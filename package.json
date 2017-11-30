@@ -17,7 +17,7 @@
   "dependencies": {
     "@essential-projects/core_contracts": "1.0.0-rc1",
     "@essential-projects/event_aggregator": "1.0.0-rc1",
-    "@process-engine/bpmn-js-custom-bundle": "1.0.0-rc1",
+    "@process-engine/bpmn-js-custom-bundle": "1.0.0-rc2",
     "@process-engine/consumer_client": "1.0.0-rc1",
     "@process-engine/process_engine_contracts": "1.0.0-rc1",
     "addict-ioc": "^2.3.4",
