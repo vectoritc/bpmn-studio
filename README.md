@@ -40,11 +40,26 @@ npm install
 npm run build
 ```
 
+Dieses Skript baut die Anwendung, das Ergebnis ist produktionsreif.
+
 **Zum starten:**
 
 ```shell
 npm start
 ```
+
+Dieses Skript startet die statische Auslieferung der Anwendung auf Port 9000.
+Zuerst muss die Anwendung gebaut sein.
+
+**Zum starten (Entwicklung)**
+
+```shell
+npm run start_dev
+```
+
+Dieses Skript startet die Auslieferung der Anwendung für die Entwicklung.
+Bei Änderungen im Quelltext wird die Anwendung neugebaut und der Webbrowser
+automatisch neugeladen.
 
 **End-to-End-Test**
 
