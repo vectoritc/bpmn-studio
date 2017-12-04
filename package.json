@@ -3,7 +3,8 @@
   "description": "An Aurelia client application.",
   "version": "1.0.0-rc1",
   "scripts": {
-    "start": "au run --watch",
+    "start": "http-server -p 9000",
+    "start_dev": "au run --watch",
     "build": "au build --prod",
     "deploy": "npm run build && npm publish",
     "integration-test-init": "webdriver-manager update && webdriver-manager start",
@@ -70,6 +71,7 @@
     "gulp-tslint": "^5.0.0",
     "gulp-typescript": "^3.1.4",
     "gulp-watch": "^4.3.11",
+    "http-server": "^0.10.0",
     "jasmine-core": "^2.4.1",
     "karma": "^0.13.22",
     "karma-chrome-launcher": "^1.0.1",

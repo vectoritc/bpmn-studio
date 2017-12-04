@@ -14,6 +14,16 @@ let serve = gulp.series(
       open: false,
       port: 9000,
       logLevel: 'silent',
+      ghostMode: {
+        clicks: false,
+        scroll: false,
+        location: false,
+        forms: {
+            submit: false,
+            inputs: false,
+            toggles: false,
+        },
+      },
       server: {
         baseDir: [project.platform.baseDir],
         middleware: [historyApiFallback(), function(req, res, next) {
