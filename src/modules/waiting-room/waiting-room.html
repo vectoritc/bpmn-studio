@@ -1,0 +1,8 @@
+<template>
+  <require from="./waiting-room.css"></require>
+  <div class="waiting-room__grid">
+    <h2 class="waiting-room__title">Waiting for UserTasks</h2>
+    <img class="waiting-room__spinner" src="src/resources/images/Rolling.svg">
+    <button class="btn btn-danger waiting-room__cancel-button" click.delegate="navigateToTaskList()">Abbrechen</button>
+  </div>
+</template>
