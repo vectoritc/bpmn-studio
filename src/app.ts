@@ -47,6 +47,12 @@ export class App {
         name: 'processdef-start',
         moduleId: 'modules/processdef-start/processdef-start',
       },
+      {
+        route: 'waitingroom/:processInstanceId',
+        title: 'Waiting Room',
+        name: 'waiting-room',
+        moduleId: 'modules/waiting-room/waiting-room',
+      },
     ]);
   }
 }
