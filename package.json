@@ -8,7 +8,9 @@
     "build": "au build --prod",
     "deploy": "npm run build && npm publish",
     "integration-test-init": "webdriver-manager update && webdriver-manager start",
-    "integration-test": "au e2e"
+    "integration-test": "au e2e",
+    "lint": "tslint --project .",
+    "test": "echo 'Currently there a no tests specified'"
   },
   "repository": {
     "type": "???",

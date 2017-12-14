@@ -27,7 +27,7 @@ pipeline {
     stage('prepare') {
       steps {
         sh 'node --version'
-        sh 'npm install --ignore-scripts'
+        sh 'npm install'
       }
     }
     stage('lint') {
