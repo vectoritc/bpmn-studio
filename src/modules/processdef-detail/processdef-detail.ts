@@ -117,13 +117,16 @@ export class ProcessDefDetail {
       } else {
         alert(`Unbekannter Status: ${JSON.stringify(response)}`);
       }
+    }).catch((error: Error) => {
+      alert(`Fehler: ${JSON.stringify(error)}`);
+      console.log(error);
     });
   }
 
   public exportDiagram(): void {
     this.exportButton.setAttribute('disabled', '');
     this.exportSpinner.classList.remove('hidden');
-    this.bpmn.getXML().then((xml: any) => {
+    this.bpmn.getXML().then((xml: string) => {
       download(xml, `${this.process.name}.bpmn`, 'application/bpmn20-xml');
       this.exportButton.removeAttribute('disabled');
       this.exportSpinner.classList.add('hidden');
