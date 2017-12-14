@@ -109,10 +109,6 @@ export class ProcessList {
     return this.processes.data;
   }
 
-  public doCancel(instanceId: string): void {
-    //
-  }
-
   private async getAllProcesses(): Promise<IPagination<IProcessEntity>> {
     return this.processEngineService.getProcesses();
   }
