@@ -30,7 +30,7 @@
     "aurelia-templating-resources": "1.4.0",
     "bluebird": "^3.5.1",
     "bootstrap": "^3.3.7",
-    "bpmn-js": "^0.21.0",
+    "bpmn-js": "^0.25.2",
     "debug": "^3.1.0",
     "downloadjs": "^1.4.7",
     "eventemitter2": "^4.1.2",
