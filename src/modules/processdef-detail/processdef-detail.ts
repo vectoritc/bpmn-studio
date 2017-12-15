@@ -118,7 +118,7 @@ export class ProcessDefDetail {
         alert(`Unbekannter Status: ${JSON.stringify(response)}`);
       }
     }).catch((error: Error) => {
-      alert(`Fehler: ${JSON.stringify(error)}`);
+      alert(`Error: ${JSON.stringify(error)}`);
       console.log(error);
     });
   }
