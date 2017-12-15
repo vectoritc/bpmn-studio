@@ -12,15 +12,14 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h4 class="modal-title">Prozesse auswählen</h4>
+            <h4 class="modal-title">Select Process</h4>
           </div>
           <div class="modal-body">
-            <p>In dem ausgewählen BPMN Diagram sind mehrere Prozesse vorhanden. Welcher dieser Prozesse soll für die ProcessEngine
-              importiert werden?</p>
+            <p>In the selected BPMN diagram are multiple processes present. Which of these process should be imported for the ProcessEngine?</p>
             <choose-dialog options.bind="chooseOptions" on-selected.bind="onProcessModdleSelected.bind($this)"></choose-dialog>
           </div>
           <div class="modal-footer">
-            <button class="btn btn-danger" click.delegate="abortImport()">Abbrechen</button>
+            <button class="btn btn-danger" click.delegate="abortImport()">Abort</button>
           </div>
         </div>
       </div>
