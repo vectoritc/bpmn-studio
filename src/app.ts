@@ -1,4 +1,5 @@
 import {Router, RouterConfiguration} from 'aurelia-router';
+import * as toastr from 'toastr';
 
 export class App {
 
@@ -54,5 +55,7 @@ export class App {
         moduleId: 'modules/waiting-room/waiting-room',
       },
     ]);
+
+    toastr.options.preventDuplicates = true;
   }
 }
