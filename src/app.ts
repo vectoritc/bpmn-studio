@@ -47,6 +47,12 @@ export class App {
         name: 'processdef-start',
         moduleId: 'modules/processdef-start/processdef-start',
       },
+      {
+        route: 'configuration',
+        title: 'Configuration',
+        name: 'configuration',
+        moduleId: 'modules/config-panel/config-panel',
+      },
     ]);
   }
 }
