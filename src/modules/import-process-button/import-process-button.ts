@@ -35,7 +35,9 @@ export class ImportProcessButton {
   }
 
   private onXmlSelected(xml: string): void {
-    const reader: bundle.moddleXml.Reader = new bundle.moddleXml.Reader(this.model);
+    const reader: bundle.moddleXml.Reader = new bundle.moddleXml.Reader({
+      model: this.model,
+    });
     const rootHandler: any = reader.handler('bpmn:Definitions');
 
     reader.fromXML(xml, rootHandler, (err: Error, bpmn: any, context: any) => {
