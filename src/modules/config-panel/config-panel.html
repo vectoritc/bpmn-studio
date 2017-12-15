@@ -6,9 +6,9 @@
     </div>
     <div class="config-panel__panel panel panel-default">
       <label for="baseRoute" class="config-panel__input-row-label--baseRoute">Base Route</label>
-      <input type="text" class="form-control config-panel__input-row--baseRoute" id="baseRoute">
+      <input value.bind="config.baseRoute" type="text" class="form-control config-panel__input-row--baseRoute" id="baseRoute">
     </div>
-    <button class="config-panel__button--save btn btn-success">Save</button>
+    <button click.delegate="updateSettings()" class="config-panel__button--save btn btn-success">Save</button>
     <button class="config-panel__button--cancel btn btn-danger">Cancel</button>
   </div>
 </template>
