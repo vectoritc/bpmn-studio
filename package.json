@@ -12,6 +12,10 @@
     "lint": "tslint --project .",
     "test": "echo 'Currently there a no tests specified'"
   },
+  "files": [
+    "scripts",
+    "index.html"
+  ],
   "bin": "node_modules/.bin/http-server",
   "repository": {
     "type": "???",
