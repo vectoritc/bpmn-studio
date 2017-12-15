@@ -16,7 +16,7 @@ export class WaitingRoom {
   }
 
   private renderUserTaskCallback: any = (userTaskConfig: IUserTaskConfig): void => {
-    toastr.success('Prozess fortgesetzt');
+    toastr.success('Process continued');
     if (userTaskConfig.userTaskEntity.process.id === this.processInstanceId) {
       this.router.navigate(`/task/${userTaskConfig.id}/dynamic-ui`);
       this.consumerClient.off('renderUserTask', this.renderUserTaskCallback);
@@ -24,7 +24,7 @@ export class WaitingRoom {
   }
 
   private processEndCallback: any = (processInstanceId: string): void => {
-    toastr.warning('Prozess beendet');
+    toastr.warning('Process stopped');
     if (processInstanceId === this.processInstanceId) {
       this.router.navigate('task');
       this.consumerClient.off('processEnd', this.processEndCallback);
