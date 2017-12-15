@@ -2,7 +2,7 @@
   <require from="./waiting-room.css"></require>
   <div class="waiting-room__grid">
     <h2 class="waiting-room__title">Process is executing</h2>
-    <img class="waiting-room__spinner" src="src/resources/images/rolling.svg">
+    <i class="glyphicon glyphicon-repeat fa-spin" style="font-size: 160px" aria-hidden="true"></i>
     <button class="btn btn-danger waiting-room__cancel-button" click.delegate="navigateToTaskList()" title="This doesn't stop the process">Don't wait!</button>
   </div>
 </template>
