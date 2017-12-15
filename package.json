@@ -10,7 +10,8 @@
     "integration-test-init": "webdriver-manager update && webdriver-manager start",
     "integration-test": "au e2e",
     "lint": "tslint --project .",
-    "test": "echo 'Currently there a no tests specified'"
+    "test": "echo 'Currently there a no tests specified'",
+    "electron": "electron electron_app/electron.js"
   },
   "files": [
     "scripts",
@@ -23,6 +24,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "electron": "^1.7.9",
     "http-server": "^0.10.0"
   },
   "peerDependencies": {},
