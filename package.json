@@ -31,7 +31,7 @@
   "devDependencies": {
     "@essential-projects/core_contracts": "1.0.0-rc1",
     "@essential-projects/event_aggregator": "1.0.0-rc1",
-    "@process-engine/bpmn-js-custom-bundle": "1.0.0-rc2",
+    "@process-engine/bpmn-js-custom-bundle": "1.0.0-rc3",
     "@process-engine/consumer_client": "1.0.0-rc1",
     "@process-engine/process_engine_contracts": "1.0.0-rc1",
     "@types/jasmine": "^2.2.0",
@@ -48,7 +48,6 @@
     "aurelia-tools": "^1.0.0",
     "bluebird": "^3.5.1",
     "bootstrap": "^3.3.7",
-    "bpmn-js": "^0.21.0",
     "browser-sync": "^2.13.0",
     "connect-history-api-fallback": "^1.2.0",
     "debounce": "^1.0.2",
