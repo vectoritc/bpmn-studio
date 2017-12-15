@@ -2,7 +2,8 @@
 
 const server = require('node-http-server');
 const open = require('open');
-const argv = require('minimist')(process.argv.slice(2)); 
+const argv = require('minimist')(process.argv.slice(2));
+
 argv['root'] = __dirname + '/..';
 
 server.deploy(argv, (result) => {
