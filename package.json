@@ -1,5 +1,5 @@
 {
-  "name": "charon",
+  "name": "@process-engine/charon",
   "description": "The process-engine frontend.",
   "version": "1.0.0-rc1",
   "scripts": {
