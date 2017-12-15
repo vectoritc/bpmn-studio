@@ -44,7 +44,7 @@ export class ImportProcessButton {
         alert(`File could not be imported: ${err}`);
       } else {
         if (context.warnings.length) {
-          alert(`Warnings while during import: ${JSON.stringify(context.warnings)}.`);
+          alert(`Warnings during import: ${JSON.stringify(context.warnings)}.`);
         }
 
         this.currentImportModdle = bpmn;
