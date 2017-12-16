@@ -84,7 +84,7 @@ export class ProcessDefDetail {
   }
 
   public deleteProcess(): void {
-    const deleteForReal: boolean = confirm('Soll der Prozess wirklich gelöscht werden?');
+    const deleteForReal: boolean = confirm('Are you sure you want to delete the process definition?');
     if (!deleteForReal) {
       return;
     }
@@ -111,11 +111,11 @@ export class ProcessDefDetail {
       return this.processEngineService.updateProcessDef(this.process, xml);
     }).then((response: any) => {
       if (response.error) {
-        alert(`Fehler: ${response.error}`);
+        alert(`Error while saving file: ${response.error}`);
       } else if (response.result) {
-        alert('Gespeichert.');
+        alert('File saved.');
       } else {
-        alert(`Unbekannter Status: ${JSON.stringify(response)}`);
+        alert(`Unknown error: ${JSON.stringify(response)}`);
       }
     }).catch((error: Error) => {
       alert(`Error: ${JSON.stringify(error)}`);
