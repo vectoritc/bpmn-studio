@@ -76,7 +76,6 @@ export class ProcessDefList {
 
   public async createProcess(): Promise<void> {
     const processInstanceId: string = await this.consumerClient.startProcessByKey('CreateProcessDef');
-
     const renderUserTaskCallback: any = (userTaskConfig: IUserTaskConfig): void => {
       if (userTaskConfig.userTaskEntity.process.id === processInstanceId) {
         this.router.navigate(`/task/${userTaskConfig.id}/dynamic-ui`);
