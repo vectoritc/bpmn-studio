@@ -23,8 +23,4 @@ export class ConfigPanel {
     this.consumerClient.updateConfig(this.config);
   }
 
-  public getSettings(): void {
-
-  }
-
 }
