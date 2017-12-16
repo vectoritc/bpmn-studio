@@ -17,15 +17,17 @@
     "scripts",
     "index.html"
   ],
-  "bin": "node_modules/.bin/http-server",
+  "bin": "./bin/charon.js",
   "repository": {
     "type": "???",
     "url": "???"
   },
   "license": "MIT",
   "dependencies": {
-    "electron": "^1.7.9",
-    "http-server": "^0.10.0"
+    "minimist": "^1.2.0",
+    "node-http-server": "^8.1.2",
+    "open": "0.0.5",
+    "electron": "^1.7.9"
   },
   "peerDependencies": {},
   "devDependencies": {
