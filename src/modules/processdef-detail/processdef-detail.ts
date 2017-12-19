@@ -84,7 +84,7 @@ export class ProcessDefDetail {
   }
 
   public deleteProcess(): void {
-    const deleteForReal: boolean = confirm('Soll der Prozess wirklich gelöscht werden?');
+    const deleteForReal: boolean = confirm('Are you sure you want to delete the process definition?');
     if (!deleteForReal) {
       return;
     }
@@ -111,19 +111,22 @@ export class ProcessDefDetail {
       return this.processEngineService.updateProcessDef(this.process, xml);
     }).then((response: any) => {
       if (response.error) {
-        alert(`Fehler: ${response.error}`);
+        alert(`Error while saving file: ${response.error}`);
       } else if (response.result) {
-        alert('Gespeichert.');
+        alert('File saved.');
       } else {
-        alert(`Unbekannter Status: ${JSON.stringify(response)}`);
+        alert(`Unknown error: ${JSON.stringify(response)}`);
       }
+    }).catch((error: Error) => {
+      alert(`Error: ${JSON.stringify(error)}`);
+      console.log(error);
     });
   }
 
   public exportDiagram(): void {
     this.exportButton.setAttribute('disabled', '');
     this.exportSpinner.classList.remove('hidden');
-    this.bpmn.getXML().then((xml: any) => {
+    this.bpmn.getXML().then((xml: string) => {
       download(xml, `${this.process.name}.bpmn`, 'application/bpmn20-xml');
       this.exportButton.removeAttribute('disabled');
       this.exportSpinner.classList.add('hidden');

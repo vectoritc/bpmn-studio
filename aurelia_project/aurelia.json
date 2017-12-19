@@ -230,6 +230,15 @@
             "resources": [
               "**/*.html"
             ]
+          },
+          {
+            "name": "toastr",
+            "path": "../node_modules/toastr",
+            "main": "toastr",
+            "resources": [
+              "build/toastr.min.css"
+            ],
+            "deps": ["jquery"]
           }
         ]
       }

@@ -35,23 +35,25 @@ export class ImportProcessButton {
   }
 
   private onXmlSelected(xml: string): void {
-    const reader: bundle.moddleXml.Reader = new bundle.moddleXml.Reader(this.model);
+    const reader: bundle.moddleXml.Reader = new bundle.moddleXml.Reader({
+      model: this.model,
+    });
     const rootHandler: any = reader.handler('bpmn:Definitions');
 
     reader.fromXML(xml, rootHandler, (err: Error, bpmn: any, context: any) => {
 
       if (err) {
-        alert(`Datei konnte nicht importiert werden: ${err}`);
+        alert(`File could not be imported: ${err}`);
       } else {
         if (context.warnings.length) {
-          alert(`Es gab Warnungen beim importieren: ${JSON.stringify(context.warnings)}.`);
+          alert(`Warnings during import: ${JSON.stringify(context.warnings)}.`);
         }
 
         this.currentImportModdle = bpmn;
         this.processes = this.getDefinedProcessesInModdle();
 
         if (this.processes.length === 0) {
-          alert('Es wurden keine Prozesse im Diagram gefunden.');
+          alert('Could not find any processes in the diagram.');
           this.abortImport();
         } else if (this.processes.length === 1) {
           this.onProcessModdleSelected(this.processes[0]);
