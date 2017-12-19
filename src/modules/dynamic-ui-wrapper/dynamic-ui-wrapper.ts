@@ -15,7 +15,7 @@ export class DynamicUiWrapper {
   private dynamicUiService: IDynamicUiService;
   @bindable()
   private _currentConfig: IUserTaskConfig;
-  private declineButtonText: string = 'Abort';
+  private declineButtonText: string = 'Cancel';
   private confirmButtonText: string = 'Continue';
   public onButtonClick: (action: string) => void;
 
@@ -39,8 +39,8 @@ export class DynamicUiWrapper {
     if (this._currentConfig.widgetType === WidgetType.confirm) {
       this.handleConfirmLayout();
     } else {
-      this.confirmButtonText = 'Abort';
-      this.declineButtonText = 'Continue';
+      this.confirmButtonText = 'Continue';
+      this.declineButtonText = 'Cancel';
     }
   }
 
