@@ -3,7 +3,7 @@
   "description": "The process-engine frontend.",
   "version": "1.0.0-rc2",
   "scripts": {
-    "start": "node-http-server port=9000 verbose=true",
+    "start": "node-http-server port=9000",
     "start_dev": "au run --watch",
     "build": "au build --prod",
     "deploy": "npm run build && npm publish",
