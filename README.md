@@ -12,9 +12,9 @@ Charon soll die bestehende React Anwendung ablösen und als zentrale Verwaltungs
 
 ## Relevante URLs
 
-* https://github.com/ProcessEngineJS/process_engine - Process Engine
-* https://github.com/ProcessEngineJS/documentation - Dokumentation
-* https://github.com/ProcessEngineJS/skeleton - Minimaler Seketon
+* https://github.com/process-engine/process_engine - Process Engine
+* https://github.com/process-engine/documentation - Dokumentation
+* https://github.com/process-engine/skeleton - Minimaler Seketon
 
 ## Wie kann ich das Projekt aufsetzen?
 
@@ -91,9 +91,9 @@ Die Konfiguration liegt unter `aurelia_project/environments/dev|stage|prod.ts`.
 
 ### Verwandte Projekte
 
-* https://github.com/ProcessEngineJS/process_engine - Process Engine
-* https://github.com/ProcessEngineJS/documentation - Dokumentation
-* https://github.com/ProcessEngineJS/skeleton - Minimaler Seketon
+* https://github.com/process-engine/process_engine - Process Engine
+* https://github.com/process-engine/documentation - Dokumentation
+* https://github.com/process-engine/skeleton - Minimaler Seketon
 
 ### Lizenzen
 
