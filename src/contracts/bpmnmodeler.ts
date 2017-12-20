@@ -20,32 +20,6 @@ export interface IBpmnModeler {
             errorHandler: (err: Error) => void): void;
 }
 
-export interface IEventBus {
-  on(events: Array<string> | string,
-     priority: number,
-     callback: Function,
-     callbackScope?: any): void;
-  on(events: Array<string> | string,
-     callback: Function,
-     callbackScope?: any): void;
-
-  once(events: Array<string> | string,
-       priority: number,
-       callback: Function,
-       callbackScope: any): void;
-  once(events: Array<string> | string,
-       callback: Function,
-       callbackScope: any): void;
-
-  off(event: string,
-      callback?: Function): void;
-
-  fire(name: string,
-       data?: any): any;
-  fire(eventObject: { type: string }, // tslint:disable-line
-       data?: any): any;
-}
-
 export interface IModdleElement {
   id: string;
   get: any;

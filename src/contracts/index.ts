@@ -3,3 +3,4 @@ export * from './bpmnmodeler';
 export * from './dynamic-ui';
 export * from './choose-dialog';
 export * from './authentication';
+export * from './eventbus';
