@@ -23,6 +23,12 @@ export class ConfigPanel {
     window.localStorage.setItem('baseRoute', this.config.baseRoute);
     this.consumerClient.updateConfig(this.config);
     toastr.success('Sucessfully saved settings!');
+    this.router.navigate('');
+  }
+
+  public cancelUpdate(): void {
+    toastr.warning('Settings dismissed!');
+    this.router.navigate('');
   }
 
 }

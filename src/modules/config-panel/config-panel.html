@@ -9,6 +9,6 @@
       <input value.bind="config.baseRoute" type="text" class="form-control config-panel__input-row--baseRoute" id="baseRoute">
     </div>
     <button click.delegate="updateSettings()" class="config-panel__button--save btn btn-success">Save</button>
-    <button class="config-panel__button--cancel btn btn-danger">Cancel</button>
+    <button click.delegate="cancelUpdate()" class="config-panel__button--cancel btn btn-danger">Cancel</button>
   </div>
 </template>
