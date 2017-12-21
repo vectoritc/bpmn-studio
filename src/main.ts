@@ -7,6 +7,10 @@ export function configure(aurelia: Aurelia): void {
   const tokenRepository: TokenRepository = new TokenRepository();
   aurelia.container.registerInstance('TokenRepository', tokenRepository);
 
+  if (window.localStorage.getItem('baseRoute')) {
+    environment.consumerClient.baseRoute = window.localStorage.getItem('baseRoute');
+  }
+
   aurelia.use
     .standardConfiguration()
     .feature('modules/dynamic-ui')
