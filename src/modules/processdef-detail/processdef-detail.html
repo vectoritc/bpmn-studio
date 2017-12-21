@@ -7,7 +7,7 @@
     <div class="bpmn-toolbar-holder">
       <div class="container bpmn-toolbar">
         <div class="action-dropdown ${startedProcessId ? 'action-dropdown-open' : ''}" ref="startButtonDropdown">
-          <button click.delegate="publishDraft()" class="btn btn-primary">
+          <button disabled.bind="process.latest" click.delegate="publishDraft()" class="btn btn-primary">
             <i class="glyphicon glyphicon-tag"></i> Publish Draft
           </button>
           <button disabled.bind="process.draft" click.delegate="startProcess()" class="btn btn-success">
@@ -45,9 +45,9 @@
         <a class="btn btn-primary" href="#/processdef/${process.id}/task">
           <i class="glyphicon glyphicon-list-alt"></i> Tasks
         </a>
-        <a class="btn btn-success save-button" click.delegate="saveDiagram()">
-          <i class="glyphicon glyphicon-floppy-disk"></i> Save
-        </a>
+        <button disabled.bind="process.latest" class="btn btn-success save-button" click.delegate="saveDiagramm()">
+            <i class="glyphicon glyphicon-floppy-disk"></i> Save
+        </button>
         <a class="btn btn-danger" click.delegate="deleteProcess()">
           <i class="glyphicon glyphicon-trash"></i> Delete Process
         </a>
@@ -56,6 +56,10 @@
           <i class="glyphicon glyphicon-export"></i> Export Diagram
         </a>
         <import-process-button desired-process-import-key.bind="process.key" callback.bind="onModdlelImported.bind($this)"></import-process-button>
+        <span if.bind="process.latest" class="processdef-detail__latest-true">Latest</span>
+        <span if.bind="!process.latest" class="processdef-detail__latest-false">Latest</span>
+        <span if.bind="process.draft" class="processdef-detail__draft-true">Draft</span>
+        <span if.bind="!process.draft" class="processdef-detail__draft-false">Draft</span>
       </div>
     </div>
     <bpmn-io view-model.ref="bpmn" xml.bind="process.xml"></bpmn-io>
