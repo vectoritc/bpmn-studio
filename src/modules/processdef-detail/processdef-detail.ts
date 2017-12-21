@@ -4,6 +4,7 @@ import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import * as download from 'downloadjs';
+import * as toastr from 'toastr';
 import {AuthenticationStateEvent, IChooseDialogOption, IProcessEngineService} from '../../contracts/index';
 import environment from '../../environment';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
@@ -141,6 +142,7 @@ export class ProcessDefDetail {
   public async publishDraft(): Promise<any> {
     await this.processEngineService.publishDraft(this._process.id);
     this.refreshProcess();
+    toastr.success('Successfully published!');
   }
 
 }
