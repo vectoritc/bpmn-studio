@@ -70,13 +70,6 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
   }
 
   public async updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<any> {
-    const needToChangeDraftStatus: boolean = !processDef.draft;
-    if (needToChangeDraftStatus) {
-      await this.updateProcessDefViaDataStore({
-        id: processDef.id,
-        draft: true,
-      });
-    }
 
     let updateError: Error;
     let result: any;
@@ -96,13 +89,6 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
       result = await throwOnErrorResponse<any>(response);
     } catch (error) {
       updateError = error;
-    }
-
-    if (needToChangeDraftStatus) {
-      await this.updateProcessDefViaDataStore({
-        id: processDef.id,
-        draft: false,
-      });
     }
 
     if (updateError) {
