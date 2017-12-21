@@ -28,7 +28,8 @@
         </td>
         <td>
           <button click.delegate="startProcess(process.id)" if.bind="process.latest" class="btn btn-success">Start</button>
-          <button click.delegate="showDetails(process.id)" class="btn btn-primary">Details</button>
+          <button click.delegate="showDetails(process.id)" if.bind="process.latest || process.draft" class="btn btn-primary">Details</button>
+          <p if.bind="!process.latest && !process.draft">Obsolete Latest!</p>
         </td>
       </tr>
     </table>
