@@ -183,4 +183,17 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
     const response: Response = await this.http.fetch(url, {method: 'get'});
     return throwOnErrorResponse<IPagination<IProcessEntity>>(response);
   }
+
+  public async publishDraft(processDefId: string): Promise<IProcessDefEntity> {
+      const options: RequestInit = {
+        method: 'post',
+        headers: new Headers({
+          'Content-Type': 'application/json',
+        }),
+      };
+      const url: string = `${environment.processengine.routes.processes}/${processDefId}/publishDraft`;
+      const response: Response = await this.http.fetch(url, options);
+
+      return throwOnErrorResponse<IProcessDefEntity>(response);
+  }
 }

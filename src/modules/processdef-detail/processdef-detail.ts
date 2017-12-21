@@ -133,4 +133,8 @@ export class ProcessDefDetail {
     });
   }
 
+  public publishDraft(): void {
+    this.processEngineService.publishDraft(this._process.id);
+  }
+
 }
