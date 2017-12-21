@@ -27,8 +27,8 @@
             <i class="glyphicon glyphicon-remove processdef-list__draft-false"></i>
         </td>
         <td>
-          <button click.delegate="startProcess(process.id)" if.bind="process.draft" class="btn btn-success">Start</button>
-          <button click.delegate="showDetails(process.id)" if.bind="process.latest" class="btn btn-primary">Details</button>
+          <button click.delegate="startProcess(process.id)" if.bind="process.latest" class="btn btn-success">Start</button>
+          <button click.delegate="showDetails(process.id)" if.bind="process.draft" class="btn btn-primary">Details</button>
         </td>
       </tr>
     </table>
