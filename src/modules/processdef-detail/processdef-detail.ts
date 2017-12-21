@@ -138,8 +138,9 @@ export class ProcessDefDetail {
     });
   }
 
-  public publishDraft(): void {
-    this.processEngineService.publishDraft(this._process.id);
+  public async publishDraft(): Promise<any> {
+    await this.processEngineService.publishDraft(this._process.id);
+    this.refreshProcess();
   }
 
 }
