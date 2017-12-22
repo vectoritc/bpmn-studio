@@ -32,11 +32,6 @@
                 </a>
               </li>
             </ul>
-            <div class="action-dropdown-bar">
-              <a class="btn btn-danger" disabled="disabled">
-                <i class="glyphicon glyphicon-stop"></i> Stop Process
-              </a>
-            </div>
           </div>
         </div>
         <a class="btn btn-primary" href="#/processdef/${process.id}/process">
@@ -48,9 +43,9 @@
         <button disabled.bind="process.latest" class="btn btn-success save-button" click.delegate="saveDiagram()">
             <i class="glyphicon glyphicon-floppy-disk"></i> Save
         </button>
-        <a class="btn btn-danger" click.delegate="deleteProcess()">
+        <button disabled.bind="process.draft" class="btn btn-danger" click.delegate="deleteProcess()">
           <i class="glyphicon glyphicon-trash"></i> Delete Process
-        </a>
+        </button>
         <a ref="exportButton" class="btn btn-primary export-button" click.delegate="exportDiagram()">
           <i ref="exportSpinner" class="glyphicon glyphicon-repeat fa-spin hidden"></i>
           <i class="glyphicon glyphicon-export"></i> Export Diagram
