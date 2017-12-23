@@ -51,8 +51,8 @@
           <i class="glyphicon glyphicon-export"></i> Export Diagram
         </a>
         <import-process-button desired-process-import-key.bind="process.key" callback.bind="onModdlelImported.bind($this)"></import-process-button>
-        <span if.bind="process.latest" class="processdef-detail__latest-true">Latest</span>
-        <span if.bind="process.draft" class="processdef-detail__draft-true">Draft</span>
+        <span if.bind="process.latest" class="processdef-detail__draft-latest--true">Latest</span>
+        <span if.bind="process.draft" class="processdef-detail__draft-latest--true">Draft</span>
       </div>
     </div>
     <bpmn-io view-model.ref="bpmn" xml.bind="process.xml"></bpmn-io>

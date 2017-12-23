@@ -15,7 +15,7 @@ tr td:last-child {
   text-align: center;
 }
 
-.processdef-list__latest-true {
+.processdef-list__draft-latest--true {
   background-color: #5cb85c;
   padding-bottom: 7px;
   padding-top: 5px;
@@ -24,25 +24,7 @@ tr td:last-child {
   border: darkgreen solid 0.5px;
 }
 
-.processdef-list__latest-false {
-  background-color: red;
-  padding-top: 7px;
-  padding-bottom: 5px;
-  padding-left: 10px;
-  padding-right: 10px;
-  border: darkred solid 0.5px;
-}
-
-.processdef-list__draft-true {
-  background-color: #5cb85c;
-  padding-bottom: 7px;
-  padding-top: 5px;
-  padding-left: 10px;
-  padding-right: 10px;
-  border: darkgreen solid 0.5px;
-}
-
-.processdef-list__draft-false {
+.processdef-list__draft-latest--false {
   background-color: red;
   padding-top: 7px;
   padding-bottom: 5px;

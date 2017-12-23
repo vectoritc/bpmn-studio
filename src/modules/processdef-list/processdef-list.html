@@ -15,16 +15,16 @@
         <td>${process.name}</td>
         <td>${process.id}</td>
         <td if.bind="process.latest" class="processdef-list__btn-table-cell">
-            <i class="glyphicon glyphicon-ok processdef-list__latest-true"></i>
+            <i class="glyphicon glyphicon-ok processdef-list__draft-latest--true"></i>
         </td>
         <td if.bind="!process.latest" class="processdef-list__btn-table-cell">
-            <i class="glyphicon glyphicon-remove processdef-list__latest-false"></i>
+            <i class="glyphicon glyphicon-remove processdef-list__draft-latest--false"></i>
         </td>
         <td if.bind="process.draft" class="processdef-list__btn-table-cell">
-            <i class="glyphicon glyphicon-ok processdef-list__draft-true"></i>
+            <i class="glyphicon glyphicon-ok processdef-list__draft-latest--true"></i>
         </td>
         <td if.bind="!process.draft" class="processdef-list__btn-table-cell">
-            <i class="glyphicon glyphicon-remove processdef-list__draft-false"></i>
+            <i class="glyphicon glyphicon-remove processdef-list__draft-latest--false"></i>
         </td>
         <td>
           <button click.delegate="startProcess(process.id)" if.bind="process.latest" class="btn btn-success">Start</button>
