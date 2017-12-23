@@ -171,15 +171,15 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
   }
 
   public async publishDraft(processDefId: string): Promise<IProcessDefEntity> {
-      const options: RequestInit = {
-        method: 'post',
-        headers: new Headers({
-          'Content-Type': 'application/json',
-        }),
-      };
-      const url: string = `${environment.processengine.routes.processes}/${processDefId}/publishDraft`;
-      const response: Response = await this.http.fetch(url, options);
+    const options: RequestInit = {
+      method: 'post',
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+    };
+    const url: string = `${environment.processengine.routes.processes}/${processDefId}/publishDraft`;
+    const response: Response = await this.http.fetch(url, options);
 
-      return throwOnErrorResponse<IProcessDefEntity>(response);
+    return throwOnErrorResponse<IProcessDefEntity>(response);
   }
 }
