@@ -1,7 +1,7 @@
 {
   "name": "@process-engine/charon",
   "description": "The process-engine frontend.",
-  "version": "1.0.0-rc4",
+  "version": "1.0.0-rc5",
   "scripts": {
     "start": "node-http-server port=9000",
     "start_dev": "au run --watch",
