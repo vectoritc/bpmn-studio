@@ -31,11 +31,16 @@
   },
   "peerDependencies": {},
   "devDependencies": {
-    "@essential-projects/core_contracts": "1.0.0-rc1",
-    "@essential-projects/event_aggregator": "1.0.0-rc1",
+    "@essential-projects/core_contracts": "1.0.0-rc3",
+    "@essential-projects/event_aggregator": "1.0.0-rc3",
     "@process-engine/bpmn-js-custom-bundle": "1.0.0-rc3",
+<<<<<<< HEAD
     "@process-engine/consumer_client": "1.0.0-rc4",
     "@process-engine/process_engine_contracts": "1.0.0-rc4",
+=======
+    "@process-engine/consumer_client": "1.0.0-rc3",
+    "@process-engine/process_engine_contracts": "1.0.0-rc3",
+>>>>>>> develop
     "@types/jasmine": "^2.2.0",
     "@types/node": "^6.0.45",
     "addict-ioc": "^2.3.4",
