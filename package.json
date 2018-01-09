@@ -1,7 +1,7 @@
 {
   "name": "@process-engine/charon",
   "description": "The process-engine frontend.",
-  "version": "1.0.0-rc3",
+  "version": "1.0.0-rc4",
   "scripts": {
     "start": "node-http-server port=9000",
     "start_dev": "au run --watch",
@@ -34,8 +34,8 @@
     "@essential-projects/core_contracts": "1.0.0-rc3",
     "@essential-projects/event_aggregator": "1.0.0-rc3",
     "@process-engine/bpmn-js-custom-bundle": "1.0.0-rc3",
-    "@process-engine/consumer_client": "1.0.0-rc3",
-    "@process-engine/process_engine_contracts": "1.0.0-rc3",
+    "@process-engine/consumer_client": "1.0.0-rc4",
+    "@process-engine/process_engine_contracts": "1.0.0-rc4",
     "@types/jasmine": "^2.2.0",
     "@types/node": "^6.0.45",
     "addict-ioc": "^2.3.4",

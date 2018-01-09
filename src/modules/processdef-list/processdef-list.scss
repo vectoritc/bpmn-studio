@@ -10,3 +10,25 @@ tr td:last-child {
 .pagination {
   text-align: center;
 }
+
+.processdef-list__btn-table-cell {
+  text-align: center;
+}
+
+.processdef-list__draft-latest--true {
+  background-color: #5cb85c;
+  padding-bottom: 7px;
+  padding-top: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border: darkgreen solid 0.5px;
+}
+
+.processdef-list__draft-latest--false {
+  background-color: red;
+  padding-top: 7px;
+  padding-bottom: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border: darkred solid 0.5px;
+}
