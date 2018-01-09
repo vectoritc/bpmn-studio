@@ -70,13 +70,6 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
   }
 
   public async updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<any> {
-    const needToChangeDraftStatus: boolean = !processDef.draft;
-    if (needToChangeDraftStatus) {
-      await this.updateProcessDefViaDataStore({
-        id: processDef.id,
-        draft: true,
-      });
-    }
 
     let updateError: Error;
     let result: any;
@@ -96,13 +89,6 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
       result = await throwOnErrorResponse<any>(response);
     } catch (error) {
       updateError = error;
-    }
-
-    if (needToChangeDraftStatus) {
-      await this.updateProcessDefViaDataStore({
-        id: processDef.id,
-        draft: false,
-      });
     }
 
     if (updateError) {
@@ -182,5 +168,18 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
 
     const response: Response = await this.http.fetch(url, {method: 'get'});
     return throwOnErrorResponse<IPagination<IProcessEntity>>(response);
+  }
+
+  public async publishDraft(processDefId: string): Promise<IProcessDefEntity> {
+    const options: RequestInit = {
+      method: 'post',
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+    };
+    const url: string = `${environment.processengine.routes.processes}/${processDefId}/publishDraft`;
+    const response: Response = await this.http.fetch(url, options);
+
+    return throwOnErrorResponse<IProcessDefEntity>(response);
   }
 }

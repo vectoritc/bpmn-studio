@@ -2,7 +2,9 @@ import {ConsumerClient} from '@process-engine/consumer_client';
 import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
+import {Router} from 'aurelia-router';
 import * as download from 'downloadjs';
+import * as toastr from 'toastr';
 import {AuthenticationStateEvent, IChooseDialogOption, IProcessEngineService} from '../../contracts/index';
 import environment from '../../environment';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
@@ -11,7 +13,7 @@ interface RouteParameters {
   processDefId: string;
 }
 
-@inject('ProcessEngineService', EventAggregator, 'ConsumerClient')
+@inject('ProcessEngineService', EventAggregator, 'ConsumerClient', Router)
 export class ProcessDefDetail {
   private processEngineService: IProcessEngineService;
   private eventAggregator: EventAggregator;
@@ -24,6 +26,7 @@ export class ProcessDefDetail {
   private startButtonDropdown: HTMLDivElement;
   private startButton: HTMLElement;
   private consumerClient: ConsumerClient;
+  private router: Router;
 
   @bindable() public uri: string;
   @bindable() public name: string;
@@ -31,10 +34,12 @@ export class ProcessDefDetail {
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
-              consumerClient: ConsumerClient) {
+              consumerClient: ConsumerClient,
+              router: Router) {
     this.processEngineService = processEngineService;
     this.eventAggregator = eventAggregator;
     this.consumerClient = consumerClient;
+    this.router = router;
   }
 
   public activate(routeParameters: RouteParameters): void {
@@ -75,6 +80,7 @@ export class ProcessDefDetail {
       return;
     }
     this.startButton.setAttribute('disabled', 'disabled');
+    this.router.navigate(`processdef/${this.process.id}/start`);
     this.startedProcessId = await this.consumerClient.startProcessByKey(this.process.key);
   }
 
@@ -131,6 +137,12 @@ export class ProcessDefDetail {
       this.exportButton.removeAttribute('disabled');
       this.exportSpinner.classList.add('hidden');
     });
+  }
+
+  public async publishDraft(): Promise<any> {
+    await this.processEngineService.publishDraft(this._process.id);
+    this.refreshProcess();
+    toastr.success('Successfully published!');
   }
 
 }

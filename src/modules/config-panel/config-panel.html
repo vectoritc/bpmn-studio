@@ -1,0 +1,14 @@
+<template>
+  <require from="./config-panel.css"></require>
+  <div class="config-panel">
+    <div class="config-panel__title">
+      <h1>Settings</h1>
+    </div>
+    <div class="config-panel__panel panel panel-default">
+      <label for="baseRoute" class="config-panel__input-row-label--baseRoute">Base Route</label>
+      <input value.bind="config.baseRoute" type="text" class="form-control config-panel__input-row--baseRoute" id="baseRoute">
+    </div>
+    <button click.delegate="updateSettings()" class="config-panel__button--save btn btn-success">Save</button>
+    <button click.delegate="cancelUpdate()" class="config-panel__button--cancel btn btn-danger">Cancel</button>
+  </div>
+</template>

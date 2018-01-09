@@ -86,4 +86,12 @@ export class ProcessDefList {
     this.consumerClient.on('renderUserTask', renderUserTaskCallback);
   }
 
+  public startProcess(processId: string): void {
+    this.router.navigate(`processdef/${processId}/start`);
+  }
+
+  public showDetails(processId: string): void {
+    this.router.navigate(`processdef/${processId}/detail`);
+  }
+
 }

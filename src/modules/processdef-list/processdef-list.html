@@ -7,18 +7,29 @@
       <tr>
         <th>ProcessDefinitionName</th>
         <th>ProcessDefinitionId</th>
-        <th>Latest</th>
+        <th class="processdef-list__btn-table-cell">Latest</th>
         <th>Draft</th>
         <th></th>
       </tr>
       <tr repeat.for="process of processes" id="processDef">
         <td>${process.name}</td>
         <td>${process.id}</td>
-        <td>${process.latest}</td>
-        <td>${process.draft}</td>
+        <td if.bind="process.latest" class="processdef-list__btn-table-cell">
+            <i class="glyphicon glyphicon-ok processdef-list__draft-latest--true"></i>
+        </td>
+        <td if.bind="!process.latest" class="processdef-list__btn-table-cell">
+            <i class="glyphicon glyphicon-remove processdef-list__draft-latest--false"></i>
+        </td>
+        <td if.bind="process.draft" class="processdef-list__btn-table-cell">
+            <i class="glyphicon glyphicon-ok processdef-list__draft-latest--true"></i>
+        </td>
+        <td if.bind="!process.draft" class="processdef-list__btn-table-cell">
+            <i class="glyphicon glyphicon-remove processdef-list__draft-latest--false"></i>
+        </td>
         <td>
-          <a class="btn btn-success" href="#/processdef/${process.id}/start">Start</a>
-          <a class="btn btn-primary" href="#/processdef/${process.id}/detail">Details</a>
+          <button click.delegate="startProcess(process.id)" if.bind="process.latest" class="btn btn-success">Start</button>
+          <button click.delegate="showDetails(process.id)" if.bind="process.latest || process.draft" class="btn btn-primary">Details</button>
+          <p if.bind="!process.latest && !process.draft">Obsolete Latest!</p>
         </td>
       </tr>
     </table>
