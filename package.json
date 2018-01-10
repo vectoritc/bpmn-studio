@@ -15,7 +15,8 @@
   },
   "files": [
     "scripts",
-    "index.html"
+    "index.html",
+    "bin"
   ],
   "bin": "./bin/charon.js",
   "repository": {
