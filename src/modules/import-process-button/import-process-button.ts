@@ -1,6 +1,7 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 import {bindable} from 'aurelia-framework';
+import * as toastr from 'toastr';
 import {IChooseDialogOption} from '../../contracts';
 import environment from '../../environment';
 
@@ -43,28 +44,29 @@ export class ImportProcessButton {
     reader.fromXML(xml, rootHandler, (err: Error, bpmn: any, context: any) => {
 
       if (err) {
-        alert(`File could not be imported: ${err}`);
+        toastr.error(`File could not be imported: ${err}`);
+        return;
+      }
+
+      if (context.warnings.length) {
+        toastr.warning(`Warnings during import: ${JSON.stringify(context.warnings)}.`);
+      }
+
+      this.currentImportModdle = bpmn;
+      this.processes = this.getDefinedProcessesInModdle();
+
+      if (this.processes.length === 0) {
+        toastr.warning('Could not find any processes in the diagram.');
+        this.abortImport();
+      } else if (this.processes.length === 1) {
+        this.onProcessModdleSelected(this.processes[0]);
       } else {
-        if (context.warnings.length) {
-          alert(`Warnings during import: ${JSON.stringify(context.warnings)}.`);
-        }
-
-        this.currentImportModdle = bpmn;
-        this.processes = this.getDefinedProcessesInModdle();
-
-        if (this.processes.length === 0) {
-          alert('Could not find any processes in the diagram.');
-          this.abortImport();
-        } else if (this.processes.length === 1) {
-          this.onProcessModdleSelected(this.processes[0]);
-        } else {
-          this.chooseOptions = [];
-          for (const process of this.processes) {
-            this.chooseOptions.push({
-              title: `${process.name} (${process.id})`,
-              value: process,
-            });
-          }
+        this.chooseOptions = [];
+        for (const process of this.processes) {
+          this.chooseOptions.push({
+            title: `${process.name} (${process.id})`,
+            value: process,
+          });
         }
       }
     });
