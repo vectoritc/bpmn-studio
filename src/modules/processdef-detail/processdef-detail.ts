@@ -97,6 +97,7 @@ export class ProcessDefDetail {
     this.processEngineService.deleteProcessDef(this.process.id)
       .then(() => {
         this._process = null;
+        this.router.navigate('');
       })
       .catch((error: Error) => {
         alert(error.message);
