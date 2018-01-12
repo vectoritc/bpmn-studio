@@ -100,7 +100,7 @@ export class ProcessDefDetail {
         this.router.navigate('');
       })
       .catch((error: Error) => {
-        alert(error.message);
+        toastr.error(error.message);
       });
   }
 
@@ -118,14 +118,14 @@ export class ProcessDefDetail {
       return this.processEngineService.updateProcessDef(this.process, xml);
     }).then((response: any) => {
       if (response.error) {
-        alert(`Error while saving file: ${response.error}`);
+        toastr.error(`Error while saving file: ${response.error}`);
       } else if (response.result) {
-        alert('File saved.');
+        toastr.success('File saved.');
       } else {
-        alert(`Unknown error: ${JSON.stringify(response)}`);
+        toastr.warning(`Unknown error: ${JSON.stringify(response)}`);
       }
     }).catch((error: Error) => {
-      alert(`Error: ${JSON.stringify(error)}`);
+      toastr.error(`Error: ${error.message}`);
       console.log(error);
     });
   }
