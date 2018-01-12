@@ -140,7 +140,7 @@ export class ProcessDefDetail {
   }
 
   public async publishDraft(): Promise<any> {
-    this.processEngineService.publishDraft(this._process.id).then(() => {
+    this.processEngineService.publishDraft(this._process.id).then((processDef: IProcessDefEntity) => {
       this.refreshProcess();
       toastr.success('Successfully published!');
     }).catch((error: Error) => {
