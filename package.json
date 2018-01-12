@@ -1,7 +1,7 @@
 {
   "name": "@process-engine/charon",
   "description": "The process-engine frontend.",
-  "version": "1.0.0-rc6",
+  "version": "1.0.0-rc9",
   "scripts": {
     "start": "./bin/charon.js",
     "start_dev": "au run --watch",
