@@ -16,7 +16,8 @@
   "files": [
     "scripts",
     "index.html",
-    "bin"
+    "bin",
+    "bootstrap"
   ],
   "bin": "./bin/charon.js",
   "repository": {
