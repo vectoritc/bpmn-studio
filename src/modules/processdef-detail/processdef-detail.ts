@@ -126,7 +126,6 @@ export class ProcessDefDetail {
       }
     }).catch((error: Error) => {
       toastr.error(`Error: ${error.message}`);
-      console.log(error);
     });
   }
 
@@ -141,9 +140,12 @@ export class ProcessDefDetail {
   }
 
   public async publishDraft(): Promise<any> {
-    await this.processEngineService.publishDraft(this._process.id);
-    this.refreshProcess();
-    toastr.success('Successfully published!');
+    this.processEngineService.publishDraft(this._process.id).then(() => {
+      this.refreshProcess();
+      toastr.success('Successfully published!');
+    }).catch((error: Error) => {
+      toastr.error(`Error while publishing Draft: ${error.message}`);
+    });
   }
 
 }
