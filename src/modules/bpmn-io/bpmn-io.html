@@ -1,8 +1,11 @@
 <template>
-  <require from="@process-engine/bpmn-js-custom-bundle/bpmn-modeler-custom.css"></require>  
+  <require from="../property-panel/property-panel"></require>
+  <require from="@process-engine/bpmn-js-custom-bundle/bpmn-modeler-custom.css"></require>
   <require from="./bpmn-io.css"></require>
   <div class="modeler">
     <div class="canvas" id="canvas"></div>
-    <div id="js-properties-panel"></div>
+    <div id="js-properties-panel">
+      <property-panel></property-panel>
+    </div>
   </div>
 </template>

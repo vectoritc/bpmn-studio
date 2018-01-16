@@ -11,9 +11,6 @@ export class BpmnIo {
   public attached(): void {
     this.modeler = new bundle.modeler({
       container: '#canvas',
-      propertiesPanel: {
-        parent: '#js-properties-panel',
-      },
       additionalModules: bundle.additionalModules,
       moddleExtensions: {
         camunda: bundle.camundaModdleDescriptor,
