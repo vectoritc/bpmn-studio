@@ -6,11 +6,10 @@ import environment from '../../environment';
 export class BpmnIo {
 
   @bindable() public xml: string;
-  private modeler: IBpmnModeler;
+  public modeler: IBpmnModeler;
 
-  public attached(): void {
+  public created(): void {
     this.modeler = new bundle.modeler({
-      container: '#canvas',
       additionalModules: bundle.additionalModules,
       moddleExtensions: {
         camunda: bundle.camundaModdleDescriptor,
@@ -22,6 +21,10 @@ export class BpmnIo {
         return 0;
       });
     }
+  }
+
+  public attached(): void {
+    this.modeler.attachTo('#canvas');
   }
 
   public xmlChanged(newValue: string, oldValue: string): void {
