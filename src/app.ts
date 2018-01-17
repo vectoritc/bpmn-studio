@@ -7,7 +7,7 @@ export class App {
 
   public configureRouter(config: RouterConfiguration, router: Router): void {
     this.router = router;
-    config.title = 'BPNN-Studio';
+    config.title = 'BPMN-Studio';
     config.map([
       {
         route: ['', 'processdef', 'processdef/:page'],
