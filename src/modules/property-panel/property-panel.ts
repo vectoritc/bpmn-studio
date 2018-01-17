@@ -6,6 +6,7 @@ import {IBpmnModeler,
         IEvent,
         IEventBus,
         IModdleElement,
+        IModeling,
         IShape} from '../../contracts';
 import environment from '../../environment';
 
@@ -18,7 +19,7 @@ export class PropertyPanel {
   public businessObjInPanel: IModdleElement;
 
   private eventBus: IEventBus;
-  private modeling;
+  private modeling: IModeling;
 
   public attached(): void {
     this.eventBus = this.modeler.get('eventBus');
