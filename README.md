@@ -1,10 +1,10 @@
 # BPMN-Studio
 
-ProcessEngineJS Admin Panel
-
 ## Was sind die Ziele dieses Projekts?
 
-BPMN-Studio soll die bestehende React Anwendung ablösen und als zentrale Verwaltungsschnittstelle für die ProcessEngine dienen.
+BPMN-Studio kann verwendet werden um BPMN Diagramme zu erstellen.
+Des Weitern kann BPMN-Studio mit einer Workflow Engine verbunden werden,
+um diese Diagramme auszuführen.
 
 ## Relevante URLs
 
