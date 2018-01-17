@@ -8,6 +8,7 @@ import * as toastr from 'toastr';
 import {AuthenticationStateEvent, IChooseDialogOption, IProcessEngineService} from '../../contracts/index';
 import environment from '../../environment';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
+import * as canvg from 'canvg-browser';
 
 interface RouteParameters {
   processDefId: string;
@@ -22,6 +23,7 @@ export class ProcessDefDetail {
   private _process: IProcessDefEntity;
   private bpmn: BpmnIo;
   private exportButton: HTMLButtonElement;
+  private exportDropdown: HTMLButtonElement;
   private exportSpinner: HTMLElement;
   private startButtonDropdown: HTMLDivElement;
   private startButton: HTMLElement;
@@ -129,14 +131,67 @@ export class ProcessDefDetail {
     });
   }
 
-  public exportDiagram(): void {
+  public exportBPMN(): void {
     this.exportButton.setAttribute('disabled', '');
+    this.exportDropdown.setAttribute('disabled', '');    
     this.exportSpinner.classList.remove('hidden');
     this.bpmn.getXML().then((xml: string) => {
       download(xml, `${this.process.name}.bpmn`, 'application/bpmn20-xml');
       this.exportButton.removeAttribute('disabled');
+      this.exportDropdown.removeAttribute('disabled');      
       this.exportSpinner.classList.add('hidden');
     });
+
+  }
+
+  public exportSVG(): void {
+    this.exportButton.setAttribute('disabled', '');
+    this.exportDropdown.setAttribute('disabled', '');
+    this.exportSpinner.classList.remove('hidden');
+    this.bpmn.getSVG().then((svg: string) => {
+      download(svg, `${this.process.name}.svg`, 'image/svg+xml');
+      this.exportButton.removeAttribute('disabled');
+      this.exportDropdown.removeAttribute('disabled');
+      this.exportSpinner.classList.add('hidden');
+    });
+  }
+
+  public exportPNG(): void {
+    this.exportButton.setAttribute('disabled', '');
+    this.exportDropdown.setAttribute('disabled', '');
+    this.exportSpinner.classList.remove('hidden');
+    this.bpmn.getSVG().then((svg: string) => {
+      download(this.generateImage('png', svg), `${this.process.name}.png`, 'image/png');      
+      this.exportButton.removeAttribute('disabled');
+      this.exportDropdown.removeAttribute('disabled');
+      this.exportSpinner.classList.add('hidden');
+    });
+  }
+
+  public exportJPEG(): void {
+    this.exportButton.setAttribute('disabled', '');
+    this.exportDropdown.setAttribute('disabled', '');
+    this.exportSpinner.classList.remove('hidden');
+    this.bpmn.getSVG().then((svg: string) => {
+      download(this.generateImage('jpeg', svg), `${this.process.name}.jpeg`, 'image/jpeg');      
+      this.exportButton.removeAttribute('disabled');
+      this.exportDropdown.removeAttribute('disabled');
+      this.exportSpinner.classList.add('hidden');
+    });
+  }
+
+  public generateImage(type, svg) {
+    let encoding = 'image/' + type,
+        context,
+        canvas;
+    canvas = document.createElement('canvas');
+    canvg(canvas, svg);
+    // make the background white for every format
+    context = canvas.getContext('2d');
+    context.globalCompositeOperation = 'destination-over';
+    context.fillStyle = 'white';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL(encoding);
   }
 
   public async publishDraft(): Promise<any> {

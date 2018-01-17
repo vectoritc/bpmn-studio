@@ -239,6 +239,27 @@
               "build/toastr.min.css"
             ],
             "deps": ["jquery"]
+          },
+          {
+            "name": "canvg-browser",
+            "path": "../node_modules/canvg-browser",
+            "main": "index.js",
+            "exports": "canvg"
+          },
+          {
+            "name": "rgbcolor",
+            "path": "../node_modules/rgbcolor",
+            "main": "index.js"
+          },
+          {
+            "name": "stackblur",
+            "path": "../node_modules/stackblur",
+            "main": "index.js"
+          },
+          {
+            "name": "xmldom",
+            "path": "../node_modules/xmldom",
+            "main": "dom-parser.js"
           }
         ]
       }
