@@ -1,5 +1,5 @@
 {
-  "name": "@process-engine/bpmn-studio",
+  "name": "bpmn-studio",
   "description": "The process-engine frontend.",
   "version": "1.0.0-rc9",
   "scripts": {

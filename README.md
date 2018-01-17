@@ -2,10 +2,6 @@
 
 ProcessEngineJS Admin Panel
 
-> BPMN-Studio is the ferryman of Hades who carries souls of the newly deceased across the rivers Styx and Acheron that divided the world of the living from the world of the dead.
-
-It's basically a frontend
-
 ## Was sind die Ziele dieses Projekts?
 
 BPMN-Studio soll die bestehende React Anwendung ablösen und als zentrale Verwaltungsschnittstelle für die ProcessEngine dienen.
