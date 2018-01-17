@@ -1,14 +1,14 @@
-# Charon (/ˈkɛərɒn/)
+# BPMN-Studio
 
 ProcessEngineJS Admin Panel
 
-> Charon is the ferryman of Hades who carries souls of the newly deceased across the rivers Styx and Acheron that divided the world of the living from the world of the dead.
+> BPMN-Studio is the ferryman of Hades who carries souls of the newly deceased across the rivers Styx and Acheron that divided the world of the living from the world of the dead.
 
 It's basically a frontend
 
 ## Was sind die Ziele dieses Projekts?
 
-Charon soll die bestehende React Anwendung ablösen und als zentrale Verwaltungsschnittstelle für die ProcessEngine dienen.
+BPMN-Studio soll die bestehende React Anwendung ablösen und als zentrale Verwaltungsschnittstelle für die ProcessEngine dienen.
 
 ## Relevante URLs
 

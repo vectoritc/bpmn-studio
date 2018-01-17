@@ -1,9 +1,9 @@
 {
-  "name": "@process-engine/charon",
+  "name": "@process-engine/bpmn-studio",
   "description": "The process-engine frontend.",
   "version": "1.0.0-rc9",
   "scripts": {
-    "start": "./bin/charon.js",
+    "start": "./bin/bpmn-studio.js",
     "start_dev": "au run --watch",
     "build": "au build --prod",
     "deploy": "npm run build && npm publish",
@@ -19,7 +19,7 @@
     "bin",
     "bootstrap"
   ],
-  "bin": "./bin/charon.js",
+  "bin": "./bin/bpmn-studio.js",
   "repository": {
     "type": "???",
     "url": "???"
