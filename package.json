@@ -1,6 +1,6 @@
 {
   "name": "bpmn-studio",
-  "description": "The process-engine frontend.",
+  "description": "An Aurelia application for designing BPMN diagrams, which can also be connected to a process engine to execute these diagrams.",
   "version": "1.0.0-rc9",
   "scripts": {
     "start": "./bin/bpmn-studio.js",
