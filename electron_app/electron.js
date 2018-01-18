@@ -31,6 +31,7 @@ function createWindow () {
   autoUpdater.addListener('update-available', (info) => {
     notifier.notify('Update available', {
       message: 'Started downloading',
+      buttons: ['Dismiss'],
     });
   });
 
