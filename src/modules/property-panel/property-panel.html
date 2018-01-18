@@ -1,3 +1,7 @@
 <template>
-  <input type="text" value.bind="businessObjInPanel.name" change.delegate="updateName()">
+  <require from="./property-panel.css"></require>
+  <div class="property-panel">
+    <compose view-model="./pages/general/general" view="./pages/general/general.html"
+      model.bind="{ modeler : modeler }" containerless></compose>
+  </div>
 </template>

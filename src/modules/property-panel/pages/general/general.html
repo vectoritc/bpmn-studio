@@ -1,0 +1,10 @@
+<template>
+  <require from="./general.css"></require>
+    <h4><span class="label label-default">${title}</span></h4>
+
+    <label class="input-title">Id: </label>
+    <input type="text" class="form-control" value.bind="businessObjInPanel.id" change.delegate="updateId()">
+
+    <label class="input-title">Name: </label>
+    <input type="text" class="form-control" value.bind="businessObjInPanel.name" change.delegate="updateName()">
+</template>
