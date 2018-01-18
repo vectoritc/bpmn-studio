@@ -47,4 +47,16 @@ export class BpmnIo {
     });
   }
 
+  public getSVG(): Promise<string> {
+    return new Promise((resolve: Function, reject: Function): void => {
+      this.modeler.saveSVG({}, (err: Error, result: string) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+  }
+
 }
