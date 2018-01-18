@@ -2,7 +2,7 @@
 
 ## Was sind die Ziele dieses Projekts?
 
-BPMN-Studio soll es dem Anwender so leicht wie möglich machen BPMN-Diagramm
+BPMN-Studio soll es dem Anwender so leicht wie möglich machen BPMN-Diagramme
 zu erstellen und zu pflegen.
 Des Weiteren kann BPMN-Studio mit einer Workflow Engine verbunden werden,
 um diese Diagramme auszuführen.
