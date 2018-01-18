@@ -1,4 +1,4 @@
-import {IBpmnModeler} from './IBpmnModeler';
+import {IBpmnModeler} from '../bpmnmodeler/IBpmnModeler';
 
 export interface IPageModel {
   modeler: IBpmnModeler;

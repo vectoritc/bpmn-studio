@@ -6,4 +6,3 @@ export {IModdleElement} from './IModdleElement';
 export {IShape} from './IShape';
 export {IEvent} from './IEvent';
 export {IModeling} from './IModeling';
-export {IPageModel} from './IPageModel';

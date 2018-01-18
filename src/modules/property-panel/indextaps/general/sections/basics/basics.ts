@@ -5,9 +5,10 @@ import {IBpmnModeler,
   IModdleElement,
   IModeling,
   IPageModel,
+  ISection,
   IShape} from '../../../../../../contracts';
 
-export class BasicsSection {
+export class BasicsSection implements ISection {
 
   private elementInPanel: IShape;
   private businessObjInPanel: IModdleElement;
@@ -22,6 +23,10 @@ export class BasicsSection {
       this.elementInPanel = event.element;
       this.businessObjInPanel = event.element.businessObject;
     });
+  }
+
+  public canHandleElement(): boolean {
+    return true;
   }
 
   private updateName(): void {
@@ -41,4 +46,5 @@ export class BasicsSection {
       documentation: this.businessObjInPanel.documentation,
     });
   }
+
 }
