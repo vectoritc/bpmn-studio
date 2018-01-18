@@ -8,13 +8,14 @@ import {IBpmnModeler,
   ISection,
   IShape} from '../../../../../../contracts';
 
-export class BasicsSection implements ISection {
+export class PoolSection implements ISection {
 
-  public path: string = '/sections/basics/basics';
+  public path: string = '/sections/pool/pool';
   public canHandleElement: boolean = true;
 
   private elementInPanel: IShape;
   private businessObjInPanel: IModdleElement;
+  private processRefInPanel: IModdleElement; // temporär
   private eventBus: IEventBus;
   private modeling: IModeling;
 
@@ -25,25 +26,33 @@ export class BasicsSection implements ISection {
     this.eventBus.on('element.click', (event: IEvent) => {
       this.elementInPanel = event.element;
       this.businessObjInPanel = event.element.businessObject;
-      console.log(this.businessObjInPanel);
+      this.processRefInPanel = this.businessObjInPanel.processRef;
+      this.checkElement();
     });
   }
 
-  private updateName(): void {
+  private checkElement(): void {
+    if (this.businessObjInPanel && this.businessObjInPanel.$type === 'bpmn:Participant') {
+      this.canHandleElement = true;
+    }
+    this.canHandleElement = false;
+  }
+
+  private updateVersionTag(): void {
     this.modeling.updateProperties(this.elementInPanel, {
-      name: this.businessObjInPanel.name,
+      versionTag: this.processRefInPanel.versionTag,
     });
   }
 
-  private updateId(): void {
+  private updateProcessId(): void {
     this.modeling.updateProperties(this.elementInPanel, {
-      id: this.businessObjInPanel.id,
+      id: this.processRefInPanel.id,
     });
   }
 
-  private updateDocumentation(): void {
+  private updateProcessName(): void {
     this.modeling.updateProperties(this.elementInPanel, {
-      documentation: this.businessObjInPanel.documentation,
+      documentation: this.processRefInPanel.name,
     });
   }
 

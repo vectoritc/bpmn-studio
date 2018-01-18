@@ -2,6 +2,8 @@
   <require from="./general.css"></require>
     <h4><span class="label label-default">${title}</span></h4>
 
-    <compose view-model="./sections/basics/basics" view="./sections/basics/basics.html"
-      model.bind="{ modeler : modeler }" if.bind="showSection(basicsSection)"></compose>
+    <compose repeat.for="section of sections"
+      view-model=".${section.path}"
+      view=".${section.path}.html"
+      model.bind="{modeler : modeler}"></compose>
 </template>
