@@ -11,7 +11,7 @@ config.contentType.ttf = 'application/x-font-ttf';
 
 server.deploy(config, (result) => {
   const url = `http://localhost:${result.config.port}/`;
-  console.log(`BPMN-Studio started at ${url}`);
+  console.log(`BPMN-Studio started at '${url}'`);
   console.log(`Press CRTL+C to exit.`);
   open(url);
 });

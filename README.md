@@ -1,5 +1,9 @@
 # BPMN-Studio
 
+BPMN-Studio ist eine Web-Applikation zur Erstellung, Verwaltung,
+Ausführung und Auswertung von BPMN-Prozessen.
+Es setzt auf dem BPMN.io auf und den BPMN-Standard 2.x um.
+
 ## Was sind die Ziele dieses Projekts?
 
 BPMN-Studio soll es dem Anwender so leicht wie möglich machen BPMN-Diagramme
