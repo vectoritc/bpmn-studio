@@ -11,7 +11,7 @@ import {IBpmnModeler,
 export class PoolSection implements ISection {
 
   public path: string = '/sections/pool/pool';
-  public canHandleElement: boolean = true;
+  public canHandleElement: boolean = false;
 
   private elementInPanel: IShape;
   private businessObjInPanel: IModdleElement;
@@ -34,8 +34,9 @@ export class PoolSection implements ISection {
   private checkElement(): void {
     if (this.businessObjInPanel && this.businessObjInPanel.$type === 'bpmn:Participant') {
       this.canHandleElement = true;
-    }
+    } else {
     this.canHandleElement = false;
+    }
   }
 
   private updateVersionTag(): void {
