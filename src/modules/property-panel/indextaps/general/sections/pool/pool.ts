@@ -35,7 +35,7 @@ export class PoolSection implements ISection {
     if (this.businessObjInPanel && this.businessObjInPanel.$type === 'bpmn:Participant') {
       this.canHandleElement = true;
     } else {
-    this.canHandleElement = false;
+      this.canHandleElement = false;
     }
   }
 

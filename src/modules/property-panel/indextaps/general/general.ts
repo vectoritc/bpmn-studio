@@ -13,7 +13,7 @@ export class General {
     this.sections = [
       this.basicsSection,
       this.poolSection,
-    ]
+    ];
   }
 
 }

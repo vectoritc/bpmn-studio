@@ -15,5 +15,5 @@ export class PropertyPanel {
   @bindable()
   public modeler: IBpmnModeler;
 
-  private pages;
+  private pages: any;
 }
