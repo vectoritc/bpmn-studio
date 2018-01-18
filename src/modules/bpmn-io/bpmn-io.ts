@@ -55,7 +55,7 @@ export class BpmnIo {
         } else {
           resolve(result);
         }
-      })
+      });
     });
   }
 

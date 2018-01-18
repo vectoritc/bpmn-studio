@@ -142,24 +142,33 @@ export class ProcessDefDetail {
 
   public exportSVG(): void {
     this.disableAndHideControlsForImageExport();
-    this.bpmn.getSVG().then((svg: string) => {
+
+    this.bpmn.getSVG()
+    .then((svg: string) => {
       download(svg, `${this.process.name}.svg`, 'image/svg+xml');
+
       this.enableAndShowControlsForImageExport();
     });
   }
 
   public exportPNG(): void {
     this.disableAndHideControlsForImageExport();
-    this.bpmn.getSVG().then((svg: string) => {
+
+    this.bpmn.getSVG()
+    .then((svg: string) => {
       download(this.generateImageFromSVG('png', svg), `${this.process.name}.png`, 'image/png');
+
       this.enableAndShowControlsForImageExport();
     });
   }
 
   public exportJPEG(): void {
     this.disableAndHideControlsForImageExport();
-    this.bpmn.getSVG().then((svg: string) => {
+
+    this.bpmn.getSVG()
+    .then((svg: string) => {
       download(this.generateImageFromSVG('jpeg', svg), `${this.process.name}.jpeg`, 'image/jpeg');
+
       this.enableAndShowControlsForImageExport();
     });
   }
