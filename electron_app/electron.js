@@ -1,9 +1,13 @@
 const electron = require('electron');
-const {autoUpdater} = require('electron-updater');
+const autoUpdater = require('electron-updater').autoUpdater;
 const app = electron.app;
 const notifier = require('electron-notifications');
 
 let mainWindow = null;
+
+const installButtonText = 'Install';
+const dismissButtonText = 'Dismiss';
+
 function createWindow () {
   if (mainWindow !== null) {
     return;
@@ -21,7 +25,7 @@ function createWindow () {
   autoUpdater.addListener('error', (error) => {
     const notification = notifier.notify('Update error', {
       message: 'Update failed',
-      buttons: ['Dismiss'],
+      buttons: [dismissButtonText],
     });
     notification.on('buttonClicked', (text, buttonIndex, options) => {
       notification.close();
@@ -31,7 +35,7 @@ function createWindow () {
   autoUpdater.addListener('update-available', (info) => {
     notifier.notify('Update available', {
       message: 'Started downloading',
-      buttons: ['Dismiss'],
+      buttons: [dismissButtonText],
     });
   });
 
@@ -39,11 +43,12 @@ function createWindow () {
     const notification = notifier.notify('Update ready', {
       message: 'Update ready for installation',
       duration: '60000',
-      buttons: ['Install', 'Dismiss'],
+      buttons: [installButtonText, dismissButtonText],
     });
 
     notification.on('buttonClicked', (text, buttonIndex, options) => {
-      if (text == 'Install') {
+      const installButtonClicked = text === installButtonText;
+      if (installButtonClicked) {
         autoUpdater.quitAndInstall();
       } else {
         notification.close();
