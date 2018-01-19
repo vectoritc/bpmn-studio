@@ -209,4 +209,10 @@ export class ProcessDefDetail {
     this.exportSpinner.classList.add('hidden');
   }
 
+  private distribute(): void {
+    const elements = this.bpmn.getSelection();
+    console.log(elements);
+    this.bpmn.distributeElements();
+  }
+
 }
