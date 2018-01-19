@@ -3,6 +3,7 @@ import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
+import * as toastr from 'toastr';
 import {AuthenticationStateEvent, IProcessEngineService} from '../../contracts/index';
 import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
 
@@ -61,7 +62,7 @@ export class ProcessDefStart {
     try {
       this._process = await this.processEngineService.getProcessDefById(this.processDefId);
     } catch (error) {
-      console.error('failed to refresh process');
+      toastr.error(`Failed to refresh process: ${error.message}`);
       throw error;
     }
   }

@@ -1,12 +1,13 @@
 {
   "name": "bpmn-studio",
   "description": "An Aurelia application for designing BPMN diagrams, which can also be connected to a process engine to execute these diagrams.",
-  "version": "1.0.0-rc9",
+  "version": "1.0.0-rc10",
   "author": {
     "name": "process-engine",
     "email": "hello@process-engine.io",
     "url": "http://process-engine.io"
   },
+  "main": "electron_app/electron.js",
   "scripts": {
     "start": "./bin/bpmn-studio.js",
     "start_dev": "au run --watch",
@@ -16,7 +17,9 @@
     "integration-test": "au e2e",
     "lint": "tslint --project .",
     "test": "echo 'Currently there a no tests specified'",
-    "electron": "electron electron_app/electron.js"
+    "electron-start-dev": "electron electron_app/electron.js",
+    "electron-build": "build",
+    "electron-shipit": "build -p always"
   },
   "files": [
     "scripts",
@@ -26,14 +29,15 @@
   ],
   "bin": "./bin/bpmn-studio.js",
   "repository": {
-    "type": "???",
-    "url": "???"
+    "type": "git",
+    "url": "git+https://github.com/process-engine/bpmn-studio"
   },
   "license": "MIT",
   "dependencies": {
+    "electron-notifications": "^1.0.0",
+    "electron-updater": "^2.19.1",
     "node-http-server": "^8.1.2",
-    "open": "0.0.5",
-    "electron": "^1.7.9"
+    "open": "0.0.5"
   },
   "peerDependencies": {},
   "devDependencies": {
@@ -64,6 +68,8 @@
     "downloadjs": "1.4.4",
     "event-stream": "^3.3.3",
     "eventemitter2": "^4.1.2",
+    "electron": "^1.7.9",
+    "electron-builder": "^19.54.0",
     "faye": "^1.2.4",
     "fetch-ponyfill": "^4.1.0",
     "font-awesome": "^4.7.0",
