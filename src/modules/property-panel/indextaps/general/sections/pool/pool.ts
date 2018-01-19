@@ -1,4 +1,5 @@
-import {IBpmnModeler,
+import {IBpmnModdle,
+  IBpmnModeler,
   IBpmnModelerConstructor,
   IEvent,
   IEventBus,
@@ -19,10 +20,12 @@ export class PoolSection implements ISection {
   private processRefInPanel: IProcessRef;
   private eventBus: IEventBus;
   private modeling: IModeling;
+  private moddle: IBpmnModdle;
 
   public activate(model: IPageModel): void {
     this.eventBus = model.modeler.get('eventBus');
     this.modeling = model.modeler.get('modeling');
+    this.moddle = model.modeler.get('moddle');
 
     this.eventBus.on('element.click', (event: IEvent) => {
       this.elementInPanel = event.element;
@@ -47,15 +50,11 @@ export class PoolSection implements ISection {
   }
 
   private updateProcessId(): void {
-    this.modeling.updateProperties(this.elementInPanel, {
-      id: this.processRefInPanel.id,
-    });
+    this.businessObjInPanel.processRef.id = this.processRefInPanel.id;
   }
 
   private updateProcessName(): void {
-    this.modeling.updateProperties(this.elementInPanel, {
-      name: this.processRefInPanel.name,
-    });
+    this.businessObjInPanel.processRef.name = this.processRefInPanel.name;
   }
 
 }

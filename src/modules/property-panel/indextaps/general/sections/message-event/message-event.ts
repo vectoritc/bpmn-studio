@@ -4,7 +4,6 @@ import {IBpmnModdle,
   IDefinition,
   IEvent,
   IEventBus,
-  IMessage,
   IModdleElement,
   IModeling,
   IPageModel,
@@ -23,9 +22,9 @@ export class MessageEventSection implements ISection {
   private moddle: IBpmnModdle;
   private xml: string;
 
-  public messages: Array<IMessage>;
+  public messages: Array<IModdleElement>;
   public selectedId: string;
-  public selectedMessage: IMessage;
+  public selectedMessage: IModdleElement;
 
   public async activate(model: IPageModel): Promise<void> {
     this.eventBus = model.modeler.get('eventBus');
@@ -41,6 +40,7 @@ export class MessageEventSection implements ISection {
       if (this.businessObjInPanel.eventDefinitions) {
         this.selectedMessage = this.businessObjInPanel.eventDefinitions[0].messageRef;
         this.selectedId = this.selectedMessage.id;
+        console.log(this.businessObjInPanel);
       }
       this.checkElement();
     });
@@ -57,12 +57,12 @@ export class MessageEventSection implements ISection {
     });
   }
 
-  private getMessages(moddle: IBpmnModdle): Promise<Array<IMessage>> {
+  private getMessages(moddle: IBpmnModdle): Promise<Array<IModdleElement>> {
     return new Promise((resolve: Function, reject: Function): void => {
 
       moddle.fromXML(this.xml, (err: Error, definitions: IDefinition) => {
         const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-        const messages: Array<IMessage> = rootElements.filter((element: IModdleElement) => {
+        const messages: Array<IModdleElement> = rootElements.filter((element: IModdleElement) => {
           return element.$type === 'bpmn:Message';
         });
 
@@ -81,22 +81,14 @@ export class MessageEventSection implements ISection {
   }
 
   private updateMessage(): void {
-    this.selectedMessage = this.messages.find((message: IMessage) => {
+    this.selectedMessage = this.messages.find((message: IModdleElement) => {
       return message.id === this.selectedId;
     });
 
-    const newMessage: IModdleElement = this.moddle.create('bpmn:Message', {
-      id: this.selectedMessage.id,
-      name: this.selectedMessage.name,
-      $parent: this.selectedMessage.$parent,
-    });
-
-    this.businessObjInPanel.eventDefinitions[0].messageRef = newMessage;
-    /*this.modeling.updateProperties(this.elementInPanel, {
-      id: this.messageRefInPanel.id,
-    });*/
+    this.businessObjInPanel.eventDefinitions[0].messageRef = this.selectedMessage;
   }
 
+  // needs to be reworked
   private updateId(): void {
     this.modeling.updateProperties(this.elementInPanel, {
       id: this.businessObjInPanel.id,
