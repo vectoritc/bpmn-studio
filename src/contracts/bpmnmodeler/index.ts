@@ -1,3 +1,4 @@
+import { IProcessRef } from './IProcessRef';
 export {IBpmnModeler} from './IBpmnModeler';
 export {IBpmnModelerConstructor} from './IBpmnModelerConstructor';
 export {ICanvas} from './ICanvas';
@@ -6,3 +7,4 @@ export {IModdleElement} from './IModdleElement';
 export {IShape} from './IShape';
 export {IEvent} from './IEvent';
 export {IModeling} from './IModeling';
+export {IProcessRef} from './IProcessRef';

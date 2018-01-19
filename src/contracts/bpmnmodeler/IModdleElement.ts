@@ -1,3 +1,5 @@
+import { IProcessRef } from './IProcessRef';
+
 export interface IModdleElement {
   id: string;
   name: string;
@@ -6,4 +8,6 @@ export interface IModdleElement {
   $type: string;
   $attrs?: any;
   $parent?: IModdleElement;
+  di?: any;
+  processRef?: IProcessRef;
 }

@@ -25,7 +25,7 @@ export class BasicsSection implements ISection {
     this.eventBus.on('element.click', (event: IEvent) => {
       this.elementInPanel = event.element;
       this.businessObjInPanel = event.element.businessObject;
-      console.log(this.businessObjInPanel);
+      // console.log(this.businessObjInPanel);
     });
   }
 
