@@ -54,7 +54,7 @@ export class PoolSection implements ISection {
 
   private updateProcessName(): void {
     this.modeling.updateProperties(this.elementInPanel, {
-      documentation: this.processRefInPanel.name,
+      name: this.processRefInPanel.name,
     });
   }
 
