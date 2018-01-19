@@ -10,4 +10,6 @@ export interface IModdleElement {
   $parent?: IModdleElement;
   di?: any;
   processRef?: IProcessRef;
+  eventDefinitions?: Array<IModdleElement>;
+  messageRef?: IModdleElement;
 }

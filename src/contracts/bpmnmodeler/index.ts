@@ -1,4 +1,4 @@
-import { IProcessRef } from './IProcessRef';
+import {IProcessRef} from './IProcessRef';
 export {IBpmnModeler} from './IBpmnModeler';
 export {IBpmnModelerConstructor} from './IBpmnModelerConstructor';
 export {ICanvas} from './ICanvas';
@@ -8,3 +8,6 @@ export {IShape} from './IShape';
 export {IEvent} from './IEvent';
 export {IModeling} from './IModeling';
 export {IProcessRef} from './IProcessRef';
+export {IBpmnModdle} from './IBpmnModdle';
+export {IDefinition} from './IDefinition';
+export {IMessage} from './IMessage';

@@ -1,0 +1,14 @@
+<template>
+  <require from="./message-event.css"></require>
+  <div class="message-event-section" show.bind="canHandleElement">
+    <label class="input-label">Message: </label>
+    <select class="form-control" value.bind="selectedId" change.delegate="updateMessage()">
+      <option model.bind="null">-Choose Message-</option>
+      <option repeat.for="message of messages"
+              model.bind="message.id">${message.id}</option>
+    </select>
+
+    <label class="input-label">Message Name: </label>
+    <input type="text" class="form-control" value.bind="businessObjInPanel.name" change.delegate="updateName()">
+  </div>
+</template>
