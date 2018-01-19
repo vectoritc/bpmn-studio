@@ -88,7 +88,7 @@ export class MessageEventSection implements ISection {
     this.businessObjInPanel.eventDefinitions[0].messageRef = this.selectedMessage;
   }
 
-  // needs to be reworked
+  // needs to be reworked, properties can be written on the businessObj directly
   private updateId(): void {
     this.modeling.updateProperties(this.elementInPanel, {
       id: this.businessObjInPanel.id,
