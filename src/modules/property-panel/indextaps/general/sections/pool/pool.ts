@@ -20,12 +20,10 @@ export class PoolSection implements ISection {
   private processRefInPanel: IProcessRef;
   private eventBus: IEventBus;
   private modeling: IModeling;
-  private moddle: IBpmnModdle;
 
   public activate(model: IPageModel): void {
     this.eventBus = model.modeler.get('eventBus');
     this.modeling = model.modeler.get('modeling');
-    this.moddle = model.modeler.get('moddle');
 
     this.eventBus.on('element.click', (event: IEvent) => {
       this.elementInPanel = event.element;
@@ -44,9 +42,7 @@ export class PoolSection implements ISection {
   }
 
   private updateVersionTag(): void {
-    this.modeling.updateProperties(this.elementInPanel, {
-      versionTag: this.processRefInPanel.versionTag,
-    });
+    this.businessObjInPanel.processRef.versionTag = this.processRefInPanel.versionTag;
   }
 
   private updateProcessId(): void {
