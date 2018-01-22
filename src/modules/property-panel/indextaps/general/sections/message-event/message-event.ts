@@ -91,7 +91,13 @@ export class MessageEventSection implements ISection {
       definitions.get('rootElements').push(bpmnMessage);
       this.moddle.toXML(definitions, (error: Error, xmlStrUpdated: string) => {
         this.modeler.importXML(xmlStrUpdated, (errr: Error) => {
-         this.refreshMessages();
+         this.refreshMessages()
+         .then(() => {
+            this.selectedId = bpmnMessage.id;
+            this.selectedMessage = bpmnMessage;
+            this.updateMessage();
+         });
+
          return 0;
         });
       });
