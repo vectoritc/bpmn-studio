@@ -8,7 +8,9 @@
               model.bind="message.id">${message.id}</option>
     </select>
 
-    <label class="input-label">Message Name: </label>
-    <input type="text" class="form-control" value.bind="businessObjInPanel.name" change.delegate="updateName()">
+    <div show.bind="selectedId">
+      <label class="input-label">Message Name: </label>
+      <input type="text" class="form-control" value.bind="selectedMessage.name" change.delegate="updateName()">
+    </div>
   </div>
 </template>

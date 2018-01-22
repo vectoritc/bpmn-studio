@@ -37,10 +37,10 @@ export class MessageEventSection implements ISection {
     this.eventBus.on('element.click', (event: IEvent) => {
       this.elementInPanel = event.element;
       this.businessObjInPanel = event.element.businessObject;
-      if (this.businessObjInPanel.eventDefinitions) {
+
+      if (this.businessObjInPanel.eventDefinitions && this.businessObjInPanel.eventDefinitions[0].messageRef) {
         this.selectedMessage = this.businessObjInPanel.eventDefinitions[0].messageRef;
         this.selectedId = this.selectedMessage.id;
-        console.log(this.businessObjInPanel);
       }
       this.checkElement();
     });
@@ -88,16 +88,7 @@ export class MessageEventSection implements ISection {
     this.businessObjInPanel.eventDefinitions[0].messageRef = this.selectedMessage;
   }
 
-  // needs to be reworked, properties can be written on the businessObj directly
-  private updateId(): void {
-    this.modeling.updateProperties(this.elementInPanel, {
-      id: this.businessObjInPanel.id,
-    });
-  }
-
-  private updateDocumentation(): void {
-    this.modeling.updateProperties(this.elementInPanel, {
-      documentation: this.businessObjInPanel.documentation,
-    });
+  private updateName(): void {
+    this.businessObjInPanel.eventDefinitions[0].messageRef.name = this.selectedMessage.name;
   }
 }
