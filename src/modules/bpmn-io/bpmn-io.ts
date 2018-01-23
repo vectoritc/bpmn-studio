@@ -1,6 +1,7 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {bindable} from 'aurelia-framework';
 import {IBpmnModeler, IBpmnModelerConstructor} from '../../contracts';
+import { IModdleElement } from '../../contracts/bpmnmodeler/IModdleElement';
 import environment from '../../environment';
 
 export class BpmnIo {
@@ -57,6 +58,16 @@ export class BpmnIo {
         }
       });
     });
+  }
+
+  public setColor(strokeColor: string, fillColor: string): void {
+    const modeling = this.modeler.get('modeling');
+
+    modeling.setColor(this.modeler.get('selection')._selectedElements[0], {
+      fill: '#FFCDD2',
+      stroke: '#E53935',
+    });
+    console.log(this.xml);
   }
 
 }

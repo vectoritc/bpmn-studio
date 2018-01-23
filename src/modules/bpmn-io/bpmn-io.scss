@@ -41,3 +41,9 @@
   top: -28px;
   border-bottom: none;
 }
+
+.highlight:not(.djs-connection) .djs-visual > :nth-child(1) {
+  fill: green !important; /* color elements as green */
+  fill-opacity: 0.4;
+  stroke: red !important;
+}

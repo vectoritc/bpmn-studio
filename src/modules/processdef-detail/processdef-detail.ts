@@ -209,4 +209,7 @@ export class ProcessDefDetail {
     this.exportSpinner.classList.add('hidden');
   }
 
+  public setColorRed(): void {
+    this.bpmn.setColor('#E53935', '#FFCDD2');
+  }
 }
