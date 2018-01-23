@@ -1,6 +1,10 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {bindable} from 'aurelia-framework';
-import {IBpmnModeler, IBpmnModelerConstructor} from '../../contracts';
+import {ElementDistributeOptions,
+        IBpmnFunction,
+        IBpmnModeler,
+        IBpmnModelerConstructor,
+        IEventBus} from '../../contracts';
 import { IModdleElement } from '../../contracts/bpmnmodeler/IModdleElement';
 import environment from '../../environment';
 
@@ -57,6 +61,20 @@ export class BpmnIo {
           resolve(result);
         }
       });
+    });
+  }
+
+  public distributeElements(option: ElementDistributeOptions): void {
+    const distribute: IBpmnFunction = this.modeler.get('distributeElements');
+    distribute.trigger(this.modeler.get('selection')._selectedElements, option);
+  }
+
+  public setColor(fillColor: string, strokeColor: string): void {
+    const modeling = this.modeler.get('modeling');
+
+    modeling.setColor(this.modeler.get('selection')._selectedElements, {
+      fill: fillColor,
+      stroke: strokeColor,
     });
   }
 

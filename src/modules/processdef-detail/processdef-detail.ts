@@ -213,16 +213,16 @@ export class ProcessDefDetail {
     this.exportSpinner.classList.add('hidden');
   }
 
-  public setColorRed(): void {
-    this.bpmn.setColor('#E53935', '#FFCDD2');
-  }
-
   public distributeElementsHorizontal(): void {
     this.bpmn.distributeElements(ElementDistributeOptions.HORIZONTAL);
   }
 
   public distributeElementsVertical(): void {
     this.bpmn.distributeElements(ElementDistributeOptions.VERTICAL);
+  }
+
+  public setColorRed(): void {
+    this.bpmn.setColor('#E53935', '#FFCDD2');
   }
 
 }
