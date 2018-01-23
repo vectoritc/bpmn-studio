@@ -6,7 +6,10 @@ import {Router} from 'aurelia-router';
 import * as canvg from 'canvg-browser';
 import * as download from 'downloadjs';
 import * as toastr from 'toastr';
-import {AuthenticationStateEvent, IChooseDialogOption, IProcessEngineService} from '../../contracts/index';
+import {AuthenticationStateEvent,
+        ElementDistributeOptions,
+        IChooseDialogOption,
+        IProcessEngineService} from '../../contracts/index';
 import environment from '../../environment';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
 
@@ -16,6 +19,7 @@ interface RouteParameters {
 
 @inject('ProcessEngineService', EventAggregator, 'ConsumerClient', Router)
 export class ProcessDefDetail {
+
   private processEngineService: IProcessEngineService;
   private eventAggregator: EventAggregator;
   private subscriptions: Array<Subscription>;
@@ -207,6 +211,14 @@ export class ProcessDefDetail {
     this.exportButton.removeAttribute('disabled');
     this.exportDropdown.removeAttribute('disabled');
     this.exportSpinner.classList.add('hidden');
+  }
+
+  public distributeElementsHorizontal(): void {
+    this.bpmn.distributeElements(ElementDistributeOptions.HORIZONTAL);
+  }
+
+  public distributeElementsVertical(): void {
+    this.bpmn.distributeElements(ElementDistributeOptions.VERTICAL);
   }
 
 }

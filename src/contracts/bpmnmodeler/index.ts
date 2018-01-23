@@ -4,3 +4,5 @@ export {ICanvas} from './ICanvas';
 export {IDependencyHook} from './IDependencyHook';
 export {IModdleElement} from './IModdleElement';
 export {IShape} from './IShape';
+export {IBpmnFunction} from './IBpmnFunction';
+export * from './constants';
