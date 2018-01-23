@@ -67,12 +67,7 @@ export class BpmnIo {
 
   public distributeElements(option: ElementDistributeOptions): void {
     const distribute: IBpmnFunction = this.modeler.get('distributeElements');
-    distribute.trigger(this.modeler.get('selection'), option);
-  }
-
-  public alignElements(option: ElementAlignOptions): void {
-    const align: IBpmnFunction = this.modeler.get('alignElements');
-    align.trigger(this.modeler.get('selection'), option);
+    distribute.trigger(this.modeler.get('selection')._selectedElements, option);
   }
 
 }

@@ -65,25 +65,12 @@
         <import-process-button desired-process-import-key.bind="process.key" callback.bind="onModdlelImported.bind($this)"></import-process-button>
         <div class="btn-group">
           <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-            Align
-            <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu">
-            <li><a href="#" click.delegate="alignElementsMiddle()">Middle</a></li>
-            <li><a href="#" click.delegate="alignElementsLeft()">Left</a></li>
-            <li><a href="#" click.delegate="alignElementsRight()">Right</a></li>
-            <li><a href="#" click.delegate="alignElementsTop()">Top</a></li>
-            <li><a href="#" click.delegate="alignElementsBottom()">Bottom</a></li>
-          </ul>
-        </div>
-        <div class="btn-group">
-          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
             Distribute
             <span class="caret"></span>
           </button>
           <ul class="dropdown-menu">
-            <li><a href="#" click.delegate="distributeElementsHorizontal()">Horizontal</a></li>
-            <li><a href="#" click.delegate="distributeElementsVertical()">Vertical</a></li>
+            <li><a click.delegate="distributeElementsHorizontal()">Horizontal</a></li>
+            <li><a click.delegate="distributeElementsVertical()">Vertical</a></li>
           </ul>
         </div>
         <span if.bind="process.latest" class="processdef-detail__draft-latest--true">Latest</span>

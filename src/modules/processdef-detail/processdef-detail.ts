@@ -7,7 +7,6 @@ import * as canvg from 'canvg-browser';
 import * as download from 'downloadjs';
 import * as toastr from 'toastr';
 import {AuthenticationStateEvent,
-        ElementAlignOptions,
         ElementDistributeOptions,
         IChooseDialogOption,
         IProcessEngineService} from '../../contracts/index';
@@ -220,26 +219,6 @@ export class ProcessDefDetail {
 
   public distributeElementsVertical(): void {
     this.bpmn.distributeElements(ElementDistributeOptions.VERTICAL);
-  }
-
-  public alignElementsMiddle(): void {
-    this.bpmn.alignElements(ElementAlignOptions.MIDDLE);
-  }
-
-  public alignElementsTop(): void {
-    this.bpmn.alignElements(ElementAlignOptions.TOP);
-  }
-
-  public alignElementsBottom(): void {
-    this.bpmn.alignElements(ElementAlignOptions.BOTTOM);
-  }
-
-  public alignElementsRight(): void {
-    this.bpmn.alignElements(ElementAlignOptions.RIGHT);
-  }
-
-  public alignElementsLeft(): void {
-    this.bpmn.alignElements(ElementAlignOptions.LEFT);
   }
 
 }
