@@ -1,0 +1,9 @@
+<template>
+  <require from="./forms.css"></require>
+    <h4><span class="label label-default">${title}</span></h4>
+
+    <compose repeat.for="section of sections"
+      view-model=".${section.path}"
+      view=".${section.path}.html"
+      model.bind="{modeler : modeler}"></compose>
+</template>
