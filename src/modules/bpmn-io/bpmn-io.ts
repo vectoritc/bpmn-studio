@@ -7,8 +7,6 @@ export class BpmnIo {
 
   @bindable() public xml: string;
   private modeler: IBpmnModeler;
-  private eventBus: IEventBus;
-  private commandStack: any;
 
   public attached(): void {
     this.modeler = new bundle.modeler({
@@ -27,56 +25,6 @@ export class BpmnIo {
         return 0;
       });
     }
-
-    this.eventBus = this.modeler.get('eventBus');
-    this.eventBus.on('selection.changed', (event: any) => {
-      // console.log(event);
-      // console.log(this.modeler.get('selection'));
-    });
-  }
-
-  public getSelection(): Object {
-    return this.modeler.get('selection');
-  }
-
-  public distributeElements(): void {
-    this.commandStack = this.modeler.get('commandStack');
-    // this.eventBus.fire('elements.distribute');
-    // console.log(this.modeler.get('elements.align'));
-    // console.log('test');
-    // console.log(this.commandStack);
-    // console.log(this.eventBus);
-    // console.log(this.modeler);
-    // this.modeler.trigger('distributeElements');
-    // this.eventBus.fire('distributeElements');
-    // const selections = this.getSelection();
-    // const elements = selections._selectedElements;
-
-    // if (elements.length < 3) {
-    //   return;
-    // }
-    // let groups;
-    // let distributableElements;
-
-    // this.modeler._setOrientation('horizontal');
-    // this.modeler.set('orientation', 'left');
-    // distributableElements = this.modeler._filterElements(elements);
-    // groups = this.modeler._createGroups(distributableElements);
-
-    // if (groups.length <= 2) {
-    //   return;
-    // }
-
-    // let context = {
-    //   groups: groups,
-    //   axis: axis,
-    //   dimension: dimension,
-    // };
-
-    // this.commandStack.execute('elements.distribute', context);
-    // this.modeler.distributeElements(groups, this.modeler._axis, this.modeler._dimension);
-    this.commandStack.triggerEditorActions('distributeElements', {type: 'horizontal'});
-
   }
 
   public xmlChanged(newValue: string, oldValue: string): void {
