@@ -20,6 +20,7 @@ interface RouteParameters {
 
 @inject('ProcessEngineService', EventAggregator, 'ConsumerClient', Router)
 export class ProcessDefDetail {
+
   private processEngineService: IProcessEngineService;
   private eventAggregator: EventAggregator;
   private subscriptions: Array<Subscription>;
@@ -213,9 +214,12 @@ export class ProcessDefDetail {
     this.exportSpinner.classList.add('hidden');
   }
 
-  private distributeElements(option: ElementDistributeOptions): void {
-    console.log(option);
-    this.bpmn.distributeElements(option);
+  private distributeElementsHorizontal(): void {
+    this.bpmn.distributeElements(ElementDistributeOptions.HORIZONTAL);
+  }
+
+  private distributeElementsVertical(): void {
+    this.bpmn.distributeElements(ElementDistributeOptions.VERTICAL);
   }
 
   private alignElements(option: ElementAlignOptions): void {
