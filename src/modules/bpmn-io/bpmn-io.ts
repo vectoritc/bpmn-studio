@@ -1,11 +1,9 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {bindable} from 'aurelia-framework';
-import {ElementAlignOptions,
-        ElementDistributeOptions,
+import {ElementDistributeOptions,
         IBpmnFunction,
         IBpmnModeler,
         IBpmnModelerConstructor,
-        IEvent,
         IEventBus} from '../../contracts';
 import environment from '../../environment';
 
