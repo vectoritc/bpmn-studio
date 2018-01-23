@@ -1,6 +1,8 @@
 .bpmn-toolbar {
   padding-top: 10px;
   padding-bottom: 10px;
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 .action-dropdown {
@@ -102,4 +104,8 @@ bpmn-io {
   padding-left: 10px;
   padding-right: 10px;
   border: black solid 0.5px;
+}
+
+.elements-workspace {
+  margin-left: 20px;
 }
