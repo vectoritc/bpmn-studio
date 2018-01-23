@@ -11,7 +11,7 @@ import {bindable, observable} from 'aurelia-framework';
 
 export class SignalEventSection implements ISection {
 
-  public path: string = '/sections/message-event/message-event';
+  public path: string = '/sections/signal-event/signal-event';
   public canHandleElement: boolean = false;
 
   private businessObjInPanel: IModdleElement;
@@ -20,23 +20,23 @@ export class SignalEventSection implements ISection {
   private modeler: IBpmnModeler;
   private msgDropdown: HTMLSelectElement;
 
-  @observable public messages: Array<IModdleElement>;
-  @bindable public selectedId: string;
-  public selectedMessage: IModdleElement;
+  public signals: Array<IModdleElement>;
+  public selectedId: string;
+  public selectedSignal: IModdleElement;
 
   public async activate(model: IPageModel): Promise<void> {
     this.eventBus = model.modeler.get('eventBus');
     this.moddle = model.modeler.get('moddle');
     this.modeler = model.modeler;
 
-    this.messages = await this.getMessages();
+    this.signals = await this.getSignals();
 
     this.eventBus.on('element.click', (event: IEvent) => {
       this.businessObjInPanel = event.element.businessObject;
 
-      if (this.businessObjInPanel.eventDefinitions && this.businessObjInPanel.eventDefinitions[0].messageRef) {
-        this.selectedId = this.businessObjInPanel.eventDefinitions[0].messageRef.id;
-        this.updateMessage();
+      if (this.businessObjInPanel.eventDefinitions && this.businessObjInPanel.eventDefinitions[0].signalRef) {
+        this.selectedId = this.businessObjInPanel.eventDefinitions[0].signalRef.id;
+        this.updateSignal();
       }
       this.checkElement();
     });
@@ -50,74 +50,74 @@ export class SignalEventSection implements ISection {
     return xml;
   }
 
-  private getMessages(): Promise<Array<IModdleElement>> {
+  private getSignals(): Promise<Array<IModdleElement>> {
     return new Promise((resolve: Function, reject: Function): void => {
 
       this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
         const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-        const messages: Array<IModdleElement> = rootElements.filter((element: IModdleElement) => {
-          return element.$type === 'bpmn:Message';
+        const signals: Array<IModdleElement> = rootElements.filter((element: IModdleElement) => {
+          return element.$type === 'bpmn:Signal';
         });
 
-        resolve(messages);
+        resolve(signals);
       });
     });
   }
 
   private checkElement(): void {
     if (this.businessObjInPanel.eventDefinitions &&
-        this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:MessageEventDefinition') {
+        this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:SignalEventDefinition') {
       this.canHandleElement = true;
     } else {
       this.canHandleElement = false;
     }
   }
 
-  private updateMessage(): void {
-    this.selectedMessage = this.messages.find((message: IModdleElement) => {
-      return message.id === this.selectedId;
+  private updateSignal(): void {
+    this.selectedSignal = this.signals.find((signal: IModdleElement) => {
+      return signal.id === this.selectedId;
     });
 
-    this.businessObjInPanel.eventDefinitions[0].messageRef = this.selectedMessage;
+    this.businessObjInPanel.eventDefinitions[0].signalRef = this.selectedSignal;
   }
 
   private updateName(): void {
     this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
 
       const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-      const message: IModdleElement = rootElements.find((element: any) => {
-        return element.$type === 'bpmn:Message' && element.id === this.selectedId;
+      const signal: IModdleElement = rootElements.find((element: any) => {
+        return element.$type === 'bpmn:Signal' && element.id === this.selectedId;
       });
 
-      message.name = this.selectedMessage.name;
+      signal.name = this.selectedSignal.name;
 
       this.moddle.toXML(definitions, (error: Error, xmlStrUpdated: string) => {
         this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
-          await this.refreshMessages();
+          await this.refreshSignals();
         });
       });
     });
   }
 
-  private async addMessage(): Promise<void> {
+  private async addSignal(): Promise<void> {
     this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
 
-      const bpmnMessage: IModdleElement = this.moddle.create('bpmn:Message', { id: `Message_${this.generateRandomId()}`, name: 'Message Name' });
-      definitions.get('rootElements').push(bpmnMessage);
+      const bpmnSignal: IModdleElement = this.moddle.create('bpmn:Signal', { id: `Signal_${this.generateRandomId()}`, name: 'Signal Name' });
+      definitions.get('rootElements').push(bpmnSignal);
 
       this.moddle.toXML(definitions, (error: Error, xmlStrUpdated: string) => {
         this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
-          await this.refreshMessages();
-          this.selectedId = bpmnMessage.id;
-          this.selectedMessage = bpmnMessage;
-          this.updateMessage();
+          await this.refreshSignals();
+          this.selectedId = bpmnSignal.id;
+          this.selectedSignal = bpmnSignal;
+          this.updateSignal();
         });
       });
     });
   }
 
-  private async refreshMessages(): Promise<void> {
-    this.messages = await this.getMessages();
+  private async refreshSignals(): Promise<void> {
+    this.signals = await this.getSignals();
   }
 
   private generateRandomId(): string {

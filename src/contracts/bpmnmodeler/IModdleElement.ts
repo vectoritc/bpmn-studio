@@ -12,4 +12,5 @@ export interface IModdleElement {
   processRef?: IProcessRef;
   eventDefinitions?: Array<IModdleElement>;
   messageRef?: IModdleElement;
+  signalRef?: IModdleElement;
 }
