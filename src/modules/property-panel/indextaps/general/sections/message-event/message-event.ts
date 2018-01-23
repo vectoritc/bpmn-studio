@@ -83,11 +83,14 @@ export class MessageEventSection implements ISection {
 
   private updateName(): void {
     this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
+
       const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-      const meesage: IModdleElement = rootElements.find((element: any) => {
+      const message: IModdleElement = rootElements.find((element: any) => {
         return element.$type === 'bpmn:Message' && element.id === this.selectedId;
       });
-      meesage.name = this.selectedMessage.name;
+
+      message.name = this.selectedMessage.name;
+
       this.moddle.toXML(definitions, (error: Error, xmlStrUpdated: string) => {
         this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
           await this.refreshMessages();
@@ -98,6 +101,7 @@ export class MessageEventSection implements ISection {
 
   private async addMessage(): Promise<void> {
     this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
+
       const bpmnMessage: IModdleElement = this.moddle.create('bpmn:Message', { id: `Message_${this.generateRandomId()}`, name: 'Message Name' });
       definitions.get('rootElements').push(bpmnMessage);
 
