@@ -7,8 +7,6 @@ import {IBpmnModdle,
   IPageModel,
   ISection} from '../../../../../../contracts';
 
-import {bindable, observable} from 'aurelia-framework';
-
 export class SignalEventSection implements ISection {
 
   public path: string = '/sections/signal-event/signal-event';
