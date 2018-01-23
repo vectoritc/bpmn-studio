@@ -18,7 +18,6 @@ export class SignalEventSection implements ISection {
   private eventBus: IEventBus;
   private moddle: IBpmnModdle;
   private modeler: IBpmnModeler;
-  private msgDropdown: HTMLSelectElement;
 
   public signals: Array<IModdleElement>;
   public selectedId: string;
