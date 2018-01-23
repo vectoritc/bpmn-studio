@@ -13,4 +13,7 @@ export interface IModdleElement {
   eventDefinitions?: Array<IModdleElement>;
   messageRef?: IModdleElement;
   signalRef?: IModdleElement;
+  script?: string;
+  scriptFormat?: string;
+  resultVariable?: string;
 }

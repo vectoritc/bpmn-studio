@@ -2,6 +2,7 @@ import {ISection} from '../../../../contracts';
 import {BasicsSection} from './sections/basics/basics';
 import {MessageEventSection} from './sections/message-event/message-event';
 import {PoolSection} from './sections/pool/pool';
+import {ScriptTaskSection} from './sections/script-task/script-task';
 import {SignalEventSection} from './sections/signal-event/signal-event';
 
 export class General {
@@ -12,6 +13,7 @@ export class General {
   public poolSection: ISection = new PoolSection();
   public messageEventSection: ISection = new MessageEventSection();
   public signalEventSection: ISection = new SignalEventSection();
+  public scriptTaskSection: ISection = new ScriptTaskSection();
 
   public attached(): void {
     this.sections = [
@@ -19,6 +21,7 @@ export class General {
       this.poolSection,
       this.messageEventSection,
       this.signalEventSection,
+      this.scriptTaskSection,
     ];
   }
 

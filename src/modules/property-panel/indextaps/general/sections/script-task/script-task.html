@@ -1,0 +1,11 @@
+<template>
+  <require from="./script-task.css"></require>
+  <div class="script-task-section" show.bind="canHandleElement">
+    <label class="input-label">Script Format: </label>
+    <input type="text" class="form-control" value.bind="scriptTask.scriptFormat" change.delegate="updateFormat()">    
+    <label class="input-label">Script: </label>
+    <input type="text" class="form-control" value.bind="scriptTask.script" change.delegate="updateScript()">
+    <label class="input-label">Result Variable: </label>
+    <input type="text" class="form-control" value.bind="scriptTask.resultVariable" change.delegate="updateResult()">
+  </div>
+</template>
