@@ -5,3 +5,5 @@ export {IDependencyHook} from './IDependencyHook';
 export {IModdleElement} from './IModdleElement';
 export {IShape} from './IShape';
 export {IEvent} from './IEvent';
+export {IBpmnFunction} from './IBpmnFunction';
+export * from './constants';

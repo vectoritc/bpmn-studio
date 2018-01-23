@@ -63,7 +63,7 @@
           </ul>
         </div>
         <import-process-button desired-process-import-key.bind="process.key" callback.bind="onModdlelImported.bind($this)"></import-process-button>
-        <button disabled.bind="process.draft" class="btn btn-default" click.delegate="distribute()" title="Distribute Elements Horizontally">
+        <button class="btn btn-default" click.delegate="distributeElements(ElementDistributeOptions.HORIZONTAL)" title="Distribute Elements Horizontally">
           <i class="glyphicon glyphicon-object-align-horizontal"></i>
         </button>
         <span if.bind="process.latest" class="processdef-detail__draft-latest--true">Latest</span>

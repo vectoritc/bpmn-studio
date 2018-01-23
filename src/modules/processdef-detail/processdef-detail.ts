@@ -6,7 +6,11 @@ import {Router} from 'aurelia-router';
 import * as canvg from 'canvg-browser';
 import * as download from 'downloadjs';
 import * as toastr from 'toastr';
-import {AuthenticationStateEvent, IChooseDialogOption, IProcessEngineService} from '../../contracts/index';
+import {AuthenticationStateEvent,
+        ElementAlignOptions,
+        ElementDistributeOptions,
+        IChooseDialogOption,
+        IProcessEngineService} from '../../contracts/index';
 import environment from '../../environment';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
 
@@ -209,10 +213,13 @@ export class ProcessDefDetail {
     this.exportSpinner.classList.add('hidden');
   }
 
-  private distribute(): void {
-    const elements = this.bpmn.getSelection();
-    console.log(elements);
-    this.bpmn.distributeElements();
+  private distributeElements(option: ElementDistributeOptions): void {
+    console.log(option);
+    this.bpmn.distributeElements(option);
+  }
+
+  private alignElements(option: ElementAlignOptions): void {
+    this.bpmn.alignElements(option);
   }
 
 }

@@ -1,6 +1,12 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {bindable} from 'aurelia-framework';
-import {IBpmnModeler, IBpmnModelerConstructor, IEvent, IEventBus} from '../../contracts';
+import {ElementAlignOptions,
+        ElementDistributeOptions,
+        IBpmnFunction,
+        IBpmnModeler,
+        IBpmnModelerConstructor,
+        IEvent,
+        IEventBus} from '../../contracts';
 import environment from '../../environment';
 
 export class BpmnIo {
@@ -57,6 +63,16 @@ export class BpmnIo {
         }
       });
     });
+  }
+
+  public distributeElements(option: ElementDistributeOptions): void {
+    const distribute: IBpmnFunction = this.modeler.get('distributeElements');
+    distribute.trigger(this.modeler.get('selection'), option);
+  }
+
+  public alignElements(option: ElementAlignOptions): void {
+    const align: IBpmnFunction = this.modeler.get('alignElements');
+    align.trigger(this.modeler.get('selection'), option);
   }
 
 }
