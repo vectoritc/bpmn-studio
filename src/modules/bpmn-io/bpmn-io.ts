@@ -5,6 +5,7 @@ import {ElementDistributeOptions,
         IBpmnModeler,
         IBpmnModelerConstructor,
         IEventBus} from '../../contracts';
+import { IModdleElement } from '../../contracts/bpmnmodeler/IModdleElement';
 import environment from '../../environment';
 
 export class BpmnIo {
@@ -65,7 +66,10 @@ export class BpmnIo {
 
   public distributeElements(option: ElementDistributeOptions): void {
     const distribute: IBpmnFunction = this.modeler.get('distributeElements');
-    distribute.trigger(this.modeler.get('selection')._selectedElements, option);
+
+    const selectedElements: Array<IModdleElement> = this.modeler.get('selection')._selectedElements;
+
+    distribute.trigger(selectedElements, option);
   }
 
 }
