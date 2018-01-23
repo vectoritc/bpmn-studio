@@ -9,5 +9,5 @@ export interface IBpmnModeler {
           callback: (error: Error, result: String) => void): void;
   importXML(xml: string,
             errorHandler: (err: Error) => void): void;
-  get(object: string): IBpmnFunction;
+  get(object: string): any;
 }
