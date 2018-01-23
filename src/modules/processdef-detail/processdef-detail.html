@@ -5,7 +5,7 @@
 
   <div if.bind="process">
     <div class="bpmn-toolbar-holder">
-      <div class="container bpmn-toolbar">
+      <div class="bpmn-toolbar">
         <div class="action-dropdown ${startedProcessId ? 'action-dropdown-open' : ''}" ref="startButtonDropdown">
           <button disabled.bind="process.latest" click.delegate="publishDraft()" class="btn btn-primary">
             <i class="glyphicon glyphicon-tag"></i> Publish Draft
@@ -63,9 +63,29 @@
           </ul>
         </div>
         <import-process-button desired-process-import-key.bind="process.key" callback.bind="onModdlelImported.bind($this)"></import-process-button>
-        <button class="btn btn-default" click.delegate="distributeElements(ElementDistributeOptions.HORIZONTAL)" title="Distribute Elements Horizontally">
-          <i class="glyphicon glyphicon-object-align-horizontal"></i>
-        </button>
+        <div class="btn-group">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            Align
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a href="#" click.delegate="alignElementsMiddle()">Middle</a></li>
+            <li><a href="#" click.delegate="alignElementsLeft()">Left</a></li>
+            <li><a href="#" click.delegate="alignElementsRight()">Right</a></li>
+            <li><a href="#" click.delegate="alignElementsTop()">Top</a></li>
+            <li><a href="#" click.delegate="alignElementsBottom()">Bottom</a></li>
+          </ul>
+        </div>
+        <div class="btn-group">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            Distribute
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a href="#" click.delegate="distributeElementsHorizontal()">Horizontal</a></li>
+            <li><a href="#" click.delegate="distributeElementsVertical()">Vertical</a></li>
+          </ul>
+        </div>
         <span if.bind="process.latest" class="processdef-detail__draft-latest--true">Latest</span>
         <span if.bind="process.draft" class="processdef-detail__draft-latest--true">Draft</span>
       </div>

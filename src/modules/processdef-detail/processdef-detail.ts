@@ -214,16 +214,32 @@ export class ProcessDefDetail {
     this.exportSpinner.classList.add('hidden');
   }
 
-  private distributeElementsHorizontal(): void {
+  public distributeElementsHorizontal(): void {
     this.bpmn.distributeElements(ElementDistributeOptions.HORIZONTAL);
   }
 
-  private distributeElementsVertical(): void {
+  public distributeElementsVertical(): void {
     this.bpmn.distributeElements(ElementDistributeOptions.VERTICAL);
   }
 
-  private alignElements(option: ElementAlignOptions): void {
-    this.bpmn.alignElements(option);
+  public alignElementsMiddle(): void {
+    this.bpmn.alignElements(ElementAlignOptions.MIDDLE);
+  }
+
+  public alignElementsTop(): void {
+    this.bpmn.alignElements(ElementAlignOptions.TOP);
+  }
+
+  public alignElementsBottom(): void {
+    this.bpmn.alignElements(ElementAlignOptions.BOTTOM);
+  }
+
+  public alignElementsRight(): void {
+    this.bpmn.alignElements(ElementAlignOptions.RIGHT);
+  }
+
+  public alignElementsLeft(): void {
+    this.bpmn.alignElements(ElementAlignOptions.LEFT);
   }
 
 }
