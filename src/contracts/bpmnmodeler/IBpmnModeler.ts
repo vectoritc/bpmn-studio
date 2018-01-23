@@ -1,3 +1,5 @@
+import {IBpmnFunction} from './IBpmnFunction';
+
 export interface IBpmnModeler {
   definitions: any;
   attachTo(wrapper: HTMLElement): void;
@@ -7,5 +9,5 @@ export interface IBpmnModeler {
           callback: (error: Error, result: String) => void): void;
   importXML(xml: string,
             errorHandler: (err: Error) => void): void;
-  get(object: string): any;
+  get(object: string): IBpmnFunction;
 }
