@@ -1,16 +1,16 @@
 <template>
-  <require from="./message-event.css"></require>
-  <div class="message-event-section" show.bind="canHandleElement">
-    <label class="input-label">Message: </label>
-    <button class="addMsgButton" click.delegate="addMessage()">+</button>
-    <select ref="msgDropdown" class="form-control" value.bind="selectedId" change.delegate="updateMessage()">
-      <option model.bind="null">-Choose Message-</option>
-      <option repeat.for="message of messages"
-              model.bind="message.id" value="${message.id}">${message.name} (id: ${message.id})</option>
+  <require from="./signal-event.css"></require>
+  <div class="signal-event-section" show.bind="canHandleElement">
+    <label class="input-label">Signal: </label>
+    <button class="addSignalButton" click.delegate="addSignal()">+</button>
+    <select ref="SignalDropdown" class="form-control" value.bind="selectedId" change.delegate="updateSignal()">
+      <option model.bind="null">-Choose Signal-</option>
+      <option repeat.for="signal of signals"
+              model.bind="signal.id" value="${signal.id}">${signal.name} (id: ${signal.id})</option>
     </select>
     <div show.bind="selectedId">
-      <label class="input-label">Message Name: </label>
-      <input type="text" class="form-control" value.bind="selectedMessage.name" change.delegate="updateName()">
+      <label class="input-label">Signal Name: </label>
+      <input type="text" class="form-control" value.bind="selectedSignal.name" change.delegate="updateName()">
     </div>
   </div>
 </template>

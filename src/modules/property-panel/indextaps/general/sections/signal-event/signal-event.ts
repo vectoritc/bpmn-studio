@@ -9,7 +9,7 @@ import {IBpmnModdle,
 
 import {bindable, observable} from 'aurelia-framework';
 
-export class MessageEventSection implements ISection {
+export class SignalEventSection implements ISection {
 
   public path: string = '/sections/message-event/message-event';
   public canHandleElement: boolean = false;
