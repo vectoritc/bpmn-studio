@@ -6,7 +6,7 @@
     <select ref="msgDropdown" class="form-control" value.bind="selectedId" change.delegate="updateMessage()">
       <option model.bind="null">-Choose Message-</option>
       <option repeat.for="message of messages"
-              model.bind="message.id" value="${message.id}">${message.id}</option>
+              model.bind="message.id" value="${message.id}">${message.name} (id: ${message.id})</option>
     </select>
     <div show.bind="selectedId">
       <label class="input-label">Message Name: </label>

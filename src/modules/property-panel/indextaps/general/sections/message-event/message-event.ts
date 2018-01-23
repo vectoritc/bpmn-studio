@@ -35,8 +35,8 @@ export class MessageEventSection implements ISection {
       this.businessObjInPanel = event.element.businessObject;
 
       if (this.businessObjInPanel.eventDefinitions && this.businessObjInPanel.eventDefinitions[0].messageRef) {
-        this.selectedMessage = this.businessObjInPanel.eventDefinitions[0].messageRef;
-        this.selectedId = this.selectedMessage.id;
+        this.selectedId = this.businessObjInPanel.eventDefinitions[0].messageRef.id;
+        this.updateMessage();
       }
       this.checkElement();
     });
@@ -82,23 +82,31 @@ export class MessageEventSection implements ISection {
   }
 
   private updateName(): void {
-    this.businessObjInPanel.eventDefinitions[0].messageRef.name = this.selectedMessage.name;
+    this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
+      const rootElements: Array<IModdleElement> = definitions.get('rootElements');
+      const meesage: IModdleElement = rootElements.find((element: any) => {
+        return element.$type === 'bpmn:Message' && element.id === this.selectedId;
+      });
+      meesage.name = this.selectedMessage.name;
+      this.moddle.toXML(definitions, (error: Error, xmlStrUpdated: string) => {
+        this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
+          await this.refreshMessages();
+        });
+      });
+    });
   }
 
   private async addMessage(): Promise<void> {
     this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
-      const bpmnMessage: IModdleElement = this.moddle.create('bpmn:Message', { id: `Message_${this.random()}`, name: 'Message Name' });
+      const bpmnMessage: IModdleElement = this.moddle.create('bpmn:Message', { id: `Message_${this.generateRandomId()}`, name: 'Message Name' });
       definitions.get('rootElements').push(bpmnMessage);
-      this.moddle.toXML(definitions, (error: Error, xmlStrUpdated: string) => {
-        this.modeler.importXML(xmlStrUpdated, (errr: Error) => {
-         this.refreshMessages()
-         .then(() => {
-            this.selectedId = bpmnMessage.id;
-            this.selectedMessage = bpmnMessage;
-            this.updateMessage();
-         });
 
-         return 0;
+      this.moddle.toXML(definitions, (error: Error, xmlStrUpdated: string) => {
+        this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
+          await this.refreshMessages();
+          this.selectedId = bpmnMessage.id;
+          this.selectedMessage = bpmnMessage;
+          this.updateMessage();
         });
       });
     });
@@ -108,14 +116,15 @@ export class MessageEventSection implements ISection {
     this.messages = await this.getMessages();
   }
 
-  private random(): string {
-    let random: string = '';
+  private generateRandomId(): string {
+    let randomId: string = '';
     const possible: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-    for (let i: number = 0; i < 8; i++) {
-      random += possible.charAt(Math.floor(Math.random() * possible.length));
+    const randomIdLength: number = 8;
+    for (let i: number = 0; i < randomIdLength; i++) {
+      randomId += possible.charAt(Math.floor(Math.random() * possible.length));
     }
-    return random;
+    return randomId;
   }
 
 }
