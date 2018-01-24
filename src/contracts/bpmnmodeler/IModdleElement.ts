@@ -25,4 +25,11 @@ export interface IModdleElement {
   targetRef?: IModdleElement;
   conditionExpression?: IModdleElement;
   body?: string;
+  extensionElements?: IModdleElement;
+  values?: Array<IModdleElement>;
+  formKey?: string;
+  fields?: Array<IModdleElement>;
+  type?: string;
+  label?: string;
+  defaultValue?: string;
 }
