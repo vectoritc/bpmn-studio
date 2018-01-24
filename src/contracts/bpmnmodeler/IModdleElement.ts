@@ -16,4 +16,10 @@ export interface IModdleElement {
   script?: string;
   scriptFormat?: string;
   resultVariable?: string;
+  calledElement?: string;
+  calledElementTenantId?: string;
+  variableMappingClass?: string;
+  variableMappingDelegateExpression?: string;
+  calledElementBinding?: string;
+  calledElementVersion?: string;
 }

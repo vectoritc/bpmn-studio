@@ -1,0 +1,35 @@
+<template>
+  <require from="./call-activity.css"></require>
+  <div class="call-activity-section" show.bind="canHandleElement">
+    <label><em>Call Activity</em></label><br>
+    <label class="input-label">Called Element: </label>
+    <input type="text" class="form-control" value.bind="callActivity.calledElement" change.delegate="updateCalledElement()">    
+    <label class="input-label">Tenant ID: </label>
+    <input type="text" class="form-control" value.bind="callActivity.calledElementTenantId" change.delegate="updateTenantId()">
+    <label class="input-label">Binding</label>
+    <select class="form-control" value.bind="selectedBinding" change.delegate="updateBinding()">
+      <option model.bind="1">latest</option>
+      <option model.bind="2">deployment</option>
+      <option model.bind="3">version</option>
+    </select>
+    <div if.bind="selectedBinding === 3">
+      <label class="input-label">Version: </label>
+      <input type="text" class="form-control" value.bind="callActivity.calledElementVersion">
+    </div>
+    <label class="input-label">Delegate Variable Mapping</label>
+    <select class="form-control" value.bind="selectedOption">
+      <option model.bind="null">-</option>
+      <option model.bind="1">variableMappingClass</option>
+      <option model.bind="2">variableMappingDelegateExpression</option>
+    </select>
+    <div if.bind="selectedOption === 1">
+      <label class="input-label">Class: </label>
+      <input type="text" class="form-control" value.bind="callActivity.variableMappingClass" change.delegate="updateVariableMappingClass()">
+    </div>
+    <div if.bind="selectedOption === 2">
+      <label class="input-label">Delegate Expression: </label>
+      <input type="text" class="form-control" value.bind="callActivity.variableMappingDelegateExpression" change.delegate="updateVariableMappingDelegateExpression()">
+    </div>
+    </div>
+  </div>
+</template>
