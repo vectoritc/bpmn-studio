@@ -4,7 +4,8 @@ import {ElementDistributeOptions,
         IBpmnFunction,
         IBpmnModeler,
         IBpmnModelerConstructor,
-        IEventBus} from '../../contracts';
+        IEventBus,
+        IModeling} from '../../contracts';
 import { IModdleElement } from '../../contracts/bpmnmodeler/IModdleElement';
 import environment from '../../environment';
 
@@ -73,9 +74,11 @@ export class BpmnIo {
   }
 
   public setColor(fillColor: string, strokeColor: string): void {
-    const modeling = this.modeler.get('modeling');
+    const modeling: IModeling = this.modeler.get('modeling');
 
-    modeling.setColor(this.modeler.get('selection')._selectedElements, {
+    const selectedElements: Array<IModdleElement> = this.modeler.get('selection')._selectedElements;
+
+    modeling.setColor(selectedElements, {
       fill: fillColor,
       stroke: strokeColor,
     });

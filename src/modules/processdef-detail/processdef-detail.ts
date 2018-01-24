@@ -222,7 +222,27 @@ export class ProcessDefDetail {
   }
 
   public setColorRed(): void {
-    this.bpmn.setColor('#E53935', '#FFCDD2');
+    this.bpmn.setColor('#FFCDD2', '#E53935');
+  }
+
+  public setColorBlue(): void {
+    this.bpmn.setColor('#BBDEFB', '#1E88E5');
+  }
+
+  public setColorOrange(): void {
+    this.bpmn.setColor('#FFE0B2', '#FB8C00');
+  }
+
+  public setColorGreen(): void {
+    this.bpmn.setColor('#C8E6C9', '#43A047');
+  }
+
+  public setColorPurple(): void {
+    this.bpmn.setColor('#E1BEE7', '#8E24AA');
+  }
+
+  public setColorWhite(): void {
+    this.bpmn.setColor(null, null);
   }
 
 }
