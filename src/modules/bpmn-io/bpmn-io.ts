@@ -66,7 +66,10 @@ export class BpmnIo {
 
   public distributeElements(option: ElementDistributeOptions): void {
     const distribute: IBpmnFunction = this.modeler.get('distributeElements');
-    distribute.trigger(this.modeler.get('selection')._selectedElements, option);
+
+    const selectedElements: Array<IModdleElement> = this.modeler.get('selection')._selectedElements;
+
+    distribute.trigger(selectedElements, option);
   }
 
   public setColor(fillColor: string, strokeColor: string): void {
