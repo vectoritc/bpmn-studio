@@ -64,6 +64,19 @@
         </div>
         <import-process-button desired-process-import-key.bind="process.key" callback.bind="onModdlelImported.bind($this)"></import-process-button>
         <div class="btn-group elements-workspace">
+            <a class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+              <i class="glyphicon glyphicon-tint"></i>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a click.delegate="setColorRed()">Red</a></li>
+              <li><a click.delegate="setColorBlue()">Blue</a></li>
+              <li><a click.delegate="setColorGreen()">Green</a></li>
+              <li><a click.delegate="setColorPurple()">Purple</a></li>
+              <li><a click.delegate="setColorOrange()">Orange</a></li>
+              <li><a click.delegate="setColorWhite()">White</a></li>
+            </ul>
+          </div>
+        <div class="btn-group">
           <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
             Distribute
             <span class="caret"></span>
