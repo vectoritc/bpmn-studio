@@ -22,4 +22,7 @@ export interface IModdleElement {
   variableMappingDelegateExpression?: string;
   calledElementBinding?: string;
   calledElementVersion?: string;
+  targetRef?: IModdleElement;
+  conditionExpression?: IModdleElement;
+  body?: string;
 }

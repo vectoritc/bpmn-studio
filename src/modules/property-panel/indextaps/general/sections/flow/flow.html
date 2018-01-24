@@ -1,0 +1,7 @@
+<template>
+  <require from="./flow.css"></require>
+  <div class="flow-section" show.bind="canHandleElement">
+    <label class="input-label">Condition: </label>
+    <input type="text" class="form-control" value.bind="tempObject.conditionExpression.body" change.delegate="updateCondition()">
+  </div>
+</template>
