@@ -78,10 +78,12 @@ export class BpmnIo {
 
     const selectedElements: Array<IModdleElement> = this.modeler.get('selection')._selectedElements;
 
-    modeling.setColor(selectedElements, {
-      fill: fillColor,
-      stroke: strokeColor,
-    });
+    if (selectedElements.length > 0) {
+      modeling.setColor(selectedElements, {
+        fill: fillColor,
+        stroke: strokeColor,
+      });
+    }
   }
 
 }
