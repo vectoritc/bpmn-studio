@@ -135,48 +135,40 @@ export class ProcessDefDetail {
     });
   }
 
-  public exportBPMN(): void {
+  public async exportBPMN(): Promise<void> {
     this.disableAndHideControlsForImageExport();
 
-    this.bpmn.getXML()
-    .then((xml: string) => {
-      download(xml, `${this.process.name}.bpmn`, 'application/bpmn20-xml');
+    const xml: string = await this.bpmn.getXML();
+    download(xml, `${this.process.name}.bpmn`, 'application/bpmn20-xml');
 
-      this.enableAndShowControlsForImageExport();
-    });
+    this.enableAndShowControlsForImageExport();
   }
 
-  public exportSVG(): void {
+  public async exportSVG(): Promise<void> {
     this.disableAndHideControlsForImageExport();
 
-    this.bpmn.getSVG()
-    .then((svg: string) => {
-      download(svg, `${this.process.name}.svg`, 'image/svg+xml');
+    const svg: string = await this.bpmn.getSVG();
+    download(svg, `${this.process.name}.svg`, 'image/svg+xml');
 
-      this.enableAndShowControlsForImageExport();
-    });
+    this.enableAndShowControlsForImageExport();
   }
 
-  public exportPNG(): void {
+  public async exportPNG(): Promise<void> {
     this.disableAndHideControlsForImageExport();
 
-    this.bpmn.getSVG()
-    .then((svg: string) => {
-      download(this.generateImageFromSVG('png', svg), `${this.process.name}.png`, 'image/png');
+    const svg: string = await this.bpmn.getSVG();
+    download(this.generateImageFromSVG('png', svg), `${this.process.name}.png`, 'image/png');
 
-      this.enableAndShowControlsForImageExport();
-    });
+    this.enableAndShowControlsForImageExport();
   }
 
-  public exportJPEG(): void {
+  public async exportJPEG(): Promise<void> {
     this.disableAndHideControlsForImageExport();
 
-    this.bpmn.getSVG()
-    .then((svg: string) => {
-      download(this.generateImageFromSVG('jpeg', svg), `${this.process.name}.jpeg`, 'image/jpeg');
+    const svg: string = await this.bpmn.getSVG();
+    download(this.generateImageFromSVG('jpeg', svg), `${this.process.name}.jpeg`, 'image/jpeg');
 
-      this.enableAndShowControlsForImageExport();
-    });
+    this.enableAndShowControlsForImageExport();
   }
 
   public generateImageFromSVG(desiredImageType: string, svg: any): string {
