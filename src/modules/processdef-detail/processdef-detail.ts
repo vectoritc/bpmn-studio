@@ -137,11 +137,13 @@ export class ProcessDefDetail {
 
   public exportBPMN(): void {
     this.disableAndHideControlsForImageExport();
-    this.bpmn.getXML().then((xml: string) => {
+
+    this.bpmn.getXML()
+    .then((xml: string) => {
       download(xml, `${this.process.name}.bpmn`, 'application/bpmn20-xml');
+
       this.enableAndShowControlsForImageExport();
     });
-
   }
 
   public exportSVG(): void {
