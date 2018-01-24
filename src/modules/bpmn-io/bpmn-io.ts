@@ -5,8 +5,8 @@ import {ElementDistributeOptions,
         IBpmnModeler,
         IBpmnModelerConstructor,
         IEventBus,
+        IModdleElement,
         IModeling} from '../../contracts';
-import { IModdleElement } from '../../contracts/bpmnmodeler/IModdleElement';
 import environment from '../../environment';
 
 export class BpmnIo {
