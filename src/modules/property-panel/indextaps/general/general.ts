@@ -1,6 +1,7 @@
 import {ISection} from '../../../../contracts';
 import {BasicsSection} from './sections/basics/basics';
 import {CallActivitySection} from './sections/call-activity/call-activity';
+import {ErrorEventSection} from './sections/error-event/error-event';
 import {FlowSection} from './sections/flow/flow';
 import {MessageEventSection} from './sections/message-event/message-event';
 import {PoolSection} from './sections/pool/pool';
@@ -19,6 +20,7 @@ export class General {
   public scriptTaskSection: ISection = new ScriptTaskSection();
   public callActivitySection: ISection = new CallActivitySection();
   public flowSection: ISection = new FlowSection();
+  public errorEventSection: ISection = new ErrorEventSection();
 
   public attached(): void {
     this.sections = [
@@ -29,6 +31,7 @@ export class General {
       this.scriptTaskSection,
       this.callActivitySection,
       this.flowSection,
+      this.errorEventSection,
     ];
   }
 

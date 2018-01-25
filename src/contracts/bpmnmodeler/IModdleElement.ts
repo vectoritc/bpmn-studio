@@ -1,4 +1,4 @@
-import { IProcessRef } from './IProcessRef';
+import {IProcessRef} from './IProcessRef';
 
 export interface IModdleElement {
   id: string;
@@ -13,6 +13,7 @@ export interface IModdleElement {
   eventDefinitions?: Array<IModdleElement>;
   messageRef?: IModdleElement;
   signalRef?: IModdleElement;
+  errorRef?: IModdleElement;
   script?: string;
   scriptFormat?: string;
   resultVariable?: string;
@@ -32,4 +33,6 @@ export interface IModdleElement {
   type?: string;
   label?: string;
   defaultValue?: string;
+  errorCode?: string;
+  errorMessageVariable?: string;
 }

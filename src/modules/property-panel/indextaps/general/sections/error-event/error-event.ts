@@ -13,9 +13,9 @@ import {inject} from 'aurelia-framework';
 import {GeneralService} from '../../service/general.service';
 
 @inject(GeneralService)
-export class SignalEventSection implements ISection {
+export class ErrorEventSection implements ISection {
 
-  public path: string = '/sections/signal-event/signal-event';
+  public path: string = '/sections/error-event/error-event';
   public canHandleElement: boolean = false;
 
   private businessObjInPanel: IModdleElement;
@@ -36,13 +36,13 @@ export class SignalEventSection implements ISection {
     this.eventBus = model.modeler.get('eventBus');
     this.moddle = model.modeler.get('moddle');
     this.modeler = model.modeler;
-
     this.errors = await this.getErrors();
 
     this.eventBus.on('element.click', (event: IEvent) => {
       this.businessObjInPanel = event.element.businessObject;
-      if (this.businessObjInPanel.eventDefinitions && this.businessObjInPanel.eventDefinitions[0].signalRef) {
-        this.selectedId = this.businessObjInPanel.eventDefinitions[0].signalRef.id;
+      if (this.businessObjInPanel.eventDefinitions && this.businessObjInPanel.eventDefinitions[0].errorRef) {
+        this.selectedId = this.businessObjInPanel.eventDefinitions[0].errorRef.id;
+
         this.updateError();
       }
       this.checkElement();
@@ -88,8 +88,8 @@ export class SignalEventSection implements ISection {
     this.businessObjInPanel.eventDefinitions[0].errorRef = this.selectedError;
   }
 
-  private updateName(): void {
-    this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
+  private updateErrorName(): void {
+    this.moddle.fromXML(this.getXML(), async(err: Error, definitions: IDefinition) => {
 
       const rootElements: Array<IModdleElement> = definitions.get('rootElements');
       const error: IModdleElement = rootElements.find((element: any) => {
@@ -98,32 +98,39 @@ export class SignalEventSection implements ISection {
 
       error.name = this.selectedError.name;
 
-      this.moddle.toXML(definitions, (toXMLError: Error, xmlStrUpdated: string) => {
-        this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
-          await this.refreshSignals();
-          await this.setBusinessObj();
-        });
-      });
+      await this.updateXML(definitions);
     });
   }
 
+  private updateErrorCode(): void {
+    this.moddle.fromXML(this.getXML(), async(fromXMLError: Error, definitions: IDefinition) => {
+      const rootElements: Array<IModdleElement> = definitions.get('rootElements');
+      const error: IModdleElement = rootElements.find((element: any) => {
+        return element.$type === 'bpmn:Error' && element.id === this.selectedId;
+      });
+
+      error.errorCode = this.selectedError.errorCode;
+
+      await this.updateXML(definitions);
+    });
+  }
+
+  private updateErrorMessage(): void {
+    this.businessObjInPanel.eventDefinitions[0].errorRef.errorMessageVariable = this.selectedError.errorMessageVariable;
+  }
+
   private async addError(): Promise<void> {
-    this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
+    this.moddle.fromXML(this.getXML(), async(err: Error, definitions: IDefinition) => {
 
       const bpmnError: IModdleElement = this.moddle.create('bpmn:Error',
         { id: `Error_${this.generalService.generateRandomId()}`, name: 'Error Name' });
 
       definitions.get('rootElements').push(bpmnError);
 
-      this.moddle.toXML(definitions, (error: Error, xmlStrUpdated: string) => {
-        this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
-          await this.refreshErrors();
-          await this.setBusinessObj();
-          this.selectedId = bpmnError.id;
-          this.selectedError = bpmnError;
-          this.updateError();
-        });
-      });
+      await this.updateXML(definitions);
+
+      this.selectedId = bpmnError.id;
+      this.updateError();
     });
   }
 
@@ -136,6 +143,20 @@ export class SignalEventSection implements ISection {
       const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
       const elementInPanel: IShape = elementRegistry.get(this.businessObjInPanel.id);
       this.businessObjInPanel = elementInPanel.businessObject;
+
+      resolve();
+    });
+  }
+
+  private updateXML(definitions: IDefinition): Promise<void> {
+    return new Promise((resolve: Function, reject: Function): void => {
+
+      this.moddle.toXML(definitions, (toXMLError: Error, xmlStrUpdated: string) => {
+        this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
+          await this.refreshErrors();
+          await this.setBusinessObj();
+        });
+      });
 
       resolve();
     });

@@ -2,16 +2,20 @@
     <require from="./error-event.css"></require>
     <require from="../../../../styles/sections.css"></require>
     <div class="section__border" show.bind="canHandleElement">
-      <label class="section__input-label">Signal: </label>
+      <label class="section__input-label">Error: </label>
       <button class="addErrorButton" click.delegate="addError()">+</button>
       <select class="form-control" value.bind="selectedId" change.delegate="updateError()">
-        <option model.bind="null">-Choose Signal-</option>
+        <option model.bind="null">-Choose Error-</option>
         <option repeat.for="error of errors"
                 model.bind="error.id" value="${error.id}">${error.name} (id: ${error.id})</option>
       </select>
       <div show.bind="selectedId">
         <label class="section__input-label">Error Name: </label>
-        <input type="text" class="form-control" value.bind="selectedError.name" change.delegate="updateName()">
+        <input type="text" class="form-control" value.bind="selectedError.name" change.delegate="updateErrorName()">
+        <label class="section__input-label">Error Code: </label>
+        <input type="text" class="form-control" value.bind="selectedError.errorCode" change.delegate="updateErrorCode()">
+        <label class="section__input-label">Error Message: </label>
+        <input type="text" class="form-control" value.bind="selectedError.errorMessageVariable" change.delegate="updateErrorMessage()">
       </div>
     </div>
   </template>
