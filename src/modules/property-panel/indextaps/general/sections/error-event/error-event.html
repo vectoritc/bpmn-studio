@@ -1,0 +1,17 @@
+<template>
+    <require from="./error-event.css"></require>
+    <require from="../../../../styles/sections.css"></require>
+    <div class="section__border" show.bind="canHandleElement">
+      <label class="section__input-label">Signal: </label>
+      <button class="addErrorButton" click.delegate="addError()">+</button>
+      <select class="form-control" value.bind="selectedId" change.delegate="updateError()">
+        <option model.bind="null">-Choose Signal-</option>
+        <option repeat.for="error of errors"
+                model.bind="error.id" value="${error.id}">${error.name} (id: ${error.id})</option>
+      </select>
+      <div show.bind="selectedId">
+        <label class="section__input-label">Error Name: </label>
+        <input type="text" class="form-control" value.bind="selectedError.name" change.delegate="updateName()">
+      </div>
+    </div>
+  </template>
