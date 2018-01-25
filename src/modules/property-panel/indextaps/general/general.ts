@@ -22,6 +22,8 @@ export class General {
   public flowSection: ISection = new FlowSection();
   public errorEventSection: ISection = new ErrorEventSection();
 
+  public canHandleElement: boolean;
+
   public attached(): void {
     this.sections = [
       this.basicsSection,
@@ -33,6 +35,10 @@ export class General {
       this.flowSection,
       this.errorEventSection,
     ];
+
+    this.canHandleElement = this.sections.some((section: ISection) => {
+      return section.canHandleElement;
+    });
   }
 
 }

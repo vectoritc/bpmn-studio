@@ -8,4 +8,5 @@ export interface ISection {
   path: string;
   canHandleElement: boolean;
   activate(model: IPageModel): void;
+  checkElement(element: IModdleElement): boolean;
   }

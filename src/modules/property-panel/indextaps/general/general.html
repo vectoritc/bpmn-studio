@@ -1,9 +1,10 @@
 <template>
   <require from="./general.css"></require>
     <h4><span class="label label-default">${title}</span></h4>
-
-    <compose repeat.for="section of sections"
-      view-model=".${section.path}"
-      view=".${section.path}.html"
-      model.bind="{modeler : modeler}"></compose>
+    <div show.bind="canHandleElement">
+      <compose repeat.for="section of sections"
+        view-model=".${section.path}"
+        view=".${section.path}.html"
+        model.bind="{modeler : modeler}"></compose>
+    </div>
 </template>

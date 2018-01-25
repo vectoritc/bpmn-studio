@@ -36,12 +36,11 @@ export class BasicsSection implements ISection {
     this.eventBus.on('element.click', (event: IEvent) => {
       this.businessObjInPanel = event.element.businessObject;
       this.isFormSelected = false;
-
       if (this.businessObjInPanel && this.businessObjInPanel.$type === 'bpmn:UserTask') {
         this.reloadForms();
       }
 
-      this.checkElement();
+      this.canHandleElement = this.checkElement(this.businessObjInPanel);
     });
   }
 
@@ -74,11 +73,11 @@ export class BasicsSection implements ISection {
     }
   }
 
-  private checkElement(): void {
-    if (this.businessObjInPanel.$type === 'bpmn:UserTask') {
-      this.canHandleElement = true;
+  public checkElement(element: IModdleElement): boolean {
+    if (element.$type === 'bpmn:UserTask') {
+      return true;
     } else {
-      this.canHandleElement = false;
+      return false;
     }
   }
 

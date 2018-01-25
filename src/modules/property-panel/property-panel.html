@@ -1,7 +1,7 @@
 <template>
   <require from="./property-panel.css"></require>
   <div class="property-panel">
-    <compose repeat.for="register of registers"view-model=".${register.path}" view=".${register.path}.html"
+    <compose repeat.for="register of registers" view-model=".${register.path}" view=".${register.path}.html"
       model.bind="{ modeler : modeler }" containerless></compose>
   </div>
 </template>
