@@ -1,7 +1,6 @@
 import {ISection} from '../../../../contracts';
 import {BasicsSection} from './sections/basics/basics';
 import {CallActivitySection} from './sections/call-activity/call-activity';
-import {MessageEventSection2} from './sections/e/message-event/message-event';
 import {FlowSection} from './sections/flow/flow';
 import {MessageEventSection} from './sections/message-event/message-event';
 import {PoolSection} from './sections/pool/pool';

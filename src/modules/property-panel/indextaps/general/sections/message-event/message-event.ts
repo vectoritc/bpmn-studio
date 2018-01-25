@@ -29,7 +29,7 @@ export class MessageEventSection implements ISection {
   public selectedId: string;
   public selectedMessage: IModdleElement;
 
-  constructor(generalService: GeneralService) {
+  constructor(generalService?: GeneralService) {
     this.generalService = generalService;
   }
 

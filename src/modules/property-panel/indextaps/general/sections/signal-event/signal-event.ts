@@ -6,7 +6,8 @@ import {IBpmnModdle,
   IEventBus,
   IModdleElement,
   IPageModel,
-  ISection} from '../../../../../../contracts';
+  ISection,
+  IShape} from '../../../../../../contracts';
 
 import {inject} from 'aurelia-framework';
 import {GeneralService} from '../../service/general.service';
@@ -27,7 +28,7 @@ export class SignalEventSection implements ISection {
   public selectedId: string;
   public selectedSignal: IModdleElement;
 
-  constructor(generalService: GeneralService) {
+  constructor(generalService?: GeneralService) {
     this.generalService = generalService;
   }
 
