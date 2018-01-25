@@ -29,15 +29,15 @@ export class PoolSection implements ISection {
       this.elementInPanel = event.element;
       this.businessObjInPanel = event.element.businessObject;
       this.processRefInPanel = this.businessObjInPanel.processRef;
-      this.checkElement();
+      this.canHandleElement = this.checkElement(this.businessObjInPanel);
     });
   }
 
-  private checkElement(): void {
-    if (this.businessObjInPanel && this.businessObjInPanel.$type === 'bpmn:Participant') {
-      this.canHandleElement = true;
+  public checkElement(element: IModdleElement): boolean {
+    if (element && element.$type === 'bpmn:Participant') {
+      return true;
     } else {
-      this.canHandleElement = false;
+      return false;
     }
   }
 

@@ -47,8 +47,17 @@ export class MessageEventSection implements ISection {
         this.selectedId = this.businessObjInPanel.eventDefinitions[0].messageRef.id;
         this.updateMessage();
       }
-      this.checkElement();
+      this.canHandleElement = this.checkElement(this.businessObjInPanel);
     });
+  }
+
+  public checkElement(element: IModdleElement): boolean {
+    if (element.eventDefinitions &&
+        element.eventDefinitions[0].$type === 'bpmn:MessageEventDefinition') {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   private getXML(): string {
@@ -71,15 +80,6 @@ export class MessageEventSection implements ISection {
         resolve(messages);
       });
     });
-  }
-
-  private checkElement(): void {
-    if (this.businessObjInPanel.eventDefinitions &&
-        this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:MessageEventDefinition') {
-      this.canHandleElement = true;
-    } else {
-      this.canHandleElement = false;
-    }
   }
 
   private updateMessage(): void {

@@ -28,6 +28,10 @@ export class BasicsSection implements ISection {
     });
   }
 
+  public checkElement(element: IModdleElement): boolean {
+    return true;
+  }
+
   private updateName(): void {
     this.modeling.updateProperties(this.elementInPanel, {
       name: this.businessObjInPanel.name,

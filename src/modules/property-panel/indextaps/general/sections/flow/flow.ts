@@ -24,17 +24,17 @@ export class FlowSection implements ISection {
 
       this.tempObject = this.businessObjInPanel;
 
-      this.checkElement();
+      this.canHandleElement = this.checkElement(this.businessObjInPanel);
     });
   }
 
-  private checkElement(): void {
-    if (this.businessObjInPanel &&
-        this.businessObjInPanel.$type === 'bpmn:SequenceFlow' &&
-        this.businessObjInPanel.targetRef.$type === 'bpmn:ExclusiveGateway') {
-      this.canHandleElement = true;
+  public checkElement(element: IModdleElement): boolean {
+    if (element &&
+        element.$type === 'bpmn:SequenceFlow' &&
+        element.targetRef.$type === 'bpmn:ExclusiveGateway') {
+      return true;
     } else {
-      this.canHandleElement = false;
+      return false;
     }
   }
 

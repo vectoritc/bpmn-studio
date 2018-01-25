@@ -45,8 +45,17 @@ export class ErrorEventSection implements ISection {
 
         this.updateError();
       }
-      this.checkElement();
+      this.canHandleElement = this.checkElement(this.businessObjInPanel);
     });
+  }
+
+  public checkElement(element: IModdleElement): boolean {
+    if (element.eventDefinitions &&
+        element.eventDefinitions[0].$type === 'bpmn:ErrorEventDefinition') {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   private getXML(): string {
@@ -71,21 +80,13 @@ export class ErrorEventSection implements ISection {
     });
   }
 
-  private checkElement(): void {
-    if (this.businessObjInPanel.eventDefinitions &&
-        this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:ErrorEventDefinition') {
-      this.canHandleElement = true;
-    } else {
-      this.canHandleElement = false;
-    }
-  }
-
   private updateError(): void {
     this.selectedError = this.errors.find((error: IModdleElement) => {
       return error.id === this.selectedId;
     });
 
     this.businessObjInPanel.eventDefinitions[0].errorRef = this.selectedError;
+    this.selectedError.errorMessageVariable = this.businessObjInPanel.eventDefinitions[0].errorMessageVariable;
   }
 
   private updateErrorName(): void {
@@ -117,7 +118,6 @@ export class ErrorEventSection implements ISection {
 
   private updateErrorMessage(): void {
     this.businessObjInPanel.eventDefinitions[0].errorMessageVariable = this.selectedError.errorMessageVariable;
-    console.log(this.getXML());
   }
 
   private async addError(): Promise<void> {

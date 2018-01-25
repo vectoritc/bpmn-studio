@@ -22,16 +22,16 @@ export class CallActivitySection implements ISection {
     this.eventBus.on('element.click', (event: IEvent) => {
       this.businessObjInPanel = event.element.businessObject;
       this.callActivity = this.businessObjInPanel;
-      this.checkElement();
+      this.canHandleElement = this.checkElement(this.businessObjInPanel);
     });
   }
 
-  private checkElement(): void {
-    if (this.businessObjInPanel &&
-        this.businessObjInPanel.$type === 'bpmn:CallActivity') {
-      this.canHandleElement = true;
+  public checkElement(element: IModdleElement): boolean {
+    if (element &&
+        element.$type === 'bpmn:CallActivity') {
+      return true;
     } else {
-      this.canHandleElement = false;
+      return false;
     }
   }
 

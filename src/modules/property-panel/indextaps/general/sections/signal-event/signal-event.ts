@@ -45,8 +45,17 @@ export class SignalEventSection implements ISection {
         this.selectedId = this.businessObjInPanel.eventDefinitions[0].signalRef.id;
         this.updateSignal();
       }
-      this.checkElement();
+      this.canHandleElement = this.checkElement(this.businessObjInPanel);
     });
+  }
+
+  public checkElement(element: IModdleElement): boolean {
+    if (element.eventDefinitions &&
+        element.eventDefinitions[0].$type === 'bpmn:SignalEventDefinition') {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   private getXML(): string {
@@ -69,15 +78,6 @@ export class SignalEventSection implements ISection {
         resolve(signals);
       });
     });
-  }
-
-  private checkElement(): void {
-    if (this.businessObjInPanel.eventDefinitions &&
-        this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:SignalEventDefinition') {
-      this.canHandleElement = true;
-    } else {
-      this.canHandleElement = false;
-    }
   }
 
   private updateSignal(): void {

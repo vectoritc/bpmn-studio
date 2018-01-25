@@ -20,16 +20,16 @@ export class ScriptTaskSection implements ISection {
     this.eventBus.on('element.click', (event: IEvent) => {
       this.businessObjInPanel = event.element.businessObject;
       this.scriptTask = this.businessObjInPanel;
-      this.checkElement();
+      this.canHandleElement = this.checkElement(this.businessObjInPanel);
     });
   }
 
-  private checkElement(): void {
-    if (this.businessObjInPanel &&
-        this.businessObjInPanel.$type === 'bpmn:ScriptTask') {
-      this.canHandleElement = true;
+  public checkElement(element: IModdleElement): boolean {
+    if (element &&
+        element.$type === 'bpmn:ScriptTask') {
+      return true;
     } else {
-      this.canHandleElement = false;
+      return false;
     }
   }
 
