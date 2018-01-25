@@ -11,3 +11,4 @@ export {IProcessRef} from './IProcessRef';
 export {IBpmnModdle} from './IBpmnModdle';
 export {IDefinition} from './IDefinition';
 export {IMessage} from './IMessage';
+export {IElementRegistry} from './IElementRegistry';

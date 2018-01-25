@@ -7,6 +7,10 @@ import {IBpmnModdle,
   IPageModel,
   ISection} from '../../../../../../contracts';
 
+import {inject} from 'aurelia-framework';
+import {GeneralService} from '../../service/general.service';
+
+@inject(GeneralService)
 export class SignalEventSection implements ISection {
 
   public path: string = '/sections/signal-event/signal-event';
@@ -16,10 +20,15 @@ export class SignalEventSection implements ISection {
   private eventBus: IEventBus;
   private moddle: IBpmnModdle;
   private modeler: IBpmnModeler;
+  private generalService: GeneralService;
 
   public signals: Array<IModdleElement>;
   public selectedId: string;
   public selectedSignal: IModdleElement;
+
+  constructor(generalService: GeneralService) {
+    this.generalService = generalService;
+  }
 
   public async activate(model: IPageModel): Promise<void> {
     this.eventBus = model.modeler.get('eventBus');
@@ -30,7 +39,6 @@ export class SignalEventSection implements ISection {
 
     this.eventBus.on('element.click', (event: IEvent) => {
       this.businessObjInPanel = event.element.businessObject;
-
       if (this.businessObjInPanel.eventDefinitions && this.businessObjInPanel.eventDefinitions[0].signalRef) {
         this.selectedId = this.businessObjInPanel.eventDefinitions[0].signalRef.id;
         this.updateSignal();
@@ -99,7 +107,9 @@ export class SignalEventSection implements ISection {
   private async addSignal(): Promise<void> {
     this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
 
-      const bpmnSignal: IModdleElement = this.moddle.create('bpmn:Signal', { id: `Signal_${this.generateRandomId()}`, name: 'Signal Name' });
+      const bpmnSignal: IModdleElement = this.moddle.create('bpmn:Signal',
+        { id: `Signal_${this.generalService.generateRandomId()}`, name: 'Signal Name' });
+
       definitions.get('rootElements').push(bpmnSignal);
 
       this.moddle.toXML(definitions, (error: Error, xmlStrUpdated: string) => {
@@ -115,17 +125,6 @@ export class SignalEventSection implements ISection {
 
   private async refreshSignals(): Promise<void> {
     this.signals = await this.getSignals();
-  }
-
-  private generateRandomId(): string {
-    let randomId: string = '';
-    const possible: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-    const randomIdLength: number = 8;
-    for (let i: number = 0; i < randomIdLength; i++) {
-      randomId += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    return randomId;
   }
 
 }

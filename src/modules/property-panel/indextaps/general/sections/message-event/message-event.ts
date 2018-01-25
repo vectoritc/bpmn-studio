@@ -1,14 +1,18 @@
 import {IBpmnModdle,
   IBpmnModeler,
   IDefinition,
+  IElementRegistry,
   IEvent,
   IEventBus,
   IModdleElement,
   IPageModel,
-  ISection} from '../../../../../../contracts';
+  ISection,
+  IShape} from '../../../../../../contracts';
 
-import {bindable, observable} from 'aurelia-framework';
+import {bindable, inject, observable} from 'aurelia-framework';
+import {GeneralService} from '../../service/general.service';
 
+@inject(GeneralService)
 export class MessageEventSection implements ISection {
 
   public path: string = '/sections/message-event/message-event';
@@ -19,10 +23,15 @@ export class MessageEventSection implements ISection {
   private moddle: IBpmnModdle;
   private modeler: IBpmnModeler;
   private msgDropdown: HTMLSelectElement;
+  private generalService: GeneralService;
 
-  @observable public messages: Array<IModdleElement>;
-  @bindable public selectedId: string;
+  public messages: Array<IModdleElement>;
+  public selectedId: string;
   public selectedMessage: IModdleElement;
+
+  constructor(generalService: GeneralService) {
+    this.generalService = generalService;
+  }
 
   public async activate(model: IPageModel): Promise<void> {
     this.eventBus = model.modeler.get('eventBus');
@@ -94,6 +103,7 @@ export class MessageEventSection implements ISection {
       this.moddle.toXML(definitions, (error: Error, xmlStrUpdated: string) => {
         this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
           await this.refreshMessages();
+          await this.setBusinessObj();
         });
       });
     });
@@ -102,14 +112,16 @@ export class MessageEventSection implements ISection {
   private async addMessage(): Promise<void> {
     this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
 
-      const bpmnMessage: IModdleElement = this.moddle.create('bpmn:Message', { id: `Message_${this.generateRandomId()}`, name: 'Message Name' });
+      const bpmnMessage: IModdleElement = this.moddle.create('bpmn:Message',
+        {id: `Message_${this.generalService.generateRandomId()}`, name: 'Message Name'});
+
       definitions.get('rootElements').push(bpmnMessage);
 
       this.moddle.toXML(definitions, (error: Error, xmlStrUpdated: string) => {
         this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
           await this.refreshMessages();
+          await this.setBusinessObj();
           this.selectedId = bpmnMessage.id;
-          this.selectedMessage = bpmnMessage;
           this.updateMessage();
         });
       });
@@ -120,15 +132,14 @@ export class MessageEventSection implements ISection {
     this.messages = await this.getMessages();
   }
 
-  private generateRandomId(): string {
-    let randomId: string = '';
-    const possible: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  private setBusinessObj(): Promise<void> {
+    return new Promise((resolve: Function, reject: Function): void => {
+      const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
+      const elementInPanel: IShape = elementRegistry.get(this.businessObjInPanel.id);
+      this.businessObjInPanel = elementInPanel.businessObject;
 
-    const randomIdLength: number = 8;
-    for (let i: number = 0; i < randomIdLength; i++) {
-      randomId += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    return randomId;
+      resolve();
+    });
   }
 
 }
