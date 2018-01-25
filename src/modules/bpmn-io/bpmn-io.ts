@@ -1,6 +1,12 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {bindable} from 'aurelia-framework';
-import {IBpmnModeler, IBpmnModelerConstructor} from '../../contracts';
+import {ElementDistributeOptions,
+        IBpmnFunction,
+        IBpmnModeler,
+        IBpmnModelerConstructor,
+        IEventBus,
+        IModdleElement,
+        IModeling} from '../../contracts';
 import environment from '../../environment';
 
 export class BpmnIo {
@@ -45,6 +51,39 @@ export class BpmnIo {
         }
       });
     });
+  }
+
+  public getSVG(): Promise<string> {
+    return new Promise((resolve: Function, reject: Function): void => {
+      this.modeler.saveSVG({}, (err: Error, result: string) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+  }
+
+  public distributeElements(option: ElementDistributeOptions): void {
+    const distribute: IBpmnFunction = this.modeler.get('distributeElements');
+
+    const selectedElements: Array<IModdleElement> = this.modeler.get('selection')._selectedElements;
+
+    distribute.trigger(selectedElements, option);
+  }
+
+  public setColor(fillColor: string, strokeColor: string): void {
+    const modeling: IModeling = this.modeler.get('modeling');
+
+    const selectedElements: Array<IModdleElement> = this.modeler.get('selection')._selectedElements;
+
+    if (selectedElements.length > 0) {
+      modeling.setColor(selectedElements, {
+        fill: fillColor,
+        stroke: strokeColor,
+      });
+    }
   }
 
 }

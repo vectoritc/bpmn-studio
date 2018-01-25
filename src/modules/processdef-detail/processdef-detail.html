@@ -5,7 +5,7 @@
 
   <div if.bind="process">
     <div class="bpmn-toolbar-holder">
-      <div class="container bpmn-toolbar">
+      <div class="bpmn-toolbar">
         <div class="action-dropdown ${startedProcessId ? 'action-dropdown-open' : ''}" ref="startButtonDropdown">
           <button disabled.bind="process.latest" click.delegate="publishDraft()" class="btn btn-primary">
             <i class="glyphicon glyphicon-tag"></i> Publish Draft
@@ -46,11 +46,46 @@
         <button disabled.bind="process.draft" class="btn btn-danger" click.delegate="deleteProcess()">
           <i class="glyphicon glyphicon-trash"></i> Delete Process
         </button>
-        <a ref="exportButton" class="btn btn-primary export-button" click.delegate="exportDiagram()">
-          <i ref="exportSpinner" class="glyphicon glyphicon-repeat fa-spin hidden"></i>
-          <i class="glyphicon glyphicon-export"></i> Export Diagram
-        </a>
+        <div class="btn-group">
+          <a ref="exportButton" class="btn btn-primary export-button" click.delegate="exportBPMN()">
+            <i ref="exportSpinner" class="glyphicon glyphicon-repeat fa-spin hidden"></i>
+            <i class="glyphicon glyphicon-export"></i> Export Diagram
+          </a>
+          <a ref="exportDropdown" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="caret"></span>
+            <span class="sr-only">Toggle Dropdown</span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="#" click.delegate="exportBPMN()">BPMN (default)</a></li>
+            <li><a href="#" click.delegate="exportSVG()">SVG</a></li>
+            <li><a href="#" click.delegate="exportPNG()">PNG</a></li>
+            <li><a href="#" click.delegate="exportJPEG()">JPEG</a></li>
+          </ul>
+        </div>
         <import-process-button desired-process-import-key.bind="process.key" callback.bind="onModdlelImported.bind($this)"></import-process-button>
+        <div class="btn-group elements-workspace">
+            <a class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+              <i class="glyphicon glyphicon-tint"></i>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a click.delegate="setColorRed()">Red</a></li>
+              <li><a click.delegate="setColorBlue()">Blue</a></li>
+              <li><a click.delegate="setColorGreen()">Green</a></li>
+              <li><a click.delegate="setColorPurple()">Purple</a></li>
+              <li><a click.delegate="setColorOrange()">Orange</a></li>
+              <li><a click.delegate="setColorWhite()">White</a></li>
+            </ul>
+          </div>
+        <div class="btn-group">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            Distribute
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a click.delegate="distributeElementsHorizontal()">Horizontal</a></li>
+            <li><a click.delegate="distributeElementsVertical()">Vertical</a></li>
+          </ul>
+        </div>
         <span if.bind="process.latest" class="processdef-detail__draft-latest--true">Latest</span>
         <span if.bind="process.draft" class="processdef-detail__draft-latest--true">Draft</span>
       </div>

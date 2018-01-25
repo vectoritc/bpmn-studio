@@ -2,6 +2,7 @@ import {IUserTaskConfig} from '@process-engine/consumer_client';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
+import * as toastr from 'toastr';
 import {AuthenticationStateEvent, IDynamicUiService} from '../../contracts/index';
 import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
 
@@ -57,7 +58,7 @@ export class TaskDynamicUi {
     try {
       this.userTask = await this.dynamicUiService.getUserTaskConfig(this.userTaskId);
     } catch (error) {
-      console.error('cant refresh user task', error);
+      toastr.error(`Failed to refresh user task: ${error.message}`);
       throw error;
     }
   }
