@@ -1,7 +1,8 @@
 <template>
   <require from="./signal-event.css"></require>
-  <div class="signal-event-section" show.bind="canHandleElement">
-    <label class="input-label">Signal: </label>
+  <require from="../../../../styles/sections.css"></require>
+  <div class="section__border" show.bind="canHandleElement">
+    <label class="section__input-label">Signal: </label>
     <button class="addSignalButton" click.delegate="addSignal()">+</button>
     <select class="form-control" value.bind="selectedId" change.delegate="updateSignal()">
       <option model.bind="null">-Choose Signal-</option>
@@ -9,7 +10,7 @@
               model.bind="signal.id" value="${signal.id}">${signal.name} (id: ${signal.id})</option>
     </select>
     <div show.bind="selectedId">
-      <label class="input-label">Signal Name: </label>
+      <label class="section__input-label">Signal Name: </label>
       <input type="text" class="form-control" value.bind="selectedSignal.name" change.delegate="updateName()">
     </div>
   </div>
