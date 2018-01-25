@@ -1,6 +1,7 @@
 import {IBpmnModdle,
   IBpmnModeler,
   IDefinition,
+  IElementRegistry,
   IEvent,
   IEventBus,
   IModdleElement,
@@ -99,6 +100,7 @@ export class SignalEventSection implements ISection {
       this.moddle.toXML(definitions, (error: Error, xmlStrUpdated: string) => {
         this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
           await this.refreshSignals();
+          await this.setBusinessObj();
         });
       });
     });
@@ -115,6 +117,7 @@ export class SignalEventSection implements ISection {
       this.moddle.toXML(definitions, (error: Error, xmlStrUpdated: string) => {
         this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
           await this.refreshSignals();
+          await this.setBusinessObj();
           this.selectedId = bpmnSignal.id;
           this.selectedSignal = bpmnSignal;
           this.updateSignal();
@@ -125,6 +128,16 @@ export class SignalEventSection implements ISection {
 
   private async refreshSignals(): Promise<void> {
     this.signals = await this.getSignals();
+  }
+
+  private setBusinessObj(): Promise<void> {
+    return new Promise((resolve: Function, reject: Function): void => {
+      const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
+      const elementInPanel: IShape = elementRegistry.get(this.businessObjInPanel.id);
+      this.businessObjInPanel = elementInPanel.businessObject;
+
+      resolve();
+    });
   }
 
 }
