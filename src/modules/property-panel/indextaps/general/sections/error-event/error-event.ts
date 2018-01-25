@@ -116,7 +116,8 @@ export class ErrorEventSection implements ISection {
   }
 
   private updateErrorMessage(): void {
-    this.businessObjInPanel.eventDefinitions[0].errorRef.errorMessageVariable = this.selectedError.errorMessageVariable;
+    this.businessObjInPanel.eventDefinitions[0].errorMessageVariable = this.selectedError.errorMessageVariable;
+    console.log(this.getXML());
   }
 
   private async addError(): Promise<void> {

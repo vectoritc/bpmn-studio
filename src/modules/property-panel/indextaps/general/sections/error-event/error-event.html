@@ -15,7 +15,7 @@
         <label class="section__input-label">Error Code: </label>
         <input type="text" class="form-control" value.bind="selectedError.errorCode" change.delegate="updateErrorCode()">
         <label class="section__input-label">Error Message: </label>
-        <input type="text" class="form-control" value.bind="selectedError.errorMessageVariable" change.delegate="updateErrorMessage()">
+        <input type="text" class="form-control" value.bind="businessObjInPanel.eventDefinitions[0].errorMessageVariable" change.delegate="updateErrorMessage()">
       </div>
     </div>
   </template>
