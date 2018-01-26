@@ -192,15 +192,6 @@ export class ProcessDefDetail {
     return image;
   }
 
-  public async publishDraft(): Promise<any> {
-    this.processEngineService.publishDraft(this._process.id).then((processDef: IProcessDefEntity) => {
-      this.refreshProcess();
-      toastr.success('Successfully published!');
-    }).catch((error: Error) => {
-      toastr.error(`Error while publishing Draft: ${error.message}`);
-    });
-  }
-
   private disableAndHideControlsForImageExport(): void {
     this.exportButton.setAttribute('disabled', '');
     this.exportDropdown.setAttribute('disabled', '');
