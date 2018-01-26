@@ -57,10 +57,10 @@ export class CallActivitySection implements ISection {
     if (this.selectedBinding === 1) {
       this.businessObjInPanel.calledElementBinding = 'latest';
       this.businessObjInPanel.calledElementVersion = undefined;
-    } else if (this.selectedBinding === 2) {
+    } else if (this.selectedBinding === 2) { // tslint:disable-line
       this.businessObjInPanel.calledElementBinding = 'deployment';
       this.businessObjInPanel.calledElementVersion = undefined;
-    } else if (this.selectedBinding === 3) {
+    } else if (this.selectedBinding === 3) { // tslint:disable-line
       this.businessObjInPanel.calledElementVersion = this.callActivity.calledElementVersion;
       this.businessObjInPanel.calledElementBinding = 'version';
     }
