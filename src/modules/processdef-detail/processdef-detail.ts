@@ -117,6 +117,7 @@ export class ProcessDefDetail {
 
   public onModdlelImported(moddle: any, xml: string): void {
     this.bpmn.xml = xml;
+    this.saveDiagram();
   }
 
   public saveDiagram(): void {
