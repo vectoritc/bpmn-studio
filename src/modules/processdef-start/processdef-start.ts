@@ -50,10 +50,6 @@ export class ProcessDefStart {
     ];
   }
 
-  public attached(): void {
-
-  }
-
   public detached(): void {
     for (const subscription of this.subscriptions) {
       subscription.dispose();
