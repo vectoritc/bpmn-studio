@@ -1,5 +1,6 @@
 import {FormWidgetFieldType, IFormWidgetConfig, SpecificFormWidgetField} from '@process-engine/consumer_client';
 import {bindable} from 'aurelia-framework';
+import * as toastr from 'toastr';
 
 export class FormWidget {
 
@@ -15,6 +16,7 @@ export class FormWidget {
       case FormWidgetFieldType.boolean:
         return 'checkbox';
       default:
+        toastr.error(`Not supported FromWidgetFieldType: ${field.type}`);
         return null;
     }
   }
