@@ -82,10 +82,6 @@ export class ProcessDefDetail {
   }
 
   public async startProcess(): Promise<void> {
-    if (this.startButton.hasAttribute('disabled')) {
-      return;
-    }
-    this.startButton.setAttribute('disabled', 'disabled');
     this.router.navigate(`processdef/${this.process.id}/start`);
     this.startedProcessId = await this.consumerClient.startProcessByKey(this.process.key);
   }
@@ -117,6 +113,7 @@ export class ProcessDefDetail {
 
   public onModdlelImported(moddle: any, xml: string): void {
     this.bpmn.xml = xml;
+    this.saveDiagram();
   }
 
   public saveDiagram(): void {
@@ -184,15 +181,6 @@ export class ProcessDefDetail {
 
     const image: string = canvas.toDataURL(encoding); // returns a base64 datastring
     return image;
-  }
-
-  public async publishDraft(): Promise<any> {
-    this.processEngineService.publishDraft(this._process.id).then((processDef: IProcessDefEntity) => {
-      this.refreshProcess();
-      toastr.success('Successfully published!');
-    }).catch((error: Error) => {
-      toastr.error(`Error while publishing Draft: ${error.message}`);
-    });
   }
 
   private disableAndHideControlsForImageExport(): void {
