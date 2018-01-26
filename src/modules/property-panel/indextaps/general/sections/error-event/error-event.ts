@@ -41,7 +41,6 @@ export class ErrorEventSection implements ISection {
 
     this.eventBus.on('element.click', (event: IEvent) => {
       this.businessObjInPanel = event.element.businessObject;
-      console.log(this.businessObjInPanel);
       if (this.businessObjInPanel.eventDefinitions && this.businessObjInPanel.eventDefinitions[0].errorRef) {
         this.selectedId = this.businessObjInPanel.eventDefinitions[0].errorRef.id;
 
