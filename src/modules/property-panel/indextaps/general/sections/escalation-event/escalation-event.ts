@@ -13,9 +13,9 @@ import {inject} from 'aurelia-framework';
 import {GeneralService} from '../../service/general.service';
 
 @inject(GeneralService)
-export class ErrorEventSection implements ISection {
+export class EscalationEventSection implements ISection {
 
-  public path: string = '/sections/error-event/error-event';
+  public path: string = '/sections/escalation-event/escalation-event';
   public canHandleElement: boolean = false;
 
   private businessObjInPanel: IModdleElement;
@@ -23,10 +23,11 @@ export class ErrorEventSection implements ISection {
   private moddle: IBpmnModdle;
   private modeler: IBpmnModeler;
   private generalService: GeneralService;
+  private isBoundaryEvent: boolean = false;
 
-  public errors: Array<IModdleElement>;
+  public escalations: Array<IModdleElement>;
   public selectedId: string;
-  public selectedError: IModdleElement;
+  public selectedEscalation: IModdleElement;
 
   constructor(generalService?: GeneralService) {
     this.generalService = generalService;
@@ -36,21 +37,23 @@ export class ErrorEventSection implements ISection {
     this.eventBus = model.modeler.get('eventBus');
     this.moddle = model.modeler.get('moddle');
     this.modeler = model.modeler;
-    this.errors = await this.getErrors();
+    this.escalations = await this.getEscalations();
 
     this.eventBus.on('element.click', (event: IEvent) => {
-      this.businessObjInPanel = event.element.businessObject;
-      if (this.businessObjInPanel.eventDefinitions && this.businessObjInPanel.eventDefinitions[0].errorRef) {
-        this.selectedId = this.businessObjInPanel.eventDefinitions[0].errorRef.id;
-        this.updateError();
+    this.businessObjInPanel = event.element.businessObject;
+    console.log(this.businessObjInPanel);
+    if (this.businessObjInPanel.eventDefinitions && this.businessObjInPanel.eventDefinitions[0].escalationRef) {
+        this.selectedId = this.businessObjInPanel.eventDefinitions[0].escalationRef.id;
+
+        this.updateEscalation();
       }
-      this.canHandleElement = this.checkElement(this.businessObjInPanel);
+    this.canHandleElement = this.checkElement(this.businessObjInPanel);
     });
   }
 
   public checkElement(element: IModdleElement): boolean {
     if (element.eventDefinitions &&
-        element.eventDefinitions[0].$type === 'bpmn:ErrorEventDefinition') {
+        element.eventDefinitions[0].$type === 'bpmn:EscalationEventDefinition') {
       return true;
     } else {
       return false;
@@ -65,77 +68,79 @@ export class ErrorEventSection implements ISection {
     return xml;
   }
 
-  private getErrors(): Promise<Array<IModdleElement>> {
+  private getEscalations(): Promise<Array<IModdleElement>> {
     return new Promise((resolve: Function, reject: Function): void => {
 
       this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
         const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-        const errors: Array<IModdleElement> = rootElements.filter((element: IModdleElement) => {
-          return element.$type === 'bpmn:Error';
+        const escalations: Array<IModdleElement> = rootElements.filter((element: IModdleElement) => {
+          return element.$type === 'bpmn:Escalation';
         });
 
-        resolve(errors);
+        resolve(escalations);
       });
     });
   }
 
-  private updateError(): void {
-    this.selectedError = this.errors.find((error: IModdleElement) => {
-      return error.id === this.selectedId;
+  private updateEscalation(): void {
+    this.selectedEscalation = this.escalations.find((escalation: IModdleElement) => {
+      return escalation.id === this.selectedId;
     });
 
-    this.businessObjInPanel.eventDefinitions[0].errorRef = this.selectedError;
-    this.selectedError.errorMessageVariable = this.businessObjInPanel.eventDefinitions[0].errorMessageVariable;
+    this.isBoundaryEvent = this.businessObjInPanel.$type === 'bpmn:BoundaryEvent';
+
+    this.businessObjInPanel.eventDefinitions[0].escalationRef = this.selectedEscalation;
+    this.selectedEscalation.escalationCodeVariable = this.businessObjInPanel.eventDefinitions[0].escalationCodeVariable;
   }
 
-  private updateErrorName(): void {
+  private updateEscalationName(): void {
     this.moddle.fromXML(this.getXML(), async(err: Error, definitions: IDefinition) => {
 
       const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-      const error: IModdleElement = rootElements.find((element: any) => {
-        return element.$type === 'bpmn:Error' && element.id === this.selectedId;
+      const escalation: IModdleElement = rootElements.find((element: any) => {
+        return element.$type === 'bpmn:Escalation' && element.id === this.selectedId;
       });
 
-      error.name = this.selectedError.name;
+      escalation.name = this.selectedEscalation.name;
 
       await this.updateXML(definitions);
     });
   }
 
-  private updateErrorCode(): void {
+  private updateEscalationCode(): void {
     this.moddle.fromXML(this.getXML(), async(fromXMLError: Error, definitions: IDefinition) => {
       const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-      const error: IModdleElement = rootElements.find((element: any) => {
-        return element.$type === 'bpmn:Error' && element.id === this.selectedId;
+      const escalation: IModdleElement = rootElements.find((element: any) => {
+        return element.$type === 'bpmn:Escalation' && element.id === this.selectedId;
       });
 
-      error.errorCode = this.selectedError.errorCode;
+      escalation.escalationCode = this.selectedEscalation.escalationCode;
 
       await this.updateXML(definitions);
     });
   }
 
-  private updateErrorMessage(): void {
-    this.businessObjInPanel.eventDefinitions[0].errorMessageVariable = this.selectedError.errorMessageVariable;
+  private updateEscalationCodeVariable(): void {
+    this.businessObjInPanel.eventDefinitions[0].escalationCodeVariable = this.selectedEscalation.escalationCodeVariable;
   }
 
-  private async addError(): Promise<void> {
+  private async addEscalation(): Promise<void> {
     this.moddle.fromXML(this.getXML(), async(err: Error, definitions: IDefinition) => {
 
-      const bpmnError: IModdleElement = this.moddle.create('bpmn:Error',
-        { id: `Error_${this.generalService.generateRandomId()}`, name: 'Error Name' });
+      const bpmnEscalation: IModdleElement = this.moddle.create('bpmn:Escalation',
+        { id: `Escalation_${this.generalService.generateRandomId()}`, name: 'Escalation Name' });
 
-      definitions.get('rootElements').push(bpmnError);
+      definitions.get('rootElements').push(bpmnEscalation);
 
       await this.updateXML(definitions);
 
-      this.selectedId = bpmnError.id;
-      this.updateError();
+      this.selectedId = bpmnEscalation.id;
+      this.updateEscalation();
     });
   }
 
-  private async refreshErrors(): Promise<void> {
-    this.errors = await this.getErrors();
+  private async refreshEscalations(): Promise<void> {
+    this.escalations = await this.getEscalations();
   }
 
   private setBusinessObj(): Promise<void> {
@@ -153,7 +158,7 @@ export class ErrorEventSection implements ISection {
 
       this.moddle.toXML(definitions, (toXMLError: Error, xmlStrUpdated: string) => {
         this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
-          await this.refreshErrors();
+          await this.refreshEscalations();
           await this.setBusinessObj();
         });
       });

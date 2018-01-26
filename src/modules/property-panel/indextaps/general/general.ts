@@ -2,6 +2,7 @@ import {ISection} from '../../../../contracts';
 import {BasicsSection} from './sections/basics/basics';
 import {CallActivitySection} from './sections/call-activity/call-activity';
 import {ErrorEventSection} from './sections/error-event/error-event';
+import {EscalationEventSection} from './sections/escalation-event/escalation-event';
 import {FlowSection} from './sections/flow/flow';
 import {MessageEventSection} from './sections/message-event/message-event';
 import {PoolSection} from './sections/pool/pool';
@@ -21,6 +22,7 @@ export class General {
   public callActivitySection: ISection = new CallActivitySection();
   public flowSection: ISection = new FlowSection();
   public errorEventSection: ISection = new ErrorEventSection();
+  public escalationEventSection: ISection = new EscalationEventSection();
 
   public canHandleElement: boolean = true;
 
@@ -34,6 +36,7 @@ export class General {
       this.callActivitySection,
       this.flowSection,
       this.errorEventSection,
+      this.escalationEventSection,
     ];
   }
 

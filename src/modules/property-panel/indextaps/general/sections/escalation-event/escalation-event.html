@@ -1,0 +1,23 @@
+<template>
+    <require from="./escalation-event.css"></require>
+    <require from="../../../../styles/sections.css"></require>
+    <div class="section__border" show.bind="canHandleElement">
+      <label class="section__input-label">Escalation: </label>
+      <button class="addEscalationButton" click.delegate="addEscalation()">+</button>
+      <select class="form-control" value.bind="selectedId" change.delegate="updateEscalation()">
+        <option model.bind="null">-Choose Escalation-</option>
+        <option repeat.for="escalation of escalations"
+                model.bind="escalation.id" value="${escalation.id}">${escalation.name} (id: ${escalation.id})</option>
+      </select>
+      <div show.bind="selectedId">
+        <label class="section__input-label">Escalation Name: </label>
+        <input type="text" class="form-control" value.bind="selectedEscalation.name" change.delegate="updateEscalationName()">
+        <label class="section__input-label">Escalation Code: </label>
+        <input type="text" class="form-control" value.bind="selectedEscalation.escalationCode" change.delegate="updateEscalationCode()">
+        <div show.bind = "isBoundaryEvent">
+          <label class="section__input-label">Escalation Code Variable: </label>
+          <input type="text" class="form-control" value.bind="selectedEscalation.escalationCodeVariable" change.delegate="updateEscalationCodeVariable()">
+        </div>
+      </div>
+    </div>
+  </template>

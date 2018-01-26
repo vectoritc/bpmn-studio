@@ -14,6 +14,7 @@ export interface IModdleElement {
   messageRef?: IModdleElement;
   signalRef?: IModdleElement;
   errorRef?: IModdleElement;
+  escalationRef?: IModdleElement;
   script?: string;
   scriptFormat?: string;
   resultVariable?: string;
@@ -35,4 +36,6 @@ export interface IModdleElement {
   defaultValue?: string;
   errorCode?: string;
   errorMessageVariable?: string;
+  escalationCode?: string;
+  escalationCodeVariable?: string;
 }
