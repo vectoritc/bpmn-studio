@@ -1,21 +1,22 @@
-.waiting-room__grid {
-  display: grid;
-  grid-template-columns: auto;
-  grid-template-rows: 25% 50% 25%;
-  grid-row-gap: 20px;
+.waiting-room {
+  margin: 40px 20px 20px 20px;
 }
 
 .waiting-room__title {
   text-align: center;
 }
 
-.waiting-room__spinner {
-  grid-row: 2;
-  margin: auto;
+.waiting-room__spinner-row {
+  text-align: center;
+  font-size: 160px;
+}
+
+.waiting-room__button-row {
+  margin-top: 40px;
+  text-align: center;
 }
 
 .waiting-room__cancel-button {
-  grid-row: 3;
-  margin: auto;
+  text-align: center;
   width: 200px;
 }

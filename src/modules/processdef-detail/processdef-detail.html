@@ -31,18 +31,22 @@
             </ul>
           </div>
         </div>
-        <a class="btn btn-primary" href="#/processdef/${process.id}/process">
-          <i class="glyphicon glyphicon-tasks"></i> Processes
-        </a>
-        <a class="btn btn-primary" href="#/processdef/${process.id}/task">
-          <i class="glyphicon glyphicon-list-alt"></i> Tasks
-        </a>
+        <div class="btn-group">
+          <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+            Navigate
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a href="#/processdef/${process.id}/process">Processes</a></li>
+            <li><a href="#/processdef/${process.id}/task">Tasks</a></li>
+          </ul>
+        </div>
         <button class="btn btn-success save-button" click.delegate="saveDiagram()">
             <i class="glyphicon glyphicon-floppy-disk"></i> Save
         </button>
-        <button disabled.bind="true" class="btn btn-danger" click.delegate="deleteProcess()">
+        <!--<button disabled.bind="true" class="btn btn-danger" click.delegate="deleteProcess()">
           <i class="glyphicon glyphicon-trash"></i> Delete Process
-        </button>
+        </button>-->
         <div class="btn-group">
           <a ref="exportButton" class="btn btn-primary export-button" click.delegate="exportBPMN()">
             <i ref="exportSpinner" class="glyphicon glyphicon-repeat fa-spin hidden"></i>
