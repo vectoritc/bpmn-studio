@@ -27,6 +27,7 @@ export class ErrorEventSection implements ISection {
   public errors: Array<IModdleElement>;
   public selectedId: string;
   public selectedError: IModdleElement;
+  public isEndEvent: boolean = false;
 
   constructor(generalService?: GeneralService) {
     this.generalService = generalService;
@@ -40,6 +41,7 @@ export class ErrorEventSection implements ISection {
 
     this.eventBus.on('element.click', (event: IEvent) => {
       this.businessObjInPanel = event.element.businessObject;
+      console.log(this.businessObjInPanel);
       if (this.businessObjInPanel.eventDefinitions && this.businessObjInPanel.eventDefinitions[0].errorRef) {
         this.selectedId = this.businessObjInPanel.eventDefinitions[0].errorRef.id;
 
@@ -52,7 +54,12 @@ export class ErrorEventSection implements ISection {
   public checkElement(element: IModdleElement): boolean {
     if (element.eventDefinitions &&
         element.eventDefinitions[0].$type === 'bpmn:ErrorEventDefinition') {
-      return true;
+          if (element.$type === 'bpmn:EndEvent') {
+            this.isEndEvent = true;
+          } else if (element.$type === 'bpmn:BoundaryEvent') {
+            this.isEndEvent = false;
+          }
+          return true;
     } else {
       return false;
     }

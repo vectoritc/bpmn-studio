@@ -14,8 +14,10 @@
         <input type="text" class="form-control" value.bind="selectedError.name" change.delegate="updateErrorName()">
         <label class="section__input-label">Error Code: </label>
         <input type="text" class="form-control" value.bind="selectedError.errorCode" change.delegate="updateErrorCode()">
-        <label class="section__input-label">Error Message: </label>
-        <input type="text" class="form-control" value.bind="selectedError.errorMessageVariable" change.delegate="updateErrorMessage()">
+        <div show.bind="!isEndEvent">
+          <label class="section__input-label">Error Message: </label>
+          <input type="text" class="form-control" value.bind="selectedError.errorMessageVariable" change.delegate="updateErrorMessage()">
+        </div>
       </div>
     </div>
   </template>
