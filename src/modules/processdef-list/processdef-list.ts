@@ -75,15 +75,11 @@ export class ProcessDefList {
   }
 
   public async createProcess(): Promise<void> {
-    const processInstanceId: string = await this.consumerClient.startProcessByKey('CreateProcessDef');
-    const renderUserTaskCallback: any = (userTaskConfig: IUserTaskConfig): void => {
-      if (userTaskConfig.userTaskEntity.process.id === processInstanceId) {
-        this.router.navigate(`/task/${userTaskConfig.id}/dynamic-ui`);
-        this.consumerClient.off('renderUserTask', renderUserTaskCallback);
-      }
-    };
+    const processId: string = this.processes.find((process: IProcessDefEntity) => {
+      return process.key === 'CreateProcessDef';
+    }).id;
 
-    this.consumerClient.on('renderUserTask', renderUserTaskCallback);
+    this.router.navigate(`processdef/${processId}/start`);
   }
 
   public startProcess(processId: string): void {
