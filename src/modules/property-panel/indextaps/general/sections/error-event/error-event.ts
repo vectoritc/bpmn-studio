@@ -91,7 +91,9 @@ export class ErrorEventSection implements ISection {
     });
 
     this.businessObjInPanel.eventDefinitions[0].errorRef = this.selectedError;
-    this.selectedError.errorMessageVariable = this.businessObjInPanel.eventDefinitions[0].errorMessageVariable;
+    if (!this.isEndEvent) {
+      this.selectedError.errorMessageVariable = this.businessObjInPanel.eventDefinitions[0].errorMessageVariable;
+    }
   }
 
   private updateErrorName(): void {
@@ -122,7 +124,7 @@ export class ErrorEventSection implements ISection {
   }
 
   private updateErrorMessage(): void {
-    this.businessObjInPanel.eventDefinitions[0].errorMessageVariable = this.selectedError.errorMessageVariable;
+      this.businessObjInPanel.eventDefinitions[0].errorMessageVariable = this.selectedError.errorMessageVariable;
   }
 
   private async addError(): Promise<void> {
