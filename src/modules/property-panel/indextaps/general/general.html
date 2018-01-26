@@ -1,7 +1,8 @@
 <template>
   <require from="./general.css"></require>
+  <require from="../../styles/registers.css"></require>
     <div show.bind="canHandleElement"></div>
-      <h4><span class="label label-default">${title}</span></h4>
+      <h4><span class="register_label_border label label-default">${title}</span></h4>
         <compose repeat.for="section of sections"
           view-model=".${section.path}"
           view=".${section.path}.html"
