@@ -41,9 +41,15 @@ export class ErrorEventSection implements ISection {
 
     this.eventBus.on('element.click', (event: IEvent) => {
       this.businessObjInPanel = event.element.businessObject;
-      if (this.businessObjInPanel.eventDefinitions && this.businessObjInPanel.eventDefinitions[0].errorRef) {
-        this.selectedId = this.businessObjInPanel.eventDefinitions[0].errorRef.id;
-        this.updateError();
+      if (this.businessObjInPanel.eventDefinitions
+        && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:ErrorEventDefinition') {
+          if (this.businessObjInPanel.eventDefinitions[0].errorRef) {
+            this.selectedId = this.businessObjInPanel.eventDefinitions[0].errorRef.id;
+            this.updateError();
+          } else {
+            this.selectedError = null;
+            this.selectedId = null;
+          }
       }
       this.canHandleElement = this.checkElement(this.businessObjInPanel);
     });

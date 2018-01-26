@@ -41,12 +41,18 @@ export class EscalationEventSection implements ISection {
 
     this.eventBus.on('element.click', (event: IEvent) => {
     this.businessObjInPanel = event.element.businessObject;
-    console.log(this.businessObjInPanel);
-    if (this.businessObjInPanel.eventDefinitions && this.businessObjInPanel.eventDefinitions[0].escalationRef) {
+
+    if (this.businessObjInPanel.eventDefinitions && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:EscalationEventDefinition') {
+      if (this.businessObjInPanel.eventDefinitions[0].escalationRef) {
         this.selectedId = this.businessObjInPanel.eventDefinitions[0].escalationRef.id;
 
         this.updateEscalation();
+      } else {
+        this.selectedEscalation = null;
+        this.selectedId = null;
       }
+    }
+
     this.canHandleElement = this.checkElement(this.businessObjInPanel);
     });
   }

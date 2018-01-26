@@ -41,9 +41,15 @@ export class SignalEventSection implements ISection {
 
     this.eventBus.on('element.click', (event: IEvent) => {
       this.businessObjInPanel = event.element.businessObject;
-      if (this.businessObjInPanel.eventDefinitions && this.businessObjInPanel.eventDefinitions[0].signalRef) {
-        this.selectedId = this.businessObjInPanel.eventDefinitions[0].signalRef.id;
-        this.updateSignal();
+      if (this.businessObjInPanel.eventDefinitions
+        && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:SignalEventDefinition') {
+          if (this.businessObjInPanel.eventDefinitions[0].signalRef) {
+            this.selectedId = this.businessObjInPanel.eventDefinitions[0].signalRef.id;
+            this.updateSignal();
+          } else {
+            this.selectedSignal = null;
+            this.selectedId = null;
+          }
       }
       this.canHandleElement = this.checkElement(this.businessObjInPanel);
     });
