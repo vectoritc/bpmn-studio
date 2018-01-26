@@ -43,9 +43,15 @@ export class MessageEventSection implements ISection {
     this.eventBus.on('element.click', (event: IEvent) => {
       this.businessObjInPanel = event.element.businessObject;
 
-      if (this.businessObjInPanel.eventDefinitions && this.businessObjInPanel.eventDefinitions[0].messageRef) {
-        this.selectedId = this.businessObjInPanel.eventDefinitions[0].messageRef.id;
-        this.updateMessage();
+      if (this.businessObjInPanel.eventDefinitions
+        && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:MessageEventDefinition') {
+          if (this.businessObjInPanel.eventDefinitions[0].messageRef) {
+            this.selectedId = this.businessObjInPanel.eventDefinitions[0].messageRef.id;
+            this.updateMessage();
+          } else {
+            this.selectedMessage = null;
+            this.selectedId = null;
+          }
       }
       this.canHandleElement = this.checkElement(this.businessObjInPanel);
     });
