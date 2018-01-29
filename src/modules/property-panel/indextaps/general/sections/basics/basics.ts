@@ -22,7 +22,7 @@ export class BasicsSection implements ISection {
     this.eventBus = model.modeler.get('eventBus');
     this.modeling = model.modeler.get('modeling');
 
-    this.eventBus.on('element.click', (event: IEvent) => {
+    this.eventBus.on(['element.click', 'shape.changed'], (event: IEvent) => {
       this.elementInPanel = event.element;
       this.businessObjInPanel = event.element.businessObject;
     });

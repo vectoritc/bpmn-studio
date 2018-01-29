@@ -46,7 +46,7 @@ export class MessageEventSection implements ISection {
       this.init();
     }
 
-    this.eventBus.on('element.click', (event: IEvent) => {
+    this.eventBus.on(['element.click', 'shape.changed'], (event: IEvent) => {
       this.businessObjInPanel = event.element.businessObject;
       this.init();
     });
