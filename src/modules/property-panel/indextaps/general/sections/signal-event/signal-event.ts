@@ -39,20 +39,30 @@ export class SignalEventSection implements ISection {
 
     this.signals = await this.getSignals();
 
+    const selectedEvents: any = this.modeler.get('selection')._selectedElements;
+    if (selectedEvents[0]) {
+      this.businessObjInPanel = selectedEvents[0].businessObject;
+      this.init();
+    }
+
     this.eventBus.on('element.click', (event: IEvent) => {
       this.businessObjInPanel = event.element.businessObject;
-      if (this.businessObjInPanel.eventDefinitions
-        && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:SignalEventDefinition') {
-          if (this.businessObjInPanel.eventDefinitions[0].signalRef) {
-            this.selectedId = this.businessObjInPanel.eventDefinitions[0].signalRef.id;
-            this.updateSignal();
-          } else {
-            this.selectedSignal = null;
-            this.selectedId = null;
-          }
-      }
-      this.canHandleElement = this.checkElement(this.businessObjInPanel);
+      this.init();
     });
+  }
+
+  private init(): void {
+    if (this.businessObjInPanel.eventDefinitions
+      && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:SignalEventDefinition') {
+        if (this.businessObjInPanel.eventDefinitions[0].signalRef) {
+          this.selectedId = this.businessObjInPanel.eventDefinitions[0].signalRef.id;
+          this.updateSignal();
+        } else {
+          this.selectedSignal = null;
+          this.selectedId = null;
+        }
+    }
+    this.canHandleElement = this.checkElement(this.businessObjInPanel);
   }
 
   public checkElement(element: IModdleElement): boolean {

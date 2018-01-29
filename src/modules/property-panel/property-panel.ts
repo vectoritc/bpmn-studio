@@ -12,10 +12,16 @@ export class PropertyPanel {
   public generalRegister: any = new General();
   public formsRegister: any = new Forms();
 
+  private currentRegister: any = this.generalRegister;
+
   private attached(): void {
     this.registers = [
       this.generalRegister,
       this.formsRegister,
     ];
+  }
+
+  public updateLabel(selectedRegister: any): void {
+    this.currentRegister = selectedRegister;
   }
 }

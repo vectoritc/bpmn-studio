@@ -39,12 +39,23 @@ export class EscalationEventSection implements ISection {
     this.modeler = model.modeler;
     this.escalations = await this.getEscalations();
 
+    const selectedEvents: any = this.modeler.get('selection')._selectedElements;
+    if (selectedEvents[0]) {
+      this.businessObjInPanel = selectedEvents[0].businessObject;
+      this.init();
+    }
+
     this.eventBus.on('element.click', (event: IEvent) => {
       this.businessObjInPanel = event.element.businessObject;
-      console.log(this.businessObjInPanel);
+      this.init();
+    });
+  }
 
-      if (this.businessObjInPanel.eventDefinitions && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:EscalationEventDefinition') {
-        this.isBoundaryEvent = this.businessObjInPanel.$type === 'bpmn:BoundaryEvent';
+  private init(): void {
+    if (this.businessObjInPanel.eventDefinitions && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:EscalationEventDefinition') {
+      this.isBoundaryEvent = this.businessObjInPanel.$type === 'bpmn:BoundaryEvent';
+      if (this.businessObjInPanel.eventDefinitions[0].escalationRef) {
+        this.selectedId = this.businessObjInPanel.eventDefinitions[0].escalationRef.id;
 
         if (this.businessObjInPanel.eventDefinitions[0].escalationRef) {
           this.selectedId = this.businessObjInPanel.eventDefinitions[0].escalationRef.id;
@@ -55,9 +66,8 @@ export class EscalationEventSection implements ISection {
           this.selectedId = null;
         }
       }
-
-      this.canHandleElement = this.checkElement(this.businessObjInPanel);
-    });
+    }
+    this.canHandleElement = this.checkElement(this.businessObjInPanel);
   }
 
   public checkElement(element: IModdleElement): boolean {

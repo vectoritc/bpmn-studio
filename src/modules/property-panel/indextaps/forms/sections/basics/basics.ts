@@ -9,6 +9,7 @@ import {IBpmnModdle,
   IPageModel,
   ISection,
   IShape} from '../../../../../../contracts';
+import { PropertyPanel } from './../../../../property-panel';
 
 export class BasicsSection implements ISection {
 
@@ -20,6 +21,7 @@ export class BasicsSection implements ISection {
   private eventBus: IEventBus;
   private moddle: IBpmnModdle;
   private modeler: IBpmnModeler;
+  private propertyPanel: PropertyPanel;
 
   private forms: Array<IModdleElement>;
   private selectedForm: IModdleElement;
@@ -33,15 +35,24 @@ export class BasicsSection implements ISection {
     this.moddle = model.modeler.get('moddle');
     this.modeler = model.modeler;
 
+    const selectedEvents: any = this.modeler.get('selection')._selectedElements;
+    if (selectedEvents[0]) {
+      this.businessObjInPanel = selectedEvents[0].businessObject;
+      this.init();
+    }
+
     this.eventBus.on('element.click', (event: IEvent) => {
       this.businessObjInPanel = event.element.businessObject;
-      this.isFormSelected = false;
-      this.canHandleElement = this.checkElement(this.businessObjInPanel);
-
-      if (this.canHandleElement) {
-        this.reloadForms();
-      }
+      this.init();
     });
+  }
+
+  private init(): void {
+    this.isFormSelected = false;
+    this.canHandleElement = this.checkElement(this.businessObjInPanel);
+    if (this.canHandleElement) {
+      this.reloadForms();
+    }
   }
 
   private getXML(): string {

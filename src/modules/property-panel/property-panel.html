@@ -1,7 +1,17 @@
 <template>
   <require from="./property-panel.css"></require>
   <div class="property-panel">
-    <compose repeat.for="register of registers" view-model=".${register.path}" view=".${register.path}.html"
+    <div class="btn-group">
+      <a class="btn btn-default labelbuttun">${currentRegister.title}</a>
+      <a ref="exportDropdown" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+      </a>
+      <ul class="dropdown-menu">
+        <li repeat.for="register of registers"><a click.delegate="updateLabel(register)">${register.title}</a></li>
+      </ul>
+    </div>
+    <compose view-model=".${currentRegister.path}" view=".${currentRegister.path}.html"
       model.bind="{ modeler : modeler }" containerless></compose>
   </div>
 </template>

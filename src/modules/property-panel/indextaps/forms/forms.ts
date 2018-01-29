@@ -8,13 +8,13 @@ export class Forms {
   public title: string = 'Forms';
   public path: string = '/indextaps/forms/forms';
   public sections: Array<ISection>;
-  public eventBus: IEventBus;
+  private eventBus: IEventBus;
 
-  public basicsSection: ISection = new BasicsSection();
+  private basicsSection: ISection = new BasicsSection();
 
   public canHandleElement: boolean;
 
-  public activate(model: IPageModel): void {
+  private activate(model: IPageModel): void {
 
     this.eventBus = model.modeler.get('eventBus');
 
@@ -22,12 +22,14 @@ export class Forms {
       this.basicsSection,
     ];
 
-    this.eventBus.on('element.click', (event: IEvent) => {
+    // const selectedEvent: any = model.modeler.get('selection')._selectedElements;
+    // console.log(selectedEvent);
+    // this.eventBus.on('element.click', (event: IEvent) => {
 
-      this.canHandleElement = this.sections.some((section: ISection) => {
-        return section.checkElement(event.element.businessObject);
-      });
-    });
+    // this.canHandleElement = this.sections.some((section: ISection) => {
+    //     return section.checkElement(event.element.businessObject);
+    //   });
+    // });
   }
 
 }

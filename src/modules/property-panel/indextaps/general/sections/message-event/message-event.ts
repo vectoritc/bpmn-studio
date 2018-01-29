@@ -9,7 +9,7 @@ import {IBpmnModdle,
   ISection,
   IShape} from '../../../../../../contracts';
 
-import {bindable, inject, observable} from 'aurelia-framework';
+import {inject} from 'aurelia-framework';
 import {GeneralService} from '../../service/general.service';
 
 @inject(GeneralService)
@@ -40,21 +40,30 @@ export class MessageEventSection implements ISection {
 
     this.messages = await this.getMessages();
 
+    const selectedEvents: any = this.modeler.get('selection')._selectedElements;
+    if (selectedEvents[0]) {
+      this.businessObjInPanel = selectedEvents[0].businessObject;
+      this.init();
+    }
+
     this.eventBus.on('element.click', (event: IEvent) => {
       this.businessObjInPanel = event.element.businessObject;
-
-      if (this.businessObjInPanel.eventDefinitions
-        && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:MessageEventDefinition') {
-          if (this.businessObjInPanel.eventDefinitions[0].messageRef) {
-            this.selectedId = this.businessObjInPanel.eventDefinitions[0].messageRef.id;
-            this.updateMessage();
-          } else {
-            this.selectedMessage = null;
-            this.selectedId = null;
-          }
-      }
-      this.canHandleElement = this.checkElement(this.businessObjInPanel);
+      this.init();
     });
+  }
+
+  private init(): void {
+    if (this.businessObjInPanel.eventDefinitions
+      && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:MessageEventDefinition') {
+        if (this.businessObjInPanel.eventDefinitions[0].messageRef) {
+          this.selectedId = this.businessObjInPanel.eventDefinitions[0].messageRef.id;
+          this.updateMessage();
+        } else {
+          this.selectedMessage = null;
+          this.selectedId = null;
+        }
+    }
+    this.canHandleElement = this.checkElement(this.businessObjInPanel);
   }
 
   public checkElement(element: IModdleElement): boolean {
