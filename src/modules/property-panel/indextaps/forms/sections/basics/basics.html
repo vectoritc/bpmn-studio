@@ -9,7 +9,7 @@
     <button class="forms-addFormButton" click.delegate="addForm()">+</button>
     <button class="forms-removeFormButton" disabled.bind="selectedIndex === undefined" click.delegate="removeForm()">x</button>
     <ul class="list-group forms-list">
-      <li class="list-group-item forms-item" id="${form.id}" repeat.for="form of forms" click.delegate="setActive(form.id)"><span click.delegate="selectForm(form)">${form.id}</span></li>
+      <li class="list-group-item forms-item" id="${form.id}" repeat.for="form of forms" click.delegate="setActive(form.id) selectForm(form)"><span>${form.id}</span></li>
       <li class="list-group-item forms-item" if.bind="forms.length === 0"><span>No Forms</span></li>
     </ul>
     <div show.bind="isFormSelected">
