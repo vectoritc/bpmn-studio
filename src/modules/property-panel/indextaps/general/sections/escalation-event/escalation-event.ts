@@ -40,20 +40,23 @@ export class EscalationEventSection implements ISection {
     this.escalations = await this.getEscalations();
 
     this.eventBus.on('element.click', (event: IEvent) => {
-    this.businessObjInPanel = event.element.businessObject;
+      this.businessObjInPanel = event.element.businessObject;
+      console.log(this.businessObjInPanel);
 
-    if (this.businessObjInPanel.eventDefinitions && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:EscalationEventDefinition') {
-      if (this.businessObjInPanel.eventDefinitions[0].escalationRef) {
-        this.selectedId = this.businessObjInPanel.eventDefinitions[0].escalationRef.id;
+      if (this.businessObjInPanel.eventDefinitions && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:EscalationEventDefinition') {
+        this.isBoundaryEvent = this.businessObjInPanel.$type === 'bpmn:BoundaryEvent';
 
-        this.updateEscalation();
-      } else {
-        this.selectedEscalation = null;
-        this.selectedId = null;
+        if (this.businessObjInPanel.eventDefinitions[0].escalationRef) {
+          this.selectedId = this.businessObjInPanel.eventDefinitions[0].escalationRef.id;
+
+          this.updateEscalation();
+        } else {
+          this.selectedEscalation = null;
+          this.selectedId = null;
+        }
       }
-    }
 
-    this.canHandleElement = this.checkElement(this.businessObjInPanel);
+      this.canHandleElement = this.checkElement(this.businessObjInPanel);
     });
   }
 
@@ -89,14 +92,16 @@ export class EscalationEventSection implements ISection {
   }
 
   private updateEscalation(): void {
-    this.selectedEscalation = this.escalations.find((escalation: IModdleElement) => {
-      return escalation.id === this.selectedId;
-    });
+    if (this.selectedId) {
+      this.selectedEscalation = this.escalations.find((escalation: IModdleElement) => {
+        return escalation.id === this.selectedId;
+      });
 
-    this.isBoundaryEvent = this.businessObjInPanel.$type === 'bpmn:BoundaryEvent';
-
-    this.businessObjInPanel.eventDefinitions[0].escalationRef = this.selectedEscalation;
-    this.selectedEscalation.escalationCodeVariable = this.businessObjInPanel.eventDefinitions[0].escalationCodeVariable;
+      this.selectedEscalation.escalationCodeVariable = this.businessObjInPanel.eventDefinitions[0].escalationCodeVariable;
+      this.businessObjInPanel.eventDefinitions[0].escalationRef = this.selectedEscalation;
+    } else {
+      this.selectedEscalation = null;
+    }
   }
 
   private updateEscalationName(): void {
@@ -138,10 +143,15 @@ export class EscalationEventSection implements ISection {
 
       definitions.get('rootElements').push(bpmnEscalation);
 
-      await this.updateXML(definitions);
-
-      this.selectedId = bpmnEscalation.id;
-      this.updateEscalation();
+      this.moddle.toXML(definitions, (error: Error, xmlStrUpdated: string) => {
+          this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
+            await this.refreshEscalations();
+            await this.setBusinessObj();
+            this.selectedId = bpmnEscalation.id;
+            this.selectedEscalation = bpmnEscalation;
+            this.updateEscalation();
+          });
+        });
     });
   }
 
@@ -172,5 +182,4 @@ export class EscalationEventSection implements ISection {
       resolve();
     });
   }
-
 }

@@ -92,13 +92,17 @@ export class ErrorEventSection implements ISection {
   }
 
   private updateError(): void {
-    this.selectedError = this.errors.find((error: IModdleElement) => {
-      return error.id === this.selectedId;
-    });
+    if (this.selectedId) {
+      this.selectedError = this.errors.find((error: IModdleElement) => {
+        return error.id === this.selectedId;
+      });
 
-    this.businessObjInPanel.eventDefinitions[0].errorRef = this.selectedError;
-    if (!this.isEndEvent) {
-      this.selectedError.errorMessageVariable = this.businessObjInPanel.eventDefinitions[0].errorMessageVariable;
+      this.businessObjInPanel.eventDefinitions[0].errorRef = this.selectedError;
+      if (!this.isEndEvent) {
+        this.selectedError.errorMessageVariable = this.businessObjInPanel.eventDefinitions[0].errorMessageVariable;
+      }
+    } else {
+      this.selectedError = null;
     }
   }
 
@@ -130,7 +134,7 @@ export class ErrorEventSection implements ISection {
   }
 
   private updateErrorMessage(): void {
-      this.businessObjInPanel.eventDefinitions[0].errorMessageVariable = this.selectedError.errorMessageVariable;
+    this.businessObjInPanel.eventDefinitions[0].errorMessageVariable = this.selectedError.errorMessageVariable;
   }
 
   private async addError(): Promise<void> {
@@ -141,10 +145,15 @@ export class ErrorEventSection implements ISection {
 
       definitions.get('rootElements').push(bpmnError);
 
-      await this.updateXML(definitions);
-
-      this.selectedId = bpmnError.id;
-      this.updateError();
+      this.moddle.toXML(definitions, (error: Error, xmlStrUpdated: string) => {
+        this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
+          await this.refreshErrors();
+          await this.setBusinessObj();
+          this.selectedId = bpmnError.id;
+          this.selectedError = bpmnError;
+          this.updateError();
+        });
+      });
     });
   }
 
