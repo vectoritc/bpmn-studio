@@ -30,6 +30,8 @@ export class BasicsSection implements ISection {
   private selectedType: string;
   private customType: string;
 
+  private activeListElementId: string;
+
   public async activate(model: IPageModel): Promise<void> {
     this.eventBus = model.modeler.get('eventBus');
     this.moddle = model.modeler.get('moddle');
@@ -68,6 +70,17 @@ export class BasicsSection implements ISection {
     this.selectedType = this.getTypeOrCustomType(form.type);
     this.selectedIndex = this.getSelectedIndex();
     this.isFormSelected = true;
+  }
+
+  private setActive(formId: string): void {
+    let element: HTMLElement = null;
+    if (this.activeListElementId) {
+      element = document.getElementById(this.activeListElementId);
+      element.classList.remove('active');
+    }
+    element = document.getElementById(formId);
+    element.classList.add('active');
+    this.activeListElementId = formId;
   }
 
   private reloadForms(): void {
