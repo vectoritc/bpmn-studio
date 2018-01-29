@@ -38,4 +38,5 @@ export interface IModdleElement {
   errorMessageVariable?: string;
   escalationCode?: string;
   escalationCodeVariable?: string;
+  value?: string;
 }

@@ -1,5 +1,6 @@
 import {bindable} from 'aurelia-framework';
 import {IBpmnModeler} from '../../contracts';
+import {Extensions} from './indextaps/extensions/extensions';
 import {Forms} from './indextaps/forms/forms';
 import {General} from './indextaps/general/general';
 
@@ -11,6 +12,7 @@ export class PropertyPanel {
 
   public generalRegister: any = new General();
   public formsRegister: any = new Forms();
+  public extensionsRegister: any = new Extensions();
 
   private currentRegister: any = this.generalRegister;
 
@@ -18,6 +20,7 @@ export class PropertyPanel {
     this.registers = [
       this.generalRegister,
       this.formsRegister,
+      this.extensionsRegister,
     ];
   }
 

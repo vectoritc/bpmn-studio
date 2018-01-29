@@ -16,8 +16,6 @@ export class FlowSection implements ISection {
 
   private tempObject: IModdleElement;
 
-  public flowCondition: string;
-
   public activate(model: IPageModel): void {
     this.eventBus = model.modeler.get('eventBus');
     this.modeler = model.modeler;
