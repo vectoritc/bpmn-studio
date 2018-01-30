@@ -88,12 +88,22 @@ export class BasicsSection implements ISection {
     this.newValues = [];
 
     if (!this.businessObjInPanel.extensionElements ||
-        !this.businessObjInPanel.extensionElements.values ||
-        !this.businessObjInPanel.extensionElements.values[1]) {
+        !this.businessObjInPanel.extensionElements.values) {
       return;
     }
 
-    const forms: Array<IModdleElement> = this.businessObjInPanel.extensionElements.values[1].values;
+    let formsElement: any;
+    for (const extensionValue of this.businessObjInPanel.extensionElements.values) {
+      if (extensionValue.$type === 'camunda:Properties') {
+        formsElement = extensionValue;
+      }
+    }
+
+    if (!formsElement) {
+      return;
+    }
+
+    const forms: Array<IModdleElement> = formsElement.values;
     for (const form of forms) {
       if (form.$type === `camunda:Property`) {
         this.newNames.push(form.name);
