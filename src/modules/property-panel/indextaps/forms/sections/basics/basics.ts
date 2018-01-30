@@ -29,6 +29,7 @@ export class BasicsSection implements ISection {
   private types: Array<string> = ['string', 'long', 'boolean', 'date', 'enum', 'custom type'];
   private selectedType: string;
   private customType: string;
+  private formElement: IModdleElement;
 
   private activeListElementId: string;
 
@@ -40,6 +41,7 @@ export class BasicsSection implements ISection {
     const selectedEvents: any = this.modeler.get('selection')._selectedElements;
     if (selectedEvents[0]) {
       this.businessObjInPanel = selectedEvents[0].businessObject;
+      this.formElement = this.getFormElement();
       this.init();
     }
 
@@ -89,18 +91,7 @@ export class BasicsSection implements ISection {
       return;
     }
 
-    let formElement: any;
-    for (const extensionValue of this.businessObjInPanel.extensionElements.values) {
-      if (extensionValue.$type === 'camunda:FormData') {
-        formElement = extensionValue;
-      }
-    }
-
-    if (!formElement) {
-      return;
-    }
-
-    const forms: any = formElement.fields;
+    const forms: Array<IModdleElement> = this.formElement.fields;
     for (const form of forms) {
       if (form.$type === `camunda:FormField`) {
         this.forms.push(form);
@@ -117,15 +108,15 @@ export class BasicsSection implements ISection {
   }
 
   private updateId(): void {
-    this.businessObjInPanel.extensionElements.values[0].fields[this.selectedIndex].id = this.selectedForm.id;
+    this.formElement.fields[this.selectedIndex].id = this.selectedForm.id;
   }
 
   private updateDefaultValue(): void {
-    this.businessObjInPanel.extensionElements.values[0].fields[this.selectedIndex].label = this.selectedForm.label;
+    this.formElement.fields[this.selectedIndex].label = this.selectedForm.label;
   }
 
   private updateLabel(): void {
-    this.businessObjInPanel.extensionElements.values[0].fields[this.selectedIndex].defaultValue = this.selectedForm.defaultValue;
+    this.formElement.fields[this.selectedIndex].defaultValue = this.selectedForm.defaultValue;
   }
 
   private updateType(): void {
@@ -137,11 +128,11 @@ export class BasicsSection implements ISection {
       type = this.selectedType;
     }
 
-    this.businessObjInPanel.extensionElements.values[0].fields[this.selectedIndex].type = type;
+    this.formElement.fields[this.selectedIndex].type = type;
   }
 
   private async removeForm(): Promise<void> {
-    this.businessObjInPanel.extensionElements.values[0].fields.splice(this.selectedIndex, 1);
+    this.formElement.fields.splice(this.selectedIndex, 1);
     this.isFormSelected = false;
     this.selectedForm = undefined;
     this.selectedIndex = undefined;
@@ -157,18 +148,7 @@ export class BasicsSection implements ISection {
                                                             defaultValue: `Default Value`,
                                                           });
 
-      if (!this.businessObjInPanel.extensionElements) {
-        const values: Array<IModdleElement> = [];
-        const fields: Array<IModdleElement> = [];
-        const formData: IModdleElement = this.moddle.create('camunda:FormData', {fields: fields});
-        values.push(formData);
-
-        this.businessObjInPanel.formKey = `Form Key`;
-        const extensionElements: IModdleElement = this.moddle.create('bpmn:ExtensionElements', {values: values});
-        this.businessObjInPanel.extensionElements = extensionElements;
-      }
-
-      this.businessObjInPanel.extensionElements.values[0].fields.push(bpmnForm);
+      this.formElement.fields.push(bpmnForm);
       this.forms.push(bpmnForm);
       this.selectForm(bpmnForm);
   }
@@ -184,12 +164,47 @@ export class BasicsSection implements ISection {
   }
 
   private getSelectedIndex(): number {
-    const forms: Array<IModdleElement> = this.businessObjInPanel.extensionElements.values[0].fields;
+    const forms: Array<IModdleElement> = this.formElement.fields;
     for (let index: number = 0; index < forms.length; index++) {
       if (forms[index].id === this.selectedForm.id) {
         return index;
       }
     }
+  }
+
+  private getFormElement(): IModdleElement {
+    let formElement: IModdleElement;
+
+    if (!this.businessObjInPanel.extensionElements) {
+      this.createExtensionElement();
+    }
+
+    for (const extensionValue of this.businessObjInPanel.extensionElements.values) {
+      if (extensionValue.$type === 'camunda:FormData') {
+        formElement = extensionValue;
+      }
+    }
+
+    if (!formElement) {
+      const fields: Array<IModdleElement> = [];
+      const extensionFormElement: IModdleElement = this.moddle.create('camunda:FormData', {fields: fields});
+      this.businessObjInPanel.extensionElements.values.push(extensionFormElement);
+
+      return this.getFormElement();
+    }
+
+    return formElement;
+  }
+
+  private createExtensionElement(): void {
+    const values: Array<IModdleElement> = [];
+    const fields: Array<IModdleElement> = [];
+    const formData: IModdleElement = this.moddle.create('camunda:FormData', {fields: fields});
+    values.push(formData);
+
+    this.businessObjInPanel.formKey = `Form Key`;
+    const extensionElements: IModdleElement = this.moddle.create('bpmn:ExtensionElements', {values: values});
+    this.businessObjInPanel.extensionElements = extensionElements;
   }
 
   private generateRandomId(): string {
