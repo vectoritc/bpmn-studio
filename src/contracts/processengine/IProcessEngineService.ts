@@ -13,5 +13,4 @@ export interface IProcessEngineService {
   getUserTasksByProcessDefId(processDefId: string): Promise<IPagination<IUserTaskEntity>>;
   getUserTasksByProcessId(processId: string): Promise<IPagination<IUserTaskEntity>>;
   getUserTaskById(userTaskId: string): Promise<IUserTaskEntity>;
-  publishDraft(processDefId: string): Promise<IProcessDefEntity>;
 }

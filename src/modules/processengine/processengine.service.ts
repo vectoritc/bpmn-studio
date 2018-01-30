@@ -54,8 +54,4 @@ export class ProcessEngineService implements IProcessEngineService {
   public getProcessesByProcessDefId(processDefId: string): Promise<IPagination<IProcessEntity>> {
     return this.repository.getProcessesByProcessDefId(processDefId);
   }
-
-  public publishDraft(processDefId: string): Promise<IProcessDefEntity> {
-    return this.repository.publishDraft(processDefId);
-  }
 }
