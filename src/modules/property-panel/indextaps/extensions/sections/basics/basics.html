@@ -4,11 +4,11 @@
   <div class="extensions-section">
     <h4><label class="header-label">Properties</label></h4>
     <label class="input-label">Add Properties </label>
-    <button class="forms-addFormButton" click.delegate="addForm()">+</button>
+    <button class="properties-addPropertyButton" click.delegate="addProperty()">+</button>
     <div repeat.for="property of properties" index.bind="$index">
       <input type="text" value.bind="newNames[$index]" placeholder="Name" change.delegate="changeName($index)">
       <input type="text" value.bind="newValues[$index]" placeholder="Value" change.delegate="changeValue($index)">
-      <button class="forms-removeFormButton" click.delegate="deleteForm($index)">X</button>
+      <button class="properties-removePropertyButton" click.delegate="removeProperty($index)">X</button>
     </div>
   </div>
 </template>

@@ -40,10 +40,10 @@ export class BasicsSection implements ISection {
 
   private init(): void {
     this.selectedElement = this.businessObjInPanel;
-    this.reloadForm();
+    this.reloadProperties();
   }
 
-  private async addForm(): Promise<void> {
+  private async addProperty(): Promise<void> {
     const bpmnProperty: IModdleElement = this.moddle.create('camunda:Property',
                                                         { name: '',
                                                           value: '',
@@ -77,12 +77,12 @@ export class BasicsSection implements ISection {
     this.properties.push(bpmnProperty);
   }
 
-  private deleteForm(index: number): void {
+  private removeProperty(index: number): void {
     this.businessObjInPanel.extensionElements.values[1].values.splice(index, 1);
-    this.reloadForm();
+    this.reloadProperties();
   }
 
-  private reloadForm(): void {
+  private reloadProperties(): void {
     this.properties = [];
     this.newNames = [];
     this.newValues = [];
@@ -92,23 +92,23 @@ export class BasicsSection implements ISection {
       return;
     }
 
-    let formsElement: any;
+    let propertyElement: any;
     for (const extensionValue of this.businessObjInPanel.extensionElements.values) {
       if (extensionValue.$type === 'camunda:Properties') {
-        formsElement = extensionValue;
+        propertyElement = extensionValue;
       }
     }
 
-    if (!formsElement) {
+    if (!propertyElement) {
       return;
     }
 
-    const forms: Array<IModdleElement> = formsElement.values;
-    for (const form of forms) {
-      if (form.$type === `camunda:Property`) {
-        this.newNames.push(form.name);
-        this.newValues.push(form.value);
-        this.properties.push(form);
+    const properties: Array<IModdleElement> = propertyElement.values;
+    for (const property of properties) {
+      if (property.$type === `camunda:Property`) {
+        this.newNames.push(property.name);
+        this.newValues.push(property.value);
+        this.properties.push(property);
       }
     }
   }
