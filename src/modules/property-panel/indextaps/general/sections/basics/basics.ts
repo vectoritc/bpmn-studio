@@ -17,10 +17,18 @@ export class BasicsSection implements ISection {
   private businessObjInPanel: IModdleElement;
   private eventBus: IEventBus;
   private modeling: IModeling;
+  private modeler: IBpmnModeler;
 
   public activate(model: IPageModel): void {
     this.eventBus = model.modeler.get('eventBus');
     this.modeling = model.modeler.get('modeling');
+    this.modeler = model.modeler;
+
+    const selectedEvents: any = this.modeler.get('selection')._selectedElements;
+    if (selectedEvents[0]) {
+      this.businessObjInPanel = selectedEvents[0].businessObject;
+      this.elementInPanel = selectedEvents[0];
+    }
 
     this.eventBus.on(['element.click', 'shape.changed'], (event: IEvent) => {
       this.elementInPanel = event.element;
