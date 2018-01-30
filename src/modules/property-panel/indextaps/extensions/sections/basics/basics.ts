@@ -20,7 +20,9 @@ export class BasicsSection implements ISection {
   private modeler: IBpmnModeler;
 
   private properties: Array<any> = [];
-  private tempObject: IModdleElement;
+  private selectedElement: IModdleElement;
+  private newNames: Array<string> = [];
+  private newValues: Array<string> = [];
 
   public async activate(model: IPageModel): Promise<void> {
     this.eventBus = model.modeler.get('eventBus');
@@ -41,7 +43,7 @@ export class BasicsSection implements ISection {
   }
 
   private init(): void {
-    this.tempObject = this.businessObjInPanel;
+    this.selectedElement = this.businessObjInPanel;
     this.reloadForm();
   }
 
@@ -66,7 +68,8 @@ export class BasicsSection implements ISection {
       const extensionElements: IModdleElement = this.moddle.create('bpmn:ExtensionElements', {values: extensionValues});
       this.businessObjInPanel.extensionElements = extensionElements;
     }
-
+    this.newNames.push('');
+    this.newValues.push('');
     this.businessObjInPanel.extensionElements.values[1].values.push(bpmnProperty);
     this.properties.push(bpmnProperty);
 }
@@ -78,24 +81,29 @@ export class BasicsSection implements ISection {
 
   private reloadForm(): void {
     this.properties = [];
-    if (this.businessObjInPanel.extensionElements === undefined || !this.businessObjInPanel.extensionElements.values) {
+    this.newNames = [];
+    this.newValues = [];
+
+    if (!this.businessObjInPanel.extensionElements || this.businessObjInPanel.extensionElements.values.length < 2) {
       return;
     }
 
-    const forms: any = this.businessObjInPanel.extensionElements.values[1].values;
+    const forms: Array<IModdleElement> = this.businessObjInPanel.extensionElements.values[1].values;
     for (const form of forms) {
       if (form.$type === `camunda:Property`) {
+        this.newNames.push(form.name);
+        this.newValues.push(form.value);
         this.properties.push(form);
       }
     }
   }
 
   private changeName(index: number): void {
-    this.businessObjInPanel.extensionElements.values[1].values[index].name = this.tempObject.extensionElements.values[1].values[index].name;
+    this.businessObjInPanel.extensionElements.values[1].values[index].name = this.newNames[index];
   }
 
   private changeValue(index: number): void {
-    this.businessObjInPanel.extensionElements.values[1].values[index].value = this.tempObject.extensionElements.values[1].values[index].value;
+    this.businessObjInPanel.extensionElements.values[1].values[index].value = this.newValues[index];
   }
 
   public checkElement(element: IModdleElement): boolean {

@@ -4,10 +4,10 @@
   <div class="extensions-section">
     <h4><label class="header-label">Properties</label></h4>
     <label class="input-label">Add Properties </label>
-    <button class="forms-addFormButton" click.delegate="addForm(1)">+</button>
+    <button class="forms-addFormButton" click.delegate="addForm()">+</button>
     <div repeat.for="property of properties" index.bind="$index">
-      <input type="text" value.bind="tempObject.extensionElements.values[1].values[$index].name" placeholder="Name" change.delegate="changeName($index)">
-      <input type="text" value.bind="tempObject.extensionElements.values[1].values[$index].value" placeholder="Value" change.delegate="changeValue($index)">
+      <input type="text" value.bind="newNames[$index]" placeholder="Name" change.delegate="changeName($index)">
+      <input type="text" value.bind="newValues[$index]" placeholder="Value" change.delegate="changeValue($index)">
       <button class="forms-removeFormButton" click.delegate="deleteForm($index)">X</button>
     </div>
   </div>
