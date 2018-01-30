@@ -1,9 +1,12 @@
 .section__content {
-  width: 100%
+  padding-right: 0;
+  padding-left: 5px;
+  padding-bottom: 10px;
 }
 
 .section__special {
-  width: 50px;
+  padding-left: 0;
+
 }
 
 .section__input-label {
@@ -13,6 +16,4 @@
 
 .section__border {
   border-left: 5px solid orange;
-  padding-left: 5px;
-  padding-bottom: 10px;
 }

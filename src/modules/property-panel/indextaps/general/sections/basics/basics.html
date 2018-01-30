@@ -1,8 +1,8 @@
 <template>
   <require from="./basics.css"></require>
   <require from="../../../../styles/sections.css"></require>
-  <div class="row col-md-12">
-    <div class="section__content section__border">
+  <div class="section">
+    <div class="section__content section__border col-md-11">
       <label class="section__input-label">Id: </label>
       <input type="text" class="form-control" value.bind="businessObjInPanel.id" change.delegate="updateId()">
 
@@ -12,7 +12,7 @@
       <label class="section__input-label">Documentation: </label>
       <input type="text" class="form-control" value.bind="businessObjInPanel.documentation" change.delegate="updateDocumentation()">
     </div>
-    <div class="section__special">
+    <div class="section__special col-md-1">
 
     </div>
   </div>
