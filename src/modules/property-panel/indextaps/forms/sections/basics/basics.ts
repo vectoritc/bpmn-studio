@@ -87,7 +87,7 @@ export class BasicsSection implements ISection {
 
   private reloadForms(): void {
     this.forms = [];
-    if (!this.businessObjInPanel.extensionElements || !this.businessObjInPanel.extensionElements.values) {
+    if (!this.formElement || !this.formElement.fields) {
       return;
     }
 

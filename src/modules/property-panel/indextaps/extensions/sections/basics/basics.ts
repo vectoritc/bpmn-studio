@@ -20,6 +20,7 @@ export class BasicsSection implements ISection {
   private selectedElement: IModdleElement;
   private newNames: Array<string> = [];
   private newValues: Array<string> = [];
+  private propertyElement: IModdleElement;
 
   public async activate(model: IPageModel): Promise<void> {
     this.eventBus = model.modeler.get('eventBus');
@@ -34,6 +35,7 @@ export class BasicsSection implements ISection {
 
     this.eventBus.on('element.click', (event: IEvent) => {
       this.businessObjInPanel = event.element.businessObject;
+      this.propertyElement = this.getPropertyElement();
       this.init();
     });
   }
@@ -49,36 +51,15 @@ export class BasicsSection implements ISection {
                                                           value: '',
                                                         });
 
-    if (!this.businessObjInPanel.extensionElements) {
-      const bpmnExecutionListener: IModdleElement = this.moddle.create('camunda:ExecutionListener',
-                                                                  { class: '',
-                                                                    event: '',
-                                                                  });
-
-      const extensionValues: Array<IModdleElement> = [];
-      const propertyValues: Array<IModdleElement> = [];
-      const properties: IModdleElement = this.moddle.create('camunda:Properties', {values: propertyValues});
-      extensionValues.push(bpmnExecutionListener);
-      extensionValues.push(properties);
-
-      const extensionElements: IModdleElement = this.moddle.create('bpmn:ExtensionElements', {values: extensionValues});
-      this.businessObjInPanel.extensionElements = extensionElements;
-    } else if (!this.businessObjInPanel.extensionElements.values[1]) {
-      const propertyValues: Array<IModdleElement> = [];
-
-      const properties: IModdleElement = this.moddle.create('camunda:Properties', {values: propertyValues});
-      this.businessObjInPanel.extensionElements.values[1] = properties;
-    }
-
     this.newNames.push('');
     this.newValues.push('');
 
-    this.businessObjInPanel.extensionElements.values[1].values.push(bpmnProperty);
+    this.propertyElement.values.push(bpmnProperty);
     this.properties.push(bpmnProperty);
   }
 
   private removeProperty(index: number): void {
-    this.businessObjInPanel.extensionElements.values[1].values.splice(index, 1);
+    this.propertyElement.values.splice(index, 1);
     this.reloadProperties();
   }
 
@@ -87,23 +68,11 @@ export class BasicsSection implements ISection {
     this.newNames = [];
     this.newValues = [];
 
-    if (!this.businessObjInPanel.extensionElements ||
-        !this.businessObjInPanel.extensionElements.values) {
+    if (!this.propertyElement || !this.propertyElement.values) {
       return;
     }
 
-    let propertyElement: any;
-    for (const extensionValue of this.businessObjInPanel.extensionElements.values) {
-      if (extensionValue.$type === 'camunda:Properties') {
-        propertyElement = extensionValue;
-      }
-    }
-
-    if (!propertyElement) {
-      return;
-    }
-
-    const properties: Array<IModdleElement> = propertyElement.values;
+    const properties: Array<IModdleElement> = this.propertyElement.values;
     for (const property of properties) {
       if (property.$type === `camunda:Property`) {
         this.newNames.push(property.name);
@@ -113,12 +82,53 @@ export class BasicsSection implements ISection {
     }
   }
 
+  private getPropertyElement(): IModdleElement {
+    let propertyElement: IModdleElement;
+
+    if (!this.businessObjInPanel.extensionElements) {
+      this.createExtensionElement();
+    }
+
+    for (const extensionValue of this.businessObjInPanel.extensionElements.values) {
+      if (extensionValue.$type === 'camunda:Properties') {
+        propertyElement = extensionValue;
+      }
+    }
+
+    if (!propertyElement) {
+      const propertyValues: Array<IModdleElement> = [];
+
+      const extensionPropertyElement: IModdleElement = this.moddle.create('camunda:Properties', {values: propertyValues});
+      this.businessObjInPanel.extensionElements.values.push(extensionPropertyElement);
+
+      return this.getPropertyElement();
+    }
+
+    return propertyElement;
+  }
+
+  private createExtensionElement(): void {
+    const bpmnExecutionListener: IModdleElement = this.moddle.create('camunda:ExecutionListener',
+                                                                { class: '',
+                                                                  event: '',
+                                                                });
+
+    const extensionValues: Array<IModdleElement> = [];
+    const propertyValues: Array<IModdleElement> = [];
+    const properties: IModdleElement = this.moddle.create('camunda:Properties', {values: propertyValues});
+    extensionValues.push(bpmnExecutionListener);
+    extensionValues.push(properties);
+
+    const extensionElements: IModdleElement = this.moddle.create('bpmn:ExtensionElements', {values: extensionValues});
+    this.businessObjInPanel.extensionElements = extensionElements;
+  }
+
   private changeName(index: number): void {
-    this.businessObjInPanel.extensionElements.values[1].values[index].name = this.newNames[index];
+    this.propertyElement.values[index].name = this.newNames[index];
   }
 
   private changeValue(index: number): void {
-    this.businessObjInPanel.extensionElements.values[1].values[index].value = this.newValues[index];
+    this.propertyElement.values[index].value = this.newValues[index];
   }
 
   public checkElement(element: IModdleElement): boolean {
