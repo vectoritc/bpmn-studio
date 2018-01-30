@@ -35,12 +35,12 @@ export class BasicsSection implements ISection {
 
     this.eventBus.on('element.click', (event: IEvent) => {
       this.businessObjInPanel = event.element.businessObject;
-      this.propertyElement = this.getPropertyElement();
       this.init();
     });
   }
 
   private init(): void {
+    this.propertyElement = this.getPropertyElement();
     this.selectedElement = this.businessObjInPanel;
     this.reloadProperties();
   }

@@ -41,7 +41,6 @@ export class BasicsSection implements ISection {
     const selectedEvents: any = this.modeler.get('selection')._selectedElements;
     if (selectedEvents[0]) {
       this.businessObjInPanel = selectedEvents[0].businessObject;
-      this.formElement = this.getFormElement();
       this.init();
     }
 
@@ -52,6 +51,7 @@ export class BasicsSection implements ISection {
   }
 
   private init(): void {
+    this.formElement = this.getFormElement();
     this.isFormSelected = false;
     this.canHandleElement = this.checkElement(this.businessObjInPanel);
     if (this.canHandleElement) {
