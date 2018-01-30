@@ -49,23 +49,30 @@ export class BasicsSection implements ISection {
                                                           value: '',
                                                         });
 
-    const bpmnExecutionListener: IModdleElement = this.moddle.create('camunda:ExecutionListener',
-                                                                { class: '',
-                                                                  event: '',
-                                                                });
-
     if (!this.businessObjInPanel.extensionElements) {
+      const bpmnExecutionListener: IModdleElement = this.moddle.create('camunda:ExecutionListener',
+                                                                  { class: '',
+                                                                    event: '',
+                                                                  });
+
       const extensionValues: Array<IModdleElement> = [];
-      const values2: Array<IModdleElement> = [];
-      const properties: IModdleElement = this.moddle.create('camunda:Properties', {values: values2});
+      const propertyValues: Array<IModdleElement> = [];
+      const properties: IModdleElement = this.moddle.create('camunda:Properties', {values: propertyValues});
       extensionValues.push(bpmnExecutionListener);
       extensionValues.push(properties);
 
       const extensionElements: IModdleElement = this.moddle.create('bpmn:ExtensionElements', {values: extensionValues});
       this.businessObjInPanel.extensionElements = extensionElements;
+    } else if (!this.businessObjInPanel.extensionElements.values[1]) {
+      const propertyValues: Array<IModdleElement> = [];
+
+      const properties: IModdleElement = this.moddle.create('camunda:Properties', {values: propertyValues});
+      this.businessObjInPanel.extensionElements.values[1] = properties;
     }
+
     this.newNames.push('');
     this.newValues.push('');
+
     this.businessObjInPanel.extensionElements.values[1].values.push(bpmnProperty);
     this.properties.push(bpmnProperty);
   }
@@ -81,8 +88,13 @@ export class BasicsSection implements ISection {
     this.newValues = [];
 
     if (!this.businessObjInPanel.extensionElements ||
+<<<<<<< Updated upstream
         this.businessObjInPanel.extensionElements.values ||
         this.businessObjInPanel.extensionElements.values[1]) {
+=======
+        !this.businessObjInPanel.extensionElements.values ||
+        !this.businessObjInPanel.extensionElements.values[1]) {
+>>>>>>> Stashed changes
       return;
     }
 
