@@ -58,4 +58,16 @@ export class BasicsSection implements ISection {
     });
   }
 
+  public clearId(): void {
+    this.businessObjInPanel.id = '';
+  }
+
+  public clearName(): void {
+    this.businessObjInPanel.id = '';
+  }
+
+  public clearDocumentation(): void {
+    this.businessObjInPanel.documentation = '';
+  }
+
 }
