@@ -75,8 +75,8 @@ export class BasicsSection implements ISection {
 }
 
   private deleteForm(index: number): void {
-    // this.businessObjInPanel.extensionElements.values[1].values.splice(index, 1);
-    // this.reloadForm();
+    this.businessObjInPanel.extensionElements.values[1].values.splice(index, 1);
+    this.reloadForm();
   }
 
   private reloadForm(): void {
@@ -84,7 +84,9 @@ export class BasicsSection implements ISection {
     this.newNames = [];
     this.newValues = [];
 
-    if (!this.businessObjInPanel.extensionElements || this.businessObjInPanel.extensionElements.values.length < 2) {
+    if (!this.businessObjInPanel.extensionElements ||
+        this.businessObjInPanel.extensionElements.values ||
+        this.businessObjInPanel.extensionElements.values.length < 2) {
       return;
     }
 
