@@ -63,7 +63,7 @@ export class BasicsSection implements ISection {
   }
 
   public clearName(): void {
-    this.businessObjInPanel.id = '';
+    this.businessObjInPanel.name = '';
   }
 
   public clearDocumentation(): void {
