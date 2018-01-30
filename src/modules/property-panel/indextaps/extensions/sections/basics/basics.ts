@@ -88,13 +88,8 @@ export class BasicsSection implements ISection {
     this.newValues = [];
 
     if (!this.businessObjInPanel.extensionElements ||
-<<<<<<< Updated upstream
-        this.businessObjInPanel.extensionElements.values ||
-        this.businessObjInPanel.extensionElements.values[1]) {
-=======
         !this.businessObjInPanel.extensionElements.values ||
         !this.businessObjInPanel.extensionElements.values[1]) {
->>>>>>> Stashed changes
       return;
     }
 
