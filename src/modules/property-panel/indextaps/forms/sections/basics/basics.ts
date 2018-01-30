@@ -89,7 +89,18 @@ export class BasicsSection implements ISection {
       return;
     }
 
-    const forms: any = this.businessObjInPanel.extensionElements.values[0].fields;
+    let formElement: any;
+    for (const extensionValue of this.businessObjInPanel.extensionElements.values) {
+      if (extensionValue.$type === 'camunda:FormData') {
+        formElement = extensionValue;
+      }
+    }
+
+    if (!formElement) {
+      return;
+    }
+
+    const forms: any = formElement.fields;
     for (const form of forms) {
       if (form.$type === `camunda:FormField`) {
         this.forms.push(form);
