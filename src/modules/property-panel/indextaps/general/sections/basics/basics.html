@@ -1,14 +1,19 @@
 <template>
   <require from="./basics.css"></require>
   <require from="../../../../styles/sections.css"></require>
-  <div class="section__border">
-    <label class="section__input-label">Id: </label>
-    <input type="text" class="form-control" value.bind="businessObjInPanel.id" change.delegate="updateId()">
+  <div class="row col-md-12">
+    <div class="section__content section__border">
+      <label class="section__input-label">Id: </label>
+      <input type="text" class="form-control" value.bind="businessObjInPanel.id" change.delegate="updateId()">
 
-    <label class="section__input-label">Name: </label>
-    <input type="text" class="form-control" value.bind="businessObjInPanel.name" change.delegate="updateName()">
+      <label class="section__input-label">Name: </label>
+      <input type="text" class="form-control" value.bind="businessObjInPanel.name" change.delegate="updateName()">
 
-    <label class="section__input-label">Documentation: </label>
-    <input type="text" class="form-control" value.bind="businessObjInPanel.documentation" change.delegate="updateDocumentation()">
+      <label class="section__input-label">Documentation: </label>
+      <input type="text" class="form-control" value.bind="businessObjInPanel.documentation" change.delegate="updateDocumentation()">
+    </div>
+    <div class="section__special">
+
+    </div>
   </div>
 </template>

@@ -1,10 +1,18 @@
+.section__content {
+  width: 100%
+}
+
+.section__special {
+  width: 50px;
+}
+
 .section__input-label {
   margin-top: 10px;
   margin-bottom: 0;
 }
 
 .section__border {
-  border-left: 5px solid grey;
+  border-left: 5px solid orange;
   padding-left: 5px;
   padding-bottom: 10px;
 }
