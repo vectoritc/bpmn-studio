@@ -1,10 +1,8 @@
 import {IBpmnModdle,
   IBpmnModeler,
-  IBpmnModelerConstructor,
   IEvent,
   IEventBus,
   IModdleElement,
-  IModeling,
   IPageModel,
   ISection} from '../../../../../../contracts';
 
@@ -16,7 +14,6 @@ export class BasicsSection implements ISection {
   private businessObjInPanel: IModdleElement;
   private eventBus: IEventBus;
   private moddle: IBpmnModdle;
-  private modeling: IModeling;
   private modeler: IBpmnModeler;
 
   private properties: Array<any> = [];
@@ -27,7 +24,6 @@ export class BasicsSection implements ISection {
   public async activate(model: IPageModel): Promise<void> {
     this.eventBus = model.modeler.get('eventBus');
     this.moddle = model.modeler.get('moddle');
-    this.modeling = model.modeler.get('modeling');
     this.modeler = model.modeler;
 
     const selectedEvents: any = this.modeler.get('selection')._selectedElements;
@@ -72,7 +68,7 @@ export class BasicsSection implements ISection {
     this.newValues.push('');
     this.businessObjInPanel.extensionElements.values[1].values.push(bpmnProperty);
     this.properties.push(bpmnProperty);
-}
+  }
 
   private deleteForm(index: number): void {
     this.businessObjInPanel.extensionElements.values[1].values.splice(index, 1);
@@ -86,7 +82,7 @@ export class BasicsSection implements ISection {
 
     if (!this.businessObjInPanel.extensionElements ||
         this.businessObjInPanel.extensionElements.values ||
-        this.businessObjInPanel.extensionElements.values.length < 2) {
+        this.businessObjInPanel.extensionElements.values[1]) {
       return;
     }
 
