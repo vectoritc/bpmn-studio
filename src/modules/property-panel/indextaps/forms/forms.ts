@@ -14,7 +14,7 @@ export class Forms {
 
   public canHandleElement: boolean;
 
-  private activate(model: IPageModel): void {
+  public activate(model: IPageModel): void {
 
     this.eventBus = model.modeler.get('eventBus');
 

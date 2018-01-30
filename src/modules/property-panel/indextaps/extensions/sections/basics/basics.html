@@ -1,15 +1,14 @@
 <template>
   <require from="./basics.css"></require>
-
+  <require from="../../../../styles/sections.css"></require>
   <div class="extensions-section">
     <h4><label class="header-label">Properties</label></h4>
     <label class="input-label">Add Properties </label>
     <button class="forms-addFormButton" click.delegate="addForm(1)">+</button>
-
-    <template repeat.for="property of properties" index.bind="$index">
-      <br>
+    <div repeat.for="property of properties" index.bind="$index">
       <input type="text" value.bind="tempObject.extensionElements.values[1].values[$index].name" placeholder="Name" change.delegate="changeName($index)">
       <input type="text" value.bind="tempObject.extensionElements.values[1].values[$index].value" placeholder="Value" change.delegate="changeValue($index)">
-      <button click.delegate="deleteForm($index)">X</button>
+      <button class="forms-removeFormButton" click.delegate="deleteForm($index)">X</button>
+    </div>
   </div>
 </template>

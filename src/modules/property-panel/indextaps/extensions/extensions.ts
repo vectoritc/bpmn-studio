@@ -6,7 +6,7 @@ export class Extensions {
   public path: string = '/indextaps/extensions/extensions';
   public sections: Array<ISection>;
 
-  public basicsSection: ISection = new BasicsSection();
+  private basicsSection: ISection = new BasicsSection();
 
   public attached(): void {
     this.sections = [
