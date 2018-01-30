@@ -6,19 +6,18 @@ import {IBpmnModdle,
   IModdleElement,
   IModeling,
   IPageModel,
-  ISection,
-  IShape} from '../../../../../../contracts';
+  ISection} from '../../../../../../contracts';
 
 export class BasicsSection implements ISection {
 
   public path: string = '/sections/basics/basics';
   public canHandleElement: boolean = false;
 
-  private elementInPanel: IShape;
   private businessObjInPanel: IModdleElement;
   private eventBus: IEventBus;
   private moddle: IBpmnModdle;
   private modeling: IModeling;
+  private modeler: IBpmnModeler;
 
   private properties: Array<any> = [];
   private tempObject: IModdleElement;
@@ -27,14 +26,23 @@ export class BasicsSection implements ISection {
     this.eventBus = model.modeler.get('eventBus');
     this.moddle = model.modeler.get('moddle');
     this.modeling = model.modeler.get('modeling');
+    this.modeler = model.modeler;
+
+    const selectedEvents: any = this.modeler.get('selection')._selectedElements;
+    if (selectedEvents[0]) {
+      this.businessObjInPanel = selectedEvents[0].businessObject;
+      this.init();
+    }
 
     this.eventBus.on('element.click', (event: IEvent) => {
-      this.elementInPanel = event.element;
       this.businessObjInPanel = event.element.businessObject;
-      this.tempObject = this.businessObjInPanel;
-
-      this.reloadForm();
+      this.init();
     });
+  }
+
+  private init(): void {
+    this.tempObject = this.businessObjInPanel;
+    this.reloadForm();
   }
 
   private async addForm(): Promise<void> {
@@ -64,8 +72,8 @@ export class BasicsSection implements ISection {
 }
 
   private deleteForm(index: number): void {
-    this.businessObjInPanel.extensionElements.values[1].values.splice(index, 1);
-    this.reloadForm();
+    // this.businessObjInPanel.extensionElements.values[1].values.splice(index, 1);
+    // this.reloadForm();
   }
 
   private reloadForm(): void {
