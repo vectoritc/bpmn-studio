@@ -1,5 +1,7 @@
-import {IBpmnModeler,
+import {IBpmnModdle,
+  IBpmnModeler,
   IBpmnModelerConstructor,
+  IDocumentation,
   IEvent,
   IEventBus,
   IModdleElement,
@@ -14,25 +16,38 @@ export class BasicsSection implements ISection {
   public canHandleElement: boolean = true;
 
   private elementInPanel: IShape;
-  private businessObjInPanel: IModdleElement;
+  public businessObjInPanel: IModdleElement;
+  public elementDocumentation: string;
   private eventBus: IEventBus;
   private modeling: IModeling;
   private modeler: IBpmnModeler;
+  private moddle: IBpmnModdle;
 
   public activate(model: IPageModel): void {
     this.eventBus = model.modeler.get('eventBus');
     this.modeling = model.modeler.get('modeling');
+    this.moddle = model.modeler.get('moddle');
     this.modeler = model.modeler;
 
     const selectedEvents: any = this.modeler.get('selection')._selectedElements;
     if (selectedEvents[0]) {
       this.businessObjInPanel = selectedEvents[0].businessObject;
       this.elementInPanel = selectedEvents[0];
+      if (this.businessObjInPanel.documentation.length > 0) {
+        this.elementDocumentation = this.businessObjInPanel.documentation[0].text;
+      } else {
+        this.elementDocumentation = '';
+      }
     }
 
-    this.eventBus.on(['element.click', 'shape.changed'], (event: IEvent) => {
+    this.eventBus.on(['element.click'], (event: IEvent) => {
       this.elementInPanel = event.element;
       this.businessObjInPanel = event.element.businessObject;
+      if (this.businessObjInPanel.documentation.length > 0) {
+        this.elementDocumentation = this.businessObjInPanel.documentation[0].text;
+      } else {
+        this.elementDocumentation = '';
+      }
     });
   }
 
@@ -53,6 +68,14 @@ export class BasicsSection implements ISection {
   }
 
   private updateDocumentation(): void {
+    if (this.businessObjInPanel.documentation.length > 0) {
+      this.businessObjInPanel.documentation = [];
+    }
+
+    const documentation: IModdleElement = this.moddle.create('bpmn:Documentation',
+    { text: this.elementDocumentation });
+    this.businessObjInPanel.documentation.push(documentation);
+
     this.modeling.updateProperties(this.elementInPanel, {
       documentation: this.businessObjInPanel.documentation,
     });
@@ -67,7 +90,8 @@ export class BasicsSection implements ISection {
   }
 
   public clearDocumentation(): void {
-    this.businessObjInPanel.documentation = '';
+    this.elementDocumentation = '';
+    this.updateDocumentation();
   }
 
 }
