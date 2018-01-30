@@ -82,10 +82,6 @@ export class ProcessDefDetail {
   }
 
   public async startProcess(): Promise<void> {
-    if (this.startButton.hasAttribute('disabled')) {
-      return;
-    }
-    this.startButton.setAttribute('disabled', 'disabled');
     this.router.navigate(`processdef/${this.process.id}/start`);
     this.startedProcessId = await this.consumerClient.startProcessByKey(this.process.key);
   }
@@ -117,6 +113,7 @@ export class ProcessDefDetail {
 
   public onModdlelImported(moddle: any, xml: string): void {
     this.bpmn.xml = xml;
+    this.saveDiagram();
   }
 
   public saveDiagram(): void {
@@ -135,46 +132,40 @@ export class ProcessDefDetail {
     });
   }
 
-  public exportBPMN(): void {
+  public async exportBPMN(): Promise<void> {
     this.disableAndHideControlsForImageExport();
-    this.bpmn.getXML().then((xml: string) => {
-      download(xml, `${this.process.name}.bpmn`, 'application/bpmn20-xml');
-      this.enableAndShowControlsForImageExport();
-    });
 
+    const xml: string = await this.bpmn.getXML();
+    download(xml, `${this.process.name}.bpmn`, 'application/bpmn20-xml');
+
+    this.enableAndShowControlsForImageExport();
   }
 
-  public exportSVG(): void {
+  public async exportSVG(): Promise<void> {
     this.disableAndHideControlsForImageExport();
 
-    this.bpmn.getSVG()
-    .then((svg: string) => {
-      download(svg, `${this.process.name}.svg`, 'image/svg+xml');
+    const svg: string = await this.bpmn.getSVG();
+    download(svg, `${this.process.name}.svg`, 'image/svg+xml');
 
-      this.enableAndShowControlsForImageExport();
-    });
+    this.enableAndShowControlsForImageExport();
   }
 
-  public exportPNG(): void {
+  public async exportPNG(): Promise<void> {
     this.disableAndHideControlsForImageExport();
 
-    this.bpmn.getSVG()
-    .then((svg: string) => {
-      download(this.generateImageFromSVG('png', svg), `${this.process.name}.png`, 'image/png');
+    const svg: string = await this.bpmn.getSVG();
+    download(this.generateImageFromSVG('png', svg), `${this.process.name}.png`, 'image/png');
 
-      this.enableAndShowControlsForImageExport();
-    });
+    this.enableAndShowControlsForImageExport();
   }
 
-  public exportJPEG(): void {
+  public async exportJPEG(): Promise<void> {
     this.disableAndHideControlsForImageExport();
 
-    this.bpmn.getSVG()
-    .then((svg: string) => {
-      download(this.generateImageFromSVG('jpeg', svg), `${this.process.name}.jpeg`, 'image/jpeg');
+    const svg: string = await this.bpmn.getSVG();
+    download(this.generateImageFromSVG('jpeg', svg), `${this.process.name}.jpeg`, 'image/jpeg');
 
-      this.enableAndShowControlsForImageExport();
-    });
+    this.enableAndShowControlsForImageExport();
   }
 
   public generateImageFromSVG(desiredImageType: string, svg: any): string {
@@ -190,15 +181,6 @@ export class ProcessDefDetail {
 
     const image: string = canvas.toDataURL(encoding); // returns a base64 datastring
     return image;
-  }
-
-  public async publishDraft(): Promise<any> {
-    this.processEngineService.publishDraft(this._process.id).then((processDef: IProcessDefEntity) => {
-      this.refreshProcess();
-      toastr.success('Successfully published!');
-    }).catch((error: Error) => {
-      toastr.error(`Error while publishing Draft: ${error.message}`);
-    });
   }
 
   private disableAndHideControlsForImageExport(): void {

@@ -33,9 +33,7 @@ export class ProcessDefStart {
     this.processDefId = routeParameters.processDefId;
     await this.refreshProcess();
     this.startProcess();
-  }
 
-  public attached(): void {
     this.subscriptions = [
       this.eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
         this.refreshProcess();

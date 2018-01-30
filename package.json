@@ -1,7 +1,7 @@
 {
   "name": "bpmn-studio",
   "description": "An Aurelia application for designing BPMN diagrams, which can also be connected to a process engine to execute these diagrams.",
-  "version": "1.0.0-rc10",
+  "version": "1.0.0-rc13",
   "author": {
     "name": "process-engine",
     "email": "hello@process-engine.io",
@@ -37,15 +37,16 @@
     "electron-notifications": "^1.0.0",
     "electron-updater": "^2.19.1",
     "node-http-server": "^8.1.2",
-    "open": "0.0.5"
+    "open": "0.0.5",
+    "proxy-polyfill": "^0.1.7"
   },
   "peerDependencies": {},
   "devDependencies": {
-    "@essential-projects/core_contracts": "1.0.0-rc3",
-    "@essential-projects/event_aggregator": "1.0.0-rc3",
-    "@process-engine/bpmn-js-custom-bundle": "1.0.0-rc4",
-    "@process-engine/consumer_client": "1.0.0-rc4",
-    "@process-engine/process_engine_contracts": "1.0.0-rc4",
+    "@essential-projects/core_contracts": "^1.0.0-rc3",
+    "@essential-projects/event_aggregator": "^1.0.0-rc3",
+    "@process-engine/bpmn-js-custom-bundle": "^1.0.0-rc6",
+    "@process-engine/consumer_client": "^1.0.0-rc5",
+    "@process-engine/process_engine_contracts": "^1.0.0-rc4",
     "@types/jasmine": "^2.2.0",
     "@types/node": "^6.0.45",
     "addict-ioc": "^2.3.4",
@@ -85,7 +86,7 @@
     "gulp-typescript": "^3.1.4",
     "gulp-watch": "^4.3.11",
     "jasmine-core": "^2.4.1",
-    "jquery": "^2.2.4",
+    "jquery": "^3.0.0",
     "karma": "^0.13.22",
     "karma-chrome-launcher": "^1.0.1",
     "karma-jasmine": "^1.0.2",

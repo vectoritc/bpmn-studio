@@ -1,42 +1,11 @@
 .config-panel {
-  display: grid;
-  grid-template-columns: 25% 50% 12% 12%;
-  grid-template-rows: 33% 33% 33%;
+  margin: 20px 20px 20px 20px;
 }
 
 .config-panel__title {
-  grid-row: 1;
-  margin-left: 10px;
+  margin-bottom: 20px;
 }
 
 .config-panel__panel {
-  grid-row: 2;
-  grid-column-start: 1;
-  grid-column-end: span 4;
-  grid-template-rows: auto;
-  grid-row-gap: 20px;
   padding: 20px 20px 20px 20px;
-  margin: 10px 0 10px 10px;
-}
-
-.config-panel__input-row-label--baseRoute {
-  grid-row: 1;
-}
-
-.config-panel__input-row--baseRoute {
-  grid-row: 2;
-}
-
-.config-panel__button--save {
-  grid-row: 3;
-  grid-column: 3;
-  border-bottom-right-radius: 0;
-  border-top-right-radius: 0;
-}
-
-.config-panel__button--cancel {
-  grid-row: 3;
-  grid-column: 4;
-  border-bottom-left-radius: 0;
-  border-top-left-radius: 0;
 }

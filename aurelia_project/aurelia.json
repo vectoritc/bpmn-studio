@@ -214,6 +214,11 @@
             "path": "../node_modules/fetch-ponyfill"
           },
           {
+            "name": "proxy-polyfill",
+            "main": "proxy.min.js",
+            "path": "../node_modules/proxy-polyfill"
+          },
+          {
             "name": "uuid-browser",
             "path": "../node_modules/uuid-browser",
             "main": "index.js"
@@ -267,7 +272,8 @@
     "copyFiles": {
       "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2": "bootstrap/fonts",
       "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff": "bootstrap/fonts",
-      "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf": "bootstrap/fonts"
+      "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf": "bootstrap/fonts",
+      "src/resources/images/default-avatar.png": "src/resources/images"
     }
   }
 }
