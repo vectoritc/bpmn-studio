@@ -1,7 +1,5 @@
 import {IBpmnModdle,
   IBpmnModeler,
-  IBpmnModelerConstructor,
-  IDocumentation,
   IEvent,
   IEventBus,
   IModdleElement,
@@ -15,13 +13,14 @@ export class BasicsSection implements ISection {
   public path: string = '/sections/basics/basics';
   public canHandleElement: boolean = true;
 
-  private elementInPanel: IShape;
-  public businessObjInPanel: IModdleElement;
-  public elementDocumentation: string;
   private eventBus: IEventBus;
   private modeling: IModeling;
   private modeler: IBpmnModeler;
   private moddle: IBpmnModdle;
+  private elementInPanel: IShape;
+
+  public businessObjInPanel: IModdleElement;
+  public elementDocumentation: string;
 
   public activate(model: IPageModel): void {
     this.eventBus = model.modeler.get('eventBus');
@@ -33,22 +32,22 @@ export class BasicsSection implements ISection {
     if (selectedEvents[0]) {
       this.businessObjInPanel = selectedEvents[0].businessObject;
       this.elementInPanel = selectedEvents[0];
-      if (this.businessObjInPanel.documentation.length > 0) {
-        this.elementDocumentation = this.businessObjInPanel.documentation[0].text;
-      } else {
-        this.elementDocumentation = '';
-      }
+      this.init();
     }
 
     this.eventBus.on(['element.click'], (event: IEvent) => {
       this.elementInPanel = event.element;
       this.businessObjInPanel = event.element.businessObject;
-      if (this.businessObjInPanel.documentation.length > 0) {
-        this.elementDocumentation = this.businessObjInPanel.documentation[0].text;
-      } else {
-        this.elementDocumentation = '';
-      }
+      this.init();
     });
+  }
+
+  private init(): void {
+    if (this.businessObjInPanel.documentation && this.businessObjInPanel.documentation.length > 0) {
+      this.elementDocumentation = this.businessObjInPanel.documentation[0].text;
+    } else {
+      this.elementDocumentation = '';
+    }
   }
 
   public checkElement(element: IModdleElement): boolean {
@@ -68,9 +67,7 @@ export class BasicsSection implements ISection {
   }
 
   private updateDocumentation(): void {
-    if (this.businessObjInPanel.documentation.length > 0) {
-      this.businessObjInPanel.documentation = [];
-    }
+    this.businessObjInPanel.documentation = [];
 
     const documentation: IModdleElement = this.moddle.create('bpmn:Documentation',
     { text: this.elementDocumentation });
