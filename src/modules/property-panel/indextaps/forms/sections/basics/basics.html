@@ -1,35 +1,38 @@
 <template>
   <require from="./basics.css"></require>
   <require from="../../../../styles/sections.css"></require>
-  <div class="section__border"  show.bind="canHandleElement">
-    <h4><label class="header-label">Forms</label></h4>
-    <label class="section__input-label">Form Key: </label>
-    <input type="text" class="form-control" value.bind="businessObjInPanel.formKey">
-    <label class="section__input-label">Form Fields: </label>
-    <button class="forms-addFormButton" click.delegate="addForm()">+</button>
-    <button class="forms-removeFormButton" disabled.bind="selectedIndex === undefined" click.delegate="removeForm()">x</button>
-    <ul class="list-group forms-list">
-      <li class="list-group-item forms-item" id="${form.id}" repeat.for="form of forms" click.delegate="setActive(form.id) selectForm(form)"><span>${form.id}</span></li>
-      <li class="list-group-item forms-item" if.bind="forms.length === 0"><span>No Forms</span></li>
-    </ul>
-    <div show.bind="isFormSelected">
-      <h4><label class="header-label">Form Field</label></h4>
-      <label class="section__input-label">ID: </label>
-      <input type="text" class="form-control" value.bind="selectedForm.id" change.delegate="updateId()">
-      <label class="section__input-label">Type: </label>
-      <select class="form-control" value.bind="selectedType" change.delegate="updateType()">
-        <option model.bind="null">-Choose Type-</option>
-        <option repeat.for="type of types">${type}</option>
-      </select>
-      <div if.bind="selectedType === types[5]">
-        <label class="section__input-label">Custom Type: </label>
-        <input type="text" class="form-control" value.bind="customType" change.delegate="updateType()">
+  <div class="section"  show.bind="canHandleElement">
+    <div class="section__content section__border col-md-11">
+      <h4><label class="header-label">Forms</label></h4>
+      <label class="section__input-label">Form Key: </label>
+      <input type="text" class="form-control" value.bind="businessObjInPanel.formKey">
+      <label class="section__input-label">Form Fields: </label>
+      <ul class="list-group forms-list">
+        <li class="list-group-item forms-item" id="${form.id}" repeat.for="form of forms" click.delegate="setActive(form.id) selectForm(form)"><span>${form.id}</span></li>
+        <li class="list-group-item forms-item" if.bind="forms.length === 0"><span>No Forms</span></li>
+      </ul>
+      <div show.bind="isFormSelected">
+        <button class="forms-removeFormButton btn btn-xs btn-danger" disabled.bind="selectedIndex === undefined" click.delegate="removeForm()">x</button>
+        <h4><label class="header-label">Form Field</label></h4>
+        <label class="section__input-label">ID: </label>
+        <input type="text" class="form-control" value.bind="selectedForm.id" change.delegate="updateId()">
+        <label class="section__input-label">Type: </label>
+        <select class="form-control" value.bind="selectedType" change.delegate="updateType()">
+          <option model.bind="null">-Choose Type-</option>
+          <option repeat.for="type of types">${type}</option>
+        </select>
+        <div if.bind="selectedType === types[5]">
+          <label class="section__input-label">Custom Type: </label>
+          <input type="text" class="form-control" value.bind="customType" change.delegate="updateType()">
+        </div>
+        <label class="section__input-label">Label: </label>
+        <input type="text" class="form-control" value.bind="selectedForm.label" change.delegate="updateLabel()">
+        <label class="section__input-label">Default Value: </label>
+        <input type="text" class="form-control" value.bind="selectedForm.defaultValue" change.delegate="updateDefaultValue()">
       </div>
-      <label class="section__input-label">Label: </label>
-      <input type="text" class="form-control" value.bind="selectedForm.label" change.delegate="updateLabel()">
-      <label class="section__input-label">Default Value: </label>
-      <input type="text" class="form-control" value.bind="selectedForm.defaultValue" change.delegate="updateDefaultValue()">
+    </div>
+    <div class="section__special col-md-1">
+      <button class="forms-addFormButton btn btn-xs btn-primary" click.delegate="addForm()">+</button>
     </div>
   </div>
 </template>
-
