@@ -1,4 +1,3 @@
-import {IDocumentation} from './IDocumentation';
 import {IProcessRef} from './IProcessRef';
 
 export interface IModdleElement {

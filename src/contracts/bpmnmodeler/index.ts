@@ -13,5 +13,4 @@ export {IMessage} from './IMessage';
 export {IElementRegistry} from './IElementRegistry';
 export {IBpmnFunction} from './IBpmnFunction';
 export {IModeling} from './IModeling';
-export {IDocumentation} from './IDocumentation';
 export * from './constants';
