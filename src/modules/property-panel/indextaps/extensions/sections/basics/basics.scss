@@ -1,20 +1,14 @@
-.input-label{
-  margin-top: 10px;
-  margin-bottom: 0;
+.addPropertyButton {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  right: 5px;
+  top: 75px;
 }
 
-.extensions-section {
-  border-left: 5px solid grey;
-  padding-left: 5px;
-  padding-bottom: 10px;
-}
-
-.properties-addPropertyButton {
+.removePropertyButton {
   position: absolute;
   right: 5px;
-}
-
-.properties-removePropertyButton {
-  position: absolute;
-  right: 5px;
+  width: 24px;
+  height: 24px;
 }
