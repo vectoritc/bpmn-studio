@@ -1,4 +1,5 @@
 import {IBpmnModeler,
+  ICallActivityElement,
   IEvent,
   IEventBus,
   IModdleElement,
@@ -11,13 +12,13 @@ export class CallActivitySection implements ISection {
   public path: string = '/sections/call-activity/call-activity';
   public canHandleElement: boolean = false;
 
-  private businessObjInPanel: IModdleElement;
+  private businessObjInPanel: ICallActivityElement;
   private eventBus: IEventBus;
   private modeler: IBpmnModeler;
 
   public selectedOption: string;
   public selectedBinding: number;
-  public callActivity: IModdleElement;
+  public callActivity: ICallActivityElement;
 
   public async activate(model: IPageModel): Promise<void> {
     this.eventBus = model.modeler.get('eventBus');

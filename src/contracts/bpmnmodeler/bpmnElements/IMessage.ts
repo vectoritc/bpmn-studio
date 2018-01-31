@@ -1,3 +1,4 @@
+import { IDocumentation } from './IDocumentation';
 import {IModdleElement} from './IModdleElement';
 
 export interface IMessage {
@@ -5,5 +6,5 @@ export interface IMessage {
   $parent?: IModdleElement;
   id: string;
   name: string;
-  documentation: Array<string>;
+  documentation: Array<IDocumentation>;
 }

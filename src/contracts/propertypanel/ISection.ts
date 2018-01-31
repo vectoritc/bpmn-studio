@@ -1,5 +1,5 @@
-import {IModdleElement} from '../bpmnmodeler/IModdleElement';
 import {IModeling} from '../bpmnmodeler/IModeling';
+import {IModdleElement} from '../bpmnmodeler/index';
 import {IShape} from '../bpmnmodeler/IShape';
 import {IEventBus} from '../eventbus/IEventBus';
 import {IPageModel} from './IPageModel';

@@ -1,11 +1,9 @@
-export interface IProcessRef {
-  $type: string;
-  documentation: Array<any>;
+import { IModdleElement } from './IModdleElement';
+
+export interface IProcessRef extends IModdleElement {
   extensionElement: Object;
   flowElement: Array<Object>;
-  id: string;
   isExecutable: boolean;
   laneSets: Array<Object>;
-  name: string;
   versionTag: string;
 }

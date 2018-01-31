@@ -2,6 +2,8 @@ import {IBpmnModdle,
   IBpmnModeler,
   IDefinition,
   IElementRegistry,
+  IEscalation,
+  IEscalationElement,
   IEvent,
   IEventBus,
   IModdleElement,
@@ -18,16 +20,18 @@ export class EscalationEventSection implements ISection {
   public path: string = '/sections/escalation-event/escalation-event';
   public canHandleElement: boolean = false;
 
-  private businessObjInPanel: IModdleElement;
+  private businessObjInPanel: IEscalationElement;
   private eventBus: IEventBus;
   private moddle: IBpmnModdle;
   private modeler: IBpmnModeler;
   private generalService: GeneralService;
   private isBoundaryEvent: boolean = false;
 
-  public escalations: Array<IModdleElement>;
+  private escalationCodeVariable: string;
+
+  public escalations: Array<IEscalation>;
   public selectedId: string;
-  public selectedEscalation: IModdleElement;
+  public selectedEscalation: IEscalation;
 
   constructor(generalService?: GeneralService) {
     this.generalService = generalService;
@@ -54,11 +58,13 @@ export class EscalationEventSection implements ISection {
   private init(): void {
     if (this.businessObjInPanel.eventDefinitions && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:EscalationEventDefinition') {
       this.isBoundaryEvent = this.businessObjInPanel.$type === 'bpmn:BoundaryEvent';
-      if (this.businessObjInPanel.eventDefinitions[0].escalationRef) {
-        this.selectedId = this.businessObjInPanel.eventDefinitions[0].escalationRef.id;
+      const escalationElement: IEscalationElement = this.businessObjInPanel.eventDefinitions[0];
 
-        if (this.businessObjInPanel.eventDefinitions[0].escalationRef) {
-          this.selectedId = this.businessObjInPanel.eventDefinitions[0].escalationRef.id;
+      if (escalationElement.escalationRef) {
+        this.selectedId = escalationElement.escalationRef.id;
+
+        if (escalationElement.escalationRef) {
+          this.selectedId = escalationElement.escalationRef.id;
 
           this.updateEscalation();
         } else {
@@ -87,12 +93,12 @@ export class EscalationEventSection implements ISection {
     return xml;
   }
 
-  private getEscalations(): Promise<Array<IModdleElement>> {
+  private getEscalations(): Promise<Array<IEscalation>> {
     return new Promise((resolve: Function, reject: Function): void => {
 
       this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
         const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-        const escalations: Array<IModdleElement> = rootElements.filter((element: IModdleElement) => {
+        const escalations: Array<IEscalation> = rootElements.filter((element: IModdleElement) => {
           return element.$type === 'bpmn:Escalation';
         });
 
@@ -107,8 +113,10 @@ export class EscalationEventSection implements ISection {
         return escalation.id === this.selectedId;
       });
 
-      this.selectedEscalation.escalationCodeVariable = this.businessObjInPanel.eventDefinitions[0].escalationCodeVariable;
-      this.businessObjInPanel.eventDefinitions[0].escalationRef = this.selectedEscalation;
+      const escalationElement: IEscalationElement = this.businessObjInPanel.eventDefinitions[0];
+
+      this.escalationCodeVariable = escalationElement.escalationCodeVariable;
+      escalationElement.escalationRef = this.selectedEscalation;
     } else {
       this.selectedEscalation = null;
     }
@@ -118,7 +126,7 @@ export class EscalationEventSection implements ISection {
     this.moddle.fromXML(this.getXML(), async(err: Error, definitions: IDefinition) => {
 
       const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-      const escalation: IModdleElement = rootElements.find((element: any) => {
+      const escalation: IEscalation = rootElements.find((element: any) => {
         return element.$type === 'bpmn:Escalation' && element.id === this.selectedId;
       });
 
@@ -131,7 +139,7 @@ export class EscalationEventSection implements ISection {
   private updateEscalationCode(): void {
     this.moddle.fromXML(this.getXML(), async(fromXMLError: Error, definitions: IDefinition) => {
       const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-      const escalation: IModdleElement = rootElements.find((element: any) => {
+      const escalation: IEscalation = rootElements.find((element: any) => {
         return element.$type === 'bpmn:Escalation' && element.id === this.selectedId;
       });
 
@@ -142,7 +150,8 @@ export class EscalationEventSection implements ISection {
   }
 
   private updateEscalationCodeVariable(): void {
-    this.businessObjInPanel.eventDefinitions[0].escalationCodeVariable = this.selectedEscalation.escalationCodeVariable;
+    const escalationElement: IEscalationElement = this.businessObjInPanel.eventDefinitions[0];
+    escalationElement.escalationCodeVariable = this.escalationCodeVariable;
   }
 
   private async addEscalation(): Promise<void> {

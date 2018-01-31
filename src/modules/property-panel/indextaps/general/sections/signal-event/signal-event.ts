@@ -7,7 +7,9 @@ import {IBpmnModdle,
   IModdleElement,
   IPageModel,
   ISection,
-  IShape} from '../../../../../../contracts';
+  IShape,
+  ISignal,
+  ISignalElement} from '../../../../../../contracts';
 
 import {inject} from 'aurelia-framework';
 import {GeneralService} from '../../service/general.service';
@@ -18,15 +20,15 @@ export class SignalEventSection implements ISection {
   public path: string = '/sections/signal-event/signal-event';
   public canHandleElement: boolean = false;
 
-  private businessObjInPanel: IModdleElement;
+  private businessObjInPanel: ISignalElement;
   private eventBus: IEventBus;
   private moddle: IBpmnModdle;
   private modeler: IBpmnModeler;
   private generalService: GeneralService;
 
-  public signals: Array<IModdleElement>;
+  public signals: Array<ISignal>;
   public selectedId: string;
-  public selectedSignal: IModdleElement;
+  public selectedSignal: ISignal;
 
   constructor(generalService?: GeneralService) {
     this.generalService = generalService;
@@ -54,8 +56,10 @@ export class SignalEventSection implements ISection {
   private init(): void {
     if (this.businessObjInPanel.eventDefinitions
       && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:SignalEventDefinition') {
-        if (this.businessObjInPanel.eventDefinitions[0].signalRef) {
-          this.selectedId = this.businessObjInPanel.eventDefinitions[0].signalRef.id;
+        const signalElement: ISignalElement = this.businessObjInPanel.eventDefinitions[0];
+
+        if (signalElement.signalRef) {
+          this.selectedId = signalElement.signalRef.id;
           this.updateSignal();
         } else {
           this.selectedSignal = null;
@@ -82,12 +86,12 @@ export class SignalEventSection implements ISection {
     return xml;
   }
 
-  private getSignals(): Promise<Array<IModdleElement>> {
+  private getSignals(): Promise<Array<ISignal>> {
     return new Promise((resolve: Function, reject: Function): void => {
 
       this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
         const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-        const signals: Array<IModdleElement> = rootElements.filter((element: IModdleElement) => {
+        const signals: Array<ISignal> = rootElements.filter((element: IModdleElement) => {
           return element.$type === 'bpmn:Signal';
         });
 
@@ -97,18 +101,20 @@ export class SignalEventSection implements ISection {
   }
 
   private updateSignal(): void {
-    this.selectedSignal = this.signals.find((signal: IModdleElement) => {
+    this.selectedSignal = this.signals.find((signal: ISignal) => {
       return signal.id === this.selectedId;
     });
 
-    this.businessObjInPanel.eventDefinitions[0].signalRef = this.selectedSignal;
+    const signalElement: ISignalElement = this.businessObjInPanel.eventDefinitions[0];
+
+    signalElement.signalRef = this.selectedSignal;
   }
 
   private updateName(): void {
     this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
 
       const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-      const signal: IModdleElement = rootElements.find((element: any) => {
+      const signal: ISignal = rootElements.find((element: any) => {
         return element.$type === 'bpmn:Signal' && element.id === this.selectedId;
       });
 
@@ -126,7 +132,7 @@ export class SignalEventSection implements ISection {
   private async addSignal(): Promise<void> {
     this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
 
-      const bpmnSignal: IModdleElement = this.moddle.create('bpmn:Signal',
+      const bpmnSignal: ISignalElement = this.moddle.create('bpmn:Signal',
         { id: `Signal_${this.generalService.generateRandomId()}`, name: 'Signal Name' });
 
       definitions.get('rootElements').push(bpmnSignal);

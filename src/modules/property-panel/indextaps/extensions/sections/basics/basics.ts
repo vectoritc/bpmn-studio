@@ -4,6 +4,8 @@ import {IBpmnModdle,
   IEventBus,
   IModdleElement,
   IPageModel,
+  IProperty,
+  IPropertyElement,
   ISection,
   IShape} from '../../../../../../contracts';
 
@@ -21,7 +23,7 @@ export class BasicsSection implements ISection {
   private selectedElement: IModdleElement;
   private newNames: Array<string> = [];
   private newValues: Array<string> = [];
-  private propertyElement: IModdleElement;
+  private propertyElement: IPropertyElement;
 
   public async activate(model: IPageModel): Promise<void> {
     this.eventBus = model.modeler.get('eventBus');
@@ -47,7 +49,7 @@ export class BasicsSection implements ISection {
   }
 
   private async addProperty(): Promise<void> {
-    const bpmnProperty: IModdleElement = this.moddle.create('camunda:Property',
+    const bpmnProperty: IProperty = this.moddle.create('camunda:Property',
                                                         { name: '',
                                                           value: '',
                                                         });
@@ -73,7 +75,7 @@ export class BasicsSection implements ISection {
       return;
     }
 
-    const properties: Array<IModdleElement> = this.propertyElement.values;
+    const properties: Array<IProperty> = this.propertyElement.values;
     for (const property of properties) {
       if (property.$type === `camunda:Property`) {
         this.newNames.push(property.name);
@@ -83,8 +85,8 @@ export class BasicsSection implements ISection {
     }
   }
 
-  private getPropertyElement(): IModdleElement {
-    let propertyElement: IModdleElement;
+  private getPropertyElement(): IPropertyElement {
+    let propertyElement: IPropertyElement;
 
     if (!this.businessObjInPanel.extensionElements) {
       this.createExtensionElement();
@@ -97,9 +99,9 @@ export class BasicsSection implements ISection {
     }
 
     if (!propertyElement) {
-      const propertyValues: Array<IModdleElement> = [];
+      const propertyValues: Array<IProperty> = [];
 
-      const extensionPropertyElement: IModdleElement = this.moddle.create('camunda:Properties', {values: propertyValues});
+      const extensionPropertyElement: IPropertyElement = this.moddle.create('camunda:Properties', {values: propertyValues});
       this.businessObjInPanel.extensionElements.values.push(extensionPropertyElement);
 
       return this.getPropertyElement();
@@ -115,10 +117,10 @@ export class BasicsSection implements ISection {
                                                                 });
 
     const extensionValues: Array<IModdleElement> = [];
-    const propertyValues: Array<IModdleElement> = [];
-    const properties: IModdleElement = this.moddle.create('camunda:Properties', {values: propertyValues});
+    const propertyValues: Array<IProperty> = [];
+    const propertyElement: IPropertyElement = this.moddle.create('camunda:Properties', {values: propertyValues});
     extensionValues.push(bpmnExecutionListener);
-    extensionValues.push(properties);
+    extensionValues.push(propertyElement);
 
     const extensionElements: IModdleElement = this.moddle.create('bpmn:ExtensionElements', {values: extensionValues});
     this.businessObjInPanel.extensionElements = extensionElements;

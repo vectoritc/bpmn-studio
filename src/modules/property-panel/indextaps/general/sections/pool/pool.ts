@@ -4,6 +4,7 @@ import {IBpmnModeler,
   IModdleElement,
   IModeling,
   IPageModel,
+  IPoolElement,
   IProcessRef,
   ISection,
   IShape} from '../../../../../../contracts';
@@ -13,7 +14,7 @@ export class PoolSection implements ISection {
   public path: string = '/sections/pool/pool';
   public canHandleElement: boolean = false;
 
-  private businessObjInPanel: IModdleElement;
+  private businessObjInPanel: IPoolElement;
   private processRefInPanel: IProcessRef;
   private eventBus: IEventBus;
   private modeling: IModeling;
