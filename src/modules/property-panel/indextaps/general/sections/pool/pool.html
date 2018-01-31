@@ -1,14 +1,16 @@
 <template>
   <require from="./pool.css"></require>
   <require from="../../../../styles/sections.css"></require>
-  <div class="section__border" show.bind="canHandleElement">
-    <label class="section__input-label">Version Tag: </label>
-    <input type="text" class="form-control" value.bind="processRefInPanel.versionTag" change.delegate="updateVersionTag()">
-
-    <label class="section__input-label">Process Id: </label>
-    <input type="text" class="form-control" value.bind="processRefInPanel.id" change.delegate="updateProcessId()">
-
-    <label class="section__input-label">Process Name: </label>
-    <input type="text" class="form-control" value.bind="processRefInPanel.name" change.delegate="updateProcessName()">
+  <div class="section" show.bind="canHandleElement">
+    <div class="section__content section__border col-md-11">
+      <label class="section__input-label">Version Tag: </label>
+      <input type="text" class="form-control" value.bind="processRefInPanel.versionTag" change.delegate="updateVersionTag()">
+      <label class="section__input-label">Process Id: </label>
+      <input type="text" class="form-control" value.bind="processRefInPanel.id" change.delegate="updateProcessId()">
+      <label class="section__input-label">Process Name: </label>
+      <input type="text" class="form-control" value.bind="processRefInPanel.name" change.delegate="updateProcessName()">
+    </div>
+    <div class="section__special col-md-1">
+    </div>
   </div>
 </template>
