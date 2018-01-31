@@ -47,8 +47,12 @@ export class SignalEventSection implements ISection {
       this.init();
     }
 
-    this.eventBus.on(['element.click', 'shape.changed'], (event: IEvent) => {
-      this.businessObjInPanel = event.element.businessObject;
+    this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
+      if (event.newSelection && event.newSelection.length !== 0) {
+        this.businessObjInPanel = event.newSelection[0].businessObject;
+      } else if (event.element) {
+        this.businessObjInPanel = event.element.businessObject;
+      }
       this.init();
     });
   }
