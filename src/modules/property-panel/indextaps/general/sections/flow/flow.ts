@@ -1,4 +1,6 @@
-import {IBpmnModeler,
+import {IBpmnModdle,
+  IBpmnModeler,
+  IConditionExpression,
   IEvent,
   IEventBus,
   IFlowElement,
@@ -15,11 +17,13 @@ export class FlowSection implements ISection {
   private businessObjInPanel: IFlowElement;
   private eventBus: IEventBus;
   private modeler: IBpmnModeler;
+  private moddle: IBpmnModdle;
 
-  private tempObject: IFlowElement;
+  private condition: string;
 
   public activate(model: IPageModel): void {
     this.eventBus = model.modeler.get('eventBus');
+    this.moddle = model.modeler.get('moddle');
     this.modeler = model.modeler;
 
     const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
@@ -35,7 +39,10 @@ export class FlowSection implements ISection {
   }
 
   private init(): void {
-    this.tempObject = this.businessObjInPanel;
+    if (this.businessObjInPanel.conditionExpression) {
+      this.condition = this.businessObjInPanel.conditionExpression.body;
+    }
+
     this.canHandleElement = this.checkElement(this.businessObjInPanel);
   }
 
@@ -50,7 +57,16 @@ export class FlowSection implements ISection {
   }
 
   private updateCondition(): void {
-    this.businessObjInPanel.conditionExpression.body = this.tempObject.conditionExpression.body;
+    if (!this.businessObjInPanel.conditionExpression) {
+      this.createConditionExpression();
+    }
+
+    this.businessObjInPanel.conditionExpression.body = this.condition;
+  }
+
+  private createConditionExpression(): void {
+    const conditionExpression: IConditionExpression = this.moddle.create('bpmn:FormalExpression', {});
+    this.businessObjInPanel.conditionExpression = conditionExpression;
   }
 
 }
