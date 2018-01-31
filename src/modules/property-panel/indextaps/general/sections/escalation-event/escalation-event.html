@@ -1,9 +1,9 @@
 <template>
-    <require from="./escalation-event.css"></require>
-    <require from="../../../../styles/sections.css"></require>
-    <div class="section__border" show.bind="canHandleElement">
+  <require from="./escalation-event.css"></require>
+  <require from="../../../../styles/sections.css"></require>
+  <div class="section" show.bind="canHandleElement">
+    <div class="section__content section__border col-md-11">
       <label class="section__input-label">Escalation: </label>
-      <button class="addEscalationButton" click.delegate="addEscalation()">+</button>
       <select class="form-control" value.bind="selectedId" change.delegate="updateEscalation()">
         <option model.bind="null">-Choose Escalation-</option>
         <option repeat.for="escalation of escalations"
@@ -20,4 +20,8 @@
         </div>
       </div>
     </div>
-  </template>
+    <div class="section__special col-md-1">
+      <button class="addEscalationButton btn btn-xs btn-primary" click.delegate="addEscalation()">+</button>      
+    </div>
+  </div>
+</template>
