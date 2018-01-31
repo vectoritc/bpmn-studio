@@ -39,7 +39,7 @@ export class ErrorEventSection implements ISection {
     this.modeler = model.modeler;
     this.errors = await this.getErrors();
 
-    const selectedEvents: any = this.modeler.get('selection')._selectedElements;
+    const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
     if (selectedEvents[0]) {
       this.businessObjInPanel = selectedEvents[0].businessObject;
       this.init();

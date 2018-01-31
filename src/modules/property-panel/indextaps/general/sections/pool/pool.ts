@@ -5,7 +5,8 @@ import {IBpmnModeler,
   IModeling,
   IPageModel,
   IProcessRef,
-  ISection} from '../../../../../../contracts';
+  ISection,
+  IShape} from '../../../../../../contracts';
 
 export class PoolSection implements ISection {
 
@@ -23,7 +24,7 @@ export class PoolSection implements ISection {
     this.modeling = model.modeler.get('modeling');
     this.modeler = model.modeler;
 
-    const selectedEvents: any = this.modeler.get('selection')._selectedElements;
+    const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
     if (selectedEvents[0]) {
       this.businessObjInPanel = selectedEvents[0].businessObject;
       this.init();

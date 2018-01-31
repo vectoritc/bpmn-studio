@@ -40,7 +40,7 @@ export class MessageEventSection implements ISection {
 
     this.messages = await this.getMessages();
 
-    const selectedEvents: any = this.modeler.get('selection')._selectedElements;
+    const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
     if (selectedEvents[0]) {
       this.businessObjInPanel = selectedEvents[0].businessObject;
       this.init();

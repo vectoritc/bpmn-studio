@@ -28,7 +28,7 @@ export class BasicsSection implements ISection {
     this.moddle = model.modeler.get('moddle');
     this.modeler = model.modeler;
 
-    const selectedEvents: any = this.modeler.get('selection')._selectedElements;
+    const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
     if (selectedEvents[0]) {
       this.businessObjInPanel = selectedEvents[0].businessObject;
       this.elementInPanel = selectedEvents[0];

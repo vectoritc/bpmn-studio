@@ -39,7 +39,7 @@ export class EscalationEventSection implements ISection {
     this.modeler = model.modeler;
     this.escalations = await this.getEscalations();
 
-    const selectedEvents: any = this.modeler.get('selection')._selectedElements;
+    const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
     if (selectedEvents[0]) {
       this.businessObjInPanel = selectedEvents[0].businessObject;
       this.init();

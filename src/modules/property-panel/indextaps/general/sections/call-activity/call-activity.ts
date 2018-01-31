@@ -3,7 +3,8 @@ import {IBpmnModeler,
   IEventBus,
   IModdleElement,
   IPageModel,
-  ISection} from '../../../../../../contracts';
+  ISection,
+  IShape} from '../../../../../../contracts';
 
 export class CallActivitySection implements ISection {
 
@@ -22,7 +23,7 @@ export class CallActivitySection implements ISection {
     this.eventBus = model.modeler.get('eventBus');
     this.modeler = model.modeler;
 
-    const selectedEvents: any = this.modeler.get('selection')._selectedElements;
+    const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
     if (selectedEvents[0]) {
       this.businessObjInPanel = selectedEvents[0].businessObject;
       this.init();
