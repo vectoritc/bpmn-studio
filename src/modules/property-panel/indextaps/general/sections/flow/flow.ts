@@ -1,6 +1,7 @@
 import {IBpmnModeler,
   IEvent,
   IEventBus,
+  IFlowElement,
   IModdleElement,
   IPageModel,
   ISection,
@@ -11,11 +12,11 @@ export class FlowSection implements ISection {
   public path: string = '/sections/flow/flow';
   public canHandleElement: boolean = false;
 
-  private businessObjInPanel: IModdleElement;
+  private businessObjInPanel: IFlowElement;
   private eventBus: IEventBus;
   private modeler: IBpmnModeler;
 
-  private tempObject: IModdleElement;
+  private tempObject: IFlowElement;
 
   public activate(model: IPageModel): void {
     this.eventBus = model.modeler.get('eventBus');
@@ -38,7 +39,7 @@ export class FlowSection implements ISection {
     this.canHandleElement = this.checkElement(this.businessObjInPanel);
   }
 
-  public checkElement(element: IModdleElement): boolean {
+  public checkElement(element: IFlowElement): boolean {
     if (element &&
         element.$type === 'bpmn:SequenceFlow' &&
         element.targetRef.$type === 'bpmn:ExclusiveGateway') {

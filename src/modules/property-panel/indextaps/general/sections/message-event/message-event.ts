@@ -4,6 +4,8 @@ import {IBpmnModdle,
   IElementRegistry,
   IEvent,
   IEventBus,
+  IMessage,
+  IMessageElement,
   IModdleElement,
   IPageModel,
   ISection,
@@ -18,16 +20,16 @@ export class MessageEventSection implements ISection {
   public path: string = '/sections/message-event/message-event';
   public canHandleElement: boolean = false;
 
-  private businessObjInPanel: IModdleElement;
+  private businessObjInPanel: IMessageElement;
   private eventBus: IEventBus;
   private moddle: IBpmnModdle;
   private modeler: IBpmnModeler;
   private msgDropdown: HTMLSelectElement;
   private generalService: GeneralService;
 
-  public messages: Array<IModdleElement>;
+  public messages: Array<IMessage>;
   public selectedId: string;
-  public selectedMessage: IModdleElement;
+  public selectedMessage: IMessage;
 
   constructor(generalService?: GeneralService) {
     this.generalService = generalService;
@@ -55,8 +57,10 @@ export class MessageEventSection implements ISection {
   private init(): void {
     if (this.businessObjInPanel.eventDefinitions
       && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:MessageEventDefinition') {
-        if (this.businessObjInPanel.eventDefinitions[0].messageRef) {
-          this.selectedId = this.businessObjInPanel.eventDefinitions[0].messageRef.id;
+        const messageElement: IMessageElement = this.businessObjInPanel.eventDefinitions[0];
+
+        if (messageElement.messageRef) {
+          this.selectedId = messageElement.messageRef.id;
           this.updateMessage();
         } else {
           this.selectedMessage = null;
@@ -83,12 +87,12 @@ export class MessageEventSection implements ISection {
     return xml;
   }
 
-  private getMessages(): Promise<Array<IModdleElement>> {
+  private getMessages(): Promise<Array<IMessage>> {
     return new Promise((resolve: Function, reject: Function): void => {
 
       this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
         const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-        const messages: Array<IModdleElement> = rootElements.filter((element: IModdleElement) => {
+        const messages: Array<IMessage> = rootElements.filter((element: IModdleElement) => {
           return element.$type === 'bpmn:Message';
         });
 
@@ -98,18 +102,19 @@ export class MessageEventSection implements ISection {
   }
 
   private updateMessage(): void {
-    this.selectedMessage = this.messages.find((message: IModdleElement) => {
+    this.selectedMessage = this.messages.find((message: IMessage) => {
       return message.id === this.selectedId;
     });
 
-    this.businessObjInPanel.eventDefinitions[0].messageRef = this.selectedMessage;
+    const messageElement: IMessageElement = this.businessObjInPanel.eventDefinitions[0];
+    messageElement.messageRef = this.selectedMessage;
   }
 
   private updateName(): void {
     this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
 
       const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-      const message: IModdleElement = rootElements.find((element: any) => {
+      const message: IMessage = rootElements.find((element: any) => {
         return element.$type === 'bpmn:Message' && element.id === this.selectedId;
       });
 
@@ -127,7 +132,7 @@ export class MessageEventSection implements ISection {
   private async addMessage(): Promise<void> {
     this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
 
-      const bpmnMessage: IModdleElement = this.moddle.create('bpmn:Message',
+      const bpmnMessage: IMessage = this.moddle.create('bpmn:Message',
         {id: `Message_${this.generalService.generateRandomId()}`, name: 'Message Name'});
 
       definitions.get('rootElements').push(bpmnMessage);

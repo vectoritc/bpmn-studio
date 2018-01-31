@@ -3,6 +3,7 @@ import {IBpmnModeler,
   IEventBus,
   IModdleElement,
   IPageModel,
+  IScriptTaskElement,
   ISection,
   IShape} from '../../../../../../contracts';
 
@@ -11,11 +12,11 @@ export class ScriptTaskSection implements ISection {
   public path: string = '/sections/script-task/script-task';
   public canHandleElement: boolean = false;
 
-  private businessObjInPanel: IModdleElement;
+  private businessObjInPanel: IScriptTaskElement;
   private eventBus: IEventBus;
   private modeler: IBpmnModeler;
 
-  public scriptTask: IModdleElement;
+  public scriptTask: IScriptTaskElement;
 
   public async activate(model: IPageModel): Promise<void> {
     this.eventBus = model.modeler.get('eventBus');

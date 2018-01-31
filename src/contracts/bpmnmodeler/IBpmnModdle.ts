@@ -1,5 +1,5 @@
 import {IDefinition} from './IDefinition';
-import {IModdleElement} from './IModdleElement';
+import {IModdleElement} from './index';
 
 export interface IBpmnModdle {
   fromXML(xml: string, callback: (err: Error, definitions: IDefinition) => void): void;

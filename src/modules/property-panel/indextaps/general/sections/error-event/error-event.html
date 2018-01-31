@@ -16,7 +16,7 @@
         <input type="text" class="form-control" value.bind="selectedError.errorCode" change.delegate="updateErrorCode()">
         <div show.bind="!isEndEvent">
           <label class="section__input-label">Error Message: </label>
-          <input type="text" class="form-control" value.bind="selectedError.errorMessageVariable" change.delegate="updateErrorMessage()">
+          <input type="text" class="form-control" value.bind="errorMessageVariable" change.delegate="updateErrorMessage()">
         </div>
       </div>
     </div>

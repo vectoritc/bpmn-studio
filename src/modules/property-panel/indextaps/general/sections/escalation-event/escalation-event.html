@@ -16,7 +16,7 @@
         <input type="text" class="form-control" value.bind="selectedEscalation.escalationCode" change.delegate="updateEscalationCode()">
         <div show.bind = "isBoundaryEvent">
           <label class="section__input-label">Escalation Code Variable: </label>
-          <input type="text" class="form-control" value.bind="selectedEscalation.escalationCodeVariable" change.delegate="updateEscalationCodeVariable()">
+          <input type="text" class="form-control" value.bind="escalationCodeVariable" change.delegate="updateEscalationCodeVariable()">
         </div>
       </div>
     </div>

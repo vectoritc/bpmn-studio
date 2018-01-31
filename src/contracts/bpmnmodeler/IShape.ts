@@ -1,4 +1,4 @@
-import {IModdleElement} from './IModdleElement';
+import {IModdleElement} from './index';
 
 export interface IShape {
   businessObject: IModdleElement;

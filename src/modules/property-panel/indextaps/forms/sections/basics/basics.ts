@@ -4,6 +4,8 @@ import {IBpmnModdle,
   IDefinition,
   IEvent,
   IEventBus,
+  IForm,
+  IFormElement,
   IModdleElement,
   IModeling,
   IPageModel,
@@ -16,18 +18,18 @@ export class BasicsSection implements ISection {
   public canHandleElement: boolean = false;
   private isFormSelected: boolean = false;
 
-  private businessObjInPanel: IModdleElement;
+  private businessObjInPanel: IFormElement;
   private eventBus: IEventBus;
   private moddle: IBpmnModdle;
   private modeler: IBpmnModeler;
 
-  private forms: Array<IModdleElement>;
-  private selectedForm: IModdleElement;
+  private forms: Array<IForm>;
+  private selectedForm: IForm;
   private selectedIndex: number;
   private types: Array<string> = ['string', 'long', 'boolean', 'date', 'enum', 'custom type'];
   private selectedType: string;
   private customType: string;
-  private formElement: IModdleElement;
+  private formElement: IFormElement;
 
   private activeListElementId: string;
 
@@ -65,7 +67,7 @@ export class BasicsSection implements ISection {
     return xml;
   }
 
-  private selectForm(form: IModdleElement): void {
+  private selectForm(form: IForm): void {
     this.selectedForm = form;
     this.selectedType = this.getTypeOrCustomType(form.type);
     this.selectedIndex = this.getSelectedIndex();
@@ -73,14 +75,14 @@ export class BasicsSection implements ISection {
   }
 
   private setActive(formId: string): void {
-    let element: HTMLElement = null;
-    if (this.activeListElementId) {
-      element = document.getElementById(this.activeListElementId);
-      element.classList.remove('active');
-    }
-    element = document.getElementById(formId);
-    element.classList.add('active');
-    this.activeListElementId = formId;
+    // let element: HTMLElement = null;
+    // if (this.activeListElementId) {
+    //   element = document.getElementById(this.activeListElementId);
+    //   element.classList.remove('active');
+    // }
+    // element = document.getElementById(formId);
+    // element.classList.add('active');
+    // this.activeListElementId = formId;
   }
 
   private reloadForms(): void {
@@ -89,7 +91,7 @@ export class BasicsSection implements ISection {
       return;
     }
 
-    const forms: Array<IModdleElement> = this.formElement.fields;
+    const forms: Array<IForm> = this.formElement.fields;
     for (const form of forms) {
       if (form.$type === `camunda:FormField`) {
         this.forms.push(form);
@@ -139,8 +141,9 @@ export class BasicsSection implements ISection {
   }
 
   private async addForm(): Promise<void> {
-      const bpmnForm: IModdleElement = this.moddle.create('camunda:FormField',
-                                                          { id: `Form_${this.generateRandomId()}`,
+      const bpmnForm: IForm = this.moddle.create('camunda:FormField',
+                                                          {
+                                                            id: `Form_${this.generateRandomId()}`,
                                                             type: null,
                                                             label: `Form Label`,
                                                             defaultValue: `Default Value`,
@@ -162,7 +165,7 @@ export class BasicsSection implements ISection {
   }
 
   private getSelectedIndex(): number {
-    const forms: Array<IModdleElement> = this.formElement.fields;
+    const forms: Array<IForm> = this.formElement.fields;
     for (let index: number = 0; index < forms.length; index++) {
       if (forms[index].id === this.selectedForm.id) {
         return index;
@@ -195,9 +198,9 @@ export class BasicsSection implements ISection {
   }
 
   private createExtensionElement(): void {
-    const values: Array<IModdleElement> = [];
-    const fields: Array<IModdleElement> = [];
-    const formData: IModdleElement = this.moddle.create('camunda:FormData', {fields: fields});
+    const values: Array<IFormElement> = [];
+    const fields: Array<IForm> = [];
+    const formData: IFormElement = this.moddle.create('camunda:FormData', {fields: fields});
     values.push(formData);
 
     this.businessObjInPanel.formKey = `Form Key`;

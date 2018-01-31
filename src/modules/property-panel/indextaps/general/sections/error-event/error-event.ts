@@ -2,6 +2,8 @@ import {IBpmnModdle,
   IBpmnModeler,
   IDefinition,
   IElementRegistry,
+  IError,
+  IErrorElement,
   IEvent,
   IEventBus,
   IModdleElement,
@@ -18,16 +20,18 @@ export class ErrorEventSection implements ISection {
   public path: string = '/sections/error-event/error-event';
   public canHandleElement: boolean = false;
 
-  private businessObjInPanel: IModdleElement;
+  private businessObjInPanel: IErrorElement;
   private eventBus: IEventBus;
   private moddle: IBpmnModdle;
   private modeler: IBpmnModeler;
   private generalService: GeneralService;
 
-  public errors: Array<IModdleElement>;
+  public errors: Array<IError>;
   public selectedId: string;
-  public selectedError: IModdleElement;
+  public selectedError: IError;
   public isEndEvent: boolean = false;
+
+  private errorMessageVariable: string;
 
   constructor(generalService?: GeneralService) {
     this.generalService = generalService;
@@ -54,8 +58,10 @@ export class ErrorEventSection implements ISection {
   private init(): void {
     if (this.businessObjInPanel.eventDefinitions
       && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:ErrorEventDefinition') {
-        if (this.businessObjInPanel.eventDefinitions[0].errorRef) {
-          this.selectedId = this.businessObjInPanel.eventDefinitions[0].errorRef.id;
+        const errorElement: IErrorElement = this.businessObjInPanel.eventDefinitions[0];
+
+        if (errorElement.errorRef) {
+          this.selectedId = errorElement.errorRef.id;
           this.updateError();
         } else {
           this.selectedError = null;
@@ -87,12 +93,12 @@ export class ErrorEventSection implements ISection {
     return xml;
   }
 
-  private getErrors(): Promise<Array<IModdleElement>> {
+  private getErrors(): Promise<Array<IError>> {
     return new Promise((resolve: Function, reject: Function): void => {
 
       this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
         const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-        const errors: Array<IModdleElement> = rootElements.filter((element: IModdleElement) => {
+        const errors: Array<IErrorElement> = rootElements.filter((element: IModdleElement) => {
           return element.$type === 'bpmn:Error';
         });
 
@@ -103,13 +109,15 @@ export class ErrorEventSection implements ISection {
 
   private updateError(): void {
     if (this.selectedId) {
-      this.selectedError = this.errors.find((error: IModdleElement) => {
+      this.selectedError = this.errors.find((error: IError) => {
         return error.id === this.selectedId;
       });
 
-      this.businessObjInPanel.eventDefinitions[0].errorRef = this.selectedError;
+      const errorElement: IErrorElement = this.businessObjInPanel.eventDefinitions[0];
+
+      this.errorMessageVariable = errorElement.errorMessageVariable;
       if (!this.isEndEvent) {
-        this.selectedError.errorMessageVariable = this.businessObjInPanel.eventDefinitions[0].errorMessageVariable;
+        this.errorMessageVariable = this.errorMessageVariable;
       }
     } else {
       this.selectedError = null;
@@ -120,7 +128,7 @@ export class ErrorEventSection implements ISection {
     this.moddle.fromXML(this.getXML(), async(err: Error, definitions: IDefinition) => {
 
       const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-      const error: IModdleElement = rootElements.find((element: any) => {
+      const error: IError = rootElements.find((element: IModdleElement) => {
         return element.$type === 'bpmn:Error' && element.id === this.selectedId;
       });
 
@@ -133,7 +141,7 @@ export class ErrorEventSection implements ISection {
   private updateErrorCode(): void {
     this.moddle.fromXML(this.getXML(), async(fromXMLError: Error, definitions: IDefinition) => {
       const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-      const error: IModdleElement = rootElements.find((element: any) => {
+      const error: IError = rootElements.find((element: any) => {
         return element.$type === 'bpmn:Error' && element.id === this.selectedId;
       });
 
@@ -144,13 +152,14 @@ export class ErrorEventSection implements ISection {
   }
 
   private updateErrorMessage(): void {
-    this.businessObjInPanel.eventDefinitions[0].errorMessageVariable = this.selectedError.errorMessageVariable;
+    const errorElement: IErrorElement = this.businessObjInPanel.eventDefinitions[0];
+    errorElement.errorMessageVariable = this.errorMessageVariable;
   }
 
   private async addError(): Promise<void> {
     this.moddle.fromXML(this.getXML(), async(err: Error, definitions: IDefinition) => {
 
-      const bpmnError: IModdleElement = this.moddle.create('bpmn:Error',
+      const bpmnError: IError = this.moddle.create('bpmn:Error',
         { id: `Error_${this.generalService.generateRandomId()}`, name: 'Error Name' });
 
       definitions.get('rootElements').push(bpmnError);
