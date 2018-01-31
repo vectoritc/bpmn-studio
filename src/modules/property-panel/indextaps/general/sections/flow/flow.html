@@ -1,8 +1,12 @@
 <template>
   <require from="./flow.css"></require>
   <require from="../../../../styles/sections.css"></require>
-  <div class="section__border" show.bind="canHandleElement">
-    <label class="section__input-label">Condition: </label>
-    <input type="text" class="form-control" value.bind="tempObject.conditionExpression.body" change.delegate="updateCondition()">
+  <div class="section" show.bind="canHandleElement">
+    <div class="section__content section__border col-md-11">
+      <label class="section__input-label">Condition: </label>
+      <input type="text" class="form-control" value.bind="tempObject.conditionExpression.body" change.delegate="updateCondition()">
+    </div>
+    <div class="section__special col-md-1">
+    </div>
   </div>
 </template>

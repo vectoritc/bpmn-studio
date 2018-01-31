@@ -1,17 +1,21 @@
 <template>
   <require from="./message-event.css"></require>
   <require from="../../../../styles/sections.css"></require>
-  <div class="section__border" show.bind="canHandleElement">
-    <label class="section__input-label">Message: </label>
-    <button class="addMsgButton" click.delegate="addMessage()">+</button>
-    <select ref="msgDropdown" class="form-control" value.bind="selectedId" change.delegate="updateMessage()">
-      <option model.bind="null">-Choose Message-</option>
-      <option repeat.for="message of messages"
-              model.bind="message.id" value="${message.id}">${message.name} (id: ${message.id})</option>
-    </select>
-    <div show.bind="selectedId">
-      <label class="section__input-labell">Message Name: </label>
-      <input type="text" class="form-control" value.bind="selectedMessage.name" change.delegate="updateName()">
+  <div class="section" show.bind="canHandleElement">
+    <div class="section__content section__border col-md-11">
+      <label class="section__input-label">Message: </label>
+      <select ref="msgDropdown" class="form-control" value.bind="selectedId" change.delegate="updateMessage()">
+        <option model.bind="null">-Choose Message-</option>
+        <option repeat.for="message of messages"
+                model.bind="message.id" value="${message.id}">${message.name} (id: ${message.id})</option>
+      </select>
+      <div show.bind="selectedId">
+        <label class="section__input-labell">Message Name: </label>
+        <input type="text" class="form-control" value.bind="selectedMessage.name" change.delegate="updateName()">
+      </div>
+    </div>
+    <div class="section__special col-md-1">
+      <button class="addMsgButton btn btn-xs btn-primary" click.delegate="addMessage()">+</button>
     </div>
   </div>
 </template>
