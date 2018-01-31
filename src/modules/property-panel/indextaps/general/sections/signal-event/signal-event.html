@@ -1,17 +1,21 @@
 <template>
   <require from="./signal-event.css"></require>
   <require from="../../../../styles/sections.css"></require>
-  <div class="section__border" show.bind="canHandleElement">
-    <label class="section__input-label">Signal: </label>
-    <button class="addSignalButton" click.delegate="addSignal()">+</button>
-    <select class="form-control" value.bind="selectedId" change.delegate="updateSignal()">
-      <option model.bind="null">-Choose Signal-</option>
-      <option repeat.for="signal of signals"
-              model.bind="signal.id" value="${signal.id}">${signal.name} (id: ${signal.id})</option>
-    </select>
-    <div show.bind="selectedId">
-      <label class="section__input-label">Signal Name: </label>
-      <input type="text" class="form-control" value.bind="selectedSignal.name" change.delegate="updateName()">
+  <div class="section" show.bind="canHandleElement">
+    <div class="section__content section__border col-md-11">
+      <label class="section__input-label">Signal: </label>
+      <select class="form-control" value.bind="selectedId" change.delegate="updateSignal()">
+        <option model.bind="null">-Choose Signal-</option>
+        <option repeat.for="signal of signals"
+                model.bind="signal.id" value="${signal.id}">${signal.name} (id: ${signal.id})</option>
+      </select>
+      <div show.bind="selectedId">
+        <label class="section__input-label">Signal Name: </label>
+        <input type="text" class="form-control" value.bind="selectedSignal.name" change.delegate="updateName()">
+      </div>
+   </div>
+   <div class="section__special col-md-1">
+     <button class="addSignalButton btn btn-xs btn-primary" click.delegate="addSignal()">+</button>
     </div>
   </div>
 </template>

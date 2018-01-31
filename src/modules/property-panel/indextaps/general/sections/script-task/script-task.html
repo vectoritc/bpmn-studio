@@ -1,13 +1,17 @@
 <template>
   <require from="./script-task.css"></require>
   <require from="../../../../styles/sections.css"></require>
-  <div class="section__border" show.bind="canHandleElement">
-    <label><em>Script Task</em></label><br>
-    <label class="section__input-label">Script Format: </label>
-    <input type="text" class="form-control" value.bind="scriptTask.scriptFormat" change.delegate="updateFormat()">
-    <label class="section__input-label">Script: </label>
-    <input type="text" class="form-control" value.bind="scriptTask.script" change.delegate="updateScript()">
-    <label class="section__input-label">Result Variable: </label>
-    <input type="text" class="form-control" value.bind="scriptTask.resultVariable" change.delegate="updateResult()">
+  <div class="section" show.bind="canHandleElement">
+    <div class="section__content section__border col-md-11">
+      <label><em>Script Task</em></label><br>
+      <label class="section__input-label">Script Format: </label>
+      <input type="text" class="form-control" value.bind="scriptTask.scriptFormat" change.delegate="updateFormat()">
+      <label class="section__input-label">Script: </label>
+      <input type="text" class="form-control" value.bind="scriptTask.script" change.delegate="updateScript()">
+      <label class="section__input-label">Result Variable: </label>
+      <input type="text" class="form-control" value.bind="scriptTask.resultVariable" change.delegate="updateResult()">
+    </div>
+    <div class="section__special col-md-1">
+    </div>
   </div>
 </template>
