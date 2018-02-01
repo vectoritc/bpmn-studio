@@ -15,6 +15,8 @@ export class FormWidget {
         return 'textbox';
       case FormWidgetFieldType.boolean:
         return 'checkbox';
+      case FormWidgetFieldType.long:
+        return 'number';
       default:
         toastr.error(`Not supported FromWidgetFieldType: ${field.type}`);
         return null;
