@@ -59,18 +59,6 @@ export class BasicsSection implements ISection {
     return true;
   }
 
-  private updateName(): void {
-    this.modeling.updateProperties(this.elementInPanel, {
-      name: this.businessObjInPanel.name,
-    });
-  }
-
-  private updateId(): void {
-    this.modeling.updateProperties(this.elementInPanel, {
-      id: this.businessObjInPanel.id,
-    });
-  }
-
   private updateDocumentation(): void {
     this.businessObjInPanel.documentation = [];
 
