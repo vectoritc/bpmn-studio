@@ -1,3 +1,5 @@
+import { observable } from 'aurelia-framework';
+
 import {IBpmnModdle,
   IBpmnModeler,
   IConditionExpression,
@@ -19,7 +21,7 @@ export class FlowSection implements ISection {
   private modeler: IBpmnModeler;
   private moddle: IBpmnModdle;
 
-  private condition: string;
+  @observable private condition: string;
 
   public activate(model: IPageModel): void {
     this.eventBus = model.modeler.get('eventBus');
@@ -60,12 +62,12 @@ export class FlowSection implements ISection {
     }
   }
 
-  private updateCondition(): void {
+  private conditionChanged(newValue: string, oldValue: string): void {
     if (!this.businessObjInPanel.conditionExpression) {
       this.createConditionExpression();
     }
 
-    this.businessObjInPanel.conditionExpression.body = this.condition;
+    this.businessObjInPanel.conditionExpression.body = newValue;
   }
 
   private createConditionExpression(): void {
