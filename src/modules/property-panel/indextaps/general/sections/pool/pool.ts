@@ -2,10 +2,8 @@ import {IBpmnModeler,
   IEvent,
   IEventBus,
   IModdleElement,
-  IModeling,
   IPageModel,
   IPoolElement,
-  IProcessRef,
   ISection,
   IShape} from '../../../../../../contracts';
 
@@ -15,14 +13,11 @@ export class PoolSection implements ISection {
   public canHandleElement: boolean = false;
 
   private businessObjInPanel: IPoolElement;
-  private processRefInPanel: IProcessRef;
   private eventBus: IEventBus;
-  private modeling: IModeling;
   private modeler: IBpmnModeler;
 
   public activate(model: IPageModel): void {
     this.eventBus = model.modeler.get('eventBus');
-    this.modeling = model.modeler.get('modeling');
     this.modeler = model.modeler;
 
     const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
@@ -38,7 +33,6 @@ export class PoolSection implements ISection {
   }
 
   private init(): void {
-    this.processRefInPanel = this.businessObjInPanel.processRef;
     this.canHandleElement = this.checkElement(this.businessObjInPanel);
   }
 
@@ -48,18 +42,6 @@ export class PoolSection implements ISection {
     } else {
       return false;
     }
-  }
-
-  private updateVersionTag(): void {
-    this.businessObjInPanel.processRef.versionTag = this.processRefInPanel.versionTag;
-  }
-
-  private updateProcessId(): void {
-    this.businessObjInPanel.processRef.id = this.processRefInPanel.id;
-  }
-
-  private updateProcessName(): void {
-    this.businessObjInPanel.processRef.name = this.processRefInPanel.name;
   }
 
 }
