@@ -12,4 +12,5 @@ export interface IModdleElement {
   extensionElements?: IExtensionElement;
   eventDefinitions?: Array<IModdleElement>;
   conditionExpression?: IConditionExpression;
+  flowElements?: Array<IModdleElement>;
 }
