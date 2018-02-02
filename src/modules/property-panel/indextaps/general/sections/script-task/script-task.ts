@@ -16,8 +16,6 @@ export class ScriptTaskSection implements ISection {
   private eventBus: IEventBus;
   private modeler: IBpmnModeler;
 
-  public scriptTask: IScriptTaskElement;
-
   public async activate(model: IPageModel): Promise<void> {
     this.eventBus = model.modeler.get('eventBus');
     this.modeler = model.modeler;
@@ -39,7 +37,6 @@ export class ScriptTaskSection implements ISection {
   }
 
   private init(): void {
-    this.scriptTask = this.businessObjInPanel;
     this.canHandleElement = this.checkElement(this.businessObjInPanel);
   }
 
@@ -52,15 +49,4 @@ export class ScriptTaskSection implements ISection {
     }
   }
 
-  private updateScript(): void {
-    this.businessObjInPanel.script = this.scriptTask.script;
-  }
-
-  private updateFormat(): void {
-    this.businessObjInPanel.scriptFormat = this.scriptTask.scriptFormat;
-  }
-
-  private updateResult(): void {
-    this.businessObjInPanel.resultVariable = this.scriptTask.resultVariable;
-  }
 }
