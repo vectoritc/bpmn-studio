@@ -1,3 +1,4 @@
+import { observable } from 'aurelia-framework';
 import {IBpmnModeler,
   ICallActivityElement,
   IEvent,
@@ -16,8 +17,8 @@ export class CallActivitySection implements ISection {
   private eventBus: IEventBus;
   private modeler: IBpmnModeler;
 
-  public selectedOption: string;
-  public selectedBinding: number;
+  @observable public selectedOption: number;
+  @observable public selectedBinding: number;
   public callActivity: ICallActivityElement;
 
   public async activate(model: IPageModel): Promise<void> {
@@ -43,6 +44,23 @@ export class CallActivitySection implements ISection {
   private init(): void {
     this.callActivity = this.businessObjInPanel;
     this.canHandleElement = this.checkElement(this.businessObjInPanel);
+    if (this.businessObjInPanel.calledElementBinding) {
+      if (this.businessObjInPanel.calledElementBinding === 'latest') {
+        this.selectedBinding = 1;
+      } else if (this.businessObjInPanel.calledElementBinding === 'deployment') {
+        this.selectedBinding = 2; // tslint:disable-line
+      } else if (this.businessObjInPanel.calledElementBinding === 'version') {
+        this.selectedBinding = 3; // tslint:disable-line
+      }
+    } else {
+      this.businessObjInPanel.calledElementBinding = 'latest';
+    }
+
+    if (this.businessObjInPanel.variableMappingClass !== undefined) {
+      this.selectedOption = 1;
+    } else if (this.businessObjInPanel.variableMappingDelegateExpression !== undefined) {
+      this.selectedOption = 2; // tslint:disable-line
+    }
   }
 
   public checkElement(element: IModdleElement): boolean {
@@ -54,34 +72,25 @@ export class CallActivitySection implements ISection {
     }
   }
 
-  private updateCalledElement(): void {
-    this.businessObjInPanel.calledElement = this.callActivity.calledElement;
+  private selectedOptionChanged(newValue: number, oldValue: number): void {
+    if (newValue === 1) {
+      this.businessObjInPanel.variableMappingDelegateExpression = undefined;
+    } else if (newValue === 2) { // tslint:disable-line
+      this.businessObjInPanel.variableMappingClass = undefined;
+    } else {
+      this.businessObjInPanel.variableMappingClass = undefined;
+      this.businessObjInPanel.variableMappingDelegateExpression = undefined;
+    }
   }
 
-  private updateTenantId(): void {
-    this.businessObjInPanel.calledElementTenantId = this.callActivity.calledElementTenantId;
-  }
-
-  private updateVariableMappingClass(): void {
-    this.businessObjInPanel.variableMappingClass = this.callActivity.variableMappingClass;
-    this.businessObjInPanel.variableMappingDelegateExpression = undefined;
-  }
-
-  private updateVariableMappingDelegateExpression(): void {
-    this.businessObjInPanel.variableMappingDelegateExpression = this.callActivity.variableMappingDelegateExpression;
-    this.businessObjInPanel.variableMappingClass = undefined;
-  }
-
-  private updateBinding(): void {
-    if (this.selectedBinding === 1) {
+  private selectedBindingChanged(newValue: number, oldValue: number): void {
+    if (newValue === 1) {
       this.businessObjInPanel.calledElementBinding = 'latest';
-      this.businessObjInPanel.calledElementVersion = undefined;
-    } else if (this.selectedBinding === 2) { // tslint:disable-line
+    } else if (newValue === 2) { // tslint:disable-line
       this.businessObjInPanel.calledElementBinding = 'deployment';
-      this.businessObjInPanel.calledElementVersion = undefined;
-    } else if (this.selectedBinding === 3) { // tslint:disable-line
-      this.businessObjInPanel.calledElementVersion = this.callActivity.calledElementVersion;
+    } else if (newValue === 3) { // tslint:disable-line
       this.businessObjInPanel.calledElementBinding = 'version';
     }
   }
+
 }
