@@ -1,5 +1,4 @@
 import { IDocumentation } from './IDocumentation';
-import {IError} from './IError';
 
 export interface IError {
   $type: string;
