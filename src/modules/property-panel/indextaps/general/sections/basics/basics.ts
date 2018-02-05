@@ -1,5 +1,7 @@
 import {IBpmnModdle,
   IBpmnModeler,
+  IDefinition,
+  IElementRegistry,
   IEvent,
   IEventBus,
   IModdleElement,
@@ -45,6 +47,7 @@ export class BasicsSection implements ISection {
       }
       this.init();
     });
+    this.setFirstElement();
   }
 
   private init(): void {
@@ -53,6 +56,38 @@ export class BasicsSection implements ISection {
     } else {
       this.elementDocumentation = '';
     }
+  }
+
+  private setFirstElement(): void {
+    const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
+    if (selectedEvents[0]) {
+      return;
+    } else {
+      const rootElements: any = this.modeler._definitions.rootElements;
+      const process: IModdleElement = rootElements.find((element: any ) =>  {
+        return element.$type === 'bpmn:Process';
+      });
+
+      const startEvent: IModdleElement = process.flowElements.find((element: any ) => {
+        return element.$type === 'bpmn:StartEvent';
+      });
+      if (startEvent.$type !== 'bpmn:StartEvent') {
+        startEvent.id = process.flowElements[0].id;
+      }
+
+      const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
+      const elementInPanel: IShape = elementRegistry.get(startEvent.id);
+
+      this.modeler.get('selection').select(elementInPanel);
+    }
+  }
+
+  private getXML(): string {
+    let xml: string;
+    this.modeler.saveXML({format: true}, (err: Error, diagrammXML: string) => {
+      xml = diagrammXML;
+    });
+    return xml;
   }
 
   public checkElement(element: IModdleElement): boolean {
