@@ -68,11 +68,16 @@ export class BasicsSection implements ISection {
         return element.$type === 'bpmn:Process';
       });
 
-      const startEvent: IModdleElement = process.flowElements.find((element: any ) => {
-        return element.$type === 'bpmn:StartEvent';
-      });
-      if (startEvent.$type !== 'bpmn:StartEvent') {
-        startEvent.id = process.flowElements[0].id;
+      let startEvent: IModdleElement;
+
+      if (process.flowElements) {
+        startEvent = process.flowElements.find((element: any ) => {
+          return element.$type === 'bpmn:StartEvent';
+        });
+      }
+
+      if (!startEvent) {
+        startEvent = process;
       }
 
       const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
