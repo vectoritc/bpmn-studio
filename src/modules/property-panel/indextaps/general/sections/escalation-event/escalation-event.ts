@@ -25,7 +25,6 @@ export class EscalationEventSection implements ISection {
   private moddle: IBpmnModdle;
   private modeler: IBpmnModeler;
   private generalService: GeneralService;
-  private isBoundaryEvent: boolean = false;
 
   private escalationCodeVariable: string;
 
@@ -60,29 +59,25 @@ export class EscalationEventSection implements ISection {
   }
 
   private init(): void {
-    if (this.businessObjInPanel.eventDefinitions && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:EscalationEventDefinition') {
-      this.isBoundaryEvent = this.businessObjInPanel.$type === 'bpmn:BoundaryEvent';
+    if (this.businessObjInPanel.eventDefinitions
+      && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:EscalationEventDefinition') {
       const escalationElement: IEscalationElement = this.businessObjInPanel.eventDefinitions[0];
 
       if (escalationElement.escalationRef) {
         this.selectedId = escalationElement.escalationRef.id;
 
-        if (escalationElement.escalationRef) {
-          this.selectedId = escalationElement.escalationRef.id;
-
-          this.updateEscalation();
-        } else {
-          this.selectedEscalation = null;
-          this.selectedId = null;
-        }
+        this.updateEscalation();
+      } else {
+        this.selectedEscalation = null;
+        this.selectedId = null;
       }
     }
     this.canHandleElement = this.checkElement(this.businessObjInPanel);
   }
 
   public checkElement(element: IModdleElement): boolean {
-    if (element.eventDefinitions &&
-        element.eventDefinitions[0].$type === 'bpmn:EscalationEventDefinition') {
+    if (element.eventDefinitions
+      && element.eventDefinitions[0].$type === 'bpmn:EscalationEventDefinition') {
       return true;
     } else {
       return false;
@@ -161,7 +156,7 @@ export class EscalationEventSection implements ISection {
   private async addEscalation(): Promise<void> {
     this.moddle.fromXML(this.getXML(), async(err: Error, definitions: IDefinition) => {
 
-      const bpmnEscalation: IModdleElement = this.moddle.create('bpmn:Escalation',
+      const bpmnEscalation: IEscalation = this.moddle.create('bpmn:Escalation',
         { id: `Escalation_${this.generalService.generateRandomId()}`, name: 'Escalation Name' });
 
       definitions.get('rootElements').push(bpmnEscalation);
