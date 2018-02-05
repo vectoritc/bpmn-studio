@@ -63,7 +63,6 @@ export class ErrorEventSection implements ISection {
     if (this.businessObjInPanel.eventDefinitions
       && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:ErrorEventDefinition') {
         const errorElement: IErrorElement = this.businessObjInPanel.eventDefinitions[0];
-
         if (errorElement.errorRef) {
           this.selectedId = errorElement.errorRef.id;
           this.updateError();
@@ -119,7 +118,7 @@ export class ErrorEventSection implements ISection {
 
       const errorElement: IErrorElement = this.businessObjInPanel.eventDefinitions[0];
 
-      this.errorMessageVariable = errorElement.errorMessageVariable;
+      errorElement.errorRef = this.selectedError;
       if (!this.isEndEvent) {
         this.errorMessageVariable = this.errorMessageVariable;
       }
@@ -207,5 +206,4 @@ export class ErrorEventSection implements ISection {
       resolve();
     });
   }
-
 }
