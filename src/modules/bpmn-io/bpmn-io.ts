@@ -3,8 +3,6 @@ import {bindable} from 'aurelia-framework';
 import {ElementDistributeOptions,
         IBpmnFunction,
         IBpmnModeler,
-        IBpmnModelerConstructor,
-        IEventBus,
         IModdleElement,
         IModeling} from '../../contracts';
 import environment from '../../environment';
