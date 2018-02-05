@@ -223,7 +223,7 @@ export class ProcessDefDetail {
     this.bpmn.setColor('#E1BEE7', '#8E24AA');
   }
 
-  public setColorWhite(): void {
+  public removeColor(): void {
     this.bpmn.setColor(null, null);
   }
 
