@@ -86,10 +86,15 @@ export class BpmnIo {
   }
 
   public getColors(): Array<string> {
-    const selectedElement: IModdleElement = this.getSelectedElements()[0].businessObject;
+    const selectedElements: Array<IShape> = this.getSelectedElements();
 
-    const fillColor: string = selectedElement.di.fill;
-    const borderColor: string = selectedElement.di.stroke;
+    if (!selectedElements || !selectedElements[0]) {
+      return [undefined, undefined];
+    }
+
+    const firstElement: IModdleElement = selectedElements[0].businessObject;
+    const fillColor: string = firstElement.di.fill;
+    const borderColor: string = firstElement.di.stroke;
 
     return [fillColor, borderColor];
   }
