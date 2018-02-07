@@ -13,4 +13,7 @@ export interface IModdleElement {
   eventDefinitions?: Array<IModdleElement>;
   conditionExpression?: IConditionExpression;
   flowElements?: Array<IModdleElement>;
+  di?: IModdleElement;
+  fill?: string;
+  stroke?: string;
 }

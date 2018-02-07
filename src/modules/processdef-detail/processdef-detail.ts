@@ -5,6 +5,9 @@ import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import * as canvg from 'canvg-browser';
 import * as download from 'downloadjs';
+import * as $ from 'jquery';
+import * as spectrum from 'spectrum-colorpicker';
+import 'spectrum-colorpicker/spectrum';
 import * as toastr from 'toastr';
 import {AuthenticationStateEvent,
         ElementDistributeOptions,
@@ -33,6 +36,8 @@ export class ProcessDefDetail {
   private startButton: HTMLElement;
   private consumerClient: ConsumerClient;
   private router: Router;
+  private fillColor: string;
+  private borderColor: string;
 
   @bindable() public uri: string;
   @bindable() public name: string;
@@ -62,6 +67,18 @@ export class ProcessDefDetail {
         this.refreshProcess();
       }),
     ];
+
+    $('#colorpickerLeft').spectrum({
+      clickoutFiresChange: true,
+      change: (borderColor: any): void => this.updateSelectedColor(null, borderColor),
+      move: (borderColor: any): void => this.updateSelectedColor(null, borderColor),
+    });
+
+    $('#colorpickerRight').spectrum({
+      clickoutFiresChange: true,
+      change: (fillColor: any): void => this.updateSelectedColor(fillColor, null),
+      move: (fillColor: any): void => this.updateSelectedColor(fillColor, null),
+    });
   }
 
   public detached(): void {
@@ -227,4 +244,36 @@ export class ProcessDefDetail {
     this.bpmn.setColor(null, null);
   }
 
+  public setColorPicked(): void {
+    this.bpmn.setColor(this.fillColor, this.borderColor);
+  }
+
+  public updateSelectedColor(fillColor: any, borderColor: any): void {
+    if (fillColor) {
+      this.fillColor = fillColor.toHexString();
+    }
+
+    if (borderColor) {
+      this.borderColor = borderColor.toHexString();
+    }
+
+    if (fillColor || borderColor) {
+      this.setColorPicked();
+    }
+  }
+
+  public updateCustomColors(): void {
+    [this.fillColor, this.borderColor] = this.bpmn.getColors();
+
+    if (!this.fillColor) {
+      this.fillColor = 'FFE000';
+    }
+
+    if (!this.borderColor) {
+      this.borderColor = '7F7526';
+    }
+
+    $('#colorpickerLeft').spectrum('set', this.fillColor);
+    $('#colorpickerRight').spectrum('set', this.borderColor);
+  }
 }

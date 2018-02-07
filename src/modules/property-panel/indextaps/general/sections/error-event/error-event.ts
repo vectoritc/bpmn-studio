@@ -55,6 +55,7 @@ export class ErrorEventSection implements ISection {
       } else if (event.element) {
         this.businessObjInPanel = event.element.businessObject;
       }
+
       this.init();
     });
   }
