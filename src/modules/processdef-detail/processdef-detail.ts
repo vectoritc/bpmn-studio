@@ -68,13 +68,13 @@ export class ProcessDefDetail {
       }),
     ];
 
-    $('#colorpickerLeft').spectrum({
+    $('#colorpickerBorder').spectrum({
       clickoutFiresChange: true,
       change: (borderColor: any): void => this.updateSelectedColor(null, borderColor),
       move: (borderColor: any): void => this.updateSelectedColor(null, borderColor),
     });
 
-    $('#colorpickerRight').spectrum({
+    $('#colorpickerFill').spectrum({
       clickoutFiresChange: true,
       change: (fillColor: any): void => this.updateSelectedColor(fillColor, null),
       move: (fillColor: any): void => this.updateSelectedColor(fillColor, null),
@@ -273,7 +273,7 @@ export class ProcessDefDetail {
       this.borderColor = '7F7526';
     }
 
-    $('#colorpickerLeft').spectrum('set', this.fillColor);
-    $('#colorpickerRight').spectrum('set', this.borderColor);
+    $('#colorpickerFill').spectrum('set', this.fillColor);
+    $('#colorpickerBorder').spectrum('set', this.borderColor);
   }
 }
