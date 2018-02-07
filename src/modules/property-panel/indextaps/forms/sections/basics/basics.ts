@@ -145,17 +145,17 @@ export class BasicsSection implements ISection {
   }
 
   private async addForm(): Promise<void> {
-      const bpmnForm: IForm = this.moddle.create('camunda:FormField',
-                                                          {
-                                                            id: `Form_${this.generateRandomId()}`,
-                                                            type: null,
-                                                            label: `Form Label`,
-                                                            defaultValue: `Default Value`,
-                                                          });
+    const bpmnForm: IForm = this.moddle.create('camunda:FormField',
+                                                {
+                                                  id: `Form_${this.generateRandomId()}`,
+                                                  type: null,
+                                                  label: `Form Label`,
+                                                  defaultValue: `Default Value`,
+                                                });
 
-      this.formElement.fields.push(bpmnForm);
-      this.forms.push(bpmnForm);
-      this.selectForm(bpmnForm);
+    this.formElement.fields.push(bpmnForm);
+    this.forms.push(bpmnForm);
+    this.selectForm(bpmnForm);
   }
 
   private getTypeOrCustomType(type: string): string {
