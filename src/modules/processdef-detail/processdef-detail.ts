@@ -68,17 +68,28 @@ export class ProcessDefDetail {
       }),
     ];
 
-    $('#colorpickerBorder').spectrum({
+    const settings: any = {
       clickoutFiresChange: true,
-      change: (borderColor: any): void => this.updateSelectedColor(null, borderColor),
-      move: (borderColor: any): void => this.updateSelectedColor(null, borderColor),
-    });
+      showPalette: true,
+      palette: [],
+      localStorageKey: 'elementColors',
+      showInitial: true,
+      showInput: true,
+      allowEmpty: true,
+      showButtons: false,
+      showPaletteOnly: true,
+      togglePaletteOnly: true,
+    };
 
-    $('#colorpickerFill').spectrum({
-      clickoutFiresChange: true,
-      change: (fillColor: any): void => this.updateSelectedColor(fillColor, null),
-      move: (fillColor: any): void => this.updateSelectedColor(fillColor, null),
-    });
+    $('#colorpickerBorder').spectrum(Object.assign({},
+      settings,
+      { move: (borderColor: any): void => this.updateBorderColor(borderColor) },
+    ));
+
+    $('#colorpickerFill').spectrum(Object.assign({},
+      settings,
+      { move: (fillColor: any): void => this.updateFillColor(fillColor) },
+    ));
   }
 
   public detached(): void {
@@ -248,30 +259,28 @@ export class ProcessDefDetail {
     this.bpmn.setColor(this.fillColor, this.borderColor);
   }
 
-  public updateSelectedColor(fillColor: any, borderColor: any): void {
+  private updateFillColor(fillColor: any): void {
     if (fillColor) {
       this.fillColor = fillColor.toHexString();
+    } else {
+      this.fillColor = null;
     }
 
+    this.setColorPicked();
+  }
+
+  private updateBorderColor(borderColor: any): void {
     if (borderColor) {
       this.borderColor = borderColor.toHexString();
+    } else {
+      this.borderColor = null;
     }
 
-    if (fillColor || borderColor) {
-      this.setColorPicked();
-    }
+    this.setColorPicked();
   }
 
   public updateCustomColors(): void {
     [this.fillColor, this.borderColor] = this.bpmn.getColors();
-
-    if (!this.fillColor) {
-      this.fillColor = 'FFE000';
-    }
-
-    if (!this.borderColor) {
-      this.borderColor = '7F7526';
-    }
 
     $('#colorpickerFill').spectrum('set', this.fillColor);
     $('#colorpickerBorder').spectrum('set', this.borderColor);
