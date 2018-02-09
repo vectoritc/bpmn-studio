@@ -2,13 +2,18 @@
   position: absolute;
   width: 24px;
   height: 24px;
-  right: 5px;
+  right: 10px;
   top: 75px;
 }
 
 .removePropertyButton {
   position: absolute;
-  right: 5px;
+  right: 10px;
   width: 24px;
   height: 24px;
+}
+
+.input_field {
+  position: relative;
+  width: 146px;
 }
