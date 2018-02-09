@@ -4,7 +4,8 @@ import {ElementDistributeOptions,
         IBpmnFunction,
         IBpmnModeler,
         IModdleElement,
-        IModeling} from '../../contracts';
+        IModeling,
+        IShape} from '../../contracts';
 import environment from '../../environment';
 
 export class BpmnIo {
@@ -66,7 +67,7 @@ export class BpmnIo {
   public distributeElements(option: ElementDistributeOptions): void {
     const distribute: IBpmnFunction = this.modeler.get('distributeElements');
 
-    const selectedElements: Array<IModdleElement> = this.modeler.get('selection')._selectedElements;
+    const selectedElements: Array<IShape> = this.getSelectedElements();
 
     distribute.trigger(selectedElements, option);
   }
@@ -74,7 +75,7 @@ export class BpmnIo {
   public setColor(fillColor: string, strokeColor: string): void {
     const modeling: IModeling = this.modeler.get('modeling');
 
-    const selectedElements: Array<IModdleElement> = this.modeler.get('selection')._selectedElements;
+    const selectedElements: Array<IShape> = this.getSelectedElements();
 
     if (selectedElements.length > 0) {
       modeling.setColor(selectedElements, {
@@ -84,4 +85,21 @@ export class BpmnIo {
     }
   }
 
+  public getColors(): Array<string> {
+    const selectedElements: Array<IShape> = this.getSelectedElements();
+
+    if (!selectedElements || !selectedElements[0]) {
+      return [undefined, undefined];
+    }
+
+    const firstElement: IModdleElement = selectedElements[0].businessObject;
+    const fillColor: string = firstElement.di.fill;
+    const borderColor: string = firstElement.di.stroke;
+
+    return [fillColor, borderColor];
+  }
+
+  private getSelectedElements(): Array<IShape> {
+    return this.modeler.get('selection')._selectedElements;
+  }
 }

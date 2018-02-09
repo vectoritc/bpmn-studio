@@ -6,32 +6,6 @@
       <label><em>Call Activity</em></label><br>
       <label class="section__input-label">Called Element: </label>
       <input type="text" class="form-control" value.bind="businessObjInPanel.calledElement">
-      <label class="section__input-label">Tenant ID: </label>
-      <input type="text" class="form-control" value.bind="businessObjInPanel.calledElementTenantId">
-      <label class="section__input-label">Binding</label>
-      <select class="form-control" value.bind="selectedBinding">
-        <option model.bind="1">latest</option>
-        <option model.bind="2">deployment</option>
-        <option model.bind="3">version</option>
-      </select>
-      <div if.bind="selectedBinding === 3">
-        <label class="section__input-label">Version: </label>
-        <input type="text" class="form-control" value.bind="businessObjInPanel.calledElementVersion">
-      </div>
-      <label class="section__input-label">Delegate Variable Mapping</label>
-      <select class="form-control" value.bind="selectedOption">
-        <option model.bind="null">-</option>
-        <option model.bind="1">variableMappingClass</option>
-        <option model.bind="2">variableMappingDelegateExpression</option>
-      </select>
-      <div if.bind="selectedOption === 1">
-        <label class="section__input-label">Class: </label>
-        <input type="text" class="form-control" value.bind="businessObjInPanel.variableMappingClass">
-      </div>
-      <div if.bind="selectedOption === 2">
-        <label class="section__input-label">Delegate Expression: </label>
-        <input type="text" class="form-control" value.bind="businessObjInPanel.variableMappingDelegateExpression">
-      </div>
     </div>
     <div class="section__special col-md-1">
     </div>

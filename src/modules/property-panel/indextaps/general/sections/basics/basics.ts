@@ -111,17 +111,31 @@ export class BasicsSection implements ISection {
     });
   }
 
-  public clearId(): void {
+  private clearId(): void {
     this.businessObjInPanel.id = '';
+    this.updateId();
   }
 
-  public clearName(): void {
+  private clearName(): void {
     this.businessObjInPanel.name = '';
+    this.updateName();
   }
 
-  public clearDocumentation(): void {
+  private clearDocumentation(): void {
     this.elementDocumentation = '';
     this.updateDocumentation();
+  }
+
+  private updateName(): void {
+    this.modeling.updateProperties(this.elementInPanel, {
+      name: this.businessObjInPanel.name,
+    });
+  }
+
+  private updateId(): void {
+    this.modeling.updateProperties(this.elementInPanel, {
+      id: this.businessObjInPanel.id,
+    });
   }
 
 }

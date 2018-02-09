@@ -5,6 +5,9 @@ import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import * as canvg from 'canvg-browser';
 import * as download from 'downloadjs';
+import * as $ from 'jquery';
+import * as spectrum from 'spectrum-colorpicker';
+import 'spectrum-colorpicker/spectrum';
 import * as toastr from 'toastr';
 import {AuthenticationStateEvent,
         ElementDistributeOptions,
@@ -33,6 +36,8 @@ export class ProcessDefDetail {
   private startButton: HTMLElement;
   private consumerClient: ConsumerClient;
   private router: Router;
+  private fillColor: string;
+  private borderColor: string;
 
   @bindable() public uri: string;
   @bindable() public name: string;
@@ -62,6 +67,29 @@ export class ProcessDefDetail {
         this.refreshProcess();
       }),
     ];
+
+    const settings: any = {
+      clickoutFiresChange: true,
+      showPalette: true,
+      palette: [],
+      localStorageKey: 'elementColors',
+      showInitial: true,
+      showInput: true,
+      allowEmpty: true,
+      showButtons: false,
+      showPaletteOnly: true,
+      togglePaletteOnly: true,
+    };
+
+    $('#colorpickerBorder').spectrum(Object.assign({},
+      settings,
+      { move: (borderColor: any): void => this.updateBorderColor(borderColor) },
+    ));
+
+    $('#colorpickerFill').spectrum(Object.assign({},
+      settings,
+      { move: (fillColor: any): void => this.updateFillColor(fillColor) },
+    ));
   }
 
   public detached(): void {
@@ -227,4 +255,34 @@ export class ProcessDefDetail {
     this.bpmn.setColor(null, null);
   }
 
+  public setColorPicked(): void {
+    this.bpmn.setColor(this.fillColor, this.borderColor);
+  }
+
+  private updateFillColor(fillColor: any): void {
+    if (fillColor) {
+      this.fillColor = fillColor.toHexString();
+    } else {
+      this.fillColor = null;
+    }
+
+    this.setColorPicked();
+  }
+
+  private updateBorderColor(borderColor: any): void {
+    if (borderColor) {
+      this.borderColor = borderColor.toHexString();
+    } else {
+      this.borderColor = null;
+    }
+
+    this.setColorPicked();
+  }
+
+  public updateCustomColors(): void {
+    [this.fillColor, this.borderColor] = this.bpmn.getColors();
+
+    $('#colorpickerFill').spectrum('set', this.fillColor);
+    $('#colorpickerBorder').spectrum('set', this.borderColor);
+  }
 }

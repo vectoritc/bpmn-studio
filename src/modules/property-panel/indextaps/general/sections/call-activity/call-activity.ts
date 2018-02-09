@@ -1,4 +1,3 @@
-import { observable } from 'aurelia-framework';
 import {IBpmnModeler,
   ICallActivityElement,
   IEvent,
@@ -16,10 +15,6 @@ export class CallActivitySection implements ISection {
   private businessObjInPanel: ICallActivityElement;
   private eventBus: IEventBus;
   private modeler: IBpmnModeler;
-
-  @observable public selectedOption: number;
-  @observable public selectedBinding: number;
-  public callActivity: ICallActivityElement;
 
   public async activate(model: IPageModel): Promise<void> {
     this.eventBus = model.modeler.get('eventBus');
@@ -42,25 +37,7 @@ export class CallActivitySection implements ISection {
   }
 
   private init(): void {
-    this.callActivity = this.businessObjInPanel;
     this.canHandleElement = this.checkElement(this.businessObjInPanel);
-    if (this.businessObjInPanel.calledElementBinding) {
-      if (this.businessObjInPanel.calledElementBinding === 'latest') {
-        this.selectedBinding = 1;
-      } else if (this.businessObjInPanel.calledElementBinding === 'deployment') {
-        this.selectedBinding = 2; // tslint:disable-line
-      } else if (this.businessObjInPanel.calledElementBinding === 'version') {
-        this.selectedBinding = 3; // tslint:disable-line
-      }
-    } else {
-      this.businessObjInPanel.calledElementBinding = 'latest';
-    }
-
-    if (this.businessObjInPanel.variableMappingClass !== undefined) {
-      this.selectedOption = 1;
-    } else if (this.businessObjInPanel.variableMappingDelegateExpression !== undefined) {
-      this.selectedOption = 2; // tslint:disable-line
-    }
   }
 
   public checkElement(element: IModdleElement): boolean {
@@ -69,27 +46,6 @@ export class CallActivitySection implements ISection {
       return true;
     } else {
       return false;
-    }
-  }
-
-  private selectedOptionChanged(newValue: number, oldValue: number): void {
-    if (newValue === 1) {
-      this.businessObjInPanel.variableMappingDelegateExpression = undefined;
-    } else if (newValue === 2) { // tslint:disable-line
-      this.businessObjInPanel.variableMappingClass = undefined;
-    } else {
-      this.businessObjInPanel.variableMappingClass = undefined;
-      this.businessObjInPanel.variableMappingDelegateExpression = undefined;
-    }
-  }
-
-  private selectedBindingChanged(newValue: number, oldValue: number): void {
-    if (newValue === 1) {
-      this.businessObjInPanel.calledElementBinding = 'latest';
-    } else if (newValue === 2) { // tslint:disable-line
-      this.businessObjInPanel.calledElementBinding = 'deployment';
-    } else if (newValue === 3) { // tslint:disable-line
-      this.businessObjInPanel.calledElementBinding = 'version';
     }
   }
 
