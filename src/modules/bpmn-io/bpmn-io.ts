@@ -12,6 +12,7 @@ export class BpmnIo {
 
   @bindable() public xml: string;
   public modeler: IBpmnModeler;
+  private toggled: boolean = false;
 
   public created(): void {
     this.modeler = new bundle.modeler({
@@ -102,4 +103,24 @@ export class BpmnIo {
   private getSelectedElements(): Array<IShape> {
     return this.modeler.get('selection')._selectedElements;
   }
+
+  private togglePanel(): void {
+    const toggleBtn: HTMLElement = document.getElementById('toggle_panel');
+    const panel: HTMLElement = document.getElementById('js-properties-panel');
+    const canvas: HTMLElement = document.getElementById('canvas');
+    if (this.toggled === true) {
+      panel.style.display = 'inline';
+      toggleBtn.style.right = '337px';
+      toggleBtn.textContent = 'Hide';
+      canvas.style.right = '350px';
+      this.toggled = false;
+    } else {
+      panel.style.display = 'none';
+      toggleBtn.style.right = '-16px';
+      toggleBtn.textContent = 'Show';
+      canvas.style.right = '1px';
+      this.toggled = true;
+    }
+  }
+
 }
