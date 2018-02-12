@@ -6,9 +6,9 @@ import {IBpmnModdle,
  IModdleElement,
  IModeling,
  IShape} from '../../contracts';
-import {Extensions} from './indextaps/extensions/extensions';
-import {Forms} from './indextaps/forms/forms';
-import {General} from './indextaps/general/general';
+import {Extensions} from './indextabs/extensions/extensions';
+import {Forms} from './indextabs/forms/forms';
+import {General} from './indextabs/general/general';
 
 export class PropertyPanel {
 
