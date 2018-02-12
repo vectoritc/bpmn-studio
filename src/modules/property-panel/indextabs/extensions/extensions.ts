@@ -3,7 +3,7 @@ import {BasicsSection} from './sections/basics/basics';
 
 export class Extensions {
   public title: string = 'Extensions';
-  public path: string = '/indextaps/extensions/extensions';
+  public path: string = '/indextabs/extensions/extensions';
   public sections: Array<ISection>;
 
   private basicsSection: ISection = new BasicsSection();

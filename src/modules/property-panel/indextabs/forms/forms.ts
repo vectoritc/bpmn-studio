@@ -6,7 +6,7 @@ import {BasicsSection} from './sections/basics/basics';
 
 export class Forms {
   public title: string = 'Forms';
-  public path: string = '/indextaps/forms/forms';
+  public path: string = '/indextabs/forms/forms';
   public sections: Array<ISection>;
   private eventBus: IEventBus;
 

@@ -11,7 +11,7 @@ import {SignalEventSection} from './sections/signal-event/signal-event';
 
 export class General {
   public title: string = 'General';
-  public path: string = '/indextaps/general/general';
+  public path: string = '/indextabs/general/general';
   public sections: Array<ISection>;
 
   public basicsSection: ISection = new BasicsSection();
