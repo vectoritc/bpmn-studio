@@ -10,9 +10,13 @@ import environment from '../../environment';
 
 export class BpmnIo {
 
+  private toggled: boolean = false;
+  private toggleBtn: HTMLButtonElement;
+  private panel: HTMLElement;
+  private canvasModel: HTMLDivElement;
+
   @bindable() public xml: string;
   public modeler: IBpmnModeler;
-  private toggled: boolean = false;
 
   public created(): void {
     this.modeler = new bundle.modeler({
@@ -105,22 +109,18 @@ export class BpmnIo {
   }
 
   private togglePanel(): void {
-    const toggleBtn: HTMLElement = document.getElementById('toggle_panel');
-    const panel: HTMLElement = document.getElementById('js-properties-panel');
-    const canvas: HTMLElement = document.getElementById('canvas');
     if (this.toggled === true) {
-      panel.style.display = 'inline';
-      toggleBtn.style.right = '337px';
-      toggleBtn.textContent = 'Hide';
-      canvas.style.right = '350px';
+      this.panel.style.display = 'inline';
+      this.toggleBtn.style.right = '337px';
+      this.toggleBtn.textContent = 'Hide';
+      this.canvasModel.style.right = '350px';
       this.toggled = false;
     } else {
-      panel.style.display = 'none';
-      toggleBtn.style.right = '-16px';
-      toggleBtn.textContent = 'Show';
-      canvas.style.right = '1px';
+      this.panel.style.display = 'none';
+      this.toggleBtn.style.right = '-16px';
+      this.toggleBtn.textContent = 'Show';
+      this.canvasModel.style.right = '1px';
       this.toggled = true;
     }
   }
-
 }
