@@ -12,8 +12,12 @@ export class BpmnIo {
 
   private toggled: boolean = false;
   private toggleBtn: HTMLButtonElement;
+  private resizeBtn: HTMLButtonElement;
   private panel: HTMLElement;
   private canvasModel: HTMLDivElement;
+  private abc: boolean = false;
+  private def: boolean = false;
+  private newXforPanel: string;
 
   @bindable() public xml: string;
   public modeler: IBpmnModeler;
@@ -113,14 +117,59 @@ export class BpmnIo {
       this.panel.style.display = 'inline';
       this.toggleBtn.style.right = '337px';
       this.toggleBtn.textContent = 'Hide';
+      this.resizeBtn.style.right = '331px';
       this.canvasModel.style.right = '350px';
       this.toggled = false;
     } else {
       this.panel.style.display = 'none';
       this.toggleBtn.style.right = '-16px';
       this.toggleBtn.textContent = 'Show';
+      this.resizeBtn.style.right = '-18px';
       this.canvasModel.style.right = '1px';
       this.toggled = true;
     }
   }
+
+  private resize(events: MouseEvent): void {
+    // console.log(event.clientX, event.clientY);
+    this.abc = true;
+    this.def = true;
+    document.addEventListener('mousemove', (event: any) => {
+      if (this.abc === true) {
+        this.newXforPanel = event.clientX;
+        this.panel.style.width = `${event.clientX}px`;
+        this.toggleBtn.style.right = `${event.clientX - 13}px`;
+        this.resizeBtn.style.right = `${event.clientX - 19}px`;
+        this.canvasModel.style.right = `${event.clientX + 1}px`;
+      }
+    });
+
+    document.addEventListener('click', (event: any) => {
+      document.removeEventListener('mousemove', this.removeMouseMove());
+      document.removeEventListener('click', this.removeClickHandler());
+    });
+
+    // document.onmousemove = (event: any): void => {
+    // if (this.abc === true) {
+    //     this.newXforPanel = event.clientX;
+    //     this.panel.style.width = `${event.clientX}px`;
+    //     this.toggleBtn.style.right = `${event.clientX - 13}px`;
+    //     this.resizeBtn.style.right = `${event.clientX - 19}px`;
+    //     this.canvasModel.style.right = `${event.clientX + 1}px`;
+    //   }
+    // };
+
+    // document.onclick = (): void => {
+    //   this.abc = false;
+    //   };
+  }
+
+  private removeMouseMove(): any {
+    this.abc = false;
+  }
+
+  private removeClickHandler(): any {
+    this.def = false;
+  }
+
 }

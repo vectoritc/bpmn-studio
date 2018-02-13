@@ -45,6 +45,13 @@
 .toggle_panel {
   right: 337px;
   position: absolute;
-  top: 50%;
+  bottom: 45%;
+  transform: rotate(-90deg);
+}
+
+.resize_btn {
+  right: 331px;
+  position: absolute;
+  top: 45%;
   transform: rotate(-90deg);
 }
