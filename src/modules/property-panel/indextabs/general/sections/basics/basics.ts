@@ -24,8 +24,9 @@ export class BasicsSection implements ISection {
   private modeler: IBpmnModeler;
   private moddle: IBpmnModdle;
   private elementInPanel: IShape;
-  public validationController: ValidationController;
+  private someId: string;
 
+  public validationController: ValidationController;
   public businessObjInPanel: IModdleElement;
   public elementDocumentation: string;
   public validationError: boolean = false;
@@ -52,6 +53,10 @@ export class BasicsSection implements ISection {
     }
 
     this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
+      if (this.validationError) {
+        this.businessObjInPanel.id = this.elementInPanel.id;
+        this.validationController.validate();
+      }
       if (event.newSelection && event.newSelection.length !== 0) {
         this.elementInPanel = event.newSelection[0];
         this.businessObjInPanel = event.newSelection[0].businessObject;
