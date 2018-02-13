@@ -91,6 +91,7 @@ export class BasicsSection implements ISection {
 
   private reloadForms(): void {
     this.forms = [];
+
     if (!this.formElement || !this.formElement.fields) {
       return;
     }
@@ -152,6 +153,10 @@ export class BasicsSection implements ISection {
                                                   label: `Form Label`,
                                                   defaultValue: `Default Value`,
                                                 });
+
+    if (!this.formElement.fields) {
+      this.formElement.fields = [];
+    }
 
     this.formElement.fields.push(bpmnForm);
     this.forms.push(bpmnForm);
