@@ -105,7 +105,7 @@ export class BasicsSection implements ISection {
   }
 
   public checkElement(element: IModdleElement): boolean {
-    if (element.$type === 'bpmn:UserTask' || element.$type === 'bpmn:StartEvent') {
+    if (element.$type === 'bpmn:UserTask') {
       return true;
     } else {
       return false;
