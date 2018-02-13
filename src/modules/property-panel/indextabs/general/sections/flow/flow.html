@@ -3,8 +3,11 @@
   <require from="../../../../styles/sections.css"></require>
   <div class="section" show.bind="canHandleElement">
     <div class="section__content section__border col-md-11">
-      <label class="section__input-label">Condition: </label>
-      <input type="text" class="form-control" value.bind="condition">
+      <div class="section__btn-group">
+        <label class="section__input-label">Condition: </label>
+        <input type="text" class="form-control" value.bind="condition">
+        <span class="glyphicon glyphicon-remove-circle section__btn-group--clear-btn" click.delegate="clearCondition()"></span>    
+      </div>
     </div>
     <div class="section__special col-md-1">
     </div>

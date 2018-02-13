@@ -49,4 +49,16 @@ export class ScriptTaskSection implements ISection {
     }
   }
 
+  private clearFormat(): void {
+    this.businessObjInPanel.scriptFormat = '';
+  }
+
+  private clearScript(): void {
+    this.businessObjInPanel.script = '';
+  }
+
+  private clearVariable(): void {
+    this.businessObjInPanel.resultVariable = '';
+  }
+
 }

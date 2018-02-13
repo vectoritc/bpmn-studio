@@ -27,6 +27,7 @@ export class EscalationEventSection implements ISection {
   private generalService: GeneralService;
 
   private escalationCodeVariable: string;
+  private isBoundaryEvent: boolean = true;
 
   public escalations: Array<IEscalation>;
   public selectedId: string;
@@ -78,7 +79,12 @@ export class EscalationEventSection implements ISection {
   public checkElement(element: IModdleElement): boolean {
     if (element.eventDefinitions
       && element.eventDefinitions[0].$type === 'bpmn:EscalationEventDefinition') {
-      return true;
+        if (element.$type === 'bpmn:EndEvent') {
+          this.isBoundaryEvent = false;
+        } else if (element.$type === 'bpmn:BoundaryEvent') {
+          this.isBoundaryEvent = true;
+        }
+        return true;
     } else {
       return false;
     }
@@ -199,5 +205,17 @@ export class EscalationEventSection implements ISection {
 
       resolve();
     });
+  }
+
+  private clearName(): void {
+    this.selectedEscalation.name = '';
+  }
+
+  private clearCode(): void {
+    this.selectedEscalation.escalationCode = '';
+  }
+
+  private clearVariable(): void {
+    this.escalationCodeVariable = '';
   }
 }

@@ -75,4 +75,8 @@ export class FlowSection implements ISection {
     this.businessObjInPanel.conditionExpression = conditionExpression;
   }
 
+  private clearCondition(): void {
+    this.condition = '';
+  }
+
 }

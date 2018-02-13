@@ -49,4 +49,7 @@ export class CallActivitySection implements ISection {
     }
   }
 
+  private clearCalledElement(): void {
+    this.businessObjInPanel.calledElement = '';
+  }
 }

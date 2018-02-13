@@ -44,4 +44,16 @@ export class PoolSection implements ISection {
     }
   }
 
+  private clearVersion(): void {
+    this.businessObjInPanel.processRef.versionTag = '';
+  }
+
+  private clearId(): void {
+    this.businessObjInPanel.processRef.id = '';
+  }
+
+  private clearName(): void {
+    this.businessObjInPanel.processRef.name = '';
+  }
+
 }
