@@ -166,4 +166,8 @@ export class MessageEventSection implements ISection {
     });
   }
 
+  private clearName(): void {
+    this.selectedMessage.name = '';
+  }
+
 }
