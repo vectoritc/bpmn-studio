@@ -60,13 +60,12 @@ export class BasicsSection implements ISection {
         this.businessObjInPanel = event.element.businessObject;
       }
       this.init();
-      this.validationController.validate();
+
+      ValidationRules.ensure((businessObject: IModdleElement) => businessObject.id).required()
+      .withMessage(`Id cannot be blank.`)
+      .on(this.businessObjInPanel);
     });
     this.setFirstElement();
-
-    ValidationRules.ensure((businessObject: IModdleElement) => businessObject.id).required()
-    .withMessage(`Id cannot be blank.`)
-    .on(this.businessObjInPanel);
 
   }
 
@@ -163,7 +162,6 @@ export class BasicsSection implements ISection {
   }
 
   private validateForm(event: ValidateEvent): void {
-    console.log(event);
     if (event.type === 'validate') {
       event.results.forEach((result: ValidateResult) => {
         if (result.valid === false) {
