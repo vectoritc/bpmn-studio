@@ -91,13 +91,12 @@ export class BasicsSection implements ISection {
 
   private getPropertyElement(): IPropertyElement {
     let propertyElement: IPropertyElement;
-
     if (!this.businessObjInPanel.extensionElements) {
       this.createExtensionElement();
     }
 
     for (const extensionValue of this.businessObjInPanel.extensionElements.values) {
-      if (extensionValue.$type === 'camunda:Properties') {
+      if (extensionValue.$type === 'camunda:Properties' && extensionValue.values) {
         propertyElement = extensionValue;
       }
     }
@@ -107,7 +106,6 @@ export class BasicsSection implements ISection {
 
       const extensionPropertyElement: IPropertyElement = this.moddle.create('camunda:Properties', {values: propertyValues});
       this.businessObjInPanel.extensionElements.values.push(extensionPropertyElement);
-
       return this.getPropertyElement();
     }
 
