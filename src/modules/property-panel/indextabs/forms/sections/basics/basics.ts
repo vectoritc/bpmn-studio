@@ -227,4 +227,25 @@ export class BasicsSection implements ISection {
     }
     return randomId;
   }
+
+  private clearFormKey(): void {
+    this.businessObjInPanel.formKey = '';
+  }
+
+  private clearId(): void {
+    this.selectedForm.id = '';
+  }
+
+  private clearType(): void {
+    this.customType = '';
+  }
+
+  private clearLabel(): void {
+    this.selectedForm.label = '';
+  }
+
+  private clearValue(): void {
+    this.selectedForm.defaultValue = '';
+  }
+
 }
