@@ -10,13 +10,22 @@
                 model.bind="error.id" value="${error.id}">${error.name} (id: ${error.id})</option>
       </select>
       <div show.bind="selectedId">
-        <label class="section__input-label">Error Name: </label>
-        <input type="text" class="form-control" value.bind="selectedError.name" change.delegate="updateErrorName()">
-        <label class="section__input-label">Error Code: </label>
-        <input type="text" class="form-control" value.bind="selectedError.errorCode" change.delegate="updateErrorCode()">
+        <div class="section__btn-group">
+          <label class="section__input-label">Error Name: </label>
+          <input type="text" class="form-control" value.bind="selectedError.name" change.delegate="updateErrorName()">
+          <span class="glyphicon glyphicon-remove-circle section__btn-group--clear-btn" click.delegate="clearName()"></span>
+        </div>
+        <div class="section__btn-group">
+          <label class="section__input-label">Error Code: </label>
+          <input type="text" class="form-control" value.bind="selectedError.errorCode" change.delegate="updateErrorCode()">
+          <span class="glyphicon glyphicon-remove-circle section__btn-group--clear-btn" click.delegate="clearCode()"></span>
+        </div>
         <div show.bind="!isEndEvent">
-          <label class="section__input-label">Error Message: </label>
-          <input type="text" class="form-control" value.bind="errorMessageVariable" change.delegate="updateErrorMessage()">
+          <div class="section__btn-group">
+            <label class="section__input-label">Error Message: </label>
+            <input type="text" class="form-control" value.bind="errorMessageVariable" change.delegate="updateErrorMessage()">
+            <span class="glyphicon glyphicon-remove-circle section__btn-group--clear-btn" click.delegate="clearMessage()"></span>
+          </div>
         </div>
       </div>
     </div>

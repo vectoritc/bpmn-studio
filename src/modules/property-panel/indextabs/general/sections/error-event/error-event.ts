@@ -207,4 +207,16 @@ export class ErrorEventSection implements ISection {
       resolve();
     });
   }
+
+  private clearName(): void {
+    this.selectedError.name = '';
+  }
+
+  private clearCode(): void {
+    this.selectedError.errorCode = '';
+  }
+
+  private clearMessage(): void {
+    this.errorMessageVariable = '';
+  }
 }
