@@ -1,17 +1,19 @@
 <template>
   <require from="./property-panel.css"></require>
   <div class="property-panel">
-    <div class="btn-group register-dropdown">
-      <a class="btn btn-default register-button">${currentRegister.title}</a>
-      <a ref="registerDropdown" class="btn btn-default dropdown-toggle dropdown_button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <div class="btn-group indextab-dropdown">
+      <a class="btn btn-default indextab-button">${currentIndextab.title}</a>
+      <a ref="indextabDropdown" class="btn btn-default dropdown-toggle dropdown_button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
       </a>
       <ul class="dropdown-menu">
-        <li repeat.for="register of registers"><a click.delegate="updateLabel(register)">${register.title}</a></li>
+        <li repeat.for="indextab of indextabs">
+          <a show.bind="indextab.canHandleElement" click.delegate="updateLabel(indextab)">${indextab.title}</a>
+        </li>
       </ul>
     </div>
-    <compose view-model=".${currentRegister.path}" view=".${currentRegister.path}.html"
+    <compose view-model=".${currentIndextab.path}" view=".${currentIndextab.path}.html"
       model.bind="{ modeler : modeler }" containerless></compose>
   </div>
 </template>

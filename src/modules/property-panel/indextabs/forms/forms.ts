@@ -1,35 +1,33 @@
 import {IEvent,
         IEventBus,
+        IIndextab,
+        IModdleElement,
         IPageModel,
-        ISection} from '../../../../contracts';
+        ISection,
+        IShape} from '../../../../contracts';
 import {BasicsSection} from './sections/basics/basics';
 
-export class Forms {
+export class Forms implements IIndextab {
   public title: string = 'Forms';
   public path: string = '/indextabs/forms/forms';
-  public sections: Array<ISection>;
   private eventBus: IEventBus;
 
   private basicsSection: ISection = new BasicsSection();
 
   public canHandleElement: boolean;
 
-  public activate(model: IPageModel): void {
+  public sections: Array<ISection> = [
+    this.basicsSection,
+  ];
 
-    this.eventBus = model.modeler.get('eventBus');
+  public checkElement(element: IShape): boolean {
+    if (!element) {
+      return false;
+    }
 
-    this.sections = [
-      this.basicsSection,
-    ];
-
-    // const selectedEvent: any = model.modeler.get('selection')._selectedElements;
-    // console.log(selectedEvent);
-    // this.eventBus.on('element.click', (event: IEvent) => {
-
-    // this.canHandleElement = this.sections.some((section: ISection) => {
-    //     return section.checkElement(event.element.businessObject);
-    //   });
-    // });
+    return this.sections.some((section: ISection) => {
+      return section.checkElement(element.businessObject);
+    });
   }
 
 }

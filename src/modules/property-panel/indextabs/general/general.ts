@@ -1,4 +1,6 @@
-import {ISection} from '../../../../contracts';
+import {IIndextab,
+        ISection,
+        IShape} from '../../../../contracts';
 import {BasicsSection} from './sections/basics/basics';
 import {CallActivitySection} from './sections/call-activity/call-activity';
 import {ErrorEventSection} from './sections/error-event/error-event';
@@ -9,7 +11,7 @@ import {PoolSection} from './sections/pool/pool';
 import {ScriptTaskSection} from './sections/script-task/script-task';
 import {SignalEventSection} from './sections/signal-event/signal-event';
 
-export class General {
+export class General implements IIndextab {
   public title: string = 'General';
   public path: string = '/indextabs/general/general';
   public sections: Array<ISection>;
@@ -38,6 +40,10 @@ export class General {
       this.errorEventSection,
       this.escalationEventSection,
     ];
+  }
+
+  public checkElement(element: IShape): boolean {
+    return true;
   }
 
 }
