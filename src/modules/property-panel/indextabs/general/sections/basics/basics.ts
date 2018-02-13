@@ -10,6 +10,10 @@ import {IBpmnModdle,
   ISection,
   IShape} from '../../../../../../contracts';
 
+import {inject} from 'aurelia-framework';
+import {ValidateEvent, ValidateResult, ValidationController, ValidationRules} from 'aurelia-validation';
+
+@inject(ValidationController)
 export class BasicsSection implements ISection {
 
   public path: string = '/sections/basics/basics';
@@ -20,15 +24,24 @@ export class BasicsSection implements ISection {
   private modeler: IBpmnModeler;
   private moddle: IBpmnModdle;
   private elementInPanel: IShape;
+  public validationController: ValidationController;
 
   public businessObjInPanel: IModdleElement;
   public elementDocumentation: string;
+
+  constructor(controller: ValidationController) {
+    this.validationController = controller;
+  }
 
   public activate(model: IPageModel): void {
     this.eventBus = model.modeler.get('eventBus');
     this.modeling = model.modeler.get('modeling');
     this.moddle = model.modeler.get('moddle');
     this.modeler = model.modeler;
+
+    this.validationController.subscribe((event: ValidateEvent) => {
+      this.validateForm(event);
+    });
 
     const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
     if (selectedEvents[0]) {
@@ -48,6 +61,10 @@ export class BasicsSection implements ISection {
       this.init();
     });
     this.setFirstElement();
+
+    ValidationRules.ensure((businessObject: IModdleElement) => businessObject.id).required()
+    .withMessage(`cannot be blank.`)
+    .on(this.businessObjInPanel);
   }
 
   private init(): void {
@@ -133,9 +150,23 @@ export class BasicsSection implements ISection {
   }
 
   private updateId(): void {
+    if (this.validationController.errors.length > 0) {
+      return;
+    }
     this.modeling.updateProperties(this.elementInPanel, {
       id: this.businessObjInPanel.id,
     });
   }
 
+  private validateForm(event: ValidateEvent): void {
+    if (event.type === 'validate') {
+      event.results.forEach((result: ValidateResult) => {
+        if (result.valid === false) {
+          document.getElementById(result.propertyName).style.border = '2px solid red';
+        } else {
+          document.getElementById(result.propertyName).style.border = '';
+        }
+      });
+    }
+  }
 }

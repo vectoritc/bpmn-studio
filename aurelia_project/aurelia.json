@@ -243,7 +243,9 @@
             "resources": [
               "build/toastr.min.css"
             ],
-            "deps": ["jquery"]
+            "deps": [
+              "jquery"
+            ]
           },
           {
             "name": "canvg-browser",
@@ -274,6 +276,12 @@
               "spectrum.css",
               "spectrum.js"
             ]
+          },
+          {
+            "name": "aurelia-validation",
+            "main": "aurelia-validation",
+            "path": "../node_modules/aurelia-validation/dist/amd",
+            "resources": []
           }
         ]
       }

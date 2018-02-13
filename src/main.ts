@@ -18,7 +18,8 @@ export function configure(aurelia: Aurelia): void {
     .feature('modules/authentication')
     .feature('modules/consumer-client', tokenRepository)
     .feature('resources')
-    .plugin('aurelia-bootstrap');
+    .plugin('aurelia-bootstrap')
+    .plugin('aurelia-validation');
 
   if (environment.debug) {
     aurelia.use.developmentLogging();

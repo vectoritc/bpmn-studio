@@ -5,7 +5,7 @@
     <div class="section__content section__border col-md-11">
       <div class="section__btn-group">
         <label class="section__input-label">Id: </label>
-        <input type="text" class="form-control" value.bind="businessObjInPanel.id" change.delegate="updateId()">
+        <input type="text" id="id" class="form-control" value.bind="businessObjInPanel.id & validateOnChange" change.delegate="updateId()">
         <span class="glyphicon glyphicon-remove-circle section__btn-group--clear-btn" click.delegate="clearId()"></span>
       </div>
       <div class="section__btn-group">
@@ -20,6 +20,7 @@
       </div>
     </div>
     <div class="section__special col-md-1">
+
     </div>
   </div>
 </template>
