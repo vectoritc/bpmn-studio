@@ -20,7 +20,22 @@
       </div>
     </div>
     <div class="section__special col-md-1">
-
+      <div class="id-tooltip-error" if.bind="validationError">
+        <div class="tooltip">
+          <span class="glyphicon glyphicon-remove"></span>
+          <span class="tooltiptext">
+            <div repeat.for="error of validationController.errors">
+              ${error}(${error.object.$type})
+            </div>
+          </span>
+        </div>
+      </div>
+      <div class="id-tooltip-ok" if.bind="!validationError">
+          <div class="tooltip">
+            <span class="glyphicon glyphicon-ok"></span>
+            <span class="tooltiptext">Every Id is fine!</span>
+          </div>
+        </div>
     </div>
   </div>
 </template>

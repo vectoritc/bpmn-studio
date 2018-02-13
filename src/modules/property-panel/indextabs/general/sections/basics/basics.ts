@@ -28,8 +28,9 @@ export class BasicsSection implements ISection {
 
   public businessObjInPanel: IModdleElement;
   public elementDocumentation: string;
+  public validationError: boolean = false;
 
-  constructor(controller: ValidationController) {
+  constructor(controller?: ValidationController) {
     this.validationController = controller;
   }
 
@@ -48,7 +49,6 @@ export class BasicsSection implements ISection {
       this.businessObjInPanel = selectedEvents[0].businessObject;
       this.elementInPanel = selectedEvents[0];
       this.init();
-      this.validationController.validate();
     }
 
     this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
@@ -60,6 +60,7 @@ export class BasicsSection implements ISection {
         this.businessObjInPanel = event.element.businessObject;
       }
       this.init();
+      this.validationController.validate();
     });
     this.setFirstElement();
 
@@ -162,12 +163,14 @@ export class BasicsSection implements ISection {
   }
 
   private validateForm(event: ValidateEvent): void {
+    console.log(event);
     if (event.type === 'validate') {
       event.results.forEach((result: ValidateResult) => {
         if (result.valid === false) {
-          console.log('false');
+          this.validationError = true;
           document.getElementById(result.propertyName).style.border = '2px solid red';
         } else {
+          this.validationError = false;
           document.getElementById(result.propertyName).style.border = '';
         }
       });
