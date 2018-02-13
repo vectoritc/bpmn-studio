@@ -167,4 +167,8 @@ export class SignalEventSection implements ISection {
     });
   }
 
+  private clearName(): void {
+    this.selectedSignal.name = '';
+  }
+
 }
