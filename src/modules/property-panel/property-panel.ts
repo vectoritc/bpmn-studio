@@ -29,7 +29,7 @@ export class PropertyPanel {
   private indextabs: Array<IIndextab>;
 
   public attached(): void {
-    this.setFirstElement();
+
     this.indextabs = [
       this.generalIndextab,
       this.formsIndextab,
@@ -51,35 +51,6 @@ export class PropertyPanel {
 
   public updateLabel(selectedIndextab: any): void {
     this.currentIndextab = selectedIndextab;
-  }
-
-  private setFirstElement(): void {
-    const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
-    if (selectedEvents[0]) {
-      return;
-    } else {
-      const rootElements: any = this.modeler._definitions.rootElements;
-      const process: IModdleElement = rootElements.find((element: any ) =>  {
-        return element.$type === 'bpmn:Process';
-      });
-
-      let startEvent: IModdleElement;
-
-      if (process.flowElements) {
-        startEvent = process.flowElements.find((element: any ) => {
-          return element.$type === 'bpmn:StartEvent';
-        });
-      }
-
-      if (!startEvent) {
-        startEvent = process;
-      }
-
-      const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
-      const elementInPanel: IShape = elementRegistry.get(startEvent.id);
-
-      this.modeler.get('selection').select(elementInPanel);
-    }
   }
 
 }

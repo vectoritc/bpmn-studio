@@ -83,7 +83,7 @@ export class BasicsSection implements ISection {
   }
 
   private setFirstElement(): void {
-   /* const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
+    const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
     if (selectedEvents[0]) {
       return;
     } else {
@@ -108,7 +108,7 @@ export class BasicsSection implements ISection {
       const elementInPanel: IShape = elementRegistry.get(startEvent.id);
 
       this.modeler.get('selection').select(elementInPanel);
-    }*/
+    }
   }
 
   private getXML(): string {
