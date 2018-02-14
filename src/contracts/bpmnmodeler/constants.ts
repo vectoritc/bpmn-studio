@@ -5,8 +5,6 @@ export enum ElementDistributeOptions {
 }
 
 export enum resizeOptions {
-  panel = 524,
-  toggleBtn = 537,
-  resizeBtn = 543,
-  canvas = 525,
+  toggleBtn = 13,
+  resizeBtn = 19,
 }
