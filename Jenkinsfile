@@ -38,7 +38,6 @@ pipeline {
         nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
           sh 'node --version'
           sh 'npm install --ignore-scripts'
-          sh 'npm rebuild node-sass'
         }
       }
     }
@@ -51,6 +50,7 @@ pipeline {
     stage('build') {
       steps {
         sh 'node --version'
+        sh 'npm rebuild node-sass'
         sh 'npm run build'
         sh 'npm run build-schemas'
         sh 'npm run build-doc'
