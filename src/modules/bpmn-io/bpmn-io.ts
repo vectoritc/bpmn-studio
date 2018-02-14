@@ -15,9 +15,11 @@ export class BpmnIo {
   private resizeBtn: HTMLButtonElement;
   private panel: HTMLElement;
   private canvasModel: HTMLDivElement;
-  private abc: boolean = false;
-  private def: boolean = false;
-  private newXforPanel: string;
+  private resizeClick: boolean = false;
+
+  private toggleBtnRight: string = '337px';
+  private resizeBtnRight: string = '331px';
+  private canvasRight: string = '350px';
 
   @bindable() public xml: string;
   public modeler: IBpmnModeler;
@@ -115,10 +117,10 @@ export class BpmnIo {
   private togglePanel(): void {
     if (this.toggled === true) {
       this.panel.style.display = 'inline';
-      this.toggleBtn.style.right = '337px';
+      this.toggleBtn.style.right = this.toggleBtnRight;
       this.toggleBtn.textContent = 'Hide';
-      this.resizeBtn.style.right = '331px';
-      this.canvasModel.style.right = '350px';
+      this.resizeBtn.style.right = this.resizeBtnRight;
+      this.canvasModel.style.right = this.canvasRight;
       this.toggled = false;
     } else {
       this.panel.style.display = 'none';
@@ -131,45 +133,19 @@ export class BpmnIo {
   }
 
   private resize(events: MouseEvent): void {
-    // console.log(event.clientX, event.clientY);
-    this.abc = true;
-    this.def = true;
+    this.resizeClick = true;
     document.addEventListener('mousemove', (event: any) => {
-      if (this.abc === true) {
-        this.newXforPanel = event.clientX;
-        this.panel.style.width = `${event.clientX}px`;
-        this.toggleBtn.style.right = `${event.clientX - 13}px`;
-        this.resizeBtn.style.right = `${event.clientX - 19}px`;
-        this.canvasModel.style.right = `${event.clientX + 1}px`;
+      if (this.resizeClick === true) {
+        this.panel.style.width = `${event.view.screen.width - event.clientX - 524}px`;
+        this.toggleBtnRight = this.toggleBtn.style.right = `${event.view.screen.width - event.clientX - 537}px`;
+        this.resizeBtnRight = this.resizeBtn.style.right = `${event.view.screen.width - event.clientX - 543}px`;
+        this.canvasRight = this.canvasModel.style.right = `${event.view.screen.width - event.clientX - 525}px`;
       }
     });
 
     document.addEventListener('click', (event: any) => {
-      document.removeEventListener('mousemove', this.removeMouseMove());
-      document.removeEventListener('click', this.removeClickHandler());
-    });
+      this.resizeClick = false;
+    }, {once : true});
 
-    // document.onmousemove = (event: any): void => {
-    // if (this.abc === true) {
-    //     this.newXforPanel = event.clientX;
-    //     this.panel.style.width = `${event.clientX}px`;
-    //     this.toggleBtn.style.right = `${event.clientX - 13}px`;
-    //     this.resizeBtn.style.right = `${event.clientX - 19}px`;
-    //     this.canvasModel.style.right = `${event.clientX + 1}px`;
-    //   }
-    // };
-
-    // document.onclick = (): void => {
-    //   this.abc = false;
-    //   };
   }
-
-  private removeMouseMove(): any {
-    this.abc = false;
-  }
-
-  private removeClickHandler(): any {
-    this.def = false;
-  }
-
 }
