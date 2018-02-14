@@ -5,7 +5,8 @@ import {ElementDistributeOptions,
         IBpmnModeler,
         IModdleElement,
         IModeling,
-        IShape} from '../../contracts';
+        IShape,
+        resizeOptions} from '../../contracts/index';
 import environment from '../../environment';
 
 export class BpmnIo {
@@ -136,10 +137,10 @@ export class BpmnIo {
     this.resizeClick = true;
     document.addEventListener('mousemove', (event: any) => {
       if (this.resizeClick === true) {
-        this.panel.style.width = `${event.view.screen.width - event.clientX - 524}px`;
-        this.toggleBtnRight = this.toggleBtn.style.right = `${event.view.screen.width - event.clientX - 537}px`;
-        this.resizeBtnRight = this.resizeBtn.style.right = `${event.view.screen.width - event.clientX - 543}px`;
-        this.canvasRight = this.canvasModel.style.right = `${event.view.screen.width - event.clientX - 525}px`;
+        this.panel.style.width = `${event.view.screen.width - event.clientX - resizeOptions.panel}px`;
+        this.toggleBtnRight = this.toggleBtn.style.right = `${event.view.screen.width - event.clientX - resizeOptions.toggleBtn}px`;
+        this.resizeBtnRight = this.resizeBtn.style.right = `${event.view.screen.width - event.clientX - resizeOptions.resizeBtn}px`;
+        this.canvasRight = this.canvasModel.style.right = `${event.view.screen.width - event.clientX - resizeOptions.canvas}px`;
       }
     });
 
