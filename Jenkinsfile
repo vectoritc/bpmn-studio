@@ -50,7 +50,6 @@ pipeline {
     stage('build') {
       steps {
         sh 'node --version'
-        sh 'npm rebuild node-sass'
         sh 'npm run build'
         sh 'npm run build-schemas'
         sh 'npm run build-doc'
