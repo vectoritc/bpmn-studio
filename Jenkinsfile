@@ -37,7 +37,7 @@ pipeline {
         }
         nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
           sh 'node --version'
-          sh 'npm install --ignore-scripts'
+          sh 'npm install'
         }
       }
     }
