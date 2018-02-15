@@ -22,7 +22,6 @@ export class Extensions implements IIndextab {
   public checkElement(element: IModdleElement): boolean {
 
     if (!element) {
-      console.log('hallo');
       return false;
     }
 
