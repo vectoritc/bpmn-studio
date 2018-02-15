@@ -141,10 +141,10 @@ export class BpmnIo {
     this.resizeClick = true;
     document.addEventListener('mousemove', (event: any) => {
       if (this.resizeClick === true) {
-        this.panel.style.width = `${event.view.screen.width - event.clientX - resizeOptions.panel}px`;
-        this.toggleBtnRight = this.toggleBtn.style.right = `${event.view.screen.width - event.clientX - resizeOptions.toggleBtn}px`;
-        this.resizeBtnRight = this.resizeBtn.style.right = `${event.view.screen.width - event.clientX - resizeOptions.resizeBtn}px`;
-        this.canvasRight = this.canvasModel.style.right = `${event.view.screen.width - event.clientX - resizeOptions.canvas}px`;
+        this.panel.style.width = `${document.body.clientWidth - event.clientX}px`;
+        this.toggleBtnRight = this.toggleBtn.style.right = `${document.body.clientWidth - event.clientX - resizeOptions.toggleBtn}px`;
+        this.resizeBtnRight = this.resizeBtn.style.right = `${document.body.clientWidth - event.clientX - resizeOptions.resizeBtn}px`;
+        this.canvasRight = this.canvasModel.style.right = `${document.body.clientWidth - event.clientX}px`;
       }
     });
 

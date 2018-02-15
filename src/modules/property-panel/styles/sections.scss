@@ -15,8 +15,10 @@
 
 .section__btn-group--clear-btn {
   position: relative;
-  left: 275px;
   top: -25px;
+  left: 100%;
+  width: 100%;
+  margin-left: -23px;
   color: #ccc;
 }
 
