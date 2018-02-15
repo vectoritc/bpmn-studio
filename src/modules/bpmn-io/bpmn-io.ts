@@ -5,21 +5,17 @@ import {ElementDistributeOptions,
         IBpmnModeler,
         IModdleElement,
         IModeling,
-        IShape,
-        resizeOptions} from '../../contracts/index';
+        IShape} from '../../contracts/index';
 import environment from '../../environment';
 
 export class BpmnIo {
 
   private toggled: boolean = false;
   private toggleBtn: HTMLButtonElement;
-  private resizeBtn: HTMLButtonElement;
   private panel: HTMLElement;
   private canvasModel: HTMLDivElement;
-  private resizeClick: boolean = false;
 
   private toggleBtnRight: string = '337px';
-  private resizeBtnRight: string = '331px';
   private canvasRight: string = '350px';
 
   @bindable({changeHandler: 'xmlChanged'}) public xml: string;
@@ -120,33 +116,14 @@ export class BpmnIo {
       this.panel.style.display = 'inline';
       this.toggleBtn.style.right = this.toggleBtnRight;
       this.toggleBtn.textContent = 'Hide';
-      this.resizeBtn.style.right = this.resizeBtnRight;
       this.canvasModel.style.right = this.canvasRight;
       this.toggled = false;
     } else {
       this.panel.style.display = 'none';
       this.toggleBtn.style.right = '-16px';
       this.toggleBtn.textContent = 'Show';
-      this.resizeBtn.style.right = '-18px';
       this.canvasModel.style.right = '1px';
       this.toggled = true;
     }
-  }
-
-  private resize(events: MouseEvent): void {
-    this.resizeClick = true;
-    document.addEventListener('mousemove', (event: any) => {
-      if (this.resizeClick === true) {
-        this.panel.style.width = `${document.body.clientWidth - event.clientX}px`;
-        this.toggleBtnRight = this.toggleBtn.style.right = `${document.body.clientWidth - event.clientX - resizeOptions.toggleBtn}px`;
-        this.resizeBtnRight = this.resizeBtn.style.right = `${document.body.clientWidth - event.clientX - resizeOptions.resizeBtn}px`;
-        this.canvasRight = this.canvasModel.style.right = `${document.body.clientWidth - event.clientX}px`;
-      }
-    });
-
-    document.addEventListener('click', (event: any) => {
-      this.resizeClick = false;
-    }, {once : true});
-
   }
 }

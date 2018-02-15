@@ -96,7 +96,7 @@ export class BasicsSection implements ISection {
     }
 
     for (const extensionValue of this.businessObjInPanel.extensionElements.values) {
-      if (extensionValue.$type === 'camunda:Properties' && extensionValue.values) {
+      if (extensionValue.$type === 'camunda:Properties' && extensionValue.fields) {
         propertyElement = extensionValue;
       }
     }

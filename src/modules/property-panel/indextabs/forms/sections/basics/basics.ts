@@ -11,7 +11,6 @@ import {IBpmnModdle,
   IPageModel,
   ISection,
   IShape} from '../../../../../../contracts';
-import { IModdleElement } from '../../../../../../contracts/bpmnmodeler/bpmnElements/IModdleElement';
 
 export class BasicsSection implements ISection {
 

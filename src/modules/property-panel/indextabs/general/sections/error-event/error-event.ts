@@ -121,7 +121,7 @@ export class ErrorEventSection implements ISection {
 
       errorElement.errorRef = this.selectedError;
       if (!this.isEndEvent) {
-        this.errorMessageVariable = this.errorMessageVariable;
+        this.errorMessageVariable = errorElement.errorMessageVariable;
       }
     } else {
       this.selectedError = null;
@@ -158,6 +158,7 @@ export class ErrorEventSection implements ISection {
   private updateErrorMessage(): void {
     const errorElement: IErrorElement = this.businessObjInPanel.eventDefinitions[0];
     errorElement.errorMessageVariable = this.errorMessageVariable;
+
   }
 
   private async addError(): Promise<void> {

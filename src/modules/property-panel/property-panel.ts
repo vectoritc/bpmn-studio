@@ -42,8 +42,12 @@ export class PropertyPanel {
     this.eventBus = this.modeler.get('eventBus');
 
     this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
-
-      this.elementInPanel = event.element;
+      if (event.type === 'element.click') {
+        this.elementInPanel = event.element;
+      }
+      if (event.type === 'shape.changed' && event.element.type !== 'label') {
+        this.elementInPanel = event.element;
+      }
       this.indextabs.forEach((indextab: IIndextab) => {
         indextab.canHandleElement = indextab.checkElement(this.elementInPanel);
         if (indextab.title === this.currentIndextabTitle && !indextab.canHandleElement) {
@@ -59,17 +63,17 @@ export class PropertyPanel {
   }
 
   private setFirstElement(): void {
-    this.moddle.fromXML(this.xml, ((err, definitions) => {
-      const process = definitions.rootElements.find((element: IModdleElement) => {
+    this.moddle.fromXML(this.xml, ((err: Error, definitions: IDefinition): void => {
+      const process: IModdleElement = definitions.rootElements.find((element: IModdleElement) => {
         return element.$type === 'bpmn:Process';
       });
-      const start = process.flowElements.find((element) => {
+      const start: IModdleElement = process.flowElements.find((element: IModdleElement) => {
         return element.$type === 'bpmn:StartEvent';
       });
-      const registry = this.modeler.get('elementRegistry');
-      const startElementShape = registry.get(start.id);
+      const registry: IElementRegistry = this.modeler.get('elementRegistry');
+      const startElementShape: IShape = registry.get(start.id);
       this.modeler.get('selection').select(startElementShape);
-    });
+    }));
   }
 
 }
