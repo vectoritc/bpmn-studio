@@ -149,7 +149,27 @@ export class ProcessDefDetail {
     this.saveDiagram();
   }
 
-  public saveDiagram(): void {
+  public async saveDiagram(): Promise<void> {
+
+    this.validateXML();
+
+    try {
+      const xml: string = await this.bpmn.getXML();
+      const response: any = await this.processEngineService.updateProcessDef(this.process, xml);
+
+      if (response.error) {
+        toastr.error(`Error while saving file: ${response.error}`);
+      } else if (response.result) {
+        toastr.success('File saved.');
+      } else {
+        toastr.warning(`Unknown error: ${JSON.stringify(response)}`);
+      }
+    } catch (error) {
+      toastr.error(`Error: ${error.message}`);
+    }
+  }
+
+  private validateXML(): void {
     const registry: Array<IShape> = this.bpmn.modeler.get('elementRegistry');
 
     registry.forEach((element: IShape) => {
@@ -169,20 +189,6 @@ export class ProcessDefDetail {
           }
         }
       }
-    });
-
-    this.bpmn.getXML().then((xml: string) => {
-      return this.processEngineService.updateProcessDef(this.process, xml);
-    }).then((response: any) => {
-      if (response.error) {
-        toastr.error(`Error while saving file: ${response.error}`);
-      } else if (response.result) {
-        toastr.success('File saved.');
-      } else {
-        toastr.warning(`Unknown error: ${JSON.stringify(response)}`);
-      }
-    }).catch((error: Error) => {
-      toastr.error(`Error: ${error.message}`);
     });
   }
 

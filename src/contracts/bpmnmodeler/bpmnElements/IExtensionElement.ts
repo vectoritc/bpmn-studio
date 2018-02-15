@@ -3,5 +3,5 @@ import {IModdleElement} from './IModdleElement';
 
 export interface IExtensionElement extends IModdleElement {
   $type: string;
-  values?: Array<IFormElement>;
+  values?: Array<any>;
 }
