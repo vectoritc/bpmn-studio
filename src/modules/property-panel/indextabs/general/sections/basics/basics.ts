@@ -55,23 +55,37 @@ export class BasicsSection implements ISection {
         this.businessObjInPanel.id = this.elementInPanel.id;
         this.validationController.validate();
       }
+
       if (event.newSelection && event.newSelection.length !== 0) {
         this.elementInPanel = event.newSelection[0];
         this.businessObjInPanel = event.newSelection[0].businessObject;
       } else if (event.element) {
         this.elementInPanel = event.element;
         this.businessObjInPanel = event.element.businessObject;
+      } else if (event.newSelection.length === 0 && event.oldSelection.length === 0) {
+
+        this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
+          const process: IModdleElement = definitions.rootElements.find((element: IModdleElement) => {
+            return element.$type === 'bpmn:Process';
+          });
+          this.businessObjInPanel = process;
+          this.modeler.get('selection').select(process);
+          this.init();
+        });
       }
       this.init();
 
       ValidationRules.ensure((businessObject: IModdleElement) => businessObject.id).required()
       .withMessage(`Id cannot be blank.`)
-      .on(this.businessObjInPanel);
+      .on(this.businessObjInPanel || {});
     });
 
   }
 
   private init(): void {
+    if (!this.businessObjInPanel) {
+      return;
+    }
     if (this.businessObjInPanel.documentation && this.businessObjInPanel.documentation.length > 0) {
       this.elementDocumentation = this.businessObjInPanel.documentation[0].text;
     } else {
@@ -92,14 +106,14 @@ export class BasicsSection implements ISection {
   }
 
   private updateDocumentation(): void {
-    this.businessObjInPanel.documentation = [];
+    this.elementInPanel.documentation = [];
 
     const documentation: IModdleElement = this.moddle.create('bpmn:Documentation',
     { text: this.elementDocumentation });
-    this.businessObjInPanel.documentation.push(documentation);
+    this.elementInPanel.documentation.push(documentation);
 
     this.modeling.updateProperties(this.elementInPanel, {
-      documentation: this.businessObjInPanel.documentation,
+      documentation: this.elementInPanel.documentation,
     });
   }
 

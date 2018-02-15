@@ -1,3 +1,4 @@
+import { IDocumentation } from './bpmnElements/IDocumentation';
 import {IModdleElement} from './index';
 
 export interface IShape {
@@ -9,4 +10,5 @@ export interface IShape {
   y: number;
   width: number;
   height: number;
+  documentation?: Array<IDocumentation>;
 }

@@ -36,7 +36,7 @@ export class BasicsSection implements ISection {
       this.init();
     }
 
-    this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
+    this.eventBus.on(['element.click', 'shape.changed'], (event: IEvent) => {
       if (event.newSelection && event.newSelection.length !== 0) {
         this.businessObjInPanel = event.newSelection[0].businessObject;
         this.init();
@@ -138,7 +138,7 @@ export class BasicsSection implements ISection {
   }
 
   public checkElement(element: IModdleElement): boolean {
-    return true;
+    return (element.$type !== 'bpmn:Process') && (element.$type !== 'bpmn:Collaboration');
   }
 
 }

@@ -21,7 +21,7 @@ export class PropertyPanel {
   public xml: string;
   private moddle: IBpmnModdle;
   private eventBus: IEventBus;
-  private elementInPanel: IShape;
+  private elementInPanel: IModdleElement;
 
   public generalIndextab: IIndextab = new General();
   public formsIndextab: IIndextab = new Forms();
@@ -38,21 +38,23 @@ export class PropertyPanel {
       this.formsIndextab,
       this.extensionsIndextab,
     ];
-    this.setFirstElement();
+    // this.setFirstElement();
     this.eventBus = this.modeler.get('eventBus');
 
-    this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
+    this.eventBus.on(['element.click', 'shape.changed'], (event: IEvent) => {
+      console.log('EVENT', event);
       if (event.type === 'element.click') {
-        this.elementInPanel = event.element;
+        this.elementInPanel = event.element.businessObject;
       }
       if (event.type === 'shape.changed' && event.element.type !== 'label') {
-        this.elementInPanel = event.element;
+        this.elementInPanel = event.element.businessObject;
       }
       this.indextabs.forEach((indextab: IIndextab) => {
         indextab.canHandleElement = indextab.checkElement(this.elementInPanel);
+        console.log(indextab.title, indextab.canHandleElement);
         if (indextab.title === this.currentIndextabTitle && !indextab.canHandleElement) {
           this.currentIndextabTitle = this.generalIndextab.title;
-          this.setFirstElement();
+          // this.setFirstElement();
         }
       });
     });
@@ -68,13 +70,8 @@ export class PropertyPanel {
       const process: IModdleElement = definitions.rootElements.find((element: IModdleElement) => {
         return element.$type === 'bpmn:Process';
       });
-      const start: IModdleElement = process.flowElements.find((element: IModdleElement) => {
-        return element.$type === 'bpmn:StartEvent';
-      });
-      const registry: IElementRegistry = this.modeler.get('elementRegistry');
-      const startElementShape: IShape = registry.get(start.id);
-      this.elementInPanel = startElementShape;
-      this.modeler.get('selection').select(startElementShape);
+      this.elementInPanel = process;
+      this.modeler.get('selection').select(process);
     }));
   }
 

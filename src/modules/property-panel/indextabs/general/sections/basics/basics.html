@@ -25,7 +25,7 @@
           <span class="glyphicon glyphicon-remove"></span>
           <span class="tooltiptext">
             <div repeat.for="error of validationController.errors">
-              ${error}(${error.object.$type})
+              ${error}
             </div>
           </span>
         </div>
@@ -33,7 +33,7 @@
       <div class="id-tooltip-ok" if.bind="!validationError">
           <div class="tooltip">
             <span class="glyphicon glyphicon-ok"></span>
-            <span class="tooltiptext">Every Id is fine!</span>
+            <span class="tooltiptext">This Id is fine!</span>
           </div>
         </div>
     </div>

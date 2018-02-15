@@ -20,13 +20,13 @@ export class Forms implements IIndextab {
     this.basicsSection,
   ];
 
-  public checkElement(element: IShape): boolean {
+  public checkElement(element: IModdleElement): boolean {
     if (!element) {
       return false;
     }
 
     return this.sections.some((section: ISection) => {
-      return section.checkElement(element.businessObject);
+      return section.checkElement(element);
     });
   }
 

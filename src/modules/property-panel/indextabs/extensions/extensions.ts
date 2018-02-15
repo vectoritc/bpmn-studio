@@ -1,4 +1,5 @@
 import {IIndextab,
+        IModdleElement,
         ISection,
         IShape} from '../../../../contracts';
 import {BasicsSection} from './sections/basics/basics';
@@ -6,18 +7,27 @@ import {BasicsSection} from './sections/basics/basics';
 export class Extensions implements IIndextab {
   public title: string = 'Extensions';
   public path: string = '/indextabs/extensions/extensions';
-  public sections: Array<ISection>;
   public canHandleElement: boolean = true;
 
   private basicsSection: ISection = new BasicsSection();
 
-  public attached(): void {
+  public sections: Array<ISection>;
+
+  constructor() {
     this.sections = [
       this.basicsSection,
     ];
   }
 
-  public checkElement(element: IShape): boolean {
-    return !(element.type === 'bpmn:Collaboration');
+  public checkElement(element: IModdleElement): boolean {
+
+    if (!element) {
+      console.log('hallo');
+      return false;
+    }
+
+    return this.sections.some((section: ISection) => {
+      return section.checkElement(element);
+    });
   }
 }
