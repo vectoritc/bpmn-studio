@@ -18,6 +18,6 @@ export class Extensions implements IIndextab {
   }
 
   public checkElement(element: IShape): boolean {
-    return true;
+    return !(element.type === 'bpmn:Collaboration');
   }
 }

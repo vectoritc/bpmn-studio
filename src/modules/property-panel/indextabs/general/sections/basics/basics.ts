@@ -18,15 +18,11 @@ export class BasicsSection implements ISection {
 
   public path: string = '/sections/basics/basics';
   public canHandleElement: boolean = true;
-
   private eventBus: IEventBus;
   private modeling: IModeling;
   private modeler: IBpmnModeler;
   private moddle: IBpmnModdle;
   private elementInPanel: IShape;
-  private someId: string;
-
-  private shitboolean: boolean = false;
 
   public validationController: ValidationController;
   public businessObjInPanel: IModdleElement;

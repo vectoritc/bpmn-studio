@@ -38,7 +38,7 @@ export class PropertyPanel {
       this.formsIndextab,
       this.extensionsIndextab,
     ];
-
+    this.setFirstElement();
     this.eventBus = this.modeler.get('eventBus');
 
     this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
@@ -52,10 +52,11 @@ export class PropertyPanel {
         indextab.canHandleElement = indextab.checkElement(this.elementInPanel);
         if (indextab.title === this.currentIndextabTitle && !indextab.canHandleElement) {
           this.currentIndextabTitle = this.generalIndextab.title;
+          this.setFirstElement();
         }
       });
     });
-    this.setFirstElement();
+
   }
 
   public updateIndextab(selectedIndextab: IIndextab): void {
@@ -72,6 +73,7 @@ export class PropertyPanel {
       });
       const registry: IElementRegistry = this.modeler.get('elementRegistry');
       const startElementShape: IShape = registry.get(start.id);
+      this.elementInPanel = startElementShape;
       this.modeler.get('selection').select(startElementShape);
     }));
   }

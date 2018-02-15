@@ -8,6 +8,7 @@ import {EscalationEventSection} from './sections/escalation-event/escalation-eve
 import {FlowSection} from './sections/flow/flow';
 import {MessageEventSection} from './sections/message-event/message-event';
 import {PoolSection} from './sections/pool/pool';
+import {ProcessSection} from './sections/process/process';
 import {ScriptTaskSection} from './sections/script-task/script-task';
 import {SignalEventSection} from './sections/signal-event/signal-event';
 
@@ -24,6 +25,7 @@ export class General implements IIndextab {
   public flowSection: ISection = new FlowSection();
   public errorEventSection: ISection = new ErrorEventSection();
   public escalationEventSection: ISection = new EscalationEventSection();
+  public processSection: ISection = new ProcessSection();
 
   public sections: Array<ISection> = [
     this.basicsSection,
