@@ -8,7 +8,7 @@
     <div>
       <button ref="resizeBtn" class="resize_btn" title="Resize" click.delegate="resize($event)">Resize</button>
       <button ref="toggleBtn" class="toggle_panel" title="Toggle PropertyPanel" click.delegate="togglePanel()">Hide</button>
-      <property-panel ref="panel" id="js-properties-panel" modeler.bind="modeler"></property-panel>
+      <property-panel ref="panel" id="js-properties-panel" modeler.bind="modeler" xml.bind="xml"></property-panel>
     </div>
   </div>
 </template>

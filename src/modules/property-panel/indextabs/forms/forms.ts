@@ -14,7 +14,7 @@ export class Forms implements IIndextab {
 
   private basicsSection: ISection = new BasicsSection();
 
-  public canHandleElement: boolean;
+  public canHandleElement: boolean = false;
 
   public sections: Array<ISection> = [
     this.basicsSection,

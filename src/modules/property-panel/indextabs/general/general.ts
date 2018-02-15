@@ -14,7 +14,6 @@ import {SignalEventSection} from './sections/signal-event/signal-event';
 export class General implements IIndextab {
   public title: string = 'General';
   public path: string = '/indextabs/general/general';
-  public sections: Array<ISection>;
 
   public basicsSection: ISection = new BasicsSection();
   public poolSection: ISection = new PoolSection();
@@ -26,21 +25,19 @@ export class General implements IIndextab {
   public errorEventSection: ISection = new ErrorEventSection();
   public escalationEventSection: ISection = new EscalationEventSection();
 
-  public canHandleElement: boolean = true;
+  public sections: Array<ISection> = [
+    this.basicsSection,
+    this.poolSection,
+    this.messageEventSection,
+    this.signalEventSection,
+    this.scriptTaskSection,
+    this.callActivitySection,
+    this.flowSection,
+    this.errorEventSection,
+    this.escalationEventSection,
+  ];
 
-  public attached(): void {
-    this.sections = [
-      this.basicsSection,
-      this.poolSection,
-      this.messageEventSection,
-      this.signalEventSection,
-      this.scriptTaskSection,
-      this.callActivitySection,
-      this.flowSection,
-      this.errorEventSection,
-      this.escalationEventSection,
-    ];
-  }
+  public canHandleElement: boolean = true;
 
   public checkElement(element: IShape): boolean {
     return true;

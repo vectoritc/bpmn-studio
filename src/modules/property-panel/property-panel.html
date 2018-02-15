@@ -9,11 +9,13 @@
       </a>
       <ul class="dropdown-menu">
         <li repeat.for="indextab of indextabs">
-          <a show.bind="indextab.canHandleElement" click.delegate="updateLabel(indextab)">${indextab.title}</a>
+          <a show.bind="indextab.canHandleElement" click.delegate="updateIndextab(indextab)">${indextab.title}</a>
         </li>
       </ul>
     </div>
-    <compose view-model=".${currentIndextab.path}" view=".${currentIndextab.path}.html"
-      model.bind="{ modeler : modeler }" containerless></compose>
+    <div repeat.for="indextab of indextabs">
+      <compose view-model=".${indextab.path}" view=".${indextab.path}.html"
+        model.bind="{ modeler : modeler }" if.bind="indextab.canHandleElement && indextab === currentIndextab" containerless></compose>
+    </div>
   </div>
 </template>

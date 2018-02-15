@@ -26,6 +26,8 @@ export class BasicsSection implements ISection {
   private elementInPanel: IShape;
   private someId: string;
 
+  private shitboolean: boolean = false;
+
   public validationController: ValidationController;
   public businessObjInPanel: IModdleElement;
   public elementDocumentation: string;
@@ -70,7 +72,6 @@ export class BasicsSection implements ISection {
       .withMessage(`Id cannot be blank.`)
       .on(this.businessObjInPanel);
     });
-    this.setFirstElement();
 
   }
 
@@ -79,35 +80,6 @@ export class BasicsSection implements ISection {
       this.elementDocumentation = this.businessObjInPanel.documentation[0].text;
     } else {
       this.elementDocumentation = '';
-    }
-  }
-
-  private setFirstElement(): void {
-    const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
-    if (selectedEvents[0]) {
-      return;
-    } else {
-      const rootElements: any = this.modeler._definitions.rootElements;
-      const process: IModdleElement = rootElements.find((element: any ) =>  {
-        return element.$type === 'bpmn:Process';
-      });
-
-      let startEvent: IModdleElement;
-
-      if (process.flowElements) {
-        startEvent = process.flowElements.find((element: any ) => {
-          return element.$type === 'bpmn:StartEvent';
-        });
-      }
-
-      if (!startEvent) {
-        startEvent = process;
-      }
-
-      const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
-      const elementInPanel: IShape = elementRegistry.get(startEvent.id);
-
-      this.modeler.get('selection').select(elementInPanel);
     }
   }
 

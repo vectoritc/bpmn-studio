@@ -37,7 +37,6 @@ export class BasicsSection implements ISection {
     this.eventBus = model.modeler.get('eventBus');
     this.moddle = model.modeler.get('moddle');
     this.modeler = model.modeler;
-
     const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
     if (selectedEvents[0]) {
       this.businessObjInPanel = selectedEvents[0].businessObject;
@@ -45,9 +44,7 @@ export class BasicsSection implements ISection {
     }
 
     this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
-      if (event.newSelection && event.newSelection.length !== 0) {
-        this.businessObjInPanel = event.newSelection[0].businessObject;
-      } else if (event.element) {
+      if (event.element) {
         this.businessObjInPanel = event.element.businessObject;
       }
       this.init();
@@ -55,6 +52,7 @@ export class BasicsSection implements ISection {
   }
 
   private init(): void {
+    console.log('called init');
     this.formElement = this.getFormElement();
     this.isFormSelected = false;
     this.canHandleElement = this.checkElement(this.businessObjInPanel);
@@ -146,6 +144,7 @@ export class BasicsSection implements ISection {
   }
 
   private async addForm(): Promise<void> {
+
     const bpmnForm: IForm = this.moddle.create('camunda:FormField',
                                                 {
                                                   id: `Form_${this.generateRandomId()}`,
@@ -161,6 +160,8 @@ export class BasicsSection implements ISection {
     this.formElement.fields.push(bpmnForm);
     this.forms.push(bpmnForm);
     this.selectForm(bpmnForm);
+
+    console.log('call addForm end', this.formElement);
   }
 
   private getTypeOrCustomType(type: string): string {
@@ -207,6 +208,7 @@ export class BasicsSection implements ISection {
   }
 
   private createExtensionElement(): void {
+    console.log('called createenxtensions');
     const values: Array<IFormElement> = [];
     const fields: Array<IForm> = [];
     const formData: IFormElement = this.moddle.create('camunda:FormData', {fields: fields});
@@ -246,6 +248,16 @@ export class BasicsSection implements ISection {
 
   private clearValue(): void {
     this.selectedForm.defaultValue = '';
+  }
+
+  public detached(): void {
+    console.log('called detached formelement', this.formElement);
+    if (this.formElement.fields.length === 0) {
+      this.businessObjInPanel.extensionElements = null;
+      console.log('deleted extensions');
+    }
+    console.log('business', this.businessObjInPanel);
+
   }
 
 }

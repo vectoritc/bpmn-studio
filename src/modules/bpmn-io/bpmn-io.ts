@@ -1,5 +1,5 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
-import {bindable} from 'aurelia-framework';
+import {bindable, observable} from 'aurelia-framework';
 import {ElementDistributeOptions,
         IBpmnFunction,
         IBpmnModeler,
@@ -22,7 +22,7 @@ export class BpmnIo {
   private resizeBtnRight: string = '331px';
   private canvasRight: string = '350px';
 
-  @bindable() public xml: string;
+  @bindable({changeHandler: 'xmlChanged'}) public xml: string;
   public modeler: IBpmnModeler;
 
   public created(): void {
@@ -44,9 +44,13 @@ export class BpmnIo {
     this.modeler.attachTo('#canvas');
   }
 
+  public detached(): void {
+    this.modeler.detach();
+  }
+
   public xmlChanged(newValue: string, oldValue: string): void {
     if (this.modeler !== undefined && this.modeler !== null) {
-      this.modeler.importXML(this.xml, (err: Error) => {
+      this.modeler.importXML(newValue, (err: Error) => {
         return 0;
       });
     }
