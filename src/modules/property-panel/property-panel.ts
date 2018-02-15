@@ -22,6 +22,7 @@ export class PropertyPanel {
   private moddle: IBpmnModdle;
   private eventBus: IEventBus;
   private elementInPanel: IModdleElement;
+  private rootElement: IModdleElement;
 
   public generalIndextab: IIndextab = new General();
   public formsIndextab: IIndextab = new Forms();
@@ -33,26 +34,33 @@ export class PropertyPanel {
   public attached(): void {
     this.moddle = this.modeler.get('moddle');
 
+    this.moddle.fromXML(this.xml, ((err: Error, definitions: IDefinition): void => {
+      this.rootElement = definitions.rootElements.find((element: IModdleElement) => {
+        return element.$type === 'bpmn:Process';
+      });
+    }));
+
     this.indextabs = [
       this.generalIndextab,
       this.formsIndextab,
       this.extensionsIndextab,
     ];
-    // this.setFirstElement();
+
     this.eventBus = this.modeler.get('eventBus');
 
     this.eventBus.on(['element.click', 'shape.changed'], (event: IEvent) => {
       if (event.type === 'element.click') {
         this.elementInPanel = event.element.businessObject;
       }
-      if (event.type === 'shape.changed' && event.element.type !== 'label') {
+      if (event.type === 'shape.changed' &&
+          event.element.type !== 'label' &&
+          event.element.id === this.elementInPanel.id) {
         this.elementInPanel = event.element.businessObject;
       }
       this.indextabs.forEach((indextab: IIndextab) => {
         indextab.canHandleElement = indextab.checkElement(this.elementInPanel);
         if (indextab.title === this.currentIndextabTitle && !indextab.canHandleElement) {
           this.currentIndextabTitle = this.generalIndextab.title;
-          // this.setFirstElement();
         }
       });
     });
@@ -61,16 +69,6 @@ export class PropertyPanel {
 
   public updateIndextab(selectedIndextab: IIndextab): void {
     this.currentIndextabTitle = selectedIndextab.title;
-  }
-
-  private setFirstElement(): void {
-    this.moddle.fromXML(this.xml, ((err: Error, definitions: IDefinition): void => {
-      const process: IModdleElement = definitions.rootElements.find((element: IModdleElement) => {
-        return element.$type === 'bpmn:Process';
-      });
-      this.elementInPanel = process;
-      this.modeler.get('selection').select(process);
-    }));
   }
 
 }
