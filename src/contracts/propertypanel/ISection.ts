@@ -9,4 +9,4 @@ export interface ISection {
   canHandleElement: boolean;
   activate(model: IPageModel): void;
   checkElement(element: IModdleElement): boolean;
-  }
+}

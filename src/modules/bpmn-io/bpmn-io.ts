@@ -44,10 +44,6 @@ export class BpmnIo {
     this.modeler.attachTo('#canvas');
   }
 
-  public detached(): void {
-    this.modeler.detach();
-  }
-
   public xmlChanged(newValue: string, oldValue: string): void {
     if (this.modeler !== undefined && this.modeler !== null) {
       this.modeler.importXML(newValue, (err: Error) => {

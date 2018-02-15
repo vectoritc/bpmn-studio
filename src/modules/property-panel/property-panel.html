@@ -2,7 +2,7 @@
   <require from="./property-panel.css"></require>
   <div class="property-panel">
     <div class="btn-group indextab-dropdown">
-      <a class="btn btn-default indextab-button">${currentIndextab.title}</a>
+      <a class="btn btn-default indextab-button">${currentIndextabTitle}</a>
       <a ref="indextabDropdown" class="btn btn-default dropdown-toggle dropdown_button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
@@ -15,7 +15,7 @@
     </div>
     <div repeat.for="indextab of indextabs">
       <compose view-model=".${indextab.path}" view=".${indextab.path}.html"
-        model.bind="{ modeler : modeler }" if.bind="indextab.canHandleElement && indextab === currentIndextab" containerless></compose>
+        model.bind="{ modeler : modeler }" if.bind="indextab.canHandleElement && indextab.title === currentIndextabTitle" containerless></compose>
     </div>
   </div>
 </template>

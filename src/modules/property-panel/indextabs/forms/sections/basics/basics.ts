@@ -11,6 +11,7 @@ import {IBpmnModdle,
   IPageModel,
   ISection,
   IShape} from '../../../../../../contracts';
+import { IModdleElement } from '../../../../../../contracts/bpmnmodeler/bpmnElements/IModdleElement';
 
 export class BasicsSection implements ISection {
 
@@ -52,11 +53,10 @@ export class BasicsSection implements ISection {
   }
 
   private init(): void {
-    console.log('called init');
-    this.formElement = this.getFormElement();
     this.isFormSelected = false;
     this.canHandleElement = this.checkElement(this.businessObjInPanel);
     if (this.canHandleElement) {
+      this.formElement = this.getFormElement();
       this.reloadForms();
     }
   }
@@ -74,17 +74,6 @@ export class BasicsSection implements ISection {
     this.selectedType = this.getTypeOrCustomType(form.type);
     this.selectedIndex = this.getSelectedIndex();
     this.isFormSelected = true;
-  }
-
-  private setActive(formId: string): void {
-    // let element: HTMLElement = null;
-    // if (this.activeListElementId) {
-    //   element = document.getElementById(this.activeListElementId);
-    //   element.classList.remove('active');
-    // }
-    // element = document.getElementById(formId);
-    // element.classList.add('active');
-    // this.activeListElementId = formId;
   }
 
   private reloadForms(): void {
@@ -161,7 +150,6 @@ export class BasicsSection implements ISection {
     this.forms.push(bpmnForm);
     this.selectForm(bpmnForm);
 
-    console.log('call addForm end', this.formElement);
   }
 
   private getTypeOrCustomType(type: string): string {
@@ -208,7 +196,6 @@ export class BasicsSection implements ISection {
   }
 
   private createExtensionElement(): void {
-    console.log('called createenxtensions');
     const values: Array<IFormElement> = [];
     const fields: Array<IForm> = [];
     const formData: IFormElement = this.moddle.create('camunda:FormData', {fields: fields});
@@ -230,6 +217,11 @@ export class BasicsSection implements ISection {
     return randomId;
   }
 
+  private deleteExtensions(): void {
+    delete this.businessObjInPanel.extensionElements;
+    delete this.businessObjInPanel.formKey;
+  }
+
   private clearFormKey(): void {
     this.businessObjInPanel.formKey = '';
   }
@@ -248,16 +240,6 @@ export class BasicsSection implements ISection {
 
   private clearValue(): void {
     this.selectedForm.defaultValue = '';
-  }
-
-  public detached(): void {
-    console.log('called detached formelement', this.formElement);
-    if (this.formElement.fields.length === 0) {
-      this.businessObjInPanel.extensionElements = null;
-      console.log('deleted extensions');
-    }
-    console.log('business', this.businessObjInPanel);
-
   }
 
 }

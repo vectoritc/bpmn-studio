@@ -12,7 +12,12 @@ import * as toastr from 'toastr';
 import {AuthenticationStateEvent,
         ElementDistributeOptions,
         IChooseDialogOption,
-        IProcessEngineService} from '../../contracts/index';
+        IElementRegistry,
+        IExtensionElement,
+        IFormElement,
+        IModdleElement,
+        IProcessEngineService,
+        IShape} from '../../contracts/index';
 import environment from '../../environment';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
 
@@ -145,6 +150,27 @@ export class ProcessDefDetail {
   }
 
   public saveDiagram(): void {
+    const registry: Array<IShape> = this.bpmn.modeler.get('elementRegistry');
+
+    registry.forEach((element: IShape) => {
+      if (element.type === 'bpmn:UserTask') {
+        const businessObj: IModdleElement = element.businessObject;
+
+        if (businessObj.extensionElements) {
+          const extensions: IExtensionElement = businessObj.extensionElements;
+
+          extensions.values = extensions.values.filter((value: IFormElement) => {
+            const keepThisValue: boolean = value.$type !== 'camunda:FormData' || value.fields.length > 0;
+            return keepThisValue;
+          });
+
+          if (extensions.values.length === 0) {
+            delete businessObj.extensionElements;
+          }
+        }
+      }
+    });
+
     this.bpmn.getXML().then((xml: string) => {
       return this.processEngineService.updateProcessDef(this.process, xml);
     }).then((response: any) => {

@@ -23,9 +23,9 @@ export class PropertyPanel {
   private eventBus: IEventBus;
   private elementInPanel: IShape;
 
-  public generalIndextab: any = new General();
-  public formsIndextab: any = new Forms();
-  public extensionsIndextab: any = new Extensions();
+  public generalIndextab: IIndextab = new General();
+  public formsIndextab: IIndextab = new Forms();
+  public extensionsIndextab: IIndextab = new Extensions();
 
   private currentIndextabTitle: string = this.generalIndextab.title;
   private indextabs: Array<IIndextab>;
@@ -46,17 +46,16 @@ export class PropertyPanel {
       this.elementInPanel = event.element;
       this.indextabs.forEach((indextab: IIndextab) => {
         indextab.canHandleElement = indextab.checkElement(this.elementInPanel);
+        if (indextab.title === this.currentIndextabTitle && !indextab.canHandleElement) {
+          this.currentIndextabTitle = this.generalIndextab.title;
+        }
       });
-
-      if (!this.currentIndextab.checkElement(this.elementInPanel)) {
-        this.currentIndextab = this.generalIndextab;
-      }
     });
     this.setFirstElement();
   }
 
-  public updateIndextab(selectedIndextab: any): void {
-    this.currentIndextab = selectedIndextab;
+  public updateIndextab(selectedIndextab: IIndextab): void {
+    this.currentIndextabTitle = selectedIndextab.title;
   }
 
   private setFirstElement(): void {
