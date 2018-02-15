@@ -37,10 +37,11 @@ export class FlowSection implements ISection {
     this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
       if (event.newSelection && event.newSelection.length !== 0) {
         this.businessObjInPanel = event.newSelection[0].businessObject;
+        this.init();
       } else if (event.element) {
         this.businessObjInPanel = event.element.businessObject;
+        this.init();
       }
-      this.init();
     });
   }
 
