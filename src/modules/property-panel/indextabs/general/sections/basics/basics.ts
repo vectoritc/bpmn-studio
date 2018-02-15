@@ -50,29 +50,25 @@ export class BasicsSection implements ISection {
       this.init();
     }
 
-    this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
+    this.eventBus.on(['element.click', 'shape.changed'], (event: IEvent) => {
       if (this.validationError) {
         this.businessObjInPanel.id = this.elementInPanel.id;
         this.validationController.validate();
       }
 
-      if (event.newSelection && event.newSelection.length !== 0) {
-        this.elementInPanel = event.newSelection[0];
-        this.businessObjInPanel = event.newSelection[0].businessObject;
-      } else if (event.element) {
+      if (event.type === 'shape.changed' &&
+          event.element.id === this.elementInPanel.id) {
+
+          this.elementInPanel = event.element;
+          this.businessObjInPanel = event.element.businessObject;
+
+      }
+
+      if (event.type === 'element.click' && event.element) {
         this.elementInPanel = event.element;
         this.businessObjInPanel = event.element.businessObject;
-      } else if (event.newSelection.length === 0 && event.oldSelection.length === 0) {
-
-        this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
-          const process: IModdleElement = definitions.rootElements.find((element: IModdleElement) => {
-            return element.$type === 'bpmn:Process';
-          });
-          this.businessObjInPanel = process;
-          this.modeler.get('selection').select(process);
-          this.init();
-        });
       }
+
       this.init();
 
       ValidationRules.ensure((businessObject: IModdleElement) => businessObject.id).required()
