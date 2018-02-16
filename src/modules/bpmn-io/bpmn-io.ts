@@ -50,6 +50,7 @@ export class BpmnIo {
       this.modeler.importXML(newValue, (err: Error) => {
         return 0;
       });
+      this.xml = newValue;
     }
   }
 
