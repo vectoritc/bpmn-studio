@@ -50,7 +50,7 @@ export class BasicsSection implements ISection {
       this.init();
     }
 
-    this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => { // selection changed event abfangen
+    this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
       if (this.validationError) {
         this.businessObjInPanel.id = this.elementInPanel.id;
         this.validationController.validate();

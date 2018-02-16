@@ -47,12 +47,7 @@ export class BpmnIo {
   public xmlChanged(newValue: string, oldValue: string): void {
     if (this.modeler !== undefined && this.modeler !== null) {
       this.modeler.importXML(newValue, (err: Error) => {
-        this.modeler.get('moddle').fromXML(this.xml, ((error: Error, definitions: IDefinition): void => {
-          const rootElement: IModdleElement = definitions.rootElements.find((element: IModdleElement) => {
-            return element.$type === 'bpmn:Collaboration';
-          });
-          this.modeler.get('selection').select(rootElement);
-        }));
+        return 0;
       });
     }
   }
