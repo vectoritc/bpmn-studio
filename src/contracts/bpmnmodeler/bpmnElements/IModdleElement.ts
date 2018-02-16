@@ -4,7 +4,7 @@ import {IExtensionElement} from './IExtensionElement';
 
 export interface IModdleElement {
   id: string;
-  name: string;
+  name?: string;
   documentation: Array<IDocumentation>;
   $type: string;
   $attrs?: any;

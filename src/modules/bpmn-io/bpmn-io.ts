@@ -1,5 +1,6 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {bindable, observable} from 'aurelia-framework';
+import { setTimeout } from 'timers';
 import {ElementDistributeOptions,
         IBpmnFunction,
         IBpmnModeler,
@@ -14,6 +15,7 @@ export class BpmnIo {
   private toggleBtn: HTMLButtonElement;
   private panel: HTMLElement;
   private canvasModel: HTMLDivElement;
+  private refresh: boolean = true;
 
   private toggleBtnRight: string = '337px';
   private canvasRight: string = '350px';
@@ -44,7 +46,12 @@ export class BpmnIo {
   public xmlChanged(newValue: string, oldValue: string): void {
     if (this.modeler !== undefined && this.modeler !== null) {
       this.modeler.importXML(newValue, (err: Error) => {
-        return 0;
+        this.modeler.get('moddle').fromXML(this.xml, ((err: Error, definitions: IDefinition): void => {
+          const rootElement = definitions.rootElements.find((element: IModdleElement) => {
+            return element.$type === 'bpmn:Collaboration';
+          });
+          this.modeler.get('selection').select(rootElement);
+        }));
       });
     }
   }
