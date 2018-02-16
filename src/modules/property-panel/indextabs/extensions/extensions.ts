@@ -19,7 +19,7 @@ export class Extensions implements IIndextab {
     ];
   }
 
-  public checkElement(element: IModdleElement): boolean {
+  public checkElement(element: IShape): boolean {
 
     if (!element) {
       return false;

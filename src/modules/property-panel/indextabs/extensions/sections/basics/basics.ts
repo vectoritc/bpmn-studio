@@ -47,6 +47,15 @@ export class BasicsSection implements ISection {
     });
   }
 
+  public checkElement(element: IShape): boolean {
+    if (!element.businessObject) {
+      return false;
+    }
+
+    return (element.businessObject.$type !== 'bpmn:Process') &&
+        (element.businessObject.$type !== 'bpmn:Collaboration');
+  }
+
   private init(): void {
     this.propertyElement = this.getPropertyElement();
     this.selectedElement = this.businessObjInPanel;
@@ -135,10 +144,6 @@ export class BasicsSection implements ISection {
 
   private changeValue(index: number): void {
     this.propertyElement.values[index].value = this.newValues[index];
-  }
-
-  public checkElement(element: IModdleElement): boolean {
-    return (element.$type !== 'bpmn:Process') && (element.$type !== 'bpmn:Collaboration');
   }
 
 }
