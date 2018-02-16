@@ -27,7 +27,6 @@ export class Forms implements IIndextab {
 
     this.sections.forEach((section: ISection) => {
       section.canHandleElement = section.checkElement(element);
-      console.log(section.canHandleElement);
     });
 
     return this.sections.some((section: ISection) => {

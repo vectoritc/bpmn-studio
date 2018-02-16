@@ -48,7 +48,6 @@ export class BasicsSection implements ISection {
         this.businessObjInPanel = event.element.businessObject;
       }
       this.init();
-      console.log(this.canHandleElement);
     });
   }
 
