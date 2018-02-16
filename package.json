@@ -9,7 +9,6 @@
   },
   "main": "electron_app/electron.js",
   "scripts": {
-    "postinstall": "npm rebuild node-sass",
     "start": "./bin/bpmn-studio.js",
     "start_dev": "au run --watch",
     "build": "au build --prod",
