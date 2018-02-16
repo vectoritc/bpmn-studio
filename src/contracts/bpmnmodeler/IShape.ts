@@ -1,4 +1,5 @@
-import {IModdleElement} from './IModdleElement';
+import { IDocumentation } from './bpmnElements/IDocumentation';
+import {IModdleElement} from './index';
 
 export interface IShape {
   businessObject: IModdleElement;
@@ -9,4 +10,6 @@ export interface IShape {
   y: number;
   width: number;
   height: number;
+  documentation?: Array<IDocumentation>;
+  $type: string;
 }

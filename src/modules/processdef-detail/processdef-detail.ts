@@ -5,11 +5,19 @@ import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import * as canvg from 'canvg-browser';
 import * as download from 'downloadjs';
+import * as $ from 'jquery';
+import * as spectrum from 'spectrum-colorpicker';
+import 'spectrum-colorpicker/spectrum';
 import * as toastr from 'toastr';
 import {AuthenticationStateEvent,
         ElementDistributeOptions,
         IChooseDialogOption,
-        IProcessEngineService} from '../../contracts/index';
+        IElementRegistry,
+        IExtensionElement,
+        IFormElement,
+        IModdleElement,
+        IProcessEngineService,
+        IShape} from '../../contracts/index';
 import environment from '../../environment';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
 
@@ -33,6 +41,8 @@ export class ProcessDefDetail {
   private startButton: HTMLElement;
   private consumerClient: ConsumerClient;
   private router: Router;
+  private fillColor: string;
+  private borderColor: string;
 
   @bindable() public uri: string;
   @bindable() public name: string;
@@ -62,6 +72,29 @@ export class ProcessDefDetail {
         this.refreshProcess();
       }),
     ];
+
+    const settings: any = {
+      clickoutFiresChange: true,
+      showPalette: true,
+      palette: [],
+      localStorageKey: 'elementColors',
+      showInitial: true,
+      showInput: true,
+      allowEmpty: true,
+      showButtons: false,
+      showPaletteOnly: true,
+      togglePaletteOnly: true,
+    };
+
+    $('#colorpickerBorder').spectrum(Object.assign({},
+      settings,
+      { move: (borderColor: any): void => this.updateBorderColor(borderColor) },
+    ));
+
+    $('#colorpickerFill').spectrum(Object.assign({},
+      settings,
+      { move: (fillColor: any): void => this.updateFillColor(fillColor) },
+    ));
   }
 
   public detached(): void {
@@ -113,13 +146,16 @@ export class ProcessDefDetail {
 
   public onModdlelImported(moddle: any, xml: string): void {
     this.bpmn.xml = xml;
-    this.saveDiagram();
   }
 
-  public saveDiagram(): void {
-    this.bpmn.getXML().then((xml: string) => {
-      return this.processEngineService.updateProcessDef(this.process, xml);
-    }).then((response: any) => {
+  public async saveDiagram(): Promise<void> {
+
+    this.validateXML();
+
+    try {
+      const xml: string = await this.bpmn.getXML();
+      const response: any = await this.processEngineService.updateProcessDef(this.process, xml);
+
       if (response.error) {
         toastr.error(`Error while saving file: ${response.error}`);
       } else if (response.result) {
@@ -127,8 +163,31 @@ export class ProcessDefDetail {
       } else {
         toastr.warning(`Unknown error: ${JSON.stringify(response)}`);
       }
-    }).catch((error: Error) => {
+    } catch (error) {
       toastr.error(`Error: ${error.message}`);
+    }
+  }
+
+  private validateXML(): void {
+    const registry: Array<IShape> = this.bpmn.modeler.get('elementRegistry');
+
+    registry.forEach((element: IShape) => {
+      if (element.type === 'bpmn:UserTask') {
+        const businessObj: IModdleElement = element.businessObject;
+
+        if (businessObj.extensionElements) {
+          const extensions: IExtensionElement = businessObj.extensionElements;
+
+          extensions.values = extensions.values.filter((value: IFormElement) => {
+            const keepThisValue: boolean = value.$type !== 'camunda:FormData' || value.fields.length > 0;
+            return keepThisValue;
+          });
+
+          if (extensions.values.length === 0) {
+            delete businessObj.extensionElements;
+          }
+        }
+      }
     });
   }
 
@@ -223,8 +282,38 @@ export class ProcessDefDetail {
     this.bpmn.setColor('#E1BEE7', '#8E24AA');
   }
 
-  public setColorWhite(): void {
+  public removeColor(): void {
     this.bpmn.setColor(null, null);
   }
 
+  public setColorPicked(): void {
+    this.bpmn.setColor(this.fillColor, this.borderColor);
+  }
+
+  private updateFillColor(fillColor: any): void {
+    if (fillColor) {
+      this.fillColor = fillColor.toHexString();
+    } else {
+      this.fillColor = null;
+    }
+
+    this.setColorPicked();
+  }
+
+  private updateBorderColor(borderColor: any): void {
+    if (borderColor) {
+      this.borderColor = borderColor.toHexString();
+    } else {
+      this.borderColor = null;
+    }
+
+    this.setColorPicked();
+  }
+
+  public updateCustomColors(): void {
+    [this.fillColor, this.borderColor] = this.bpmn.getColors();
+
+    $('#colorpickerFill').spectrum('set', this.fillColor);
+    $('#colorpickerBorder').spectrum('set', this.borderColor);
+  }
 }

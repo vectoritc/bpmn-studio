@@ -35,11 +35,13 @@
   },
   "license": "MIT",
   "dependencies": {
+    "aurelia-validation": "^1.1.2",
     "electron-notifications": "^1.0.0",
     "electron-updater": "^2.19.1",
     "node-http-server": "^8.1.2",
     "open": "0.0.5",
-    "proxy-polyfill": "^0.1.7"
+    "proxy-polyfill": "^0.1.7",
+    "spectrum-colorpicker": "^1.8.0"
   },
   "peerDependencies": {},
   "devDependencies": {

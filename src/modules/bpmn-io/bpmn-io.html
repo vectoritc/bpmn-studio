@@ -1,8 +1,13 @@
 <template>
+  <require from="../property-panel/property-panel"></require>
   <require from="@process-engine/bpmn-js-custom-bundle/bpmn-modeler-custom.css"></require>
   <require from="./bpmn-io.css"></require>
   <div class="modeler">
-    <div class="canvas col-md-9" id="canvas"></div>
-    <div class="col-md-3" id="js-properties-panel"></div>
+    <div ref="canvasModel" id="canvas">
+    </div>
+    <div>
+      <button ref="toggleBtn" class="toggle_panel" title="Toggle PropertyPanel" click.delegate="togglePanel()">Hide</button>
+      <property-panel ref="panel" id="js-properties-panel" modeler.bind="modeler" xml.bind="xml"></property-panel>
+    </div>
   </div>
 </template>

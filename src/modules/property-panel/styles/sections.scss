@@ -1,0 +1,27 @@
+.section__content {
+  padding-right: 5px;
+  padding-left: 10px;
+}
+
+.section__special {
+  padding-left: 0;
+  padding-top: 25px;
+}
+
+.section__btn-group {
+  display: inline-block;
+  width: 100%;
+}
+
+.section__btn-group--clear-btn {
+  position: relative;
+  top: -25px;
+  left: 100%;
+  width: 100%;
+  margin-left: -23px;
+  color: #ccc;
+}
+
+.section__input-label {
+  margin-bottom: 0;
+}

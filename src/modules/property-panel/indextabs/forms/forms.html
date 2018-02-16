@@ -1,0 +1,11 @@
+<template>
+  <require from="./forms.css"></require>
+  <require from="../../styles/registers.css"></require>
+    <div>
+      <!-- <h4><span class="register_label_border label label-default">${title}</span></h4> -->
+      <compose repeat.for="section of sections"
+        view-model=".${section.path}"
+        view=".${section.path}.html"
+        model.bind="{modeler : modeler}"></compose>
+    </div>
+</template>

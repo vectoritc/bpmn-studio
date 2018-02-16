@@ -1,5 +1,5 @@
-import {IModdleElement} from './IModdleElement';
+import {IModdleElement, IShape} from './index';
 
 export interface IBpmnFunction {
-  trigger(selection: Array<IModdleElement>, option: string): void;
+  trigger(selection: Array<IShape>, option: string): void;
 }

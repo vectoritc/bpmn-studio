@@ -1,7 +1,8 @@
-import {IModdleElement} from './IModdleElement';
-
+import {IModdleElement} from './index';
+import {IShape} from './IShape';
 export interface IModeling {
-  setColor(elements: Array<IModdleElement>, options: {
+  updateProperties(element: IShape, properties: any): void;
+  setColor(elements: Array<IShape>, options: {
     fill: string,
     stroke: string,
   }): void;
