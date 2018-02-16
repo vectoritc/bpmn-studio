@@ -46,15 +46,16 @@ export class FlowSection implements ISection {
   }
 
   public checkElement(elementShape: IShape): boolean {
-    if (elementShape) {
-      const element: IFlowElement = elementShape.businessObject;
-      if (element &&
-          element.$type === 'bpmn:SequenceFlow' &&
-          (element.targetRef.$type === 'bpmn:ExclusiveGateway' ||
-          element.sourceRef.$type === 'bpmn:ExclusiveGateway')) {
-        return true;
-    } else {
-      return false;
+      if (elementShape) {
+        const element: IFlowElement = elementShape.businessObject;
+        if (element &&
+            element.$type === 'bpmn:SequenceFlow' &&
+            (element.targetRef.$type === 'bpmn:ExclusiveGateway' ||
+            element.sourceRef.$type === 'bpmn:ExclusiveGateway')) {
+          return true;
+      } else {
+        return false;
+      }
     }
   }
 
@@ -62,8 +63,6 @@ export class FlowSection implements ISection {
     if (this.businessObjInPanel.conditionExpression) {
       this.condition = this.businessObjInPanel.conditionExpression.body;
     }
-
-    this.canHandleElement = this.checkElement(this.businessObjInPanel);
   }
 
   private conditionChanged(newValue: string, oldValue: string): void {

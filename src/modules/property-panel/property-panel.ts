@@ -21,7 +21,7 @@ export class PropertyPanel {
   public xml: string;
   private moddle: IBpmnModdle;
   private eventBus: IEventBus;
-  private elementInPanel: IModdleElement;
+  private elementInPanel: IShape;
 
   public generalIndextab: IIndextab = new General();
   public formsIndextab: IIndextab = new Forms();
@@ -32,14 +32,13 @@ export class PropertyPanel {
 
   public attached(): void {
     this.moddle = this.modeler.get('moddle');
+    this.eventBus = this.modeler.get('eventBus');
 
     this.indextabs = [
       this.generalIndextab,
       this.formsIndextab,
       this.extensionsIndextab,
     ];
-
-    this.eventBus = this.modeler.get('eventBus');
 
     this.indextabs.forEach((indextab: IIndextab) => {
       indextab.canHandleElement = indextab.checkElement(this.elementInPanel);
@@ -52,16 +51,17 @@ export class PropertyPanel {
 
     this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
       if (event.type === 'element.click') {
-        this.elementInPanel = event.element.businessObject;
+        this.elementInPanel = event.element;
       }
       if (event.type === 'shape.changed' &&
           event.element.type !== 'label' &&
           event.element.id === this.elementInPanel.id) {
-        this.elementInPanel = event.element.businessObject;
+        this.elementInPanel = event.element;
       }
       if (event.type === 'selection.changed' && event.newSelection.length !== 0) {
-        this.elementInPanel = event.newSelection[0].businessObject;
+        this.elementInPanel = event.newSelection[0];
       }
+
       this.indextabs.forEach((indextab: IIndextab) => {
         indextab.canHandleElement = indextab.checkElement(this.elementInPanel);
         if (indextab.title === this.currentIndextabTitle && !indextab.canHandleElement) {

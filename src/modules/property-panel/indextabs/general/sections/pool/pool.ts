@@ -23,12 +23,10 @@ export class PoolSection implements ISection {
     const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
     if (selectedEvents[0]) {
       this.businessObjInPanel = selectedEvents[0].businessObject;
-      this.init();
     }
 
     this.eventBus.on(['element.click', 'shape.changed'], (event: IEvent) => {
       this.businessObjInPanel = event.element.businessObject;
-      this.init();
     });
   }
 
@@ -41,10 +39,6 @@ export class PoolSection implements ISection {
     } else {
       return false;
     }
-  }
-
-  private init(): void {
-    this.canHandleElement = this.checkElement(this.businessObjInPanel);
   }
 
   private clearVersion(): void {

@@ -7,5 +7,5 @@ export interface IIndextab {
   path: string;
   canHandleElement: boolean;
   sections: Array<ISection>;
-  checkElement(element: IModdleElement): boolean;
+  checkElement(element: IShape): boolean;
 }

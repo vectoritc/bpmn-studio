@@ -82,7 +82,6 @@ export class MessageEventSection implements ISection {
           this.selectedId = null;
         }
     }
-    this.canHandleElement = this.checkElement(this.businessObjInPanel);
   }
 
   private getXML(): string {

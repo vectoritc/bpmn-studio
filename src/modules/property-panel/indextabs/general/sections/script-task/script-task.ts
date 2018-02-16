@@ -23,7 +23,6 @@ export class ScriptTaskSection implements ISection {
     const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
     if (selectedEvents[0]) {
       this.businessObjInPanel = selectedEvents[0].businessObject;
-      this.init();
     }
 
     this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
@@ -32,7 +31,6 @@ export class ScriptTaskSection implements ISection {
       } else if (event.element) {
         this.businessObjInPanel = event.element.businessObject;
       }
-      this.init();
     });
   }
 
@@ -44,10 +42,6 @@ export class ScriptTaskSection implements ISection {
     } else {
       return false;
     }
-  }
-
-  private init(): void {
-    this.canHandleElement = this.checkElement(this.businessObjInPanel);
   }
 
   private clearFormat(): void {
