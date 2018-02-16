@@ -11,4 +11,5 @@ export interface IShape {
   width: number;
   height: number;
   documentation?: Array<IDocumentation>;
+  $type: string;
 }

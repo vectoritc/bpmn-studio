@@ -89,6 +89,10 @@ export class BpmnIo {
 
     const selectedElements: Array<IShape> = this.getSelectedElements();
 
+    if (selectedElements.length === 1 && selectedElements[0].$type === 'bpmn:Collaboration') {
+      return;
+    }
+
     if (selectedElements.length > 0) {
       modeling.setColor(selectedElements, {
         fill: fillColor,
@@ -100,7 +104,7 @@ export class BpmnIo {
   public getColors(): Array<string> {
     const selectedElements: Array<IShape> = this.getSelectedElements();
 
-    if (!selectedElements || !selectedElements[0]) {
+    if (!selectedElements || !selectedElements[0] || !selectedElements[0].businessObject) {
       return [undefined, undefined];
     }
 
