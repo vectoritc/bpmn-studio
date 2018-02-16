@@ -4,6 +4,7 @@ import { setTimeout } from 'timers';
 import {ElementDistributeOptions,
         IBpmnFunction,
         IBpmnModeler,
+        IDefinition,
         IModdleElement,
         IModeling,
         IShape} from '../../contracts/index';
@@ -46,8 +47,8 @@ export class BpmnIo {
   public xmlChanged(newValue: string, oldValue: string): void {
     if (this.modeler !== undefined && this.modeler !== null) {
       this.modeler.importXML(newValue, (err: Error) => {
-        this.modeler.get('moddle').fromXML(this.xml, ((err: Error, definitions: IDefinition): void => {
-          const rootElement = definitions.rootElements.find((element: IModdleElement) => {
+        this.modeler.get('moddle').fromXML(this.xml, ((error: Error, definitions: IDefinition): void => {
+          const rootElement: IModdleElement = definitions.rootElements.find((element: IModdleElement) => {
             return element.$type === 'bpmn:Collaboration';
           });
           this.modeler.get('selection').select(rootElement);
