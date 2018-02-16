@@ -13,21 +13,11 @@ export class PoolSection implements ISection {
   public canHandleElement: boolean = false;
 
   private businessObjInPanel: IPoolElement;
-  private eventBus: IEventBus;
   private modeler: IBpmnModeler;
 
   public activate(model: IPageModel): void {
-    this.eventBus = model.modeler.get('eventBus');
+    this.businessObjInPanel = model.elementInPanel.businessObject;
     this.modeler = model.modeler;
-
-    const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
-    if (selectedEvents[0]) {
-      this.businessObjInPanel = selectedEvents[0].businessObject;
-    }
-
-    this.eventBus.on(['element.click', 'shape.changed'], (event: IEvent) => {
-      this.businessObjInPanel = event.element.businessObject;
-    });
   }
 
   public checkElement(element: IShape): boolean {
