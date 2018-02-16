@@ -19,14 +19,13 @@ export class PropertyPanel {
   public modeler: IBpmnModeler;
   @bindable()
   public xml: string;
-  private moddle: IBpmnModdle;
-  private eventBus: IEventBus;
-  private elementInPanel: IShape;
-
+  public elementInPanel: IShape;
   public generalIndextab: IIndextab = new General();
   public formsIndextab: IIndextab = new Forms();
   public extensionsIndextab: IIndextab = new Extensions();
 
+  private moddle: IBpmnModdle;
+  private eventBus: IEventBus;
   private currentIndextabTitle: string = this.generalIndextab.title;
   private indextabs: Array<IIndextab>;
 

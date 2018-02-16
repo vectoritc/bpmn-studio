@@ -31,7 +31,6 @@ export class PoolSection implements ISection {
   }
 
   public checkElement(element: IShape): boolean {
-
     if (element &&
         element.businessObject &&
         element.businessObject.$type === 'bpmn:Participant') {

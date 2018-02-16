@@ -7,6 +7,7 @@ import {BasicsSection} from './sections/basics/basics';
 export class Extensions implements IIndextab {
   public title: string = 'Extensions';
   public path: string = '/indextabs/extensions/extensions';
+  public elementInPanel: IShape;
   public canHandleElement: boolean = true;
 
   private basicsSection: ISection = new BasicsSection();

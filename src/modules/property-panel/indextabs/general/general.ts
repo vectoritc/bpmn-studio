@@ -18,9 +18,9 @@ import {SignalEventSection} from './sections/signal-event/signal-event';
 export class General implements IIndextab {
   public title: string = 'General';
   public path: string = '/indextabs/general/general';
+  public elementInPanel: IShape;
 
   private eventBus: IEventBus;
-  private elementInPanel: IShape;
 
   public basicsSection: ISection = new BasicsSection();
   public poolSection: ISection = new PoolSection();
@@ -57,6 +57,8 @@ export class General implements IIndextab {
   }
 
   public activate(model: IPageModel): void {
+    this.elementInPanel = model.elementInPanel;
+
     this.eventBus = model.modeler.get('eventBus');
 
     this.eventBus.on(['element.click', 'shape.changed'], (event: IEvent) => {
