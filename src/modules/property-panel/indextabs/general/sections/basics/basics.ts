@@ -80,6 +80,10 @@ export class BasicsSection implements ISection {
 
   }
 
+  public checkElement(element: IShape): boolean {
+    return true;
+  }
+
   private init(): void {
     if (!this.businessObjInPanel) {
       return;
@@ -97,10 +101,6 @@ export class BasicsSection implements ISection {
       xml = diagrammXML;
     });
     return xml;
-  }
-
-  public checkElement(element: IModdleElement): boolean {
-    return true;
   }
 
   private updateDocumentation(): void {

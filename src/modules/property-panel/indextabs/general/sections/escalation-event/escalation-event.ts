@@ -59,6 +59,22 @@ export class EscalationEventSection implements ISection {
     });
   }
 
+  public checkElement(element: IShape): boolean {
+    if (element &&
+        element.businessObject &&
+        element.businessObject.eventDefinitions &&
+        element.businessObject.eventDefinitions[0].$type === 'bpmn:EscalationEventDefinition') {
+        if (element.businessObject.$type === 'bpmn:EndEvent') {
+          this.isBoundaryEvent = false;
+        } else if (element.businessObject.$type === 'bpmn:BoundaryEvent') {
+          this.isBoundaryEvent = true;
+        }
+        return true;
+    } else {
+      return false;
+    }
+  }
+
   private init(): void {
     if (this.businessObjInPanel.eventDefinitions
       && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:EscalationEventDefinition') {
@@ -74,20 +90,6 @@ export class EscalationEventSection implements ISection {
       }
     }
     this.canHandleElement = this.checkElement(this.businessObjInPanel);
-  }
-
-  public checkElement(element: IModdleElement): boolean {
-    if (element.eventDefinitions
-      && element.eventDefinitions[0].$type === 'bpmn:EscalationEventDefinition') {
-        if (element.$type === 'bpmn:EndEvent') {
-          this.isBoundaryEvent = false;
-        } else if (element.$type === 'bpmn:BoundaryEvent') {
-          this.isBoundaryEvent = true;
-        }
-        return true;
-    } else {
-      return false;
-    }
   }
 
   private getXML(): string {

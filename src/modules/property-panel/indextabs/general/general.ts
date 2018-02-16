@@ -20,7 +20,7 @@ export class General implements IIndextab {
   public path: string = '/indextabs/general/general';
 
   private eventBus: IEventBus;
-  private elementInPanel: IModdleElement;
+  private elementInPanel: IShape;
 
   public basicsSection: ISection = new BasicsSection();
   public poolSection: ISection = new PoolSection();
@@ -46,18 +46,25 @@ export class General implements IIndextab {
 
   public canHandleElement: boolean = true;
 
-  public checkElement(element: IModdleElement): boolean {
-    return true;
+  public checkElement(element: IShape): boolean {
+    this.sections.forEach((section: ISection) => {
+      section.canHandleElement = section.checkElement(element);
+    });
+
+    return this.sections.some((section: ISection) => {
+      return section.canHandleElement;
+    });
   }
+
   public activate(model: IPageModel): void {
     this.eventBus = model.modeler.get('eventBus');
 
     this.eventBus.on(['element.click', 'shape.changed'], (event: IEvent) => {
       if (event.type === 'element.click') {
-        this.elementInPanel = event.element.businessObject;
+        this.elementInPanel = event.element;
       }
       if (event.type === 'shape.changed' && event.element.type !== 'label') {
-        this.elementInPanel = event.element.businessObject;
+        this.elementInPanel = event.element;
       }
       if (this.elementInPanel) {
         this.sections.forEach((section: ISection) => {

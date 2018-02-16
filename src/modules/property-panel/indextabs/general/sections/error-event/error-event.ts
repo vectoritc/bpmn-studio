@@ -55,9 +55,24 @@ export class ErrorEventSection implements ISection {
       } else if (event.element) {
         this.businessObjInPanel = event.element.businessObject;
       }
-
       this.init();
     });
+  }
+
+  public checkElement(element: IShape): boolean {
+    if (element &&
+        element.businessObject &&
+        element.businessObject.eventDefinitions &&
+        element.businessObject.eventDefinitions[0].$type === 'bpmn:ErrorEventDefinition') {
+          if (element.businessObject.$type === 'bpmn:EndEvent') {
+            this.isEndEvent = true;
+          } else if (element.businessObject.$type === 'bpmn:BoundaryEvent') {
+            this.isEndEvent = false;
+          }
+          return true;
+    } else {
+      return false;
+    }
   }
 
   private init(): void {
@@ -71,21 +86,6 @@ export class ErrorEventSection implements ISection {
           this.selectedError = null;
           this.selectedId = null;
         }
-    }
-    this.canHandleElement = this.checkElement(this.businessObjInPanel);
-  }
-
-  public checkElement(element: IModdleElement): boolean {
-    if (element.eventDefinitions &&
-        element.eventDefinitions[0].$type === 'bpmn:ErrorEventDefinition') {
-          if (element.$type === 'bpmn:EndEvent') {
-            this.isEndEvent = true;
-          } else if (element.$type === 'bpmn:BoundaryEvent') {
-            this.isEndEvent = false;
-          }
-          return true;
-    } else {
-      return false;
     }
   }
 

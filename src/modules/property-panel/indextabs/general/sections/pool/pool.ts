@@ -32,16 +32,19 @@ export class PoolSection implements ISection {
     });
   }
 
-  private init(): void {
-    this.canHandleElement = this.checkElement(this.businessObjInPanel);
-  }
+  public checkElement(element: IShape): boolean {
 
-  public checkElement(element: IModdleElement): boolean {
-    if (element && element.$type === 'bpmn:Participant') {
+    if (element &&
+        element.businessObject &&
+        element.businessObject.$type === 'bpmn:Participant') {
       return true;
     } else {
       return false;
     }
+  }
+
+  private init(): void {
+    this.canHandleElement = this.checkElement(this.businessObjInPanel);
   }
 
   private clearVersion(): void {

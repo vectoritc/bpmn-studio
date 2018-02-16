@@ -36,17 +36,18 @@ export class ScriptTaskSection implements ISection {
     });
   }
 
-  private init(): void {
-    this.canHandleElement = this.checkElement(this.businessObjInPanel);
-  }
-
-  public checkElement(element: IModdleElement): boolean {
+  public checkElement(element: IShape): boolean {
     if (element &&
-        element.$type === 'bpmn:ScriptTask') {
+        element.businessObject &&
+        element.businessObject.$type === 'bpmn:ScriptTask') {
       return true;
     } else {
       return false;
     }
+  }
+
+  private init(): void {
+    this.canHandleElement = this.checkElement(this.businessObjInPanel);
   }
 
   private clearFormat(): void {

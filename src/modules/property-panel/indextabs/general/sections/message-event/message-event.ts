@@ -58,6 +58,17 @@ export class MessageEventSection implements ISection {
     });
   }
 
+  public checkElement(element: IShape): boolean {
+    if (element &&
+        element.businessObject &&
+        element.businessObject.eventDefinitions &&
+        element.businessObject.eventDefinitions[0].$type === 'bpmn:MessageEventDefinition') {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   private init(): void {
     if (this.businessObjInPanel.eventDefinitions
       && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:MessageEventDefinition') {
@@ -72,15 +83,6 @@ export class MessageEventSection implements ISection {
         }
     }
     this.canHandleElement = this.checkElement(this.businessObjInPanel);
-  }
-
-  public checkElement(element: IModdleElement): boolean {
-    if (element.eventDefinitions &&
-        element.eventDefinitions[0].$type === 'bpmn:MessageEventDefinition') {
-      return true;
-    } else {
-      return false;
-    }
   }
 
   private getXML(): string {
