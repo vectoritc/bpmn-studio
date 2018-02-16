@@ -48,7 +48,7 @@ export class PropertyPanel {
 
     this.eventBus = this.modeler.get('eventBus');
 
-    this.eventBus.on(['element.click', 'shape.changed'], (event: IEvent) => {
+    this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
       if (event.type === 'element.click') {
         this.elementInPanel = event.element.businessObject;
       }
@@ -56,6 +56,9 @@ export class PropertyPanel {
           event.element.type !== 'label' &&
           event.element.id === this.elementInPanel.id) {
         this.elementInPanel = event.element.businessObject;
+      }
+      if (event.type === 'selection.changed' && event.newSelection.length !== 0) {
+        this.elementInPanel = event.newSelection[0].businessObject;
       }
       this.indextabs.forEach((indextab: IIndextab) => {
         indextab.canHandleElement = indextab.checkElement(this.elementInPanel);
