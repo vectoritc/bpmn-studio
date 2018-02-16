@@ -137,8 +137,8 @@ export class BasicsSection implements ISection {
                                                 {
                                                   id: `Form_${this.generateRandomId()}`,
                                                   type: null,
-                                                  label: `Form Label`,
-                                                  defaultValue: `Default Value`,
+                                                  label: ``,
+                                                  defaultValue: ``,
                                                 });
 
     if (!this.formElement.fields) {
