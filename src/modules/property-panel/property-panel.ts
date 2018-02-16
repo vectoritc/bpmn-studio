@@ -22,7 +22,6 @@ export class PropertyPanel {
   private moddle: IBpmnModdle;
   private eventBus: IEventBus;
   private elementInPanel: IModdleElement;
-  private rootElement: IModdleElement;
 
   public generalIndextab: IIndextab = new General();
   public formsIndextab: IIndextab = new Forms();
@@ -33,12 +32,6 @@ export class PropertyPanel {
 
   public attached(): void {
     this.moddle = this.modeler.get('moddle');
-
-    this.moddle.fromXML(this.xml, ((err: Error, definitions: IDefinition): void => {
-      this.rootElement = definitions.rootElements.find((element: IModdleElement) => {
-        return element.$type === 'bpmn:Process';
-      });
-    }));
 
     this.indextabs = [
       this.generalIndextab,
@@ -54,6 +47,8 @@ export class PropertyPanel {
         this.currentIndextabTitle = this.generalIndextab.title;
       }
     });
+
+    this.setFirstElement();
 
     this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
       if (event.type === 'element.click') {
@@ -79,6 +74,25 @@ export class PropertyPanel {
 
   public updateIndextab(selectedIndextab: IIndextab): void {
     this.currentIndextabTitle = selectedIndextab.title;
+  }
+
+  private setFirstElement(): void {
+    this.moddle.fromXML(this.xml, ((err: Error, definitions: IDefinition): void => {
+      const process: IModdleElement = definitions.rootElements.find((element: IModdleElement) => {
+        return element.$type === 'bpmn:Process';
+      });
+      const startEvent: IModdleElement = process.flowElements.find((element: any ) => {
+        return element.$type === 'bpmn:StartEvent';
+      });
+      if (startEvent.$type !== 'bpmn:StartEvent') {
+        startEvent.id = process.flowElements[0].id;
+      }
+
+      const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
+      const elementInPanel: IShape = elementRegistry.get(startEvent.id);
+
+      this.modeler.get('selection').select(elementInPanel);
+    }));
   }
 
 }
