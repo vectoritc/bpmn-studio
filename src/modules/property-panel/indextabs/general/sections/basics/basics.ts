@@ -34,7 +34,8 @@ export class BasicsSection implements ISection {
   }
 
   public activate(model: IPageModel): void {
-    this.eventBus = model.modeler.get('eventBus');
+    this.elementInPanel = model.elementInPanel;
+    this.businessObjInPanel = model.elementInPanel.businessObject;
     this.modeling = model.modeler.get('modeling');
     this.moddle = model.modeler.get('moddle');
     this.modeler = model.modeler;
@@ -43,44 +44,17 @@ export class BasicsSection implements ISection {
       this.validateForm(event);
     });
 
-    const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
-    if (selectedEvents[0]) {
-      this.businessObjInPanel = selectedEvents[0].businessObject;
-      this.elementInPanel = selectedEvents[0];
-      this.init();
-    }
+    this.init();
 
-    this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
-      if (this.validationError) {
-        this.businessObjInPanel.id = this.elementInPanel.id;
-        this.validationController.validate();
-      }
-
-      if (event.type === 'selection.changed' && event.newSelection.length !== 0) {
-        this.elementInPanel = event.newSelection[0];
-        this.businessObjInPanel = this.elementInPanel.businessObject;
-      }
-      if (event.type === 'shape.changed' &&
-          event.element.id === this.elementInPanel.id) {
-
-          this.elementInPanel = event.element;
-          this.businessObjInPanel = event.element.businessObject;
-      }
-      if (event.type === 'element.click' && event.element) {
-        this.elementInPanel = event.element;
-        this.businessObjInPanel = event.element.businessObject;
-      }
-
-      this.init();
-
-      ValidationRules.ensure((businessObject: IModdleElement) => businessObject.id).required()
+    ValidationRules.ensure((businessObject: IModdleElement) => businessObject.id).required()
       .withMessage(`Id cannot be blank.`)
       .on(this.businessObjInPanel || {});
-    });
-
   }
 
   public checkElement(element: IShape): boolean {
+    if (!element) {
+      return false;
+    }
     return true;
   }
 
