@@ -15,7 +15,7 @@ import {IBpmnModdle,
 export class BasicsSection implements ISection {
 
   public path: string = '/sections/basics/basics';
-  public canHandleElement: boolean = false;
+  public canHandleElement: boolean = true;
   private isFormSelected: boolean = false;
 
   private businessObjInPanel: IFormElement;
@@ -48,12 +48,20 @@ export class BasicsSection implements ISection {
         this.businessObjInPanel = event.element.businessObject;
       }
       this.init();
+      console.log(this.canHandleElement);
     });
+  }
+
+  public checkElement(element: IShape): boolean {
+    if (!element.businessObject) {
+      return false;
+    }
+
+    return element.businessObject.$type === 'bpmn:UserTask';
   }
 
   private init(): void {
     this.isFormSelected = false;
-    this.canHandleElement = this.checkElement(this.businessObjInPanel);
     if (this.canHandleElement) {
       this.formElement = this.getFormElement();
       this.reloadForms();
@@ -87,14 +95,6 @@ export class BasicsSection implements ISection {
       if (form.$type === `camunda:FormField`) {
         this.forms.push(form);
       }
-    }
-  }
-
-  public checkElement(element: IModdleElement): boolean {
-    if (element.$type === 'bpmn:UserTask') {
-      return true;
-    } else {
-      return false;
     }
   }
 
