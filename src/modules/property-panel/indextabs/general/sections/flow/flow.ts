@@ -56,7 +56,8 @@ export class FlowSection implements ISection {
   public checkElement(element: IFlowElement): boolean {
     if (element &&
         element.$type === 'bpmn:SequenceFlow' &&
-        element.targetRef.$type === 'bpmn:ExclusiveGateway') {
+        (element.targetRef.$type === 'bpmn:ExclusiveGateway' ||
+         element.sourceRef.$type === 'bpmn:ExclusiveGateway')) {
       return true;
     } else {
       return false;
