@@ -1,6 +1,7 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {bindable, observable} from 'aurelia-framework';
 import { setTimeout } from 'timers';
+import * as toastr from 'toastr';
 import {ElementDistributeOptions,
         IBpmnFunction,
         IBpmnModeler,
@@ -89,16 +90,15 @@ export class BpmnIo {
 
     const selectedElements: Array<IShape> = this.getSelectedElements();
 
-    if (selectedElements.length === 1 && selectedElements[0].$type === 'bpmn:Collaboration') {
+    if (selectedElements.length < 1 || selectedElements.length === 1 && selectedElements[0].$type === 'bpmn:Collaboration') {
+      toastr.error(`Error while changing the color: No valid element was selected.`);
       return;
     }
 
-    if (selectedElements.length > 0) {
-      modeling.setColor(selectedElements, {
-        fill: fillColor,
-        stroke: strokeColor,
-      });
-    }
+    modeling.setColor(selectedElements, {
+      fill: fillColor,
+      stroke: strokeColor,
+    });
   }
 
   public getColors(): Array<string> {
