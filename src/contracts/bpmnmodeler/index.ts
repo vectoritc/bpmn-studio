@@ -9,5 +9,5 @@ export {IDefinition} from './IDefinition';
 export {IElementRegistry} from './IElementRegistry';
 export {IBpmnFunction} from './IBpmnFunction';
 export {IModeling} from './IModeling';
-export * from './bpmnelements/index';
+export * from './bpmnElements/index';
 export * from './constants';
