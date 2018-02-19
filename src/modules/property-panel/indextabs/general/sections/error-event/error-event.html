@@ -2,7 +2,7 @@
   <require from="./error-event.css"></require>
   <require from="../../../../styles/sections.css"></require>
   <div class="section" show.bind="canHandleElement">
-    <div class="section__content section__border col-md-11">
+    <div class="section__content col-md-11">
       <label class="section__input-label">Error: </label>
       <select class="form-control" value.bind="selectedId" change.delegate="updateError()">
         <option model.bind="null">-Choose Error-</option>
