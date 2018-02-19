@@ -91,6 +91,8 @@ export class PropertyPanel {
         if (!startEvent && process.flowElements) {
           startEvent = process.flowElements[0];
         }
+      } else if (process.laneSets && process.laneSets[0].lanes) {
+        startEvent = process.laneSets[0].lanes[0];
       }
 
       if (!startEvent) {
