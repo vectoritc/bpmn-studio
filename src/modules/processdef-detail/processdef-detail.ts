@@ -328,14 +328,15 @@ export class ProcessDefDetail {
   }
 
   private validateForm(event: ValidateEvent): void {
-    if (event.type === 'validate') {
-      event.results.forEach((result: ValidateResult) => {
-        if (result.valid === false) {
-          this.validationError = true;
-        } else {
-          this.validationError = false;
-        }
-      });
+    if (event.type !== 'validate') {
+      return;
     }
+    event.results.forEach((result: ValidateResult) => {
+      if (result.valid === false) {
+        this.validationError = true;
+        return;
+      }
+      this.validationError = false;
+    });
   }
 }
