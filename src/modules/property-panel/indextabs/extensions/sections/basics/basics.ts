@@ -39,8 +39,10 @@ export class BasicsSection implements ISection {
       return false;
     }
 
-    return (element.businessObject.$type !== 'bpmn:Process') &&
-        (element.businessObject.$type !== 'bpmn:Collaboration');
+    const elementHasExtensions: boolean = (element.businessObject.$type !== 'bpmn:Process') &&
+                                      (element.businessObject.$type !== 'bpmn:Collaboration');
+
+    return elementHasExtensions;
   }
 
   private init(): void {
