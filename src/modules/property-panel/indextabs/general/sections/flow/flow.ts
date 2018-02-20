@@ -30,17 +30,18 @@ export class FlowSection implements ISection {
   }
 
   public checkElement(elementShape: IShape): boolean {
-      if (elementShape) {
-        const element: IFlowElement = elementShape.businessObject;
-        if (element &&
-            element.$type === 'bpmn:SequenceFlow' &&
-            (element.targetRef.$type === 'bpmn:ExclusiveGateway' ||
-            element.sourceRef.$type === 'bpmn:ExclusiveGateway')) {
-          return true;
+    if (elementShape) {
+      const element: IFlowElement = elementShape.businessObject;
+      if (element &&
+          element.$type === 'bpmn:SequenceFlow' &&
+          (element.targetRef.$type === 'bpmn:ExclusiveGateway' ||
+          element.sourceRef.$type === 'bpmn:ExclusiveGateway')) {
+        return true;
       } else {
         return false;
       }
     }
+    return false;
   }
 
   private init(): void {

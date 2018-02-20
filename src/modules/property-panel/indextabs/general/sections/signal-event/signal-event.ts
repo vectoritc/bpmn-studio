@@ -35,7 +35,6 @@ export class SignalEventSection implements ISection {
 
   public async activate(model: IPageModel): Promise<void> {
     this.businessObjInPanel = model.elementInPanel.businessObject;
-
     this.moddle = model.modeler.get('moddle');
     this.modeler = model.modeler;
 

@@ -3,12 +3,11 @@
   <require from="../../styles/registers.css"></require>
       <!-- <h4><span class="register_label_border label label-default">${title}</span></h4> -->
       <div repeat.for="section of sections">
-        <div>
+        <div if.bind="section.checkElement(elementInPanel)">
           <compose
             view-model=".${section.path}"
             view=".${section.path}.html"
             model.bind="{modeler : modeler, elementInPanel : elementInPanel}"
-            if.bind="section.canHandleElement"
             containerless></compose>
         </div>
       </div>

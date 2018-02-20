@@ -46,8 +46,6 @@ export class PropertyPanel {
       }
     });
 
-    this.setFirstElement();
-
     this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
       if (event.type === 'element.click') {
         this.elementInPanel = event.element;
@@ -68,6 +66,8 @@ export class PropertyPanel {
         }
       });
     });
+
+    this.setFirstElement();
 
   }
 
