@@ -58,14 +58,6 @@ export class General implements IIndextab {
 
   public activate(model: IPageModel): void {
     this.elementInPanel = model.elementInPanel;
-
-    this.eventBus = model.modeler.get('eventBus');
-    this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
-      this.sections.forEach((section: ISection) => {
-        section.canHandleElement = section.checkElement(this.elementInPanel);
-      });
-
-    });
   }
 
 }
