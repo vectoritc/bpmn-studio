@@ -94,4 +94,11 @@ export class PropertyPanel {
     }));
   }
 
+  private xmlChanged(newValue: string, oldValue: string): void {
+    if (oldValue) {
+      this.setFirstElement();
+      this.updateIndextab(this.generalIndextab);
+    }
+  }
+
 }
