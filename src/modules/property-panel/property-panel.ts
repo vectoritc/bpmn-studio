@@ -77,30 +77,30 @@ export class PropertyPanel {
   }
 
   private setFirstElement(): void {
-    let startEvent: IModdleElement;
+    let firstElement: IModdleElement;
     this.moddle.fromXML(this.xml, ((err: Error, definitions: IDefinition): void => {
       const process: IModdleElement = definitions.rootElements.find((element: IModdleElement) => {
         return element.$type === 'bpmn:Process';
       });
 
       if (process.flowElements) {
-        startEvent = process.flowElements.find((element: any ) => {
+        firstElement = process.flowElements.find((element: IModdleElement ) => {
           return element.$type === 'bpmn:StartEvent';
         });
 
-        if (!startEvent && process.flowElements) {
-          startEvent = process.flowElements[0];
+        if (!firstElement && process.flowElements) {
+          firstElement = process.flowElements[0];
         }
       } else if (process.laneSets && process.laneSets[0].lanes) {
-        startEvent = process.laneSets[0].lanes[0];
+        firstElement = process.laneSets[0].lanes[0];
       }
 
-      if (!startEvent) {
-        startEvent = process;
+      if (!firstElement) {
+        firstElement = process;
       }
 
       const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
-      const elementInPanel: IShape = elementRegistry.get(startEvent.id);
+      const elementInPanel: IShape = elementRegistry.get(firstElement.id);
 
       this.modeler.get('selection').select(elementInPanel);
     }));
