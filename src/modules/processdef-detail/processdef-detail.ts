@@ -126,12 +126,10 @@ export class ProcessDefDetail {
 
   public async startProcess(): Promise<void> {
     this.router.navigate(`processdef/${this.process.id}/start`);
-    this.startedProcessId = await this.consumerClient.startProcessByKey(this.process.key);
   }
 
   public closeProcessStartDropdown(): void {
     this.startButton.removeAttribute('disabled');
-    this.startedProcessId = undefined;
   }
 
   public deleteProcess(): void {
