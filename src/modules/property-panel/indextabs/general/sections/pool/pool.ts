@@ -20,14 +20,14 @@ export class PoolSection implements ISection {
     this.modeler = model.modeler;
   }
 
-  public checkElement(element: IShape): boolean {
-    if (element &&
-        element.businessObject &&
-        element.businessObject.$type === 'bpmn:Participant') {
-      return true;
-    } else {
-      return false;
-    }
+  public isSuitableForElement(element: IShape): boolean {
+    return this.elementIsParticipant(element);
+  }
+
+  private elementIsParticipant(element: IShape): boolean {
+    return element !== undefined
+        && element.businessObject !== undefined
+        && element.businessObject.$type === 'bpmn:Participant';
   }
 
   private clearVersion(): void {

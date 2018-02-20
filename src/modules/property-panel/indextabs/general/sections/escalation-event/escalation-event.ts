@@ -46,20 +46,26 @@ export class EscalationEventSection implements ISection {
     this.init();
   }
 
-  public checkElement(element: IShape): boolean {
-    if (element &&
-        element.businessObject &&
-        element.businessObject.eventDefinitions &&
-        element.businessObject.eventDefinitions[0].$type === 'bpmn:EscalationEventDefinition') {
-        if (element.businessObject.$type === 'bpmn:EndEvent') {
-          this.isBoundaryEvent = false;
-        } else if (element.businessObject.$type === 'bpmn:BoundaryEvent') {
-          this.isBoundaryEvent = true;
-        }
-        return true;
-    } else {
-      return false;
+  public isSuitableForElement(element: IShape): boolean {
+
+    if (this.elementIsEscalationEvent(element)) {
+      this.isBoundaryEvent = this.elementIsBoundaryEvent(element);
+      return true;
     }
+    return false;
+  }
+
+  private elementIsEscalationEvent(element: IShape): boolean {
+    return element !== undefined
+        && element.businessObject !== undefined
+        && element.businessObject.eventDefinitions !== undefined
+        && element.businessObject.eventDefinitions[0].$type === 'bpmn:EscalationEventDefinition';
+  }
+
+  private elementIsBoundaryEvent(element: IShape): boolean {
+    return element !== undefined
+        && element.businessObject !== undefined
+        && element.businessObject.$type === 'bpmn:BoundaryEvent';
   }
 
   private init(): void {

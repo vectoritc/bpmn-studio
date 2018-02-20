@@ -43,15 +43,15 @@ export class SignalEventSection implements ISection {
     this.init();
   }
 
-  public checkElement(element: IShape): boolean {
-    if (element &&
-        element.businessObject &&
-        element.businessObject.eventDefinitions &&
-        element.businessObject.eventDefinitions[0].$type === 'bpmn:SignalEventDefinition') {
-      return true;
-    } else {
-      return false;
-    }
+  public isSuitableForElement(element: IShape): boolean {
+    return this.elementIsSignalEvent(element);
+  }
+
+  private elementIsSignalEvent(element: IShape): boolean {
+    return element !== undefined
+        && element.businessObject !== undefined
+        && element.businessObject.eventDefinitions !== undefined
+        && element.businessObject.eventDefinitions[0].$type === 'bpmn:SignalEventDefinition';
   }
 
   private init(): void {

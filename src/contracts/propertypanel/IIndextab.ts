@@ -8,5 +8,5 @@ export interface IIndextab {
   elementInPanel: IShape;
   canHandleElement: boolean;
   sections: Array<ISection>;
-  checkElement(element: IShape): boolean;
+  isSuitableForElement(element: IShape): boolean;
 }

@@ -20,14 +20,14 @@ export class Extensions implements IIndextab {
     ];
   }
 
-  public checkElement(element: IShape): boolean {
+  public isSuitableForElement(element: IShape): boolean {
 
     if (!element) {
       return false;
     }
 
     return this.sections.some((section: ISection) => {
-      return section.checkElement(element);
+      return section.isSuitableForElement(element);
     });
   }
 }

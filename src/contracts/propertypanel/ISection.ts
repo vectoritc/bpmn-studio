@@ -8,5 +8,5 @@ export interface ISection {
   path: string;
   canHandleElement: boolean;
   activate(model: IPageModel): void;
-  checkElement(element: IShape): boolean;
+  isSuitableForElement(element: IShape): boolean;
 }

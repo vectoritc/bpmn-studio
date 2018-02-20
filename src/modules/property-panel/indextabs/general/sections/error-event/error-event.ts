@@ -46,20 +46,25 @@ export class ErrorEventSection implements ISection {
     this.init();
   }
 
-  public checkElement(element: IShape): boolean {
-    if (element &&
-        element.businessObject &&
-        element.businessObject.eventDefinitions &&
-        element.businessObject.eventDefinitions[0].$type === 'bpmn:ErrorEventDefinition') {
-          if (element.businessObject.$type === 'bpmn:EndEvent') {
-            this.isEndEvent = true;
-          } else if (element.businessObject.$type === 'bpmn:BoundaryEvent') {
-            this.isEndEvent = false;
-          }
-          return true;
-    } else {
-      return false;
+  public isSuitableForElement(element: IShape): boolean {
+    if (this.elementIsErrorEvent(element)) {
+      this.isEndEvent = this.elementIsEndEvent(element);
+      return true;
     }
+    return false;
+  }
+
+  private elementIsErrorEvent(element: IShape): boolean {
+    return element !== undefined
+        && element.businessObject !== undefined
+        && element.businessObject.eventDefinitions !== undefined
+        && element.businessObject.eventDefinitions[0].$type === 'bpmn:ErrorEventDefinition';
+  }
+
+  private elementIsEndEvent(element: IShape): boolean {
+    return element !== undefined
+        && element.businessObject !== undefined
+        && element.businessObject.$type === 'bpmn:EndEvent';
   }
 
   private init(): void {

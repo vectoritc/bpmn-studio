@@ -20,14 +20,12 @@ export class CallActivitySection implements ISection {
     this.modeler = model.modeler;
   }
 
-  public checkElement(element: IShape): boolean {
-    if (element &&
-        element.businessObject &&
-        element.businessObject.$type === 'bpmn:CallActivity') {
-          return true;
-        } else {
-          return false;
-        }
+  public isSuitableForElement(element: IShape): boolean {
+    const elementIsCallActivity: boolean = element !== undefined
+                                        && element.businessObject !== undefined
+                                        && element.businessObject.$type === 'bpmn:CallActivity';
+
+    return elementIsCallActivity;
   }
 
   private clearCalledElement(): void {

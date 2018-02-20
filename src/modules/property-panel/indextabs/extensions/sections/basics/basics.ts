@@ -34,7 +34,7 @@ export class BasicsSection implements ISection {
     this.init();
   }
 
-  public checkElement(element: IShape): boolean {
+  public isSuitableForElement(element: IShape): boolean {
     if (!element.businessObject) {
       return false;
     }

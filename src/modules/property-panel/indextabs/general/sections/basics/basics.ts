@@ -51,8 +51,8 @@ export class BasicsSection implements ISection {
       .on(this.businessObjInPanel || {});
   }
 
-  public checkElement(element: IShape): boolean {
-    if (!element) {
+  public isSuitableForElement(element: IShape): boolean {
+    if (element === undefined || element === null) {
       return false;
     }
     return true;

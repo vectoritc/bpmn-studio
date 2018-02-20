@@ -46,9 +46,9 @@ export class General implements IIndextab {
 
   public canHandleElement: boolean = true;
 
-  public checkElement(element: IShape): boolean {
+  public isSuitableForElement(element: IShape): boolean {
     this.sections.forEach((section: ISection) => {
-      section.canHandleElement = section.checkElement(element);
+      section.canHandleElement = section.isSuitableForElement(element);
     });
 
     return this.sections.some((section: ISection) => {

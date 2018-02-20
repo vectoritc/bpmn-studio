@@ -40,27 +40,31 @@ export class PropertyPanel {
     ];
 
     this.indextabs.forEach((indextab: IIndextab) => {
-      indextab.canHandleElement = indextab.checkElement(this.elementInPanel);
+      indextab.canHandleElement = indextab.isSuitableForElement(this.elementInPanel);
       if (indextab.title === this.currentIndextabTitle && !indextab.canHandleElement) {
         this.currentIndextabTitle = this.generalIndextab.title;
       }
     });
 
     this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
-      if (event.type === 'element.click') {
+
+      const elementWasClickedOn: boolean = event.type === 'element.clicked';
+      const elementIsValidShape: boolean = event.type === 'shape.changed' && event.element.type !== 'label';
+
+      const elementIsShapeInPanel: boolean = elementIsValidShape && event.element.id === this.elementInPanel.id;
+
+      if (elementWasClickedOn || elementIsShapeInPanel) {
         this.elementInPanel = event.element;
       }
-      if (event.type === 'shape.changed' &&
-          event.element.type !== 'label' &&
-          event.element.id === this.elementInPanel.id) {
-        this.elementInPanel = event.element;
-      }
-      if (event.type === 'selection.changed' && event.newSelection.length !== 0) {
+
+      const selectedElementChanged: boolean = event.type === 'selection.changed' && event.newSelection.length !== 0;
+
+      if (selectedElementChanged) {
         this.elementInPanel = event.newSelection[0];
       }
 
       this.indextabs.forEach((indextab: IIndextab) => {
-        indextab.canHandleElement = indextab.checkElement(this.elementInPanel);
+        indextab.canHandleElement = indextab.isSuitableForElement(this.elementInPanel);
         if (indextab.title === this.currentIndextabTitle && !indextab.canHandleElement) {
           this.currentIndextabTitle = this.generalIndextab.title;
         }

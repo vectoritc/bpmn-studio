@@ -20,14 +20,14 @@ export class ScriptTaskSection implements ISection {
     this.modeler = model.modeler;
   }
 
-  public checkElement(element: IShape): boolean {
-    if (element &&
-        element.businessObject &&
-        element.businessObject.$type === 'bpmn:ScriptTask') {
-      return true;
-    } else {
-      return false;
-    }
+  public isSuitableForElement(element: IShape): boolean {
+    return this.elementIsScriptTask(element);
+  }
+
+  private elementIsScriptTask(element: IShape): boolean {
+    return element !== undefined
+        && element.businessObject !== undefined
+        && element.businessObject.$type === 'bpmn:ScriptTask';
   }
 
   private clearFormat(): void {

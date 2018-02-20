@@ -21,13 +21,17 @@ export class Forms implements IIndextab {
     this.basicsSection,
   ];
 
-  public checkElement(element: IShape): boolean {
+  public activate(model: IPageModel): void {
+    this.elementInPanel = model.elementInPanel;
+  }
+
+  public isSuitableForElement(element: IShape): boolean {
     if (!element) {
       return false;
     }
 
     this.sections.forEach((section: ISection) => {
-      section.canHandleElement = section.checkElement(element);
+      section.canHandleElement = section.isSuitableForElement(element);
     });
 
     return this.sections.some((section: ISection) => {

@@ -45,15 +45,15 @@ export class MessageEventSection implements ISection {
     this.init();
   }
 
-  public checkElement(element: IShape): boolean {
-    if (element &&
-        element.businessObject &&
-        element.businessObject.eventDefinitions &&
-        element.businessObject.eventDefinitions[0].$type === 'bpmn:MessageEventDefinition') {
-      return true;
-    } else {
-      return false;
-    }
+  public isSuitableForElement(element: IShape): boolean {
+    return this.elementIsMessageEvent(element);
+  }
+
+  private elementIsMessageEvent(element: IShape): boolean {
+    return element !== undefined
+        && element.businessObject !== undefined
+        && element.businessObject.eventDefinitions !== undefined
+        && element.businessObject.eventDefinitions[0].$type === 'bpmn:MessageEventDefinition';
   }
 
   private init(): void {

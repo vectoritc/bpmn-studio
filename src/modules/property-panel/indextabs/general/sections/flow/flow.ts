@@ -29,19 +29,25 @@ export class FlowSection implements ISection {
     this.modeler = model.modeler;
   }
 
-  public checkElement(elementShape: IShape): boolean {
-    if (elementShape) {
+  public isSuitableForElement(elementShape: IShape): boolean {
+    if (elementShape !== undefined && elementShape !== null) {
       const element: IFlowElement = elementShape.businessObject;
-      if (element &&
-          element.$type === 'bpmn:SequenceFlow' &&
-          (element.targetRef.$type === 'bpmn:ExclusiveGateway' ||
-          element.sourceRef.$type === 'bpmn:ExclusiveGateway')) {
-        return true;
-      } else {
+      if (!this.elementIsFlow(element)) {
         return false;
       }
+      const flowPointsAtExclusiveGateway: boolean = element.targetRef.$type === 'bpmn:ExclusiveGateway';
+      const flowStartsAtExclusiveGateway: boolean = element.sourceRef.$type === 'bpmn:ExclusiveGateway';
+
+      const flowHasCondition: boolean = flowPointsAtExclusiveGateway || flowStartsAtExclusiveGateway;
+
+      return flowHasCondition;
     }
-    return false;
+  }
+
+  private elementIsFlow(element: IFlowElement): boolean {
+    return element !== undefined
+          && element !== null
+          && element.$type === 'bpmn:SequenceFlow';
   }
 
   private init(): void {
