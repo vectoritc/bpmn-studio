@@ -19,19 +19,19 @@ export class PropertyPanel {
   public modeler: IBpmnModeler;
   @bindable()
   public xml: string;
-  private moddle: IBpmnModdle;
-  private eventBus: IEventBus;
-  private elementInPanel: IModdleElement;
-
+  public elementInPanel: IShape;
   public generalIndextab: IIndextab = new General();
   public formsIndextab: IIndextab = new Forms();
   public extensionsIndextab: IIndextab = new Extensions();
 
+  private moddle: IBpmnModdle;
+  private eventBus: IEventBus;
   private currentIndextabTitle: string = this.generalIndextab.title;
   private indextabs: Array<IIndextab>;
 
   public attached(): void {
     this.moddle = this.modeler.get('moddle');
+    this.eventBus = this.modeler.get('eventBus');
 
     this.indextabs = [
       this.generalIndextab,
@@ -39,36 +39,39 @@ export class PropertyPanel {
       this.extensionsIndextab,
     ];
 
-    this.eventBus = this.modeler.get('eventBus');
-
     this.indextabs.forEach((indextab: IIndextab) => {
-      indextab.canHandleElement = indextab.checkElement(this.elementInPanel);
+      indextab.canHandleElement = indextab.isSuitableForElement(this.elementInPanel);
       if (indextab.title === this.currentIndextabTitle && !indextab.canHandleElement) {
         this.currentIndextabTitle = this.generalIndextab.title;
       }
     });
 
-    this.setFirstElement();
-
     this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
-      if (event.type === 'element.click') {
-        this.elementInPanel = event.element.businessObject;
+
+      const elementWasClickedOn: boolean = event.type === 'element.clicked';
+      const elementIsValidShape: boolean = event.type === 'shape.changed' && event.element.type !== 'label';
+
+      const elementIsShapeInPanel: boolean = elementIsValidShape && event.element.id === this.elementInPanel.id;
+
+      if (elementWasClickedOn || elementIsShapeInPanel) {
+        this.elementInPanel = event.element;
       }
-      if (event.type === 'shape.changed' &&
-          event.element.type !== 'label' &&
-          event.element.id === this.elementInPanel.id) {
-        this.elementInPanel = event.element.businessObject;
+
+      const selectedElementChanged: boolean = event.type === 'selection.changed' && event.newSelection.length !== 0;
+
+      if (selectedElementChanged) {
+        this.elementInPanel = event.newSelection[0];
       }
-      if (event.type === 'selection.changed' && event.newSelection.length !== 0) {
-        this.elementInPanel = event.newSelection[0].businessObject;
-      }
+
       this.indextabs.forEach((indextab: IIndextab) => {
-        indextab.canHandleElement = indextab.checkElement(this.elementInPanel);
+        indextab.canHandleElement = indextab.isSuitableForElement(this.elementInPanel);
         if (indextab.title === this.currentIndextabTitle && !indextab.canHandleElement) {
           this.currentIndextabTitle = this.generalIndextab.title;
         }
       });
     });
+
+    this.setFirstElement();
 
   }
 

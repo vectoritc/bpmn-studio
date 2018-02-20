@@ -17,50 +17,42 @@ export class FlowSection implements ISection {
   public canHandleElement: boolean = false;
 
   private businessObjInPanel: IFlowElement;
-  private eventBus: IEventBus;
   private modeler: IBpmnModeler;
   private moddle: IBpmnModdle;
 
   @observable private condition: string;
 
   public activate(model: IPageModel): void {
-    this.eventBus = model.modeler.get('eventBus');
+    this.businessObjInPanel = model.elementInPanel.businessObject;
+
     this.moddle = model.modeler.get('moddle');
     this.modeler = model.modeler;
+  }
 
-    const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
-    if (selectedEvents[0]) {
-      this.businessObjInPanel = selectedEvents[0].businessObject;
-      this.init();
-    }
-
-    this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
-      if (event.newSelection && event.newSelection.length !== 0) {
-        this.businessObjInPanel = event.newSelection[0].businessObject;
-        this.init();
-      } else if (event.element) {
-        this.businessObjInPanel = event.element.businessObject;
-        this.init();
+  public isSuitableForElement(elementShape: IShape): boolean {
+    if (elementShape !== undefined && elementShape !== null) {
+      const element: IFlowElement = elementShape.businessObject;
+      if (!this.elementIsFlow(element)) {
+        return false;
       }
-    });
+      const flowPointsAtExclusiveGateway: boolean = element.targetRef.$type === 'bpmn:ExclusiveGateway';
+      const flowStartsAtExclusiveGateway: boolean = element.sourceRef.$type === 'bpmn:ExclusiveGateway';
+
+      const flowHasCondition: boolean = flowPointsAtExclusiveGateway || flowStartsAtExclusiveGateway;
+
+      return flowHasCondition;
+    }
+  }
+
+  private elementIsFlow(element: IFlowElement): boolean {
+    return element !== undefined
+          && element !== null
+          && element.$type === 'bpmn:SequenceFlow';
   }
 
   private init(): void {
     if (this.businessObjInPanel.conditionExpression) {
       this.condition = this.businessObjInPanel.conditionExpression.body;
-    }
-
-    this.canHandleElement = this.checkElement(this.businessObjInPanel);
-  }
-
-  public checkElement(element: IFlowElement): boolean {
-    if (element &&
-        element.$type === 'bpmn:SequenceFlow' &&
-        (element.targetRef.$type === 'bpmn:ExclusiveGateway' ||
-         element.sourceRef.$type === 'bpmn:ExclusiveGateway')) {
-      return true;
-    } else {
-      return false;
     }
   }
 
