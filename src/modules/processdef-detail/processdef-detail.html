@@ -42,7 +42,7 @@
             <li><a href="#/processdef/${process.id}/task">Tasks</a></li>
           </ul>
         </div>
-        <button class="btn btn-success save-button" click.delegate="saveDiagram()">
+        <button class="btn btn-success save-button" click.delegate="saveDiagram()" disabled.bind="validationError">
             <i class="glyphicon glyphicon-floppy-disk"></i> Save
         </button>
         <!--<button disabled.bind="true" class="btn btn-danger" click.delegate="deleteProcess()">

@@ -23,6 +23,7 @@ export class BasicsSection implements ISection {
   private modeler: IBpmnModeler;
   private moddle: IBpmnModdle;
   private elementInPanel: IShape;
+  private saveId: string;
 
   public validationController: ValidationController;
   public businessObjInPanel: IModdleElement;
@@ -34,8 +35,15 @@ export class BasicsSection implements ISection {
   }
 
   public activate(model: IPageModel): void {
+
+    if (this.validationError) {
+      this.businessObjInPanel.id = this.saveId;
+      this.validationController.validate();
+    }
+
     this.elementInPanel = model.elementInPanel;
     this.businessObjInPanel = model.elementInPanel.businessObject;
+    this.saveId = model.elementInPanel.businessObject.id;
     this.modeling = model.modeler.get('modeling');
     this.moddle = model.modeler.get('moddle');
     this.modeler = model.modeler;
@@ -46,7 +54,9 @@ export class BasicsSection implements ISection {
 
     this.init();
 
-    ValidationRules.ensure((businessObject: IModdleElement) => businessObject.id).required()
+    ValidationRules.ensure((businessObject: IModdleElement) => businessObject.id)
+      .displayName('elementId')
+      .required()
       .withMessage(`Id cannot be blank.`)
       .on(this.businessObjInPanel || {});
   }
@@ -121,16 +131,21 @@ export class BasicsSection implements ISection {
   }
 
   private validateForm(event: ValidateEvent): void {
-    if (event.type === 'validate') {
-      event.results.forEach((result: ValidateResult) => {
-        if (result.valid === false) {
-          this.validationError = true;
-          document.getElementById(result.propertyName).style.border = '2px solid red';
-        } else {
-          this.validationError = false;
-          document.getElementById(result.propertyName).style.border = '';
-        }
-      });
+    if (event.type !== 'validate') {
+      return;
+    }
+    this.validationError = false;
+
+    for (const result of event.results) {
+      if (result.rule.property.displayName !== 'elementId') {
+        continue;
+      }
+      if (result.valid === false) {
+        this.validationError = true;
+        document.getElementById(result.rule.property.displayName).style.border = '2px solid red';
+      } else {
+        document.getElementById(result.rule.property.displayName).style.border = '';
+      }
     }
   }
 }
