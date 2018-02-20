@@ -26,25 +26,23 @@ export class BasicsSection implements ISection {
   private propertyElement: IPropertyElement;
 
   public async activate(model: IPageModel): Promise<void> {
-    this.eventBus = model.modeler.get('eventBus');
+    this.businessObjInPanel = model.elementInPanel.businessObject;
+
     this.moddle = model.modeler.get('moddle');
     this.modeler = model.modeler;
 
-    const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
-    if (selectedEvents[0]) {
-      this.businessObjInPanel = selectedEvents[0].businessObject;
-      this.init();
+    this.init();
+  }
+
+  public isSuitableForElement(element: IShape): boolean {
+    if (element.businessObject === undefined) {
+      return false;
     }
 
-    this.eventBus.on(['element.click', 'shape.changed'], (event: IEvent) => {
-      if (event.newSelection && event.newSelection.length !== 0) {
-        this.businessObjInPanel = event.newSelection[0].businessObject;
-        this.init();
-      } else if (event.element) {
-        this.businessObjInPanel = event.element.businessObject;
-        this.init();
-      }
-    });
+    const elementHasExtensions: boolean = (element.businessObject.$type !== 'bpmn:Process') &&
+                                      (element.businessObject.$type !== 'bpmn:Collaboration');
+
+    return elementHasExtensions;
   }
 
   private init(): void {
@@ -135,10 +133,6 @@ export class BasicsSection implements ISection {
 
   private changeValue(index: number): void {
     this.propertyElement.values[index].value = this.newValues[index];
-  }
-
-  public checkElement(element: IModdleElement): boolean {
-    return (element.$type !== 'bpmn:Process') && (element.$type !== 'bpmn:Collaboration');
   }
 
 }
