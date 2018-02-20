@@ -39,12 +39,7 @@ export class PropertyPanel {
       this.extensionsIndextab,
     ];
 
-    this.indextabs.forEach((indextab: IIndextab) => {
-      indextab.canHandleElement = indextab.isSuitableForElement(this.elementInPanel);
-      if (indextab.title === this.currentIndextabTitle && !indextab.canHandleElement) {
-        this.currentIndextabTitle = this.generalIndextab.title;
-      }
-    });
+    this.checkForEachIndexTabisSuitable();
 
     this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
 
@@ -63,12 +58,7 @@ export class PropertyPanel {
         this.elementInPanel = event.newSelection[0];
       }
 
-      this.indextabs.forEach((indextab: IIndextab) => {
-        indextab.canHandleElement = indextab.isSuitableForElement(this.elementInPanel);
-        if (indextab.title === this.currentIndextabTitle && !indextab.canHandleElement) {
-          this.currentIndextabTitle = this.generalIndextab.title;
-        }
-      });
+      this.checkForEachIndexTabisSuitable();
     });
 
     this.setFirstElement();
@@ -114,6 +104,15 @@ export class PropertyPanel {
       this.setFirstElement();
       this.updateIndextab(this.generalIndextab);
     }
+  }
+
+  private checkForEachIndexTabisSuitable(): void {
+    this.indextabs.forEach((indextab: IIndextab) => {
+      indextab.canHandleElement = indextab.isSuitableForElement(this.elementInPanel);
+      if (indextab.title === this.currentIndextabTitle && !indextab.canHandleElement) {
+        this.currentIndextabTitle = this.generalIndextab.title;
+      }
+    });
   }
 
 }
