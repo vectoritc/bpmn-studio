@@ -35,7 +35,7 @@ export class BasicsSection implements ISection {
   }
 
   public isSuitableForElement(element: IShape): boolean {
-    if (!element.businessObject) {
+    if (element.businessObject === undefined) {
       return false;
     }
 
