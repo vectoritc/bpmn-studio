@@ -134,16 +134,18 @@ export class BasicsSection implements ISection {
     if (event.type !== 'validate') {
       return;
     }
-    event.results.forEach((result: ValidateResult) => {
-      if (result.rule.property.displayName === 'elementId') {
-        if (result.valid === false) {
-          this.validationError = true;
-          document.getElementById(result.rule.property.displayName).style.border = '2px solid red';
-        } else {
-          this.validationError = false;
-          document.getElementById(result.rule.property.displayName).style.border = '';
-        }
+    this.validationError = false;
+
+    for (const result of event.results) {
+      if (result.rule.property.displayName !== 'elementId') {
+        continue;
       }
-    });
+      if (result.valid === false) {
+        this.validationError = true;
+        document.getElementById(result.rule.property.displayName).style.border = '2px solid red';
+      } else {
+        document.getElementById(result.rule.property.displayName).style.border = '';
+      }
+    }
   }
 }

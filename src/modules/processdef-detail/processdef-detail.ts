@@ -331,12 +331,15 @@ export class ProcessDefDetail {
     if (event.type !== 'validate') {
       return;
     }
-    event.results.forEach((result: ValidateResult) => {
+
+    this.validationError = false;
+
+    for (const result of event.results) {
       if (result.valid === false) {
         this.validationError = true;
         return;
       }
-      this.validationError = false;
-    });
+    }
   }
+
 }
