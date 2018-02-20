@@ -3,6 +3,7 @@ import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
+import {ValidateEvent, ValidateResult, ValidationController, ValidationRules} from 'aurelia-validation';
 import * as canvg from 'canvg-browser';
 import * as download from 'downloadjs';
 import * as $ from 'jquery';
@@ -25,7 +26,7 @@ interface RouteParameters {
   processDefId: string;
 }
 
-@inject('ProcessEngineService', EventAggregator, 'ConsumerClient', Router)
+@inject('ProcessEngineService', EventAggregator, 'ConsumerClient', Router, ValidationController)
 export class ProcessDefDetail {
 
   private processEngineService: IProcessEngineService;
@@ -44,6 +45,9 @@ export class ProcessDefDetail {
   private fillColor: string;
   private borderColor: string;
 
+  public validationController: ValidationController;
+  public validationError: boolean;
+
   @bindable() public uri: string;
   @bindable() public name: string;
   @bindable() public startedProcessId: string;
@@ -51,11 +55,13 @@ export class ProcessDefDetail {
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
               consumerClient: ConsumerClient,
-              router: Router) {
+              router: Router,
+              validationController: ValidationController) {
     this.processEngineService = processEngineService;
     this.eventAggregator = eventAggregator;
     this.consumerClient = consumerClient;
     this.router = router;
+    this.validationController = validationController;
   }
 
   public activate(routeParameters: RouteParameters): void {
@@ -64,6 +70,10 @@ export class ProcessDefDetail {
   }
 
   public attached(): void {
+    this.validationController.subscribe((event: ValidateEvent) => {
+      this.validateForm(event);
+    });
+
     this.subscriptions = [
       this.eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
         this.refreshProcess();
@@ -315,5 +325,17 @@ export class ProcessDefDetail {
 
     $('#colorpickerFill').spectrum('set', this.fillColor);
     $('#colorpickerBorder').spectrum('set', this.borderColor);
+  }
+
+  private validateForm(event: ValidateEvent): void {
+    if (event.type === 'validate') {
+      event.results.forEach((result: ValidateResult) => {
+        if (result.valid === false) {
+          this.validationError = true;
+        } else {
+          this.validationError = false;
+        }
+      });
+    }
   }
 }
