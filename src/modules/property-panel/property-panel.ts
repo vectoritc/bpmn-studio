@@ -76,15 +76,17 @@ export class PropertyPanel {
         return element.$type === 'bpmn:Process';
       });
 
-      if (process.flowElements) {
+      const processHasFlowElements: boolean = process.flowElements !== undefined && process.flowElements !== null;
+
+      if (processHasFlowElements) {
         firstElement = process.flowElements.find((element: IModdleElement ) => {
           return element.$type === 'bpmn:StartEvent';
         });
 
-        if (!firstElement && process.flowElements) {
+        if (!firstElement) {
           firstElement = process.flowElements[0];
         }
-      } else if (process.laneSets && process.laneSets[0].lanes) {
+      } else if (this.processHasLanes(process)) {
         firstElement = process.laneSets[0].lanes[0];
       }
 
@@ -97,6 +99,11 @@ export class PropertyPanel {
 
       this.modeler.get('selection').select(elementInPanel);
     }));
+  }
+
+  private processHasLanes(process: IModdleElement): boolean {
+    return  (process.laneSets !== undefined || process.laneSets !== null) &&
+            (process.laneSets[0].lanes !== undefined || process.laneSets[0].lanes !== null);
   }
 
   private xmlChanged(newValue: string, oldValue: string): void {
