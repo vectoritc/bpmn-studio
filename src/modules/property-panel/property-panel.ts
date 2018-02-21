@@ -28,7 +28,6 @@ export class PropertyPanel {
   private eventBus: IEventBus;
   private currentIndextabTitle: string = this.generalIndextab.title;
   private indextabs: Array<IIndextab>;
-  private selectedElementId: string;
 
   public attached(): void {
     this.moddle = this.modeler.get('moddle');
@@ -48,7 +47,6 @@ export class PropertyPanel {
     });
 
     this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
-
       const elementWasClickedOn: boolean = event.type === 'element.clicked';
       const elementIsValidShape: boolean = event.type === 'shape.changed' && event.element.type !== 'label';
 
