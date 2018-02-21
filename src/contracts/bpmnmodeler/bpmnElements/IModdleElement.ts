@@ -16,4 +16,6 @@ export interface IModdleElement {
   di?: IModdleElement;
   fill?: string;
   stroke?: string;
+  laneSets?: Array<IModdleElement>;
+  lanes?: Array<IModdleElement>;
 }
