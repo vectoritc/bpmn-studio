@@ -28,6 +28,7 @@ export class PropertyPanel {
   private eventBus: IEventBus;
   private currentIndextabTitle: string = this.generalIndextab.title;
   private indextabs: Array<IIndextab>;
+  private selectedElementId: string;
 
   public attached(): void {
     this.moddle = this.modeler.get('moddle');
