@@ -73,9 +73,7 @@ export class BasicsSection implements ISection {
 
       this.init();
 
-      ValidationRules.ensure((businessObject: IModdleElement) => businessObject.id).required()
-      .withMessage(`Id cannot be blank.`)
-      .on(this.businessObjInPanel || {});
+      this.checkId();
     });
 
   }
@@ -158,5 +156,22 @@ export class BasicsSection implements ISection {
         }
       });
     }
+  }
+
+  private checkId(): void {
+    const elementIds: Array<string> = this.moddle.ids._seed.hats[0].flowElements.map((flowElement: IModdleElement) => {
+      return flowElement.id;
+    });
+
+    const currentId: number = elementIds.indexOf(this.businessObjInPanel.id);
+    elementIds.splice(currentId, 1);
+
+    ValidationRules.ensure((businessObject: IModdleElement) => businessObject.id)
+    .required()
+      .withMessage(`Id cannot be blank.`)
+    .then()
+    .satisfies((id: string) => !elementIds.includes(id))
+      .withMessage(`Id already exists.`)
+    .on(this.businessObjInPanel);
   }
 }
