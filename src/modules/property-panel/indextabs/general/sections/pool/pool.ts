@@ -39,11 +39,7 @@ export class PoolSection implements ISection {
       this.validateForm(event);
     });
 
-    ValidationRules.ensure((businessObject: IModdleElement) => businessObject.id)
-      .displayName('processId')
-      .required()
-      .withMessage(`Process-Id cannot be blank.`)
-      .on(this.businessObjInPanel.processRef || {});
+    this.checkId();
   }
 
   public detached(): void {
@@ -92,6 +88,26 @@ export class PoolSection implements ISection {
         document.getElementById(result.rule.property.displayName).style.border = '';
       }
     }
+  }
+
+  private checkId(): void {
+    const elementIds: Array<string> = this.modeler._definitions.rootElements.map((rootElement: IModdleElement) => {
+      return rootElement.id;
+    });
+
+    elementIds.splice(0, 1);
+
+    const currentId: number = elementIds.indexOf(this.businessObjInPanel.processRef.id);
+    elementIds.splice(currentId, 1);
+
+    ValidationRules.ensure((businessObject: IModdleElement) => businessObject.id)
+    .displayName('processId')
+    .required()
+      .withMessage(`Process-Id cannot be blank.`)
+    .then()
+    .satisfies((id: string) => !elementIds.includes(id))
+      .withMessage(`Process-Id already exists.`)
+    .on(this.businessObjInPanel.processRef);
   }
 
 }
