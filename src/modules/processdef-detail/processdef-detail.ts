@@ -124,7 +124,7 @@ export class ProcessDefDetail {
     });
   }
 
-  public async startProcess(): Promise<void> {
+  public startProcess(): void {
     this.router.navigate(`processdef/${this.process.id}/start`);
   }
 
