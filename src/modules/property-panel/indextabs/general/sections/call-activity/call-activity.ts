@@ -1,7 +1,9 @@
-import {ICallActivityElement,
-        IPageModel,
-        ISection,
-        IShape} from '../../../../../../contracts';
+import {
+  ICallActivityElement,
+  IPageModel,
+  ISection,
+  IShape,
+} from '../../../../../../contracts';
 
 export class CallActivitySection implements ISection {
 

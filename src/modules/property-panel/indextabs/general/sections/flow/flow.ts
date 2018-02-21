@@ -1,9 +1,11 @@
-import {IBpmnModdle,
-        IConditionExpression,
-        IFlowElement,
-        IPageModel,
-        ISection,
-        IShape} from '../../../../../../contracts';
+import {
+  IBpmnModdle,
+  IConditionExpression,
+  IFlowElement,
+  IPageModel,
+  ISection,
+  IShape,
+} from '../../../../../../contracts';
 
 import { observable } from 'aurelia-framework';
 

@@ -1,10 +1,12 @@
-import {IBpmnModdle,
-        IBpmnModeler,
-        IModdleElement,
-        IModeling,
-        IPageModel,
-        ISection,
-        IShape} from '../../../../../../contracts';
+import {
+  IBpmnModdle,
+  IBpmnModeler,
+  IModdleElement,
+  IModeling,
+  IPageModel,
+  ISection,
+  IShape,
+} from '../../../../../../contracts';
 
 import {inject} from 'aurelia-framework';
 import {ValidateEvent, ValidationController, ValidationRules} from 'aurelia-validation';

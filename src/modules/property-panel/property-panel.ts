@@ -1,13 +1,15 @@
 import {bindable} from 'aurelia-framework';
-import {IBpmnModdle,
-        IBpmnModeler,
-        IDefinition,
-        IElementRegistry,
-        IEvent,
-        IEventBus,
-        IIndextab,
-        IModdleElement,
-        IShape} from '../../contracts';
+import {
+  IBpmnModdle,
+  IBpmnModeler,
+  IDefinition,
+  IElementRegistry,
+  IEvent,
+  IEventBus,
+  IIndextab,
+  IModdleElement,
+  IShape,
+} from '../../contracts';
 import {Extensions} from './indextabs/extensions/extensions';
 import {Forms} from './indextabs/forms/forms';
 import {General} from './indextabs/general/general';

@@ -1,4 +1,5 @@
-import {IBpmnModdle,
+import {
+  IBpmnModdle,
   IBpmnModeler,
   IDefinition,
   IElementRegistry,
@@ -7,7 +8,8 @@ import {IBpmnModdle,
   ISection,
   IShape,
   ISignal,
-  ISignalElement} from '../../../../../../contracts';
+  ISignalElement,
+} from '../../../../../../contracts';
 
 import {inject} from 'aurelia-framework';
 import {GeneralService} from '../../service/general.service';

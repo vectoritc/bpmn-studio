@@ -1,7 +1,9 @@
-import {IIndextab,
-        IPageModel,
-        ISection,
-        IShape} from '../../../../contracts';
+import {
+  IIndextab,
+  IPageModel,
+  ISection,
+  IShape,
+} from '../../../../contracts';
 import {BasicsSection} from './sections/basics/basics';
 
 export class Forms implements IIndextab {

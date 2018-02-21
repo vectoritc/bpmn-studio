@@ -1,13 +1,15 @@
-import {IBpmnModdle,
-        IBpmnModeler,
-        IDefinition,
-        IElementRegistry,
-        IEscalation,
-        IEscalationElement,
-        IModdleElement,
-        IPageModel,
-        ISection,
-        IShape} from '../../../../../../contracts';
+import {
+  IBpmnModdle,
+  IBpmnModeler,
+  IDefinition,
+  IElementRegistry,
+  IEscalation,
+  IEscalationElement,
+  IModdleElement,
+  IPageModel,
+  ISection,
+  IShape,
+} from '../../../../../../contracts';
 
 import {inject} from 'aurelia-framework';
 import {GeneralService} from '../../service/general.service';

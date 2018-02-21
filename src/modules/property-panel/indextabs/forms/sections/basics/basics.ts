@@ -1,11 +1,13 @@
-import {IBpmnModdle,
-        IBpmnModeler,
-        IForm,
-        IFormElement,
-        IModdleElement,
-        IPageModel,
-        ISection,
-        IShape} from '../../../../../../contracts';
+import {
+  IBpmnModdle,
+  IBpmnModeler,
+  IForm,
+  IFormElement,
+  IModdleElement,
+  IPageModel,
+  ISection,
+  IShape,
+} from '../../../../../../contracts';
 
 export class BasicsSection implements ISection {
 
