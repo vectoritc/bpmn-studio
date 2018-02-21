@@ -154,6 +154,7 @@ export class BasicsSection implements ISection {
     elementIds.splice(currentId, 1);
 
     ValidationRules.ensure((businessObject: IModdleElement) => businessObject.id)
+    .displayName('elementId')
     .required()
       .withMessage(`Id cannot be blank.`)
     .then()
