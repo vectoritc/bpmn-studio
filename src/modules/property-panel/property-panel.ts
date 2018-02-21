@@ -102,8 +102,14 @@ export class PropertyPanel {
   }
 
   private processHasLanes(process: IModdleElement): boolean {
-    return  (process.laneSets !== undefined || process.laneSets !== null) &&
-            (process.laneSets[0].lanes !== undefined || process.laneSets[0].lanes !== null);
+    const processHasLaneSets: boolean = process.laneSets !== undefined && process.laneSets !== null;
+    if (!processHasLaneSets) {
+      return false;
+    }
+
+    const processHasLanes: boolean = process.laneSets[0].lanes !== undefined && process.laneSets[0].lanes !== null;
+
+    return processHasLanes;
   }
 
   private xmlChanged(newValue: string, oldValue: string): void {
