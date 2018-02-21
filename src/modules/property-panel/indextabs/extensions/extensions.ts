@@ -1,5 +1,4 @@
 import {IIndextab,
-        IModdleElement,
         ISection,
         IShape} from '../../../../contracts';
 import {BasicsSection} from './sections/basics/basics';

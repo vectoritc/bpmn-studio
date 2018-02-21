@@ -7,7 +7,6 @@ import {IBpmnModdle,
         IEventBus,
         IIndextab,
         IModdleElement,
-        IModeling,
         IShape} from '../../contracts';
 import {Extensions} from './indextabs/extensions/extensions';
 import {Forms} from './indextabs/forms/forms';

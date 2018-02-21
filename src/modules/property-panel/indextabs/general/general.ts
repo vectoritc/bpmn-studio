@@ -1,7 +1,4 @@
-import {IEvent,
-        IEventBus,
-        IIndextab,
-        IModdleElement,
+import {IIndextab,
         IPageModel,
         ISection,
         IShape} from '../../../../contracts';
@@ -19,8 +16,6 @@ export class General implements IIndextab {
   public title: string = 'General';
   public path: string = '/indextabs/general/general';
   public elementInPanel: IShape;
-
-  private eventBus: IEventBus;
 
   public basicsSection: ISection = new BasicsSection();
   public poolSection: ISection = new PoolSection();

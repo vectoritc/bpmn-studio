@@ -1,13 +1,11 @@
 import {inject} from 'aurelia-framework';
-import {ValidateEvent, ValidateResult, ValidationController, ValidationRules} from 'aurelia-validation';
+import {ValidateEvent, ValidationController, ValidationRules} from 'aurelia-validation';
 import {IBpmnModeler,
-  IEvent,
-  IEventBus,
-  IModdleElement,
-  IPageModel,
-  IPoolElement,
-  ISection,
-  IShape} from '../../../../../../contracts';
+        IModdleElement,
+        IPageModel,
+        IPoolElement,
+        ISection,
+        IShape} from '../../../../../../contracts';
 
 @inject(ValidationController)
 export class PoolSection implements ISection {

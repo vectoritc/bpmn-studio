@@ -2,8 +2,6 @@ import {IBpmnModdle,
   IBpmnModeler,
   IDefinition,
   IElementRegistry,
-  IEvent,
-  IEventBus,
   IModdleElement,
   IPageModel,
   ISection,
@@ -97,7 +95,6 @@ export class SignalEventSection implements ISection {
     });
 
     const signalElement: ISignalElement = this.businessObjInPanel.eventDefinitions[0];
-
     signalElement.signalRef = this.selectedSignal;
   }
 
@@ -157,5 +154,4 @@ export class SignalEventSection implements ISection {
   private clearName(): void {
     this.selectedSignal.name = '';
   }
-
 }

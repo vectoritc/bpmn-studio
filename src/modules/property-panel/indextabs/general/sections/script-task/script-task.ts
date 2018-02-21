@@ -1,11 +1,7 @@
-import {IBpmnModeler,
-  IEvent,
-  IEventBus,
-  IModdleElement,
-  IPageModel,
-  IScriptTaskElement,
-  ISection,
-  IShape} from '../../../../../../contracts';
+import {IPageModel,
+        IScriptTaskElement,
+        ISection,
+        IShape} from '../../../../../../contracts';
 
 export class ScriptTaskSection implements ISection {
 
@@ -13,11 +9,9 @@ export class ScriptTaskSection implements ISection {
   public canHandleElement: boolean = false;
 
   private businessObjInPanel: IScriptTaskElement;
-  private modeler: IBpmnModeler;
 
-  public async activate(model: IPageModel): Promise<void> {
+  public activate(model: IPageModel): void {
     this.businessObjInPanel = model.elementInPanel.businessObject;
-    this.modeler = model.modeler;
   }
 
   public isSuitableForElement(element: IShape): boolean {
@@ -41,5 +35,4 @@ export class ScriptTaskSection implements ISection {
   private clearVariable(): void {
     this.businessObjInPanel.resultVariable = '';
   }
-
 }

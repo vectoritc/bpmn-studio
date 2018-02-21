@@ -1,24 +1,19 @@
 import {IBpmnModdle,
-  IBpmnModeler,
-  IDefinition,
-  IElementRegistry,
-  IEvent,
-  IEventBus,
-  IModdleElement,
-  IModeling,
-  IPageModel,
-  ISection,
-  IShape} from '../../../../../../contracts';
+        IBpmnModeler,
+        IModdleElement,
+        IModeling,
+        IPageModel,
+        ISection,
+        IShape} from '../../../../../../contracts';
 
 import {inject} from 'aurelia-framework';
-import {ValidateEvent, ValidateResult, ValidationController, ValidationRules} from 'aurelia-validation';
+import {ValidateEvent, ValidationController, ValidationRules} from 'aurelia-validation';
 
 @inject(ValidationController)
 export class BasicsSection implements ISection {
 
   public path: string = '/sections/basics/basics';
   public canHandleElement: boolean = true;
-  private eventBus: IEventBus;
   private modeling: IModeling;
   private modeler: IBpmnModeler;
   private moddle: IBpmnModdle;

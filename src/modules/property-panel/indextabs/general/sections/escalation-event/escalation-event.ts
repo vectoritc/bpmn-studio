@@ -1,15 +1,13 @@
 import {IBpmnModdle,
-  IBpmnModeler,
-  IDefinition,
-  IElementRegistry,
-  IEscalation,
-  IEscalationElement,
-  IEvent,
-  IEventBus,
-  IModdleElement,
-  IPageModel,
-  ISection,
-  IShape} from '../../../../../../contracts';
+        IBpmnModeler,
+        IDefinition,
+        IElementRegistry,
+        IEscalation,
+        IEscalationElement,
+        IModdleElement,
+        IPageModel,
+        ISection,
+        IShape} from '../../../../../../contracts';
 
 import {inject} from 'aurelia-framework';
 import {GeneralService} from '../../service/general.service';
@@ -47,7 +45,6 @@ export class EscalationEventSection implements ISection {
   }
 
   public isSuitableForElement(element: IShape): boolean {
-
     if (this.elementIsEscalationEvent(element)) {
       this.isBoundaryEvent = this.elementIsBoundaryEvent(element);
       return true;
@@ -75,7 +72,6 @@ export class EscalationEventSection implements ISection {
 
       if (escalationElement.escalationRef) {
         this.selectedId = escalationElement.escalationRef.id;
-
         this.updateEscalation();
       } else {
         this.selectedEscalation = null;

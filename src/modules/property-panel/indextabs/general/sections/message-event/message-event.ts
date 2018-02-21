@@ -1,15 +1,13 @@
 import {IBpmnModdle,
-  IBpmnModeler,
-  IDefinition,
-  IElementRegistry,
-  IEvent,
-  IEventBus,
-  IMessage,
-  IMessageElement,
-  IModdleElement,
-  IPageModel,
-  ISection,
-  IShape} from '../../../../../../contracts';
+        IBpmnModeler,
+        IDefinition,
+        IElementRegistry,
+        IMessage,
+        IMessageElement,
+        IModdleElement,
+        IPageModel,
+        ISection,
+        IShape} from '../../../../../../contracts';
 
 import {inject} from 'aurelia-framework';
 import {GeneralService} from '../../service/general.service';
@@ -157,5 +155,4 @@ export class MessageEventSection implements ISection {
   private clearName(): void {
     this.selectedMessage.name = '';
   }
-
 }

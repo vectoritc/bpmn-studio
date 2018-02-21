@@ -3,7 +3,7 @@ import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import {ValidateEvent, ValidateResult, ValidationController, ValidationRules} from 'aurelia-validation';
+import {ValidateEvent, ValidationController} from 'aurelia-validation';
 import * as canvg from 'canvg-browser';
 import * as download from 'downloadjs';
 import * as $ from 'jquery';
@@ -12,14 +12,11 @@ import 'spectrum-colorpicker/spectrum';
 import * as toastr from 'toastr';
 import {AuthenticationStateEvent,
         ElementDistributeOptions,
-        IChooseDialogOption,
-        IElementRegistry,
         IExtensionElement,
         IFormElement,
         IModdleElement,
         IProcessEngineService,
         IShape} from '../../contracts/index';
-import environment from '../../environment';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
 
 interface RouteParameters {
