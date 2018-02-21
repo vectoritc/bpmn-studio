@@ -45,6 +45,8 @@ export class ProcessDefDetail {
   private fillColor: string;
   private borderColor: string;
 
+  private test: boolean = true;
+
   public validationController: ValidationController;
   public validationError: boolean;
 
@@ -110,6 +112,14 @@ export class ProcessDefDetail {
   public detached(): void {
     for (const subscription of this.subscriptions) {
       subscription.dispose();
+    }
+  }
+
+  private showXMLorNot(): void {
+    if (this.test) {
+      this.test = false;
+    } else {
+      this.test = true;
     }
   }
 

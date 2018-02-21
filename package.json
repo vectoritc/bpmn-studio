@@ -41,7 +41,8 @@
     "node-http-server": "^8.1.2",
     "open": "0.0.5",
     "proxy-polyfill": "^0.1.7",
-    "spectrum-colorpicker": "^1.8.0"
+    "spectrum-colorpicker": "^1.8.0",
+    "xml-formatter": "^1.0.1"
   },
   "peerDependencies": {},
   "devDependencies": {

@@ -282,6 +282,11 @@
             "main": "aurelia-validation",
             "path": "../node_modules/aurelia-validation/dist/amd",
             "resources": []
+          },
+          {
+            "name": "xml-formatter",
+            "main": "index.js",
+            "path": "../node_modules/xml-formatter"
           }
         ]
       }
