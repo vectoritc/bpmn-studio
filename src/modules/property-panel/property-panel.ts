@@ -39,7 +39,8 @@ export class PropertyPanel {
       this.extensionsIndextab,
     ];
 
-    this.checkForEachIndexTabisSuitable();
+    this.updateIndexTabsSuitability();
+    this.checkIndexTabSuitability();
 
     this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
 
@@ -58,7 +59,8 @@ export class PropertyPanel {
         this.elementInPanel = event.newSelection[0];
       }
 
-      this.checkForEachIndexTabisSuitable();
+      this.updateIndexTabsSuitability();
+      this.checkIndexTabSuitability();
     });
 
     this.setFirstElement();
@@ -119,13 +121,20 @@ export class PropertyPanel {
     }
   }
 
-  private checkForEachIndexTabisSuitable(): void {
-    this.indextabs.forEach((indextab: IIndextab) => {
+  private updateIndexTabsSuitability(): void {
+    for (const indextab of this.indextabs) {
       indextab.canHandleElement = indextab.isSuitableForElement(this.elementInPanel);
-      if (indextab.title === this.currentIndextabTitle && !indextab.canHandleElement) {
-        this.currentIndextabTitle = this.generalIndextab.title;
-      }
+    }
+  }
+
+  private checkIndexTabSuitability(): void {
+    const currentIndexTab: IIndextab = this.indextabs.find((indextab: IIndextab) => {
+      return indextab.title === this.currentIndextabTitle;
     });
+
+    if (!currentIndexTab.canHandleElement) {
+      this.currentIndextabTitle = this.generalIndextab.title;
+    }
   }
 
 }
