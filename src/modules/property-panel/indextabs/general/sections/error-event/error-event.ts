@@ -78,7 +78,7 @@ export class ErrorEventSection implements ISection {
           this.selectedError = null;
           this.selectedId = null;
         }
-      }
+    }
   }
 
   private getXML(): string {

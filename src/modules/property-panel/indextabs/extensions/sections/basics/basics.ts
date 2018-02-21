@@ -34,7 +34,7 @@ export class BasicsSection implements ISection {
     }
 
     const elementHasExtensions: boolean = (element.businessObject.$type !== 'bpmn:Process') &&
-                                      (element.businessObject.$type !== 'bpmn:Collaboration');
+                                       (element.businessObject.$type !== 'bpmn:Collaboration');
 
     return elementHasExtensions;
   }
@@ -46,10 +46,10 @@ export class BasicsSection implements ISection {
   }
 
   private addProperty(): void {
-    const bpmnProperty: IProperty = this.moddle.create('camunda:Property',
-                                                        { name: '',
-                                                          value: '',
-                                                        });
+    const bpmnProperty: IProperty = this.moddle.create('camunda:Property', {
+      name: '',
+      value: '',
+    });
 
     this.newNames.push('');
     this.newValues.push('');
@@ -106,10 +106,10 @@ export class BasicsSection implements ISection {
   }
 
   private createExtensionElement(): void {
-    const bpmnExecutionListener: IModdleElement = this.moddle.create('camunda:ExecutionListener',
-                                                                      { class: '',
-                                                                        event: '',
-                                                                      });
+    const bpmnExecutionListener: IModdleElement = this.moddle.create('camunda:ExecutionListener', {
+      class: '',
+      event: '',
+    });
 
     const extensionValues: Array<IModdleElement> = [];
     const propertyValues: Array<IProperty> = [];

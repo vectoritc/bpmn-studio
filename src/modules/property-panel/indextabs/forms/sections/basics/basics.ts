@@ -116,13 +116,12 @@ export class BasicsSection implements ISection {
   }
 
   private addForm(): void {
-    const bpmnForm: IForm = this.moddle.create('camunda:FormField',
-                                                {
-                                                  id: `Form_${this.generateRandomId()}`,
-                                                  type: null,
-                                                  label: ``,
-                                                  defaultValue: ``,
-                                                });
+    const bpmnForm: IForm = this.moddle.create('camunda:FormField', {
+      id: `Form_${this.generateRandomId()}`,
+      type: null,
+      label: ``,
+      defaultValue: ``,
+    });
 
     if (!this.formElement.fields) {
       this.formElement.fields = [];
