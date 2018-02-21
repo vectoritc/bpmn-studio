@@ -7,6 +7,7 @@ import {BasicsSection} from './sections/basics/basics';
 export class Extensions implements IIndextab {
   public title: string = 'Extensions';
   public path: string = '/indextabs/extensions/extensions';
+  public elementInPanel: IShape;
   public canHandleElement: boolean = true;
 
   private basicsSection: ISection = new BasicsSection();
@@ -19,14 +20,14 @@ export class Extensions implements IIndextab {
     ];
   }
 
-  public checkElement(element: IModdleElement): boolean {
+  public isSuitableForElement(element: IShape): boolean {
 
     if (!element) {
       return false;
     }
 
     return this.sections.some((section: ISection) => {
-      return section.checkElement(element);
+      return section.isSuitableForElement(element);
     });
   }
 }

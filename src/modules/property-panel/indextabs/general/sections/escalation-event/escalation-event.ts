@@ -21,7 +21,6 @@ export class EscalationEventSection implements ISection {
   public canHandleElement: boolean = false;
 
   private businessObjInPanel: IEscalationElement;
-  private eventBus: IEventBus;
   private moddle: IBpmnModdle;
   private modeler: IBpmnModeler;
   private generalService: GeneralService;
@@ -38,25 +37,35 @@ export class EscalationEventSection implements ISection {
   }
 
   public async activate(model: IPageModel): Promise<void> {
-    this.eventBus = model.modeler.get('eventBus');
+    this.businessObjInPanel = model.elementInPanel.businessObject;
+
     this.moddle = model.modeler.get('moddle');
     this.modeler = model.modeler;
     this.escalations = await this.getEscalations();
 
-    const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
-    if (selectedEvents[0]) {
-      this.businessObjInPanel = selectedEvents[0].businessObject;
-      this.init();
-    }
+    this.init();
+  }
 
-    this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
-      if (event.newSelection && event.newSelection.length !== 0) {
-        this.businessObjInPanel = event.newSelection[0].businessObject;
-      } else if (event.element) {
-        this.businessObjInPanel = event.element.businessObject;
-      }
-      this.init();
-    });
+  public isSuitableForElement(element: IShape): boolean {
+
+    if (this.elementIsEscalationEvent(element)) {
+      this.isBoundaryEvent = this.elementIsBoundaryEvent(element);
+      return true;
+    }
+    return false;
+  }
+
+  private elementIsEscalationEvent(element: IShape): boolean {
+    return element !== undefined
+        && element.businessObject !== undefined
+        && element.businessObject.eventDefinitions !== undefined
+        && element.businessObject.eventDefinitions[0].$type === 'bpmn:EscalationEventDefinition';
+  }
+
+  private elementIsBoundaryEvent(element: IShape): boolean {
+    return element !== undefined
+        && element.businessObject !== undefined
+        && element.businessObject.$type === 'bpmn:BoundaryEvent';
   }
 
   private init(): void {
@@ -72,21 +81,6 @@ export class EscalationEventSection implements ISection {
         this.selectedEscalation = null;
         this.selectedId = null;
       }
-    }
-    this.canHandleElement = this.checkElement(this.businessObjInPanel);
-  }
-
-  public checkElement(element: IModdleElement): boolean {
-    if (element.eventDefinitions
-      && element.eventDefinitions[0].$type === 'bpmn:EscalationEventDefinition') {
-        if (element.$type === 'bpmn:EndEvent') {
-          this.isBoundaryEvent = false;
-        } else if (element.$type === 'bpmn:BoundaryEvent') {
-          this.isBoundaryEvent = true;
-        }
-        return true;
-    } else {
-      return false;
     }
   }
 

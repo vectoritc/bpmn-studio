@@ -18,9 +18,9 @@ import {SignalEventSection} from './sections/signal-event/signal-event';
 export class General implements IIndextab {
   public title: string = 'General';
   public path: string = '/indextabs/general/general';
+  public elementInPanel: IShape;
 
   private eventBus: IEventBus;
-  private elementInPanel: IModdleElement;
 
   public basicsSection: ISection = new BasicsSection();
   public poolSection: ISection = new PoolSection();
@@ -46,25 +46,18 @@ export class General implements IIndextab {
 
   public canHandleElement: boolean = true;
 
-  public checkElement(element: IModdleElement): boolean {
-    return true;
-  }
-  public activate(model: IPageModel): void {
-    this.eventBus = model.modeler.get('eventBus');
-
-    this.eventBus.on(['element.click', 'shape.changed'], (event: IEvent) => {
-      if (event.type === 'element.click') {
-        this.elementInPanel = event.element.businessObject;
-      }
-      if (event.type === 'shape.changed' && event.element.type !== 'label') {
-        this.elementInPanel = event.element.businessObject;
-      }
-      if (this.elementInPanel) {
-        this.sections.forEach((section: ISection) => {
-          section.canHandleElement = section.checkElement(this.elementInPanel);
-        });
-      }
+  public isSuitableForElement(element: IShape): boolean {
+    this.sections.forEach((section: ISection) => {
+      section.canHandleElement = section.isSuitableForElement(element);
     });
+
+    return this.sections.some((section: ISection) => {
+      return section.canHandleElement;
+    });
+  }
+
+  public activate(model: IPageModel): void {
+    this.elementInPanel = model.elementInPanel;
   }
 
 }

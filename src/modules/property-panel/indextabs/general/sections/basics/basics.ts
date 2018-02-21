@@ -23,6 +23,7 @@ export class BasicsSection implements ISection {
   private modeler: IBpmnModeler;
   private moddle: IBpmnModdle;
   private elementInPanel: IShape;
+  private saveId: string;
 
   public validationController: ValidationController;
   public businessObjInPanel: IModdleElement;
@@ -34,7 +35,15 @@ export class BasicsSection implements ISection {
   }
 
   public activate(model: IPageModel): void {
-    this.eventBus = model.modeler.get('eventBus');
+
+    if (this.validationError) {
+      this.businessObjInPanel.id = this.saveId;
+      this.validationController.validate();
+    }
+
+    this.elementInPanel = model.elementInPanel;
+    this.businessObjInPanel = model.elementInPanel.businessObject;
+    this.saveId = model.elementInPanel.businessObject.id;
     this.modeling = model.modeler.get('modeling');
     this.moddle = model.modeler.get('moddle');
     this.modeler = model.modeler;
@@ -43,39 +52,16 @@ export class BasicsSection implements ISection {
       this.validateForm(event);
     });
 
-    const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
-    if (selectedEvents[0]) {
-      this.businessObjInPanel = selectedEvents[0].businessObject;
-      this.elementInPanel = selectedEvents[0];
-      this.init();
+    this.init();
+
+    this.checkId();
+  }
+
+  public isSuitableForElement(element: IShape): boolean {
+    if (element === undefined || element === null) {
+      return false;
     }
-
-    this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
-      if (this.validationError) {
-        this.businessObjInPanel.id = this.elementInPanel.id;
-        this.validationController.validate();
-      }
-
-      if (event.type === 'selection.changed' && event.newSelection.length !== 0) {
-        this.elementInPanel = event.newSelection[0];
-        this.businessObjInPanel = this.elementInPanel.businessObject;
-      }
-      if (event.type === 'shape.changed' &&
-          event.element.id === this.elementInPanel.id) {
-
-          this.elementInPanel = event.element;
-          this.businessObjInPanel = event.element.businessObject;
-      }
-      if (event.type === 'element.click' && event.element) {
-        this.elementInPanel = event.element;
-        this.businessObjInPanel = event.element.businessObject;
-      }
-
-      this.init();
-
-      this.checkId();
-    });
-
+    return true;
   }
 
   private init(): void {
@@ -95,10 +81,6 @@ export class BasicsSection implements ISection {
       xml = diagrammXML;
     });
     return xml;
-  }
-
-  public checkElement(element: IModdleElement): boolean {
-    return true;
   }
 
   private updateDocumentation(): void {
@@ -145,16 +127,21 @@ export class BasicsSection implements ISection {
   }
 
   private validateForm(event: ValidateEvent): void {
-    if (event.type === 'validate') {
-      event.results.forEach((result: ValidateResult) => {
-        if (result.valid === false) {
-          this.validationError = true;
-          document.getElementById(result.propertyName).style.border = '2px solid red';
-        } else {
-          this.validationError = false;
-          document.getElementById(result.propertyName).style.border = '';
-        }
-      });
+    if (event.type !== 'validate') {
+      return;
+    }
+    this.validationError = false;
+
+    for (const result of event.results) {
+      if (result.rule.property.displayName !== 'elementId') {
+        continue;
+      }
+      if (result.valid === false) {
+        this.validationError = true;
+        document.getElementById(result.rule.property.displayName).style.border = '2px solid red';
+      } else {
+        document.getElementById(result.rule.property.displayName).style.border = '';
+      }
     }
   }
 

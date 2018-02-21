@@ -21,7 +21,6 @@ export class SignalEventSection implements ISection {
   public canHandleElement: boolean = false;
 
   private businessObjInPanel: ISignalElement;
-  private eventBus: IEventBus;
   private moddle: IBpmnModdle;
   private modeler: IBpmnModeler;
   private generalService: GeneralService;
@@ -35,26 +34,24 @@ export class SignalEventSection implements ISection {
   }
 
   public async activate(model: IPageModel): Promise<void> {
-    this.eventBus = model.modeler.get('eventBus');
+    this.businessObjInPanel = model.elementInPanel.businessObject;
     this.moddle = model.modeler.get('moddle');
     this.modeler = model.modeler;
 
     this.signals = await this.getSignals();
 
-    const selectedEvents: Array<IShape> = this.modeler.get('selection')._selectedElements;
-    if (selectedEvents[0]) {
-      this.businessObjInPanel = selectedEvents[0].businessObject;
-      this.init();
-    }
+    this.init();
+  }
 
-    this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
-      if (event.newSelection && event.newSelection.length !== 0) {
-        this.businessObjInPanel = event.newSelection[0].businessObject;
-      } else if (event.element) {
-        this.businessObjInPanel = event.element.businessObject;
-      }
-      this.init();
-    });
+  public isSuitableForElement(element: IShape): boolean {
+    return this.elementIsSignalEvent(element);
+  }
+
+  private elementIsSignalEvent(element: IShape): boolean {
+    return element !== undefined
+        && element.businessObject !== undefined
+        && element.businessObject.eventDefinitions !== undefined
+        && element.businessObject.eventDefinitions[0].$type === 'bpmn:SignalEventDefinition';
   }
 
   private init(): void {
@@ -69,16 +66,6 @@ export class SignalEventSection implements ISection {
           this.selectedSignal = null;
           this.selectedId = null;
         }
-    }
-    this.canHandleElement = this.checkElement(this.businessObjInPanel);
-  }
-
-  public checkElement(element: IModdleElement): boolean {
-    if (element.eventDefinitions &&
-        element.eventDefinitions[0].$type === 'bpmn:SignalEventDefinition') {
-      return true;
-    } else {
-      return false;
     }
   }
 
