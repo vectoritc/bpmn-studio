@@ -75,7 +75,10 @@ export class ProcessDefList {
   }
 
   public async createProcess(): Promise<void> {
-    const processId: string = this.processes.find((process: IProcessDefEntity) => {
+    const processesDefList: IPagination<IProcessDefEntity> = await this.consumerClient.getProcessDefList();
+    const processes: Array<IProcessDefEntity> = processesDefList.data;
+
+    const processId: string = processes.find((process: IProcessDefEntity) => {
       return process.key === 'CreateProcessDef';
     }).id;
 
