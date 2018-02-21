@@ -43,7 +43,6 @@ export class PropertyPanel {
     this.checkIndexTabSuitability();
 
     this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
-
       const elementWasClickedOn: boolean = event.type === 'element.clicked';
       const elementIsValidShape: boolean = event.type === 'shape.changed' && event.element.type !== 'label';
 
