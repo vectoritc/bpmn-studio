@@ -167,6 +167,6 @@ export class BasicsSection implements ISection {
     .then()
     .satisfies((id: string) => !elementIds.includes(id))
       .withMessage(`Id already exists.`)
-    .on(this.businessObjInPanel || { });
+    .on(this.businessObjInPanel);
   }
 }
