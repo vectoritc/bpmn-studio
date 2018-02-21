@@ -7,7 +7,7 @@ import {
   IShape,
 } from '../../../../../../contracts';
 
-import { observable } from 'aurelia-framework';
+import {observable} from 'aurelia-framework';
 
 export class FlowSection implements ISection {
 
