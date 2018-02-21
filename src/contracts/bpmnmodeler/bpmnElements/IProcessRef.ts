@@ -1,9 +1,9 @@
 import { IModdleElement } from './IModdleElement';
 
 export interface IProcessRef extends IModdleElement {
-  extensionElement: Object;
-  flowElement: Array<Object>;
+  extensionElement: IModdleElement;
+  flowElement: Array<IModdleElement>;
   isExecutable: boolean;
-  laneSets: Array<Object>;
+  laneSets: Array<IModdleElement>;
   versionTag: string;
 }
