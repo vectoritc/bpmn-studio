@@ -146,7 +146,14 @@ export class BasicsSection implements ISection {
   }
 
   private checkId(): void {
-    const elementIds: Array<string> = this.moddle.ids._seed.hats[0].flowElements.map((flowElement: IModdleElement) => {
+    let firstHat: string;
+
+    for (const first in this.moddle.ids._seed.hats) {
+      firstHat = first;
+      break;
+    }
+
+    const elementIds: Array<string> = this.moddle.ids._seed.hats[firstHat].flowElements.map((flowElement: IModdleElement) => {
       return flowElement.id;
     });
 
@@ -160,6 +167,6 @@ export class BasicsSection implements ISection {
     .then()
     .satisfies((id: string) => !elementIds.includes(id))
       .withMessage(`Id already exists.`)
-    .on(this.businessObjInPanel);
+    .on(this.businessObjInPanel || { });
   }
 }
