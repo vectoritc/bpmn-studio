@@ -28,6 +28,7 @@ export class PropertyPanel {
   private eventBus: IEventBus;
   private currentIndextabTitle: string = this.generalIndextab.title;
   private indextabs: Array<IIndextab>;
+  private selectedElementId: string;
 
   public attached(): void {
     this.moddle = this.modeler.get('moddle');
@@ -50,12 +51,14 @@ export class PropertyPanel {
 
       if (elementWasClickedOn || elementIsShapeInPanel) {
         this.elementInPanel = event.element;
+        this.selectedElementId = this.elementInPanel.businessObject.id;
       }
 
       const selectedElementChanged: boolean = event.type === 'selection.changed' && event.newSelection.length !== 0;
 
       if (selectedElementChanged) {
         this.elementInPanel = event.newSelection[0];
+        this.selectedElementId = this.elementInPanel.businessObject.id;
       }
 
       this.updateIndexTabsSuitability();
