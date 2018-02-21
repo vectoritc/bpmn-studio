@@ -40,12 +40,8 @@ export class PropertyPanel {
       this.extensionsIndextab,
     ];
 
-    this.indextabs.forEach((indextab: IIndextab) => {
-      indextab.canHandleElement = indextab.isSuitableForElement(this.elementInPanel);
-      if (indextab.title === this.currentIndextabTitle && !indextab.canHandleElement) {
-        this.currentIndextabTitle = this.generalIndextab.title;
-      }
-    });
+    this.updateIndexTabsSuitability();
+    this.checkIndexTabSuitability();
 
     this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
 
@@ -64,12 +60,8 @@ export class PropertyPanel {
         this.elementInPanel = event.newSelection[0];
       }
 
-      this.indextabs.forEach((indextab: IIndextab) => {
-        indextab.canHandleElement = indextab.isSuitableForElement(this.elementInPanel);
-        if (indextab.title === this.currentIndextabTitle && !indextab.canHandleElement) {
-          this.currentIndextabTitle = this.generalIndextab.title;
-        }
-      });
+      this.updateIndexTabsSuitability();
+      this.checkIndexTabSuitability();
     });
 
     this.setFirstElement();
@@ -81,28 +73,68 @@ export class PropertyPanel {
   }
 
   private setFirstElement(): void {
+    let firstElement: IModdleElement;
     this.moddle.fromXML(this.xml, ((err: Error, definitions: IDefinition): void => {
       const process: IModdleElement = definitions.rootElements.find((element: IModdleElement) => {
         return element.$type === 'bpmn:Process';
       });
-      const startEvent: IModdleElement = process.flowElements.find((element: any ) => {
-        return element.$type === 'bpmn:StartEvent';
-      });
-      if (startEvent.$type !== 'bpmn:StartEvent') {
-        startEvent.id = process.flowElements[0].id;
+
+      const processHasFlowElements: boolean = process.flowElements !== undefined && process.flowElements !== null;
+
+      if (processHasFlowElements) {
+        firstElement = process.flowElements.find((element: IModdleElement ) => {
+          return element.$type === 'bpmn:StartEvent';
+        });
+
+        if (!firstElement) {
+          firstElement = process.flowElements[0];
+        }
+      } else if (this.processHasLanes(process)) {
+        firstElement = process.laneSets[0].lanes[0];
+      }
+
+      if (!firstElement) {
+        firstElement = process;
       }
 
       const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
-      const elementInPanel: IShape = elementRegistry.get(startEvent.id);
+      const elementInPanel: IShape = elementRegistry.get(firstElement.id);
 
       this.modeler.get('selection').select(elementInPanel);
     }));
+  }
+
+  private processHasLanes(process: IModdleElement): boolean {
+    const processHasLaneSets: boolean = process.laneSets !== undefined && process.laneSets !== null;
+    if (!processHasLaneSets) {
+      return false;
+    }
+
+    const processHasLanes: boolean = process.laneSets[0].lanes !== undefined && process.laneSets[0].lanes !== null;
+
+    return processHasLanes;
   }
 
   private xmlChanged(newValue: string, oldValue: string): void {
     if (oldValue) {
       this.setFirstElement();
       this.updateIndextab(this.generalIndextab);
+    }
+  }
+
+  private updateIndexTabsSuitability(): void {
+    for (const indextab of this.indextabs) {
+      indextab.canHandleElement = indextab.isSuitableForElement(this.elementInPanel);
+    }
+  }
+
+  private checkIndexTabSuitability(): void {
+    const currentIndexTab: IIndextab = this.indextabs.find((indextab: IIndextab) => {
+      return indextab.title === this.currentIndextabTitle;
+    });
+
+    if (!currentIndexTab.canHandleElement) {
+      this.currentIndextabTitle = this.generalIndextab.title;
     }
   }
 
