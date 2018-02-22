@@ -205,6 +205,19 @@ export class BasicsSection implements ISection {
     return randomId;
   }
 
+  private setActive(formId: string): void {
+    let element: HTMLElement = null;
+
+    if (this.activeListElementId) {
+      element = document.getElementById(`formfield${this.activeListElementId}`);
+      element.classList.remove('active');
+    }
+
+    element = document.getElementById(`formfield${formId}`);
+    element.classList.add('active');
+    this.activeListElementId = formId;
+  }
+
   private deleteExtensions(): void {
     delete this.businessObjInPanel.extensionElements;
     delete this.businessObjInPanel.formKey;
