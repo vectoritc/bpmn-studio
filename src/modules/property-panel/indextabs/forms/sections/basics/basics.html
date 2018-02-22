@@ -9,9 +9,15 @@
         <input type="text" class="form-control" value.bind="businessObjInPanel.formKey">
         <span class="glyphicon glyphicon-remove-circle section__btn-group--clear-btn" click.delegate="clearFormKey()"></span>
       </div>
-      <label class="section__input-label">Form Fields: </label>
+      <div class="form-fields-label-group">
+        <label class="section__input-label">Form Fields: </label>
+        <button class="remove-forms__button btn btn-xs btn-danger" disabled.bind="!isFormSelected" click.delegate="removeForm()">x</button>
+        <button class="add-forms__button btn btn-xs btn-primary" click.delegate="addForm()">+</button>
+      </div>
       <ul class="list-group forms-list">
-        <li class="list-group-item forms-item" id="formfield${form.id}" repeat.for="form of forms" click.delegate="setActive(form.id) selectForm(form)"><span>${form.id}</span></li>
+        <div repeat.for="form of forms">
+          <li class="list-group-item forms-item" id="formfield${form.id}" click.delegate="selectForm(form)"><span>${form.id}</span></li>
+        </div>
         <li class="list-group-item forms-item" if.bind="forms.length === 0"><span>No Forms</span></li>
       </ul>
       <div show.bind="isFormSelected">
@@ -48,14 +54,6 @@
       </div>
     </div>
     <div class="section__special">
-      <div class="add-forms">
-        <button class="add-forms__button btn btn-xs btn-primary" click.delegate="addForm()">+</button>
-      </div>
-      <div class="remove-forms">
-        <div repeat.for="form of forms" index.bind="$index">
-          <button class="remove-forms__button btn btn-xs btn-danger" click.delegate="removeForm($index)">x</button>
-        </div>
-      </div>
     </div>
   </div>
 </template>

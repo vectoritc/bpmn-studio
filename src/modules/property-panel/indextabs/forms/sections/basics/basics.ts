@@ -66,10 +66,14 @@ export class BasicsSection implements ISection {
   }
 
   private selectForm(form: IForm): void {
+    if (this.isFormSelected) {
+      this.unSetActive(this.selectedForm.id);
+    }
     this.selectedForm = form;
     this.selectedType = this.getTypeOrCustomType(form.type);
-    this.selectedIndex = this.getSelectedIndex();
     this.isFormSelected = true;
+    this.setActive(form.id);
+    this.selectedIndex = this.getSelectedIndex();
   }
 
   private reloadForms(): void {
@@ -114,6 +118,7 @@ export class BasicsSection implements ISection {
   private async removeForm(index: number): Promise<void> {
     this.formElement.fields.splice(index, 1);
     this.isFormSelected = false;
+    this.unSetActive(this.selectedForm.id);
     this.selectedForm = undefined;
     this.selectedIndex = undefined;
     this.selectedType = undefined;
@@ -136,8 +141,6 @@ export class BasicsSection implements ISection {
 
     this.formElement.fields.push(bpmnForm);
     this.forms.push(bpmnForm);
-    this.selectForm(bpmnForm);
-
   }
 
   private getTypeOrCustomType(type: string): string {
@@ -208,14 +211,15 @@ export class BasicsSection implements ISection {
   private setActive(formId: string): void {
     let element: HTMLElement = null;
 
-    if (this.activeListElementId) {
-      element = document.getElementById(`formfield${this.activeListElementId}`);
-      element.classList.remove('active');
-    }
-
     element = document.getElementById(`formfield${formId}`);
     element.classList.add('active');
-    this.activeListElementId = formId;
+  }
+
+  private unSetActive(formId: string): void {
+    let element: HTMLElement = null;
+
+    element = document.getElementById(`formfield${formId}`);
+    element.classList.remove('active');
   }
 
   private deleteExtensions(): void {
