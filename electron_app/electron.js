@@ -1,7 +1,9 @@
 const electron = require('electron');
 const autoUpdater = require('electron-updater').autoUpdater;
+const path = require('path');
 const app = electron.app;
 const notifier = require('electron-notifications');
+const pe = require('@process-engine/skeleton');
 
 let mainWindow = null;
 
@@ -13,7 +15,11 @@ function createWindow () {
     return;
   }
 
-  mainWindow = new electron.BrowserWindow({width: 800, height: 600});
+  mainWindow = new electron.BrowserWindow({
+    width: 800,
+    height: 600,
+    icon: path.join(__dirname, 'assets/itest_icon.png')
+  });
 
   mainWindow.loadURL(`file://${__dirname}/../index.html`);
   mainWindow.on('closed', () => {
