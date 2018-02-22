@@ -111,8 +111,8 @@ export class BasicsSection implements ISection {
     this.formElement.fields[this.selectedIndex].type = type;
   }
 
-  private async removeForm(): Promise<void> {
-    this.formElement.fields.splice(this.selectedIndex, 1);
+  private async removeForm(index: number): Promise<void> {
+    this.formElement.fields.splice(index, 1);
     this.isFormSelected = false;
     this.selectedForm = undefined;
     this.selectedIndex = undefined;
