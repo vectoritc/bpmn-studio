@@ -2,7 +2,7 @@
   <require from="./signal-event.css"></require>
   <require from="../../../../styles/sections.css"></require>
   <div class="section">
-    <div class="section__content section__border col-md-11">
+    <div class="section__content section__border">
       <label class="section__input-label">Signal: </label>
       <select class="form-control" value.bind="selectedId" change.delegate="updateSignal()">
         <option model.bind="null">-Choose Signal-</option>
@@ -17,7 +17,7 @@
         </div>
       </div>
    </div>
-   <div class="section__special col-md-1">
+   <div class="section__special">
      <button class="addSignalButton btn btn-xs btn-primary" click.delegate="addSignal()">+</button>
     </div>
   </div>
