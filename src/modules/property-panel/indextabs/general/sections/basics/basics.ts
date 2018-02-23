@@ -54,7 +54,6 @@ export class BasicsSection implements ISection {
 
     this.init();
 
-    console.log(this.moddle);
     this.checkId();
   }
 
@@ -146,10 +145,19 @@ export class BasicsSection implements ISection {
     }
   }
 
-  private getFlowElements(processId: string): Array<IModdleElement> {
-    const hat: IModdleElement = this.moddle.ids._seed.hats[processId];
+  private getFlowElements(): Array<IModdleElement> {
+    const processIds: Array<string> = this.getProcessIds();
+    let flowElements: Array<IModdleElement> = [];
 
-    const flowElements: Array<IModdleElement> = hat.flowElements;
+    for (const processId of processIds) {
+      const hat: IModdleElement = this.moddle.ids._seed.hats[processId];
+
+      const hasFlowElements: boolean = hat.flowElements !== undefined;
+      if (hasFlowElements) {
+        flowElements = flowElements.concat(hat.flowElements);
+      }
+    }
+
     return flowElements || [];
   }
 
@@ -163,16 +171,6 @@ export class BasicsSection implements ISection {
        }
     }
     return lanes || [];
-  }
-
-  private getElements(processId: string): Array<IModdleElement> {
-    const flowElements: Array<IModdleElement> = this.getFlowElements(processId);
-    const lanes: Array<IModdleElement> = this.getLaneElements();
-    const pools: Array<IModdleElement> = this.getPoolElements();
-
-    const elements: Array<IModdleElement> = lanes.concat(flowElements);
-
-    return elements || [];
   }
 
   private getPoolElements(): Array<IModdleElement> {
@@ -192,19 +190,44 @@ export class BasicsSection implements ISection {
     return pools || [];
   }
 
-  private checkId(): void {
-    let processId: string;
+  private getProcesses(): Array<IModdleElement> {
+    const processes: Array<IModdleElement> = [];
     const hats: Array<IModdleElement> = this.moddle.ids._seed.hats;
 
     for (const currentElementId in hats) {
       const currentElement: IModdleElement = hats[currentElementId];
       if (currentElement.$type === 'bpmn:Process') {
-        processId = currentElement.id;
-        break;
+        processes.push(currentElement);
       }
     }
 
-    const elements: Array<IModdleElement> = this.getElements(processId).concat(this.getPoolElements());
+    return processes;
+  }
+
+  private getElements(): Array<IModdleElement> {
+    const flowElements: Array<IModdleElement> = this.getFlowElements();
+    const lanes: Array<IModdleElement> = this.getLaneElements();
+    const pools: Array<IModdleElement> = this.getPoolElements();
+    const processes: Array<IModdleElement> = this.getProcesses();
+
+    const elements: Array<IModdleElement> = lanes.concat(flowElements).concat(pools).concat(processes);
+
+    return elements || [];
+  }
+
+  private getProcessIds(): Array<string> {
+    const processes: Array<IModdleElement> = this.getProcesses();
+
+    const processIds: Array<string> = processes.map((process: IModdleElement) => {
+      return process.id;
+    });
+
+    return processIds;
+  }
+
+  private checkId(): void {
+
+    const elements: Array<IModdleElement> = this.getElements();
     const hasNoElements: boolean = elements.length === 0;
     if (hasNoElements) {
       return;
