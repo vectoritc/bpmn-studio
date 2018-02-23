@@ -23,7 +23,7 @@ export class BasicsSection implements ISection {
   private modeler: IBpmnModeler;
 
   private forms: Array<IForm>;
-  private selectedForms: Array<IForm>;
+  private selectedForm: IForm;
   private selectedIndex: number;
   private types: Array<string> = ['string', 'long', 'boolean', 'date', 'enum', 'custom type'];
   private customType: string;
@@ -85,25 +85,25 @@ export class BasicsSection implements ISection {
   }
 
   private updateId(): void {
-    this.formElement.fields[this.selectedIndex].id = this.selectedForms[0].id;
+    this.formElement.fields[this.selectedIndex].id = this.selectedForm.id;
   }
 
   private updateDefaultValue(): void {
-    this.formElement.fields[this.selectedIndex].label = this.selectedForms[0].label;
+    this.formElement.fields[this.selectedIndex].label = this.selectedForm.label;
   }
 
   private updateLabel(): void {
-    this.formElement.fields[this.selectedIndex].defaultValue = this.selectedForms[0].defaultValue;
+    this.formElement.fields[this.selectedIndex].defaultValue = this.selectedForm.defaultValue;
   }
 
   private updateType(): void {
-    this.formElement.fields[this.selectedIndex].type = this.selectedForms[0].type;
+    this.formElement.fields[this.selectedIndex].type = this.selectedForm.type;
   }
 
   private async removeForm(): Promise<void> {
     this.formElement.fields.splice(this.selectedIndex, 1);
     this.isFormSelected = false;
-    this.selectedForms = undefined;
+    this.selectedForm = undefined;
     this.selectedIndex = undefined;
     this.reloadForms();
   }
@@ -129,7 +129,7 @@ export class BasicsSection implements ISection {
   private getSelectedIndex(): number {
     const forms: Array<IForm> = this.formElement.fields;
     for (let index: number = 0; index < forms.length; index++) {
-      if (forms[index].id === this.selectedForms[0].id) {
+      if (forms[index].id === this.selectedForm.id) {
         return index;
       }
     }
@@ -191,7 +191,7 @@ export class BasicsSection implements ISection {
   }
 
   private clearId(): void {
-    this.selectedForms[0].id = '';
+    this.selectedForm.id = '';
   }
 
   private clearType(): void {
@@ -199,11 +199,11 @@ export class BasicsSection implements ISection {
   }
 
   private clearLabel(): void {
-    this.selectedForms[0].label = '';
+    this.selectedForm.label = '';
   }
 
   private clearValue(): void {
-    this.selectedForms[0].defaultValue = '';
+    this.selectedForm.defaultValue = '';
   }
 
 }
