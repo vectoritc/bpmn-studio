@@ -54,6 +54,7 @@ export class BasicsSection implements ISection {
 
     this.init();
 
+    console.log(this.moddle);
     this.checkId();
   }
 
@@ -152,7 +153,7 @@ export class BasicsSection implements ISection {
     return flowElements || [];
   }
 
-  private getLaneElements(processId: string): Array<IModdleElement> {
+  private getLaneElements(): Array<IModdleElement> {
     const hats: Array<IModdleElement> = this.moddle.ids._seed.hats;
 
     const lanes: Array<IModdleElement> = [];
@@ -166,11 +167,29 @@ export class BasicsSection implements ISection {
 
   private getElements(processId: string): Array<IModdleElement> {
     const flowElements: Array<IModdleElement> = this.getFlowElements(processId);
-    const lanes: Array<IModdleElement> = this.getLaneElements(processId);
+    const lanes: Array<IModdleElement> = this.getLaneElements();
+    const pools: Array<IModdleElement> = this.getPoolElements();
 
     const elements: Array<IModdleElement> = lanes.concat(flowElements);
 
     return elements || [];
+  }
+
+  private getPoolElements(): Array<IModdleElement> {
+    const hats: Array<IModdleElement> = this.moddle.ids._seed.hats;
+    let pools: Array<IModdleElement>;
+
+    for (const currentElementId in hats) {
+      const currentElement: IModdleElement = hats[currentElementId];
+      if (currentElement.$type === 'bpmn:Collaboration') {
+        pools = currentElement.participants.map((pool: IModdleElement) => {
+          return pool;
+        });
+        break;
+      }
+    }
+
+    return pools || [];
   }
 
   private checkId(): void {
@@ -185,7 +204,7 @@ export class BasicsSection implements ISection {
       }
     }
 
-    const elements: Array<IModdleElement> = this.getElements(processId);
+    const elements: Array<IModdleElement> = this.getElements(processId).concat(this.getPoolElements());
     const hasNoElements: boolean = elements.length === 0;
     if (hasNoElements) {
       return;
