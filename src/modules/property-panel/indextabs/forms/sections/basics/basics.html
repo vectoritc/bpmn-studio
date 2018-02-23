@@ -28,12 +28,12 @@
         </div>
         <div class="type-input">
           <label class="section__input-label">Type: </label>
-          <select class="form-control" value.bind="selectedForm.type" change.delegate="updateType()">
+          <select class="form-control" value.bind="selectedType" change.delegate="updateType()">
             <option model.bind="null">-Choose Type-</option>
             <option repeat.for="type of types" model.bind="type">${type}</option>
           </select>
         </div>
-        <div if.bind="selectedForm.type === types[5]">
+        <div if.bind="selectedType === types[5]">
           <div class="section__btn-group">
             <label class="section__input-label">Custom Type: </label>
             <input type="text" class="form-control" value.bind="customType" placeholder="Custom Type" change.delegate="updateType()">

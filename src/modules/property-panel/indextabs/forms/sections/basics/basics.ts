@@ -25,6 +25,7 @@ export class BasicsSection implements ISection {
   private forms: Array<IForm>;
   private selectedForm: IForm;
   private selectedIndex: number;
+  private selectedType: string;
   private types: Array<string> = ['string', 'long', 'boolean', 'date', 'enum', 'custom type'];
   private customType: string;
   private formElement: IFormElement;
@@ -66,6 +67,7 @@ export class BasicsSection implements ISection {
 
   private selectForm(): void {
     this.isFormSelected = true;
+    this.selectedType = this.getTypeOrCustomType(this.selectedForm.type);
     this.selectedIndex = this.getSelectedIndex();
   }
 
@@ -84,6 +86,16 @@ export class BasicsSection implements ISection {
     }
   }
 
+  private getTypeOrCustomType(type: string): string {
+    if (this.types.includes(type) || type === null) {
+      this.customType = '';
+      return type;
+    } else {
+      this.customType = type;
+      return 'custom type';
+    }
+  }
+
   private updateId(): void {
     this.formElement.fields[this.selectedIndex].id = this.selectedForm.id;
   }
@@ -97,7 +109,15 @@ export class BasicsSection implements ISection {
   }
 
   private updateType(): void {
-    this.formElement.fields[this.selectedIndex].type = this.selectedForm.type;
+    let type: string;
+
+    if (this.selectedType === 'custom type') {
+      type = this.customType;
+    } else {
+      type = this.selectedType;
+    }
+
+    this.formElement.fields[this.selectedIndex].type = type;
   }
 
   private async removeForm(): Promise<void> {
