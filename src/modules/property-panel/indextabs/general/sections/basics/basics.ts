@@ -148,8 +148,7 @@ export class BasicsSection implements ISection {
 
     for (const processId of processIds) {
       const hat: IModdleElement = this.moddle.ids._seed.hats[processId];
-
-      const hasFlowElements: boolean = hat.flowElements !== undefined;
+      const hasFlowElements: boolean = hat !== undefined && hat.flowElements !== undefined;
       if (hasFlowElements) {
         flowElements = flowElements.concat(hat.flowElements);
       }
@@ -216,10 +215,14 @@ export class BasicsSection implements ISection {
 
   private getProcessIds(): Array<string> {
     const processes: Array<IModdleElement> = this.getProcesses();
+    const hats: Array<IModdleElement> = this.moddle.ids._seed.hats;
+    const processIds: Array<string> = [];
 
-    const processIds: Array<string> = processes.map((process: IModdleElement) => {
-      return process.id;
-    });
+    for (const hat in hats) {
+      if (hats[hat].$type === 'bpmn:Process' || hats[hat].$type === 'bpmn:SubProcess') {
+        processIds.push(hat);
+      }
+    }
 
     return processIds;
   }
