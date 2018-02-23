@@ -146,14 +146,22 @@ export class BasicsSection implements ISection {
   }
 
   private checkId(): void {
-    let firstHat: string;
+    let processId: string;
+    const hats: Array<IModdleElement> = this.moddle.ids._seed.hats;
 
-    for (const first in this.moddle.ids._seed.hats) {
-      firstHat = first;
-      break;
+    for (const currentElementId in hats) {
+      const currentElement: IModdleElement = hats[currentElementId];
+      if (currentElement.$type === 'bpmn:Process') {
+        processId = currentElement.id;
+        break;
+      }
     }
 
-    const elementIds: Array<string> = this.moddle.ids._seed.hats[firstHat].flowElements.map((flowElement: IModdleElement) => {
+    if (!processId) {
+      return;
+    }
+
+    const elementIds: Array<string> = this.moddle.ids._seed.hats[processId].flowElements.map((flowElement: IModdleElement) => {
       return flowElement.id;
     });
 
