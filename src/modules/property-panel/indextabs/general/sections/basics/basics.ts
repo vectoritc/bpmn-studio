@@ -145,6 +145,34 @@ export class BasicsSection implements ISection {
     }
   }
 
+  private getFlowElements(processId: string): Array<IModdleElement> {
+    const hat: IModdleElement = this.moddle.ids._seed.hats[processId];
+
+    const flowElements: Array<IModdleElement> = hat.flowElements;
+    return flowElements || [];
+  }
+
+  private getLaneElements(processId: string): Array<IModdleElement> {
+    const hats: Array<IModdleElement> = this.moddle.ids._seed.hats;
+
+    const lanes: Array<IModdleElement> = [];
+    for (const hatId in hats) {
+      if (hats[hatId].$type === 'bpmn:Lane') {
+        lanes.push(hats[hatId]);
+       }
+    }
+    return lanes || [];
+  }
+
+  private getElements(processId: string): Array<IModdleElement> {
+    const flowElements: Array<IModdleElement> = this.getFlowElements(processId);
+    const lanes: Array<IModdleElement> = this.getLaneElements(processId);
+
+    const elements: Array<IModdleElement> = lanes.concat(flowElements);
+
+    return elements || [];
+  }
+
   private checkId(): void {
     let processId: string;
     const hats: Array<IModdleElement> = this.moddle.ids._seed.hats;
@@ -157,12 +185,14 @@ export class BasicsSection implements ISection {
       }
     }
 
-    if (!processId) {
+    const elements: Array<IModdleElement> = this.getElements(processId);
+    const hasNoElements: boolean = elements.length === 0;
+    if (hasNoElements) {
       return;
     }
 
-    const elementIds: Array<string> = this.moddle.ids._seed.hats[processId].flowElements.map((flowElement: IModdleElement) => {
-      return flowElement.id;
+    const elementIds: Array<string> = elements.map((element: IModdleElement) => {
+      return element.id;
     });
 
     const currentId: number = elementIds.indexOf(this.businessObjInPanel.id);

@@ -94,7 +94,6 @@ export class PoolSection implements ISection {
     const elementIds: Array<string> = this.modeler._definitions.rootElements.map((rootElement: IModdleElement) => {
       return rootElement.id;
     });
-
     elementIds.splice(0, 1);
 
     const currentId: number = elementIds.indexOf(this.businessObjInPanel.processRef.id);
