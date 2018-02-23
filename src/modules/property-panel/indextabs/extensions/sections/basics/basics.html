@@ -18,7 +18,7 @@
     </div>
     <div class="section__special">
       <div class="extensions-remove">
-        <div repeat.for="property of properties" index.bind="$index">
+        <div repeat.for="property of properties">
           <button class="removePropertyButton btn btn-xs btn-danger" click.delegate="removeProperty($index)">x</button>
         </div>
       </div>
