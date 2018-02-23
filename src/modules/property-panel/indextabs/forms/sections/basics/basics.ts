@@ -22,8 +22,8 @@ export class BasicsSection implements ISection {
   private forms: Array<IForm>;
   private selectedForm: IForm;
   private selectedIndex: number;
-  private types: Array<string> = ['string', 'long', 'boolean', 'date', 'enum', 'custom type'];
   private selectedType: string;
+  private types: Array<string> = ['string', 'long', 'boolean', 'date', 'enum', 'custom type'];
   private customType: string;
   private formElement: IFormElement;
 
@@ -60,11 +60,10 @@ export class BasicsSection implements ISection {
     return xml;
   }
 
-  private selectForm(form: IForm): void {
-    this.selectedForm = form;
-    this.selectedType = this.getTypeOrCustomType(form.type);
-    this.selectedIndex = this.getSelectedIndex();
+  private selectForm(): void {
     this.isFormSelected = true;
+    this.selectedType = this.getTypeOrCustomType(this.selectedForm.type);
+    this.selectedIndex = this.getSelectedIndex();
   }
 
   private reloadForms(): void {
@@ -79,6 +78,16 @@ export class BasicsSection implements ISection {
       if (form.$type === `camunda:FormField`) {
         this.forms.push(form);
       }
+    }
+  }
+
+  private getTypeOrCustomType(type: string): string {
+    if (this.types.includes(type) || type === null) {
+      this.customType = '';
+      return type;
+    } else {
+      this.customType = type;
+      return 'custom type';
     }
   }
 
@@ -97,7 +106,7 @@ export class BasicsSection implements ISection {
   private updateType(): void {
     let type: string;
 
-    if (this.selectedType === `custom type`) {
+    if (this.selectedType === 'custom type') {
       type = this.customType;
     } else {
       type = this.selectedType;
@@ -111,18 +120,18 @@ export class BasicsSection implements ISection {
     this.isFormSelected = false;
     this.selectedForm = undefined;
     this.selectedIndex = undefined;
-    this.selectedType = undefined;
     this.reloadForms();
   }
 
-  private addForm(): void {
-    const bpmnFormProperties: Object = {
-      id: `Form_${this.generateRandomId()}`,
-      type: null,
-      label: ``,
-      defaultValue: ``,
-    };
-    const bpmnForm: IForm = this.moddle.create('camunda:FormField', bpmnFormProperties);
+  private async addForm(): Promise<void> {
+
+    const bpmnForm: IForm = this.moddle.create('camunda:FormField',
+      {
+        id: `Form_${this.generateRandomId()}`,
+        type: null,
+        label: ``,
+        defaultValue: ``,
+      });
 
     if (!this.formElement.fields) {
       this.formElement.fields = [];
@@ -130,17 +139,8 @@ export class BasicsSection implements ISection {
 
     this.formElement.fields.push(bpmnForm);
     this.forms.push(bpmnForm);
-    this.selectForm(bpmnForm);
-  }
-
-  private getTypeOrCustomType(type: string): string {
-    if (this.types.includes(type) || type === null) {
-      this.customType = '';
-      return type;
-    } else {
-      this.customType = type;
-      return 'custom type';
-    }
+    this.selectedForm = bpmnForm;
+    this.selectForm();
   }
 
   private getSelectedIndex(): number {

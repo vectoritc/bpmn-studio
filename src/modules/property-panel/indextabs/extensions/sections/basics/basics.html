@@ -1,16 +1,26 @@
 <template>
   <require from="./basics.css"></require>
   <require from="../../../../styles/sections.css"></require>
-  <div class="extensions-section">
+  <div class="section">
     <div class="section__content">
-        
-      <h4><label class="header-label">Properties</label></h4>
       <label class="input-label">Add Properties </label>
       <button class="addPropertyButton btn btn-xs btn-primary" click.delegate="addProperty()">+</button>
       <div repeat.for="property of properties" index.bind="$index">
-        <input type="text" value.bind="newNames[$index]" class="input_field" placeholder="Name" change.delegate="changeName($index)">
-        <input type="text" value.bind="newValues[$index]" class="input_field" placeholder="Value" change.delegate="changeValue($index)">
-        <button class="removePropertyButton btn btn-xs btn-danger" click.delegate="removeProperty($index)">x</button>
+        <div class="extensions-input row">
+          <div class="extensions-input--name col-md-6">
+            <input type="text" value.bind="newNames[$index]" class="form-control" placeholder="Name" change.delegate="changeName($index)">
+          </div>
+          <div class="extensions-input--value col-md-6">
+            <input type="text" value.bind="newValues[$index]" class="form-control" placeholder="Value" change.delegate="changeValue($index)">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section__special">
+      <div class="extensions-remove">
+        <div repeat.for="property of properties">
+          <button class="removePropertyButton btn btn-xs btn-danger" click.delegate="removeProperty($index)">x</button>
+        </div>
       </div>
     </div>
   </div>
