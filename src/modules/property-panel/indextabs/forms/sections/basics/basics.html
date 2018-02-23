@@ -33,7 +33,7 @@
             <option repeat.for="type of types" model.bind="type">${type}</option>
           </select>
         </div>
-        <div if.bind="selectedType === types[5]">
+        <div if.bind="selectedForm.type === types[5]">
           <div class="section__btn-group">
             <label class="section__input-label">Custom Type: </label>
             <input type="text" class="form-control" value.bind="customType" placeholder="Custom Type" change.delegate="updateType()">
