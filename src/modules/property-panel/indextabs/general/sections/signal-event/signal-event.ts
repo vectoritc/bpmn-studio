@@ -1,15 +1,15 @@
-import {IBpmnModdle,
+import {
+  IBpmnModdle,
   IBpmnModeler,
   IDefinition,
   IElementRegistry,
-  IEvent,
-  IEventBus,
   IModdleElement,
   IPageModel,
   ISection,
   IShape,
   ISignal,
-  ISignalElement} from '../../../../../../contracts';
+  ISignalElement,
+} from '../../../../../../contracts';
 
 import {inject} from 'aurelia-framework';
 import {GeneralService} from '../../service/general.service';
@@ -97,7 +97,6 @@ export class SignalEventSection implements ISection {
     });
 
     const signalElement: ISignalElement = this.businessObjInPanel.eventDefinitions[0];
-
     signalElement.signalRef = this.selectedSignal;
   }
 
@@ -157,5 +156,4 @@ export class SignalEventSection implements ISection {
   private clearName(): void {
     this.selectedSignal.name = '';
   }
-
 }

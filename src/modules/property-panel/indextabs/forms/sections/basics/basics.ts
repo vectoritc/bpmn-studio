@@ -1,16 +1,13 @@
-import {IBpmnModdle,
+import {
+  IBpmnModdle,
   IBpmnModeler,
-  IBpmnModelerConstructor,
-  IDefinition,
-  IEvent,
-  IEventBus,
   IForm,
   IFormElement,
   IModdleElement,
-  IModeling,
   IPageModel,
   ISection,
-  IShape} from '../../../../../../contracts';
+  IShape,
+} from '../../../../../../contracts';
 
 export class BasicsSection implements ISection {
 
@@ -32,12 +29,10 @@ export class BasicsSection implements ISection {
 
   private activeListElementId: string;
 
-  public async activate(model: IPageModel): Promise<void> {
+  public activate(model: IPageModel): void {
     this.businessObjInPanel = model.elementInPanel.businessObject;
-
     this.moddle = model.modeler.get('moddle');
     this.modeler = model.modeler;
-
     this.init();
   }
 
@@ -111,7 +106,7 @@ export class BasicsSection implements ISection {
     this.formElement.fields[this.selectedIndex].type = type;
   }
 
-  private async removeForm(): Promise<void> {
+  private removeForm(): void {
     this.formElement.fields.splice(this.selectedIndex, 1);
     this.isFormSelected = false;
     this.selectedForm = undefined;
@@ -120,15 +115,14 @@ export class BasicsSection implements ISection {
     this.reloadForms();
   }
 
-  private async addForm(): Promise<void> {
-
-    const bpmnForm: IForm = this.moddle.create('camunda:FormField',
-                                                {
-                                                  id: `Form_${this.generateRandomId()}`,
-                                                  type: null,
-                                                  label: ``,
-                                                  defaultValue: ``,
-                                                });
+  private addForm(): void {
+    const bpmnFormProperties: Object = {
+      id: `Form_${this.generateRandomId()}`,
+      type: null,
+      label: ``,
+      defaultValue: ``,
+    };
+    const bpmnForm: IForm = this.moddle.create('camunda:FormField', bpmnFormProperties);
 
     if (!this.formElement.fields) {
       this.formElement.fields = [];
@@ -137,7 +131,6 @@ export class BasicsSection implements ISection {
     this.formElement.fields.push(bpmnForm);
     this.forms.push(bpmnForm);
     this.selectForm(bpmnForm);
-
   }
 
   private getTypeOrCustomType(type: string): string {

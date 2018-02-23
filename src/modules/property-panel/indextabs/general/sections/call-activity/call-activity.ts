@@ -1,11 +1,9 @@
-import {IBpmnModeler,
+import {
   ICallActivityElement,
-  IEvent,
-  IEventBus,
-  IModdleElement,
   IPageModel,
   ISection,
-  IShape} from '../../../../../../contracts';
+  IShape,
+} from '../../../../../../contracts';
 
 export class CallActivitySection implements ISection {
 
@@ -13,11 +11,9 @@ export class CallActivitySection implements ISection {
   public canHandleElement: boolean = false;
 
   private businessObjInPanel: ICallActivityElement;
-  private modeler: IBpmnModeler;
 
   public async activate(model: IPageModel): Promise<void> {
     this.businessObjInPanel = model.elementInPanel.businessObject;
-    this.modeler = model.modeler;
   }
 
   public isSuitableForElement(element: IShape): boolean {

@@ -1,15 +1,15 @@
-import {IBpmnModdle,
+import {
+  IBpmnModdle,
   IBpmnModeler,
   IDefinition,
   IElementRegistry,
   IError,
   IErrorElement,
-  IEvent,
-  IEventBus,
   IModdleElement,
   IPageModel,
   ISection,
-  IShape} from '../../../../../../contracts';
+  IShape,
+} from '../../../../../../contracts';
 
 import {inject} from 'aurelia-framework';
 import {GeneralService} from '../../service/general.service';
@@ -150,7 +150,6 @@ export class ErrorEventSection implements ISection {
   private updateErrorMessage(): void {
     const errorElement: IErrorElement = this.businessObjInPanel.eventDefinitions[0];
     errorElement.errorMessageVariable = this.errorMessageVariable;
-
   }
 
   private async addError(): Promise<void> {

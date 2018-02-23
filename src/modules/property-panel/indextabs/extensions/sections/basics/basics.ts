@@ -1,13 +1,12 @@
-import {IBpmnModdle,
-  IBpmnModeler,
-  IEvent,
-  IEventBus,
+import {
+  IBpmnModdle,
   IModdleElement,
   IPageModel,
   IProperty,
   IPropertyElement,
   ISection,
-  IShape} from '../../../../../../contracts';
+  IShape,
+} from '../../../../../../contracts';
 
 export class BasicsSection implements ISection {
 
@@ -15,9 +14,7 @@ export class BasicsSection implements ISection {
   public canHandleElement: boolean = false;
 
   private businessObjInPanel: IModdleElement;
-  private eventBus: IEventBus;
   private moddle: IBpmnModdle;
-  private modeler: IBpmnModeler;
 
   private properties: Array<any> = [];
   private selectedElement: IModdleElement;
@@ -25,12 +22,9 @@ export class BasicsSection implements ISection {
   private newValues: Array<string> = [];
   private propertyElement: IPropertyElement;
 
-  public async activate(model: IPageModel): Promise<void> {
+  public activate(model: IPageModel): void {
     this.businessObjInPanel = model.elementInPanel.businessObject;
-
     this.moddle = model.modeler.get('moddle');
-    this.modeler = model.modeler;
-
     this.init();
   }
 
@@ -51,11 +45,12 @@ export class BasicsSection implements ISection {
     this.reloadProperties();
   }
 
-  private async addProperty(): Promise<void> {
-    const bpmnProperty: IProperty = this.moddle.create('camunda:Property',
-                                                        { name: '',
-                                                          value: '',
-                                                        });
+  private addProperty(): void {
+    const bpmnPropertyProperties: Object = {
+      name: '',
+      value: '',
+    };
+    const bpmnProperty: IProperty = this.moddle.create('camunda:Property', bpmnPropertyProperties);
 
     this.newNames.push('');
     this.newValues.push('');
@@ -112,10 +107,11 @@ export class BasicsSection implements ISection {
   }
 
   private createExtensionElement(): void {
-    const bpmnExecutionListener: IModdleElement = this.moddle.create('camunda:ExecutionListener',
-                                                                { class: '',
-                                                                  event: '',
-                                                                });
+    const bpmnExecutionListenerProperties: Object = {
+      class: '',
+      event: '',
+    };
+    const bpmnExecutionListener: IModdleElement = this.moddle.create('camunda:ExecutionListener', bpmnExecutionListenerProperties);
 
     const extensionValues: Array<IModdleElement> = [];
     const propertyValues: Array<IProperty> = [];
