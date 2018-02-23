@@ -2,18 +2,18 @@
   <require from="./property-panel.css"></require>
   <div class="property-panel">
     <b class="element-id-label">${selectedElementId}</b>
-    <div class="btn-group indextab-dropdown">
-      <a class="btn btn-default indextab-button">${currentIndextabTitle}</a>
-      <a ref="indextabDropdown" class="btn btn-default dropdown-toggle dropdown_button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <span class="caret"></span>
-        <span class="sr-only">Toggle Dropdown</span>
-      </a>
+
+    <div class="indextab-dropdown dropdown">
+      <button class="btn btn-default dropdown-toggle indextab-dropdown__button" data-toggle="dropdown">${currentIndextabTitle}
+        <i class="glyphicon glyphicon-chevron-down indextab-dropdown__glyhicon"></i>
+      </button>
       <ul class="dropdown-menu">
         <li repeat.for="indextab of indextabs">
           <a show.bind="indextab.canHandleElement" click.delegate="updateIndextab(indextab)">${indextab.title}</a>
         </li>
       </ul>
     </div>
+
     <div repeat.for="indextab of indextabs">
       <compose view-model=".${indextab.path}"
         view=".${indextab.path}.html"
@@ -21,5 +21,6 @@
         if.bind="indextab.canHandleElement && indextab.title === currentIndextabTitle"
         containerless></compose>
     </div>
+
   </div>
 </template>

@@ -1,25 +1,27 @@
-.forms-list{
-  max-height: 150px;
-  overflow-y:scroll;
+.type-input {
+  margin-bottom: 20px;
 }
 
-.forms-item{
-  padding: 5px 10px 5px 10px;
-  white-space: nowrap;
+.form-fields-label-group {
+  display: inline-block;
+  width: 100%;
 }
 
-.forms-addFormButton {
-  position: absolute;
-  right: 0px;
-  top: 95px;
+.add-forms__button {
   width: 24px;
   height: 24px;
+  float: right;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
 }
 
-.forms-removeFormButton {
-  position: absolute;
-  right: 0px;
+.remove-forms__button {
   width: 24px;
   height: 24px;
-  top: auto;
+  float: right;
+  margin-right: 5px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 0;
 }
