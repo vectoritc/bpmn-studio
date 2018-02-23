@@ -41,8 +41,7 @@ export class ProcessDefDetail {
   private router: Router;
   private fillColor: string;
   private borderColor: string;
-
-  private test: boolean = true;
+  private showXMLView: boolean = false;
 
   public validationController: ValidationController;
   public validationError: boolean;
@@ -112,11 +111,12 @@ export class ProcessDefDetail {
     }
   }
 
-  private showXMLorNot(): void {
-    if (this.test) {
-      this.test = false;
+  private async showXMLorNot(): Promise<void> {
+    if (!this.showXMLView) {
+      this.process.xml = await this.bpmn.getXML();
+      this.showXMLView = true;
     } else {
-      this.test = true;
+      this.showXMLView = false;
     }
   }
 

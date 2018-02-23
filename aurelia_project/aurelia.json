@@ -284,9 +284,30 @@
             "resources": []
           },
           {
-            "name": "xml-formatter",
+            "name": "xml-beautifier",
             "main": "index.js",
-            "path": "../node_modules/xml-formatter"
+            "path": "../node_modules/xml-beautifier/dist"
+          },
+          {
+            "name": "repeat-string",
+            "main": "index.js",
+            "path": "../node_modules/repeat-string"
+          },
+          {
+            "name": "aurelia-syntax-highlighter",
+            "main": "index.js",
+            "path": "../node_modules/aurelia-syntax-highlighter/dist/amd"
+          },
+          {
+            "name": "prismjs",
+            "main": "prism.js",
+            "path": "../node_modules/prismjs",
+            "resources": [
+              "themes/prism.css",
+              "plugins/line-numbers/prism-line-numbers.css",
+              "plugins/line-numbers/prism-line-numbers.js"
+            ],
+            "exports": "Prism"
           }
         ]
       }

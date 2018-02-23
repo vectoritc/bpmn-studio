@@ -1,6 +1,11 @@
 <template>
   <require from="./bpmn-xml-view.css"></require>
+  <require from="prismjs/themes/prism.css"></require>
+  <require from="prismjs/plugins/line-numbers/prism-line-numbers.css"></require>
   <div class="xml-view">
-    <textarea rows="10" cols="40" value="${xml}"></textarea>
+    <!-- <textarea id="demo" rows="10" cols="40" value="${xml}"></textarea> -->
+    <pre class="line-numbers"><code class="language-markup" au-syntax.bind="xml">
+    </code></pre>
   </div>
+  <script src="prismjs/plugins/line-numbers/prism-line-numbers.js"></script>
 </template>
