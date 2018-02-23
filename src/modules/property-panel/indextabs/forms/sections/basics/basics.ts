@@ -124,6 +124,8 @@ export class BasicsSection implements ISection {
 
     this.formElement.fields.push(bpmnForm);
     this.forms.push(bpmnForm);
+    this.selectedForm = bpmnForm;
+    this.selectForm();
   }
 
   private getSelectedIndex(): number {
