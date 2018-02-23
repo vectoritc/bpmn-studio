@@ -1,13 +1,3 @@
-.forms-list {
-  max-height: 150px;
-  overflow-y:scroll;
-}
-
-.forms-item {
-  padding: 5px 10px 5px 10px;
-  white-space: nowrap;
-}
-
 .type-input {
   margin-bottom: 20px;
 }
@@ -21,10 +11,17 @@
   width: 24px;
   height: 24px;
   float: right;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
 }
 
 .remove-forms__button {
   width: 24px;
   height: 24px;
   float: right;
+  margin-right: 5px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 0;
 }

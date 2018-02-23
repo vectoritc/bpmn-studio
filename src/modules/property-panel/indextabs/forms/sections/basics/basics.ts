@@ -23,10 +23,9 @@ export class BasicsSection implements ISection {
   private modeler: IBpmnModeler;
 
   private forms: Array<IForm>;
-  private selectedForm: IForm;
+  private selectedForms: Array<IForm>;
   private selectedIndex: number;
   private types: Array<string> = ['string', 'long', 'boolean', 'date', 'enum', 'custom type'];
-  private selectedType: string;
   private customType: string;
   private formElement: IFormElement;
 
@@ -65,14 +64,8 @@ export class BasicsSection implements ISection {
     return xml;
   }
 
-  private selectForm(form: IForm): void {
-    if (this.isFormSelected) {
-      this.unSetActive(this.selectedForm.id);
-    }
-    this.selectedForm = form;
-    this.selectedType = this.getTypeOrCustomType(form.type);
+  private selectForm(): void {
     this.isFormSelected = true;
-    this.setActive(form.id);
     this.selectedIndex = this.getSelectedIndex();
   }
 
@@ -92,36 +85,34 @@ export class BasicsSection implements ISection {
   }
 
   private updateId(): void {
-    this.formElement.fields[this.selectedIndex].id = this.selectedForm.id;
+    this.formElement.fields[this.selectedIndex].id = this.selectedForms[0].id;
   }
 
   private updateDefaultValue(): void {
-    this.formElement.fields[this.selectedIndex].label = this.selectedForm.label;
+    this.formElement.fields[this.selectedIndex].label = this.selectedForms[0].label;
   }
 
   private updateLabel(): void {
-    this.formElement.fields[this.selectedIndex].defaultValue = this.selectedForm.defaultValue;
+    this.formElement.fields[this.selectedIndex].defaultValue = this.selectedForms[0].defaultValue;
   }
 
   private updateType(): void {
     let type: string;
 
-    if (this.selectedType === `custom type`) {
+    if (this.selectedForms[0].type === 'custom type') {
       type = this.customType;
     } else {
-      type = this.selectedType;
+      type = this.selectedForms[0].type;
     }
 
     this.formElement.fields[this.selectedIndex].type = type;
   }
 
-  private async removeForm(index: number): Promise<void> {
-    this.formElement.fields.splice(index, 1);
+  private async removeForm(): Promise<void> {
+    this.formElement.fields.splice(this.selectedIndex, 1);
     this.isFormSelected = false;
-    this.unSetActive(this.selectedForm.id);
-    this.selectedForm = undefined;
+    this.selectedForms = undefined;
     this.selectedIndex = undefined;
-    this.selectedType = undefined;
     this.reloadForms();
   }
 
@@ -156,7 +147,7 @@ export class BasicsSection implements ISection {
   private getSelectedIndex(): number {
     const forms: Array<IForm> = this.formElement.fields;
     for (let index: number = 0; index < forms.length; index++) {
-      if (forms[index].id === this.selectedForm.id) {
+      if (forms[index].id === this.selectedForms[0].id) {
         return index;
       }
     }
@@ -208,20 +199,6 @@ export class BasicsSection implements ISection {
     return randomId;
   }
 
-  private setActive(formId: string): void {
-    let element: HTMLElement = null;
-
-    element = document.getElementById(`formfield${formId}`);
-    element.classList.add('active');
-  }
-
-  private unSetActive(formId: string): void {
-    let element: HTMLElement = null;
-
-    element = document.getElementById(`formfield${formId}`);
-    element.classList.remove('active');
-  }
-
   private deleteExtensions(): void {
     delete this.businessObjInPanel.extensionElements;
     delete this.businessObjInPanel.formKey;
@@ -232,7 +209,7 @@ export class BasicsSection implements ISection {
   }
 
   private clearId(): void {
-    this.selectedForm.id = '';
+    this.selectedForms[0].id = '';
   }
 
   private clearType(): void {
@@ -240,11 +217,11 @@ export class BasicsSection implements ISection {
   }
 
   private clearLabel(): void {
-    this.selectedForm.label = '';
+    this.selectedForms[0].label = '';
   }
 
   private clearValue(): void {
-    this.selectedForm.defaultValue = '';
+    this.selectedForms[0].defaultValue = '';
   }
 
 }
