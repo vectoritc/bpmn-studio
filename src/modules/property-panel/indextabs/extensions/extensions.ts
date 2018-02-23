@@ -1,7 +1,8 @@
-import {IIndextab,
-        IModdleElement,
-        ISection,
-        IShape} from '../../../../contracts';
+import {
+  IIndextab,
+  ISection,
+  IShape,
+} from '../../../../contracts';
 import {BasicsSection} from './sections/basics/basics';
 
 export class Extensions implements IIndextab {
