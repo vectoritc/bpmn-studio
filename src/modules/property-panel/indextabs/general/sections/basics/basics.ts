@@ -193,7 +193,7 @@ export class BasicsSection implements ISection {
 
     for (const currentElementId in hats) {
       const currentElement: IModdleElement = hats[currentElementId];
-      if (currentElement.$type === 'bpmn:Process') {
+      if (currentElement.$type === 'bpmn:Process' || currentElement.$type === 'bpmn:SubProcess') {
         processes.push(currentElement);
       }
     }
@@ -207,7 +207,9 @@ export class BasicsSection implements ISection {
     const pools: Array<IModdleElement> = this.getPoolElements();
     const processes: Array<IModdleElement> = this.getProcesses();
 
-    const elements: Array<IModdleElement> = lanes.concat(flowElements).concat(pools).concat(processes);
+    const elements: Array<IModdleElement> = lanes.concat(flowElements)
+      .concat(pools)
+      .concat(processes);
 
     return elements || [];
   }
