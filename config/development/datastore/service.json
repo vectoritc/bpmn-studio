@@ -2,7 +2,7 @@
   "initializeAllEntityTypesOnStartup": true,
   "data_sources": {
     "default": {
-      "$ref": "#/data_sources/postgres"
+      "$ref": "#/data_sources/localstorage"
     }
   },
   "default_data": {

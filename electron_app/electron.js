@@ -3,7 +3,7 @@ const autoUpdater = require('electron-updater').autoUpdater;
 const path = require('path');
 const app = electron.app;
 const notifier = require('electron-notifications');
-const pe = require('@process-engine/skeleton');
+const pe = require('@process-engine/skeleton-electron');
 
 let mainWindow = null;
 

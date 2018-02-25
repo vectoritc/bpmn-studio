@@ -1,7 +1,7 @@
 {
   "data_sources": {
     "User": {
-      "$ref": "#/data_sources/postgres"
+      "$ref": "#/data_sources/localstorage"
     }
   }
 }
