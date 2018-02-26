@@ -1,6 +1,7 @@
 import {
   IBpmnModdle,
   IBpmnModeler,
+  IElementRegistry,
   IModdleElement,
   IModeling,
   IPageModel,
@@ -8,10 +9,6 @@ import {
   IShape,
 } from '../../../../../../contracts';
 
-import {inject} from 'aurelia-framework';
-import {ValidateEvent, ValidationController, ValidationRules} from 'aurelia-validation';
-
-@inject(ValidationController)
 export class BasicsSection implements ISection {
 
   public path: string = '/sections/basics/basics';
@@ -21,22 +18,13 @@ export class BasicsSection implements ISection {
   private moddle: IBpmnModdle;
   private elementInPanel: IShape;
   private saveId: string;
+  private idErrors: Array<String> = [];
+  private idIsInvalid: Boolean = false;
 
-  public validationController: ValidationController;
   public businessObjInPanel: IModdleElement;
   public elementDocumentation: string;
-  public validationError: boolean = false;
-
-  constructor(controller?: ValidationController) {
-    this.validationController = controller;
-  }
 
   public activate(model: IPageModel): void {
-
-    if (this.validationError) {
-      this.businessObjInPanel.id = this.saveId;
-      this.validationController.validate();
-    }
 
     this.elementInPanel = model.elementInPanel;
     this.businessObjInPanel = model.elementInPanel.businessObject;
@@ -44,10 +32,6 @@ export class BasicsSection implements ISection {
     this.modeling = model.modeler.get('modeling');
     this.moddle = model.modeler.get('moddle');
     this.modeler = model.modeler;
-
-    this.validationController.subscribe((event: ValidateEvent) => {
-      this.validateForm(event);
-    });
 
     this.init();
 
@@ -94,7 +78,7 @@ export class BasicsSection implements ISection {
 
   private clearId(): void {
     this.businessObjInPanel.id = '';
-    this.validationController.validate();
+    this.checkId();
     this.updateId();
   }
 
@@ -115,31 +99,10 @@ export class BasicsSection implements ISection {
   }
 
   private updateId(): void {
-    if (this.validationController.errors.length > 0) {
-      return;
-    }
+    this.checkId();
     this.modeling.updateProperties(this.elementInPanel, {
       id: this.businessObjInPanel.id,
     });
-  }
-
-  private validateForm(event: ValidateEvent): void {
-    if (event.type !== 'validate') {
-      return;
-    }
-    this.validationError = false;
-
-    for (const result of event.results) {
-      if (result.rule.property.displayName !== 'elementId') {
-        continue;
-      }
-      if (result.valid === false) {
-        this.validationError = true;
-        document.getElementById(result.rule.property.displayName).style.border = '2px solid red';
-      } else {
-        document.getElementById(result.rule.property.displayName).style.border = '';
-      }
-    }
   }
 
   private getFlowElements(): Array<IModdleElement> {
@@ -227,28 +190,37 @@ export class BasicsSection implements ISection {
     return processIds;
   }
 
+  private resetId(): void {
+    this.businessObjInPanel.id = this.saveId;
+  }
+
   private checkId(): void {
+    this.idErrors = [];
+    this.idIsInvalid = false;
 
-    const elements: Array<IModdleElement> = this.getElements();
-    const hasNoElements: boolean = elements.length === 0;
-    if (hasNoElements) {
-      return;
-    }
-
-    const elementIds: Array<string> = elements.map((element: IModdleElement) => {
-      return element.id;
+    const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
+    const elementsWithSameId: Array<IShape> =  elementRegistry.filter((element: IShape) => {
+      if (element.businessObject !== this.businessObjInPanel) {
+        if (element.type !== 'label') {
+          return element.businessObject.id === this.businessObjInPanel.id;
+        }
+      }
+      return false;
     });
 
-    const currentId: number = elementIds.indexOf(this.businessObjInPanel.id);
-    elementIds.splice(currentId, 1);
+    const hasSameIdWithOtherElements: Boolean = elementsWithSameId.length > 0;
+    const idIsEmpty: Boolean = this.businessObjInPanel.id.length <= 0;
+    if (hasSameIdWithOtherElements) {
+      this.idErrors.push('Id is already existing!');
+      this.idIsInvalid = true;
+    }
+    if (idIsEmpty) {
+      this.idErrors.push('Id is empty!');
+      this.idIsInvalid = true;
+    }
 
-    ValidationRules.ensure((businessObject: IModdleElement) => businessObject.id)
-    .displayName('elementId')
-    .required()
-      .withMessage(`Id cannot be blank.`)
-    .then()
-    .satisfies((id: string) => !elementIds.includes(id))
-      .withMessage(`Id already exists.`)
-    .on(this.businessObjInPanel);
+    if (this.idIsInvalid) {
+      this.businessObjInPanel.id = this.saveId;
+    }
   }
 }
