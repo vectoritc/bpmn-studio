@@ -13,7 +13,8 @@
   right: 0;
   z-index: 10;
   border-left: 1px solid #ccc;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   width: 350px;
   background-color: #f8f8f8;
 }

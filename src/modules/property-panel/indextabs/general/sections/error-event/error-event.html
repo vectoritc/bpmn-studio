@@ -1,8 +1,7 @@
 <template>
   <require from="./error-event.css"></require>
   <require from="../../../../styles/sections.css"></require>
-  <div class="section">
-    <div class="section__content col-md-11">
+    <div class="section__content">
       <label class="section__input-label">Error: </label>
       <select class="form-control" value.bind="selectedId" change.delegate="updateError()">
         <option model.bind="null">-Choose Error-</option>
@@ -29,7 +28,7 @@
         </div>
       </div>
     </div>
-    <div class="section__special col-md-1">
+    <div class="section__special">
       <button class="addErrorButton btn btn-xs btn-primary" click.delegate="addError()">+</button>
     </div>
   </div>
