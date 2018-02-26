@@ -17,7 +17,7 @@ export class BasicsSection implements ISection {
   private modeler: IBpmnModeler;
   private moddle: IBpmnModdle;
   private elementInPanel: IShape;
-  private saveId: string;
+  private previousId: string;
   private idErrors: Array<String> = [];
   private idIsInvalid: Boolean = false;
 
@@ -28,7 +28,7 @@ export class BasicsSection implements ISection {
 
     this.elementInPanel = model.elementInPanel;
     this.businessObjInPanel = model.elementInPanel.businessObject;
-    this.saveId = model.elementInPanel.businessObject.id;
+    this.previousId = model.elementInPanel.businessObject.id;
     this.modeling = model.modeler.get('modeling');
     this.moddle = model.modeler.get('moddle');
     this.modeler = model.modeler;
@@ -105,93 +105,8 @@ export class BasicsSection implements ISection {
     });
   }
 
-  private getFlowElements(): Array<IModdleElement> {
-    const processIds: Array<string> = this.getProcessIds();
-    let flowElements: Array<IModdleElement> = [];
-
-    for (const processId of processIds) {
-      const hat: IModdleElement = this.moddle.ids._seed.hats[processId];
-      const hasFlowElements: boolean = hat !== undefined && hat.flowElements !== undefined;
-      if (hasFlowElements) {
-        flowElements = flowElements.concat(hat.flowElements);
-      }
-    }
-
-    return flowElements || [];
-  }
-
-  private getLaneElements(): Array<IModdleElement> {
-    const hats: Array<IModdleElement> = this.moddle.ids._seed.hats;
-
-    const lanes: Array<IModdleElement> = [];
-    for (const hatId in hats) {
-      if (hats[hatId].$type === 'bpmn:Lane') {
-        lanes.push(hats[hatId]);
-       }
-    }
-    return lanes || [];
-  }
-
-  private getPoolElements(): Array<IModdleElement> {
-    const hats: Array<IModdleElement> = this.moddle.ids._seed.hats;
-    let pools: Array<IModdleElement>;
-
-    for (const currentElementId in hats) {
-      const currentElement: IModdleElement = hats[currentElementId];
-      if (currentElement.$type === 'bpmn:Collaboration') {
-        pools = currentElement.participants.map((pool: IModdleElement) => {
-          return pool;
-        });
-        break;
-      }
-    }
-
-    return pools || [];
-  }
-
-  private getProcesses(): Array<IModdleElement> {
-    const processes: Array<IModdleElement> = [];
-    const hats: Array<IModdleElement> = this.moddle.ids._seed.hats;
-
-    for (const currentElementId in hats) {
-      const currentElement: IModdleElement = hats[currentElementId];
-      if (currentElement.$type === 'bpmn:Process' || currentElement.$type === 'bpmn:SubProcess') {
-        processes.push(currentElement);
-      }
-    }
-
-    return processes;
-  }
-
-  private getElements(): Array<IModdleElement> {
-    const flowElements: Array<IModdleElement> = this.getFlowElements();
-    const lanes: Array<IModdleElement> = this.getLaneElements();
-    const pools: Array<IModdleElement> = this.getPoolElements();
-    const processes: Array<IModdleElement> = this.getProcesses();
-
-    const elements: Array<IModdleElement> = lanes.concat(flowElements)
-      .concat(pools)
-      .concat(processes);
-
-    return elements || [];
-  }
-
-  private getProcessIds(): Array<string> {
-    const processes: Array<IModdleElement> = this.getProcesses();
-    const hats: Array<IModdleElement> = this.moddle.ids._seed.hats;
-    const processIds: Array<string> = [];
-
-    for (const hat in hats) {
-      if (hats[hat].$type === 'bpmn:Process' || hats[hat].$type === 'bpmn:SubProcess') {
-        processIds.push(hat);
-      }
-    }
-
-    return processIds;
-  }
-
   private resetId(): void {
-    this.businessObjInPanel.id = this.saveId;
+    this.businessObjInPanel.id = this.previousId;
   }
 
   private checkId(): void {
@@ -220,7 +135,7 @@ export class BasicsSection implements ISection {
     }
 
     if (this.idIsInvalid) {
-      this.businessObjInPanel.id = this.saveId;
+      this.resetId();
     }
   }
 }
