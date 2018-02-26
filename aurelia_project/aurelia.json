@@ -308,6 +308,30 @@
               "plugins/line-numbers/prism-line-numbers.js"
             ],
             "exports": "Prism"
+          },
+          {
+            "name": "ace-builds",
+            "main": "ace.js",
+            "path": "../node_modules/ace-builds/src-noconflict",
+            "resources": [
+              "theme-twilight.js"
+            ]
+          },
+          {
+            "name": "highlight.js",
+            "main": "lib/index.js",
+            "path": "../node_modules/highlight.js",
+            "resources": [
+              "styles/*.css"
+            ]
+          },
+          {
+            "name": "highlightjs-line-numbers.js",
+            "main": "dist/highlightjs-line-numbers.min.js",
+            "path": "../node_modules/highlightjs-line-numbers.js",
+            "resources": [
+              "styles/*.css"
+            ]
           }
         ]
       }

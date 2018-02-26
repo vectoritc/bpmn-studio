@@ -1,11 +1,14 @@
 <template>
   <require from="./bpmn-xml-view.css"></require>
-  <require from="prismjs/themes/prism.css"></require>
-  <require from="prismjs/plugins/line-numbers/prism-line-numbers.css"></require>
+  <!-- <require from="prismjs/themes/prism.css"></require>
+  <require from="prismjs/plugins/line-numbers/prism-line-numbers.css"></require> -->
+  <require from="highlight.js/styles/hybrid.css"></require>
   <div class="xml-view">
     <!-- <textarea id="demo" rows="10" cols="40" value="${xml}"></textarea> -->
-    <pre class="line-numbers"><code class="language-markup" au-syntax.bind="xml">
+    <!-- <pre id="editor"><code au-syntax.bind="xml" linenumbers="true"></code></pre> -->
+    <pre ref="test"><code id="code" class="xml" textcontent.bind="xml">
     </code></pre>
   </div>
-  <script src="prismjs/plugins/line-numbers/prism-line-numbers.js"></script>
+  <!-- <script src="prismjs/plugins/line-numbers/prism-line-numbers.js"></script> -->
+  <!-- <script src="highlightjs-line-numbers.js/highlightjs-line-numbers.min.js"></script> -->
 </template>
