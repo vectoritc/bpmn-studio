@@ -283,29 +283,64 @@ export class BasicsSection implements ISection {
     }
   }
 
-  private _formIdIsUnique(id: string): boolean {
-    const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
-    const formsWithSameId: Array<IShape> =  elementRegistry.filter((element: IShape) => {
-      const currentElement: IModdleElement = element.businessObject;
-      if (currentElement.$type === 'bpmn:UserTask' && currentElement.extensionElements) {
-        const extensionElements: Array<IFormElement> = currentElement.extensionElements.values;
-        for (const extension of extensionElements) {
-          if (extension.$type === 'camunda:FormData') {
-            const currentForms: Array<IForm> = extension.fields;
-            for (const form of currentForms) {
-              if (form.id === this.selectedForm.id) {
-                if (form !== this.selectedForm) {
-                  return true;
-                }
-              }
-            }
-          }
+  private _hasFormSameIdAsSelected(forms: Array<IForm>): boolean {
+    for (const form of forms) {
+      if (form.id === this.selectedForm.id) {
+        if (form !== this.selectedForm) {
+          return true;
         }
       }
-      return false;
+    }
+
+    return false;
+  }
+
+  private _getFormDataFromBusinessObject(businessObject: IModdleElement): IFormElement {
+    const extensionElement: IExtensionElement = businessObject.extensionElements;
+    const hasNoExtensionElements: boolean = extensionElement === undefined;
+    if (hasNoExtensionElements) {
+      return;
+    }
+
+    const extensions: Array<IModdleElement> = extensionElement.values;
+    for (const extension of extensions) {
+      const isFormData: boolean = extension.$type === 'camunda:FormData';
+      if (isFormData) {
+        return extension;
+      }
+    }
+
+    return;
+  }
+
+  private _getFormsById(id: string): Array<IShape> {
+    const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
+
+    const formsWithId: Array<IShape> = elementRegistry.filter((element: IShape) => {
+      const currentBusinessObj: IModdleElement = element.businessObject;
+
+      const isNoUserTask: boolean = currentBusinessObj.$type !== 'bpmn:UserTask';
+      if (isNoUserTask) {
+        return false;
+      }
+      const formData: IFormElement = this._getFormDataFromBusinessObject(currentBusinessObj);
+      if (formData === undefined) {
+        return false;
+      }
+
+      const forms: Array<IForm> = formData.fields;
+
+      return this._hasFormSameIdAsSelected(forms);
     });
 
-    return formsWithSameId.length === 0;
+    return formsWithId;
+  }
+
+  private _formIdIsUnique(id: string): boolean {
+    const formsWithSameId: Array<IShape> = this._getFormsById(id);
+    const isIdUnique: boolean = formsWithSameId.length === 0;
+
+    return isIdUnique;
   }
 
   private _setValidationRules(): void {
