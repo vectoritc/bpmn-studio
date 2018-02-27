@@ -22,7 +22,7 @@
         <h4><label class="header-label">Form Field</label></h4>
         <div class="section__btn-group">
           <label class="section__input-label">ID: </label>
-          <input type="text" class="form-control" value.bind="selectedForm.id" placeholder="ID" change.delegate="updateId()">
+          <input type="text" class="form-control" id="formId" value.bind="selectedForm.id & validateOnChange" placeholder="ID" change.delegate="updateId()">
           <span class="glyphicon glyphicon-remove-circle section__btn-group--clear-btn" click.delegate="clearId()"></span>
         </div>
         <div class="type-input">
@@ -50,8 +50,6 @@
           <span class="glyphicon glyphicon-remove-circle section__btn-group--clear-btn" click.delegate="clearValue()"></span>
         </div>
       </div>
-    </div>
-    <div class="section__special">
     </div>
   </div>
 </template>
