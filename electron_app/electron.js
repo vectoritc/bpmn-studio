@@ -6,10 +6,12 @@ const notifier = require('electron-notifications');
 const isDev = require('electron-is-dev');
 
 if (!isDev) {
+  const userDataFolder = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : '/var/local');
+  process.env.datastore__service__data_sources__default__adapter__databasePath = path.join(userDataFolder, 'process-engine_database');
+
   // __dirname is ./bpmn-studio.app/Contents/Resources/app.asar/electron_app
   // config is in ./bpmn-studio.app/Contents/config
   process.env.CONFIG_PATH = path.join(__dirname, '..', '..', '..', 'config');
-  process.env.NODE_ENV = 'development';
 }
 
 const pe = require('@process-engine/skeleton-electron');

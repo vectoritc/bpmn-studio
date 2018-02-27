@@ -1,8 +1,7 @@
 {
   "adapter": {
     "name": "Localstorage",
-    "skipMigration": false,
-    "databasePath": "/Users/heiko/Desktop/pe_db"
+    "skipMigration": false
   },
   "schemaMode": "full"
 }
