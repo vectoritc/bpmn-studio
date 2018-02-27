@@ -7,6 +7,25 @@ import 'highlightjs-line-numbers.js';
 import 'prismjs';
 // import * as lineNumbers from 'prismjs/plugins/line-numbers/prism-line-numbers.js';
 import * as beautify from 'xml-beautifier';
+// tslint:disable:no-namespace
+// tslint:disable:no-internal-module
+// declare module hljs {
+//   // tslint:disable-next-line:class-name
+//   export interface initHighlighting {
+//     called: boolean;
+//   }
+// }
+// tslint:disable-next-line:class-name
+interface initHighlighting {
+  (): void;
+  called: boolean;
+}
+
+const myhljs: {
+  initHighlighting: initHighlighting;
+  // tslint:disable-next-line:prefer-method-signature
+  initLineNumbersOnLoad: () => void;
+} = hljs as any;
 
 export class BpmnXmlView {
 
@@ -17,9 +36,9 @@ export class BpmnXmlView {
 
   public attached(): void {
     this.xml = beautify(this.xml);
-    hljs.initHighlighting();
-    hljs.initHighlighting.called = false; // tslint:disable-line
-    hljs.initLineNumbersOnLoad(); // tslint:disable-line
+    myhljs.initHighlighting();
+    myhljs.initHighlighting.called = false;
+    myhljs.initLineNumbersOnLoad();
     // const editor: any = ace.edit('editor');
     // editor.setTheme('ace/theme/twilight');
     // editor.session.setMode('ace/mode/javascript');
