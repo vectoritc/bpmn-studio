@@ -111,7 +111,7 @@ export class ProcessDefDetail {
     }
   }
 
-  private async showXMLorNot(): Promise<void> {
+  private async _toggleXMLView(): Promise<void> {
     if (!this.showXMLView) {
       this.process.xml = await this.bpmn.getXML();
       this.showXMLView = true;

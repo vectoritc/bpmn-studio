@@ -8,7 +8,7 @@ interface InitHighlighting {
   called: boolean;
 }
 
-const myhljs: {
+const highlightEngine: {
   initHighlighting: InitHighlighting;
   // tslint:disable-next-line:prefer-method-signature
   initLineNumbersOnLoad: () => void;
@@ -20,9 +20,9 @@ export class BpmnXmlView {
 
   public attached(): void {
     this.xml = beautify(this.xml);
-    myhljs.initHighlighting();
-    myhljs.initHighlighting.called = false;
-    myhljs.initLineNumbersOnLoad();
+    highlightEngine.initHighlighting();
+    highlightEngine.initHighlighting.called = false;
+    highlightEngine.initLineNumbersOnLoad();
   }
 
 }

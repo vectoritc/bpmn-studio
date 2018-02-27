@@ -96,7 +96,7 @@
             <li><a click.delegate="distributeElementsVertical()"><i class="glyphicon glyphicon-object-align-vertical"></i> Vertical</a></li>
           </ul>
         </div>
-        <button type="button" class="btn btn-default" click.delegate="showXMLorNot()">${!showXMLView ? 'XML' : 'Diagram'}</button>
+        <button type="button" class="btn btn-default" click.delegate="_toggleXMLView()">${!showXMLView ? 'XML' : 'Diagram'}</button>
       </div>
     </div>
     <bpmn-io show.bind="!showXMLView" view-model.ref="bpmn" xml.bind="process.xml"></bpmn-io>
