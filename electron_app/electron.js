@@ -18,7 +18,7 @@ function createWindow () {
   mainWindow = new electron.BrowserWindow({
     width: 800,
     height: 600,
-    icon: path.join(__dirname, 'assets/itest_icon.png')
+    title: "BPMN-Studio",
   });
 
   mainWindow.loadURL(`file://${__dirname}/../index.html`);
