@@ -3,14 +3,13 @@ import * as hljs from 'highlight.js';
 import 'highlightjs-line-numbers.js';
 import * as beautify from 'xml-beautifier';
 
-// tslint:disable-next-line:class-name
-interface initHighlighting {
+interface InitHighlighting {
   (): void;
   called: boolean;
 }
 
 const myhljs: {
-  initHighlighting: initHighlighting;
+  initHighlighting: InitHighlighting;
   // tslint:disable-next-line:prefer-method-signature
   initLineNumbersOnLoad: () => void;
 } = hljs as any;
