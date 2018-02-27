@@ -19,8 +19,7 @@ export function configure(aurelia: Aurelia): void {
     .feature('modules/consumer-client', tokenRepository)
     .feature('resources')
     .plugin('aurelia-bootstrap')
-    .plugin('aurelia-validation')
-    .plugin('aurelia-syntax-highlighter');
+    .plugin('aurelia-validation');
 
   if (environment.debug) {
     aurelia.use.developmentLogging();

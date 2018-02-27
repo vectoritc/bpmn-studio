@@ -294,35 +294,11 @@
             "path": "../node_modules/repeat-string"
           },
           {
-            "name": "aurelia-syntax-highlighter",
-            "main": "index.js",
-            "path": "../node_modules/aurelia-syntax-highlighter/dist/amd"
-          },
-          {
-            "name": "prismjs",
-            "main": "prism.js",
-            "path": "../node_modules/prismjs",
-            "resources": [
-              "themes/prism.css",
-              "plugins/line-numbers/prism-line-numbers.css",
-              "plugins/line-numbers/prism-line-numbers.js"
-            ],
-            "exports": "Prism"
-          },
-          {
-            "name": "ace-builds",
-            "main": "ace.js",
-            "path": "../node_modules/ace-builds/src-noconflict",
-            "resources": [
-              "theme-twilight.js"
-            ]
-          },
-          {
             "name": "highlight.js",
             "main": "lib/index.js",
             "path": "../node_modules/highlight.js",
             "resources": [
-              "styles/*.css"
+              "styles/github-gist.css"
             ]
           },
           {
