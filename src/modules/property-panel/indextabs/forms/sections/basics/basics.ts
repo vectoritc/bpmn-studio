@@ -355,7 +355,7 @@ export class BasicsSection implements ISection {
       .withMessage(`Id cannot be blank.`)
       .then()
       .satisfies((id: string) => this._formIdIsUnique(id))
-        .withMessage(`Id already exists.`)
+      .withMessage(`Id already exists.`)
       .on(this.selectedForm);
   }
 }
