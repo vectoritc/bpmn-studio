@@ -25,7 +25,7 @@
           <div class="tooltip">
             <span class="glyphicon glyphicon-remove"></span>
             <span class="tooltiptext">
-              <div repeat.for="error of idErrors">
+              <div repeat.for="error of validationController.errors">
                 ${error}
               </div>
             </span>
