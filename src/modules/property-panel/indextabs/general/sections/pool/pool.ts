@@ -1,7 +1,10 @@
 import {inject} from 'aurelia-framework';
 import {ValidateEvent, ValidationController, ValidationRules} from 'aurelia-validation';
+import { Config } from 'protractor';
 import {
+  IBpmnModdle,
   IBpmnModeler,
+  IElementRegistry,
   IModdleElement,
   IPageModel,
   IPoolElement,
@@ -19,7 +22,8 @@ export class PoolSection implements ISection {
 
   private businessObjInPanel: IPoolElement;
   private modeler: IBpmnModeler;
-  private saveProcessId: string;
+  private moddle: IBpmnModdle;
+  private previousId: string;
 
   constructor(controller?: ValidationController) {
     this.validationController = controller;
@@ -27,24 +31,25 @@ export class PoolSection implements ISection {
 
   public activate(model: IPageModel): void {
     if (this.validationError) {
-      this.businessObjInPanel.processRef.id = this.saveProcessId;
+      this.businessObjInPanel.processRef.id = this.previousId;
       this.validationController.validate();
     }
 
     this.businessObjInPanel = model.elementInPanel.businessObject;
-    this.saveProcessId = this.businessObjInPanel.processRef.id;
+    this.previousId = this.businessObjInPanel.processRef.id;
+    this.moddle = model.modeler.get('moddle');
     this.modeler = model.modeler;
 
     this.validationController.subscribe((event: ValidateEvent) => {
-      this.validateForm(event);
+      this.validateId(event);
     });
 
-    this.checkId();
+    this.setValidationRules();
   }
 
   public detached(): void {
     if (this.validationError) {
-      this.businessObjInPanel.processRef.id = this.saveProcessId;
+      this.businessObjInPanel.processRef.id = this.previousId;
       this.validationController.validate();
     }
   }
@@ -65,13 +70,14 @@ export class PoolSection implements ISection {
 
   private clearId(): void {
     this.businessObjInPanel.processRef.id = '';
+    this.validationController.validate();
   }
 
   private clearName(): void {
     this.businessObjInPanel.processRef.name = '';
   }
 
-  private validateForm(event: ValidateEvent): void {
+  private validateId(event: ValidateEvent): void {
     if (event.type !== 'validate') {
       return;
     }
@@ -90,23 +96,39 @@ export class PoolSection implements ISection {
     }
   }
 
-  private checkId(): void {
+  private isIdUnique(id: string): boolean {
+    const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
+    const elementsWithSameId: Array<IShape> =  elementRegistry.filter((element: IShape) => {
+      if (element.businessObject !== this.businessObjInPanel) {
+        if (element.type !== 'label') {
+          return element.businessObject.id === this.businessObjInPanel.processRef.id;
+        }
+      }
+      return false;
+    });
+
+    return elementsWithSameId.length === 0;
+  }
+
+  private isProcessIdUnique(id: string): boolean {
     const elementIds: Array<string> = this.modeler._definitions.rootElements.map((rootElement: IModdleElement) => {
       return rootElement.id;
     });
-    elementIds.splice(0, 1);
 
     const currentId: number = elementIds.indexOf(this.businessObjInPanel.processRef.id);
     elementIds.splice(currentId, 1);
 
+    return !elementIds.includes(id);
+  }
+
+  private setValidationRules(): void {
     ValidationRules.ensure((businessObject: IModdleElement) => businessObject.id)
     .displayName('processId')
     .required()
       .withMessage(`Process-Id cannot be blank.`)
     .then()
-    .satisfies((id: string) => !elementIds.includes(id))
+    .satisfies((id: string) => this.isIdUnique(id) && this.isProcessIdUnique(id))
       .withMessage(`Process-Id already exists.`)
     .on(this.businessObjInPanel.processRef);
   }
-
 }
