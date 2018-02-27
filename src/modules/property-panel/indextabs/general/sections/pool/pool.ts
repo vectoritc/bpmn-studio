@@ -22,7 +22,7 @@ export class PoolSection implements ISection {
 
   private businessObjInPanel: IPoolElement;
   private modeler: IBpmnModeler;
-  private moddle: IBpmnModdle;
+  private bpmnModdle: IBpmnModdle;
   private previousProcessRefId: string;
 
   constructor(controller?: ValidationController) {
@@ -37,8 +37,9 @@ export class PoolSection implements ISection {
 
     this.businessObjInPanel = model.elementInPanel.businessObject;
     this.previousProcessRefId = this.businessObjInPanel.processRef.id;
-    this.moddle = model.modeler.get('moddle');
+
     this.modeler = model.modeler;
+    this.bpmnModdle = this.modeler.get('moddle');
 
     this.validationController.subscribe((event: ValidateEvent) => {
       this._validateId(event);
@@ -96,7 +97,7 @@ export class PoolSection implements ISection {
     }
   }
 
-  private _formIdIsUniqu(id: string): boolean {
+  private _formIdIsUnique(id: string): boolean {
     const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
     const elementsWithSameId: Array<IShape> =  elementRegistry.filter((element: IShape) => {
       if (element.businessObject !== this.businessObjInPanel) {
@@ -127,7 +128,7 @@ export class PoolSection implements ISection {
     .required()
     .withMessage(`Process-Id cannot be blank.`)
     .then()
-    .satisfies((id: string) => this._formIdIsUniqu(id) && this._isProcessIdUnique(id))
+    .satisfies((id: string) => this._formIdIsUnique(id) && this._isProcessIdUnique(id))
     .withMessage(`Process-Id already exists.`)
     .on(this.businessObjInPanel.processRef);
   }

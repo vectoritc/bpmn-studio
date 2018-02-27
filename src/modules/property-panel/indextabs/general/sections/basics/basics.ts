@@ -19,7 +19,7 @@ export class BasicsSection implements ISection {
   public canHandleElement: boolean = true;
   private modeling: IModeling;
   private modeler: IBpmnModeler;
-  private moddle: IBpmnModdle;
+  private bpmnModdle: IBpmnModdle;
   private elementInPanel: IShape;
   private previousProcessRefId: string;
   private validationError: boolean = false;
@@ -42,8 +42,9 @@ export class BasicsSection implements ISection {
     this.elementInPanel = model.elementInPanel;
     this.businessObjInPanel = model.elementInPanel.businessObject;
     this.previousProcessRefId = model.elementInPanel.businessObject.id;
+
     this.modeling = model.modeler.get('modeling');
-    this.moddle = model.modeler.get('moddle');
+    this.bpmnModdle = model.modeler.get('moddle');
     this.modeler = model.modeler;
 
     this.validationController.subscribe((event: ValidateEvent) => {
@@ -84,7 +85,7 @@ export class BasicsSection implements ISection {
   private _updateDocumentation(): void {
     this.elementInPanel.documentation = [];
 
-    const documentation: IModdleElement = this.moddle.create('bpmn:Documentation',
+    const documentation: IModdleElement = this.bpmnModdle.create('bpmn:Documentation',
     { text: this.elementDocumentation });
     this.elementInPanel.documentation.push(documentation);
 

@@ -22,7 +22,7 @@ export class BasicsSection implements ISection {
   private isFormSelected: boolean = false;
 
   private businessObjInPanel: IFormElement;
-  private moddle: IBpmnModdle;
+  private bpmnModdle: IBpmnModdle;
   private modeler: IBpmnModeler;
 
   private forms: Array<IForm>;
@@ -47,7 +47,7 @@ export class BasicsSection implements ISection {
     this.businessObjInPanel = model.elementInPanel.businessObject;
 
     this.modeler = model.modeler;
-    this.moddle = this.modeler.get('moddle');
+    this.bpmnModdle = this.modeler.get('moddle');
 
     this.validationController.subscribe((event: ValidateEvent) => {
       this._validateFormId(event);
@@ -161,7 +161,7 @@ export class BasicsSection implements ISection {
 
   private async _addForm(): Promise<void> {
 
-    const bpmnForm: IForm = this.moddle.create('camunda:FormField',
+    const bpmnForm: IForm = this.bpmnModdle.create('camunda:FormField',
       {
         id: `Form_${this._generateRandomId()}`,
         type: null,
@@ -204,7 +204,7 @@ export class BasicsSection implements ISection {
 
     if (!formElement) {
       const fields: Array<IModdleElement> = [];
-      const extensionFormElement: IModdleElement = this.moddle.create('camunda:FormData', {fields: fields});
+      const extensionFormElement: IModdleElement = this.bpmnModdle.create('camunda:FormData', {fields: fields});
       this.businessObjInPanel.extensionElements.values.push(extensionFormElement);
 
       return this._getFormElement();
@@ -216,11 +216,11 @@ export class BasicsSection implements ISection {
   private _createExtensionElement(): void {
     const values: Array<IFormElement> = [];
     const fields: Array<IForm> = [];
-    const formData: IFormElement = this.moddle.create('camunda:FormData', {fields: fields});
+    const formData: IFormElement = this.bpmnModdle.create('camunda:FormData', {fields: fields});
     values.push(formData);
 
     this.businessObjInPanel.formKey = `Form Key`;
-    const extensionElements: IModdleElement = this.moddle.create('bpmn:ExtensionElements', {values: values});
+    const extensionElements: IModdleElement = this.bpmnModdle.create('bpmn:ExtensionElements', {values: values});
     this.businessObjInPanel.extensionElements = extensionElements;
   }
 
