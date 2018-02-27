@@ -33,7 +33,7 @@ export class BasicsSection implements ISection {
   private customType: string;
   private formElement: IFormElement;
 
-  private fallbackId: string;
+  private previousProcessRefId: string;
   private validationError: boolean = false;
   private validationController: ValidationController;
 
@@ -50,10 +50,10 @@ export class BasicsSection implements ISection {
     this.moddle = this.modeler.get('moddle');
 
     this.validationController.subscribe((event: ValidateEvent) => {
-      this.validateFormId(event);
+      this._validateFormId(event);
     });
 
-    this.init();
+    this._init();
   }
 
   public isSuitableForElement(element: IShape): boolean {
@@ -64,15 +64,15 @@ export class BasicsSection implements ISection {
     return element.businessObject.$type === 'bpmn:UserTask';
   }
 
-  private init(): void {
+  private _init(): void {
     this.isFormSelected = false;
     if (this.canHandleElement) {
-      this.formElement = this.getFormElement();
-      this.reloadForms();
+      this.formElement = this._getFormElement();
+      this._reloadForms();
     }
   }
 
-  private getXML(): string {
+  private _getXML(): string {
     let xml: string;
     this.modeler.saveXML({format: true}, (err: Error, diagrammXML: string) => {
       xml = diagrammXML;
@@ -80,22 +80,22 @@ export class BasicsSection implements ISection {
     return xml;
   }
 
-  private resetId(): void {
-    this.selectedForm.id = this.fallbackId;
+  private _resetId(): void {
+    this.selectedForm.id = this.previousProcessRefId;
     this.validationController.validate();
   }
 
-  private selectForm(): void {
-    this.fallbackId = this.selectedForm.id;
+  private _selectForm(): void {
+    this.previousProcessRefId = this.selectedForm.id;
 
     this.isFormSelected = true;
-    this.selectedType = this.getTypeOrCustomType(this.selectedForm.type);
-    this.selectedIndex = this.getSelectedIndex();
+    this.selectedType = this._getTypeOrCustomType(this.selectedForm.type);
+    this.selectedIndex = this._getSelectedIndex();
 
-    this.setValidationRules();
+    this._setValidationRules();
   }
 
-  private reloadForms(): void {
+  private _reloadForms(): void {
     this.forms = [];
 
     if (!this.formElement || !this.formElement.fields) {
@@ -110,7 +110,7 @@ export class BasicsSection implements ISection {
     }
   }
 
-  private getTypeOrCustomType(type: string): string {
+  private _getTypeOrCustomType(type: string): string {
     if (this.types.includes(type) || type === null) {
       this.customType = '';
       return type;
@@ -120,24 +120,24 @@ export class BasicsSection implements ISection {
     }
   }
 
-  private updateId(): void {
+  private _updateId(): void {
     this.validationController.validate();
     if (this.validationController.errors.length > 0) {
-      this.resetId();
+      this._resetId();
     }
 
     this.formElement.fields[this.selectedIndex].id = this.selectedForm.id;
   }
 
-  private updateDefaultValue(): void {
+  private _updateDefaultValue(): void {
     this.formElement.fields[this.selectedIndex].label = this.selectedForm.label;
   }
 
-  private updateLabel(): void {
+  private _updateLabel(): void {
     this.formElement.fields[this.selectedIndex].defaultValue = this.selectedForm.defaultValue;
   }
 
-  private updateType(): void {
+  private _updateType(): void {
     let type: string;
 
     if (this.selectedType === 'custom type') {
@@ -149,21 +149,21 @@ export class BasicsSection implements ISection {
     this.formElement.fields[this.selectedIndex].type = type;
   }
 
-  private removeForm(): void {
+  private _removeForm(): void {
     this.formElement.fields.splice(this.selectedIndex, 1);
 
     this.isFormSelected = false;
     this.selectedForm = undefined;
     this.selectedIndex = undefined;
 
-    this.reloadForms();
+    this._reloadForms();
   }
 
-  private async addForm(): Promise<void> {
+  private async _addForm(): Promise<void> {
 
     const bpmnForm: IForm = this.moddle.create('camunda:FormField',
       {
-        id: `Form_${this.generateRandomId()}`,
+        id: `Form_${this._generateRandomId()}`,
         type: null,
         label: ``,
         defaultValue: ``,
@@ -177,10 +177,10 @@ export class BasicsSection implements ISection {
     this.forms.push(bpmnForm);
     this.selectedForm = bpmnForm;
 
-    this.selectForm();
+    this._selectForm();
   }
 
-  private getSelectedIndex(): number {
+  private _getSelectedIndex(): number {
     const forms: Array<IForm> = this.formElement.fields;
     for (let index: number = 0; index < forms.length; index++) {
       if (forms[index].id === this.selectedForm.id) {
@@ -189,11 +189,11 @@ export class BasicsSection implements ISection {
     }
   }
 
-  private getFormElement(): IModdleElement {
+  private _getFormElement(): IModdleElement {
     let formElement: IModdleElement;
 
     if (!this.businessObjInPanel.extensionElements) {
-      this.createExtensionElement();
+      this._createExtensionElement();
     }
 
     for (const extensionValue of this.businessObjInPanel.extensionElements.values) {
@@ -207,13 +207,13 @@ export class BasicsSection implements ISection {
       const extensionFormElement: IModdleElement = this.moddle.create('camunda:FormData', {fields: fields});
       this.businessObjInPanel.extensionElements.values.push(extensionFormElement);
 
-      return this.getFormElement();
+      return this._getFormElement();
     }
 
     return formElement;
   }
 
-  private createExtensionElement(): void {
+  private _createExtensionElement(): void {
     const values: Array<IFormElement> = [];
     const fields: Array<IForm> = [];
     const formData: IFormElement = this.moddle.create('camunda:FormData', {fields: fields});
@@ -224,7 +224,7 @@ export class BasicsSection implements ISection {
     this.businessObjInPanel.extensionElements = extensionElements;
   }
 
-  private generateRandomId(): string {
+  private _generateRandomId(): string {
     let randomId: string = '';
     const possible: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
@@ -235,35 +235,35 @@ export class BasicsSection implements ISection {
     return randomId;
   }
 
-  private deleteExtensions(): void {
+  private _deleteExtensions(): void {
     delete this.businessObjInPanel.extensionElements;
     delete this.businessObjInPanel.formKey;
   }
 
-  private clearFormKey(): void {
+  private _clearFormKey(): void {
     this.businessObjInPanel.formKey = '';
   }
 
-  private clearId(): void {
+  private _clearId(): void {
     this.selectedForm.id = '';
 
     this.validationController.validate();
-    this.updateId();
+    this._updateId();
   }
 
-  private clearType(): void {
+  private _clearType(): void {
     this.customType = '';
   }
 
-  private clearLabel(): void {
+  private _clearLabel(): void {
     this.selectedForm.label = '';
   }
 
-  private clearValue(): void {
+  private _clearValue(): void {
     this.selectedForm.defaultValue = '';
   }
 
-  private validateFormId(event: ValidateEvent): void {
+  private _validateFormId(event: ValidateEvent): void {
     if (event.type !== 'validate') {
       return;
     }
@@ -283,7 +283,7 @@ export class BasicsSection implements ISection {
     }
   }
 
-  private isIdUnique(id: string): boolean {
+  private _formIdIsUnique(id: string): boolean {
     const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
     const formsWithSameId: Array<IShape> =  elementRegistry.filter((element: IShape) => {
       const currentElement: IModdleElement = element.businessObject;
@@ -308,15 +308,15 @@ export class BasicsSection implements ISection {
     return formsWithSameId.length === 0;
   }
 
-  private setValidationRules(): void {
+  private _setValidationRules(): void {
     ValidationRules
       .ensure((form: IForm) => form.id)
       .displayName('formId')
       .required()
       .withMessage(`Id cannot be blank.`)
       .then()
-      .satisfies((id: string) => this.isIdUnique(id))
-      .withMessage(`Id already exists.`)
+      .satisfies((id: string) => this._formIdIsUnique(id))
+        .withMessage(`Id already exists.`)
       .on(this.selectedForm);
   }
 }

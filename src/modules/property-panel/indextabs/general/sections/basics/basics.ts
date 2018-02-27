@@ -21,7 +21,7 @@ export class BasicsSection implements ISection {
   private modeler: IBpmnModeler;
   private moddle: IBpmnModdle;
   private elementInPanel: IShape;
-  private previousId: string;
+  private previousProcessRefId: string;
   private validationError: boolean = false;
   private validationController: ValidationController;
 
@@ -35,24 +35,24 @@ export class BasicsSection implements ISection {
   public activate(model: IPageModel): void {
 
     if (this.validationError) {
-      this.businessObjInPanel.id = this.previousId;
+      this.businessObjInPanel.id = this.previousProcessRefId;
       this.validationController.validate();
     }
 
     this.elementInPanel = model.elementInPanel;
     this.businessObjInPanel = model.elementInPanel.businessObject;
-    this.previousId = model.elementInPanel.businessObject.id;
+    this.previousProcessRefId = model.elementInPanel.businessObject.id;
     this.modeling = model.modeler.get('modeling');
     this.moddle = model.modeler.get('moddle');
     this.modeler = model.modeler;
 
     this.validationController.subscribe((event: ValidateEvent) => {
-      this.validateId(event);
+      this._validateFormId(event);
     });
 
-    this.init();
+    this._init();
 
-    this.checkIsIdUnique();
+    this._setValidationRules();
   }
 
   public isSuitableForElement(element: IShape): boolean {
@@ -62,7 +62,7 @@ export class BasicsSection implements ISection {
     return true;
   }
 
-  private init(): void {
+  private _init(): void {
     if (!this.businessObjInPanel) {
       return;
     }
@@ -73,7 +73,7 @@ export class BasicsSection implements ISection {
     }
   }
 
-  private getXML(): string {
+  private _getXML(): string {
     let xml: string;
     this.modeler.saveXML({format: true}, (err: Error, diagrammXML: string) => {
       xml = diagrammXML;
@@ -81,7 +81,7 @@ export class BasicsSection implements ISection {
     return xml;
   }
 
-  private updateDocumentation(): void {
+  private _updateDocumentation(): void {
     this.elementInPanel.documentation = [];
 
     const documentation: IModdleElement = this.moddle.create('bpmn:Documentation',
@@ -93,29 +93,29 @@ export class BasicsSection implements ISection {
     });
   }
 
-  private clearId(): void {
+  private _clearId(): void {
     this.businessObjInPanel.id = '';
     this.validationController.validate();
-    this.updateId();
+    this._updateId();
   }
 
-  private clearName(): void {
+  private _clearName(): void {
     this.businessObjInPanel.name = '';
-    this.updateName();
+    this._updateName();
   }
 
-  private clearDocumentation(): void {
+  private _clearDocumentation(): void {
     this.elementDocumentation = '';
-    this.updateDocumentation();
+    this._updateDocumentation();
   }
 
-  private updateName(): void {
+  private _updateName(): void {
     this.modeling.updateProperties(this.elementInPanel, {
       name: this.businessObjInPanel.name,
     });
   }
 
-  private updateId(): void {
+  private _updateId(): void {
     if (this.validationController.errors.length > 0) {
       return;
     }
@@ -125,7 +125,7 @@ export class BasicsSection implements ISection {
     });
   }
 
-  private validateId(event: ValidateEvent): void {
+  private _validateFormId(event: ValidateEvent): void {
     if (event.type !== 'validate') {
       return;
     }
@@ -143,7 +143,7 @@ export class BasicsSection implements ISection {
     }
   }
 
-  private isIdUnique(id: string): boolean {
+  private _formIdIsUnique(id: string): boolean {
     const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
     const elementsWithSameId: Array<IShape> =  elementRegistry.filter((element: IShape) => {
       if (element.businessObject !== this.businessObjInPanel) {
@@ -157,14 +157,14 @@ export class BasicsSection implements ISection {
     return elementsWithSameId.length === 0;
   }
 
-  private checkIsIdUnique(): void {
+  private _setValidationRules(): void {
     ValidationRules
       .ensure((businessObject: IModdleElement) => businessObject.id)
       .displayName('elementId')
       .required()
         .withMessage(`Id cannot be blank.`)
       .then()
-      .satisfies((id: string) => this.isIdUnique(id))
+      .satisfies((id: string) => this._formIdIsUnique(id))
         .withMessage(`Id already exists.`)
       .on(this.businessObjInPanel);
   }

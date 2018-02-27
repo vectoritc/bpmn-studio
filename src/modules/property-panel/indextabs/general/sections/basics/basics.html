@@ -5,18 +5,18 @@
     <div class="section__content">
       <div class="section__btn-group">
         <label class="section__input-label">Id: </label>
-        <input type="text" id="elementId" class="form-control" value.bind="businessObjInPanel.id & validateOnChange" change.delegate="updateId()">
-        <span class="glyphicon glyphicon-remove-circle section__btn-group--clear-btn" click.delegate="clearId()"></span>
+        <input type="text" id="elementId" class="form-control" value.bind="businessObjInPanel.id & validateOnChange" change.delegate="_updateId()">
+        <span class="glyphicon glyphicon-remove-circle section__btn-group--clear-btn" click.delegate="_clearId()"></span>
       </div>
       <div class="section__btn-group">
         <label class="section__input-label">Name: </label>
-        <input type="text" class="form-control" value.bind="businessObjInPanel.name" change.delegate="updateName()">
-        <span class="glyphicon glyphicon-remove-circle section__btn-group--clear-btn" click.delegate="clearName()"></span>
+        <input type="text" class="form-control" value.bind="businessObjInPanel.name" change.delegate="_updateName()">
+        <span class="glyphicon glyphicon-remove-circle section__btn-group--clear-btn" click.delegate="_clearName()"></span>
       </div>
       <div class="section__btn-group">
         <label class="section__input-label">Documentation: </label>
-        <input type="text" class="form-control" value.bind="elementDocumentation" change.delegate="updateDocumentation()">
-        <span class="glyphicon glyphicon-remove-circle section__btn-group--clear-btn" click.delegate="clearDocumentation()"></span>
+        <input type="text" class="form-control" value.bind="elementDocumentation" change.delegate="_updateDocumentation()">
+        <span class="glyphicon glyphicon-remove-circle section__btn-group--clear-btn" click.delegate="_clearDocumentation()"></span>
       </div>
     </div>
     <div class="section__special">
