@@ -110,13 +110,24 @@ export class PoolSection implements ISection {
     return elementsWithSameId.length === 0;
   }
 
+  private isProcessIdUnique(id: string): boolean {
+    const elementIds: Array<string> = this.modeler._definitions.rootElements.map((rootElement: IModdleElement) => {
+      return rootElement.id;
+    });
+
+    const currentId: number = elementIds.indexOf(this.businessObjInPanel.processRef.id);
+    elementIds.splice(currentId, 1);
+
+    return !elementIds.includes(id);
+  }
+
   private setValidationRules(): void {
     ValidationRules.ensure((businessObject: IModdleElement) => businessObject.id)
     .displayName('processId')
     .required()
       .withMessage(`Process-Id cannot be blank.`)
     .then()
-    .satisfies((id: string) => this.isIdUnique(id))
+    .satisfies((id: string) => this.isIdUnique(id) && this.isProcessIdUnique(id))
       .withMessage(`Process-Id already exists.`)
     .on(this.businessObjInPanel.processRef);
   }
