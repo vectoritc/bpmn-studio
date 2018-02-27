@@ -22,6 +22,11 @@
     "electron-build": "build",
     "electron-shipit": "build -p always"
   },
+  "build": {
+    "extraFiles": [
+      "config/**/*"
+    ]
+  },
   "files": [
     "scripts",
     "index.html",
@@ -37,6 +42,7 @@
   "dependencies": {
     "@process-engine/skeleton-electron": "^1.0.0-pre4",
     "aurelia-validation": "^1.1.2",
+    "electron-is-dev": "^0.3.0",
     "electron-notifications": "^1.0.0",
     "electron-updater": "^2.19.1",
     "node-http-server": "^8.1.2",

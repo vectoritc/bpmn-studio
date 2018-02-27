@@ -3,6 +3,15 @@ const autoUpdater = require('electron-updater').autoUpdater;
 const path = require('path');
 const app = electron.app;
 const notifier = require('electron-notifications');
+const isDev = require('electron-is-dev');
+
+if (!isDev) {
+  // __dirname is ./bpmn-studio.app/Contents/Resources/app.asar/electron_app
+  // config is in ./bpmn-studio.app/Contents/config
+  process.env.CONFIG_PATH = path.join(__dirname, '..', '..', '..', 'config');
+  process.env.NODE_ENV = 'development';
+}
+
 const pe = require('@process-engine/skeleton-electron');
 
 let mainWindow = null;
