@@ -9,6 +9,10 @@ import {
   IShape,
 } from '../../../../../../contracts';
 
+import {inject} from 'aurelia-framework';
+import {ValidateEvent, ValidationController, ValidationRules} from 'aurelia-validation';
+
+@inject(ValidationController)
 export class BasicsSection implements ISection {
 
   public path: string = '/sections/basics/basics';
@@ -18,13 +22,22 @@ export class BasicsSection implements ISection {
   private moddle: IBpmnModdle;
   private elementInPanel: IShape;
   private previousId: string;
-  private idErrors: Array<String> = [];
-  private idIsInvalid: Boolean = false;
+  private validationError: boolean = false;
+  private validationController: ValidationController;
 
   public businessObjInPanel: IModdleElement;
   public elementDocumentation: string;
 
+  constructor(controller?: ValidationController) {
+    this.validationController = controller;
+  }
+
   public activate(model: IPageModel): void {
+
+    if (this.validationError) {
+      this.businessObjInPanel.id = this.previousId;
+      this.validationController.validate();
+    }
 
     this.elementInPanel = model.elementInPanel;
     this.businessObjInPanel = model.elementInPanel.businessObject;
@@ -33,9 +46,13 @@ export class BasicsSection implements ISection {
     this.moddle = model.modeler.get('moddle');
     this.modeler = model.modeler;
 
+    this.validationController.subscribe((event: ValidateEvent) => {
+      this.validateId(event);
+    });
+
     this.init();
 
-    this.checkId();
+    this.checkIsIdUnique();
   }
 
   public isSuitableForElement(element: IShape): boolean {
@@ -78,7 +95,7 @@ export class BasicsSection implements ISection {
 
   private clearId(): void {
     this.businessObjInPanel.id = '';
-    this.checkId();
+    this.validationController.validate();
     this.updateId();
   }
 
@@ -99,20 +116,34 @@ export class BasicsSection implements ISection {
   }
 
   private updateId(): void {
-    this.checkId();
+    if (this.validationController.errors.length > 0) {
+      return;
+    }
+
     this.modeling.updateProperties(this.elementInPanel, {
       id: this.businessObjInPanel.id,
     });
   }
 
-  private resetId(): void {
-    this.businessObjInPanel.id = this.previousId;
+  private validateId(event: ValidateEvent): void {
+    if (event.type !== 'validate') {
+      return;
+    }
+    this.validationError = false;
+    for (const result of event.results) {
+      if (result.rule.property.displayName !== 'elementId') {
+        continue;
+      }
+      if (result.valid === false) {
+        this.validationError = true;
+        document.getElementById(result.rule.property.displayName).style.border = '2px solid red';
+      } else {
+        document.getElementById(result.rule.property.displayName).style.border = '';
+      }
+    }
   }
 
-  private checkId(): void {
-    this.idErrors = [];
-    this.idIsInvalid = false;
-
+  private isIdUnique(id: string): boolean {
     const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
     const elementsWithSameId: Array<IShape> =  elementRegistry.filter((element: IShape) => {
       if (element.businessObject !== this.businessObjInPanel) {
@@ -123,19 +154,18 @@ export class BasicsSection implements ISection {
       return false;
     });
 
-    const hasSameIdWithOtherElements: Boolean = elementsWithSameId.length > 0;
-    const idIsEmpty: Boolean = this.businessObjInPanel.id.length <= 0;
-    if (hasSameIdWithOtherElements) {
-      this.idErrors.push('Id is already existing!');
-      this.idIsInvalid = true;
-    }
-    if (idIsEmpty) {
-      this.idErrors.push('Id is empty!');
-      this.idIsInvalid = true;
-    }
+    return elementsWithSameId.length === 0;
+  }
 
-    if (this.idIsInvalid) {
-      this.resetId();
-    }
+  private checkIsIdUnique(): void {
+    ValidationRules
+      .ensure((businessObject: IModdleElement) => businessObject.id)
+      .displayName('elementId')
+      .required()
+        .withMessage(`Id cannot be blank.`)
+      .then()
+      .satisfies((id: string) => this.isIdUnique(id))
+        .withMessage(`Id already exists.`)
+      .on(this.businessObjInPanel);
   }
 }
