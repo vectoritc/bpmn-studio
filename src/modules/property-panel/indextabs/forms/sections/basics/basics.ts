@@ -33,7 +33,7 @@ export class BasicsSection implements ISection {
   private customType: string;
   private formElement: IFormElement;
 
-  private previousProcessRefId: string;
+  private previousFormId: string;
   private validationError: boolean = false;
   private validationController: ValidationController;
 
@@ -81,12 +81,13 @@ export class BasicsSection implements ISection {
   }
 
   private _resetId(): void {
-    this.selectedForm.id = this.previousProcessRefId;
+    this.selectedForm.id = this.previousFormId;
     this.validationController.validate();
   }
 
   private _selectForm(): void {
-    this.previousProcessRefId = this.selectedForm.id;
+    this.previousFormId = this.selectedForm.id;
+    this.validationController.validate();
 
     this.isFormSelected = true;
     this.selectedType = this._getTypeOrCustomType(this.selectedForm.type);
@@ -124,6 +125,10 @@ export class BasicsSection implements ISection {
     this.validationController.validate();
     if (this.validationController.errors.length > 0) {
       this._resetId();
+    }
+
+    if (this.selectedForm.id === '') {
+      this.selectedForm.id = this.previousFormId;
     }
 
     this.formElement.fields[this.selectedIndex].id = this.selectedForm.id;
@@ -246,9 +251,8 @@ export class BasicsSection implements ISection {
 
   private _clearId(): void {
     this.selectedForm.id = '';
-
-    this.validationController.validate();
     this._updateId();
+    this.validationController.validate();
   }
 
   private _clearType(): void {
