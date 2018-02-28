@@ -125,7 +125,7 @@ export class BpmnIo {
     return this.modeler.get('selection')._selectedElements;
   }
 
-  private togglePanel(): void {
+  public togglePanel(): void {
     if (this.toggled === true) {
       this.panel.style.display = 'inline';
       this.toggleBtn.style.right = `${this.toggleBtnRight}px`;
@@ -141,7 +141,7 @@ export class BpmnIo {
     }
   }
 
-  private resize(): void {
+  public resize(): void {
     this.isResizeClicked = true;
     document.addEventListener('mousemove', (event: any) => {
       if (this.isResizeClicked === true) {
