@@ -106,7 +106,9 @@ export class ProcessDefDetail {
       { move: (fillColor: any): void => this.updateFillColor(fillColor) },
     ));
 
-    // as soon as the view-model is fully attached
+    // setTimeout() gives us the callback queue, that causes
+    // the initLoadingFinished boolean to become true as late as possible
+    // so as soon as the view-model is fully attached
     // the bpmn-xml-view module gets attached and calls
     // the highlight method
     setTimeout(() => {
