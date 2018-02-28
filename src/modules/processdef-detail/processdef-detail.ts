@@ -1,5 +1,6 @@
 import {ConsumerClient} from '@process-engine/consumer_client';
 import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
+import {bindingMode} from 'aurelia-binding';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
@@ -49,6 +50,7 @@ export class ProcessDefDetail {
   @bindable() public uri: string;
   @bindable() public name: string;
   @bindable() public startedProcessId: string;
+  @bindable({ defaultBindingMode: bindingMode.oneWay }) public initialLoadingFinished: boolean = false;
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
@@ -103,6 +105,10 @@ export class ProcessDefDetail {
       settings,
       { move: (fillColor: any): void => this.updateFillColor(fillColor) },
     ));
+
+    setTimeout(() => {
+      this.initialLoadingFinished = true;
+    }, 0);
   }
 
   public detached(): void {

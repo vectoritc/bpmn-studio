@@ -1,3 +1,4 @@
+import {bindingMode} from 'aurelia-binding';
 import {bindable} from 'aurelia-framework';
 import * as hljs from 'highlight.js';
 import 'highlightjs-line-numbers.js';
@@ -14,11 +15,26 @@ export class BpmnXmlView {
 
   private codeElement: HTMLElement;
   @bindable() public xml: string;
+  @bindable({ defaultBindingMode: bindingMode.oneWay }) public newXML: string;
 
   public attached(): void {
-    this.xml = beautify(this.xml);
-    highlightEngine.highlightBlock(this.codeElement);
-    highlightEngine.lineNumbersBlock(this.codeElement);
+    if (this.codeElement) {
+      this.highlight();
+    }
+  }
+
+  public xmlChanged(): void {
+    if (this.codeElement) {
+      this.highlight();
+    }
+  }
+
+  public highlight(): void {
+    this.newXML = beautify(this.xml);
+    setTimeout(() => {
+      highlightEngine.highlightBlock(this.codeElement);
+      highlightEngine.lineNumbersBlock(this.codeElement);
+    }, 0);
   }
 
 }
