@@ -6,8 +6,12 @@
     <div ref="canvasModel" id="canvas">
     </div>
     <div>
-      <button show.bind="!toggled" ref="resizeBtn" class="resize_btn" title="Resize" click.delegate="resize()">Resize</button>      
-      <button ref="toggleBtn" class="toggle_panel" title="Toggle PropertyPanel" click.delegate="togglePanel()">${ !toggled ? 'Hide' : 'Show'}</button>
+      <div class="resize_div" ref="resizeBtn">
+        <button show.bind="!toggled" class="resize_btn" title="Resize" click.delegate="resize()">Resize</button>
+      </div>
+      <div class="toggle_div" ref="toggleBtn">
+        <button class="toggle_panel" title="Toggle PropertyPanel" click.delegate="togglePanel()">${ !toggled ? 'Hide' : 'Show'}</button>
+      </div>
       <property-panel ref="panel" id="js-properties-panel" modeler.bind="modeler" xml.bind="xml"></property-panel>
     </div>
   </div>
