@@ -1,11 +1,16 @@
+.section {
+  width: 100%;
+  display: table;
+}
+
 .section__content {
-  padding-right: 5px;
-  padding-left: 10px;
+  display: table-cell;
+  width: auto;
 }
 
 .section__special {
-  padding-left: 0;
-  padding-top: 25px;
+  display: table-cell;
+  width: 30px
 }
 
 .section__btn-group {

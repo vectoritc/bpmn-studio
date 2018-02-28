@@ -1,14 +1,15 @@
 import {bindable} from 'aurelia-framework';
-import {IBpmnModdle,
-        IBpmnModeler,
-        IDefinition,
-        IElementRegistry,
-        IEvent,
-        IEventBus,
-        IIndextab,
-        IModdleElement,
-        IModeling,
-        IShape} from '../../contracts';
+import {
+  IBpmnModdle,
+  IBpmnModeler,
+  IDefinition,
+  IElementRegistry,
+  IEvent,
+  IEventBus,
+  IIndextab,
+  IModdleElement,
+  IShape,
+} from '../../contracts';
 import {Extensions} from './indextabs/extensions/extensions';
 import {Forms} from './indextabs/forms/forms';
 import {General} from './indextabs/general/general';
@@ -28,6 +29,7 @@ export class PropertyPanel {
   private eventBus: IEventBus;
   private currentIndextabTitle: string = this.generalIndextab.title;
   private indextabs: Array<IIndextab>;
+  private selectedElementId: string;
 
   public attached(): void {
     this.moddle = this.modeler.get('moddle');
@@ -43,7 +45,6 @@ export class PropertyPanel {
     this.checkIndexTabSuitability();
 
     this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
-
       const elementWasClickedOn: boolean = event.type === 'element.clicked';
       const elementIsValidShape: boolean = event.type === 'shape.changed' && event.element.type !== 'label';
 
@@ -51,12 +52,14 @@ export class PropertyPanel {
 
       if (elementWasClickedOn || elementIsShapeInPanel) {
         this.elementInPanel = event.element;
+        this.selectedElementId = this.elementInPanel.businessObject.id;
       }
 
       const selectedElementChanged: boolean = event.type === 'selection.changed' && event.newSelection.length !== 0;
 
       if (selectedElementChanged) {
         this.elementInPanel = event.newSelection[0];
+        this.selectedElementId = this.elementInPanel.businessObject.id;
       }
 
       this.updateIndexTabsSuitability();

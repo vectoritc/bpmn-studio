@@ -1,17 +1,22 @@
 .property-panel {
-  margin-top: 10px;
-  margin-right: 10px;
+  padding: 20px 10px 20px 10px;
+  width: 100%;
 }
 
 .indextab-dropdown {
-  margin-bottom: 20px;
+  margin: 15px 0 20px 0;
+}
+
+.element-id-label {
   margin-left: 10px;
+  font-size: 15px;
 }
 
-.indextab-button {
-  width: 295.75px;
+.indextab-dropdown__button {
+  width: 100%;
 }
 
-.dropdown_button {
-  width: 34px;
+.indextab-dropdown__glyhicon {
+  float: right;
+  top: 4px;
 }

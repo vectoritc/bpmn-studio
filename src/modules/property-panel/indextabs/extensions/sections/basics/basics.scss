@@ -1,19 +1,30 @@
 .addPropertyButton {
-  position: absolute;
   width: 24px;
   height: 24px;
-  right: 10px;
-  top: 75px;
 }
 
 .removePropertyButton {
-  position: absolute;
-  right: 10px;
   width: 24px;
   height: 24px;
+  margin-top: 20px;
+  margin-left: 5px;
 }
 
-.input_field {
+.extensions-remove {
   position: relative;
-  width: 146px;
+  top: 31px;
+}
+
+.extensions-input {
+  margin-top: 10px;
+}
+
+.extensions-input--name {
+  width: 50%;
+  padding-right: 5px;
+}
+
+.extensions-input--value {
+  width: 50%;
+  padding-left: 5px;
 }
