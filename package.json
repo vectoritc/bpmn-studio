@@ -19,7 +19,7 @@
     "lint": "tslint --project .",
     "test": "echo 'Currently there a no tests specified'",
     "electron-start-dev": "electron electron_app/electron.js",
-    "electron-build": "build",
+    "electron-build": "build -mwl",
     "electron-shipit": "build -p always"
   },
   "build": {
