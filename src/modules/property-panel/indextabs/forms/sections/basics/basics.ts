@@ -317,7 +317,7 @@ export class BasicsSection implements ISection {
         this.validationError = true;
         document.getElementById(result.rule.property.displayName).style.border = '2px solid red';
       } else {
-        document.getElementById(result.rule.property.displayName).style.border = '2px solid green';
+        document.getElementById(result.rule.property.displayName).style.border = '';
       }
     }
   }
