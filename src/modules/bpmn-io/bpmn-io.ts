@@ -8,19 +8,24 @@ import {ElementDistributeOptions,
         IDefinition,
         IModdleElement,
         IModeling,
-        IShape} from '../../contracts/index';
+        IShape,
+        resizeOptions} from '../../contracts/index';
 import environment from '../../environment';
 
 export class BpmnIo {
 
   private toggled: boolean = false;
   private toggleBtn: HTMLButtonElement;
+  private resizeBtn: HTMLButtonElement;
   private panel: HTMLElement;
   private canvasModel: HTMLDivElement;
   private refresh: boolean = true;
+  private isResizeClicked: boolean = false;
 
-  private toggleBtnRight: string = '337px';
-  private canvasRight: string = '350px';
+  private toggleBtnRight: number = 337;
+  private resizeBtnRight: number = 331;
+  private canvasRight: number = 350;
+  private minWidth: number = environment.propertyPanel.minWidth;
 
   @bindable({changeHandler: 'xmlChanged'}) public xml: string;
   public modeler: IBpmnModeler;
@@ -123,16 +128,43 @@ export class BpmnIo {
   private togglePanel(): void {
     if (this.toggled === true) {
       this.panel.style.display = 'inline';
-      this.toggleBtn.style.right = this.toggleBtnRight;
-      this.toggleBtn.textContent = 'Hide';
-      this.canvasModel.style.right = this.canvasRight;
+      this.toggleBtn.style.right = `${this.toggleBtnRight}px`;
+      this.resizeBtn.style.right = `${this.resizeBtnRight}px`;
+      this.canvasModel.style.right = `${this.canvasRight}px`;
       this.toggled = false;
     } else {
       this.panel.style.display = 'none';
       this.toggleBtn.style.right = '-16px';
-      this.toggleBtn.textContent = 'Show';
+      this.resizeBtn.style.right = '-18px';
       this.canvasModel.style.right = '1px';
       this.toggled = true;
     }
+  }
+
+  private resize(): void {
+    this.isResizeClicked = true;
+    document.addEventListener('mousemove', (event: any) => {
+      if (this.isResizeClicked === true) {
+        let currentWidth: number = document.body.clientWidth - event.clientX;
+
+        if (currentWidth < this.minWidth) {
+          currentWidth = this.minWidth;
+        }
+
+        this.toggleBtnRight = currentWidth - resizeOptions.toggleBtn;
+        this.resizeBtnRight = currentWidth - resizeOptions.resizeBtn;
+        this.canvasRight = currentWidth;
+
+        this.panel.style.width = `${currentWidth}px`;
+        this.toggleBtn.style.right = `${this.toggleBtnRight}px`;
+        this.resizeBtn.style.right = `${this.resizeBtnRight}px`;
+        this.canvasModel.style.right = `${this.canvasRight}px`;
+      }
+    });
+
+    document.addEventListener('click', (event: any) => {
+      this.isResizeClicked = false;
+    }, {once: true});
+
   }
 }
