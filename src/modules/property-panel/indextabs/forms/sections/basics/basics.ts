@@ -67,6 +67,15 @@ export class BasicsSection implements ISection {
   }
 
   private _validateOnDetach(): void {
+    if (!this.validationError) {
+      return;
+    }
+
+    this._resetIdOnSelectedOrPrevious();
+
+    this.validationController.validate();
+    this._updateId();
+
     if (this.validationError) {
       this._resetIdOnSelectedOrPrevious();
 
