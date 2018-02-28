@@ -167,6 +167,14 @@ export class BasicsSection implements ISection {
     return elementsWithSameId.length === 0;
   }
 
+  private _isProcessIdUnique(id: string): boolean {
+    const elementIds: Array<string> = this.modeler._definitions.rootElements.map((rootElement: IModdleElement) => {
+      return rootElement.id;
+    });
+
+    return !elementIds.includes(id);
+  }
+
   private _setValidationRules(): void {
     ValidationRules
       .ensure((businessObject: IModdleElement) => businessObject.id)
@@ -174,7 +182,7 @@ export class BasicsSection implements ISection {
       .required()
         .withMessage(`Id cannot be blank.`)
       .then()
-      .satisfies((id: string) => this._formIdIsUnique(id))
+      .satisfies((id: string) => this._formIdIsUnique(id) && this._isProcessIdUnique(id))
         .withMessage(`Id already exists.`)
       .on(this.businessObjInPanel);
   }

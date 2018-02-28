@@ -100,12 +100,7 @@ export class PoolSection implements ISection {
   private _formIdIsUnique(id: string): boolean {
     const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
     const elementsWithSameId: Array<IShape> =  elementRegistry.filter((element: IShape) => {
-      if (element.businessObject !== this.businessObjInPanel) {
-        if (element.type !== 'label') {
-          return element.businessObject.id === this.businessObjInPanel.processRef.id;
-        }
-      }
-      return false;
+        return element.businessObject.id === this.businessObjInPanel.processRef.id;
     });
 
     return elementsWithSameId.length === 0;
