@@ -28,6 +28,7 @@ export class BpmnIo {
   private resizeBtnRight: number = 331;
   private canvasRight: number = 350;
   private minWidth: number = environment.propertyPanel.minWidth;
+  private maxWidth: number = document.body.clientWidth - environment.propertyPanel.maxWidth;
 
   @bindable({changeHandler: 'xmlChanged'}) public xml: string;
   public modeler: IBpmnModeler;
@@ -151,6 +152,8 @@ export class BpmnIo {
 
         if (currentWidth < this.minWidth) {
           currentWidth = this.minWidth;
+        } else if (currentWidth > this.maxWidth) {
+          currentWidth = this.maxWidth;
         }
 
         this.toggleBtnRight = currentWidth - toggleBtnWidth;

@@ -26,5 +26,6 @@ export default {
   },
   propertyPanel: {
     minWidth: 190,
+    maxWidth: 150,
   },
 };
