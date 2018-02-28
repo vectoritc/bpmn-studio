@@ -1,7 +1,18 @@
 const electron = require('electron');
 const autoUpdater = require('electron-updater').autoUpdater;
+const path = require('path');
 const app = electron.app;
 const notifier = require('electron-notifications');
+const isDev = require('electron-is-dev');
+
+if (!isDev) {
+  const userDataFolder = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : '/var/local');
+  process.env.datastore__service__data_sources__default__adapter__databasePath = path.join(userDataFolder, 'process-engine_database');
+
+  process.env.CONFIG_PATH = path.join(__dirname, '..', '..', '..', 'config');
+}
+
+const pe = require('@process-engine/skeleton-electron');
 
 let mainWindow = null;
 
@@ -13,7 +24,11 @@ function createWindow () {
     return;
   }
 
-  mainWindow = new electron.BrowserWindow({width: 800, height: 600});
+  mainWindow = new electron.BrowserWindow({
+    width: 800,
+    height: 600,
+    title: "BPMN-Studio",
+  });
 
   mainWindow.loadURL(`file://${__dirname}/../index.html`);
   mainWindow.on('closed', () => {
