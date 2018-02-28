@@ -8,9 +8,11 @@ import {ElementDistributeOptions,
         IDefinition,
         IModdleElement,
         IModeling,
-        IShape,
-        resizeOptions} from '../../contracts/index';
+        IShape} from '../../contracts/index';
 import environment from '../../environment';
+
+const toggleBtnWidth: number = 13;
+const resizeBtnWidth: number = 19;
 
 export class BpmnIo {
 
@@ -151,8 +153,8 @@ export class BpmnIo {
           currentWidth = this.minWidth;
         }
 
-        this.toggleBtnRight = currentWidth - resizeOptions.toggleBtn;
-        this.resizeBtnRight = currentWidth - resizeOptions.resizeBtn;
+        this.toggleBtnRight = currentWidth - toggleBtnWidth;
+        this.resizeBtnRight = currentWidth - resizeBtnWidth;
         this.canvasRight = currentWidth;
 
         this.panel.style.width = `${currentWidth}px`;
