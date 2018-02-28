@@ -157,11 +157,14 @@ export class BasicsSection implements ISection {
 
   private _updateId(): void {
     this.validationController.validate();
-    if (this.validationController.errors.length > 0) {
+
+    const hasValidationErrors: boolean = this.validationController.errors.length > 0;
+    if (hasValidationErrors) {
       this._resetId();
     }
 
-    if (this.selectedForm === null || this.selectedForm.id === '') {
+    const isSelectedFormIdNotExisting: boolean = this.selectedForm === null || this.selectedForm.id === '';
+    if (isSelectedFormIdNotExisting) {
       return;
     }
 
@@ -323,15 +326,16 @@ export class BasicsSection implements ISection {
   }
 
   private _hasFormSameIdAsSelected(forms: Array<IForm>): boolean {
-    for (const form of forms) {
-      if (form.id === this.selectedForm.id) {
-        if (form !== this.selectedForm) {
-          return true;
-        }
-      }
-    }
 
-    return false;
+    const unselectedFormWithSameId: IForm = forms.find((form: IForm) => {
+
+      const formHasSameIdAsSelectedForm: boolean = form.id === this.selectedForm.id;
+      const formIsNotSelectedForm: boolean = form !== this.selectedForm;
+
+      return formHasSameIdAsSelectedForm && formIsNotSelectedForm;
+    });
+
+    return unselectedFormWithSameId !== undefined;
   }
 
   private _getFormDataFromBusinessObject(businessObject: IModdleElement): IFormElement {
@@ -342,27 +346,24 @@ export class BasicsSection implements ISection {
     }
 
     const extensions: Array<IModdleElement> = extensionElement.values;
-    for (const extension of extensions) {
+    return extensions.find((extension: IModdleElement) => {
       const isFormData: boolean = extension.$type === 'camunda:FormData';
-      if (isFormData) {
-        return extension;
-      }
-    }
 
-    return;
+      return isFormData;
+    });
   }
 
   private _getFormsById(id: string): Array<IShape> {
     const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
 
     const formsWithId: Array<IShape> = elementRegistry.filter((element: IShape) => {
-      const currentBusinessObj: IModdleElement = element.businessObject;
+      const currentBusinessObject: IModdleElement = element.businessObject;
 
-      const isNoUserTask: boolean = currentBusinessObj.$type !== 'bpmn:UserTask';
+      const isNoUserTask: boolean = currentBusinessObject.$type !== 'bpmn:UserTask';
       if (isNoUserTask) {
         return false;
       }
-      const formData: IFormElement = this._getFormDataFromBusinessObject(currentBusinessObj);
+      const formData: IFormElement = this._getFormDataFromBusinessObject(currentBusinessObject);
       if (formData === undefined) {
         return false;
       }
@@ -387,10 +388,10 @@ export class BasicsSection implements ISection {
       .ensure((form: IForm) => form.id)
       .displayName('formId')
       .required()
-      .withMessage(`Id cannot be blank.`)
+      .withMessage('Id cannot be blank.')
       .then()
       .satisfies((id: string) => this._formIdIsUnique(id))
-      .withMessage(`Id already exists.`)
+      .withMessage('Id already exists.')
       .on(this.selectedForm);
   }
 }

@@ -155,13 +155,21 @@ export class BasicsSection implements ISection {
 
   private _formIdIsUnique(id: string): boolean {
     const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
+
     const elementsWithSameId: Array<IShape> =  elementRegistry.filter((element: IShape) => {
-      if (element.businessObject !== this.businessObjInPanel) {
-        if (element.type !== 'label') {
-          return element.businessObject.id === this.businessObjInPanel.id;
-        }
+      const elementIsBusinessObjectInPanel: boolean = element.businessObject === this.businessObjInPanel;
+      if (elementIsBusinessObjectInPanel) {
+        return false;
       }
-      return false;
+
+      const elementIsOfTypeLabel: boolean = element.type === 'label';
+      if (elementIsOfTypeLabel) {
+        return false;
+      }
+
+      const elementHasSameId: boolean = element.businessObject.id === this.businessObjInPanel.id;
+
+      return elementHasSameId;
     });
 
     return elementsWithSameId.length === 0;
@@ -180,10 +188,10 @@ export class BasicsSection implements ISection {
       .ensure((businessObject: IModdleElement) => businessObject.id)
       .displayName('elementId')
       .required()
-        .withMessage(`Id cannot be blank.`)
+        .withMessage('Id cannot be blank.')
       .then()
       .satisfies((id: string) => this._formIdIsUnique(id) && this._isProcessIdUnique(id))
-        .withMessage(`Id already exists.`)
-      .on(this.businessObjInPanel);
+        .withMessage('Id already exists.')
+      .on(this.businessObjInPanel); ,
   }
 }

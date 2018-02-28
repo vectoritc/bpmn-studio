@@ -1,6 +1,6 @@
 import {inject} from 'aurelia-framework';
 import {ValidateEvent, ValidationController, ValidationRules} from 'aurelia-validation';
-import { Config } from 'protractor';
+import {Config} from 'protractor';
 import {
   IBpmnModdle,
   IBpmnModeler,
@@ -121,10 +121,10 @@ export class PoolSection implements ISection {
     ValidationRules.ensure((businessObject: IModdleElement) => businessObject.id)
     .displayName('processId')
     .required()
-    .withMessage(`Process-Id cannot be blank.`)
+    .withMessage('Process-Id cannot be blank.')
     .then()
     .satisfies((id: string) => this._formIdIsUnique(id) && this._isProcessIdUnique(id))
-    .withMessage(`Process-Id already exists.`)
+    .withMessage('Process-Id already exists.')
     .on(this.businessObjInPanel.processRef);
   }
 }
