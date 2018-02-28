@@ -33,7 +33,6 @@ export class BasicsSection implements ISection {
   }
 
   public activate(model: IPageModel): void {
-
     if (this.validationError) {
       this.businessObjInPanel.id = this.previousProcessRefId;
       this.validationController.validate();
@@ -56,10 +55,18 @@ export class BasicsSection implements ISection {
     this._setValidationRules();
   }
 
+  public detached(): void {
+    if (this.validationError) {
+      this.businessObjInPanel.id = this.previousProcessRefId;
+      this.validationController.validate();
+    }
+  }
+
   public isSuitableForElement(element: IShape): boolean {
     if (element === undefined || element === null) {
       return false;
     }
+
     return true;
   }
 
@@ -67,6 +74,7 @@ export class BasicsSection implements ISection {
     if (!this.businessObjInPanel) {
       return;
     }
+
     if (this.businessObjInPanel.documentation && this.businessObjInPanel.documentation.length > 0) {
       this.elementDocumentation = this.businessObjInPanel.documentation[0].text;
     } else {
@@ -130,6 +138,7 @@ export class BasicsSection implements ISection {
     if (event.type !== 'validate') {
       return;
     }
+
     this.validationError = false;
     for (const result of event.results) {
       if (result.rule.property.displayName !== 'elementId') {
