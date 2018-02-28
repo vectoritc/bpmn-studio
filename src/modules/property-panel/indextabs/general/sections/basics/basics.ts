@@ -192,6 +192,6 @@ export class BasicsSection implements ISection {
       .then()
       .satisfies((id: string) => this._formIdIsUnique(id) && this._isProcessIdUnique(id))
         .withMessage('Id already exists.')
-      .on(this.businessObjInPanel); ,
+      .on(this.businessObjInPanel);
   }
 }
