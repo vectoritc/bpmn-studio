@@ -75,13 +75,6 @@ export class BasicsSection implements ISection {
 
     this.validationController.validate();
     this._updateId();
-
-    if (this.validationError) {
-      this._resetIdOnSelectedOrPrevious();
-
-      this.validationController.validate();
-      this._updateId();
-    }
   }
 
   private _resetIdOnSelectedOrPrevious(): void {

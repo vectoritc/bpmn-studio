@@ -156,7 +156,7 @@ export class BasicsSection implements ISection {
   private _formIdIsUnique(id: string): boolean {
     const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
 
-    const elementsWithSameId: Array<IShape> =  elementRegistry.filter((element: IShape) => {
+    const elementsWithSameId: Array<IShape> = elementRegistry.filter((element: IShape) => {
       const elementIsBusinessObjectInPanel: boolean = element.businessObject === this.businessObjInPanel;
       if (elementIsBusinessObjectInPanel) {
         return false;
