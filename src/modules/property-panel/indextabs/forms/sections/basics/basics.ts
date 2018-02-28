@@ -169,11 +169,11 @@ export class BasicsSection implements ISection {
   }
 
   private _updateDefaultValue(): void {
-    this.formElement.fields[this.selectedIndex].label = this.selectedForm.label;
+    this.formElement.fields[this.selectedIndex].defaultValue = this.selectedForm.defaultValue;
   }
 
   private _updateLabel(): void {
-    this.formElement.fields[this.selectedIndex].defaultValue = this.selectedForm.defaultValue;
+    this.formElement.fields[this.selectedIndex].label = this.selectedForm.label;
   }
 
   private _updateType(): void {
