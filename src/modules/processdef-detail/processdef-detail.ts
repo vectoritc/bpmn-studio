@@ -106,6 +106,9 @@ export class ProcessDefDetail {
       { move: (fillColor: any): void => this.updateFillColor(fillColor) },
     ));
 
+    // as soon as the view-model is fully attached
+    // the bpmn-xml-view module gets attached and calls
+    // the highlight method
     setTimeout(() => {
       this.initialLoadingFinished = true;
     }, 0);
@@ -117,7 +120,7 @@ export class ProcessDefDetail {
     }
   }
 
-  private async _toggleXMLView(): Promise<void> {
+  public async toggleXMLView(): Promise<void> {
     if (!this.showXMLView) {
       this.process.xml = await this.bpmn.getXML();
       this.showXMLView = true;
