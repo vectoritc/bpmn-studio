@@ -34,6 +34,7 @@ export class BasicsSection implements ISection {
   private formElement: IFormElement;
 
   private previousFormId: string;
+  private previousForm: IForm;
   private validationError: boolean = false;
   private validationController: ValidationController;
 
@@ -54,6 +55,32 @@ export class BasicsSection implements ISection {
     });
 
     this._init();
+
+    if (this.validationError) {
+      this.previousForm.id = this.previousFormId;
+      this.validationController.validate();
+    }
+  }
+
+  public detached(): void {
+    this._validateOnDetach();
+  }
+
+  private _validateOnDetach(): void {
+    if (this.validationError) {
+      this._resetIdOnSelectedOrPrevious();
+
+      this.validationController.validate();
+      this._updateId();
+    }
+  }
+
+  private _resetIdOnSelectedOrPrevious(): void {
+    if (this.selectedForm !== null) {
+      this.selectedForm.id = this.previousFormId;
+    } else {
+      this.previousForm.id = this.previousFormId;
+    }
   }
 
   public isSuitableForElement(element: IShape): boolean {
@@ -81,12 +108,19 @@ export class BasicsSection implements ISection {
   }
 
   private _resetId(): void {
-    this.selectedForm.id = this.previousFormId;
+    this._resetIdOnSelectedOrPrevious();
+
     this.validationController.validate();
   }
 
   private _selectForm(): void {
+    if (this.validationError) {
+      this.previousForm.id = this.previousFormId;
+    }
+
     this.previousFormId = this.selectedForm.id;
+    this.previousForm = this.selectedForm;
+
     this.validationController.validate();
 
     this.isFormSelected = true;
@@ -127,8 +161,8 @@ export class BasicsSection implements ISection {
       this._resetId();
     }
 
-    if (this.selectedForm.id === '') {
-      this.selectedForm.id = this.previousFormId;
+    if (this.selectedForm === null || this.selectedForm.id === '') {
+      return;
     }
 
     this.formElement.fields[this.selectedIndex].id = this.selectedForm.id;
@@ -251,6 +285,7 @@ export class BasicsSection implements ISection {
 
   private _clearId(): void {
     this.selectedForm.id = '';
+    this.validationController.validate();
     this._updateId();
     this.validationController.validate();
   }
