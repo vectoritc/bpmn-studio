@@ -11,16 +11,24 @@ import {ElementDistributeOptions,
         IShape} from '../../contracts/index';
 import environment from '../../environment';
 
+const toggleButtonWidth: number = 13;
+const resizeButtonWidth: number = 19;
+
 export class BpmnIo {
 
   private toggled: boolean = false;
-  private toggleBtn: HTMLButtonElement;
+  private toggleButton: HTMLButtonElement;
+  private resizeButton: HTMLButtonElement;
   private panel: HTMLElement;
   private canvasModel: HTMLDivElement;
   private refresh: boolean = true;
+  private isResizeClicked: boolean = false;
 
-  private toggleBtnRight: string = '337px';
-  private canvasRight: string = '350px';
+  private toggleButtonRight: number = 337;
+  private resizeButtonRight: number = 331;
+  private canvasRight: number = 350;
+  private minWidth: number = environment.propertyPanel.minWidth;
+  private maxWidth: number = document.body.clientWidth - environment.propertyPanel.maxWidth;
 
   @bindable({changeHandler: 'xmlChanged'}) public xml: string;
   public modeler: IBpmnModeler;
@@ -43,6 +51,12 @@ export class BpmnIo {
 
   public attached(): void {
     this.modeler.attachTo('#canvas');
+
+    window.addEventListener('resize', this.resizeEventHandler);
+  }
+
+  public detached(): void {
+    window.removeEventListener('resize', this.resizeEventHandler);
   }
 
   public xmlChanged(newValue: string, oldValue: string): void {
@@ -120,19 +134,53 @@ export class BpmnIo {
     return this.modeler.get('selection')._selectedElements;
   }
 
-  private togglePanel(): void {
+  public togglePanel(): void {
     if (this.toggled === true) {
       this.panel.style.display = 'inline';
-      this.toggleBtn.style.right = this.toggleBtnRight;
-      this.toggleBtn.textContent = 'Hide';
-      this.canvasModel.style.right = this.canvasRight;
+      this.toggleButton.style.right = `${this.toggleButtonRight}px`;
+      this.resizeButton.style.right = `${this.resizeButtonRight}px`;
+      this.canvasModel.style.right = `${this.canvasRight}px`;
       this.toggled = false;
     } else {
       this.panel.style.display = 'none';
-      this.toggleBtn.style.right = '-16px';
-      this.toggleBtn.textContent = 'Show';
+      this.toggleButton.style.right = '-16px';
+      this.resizeButton.style.right = '-18px';
       this.canvasModel.style.right = '1px';
       this.toggled = true;
     }
+  }
+
+  public resize(): void {
+    this.isResizeClicked = true;
+    document.addEventListener('mousemove', (event: any) => {
+      if (this.isResizeClicked === false) {
+        return;
+      }
+      let currentWidth: number = document.body.clientWidth - event.clientX;
+
+      if (currentWidth < this.minWidth) {
+        currentWidth = this.minWidth;
+      } else if (currentWidth > this.maxWidth) {
+        currentWidth = this.maxWidth;
+      }
+
+      this.toggleButtonRight = currentWidth - toggleButtonWidth;
+      this.resizeButtonRight = currentWidth - resizeButtonWidth;
+      this.canvasRight = currentWidth;
+
+      this.panel.style.width = `${currentWidth}px`;
+      this.toggleButton.style.right = `${this.toggleButtonRight}px`;
+      this.resizeButton.style.right = `${this.resizeButtonRight}px`;
+      this.canvasModel.style.right = `${this.canvasRight}px`;
+    });
+
+    document.addEventListener('click', (event: any) => {
+      this.isResizeClicked = false;
+    }, {once: true});
+
+  }
+
+  private resizeEventHandler = (event: any): void => {
+    this.maxWidth = document.body.clientWidth - environment.propertyPanel.maxWidth;
   }
 }

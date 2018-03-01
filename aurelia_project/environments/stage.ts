@@ -24,4 +24,8 @@ export default {
   consumerClient: {
     baseRoute: baseRoute,
   },
+  propertyPanel: {
+    minWidth: 190,
+    maxWidth: 150,
+  },
 };

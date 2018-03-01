@@ -44,8 +44,27 @@
 }
 
 .toggle_panel {
-  right: 337px;
-  position: absolute;
-  bottom: 50%;
+  position: relative;
   transform: rotate(-90deg);
+  bottom: 0;
+}
+
+.resize_button {
+  position: relative;
+  transform: rotate(-90deg);
+  bottom: 0;
+}
+
+.resize_div {
+  right: 331px;
+  height: 50%;
+  bottom: 80px;
+  position: absolute;
+}
+
+.toggle_div {
+  right: 337px;
+  height: 50%;
+  bottom: 0;
+  position: absolute;
 }
