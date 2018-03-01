@@ -11,21 +11,21 @@ import {ElementDistributeOptions,
         IShape} from '../../contracts/index';
 import environment from '../../environment';
 
-const toggleBtnWidth: number = 13;
-const resizeBtnWidth: number = 19;
+const toggleButtonWidth: number = 13;
+const resizeButtonWidth: number = 19;
 
 export class BpmnIo {
 
   private toggled: boolean = false;
-  private toggleBtn: HTMLButtonElement;
-  private resizeBtn: HTMLButtonElement;
+  private toggleButton: HTMLButtonElement;
+  private resizeButton: HTMLButtonElement;
   private panel: HTMLElement;
   private canvasModel: HTMLDivElement;
   private refresh: boolean = true;
   private isResizeClicked: boolean = false;
 
-  private toggleBtnRight: number = 337;
-  private resizeBtnRight: number = 331;
+  private toggleButtonRight: number = 337;
+  private resizeButtonRight: number = 331;
   private canvasRight: number = 350;
   private minWidth: number = environment.propertyPanel.minWidth;
   private maxWidth: number = document.body.clientWidth - environment.propertyPanel.maxWidth;
@@ -131,14 +131,14 @@ export class BpmnIo {
   public togglePanel(): void {
     if (this.toggled === true) {
       this.panel.style.display = 'inline';
-      this.toggleBtn.style.right = `${this.toggleBtnRight}px`;
-      this.resizeBtn.style.right = `${this.resizeBtnRight}px`;
+      this.toggleButton.style.right = `${this.toggleButtonRight}px`;
+      this.resizeButton.style.right = `${this.resizeButtonRight}px`;
       this.canvasModel.style.right = `${this.canvasRight}px`;
       this.toggled = false;
     } else {
       this.panel.style.display = 'none';
-      this.toggleBtn.style.right = '-16px';
-      this.resizeBtn.style.right = '-18px';
+      this.toggleButton.style.right = '-16px';
+      this.resizeButton.style.right = '-18px';
       this.canvasModel.style.right = '1px';
       this.toggled = true;
     }
@@ -156,13 +156,13 @@ export class BpmnIo {
           currentWidth = this.maxWidth;
         }
 
-        this.toggleBtnRight = currentWidth - toggleBtnWidth;
-        this.resizeBtnRight = currentWidth - resizeBtnWidth;
+        this.toggleButtonRight = currentWidth - toggleButtonWidth;
+        this.resizeButtonRight = currentWidth - resizeButtonWidth;
         this.canvasRight = currentWidth;
 
         this.panel.style.width = `${currentWidth}px`;
-        this.toggleBtn.style.right = `${this.toggleBtnRight}px`;
-        this.resizeBtn.style.right = `${this.resizeBtnRight}px`;
+        this.toggleButton.style.right = `${this.toggleButtonRight}px`;
+        this.resizeButton.style.right = `${this.resizeButtonRight}px`;
         this.canvasModel.style.right = `${this.canvasRight}px`;
       }
     });
