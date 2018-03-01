@@ -3,6 +3,7 @@
   <require from="../import-process-button/import-process-button"></require>
   <require from="./processdef-detail.css"></require>
   <require from="spectrum-colorpicker/spectrum.css"></require>
+  <require from="../bpmn-xml-view/bpmn-xml-view"></require>
 
   <div if.bind="process">
     <div class="bpmn-toolbar-holder">
@@ -95,9 +96,11 @@
             <li><a click.delegate="distributeElementsVertical()"><i class="glyphicon glyphicon-object-align-vertical"></i> Vertical</a></li>
           </ul>
         </div>
+        <button type="button" class="btn btn-default" click.delegate="toggleXMLView()">${!showXMLView ? 'XML' : 'Diagram'}</button>
       </div>
     </div>
-    <bpmn-io view-model.ref="bpmn" xml.bind="process.xml"></bpmn-io>
+    <bpmn-io show.bind="!showXMLView" view-model.ref="bpmn" xml.bind="process.xml"></bpmn-io>
+    <bpmn-xml-view if.bind="initialLoadingFinished" show.bind="showXMLView" xml.bind="process.xml"></bpmn-xml-view>
   </div>
 
   <div class="container" if.bind="!process">

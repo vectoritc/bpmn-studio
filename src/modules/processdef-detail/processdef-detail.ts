@@ -1,5 +1,6 @@
 import {ConsumerClient} from '@process-engine/consumer_client';
 import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
+import {bindingMode} from 'aurelia-binding';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
@@ -41,6 +42,7 @@ export class ProcessDefDetail {
   private router: Router;
   private fillColor: string;
   private borderColor: string;
+  private showXMLView: boolean = false;
 
   public validationController: ValidationController;
   public validationError: boolean;
@@ -48,6 +50,7 @@ export class ProcessDefDetail {
   @bindable() public uri: string;
   @bindable() public name: string;
   @bindable() public startedProcessId: string;
+  @bindable({ defaultBindingMode: bindingMode.oneWay }) public initialLoadingFinished: boolean = false;
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
@@ -102,11 +105,29 @@ export class ProcessDefDetail {
       settings,
       { move: (fillColor: any): void => this.updateFillColor(fillColor) },
     ));
+
+    // setTimeout() gives us the callback queue, that causes
+    // the initLoadingFinished boolean to become true as late as possible
+    // so as soon as the view-model is fully attached
+    // the bpmn-xml-view module gets attached and calls
+    // the highlight method
+    setTimeout(() => {
+      this.initialLoadingFinished = true;
+    }, 0);
   }
 
   public detached(): void {
     for (const subscription of this.subscriptions) {
       subscription.dispose();
+    }
+  }
+
+  public async toggleXMLView(): Promise<void> {
+    if (!this.showXMLView) {
+      this.process.xml = await this.bpmn.getXML();
+      this.showXMLView = true;
+    } else {
+      this.showXMLView = false;
     }
   }
 

@@ -45,10 +45,13 @@
     "electron-is-dev": "^0.3.0",
     "electron-notifications": "^1.0.0",
     "electron-updater": "^2.19.1",
+    "highlight.js": "^9.12.0",
+    "highlightjs-line-numbers.js": "^2.2.0",
     "node-http-server": "^8.1.2",
     "open": "0.0.5",
     "proxy-polyfill": "^0.1.7",
-    "spectrum-colorpicker": "^1.8.0"
+    "spectrum-colorpicker": "^1.8.0",
+    "xml-beautifier": "^0.3.0"
   },
   "peerDependencies": {},
   "devDependencies": {
@@ -77,10 +80,10 @@
     "debounce": "^1.0.2",
     "debug": "^3.1.0",
     "downloadjs": "1.4.4",
-    "event-stream": "^3.3.3",
-    "eventemitter2": "^4.1.2",
     "electron": "^1.7.9",
     "electron-builder": "^19.54.0",
+    "event-stream": "^3.3.3",
+    "eventemitter2": "^4.1.2",
     "faye": "^1.2.4",
     "fetch-ponyfill": "^4.1.0",
     "font-awesome": "^4.7.0",
