@@ -18,4 +18,5 @@ export interface IModdleElement {
   stroke?: string;
   laneSets?: Array<IModdleElement>;
   lanes?: Array<IModdleElement>;
+  participants?: Array<IModdleElement>;
 }

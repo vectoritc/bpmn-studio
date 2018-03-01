@@ -1,6 +1,7 @@
 import {
   IBpmnModdle,
   IBpmnModeler,
+  IElementRegistry,
   IModdleElement,
   IModeling,
   IPageModel,
@@ -18,57 +19,62 @@ export class BasicsSection implements ISection {
   public canHandleElement: boolean = true;
   private modeling: IModeling;
   private modeler: IBpmnModeler;
-  private moddle: IBpmnModdle;
+  private bpmnModdle: IBpmnModdle;
   private elementInPanel: IShape;
-  private saveId: string;
+  private previousProcessRefId: string;
+  private validationError: boolean = false;
+  private validationController: ValidationController;
 
-  public validationController: ValidationController;
   public businessObjInPanel: IModdleElement;
   public elementDocumentation: string;
-  public validationError: boolean = false;
 
   constructor(controller?: ValidationController) {
     this.validationController = controller;
   }
 
   public activate(model: IPageModel): void {
-
     if (this.validationError) {
-      this.businessObjInPanel.id = this.saveId;
+      this.businessObjInPanel.id = this.previousProcessRefId;
       this.validationController.validate();
     }
 
     this.elementInPanel = model.elementInPanel;
     this.businessObjInPanel = model.elementInPanel.businessObject;
-    this.saveId = model.elementInPanel.businessObject.id;
+    this.previousProcessRefId = model.elementInPanel.businessObject.id;
+
     this.modeling = model.modeler.get('modeling');
-    this.moddle = model.modeler.get('moddle');
+    this.bpmnModdle = model.modeler.get('moddle');
     this.modeler = model.modeler;
 
     this.validationController.subscribe((event: ValidateEvent) => {
-      this.validateForm(event);
+      this._validateFormId(event);
     });
 
-    this.init();
+    this._init();
 
-    ValidationRules.ensure((businessObject: IModdleElement) => businessObject.id)
-      .displayName('elementId')
-      .required()
-      .withMessage(`Id cannot be blank.`)
-      .on(this.businessObjInPanel || {});
+    this._setValidationRules();
+  }
+
+  public detached(): void {
+    if (this.validationError) {
+      this.businessObjInPanel.id = this.previousProcessRefId;
+      this.validationController.validate();
+    }
   }
 
   public isSuitableForElement(element: IShape): boolean {
     if (element === undefined || element === null) {
       return false;
     }
+
     return true;
   }
 
-  private init(): void {
+  private _init(): void {
     if (!this.businessObjInPanel) {
       return;
     }
+
     if (this.businessObjInPanel.documentation && this.businessObjInPanel.documentation.length > 0) {
       this.elementDocumentation = this.businessObjInPanel.documentation[0].text;
     } else {
@@ -76,7 +82,7 @@ export class BasicsSection implements ISection {
     }
   }
 
-  private getXML(): string {
+  private _getXML(): string {
     let xml: string;
     this.modeler.saveXML({format: true}, (err: Error, diagrammXML: string) => {
       xml = diagrammXML;
@@ -84,10 +90,10 @@ export class BasicsSection implements ISection {
     return xml;
   }
 
-  private updateDocumentation(): void {
+  private _updateDocumentation(): void {
     this.elementInPanel.documentation = [];
 
-    const documentation: IModdleElement = this.moddle.create('bpmn:Documentation',
+    const documentation: IModdleElement = this.bpmnModdle.create('bpmn:Documentation',
     { text: this.elementDocumentation });
     this.elementInPanel.documentation.push(documentation);
 
@@ -96,43 +102,46 @@ export class BasicsSection implements ISection {
     });
   }
 
-  private clearId(): void {
+  private _clearId(): void {
     this.businessObjInPanel.id = '';
     this.validationController.validate();
-    this.updateId();
+    this._updateId();
   }
 
-  private clearName(): void {
+  private _clearName(): void {
     this.businessObjInPanel.name = '';
-    this.updateName();
+    this._updateName();
   }
 
-  private clearDocumentation(): void {
+  private _clearDocumentation(): void {
     this.elementDocumentation = '';
-    this.updateDocumentation();
+    this._updateDocumentation();
   }
 
-  private updateName(): void {
+  private _updateName(): void {
     this.modeling.updateProperties(this.elementInPanel, {
       name: this.businessObjInPanel.name,
     });
   }
 
-  private updateId(): void {
+  private _updateId(): void {
+    this.validationController.validate();
+
     if (this.validationController.errors.length > 0) {
       return;
     }
+
     this.modeling.updateProperties(this.elementInPanel, {
       id: this.businessObjInPanel.id,
     });
   }
 
-  private validateForm(event: ValidateEvent): void {
+  private _validateFormId(event: ValidateEvent): void {
     if (event.type !== 'validate') {
       return;
     }
-    this.validationError = false;
 
+    this.validationError = false;
     for (const result of event.results) {
       if (result.rule.property.displayName !== 'elementId') {
         continue;
@@ -144,5 +153,47 @@ export class BasicsSection implements ISection {
         document.getElementById(result.rule.property.displayName).style.border = '';
       }
     }
+  }
+
+  private _formIdIsUnique(id: string): boolean {
+    const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
+
+    const elementsWithSameId: Array<IShape> = elementRegistry.filter((element: IShape) => {
+      const elementIsBusinessObjectInPanel: boolean = element.businessObject === this.businessObjInPanel;
+      if (elementIsBusinessObjectInPanel) {
+        return false;
+      }
+
+      const elementIsOfTypeLabel: boolean = element.type === 'label';
+      if (elementIsOfTypeLabel) {
+        return false;
+      }
+
+      const elementHasSameId: boolean = element.businessObject.id === this.businessObjInPanel.id;
+
+      return elementHasSameId;
+    });
+
+    return elementsWithSameId.length === 0;
+  }
+
+  private _isProcessIdUnique(id: string): boolean {
+    const elementIds: Array<string> = this.modeler._definitions.rootElements.map((rootElement: IModdleElement) => {
+      return rootElement.id;
+    });
+
+    return !elementIds.includes(id);
+  }
+
+  private _setValidationRules(): void {
+    ValidationRules
+      .ensure((businessObject: IModdleElement) => businessObject.id)
+      .displayName('elementId')
+      .required()
+        .withMessage('Id cannot be blank.')
+      .then()
+      .satisfies((id: string) => this._formIdIsUnique(id) && this._isProcessIdUnique(id))
+        .withMessage('Id already exists.')
+      .on(this.businessObjInPanel);
   }
 }
