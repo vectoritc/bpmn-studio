@@ -11,7 +11,7 @@ how to obtain them.
 ## Logs of the UI Thread
 
 Add `mainWindow.toggleDevTools();` to your application, and it will start with
-the Chrome DevTools opened, even when bundled.
+the Chrome DevTools opened.
 
 This works for bundled and non-bundled apps.
 
