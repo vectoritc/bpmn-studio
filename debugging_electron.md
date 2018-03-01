@@ -102,7 +102,7 @@ fs.writeFileSync('~/Desktop/working_dir.txt', process.cwd(), 'utf8');
 
 This is useful when you are unable to change or manipulate the working
 directory (in which the application is executed). Node.js will then write a
-file to the location of the current process.
+file with the location of the current process.
 
 ## Debugging the UI Thread
 
