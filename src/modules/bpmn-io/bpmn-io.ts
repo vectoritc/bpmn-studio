@@ -147,24 +147,25 @@ export class BpmnIo {
   public resize(): void {
     this.isResizeClicked = true;
     document.addEventListener('mousemove', (event: any) => {
-      if (this.isResizeClicked === true) {
-        let currentWidth: number = document.body.clientWidth - event.clientX;
-
-        if (currentWidth < this.minWidth) {
-          currentWidth = this.minWidth;
-        } else if (currentWidth > this.maxWidth) {
-          currentWidth = this.maxWidth;
-        }
-
-        this.toggleButtonRight = currentWidth - toggleButtonWidth;
-        this.resizeButtonRight = currentWidth - resizeButtonWidth;
-        this.canvasRight = currentWidth;
-
-        this.panel.style.width = `${currentWidth}px`;
-        this.toggleButton.style.right = `${this.toggleButtonRight}px`;
-        this.resizeButton.style.right = `${this.resizeButtonRight}px`;
-        this.canvasModel.style.right = `${this.canvasRight}px`;
+      if (this.isResizeClicked === false) {
+        return;
       }
+      let currentWidth: number = document.body.clientWidth - event.clientX;
+
+      if (currentWidth < this.minWidth) {
+        currentWidth = this.minWidth;
+      } else if (currentWidth > this.maxWidth) {
+        currentWidth = this.maxWidth;
+      }
+
+      this.toggleButtonRight = currentWidth - toggleButtonWidth;
+      this.resizeButtonRight = currentWidth - resizeButtonWidth;
+      this.canvasRight = currentWidth;
+
+      this.panel.style.width = `${currentWidth}px`;
+      this.toggleButton.style.right = `${this.toggleButtonRight}px`;
+      this.resizeButton.style.right = `${this.resizeButtonRight}px`;
+      this.canvasModel.style.right = `${this.canvasRight}px`;
     });
 
     document.addEventListener('click', (event: any) => {
