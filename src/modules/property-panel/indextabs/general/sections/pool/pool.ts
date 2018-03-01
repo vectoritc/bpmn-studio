@@ -59,6 +59,10 @@ export class PoolSection implements ISection {
     return this._elementIsParticipant(element);
   }
 
+  public validate(): void {
+    this.validationController.validate();
+  }
+
   private _elementIsParticipant(element: IShape): boolean {
     return element !== undefined
         && element.businessObject !== undefined
@@ -126,9 +130,5 @@ export class PoolSection implements ISection {
     .satisfies((id: string) => this._formIdIsUnique(id) && this._isProcessIdUnique(id))
     .withMessage('Process-Id already exists.')
     .on(this.businessObjInPanel.processRef);
-  }
-
-  private _validate(): void {
-    this.validationController.validate();
   }
 }
