@@ -125,6 +125,8 @@ export class BasicsSection implements ISection {
   }
 
   private _updateId(): void {
+    this.validationController.validate();
+
     if (this.validationController.errors.length > 0) {
       return;
     }

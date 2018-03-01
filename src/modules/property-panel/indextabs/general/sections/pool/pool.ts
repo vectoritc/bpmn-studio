@@ -127,4 +127,8 @@ export class PoolSection implements ISection {
     .withMessage('Process-Id already exists.')
     .on(this.businessObjInPanel.processRef);
   }
+
+  private _validate(): void {
+    this.validationController.validate();
+  }
 }
