@@ -51,6 +51,14 @@ export class BpmnIo {
 
   public attached(): void {
     this.modeler.attachTo('#canvas');
+
+    window.addEventListener('resize', (event: any) => {
+      this.maxWidth = document.body.clientWidth - environment.propertyPanel.maxWidth;
+    });
+  }
+
+  public detached(): void {
+    window.removeEventListener('resize', this.eventListenersRemoved(event), true);
   }
 
   public xmlChanged(newValue: string, oldValue: string): void {
@@ -172,5 +180,9 @@ export class BpmnIo {
       this.isResizeClicked = false;
     }, {once: true});
 
+  }
+
+  private eventListenersRemoved(event: any): EventListenerOrEventListenerObject {
+    return event;
   }
 }
