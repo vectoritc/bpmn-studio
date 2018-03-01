@@ -31,7 +31,8 @@
     "scripts",
     "index.html",
     "bin",
-    "bootstrap"
+    "bootstrap",
+    "resources"
   ],
   "bin": "./bin/bpmn-studio.js",
   "repository": {
