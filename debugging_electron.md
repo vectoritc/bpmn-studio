@@ -91,7 +91,7 @@ In OS X, the working directory is `/`.
 
 ## Extract Info From the Bundled Application Without Starting it From the Terminal
 
-You can tell Node.js where the working directory is located:
+You can tell Node.js to write out the current working directory to a file:
 
 ```JavaScript
 const fs = require('fs');
@@ -100,9 +100,9 @@ const fs = require('fs');
 fs.writeFileSync('~/Desktop/working_dir.txt', process.cwd(), 'utf8');
 ```
 
-This is usefull when you are unable to change or manipulate the working
+This is useful when you are unable to change or manipulate the working
 directory (in which the application is executed). Node.js will then write a
-file to the specified location.
+file to the location of the current process.
 
 ## Debugging the UI Thread
 
