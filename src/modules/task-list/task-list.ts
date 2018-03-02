@@ -9,6 +9,7 @@ import {
 } from '@process-engine/consumer_client';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
+import * as toastr from 'toastr';
 import {AuthenticationStateEvent, IDynamicUiService, IPagination, IProcessEngineService} from '../../contracts/index';
 import environment from '../../environment';
 import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
@@ -45,7 +46,7 @@ export class TaskList {
       this.userTasks = await this.getUserTasks();
       this.succesfullRequested = true;
     } catch (error) {
-      return;
+      toastr.error(error);
     }
 
     this.totalItems = this.tasks.length;
