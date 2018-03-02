@@ -24,6 +24,7 @@ export class TaskList {
   private eventAggregator: EventAggregator;
   private consumerClient: IConsumerClient;
 
+  private succesfullRequested: boolean = false;
   private subscriptions: Array<Subscription>;
   private userTasks: IPagination<IUserTaskEntity>;
   private getUserTasksIntervalId: number;
@@ -40,7 +41,12 @@ export class TaskList {
   }
 
   private async updateUserTasks(): Promise<void> {
-    this.userTasks = await this.getUserTasks();
+    try {
+      this.userTasks = await this.getUserTasks();
+      this.succesfullRequested = true;
+    } catch (error) {
+      return;
+    }
 
     this.totalItems = this.tasks.length;
   }
