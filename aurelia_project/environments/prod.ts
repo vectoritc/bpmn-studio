@@ -28,4 +28,19 @@ export default {
     minWidth: 190,
     maxWidth: 150,
   },
+  colorPickerSettings: {
+    loadTimeout: 10,
+    uiSettings: {
+      clickoutFiresChange: true,
+      showPalette: true,
+      palette: [],
+      localStorageKey: 'elementColors',
+      showInitial: true,
+      showInput: true,
+      allowEmpty: true,
+      showButtons: false,
+      showPaletteOnly: true,
+      togglePaletteOnly: true,
+    },
+  },
 };

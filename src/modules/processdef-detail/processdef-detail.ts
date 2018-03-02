@@ -18,6 +18,7 @@ import {AuthenticationStateEvent,
         IModdleElement,
         IProcessEngineService,
         IShape} from '../../contracts/index';
+import environment from '../../environment';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
 
 interface RouteParameters {
@@ -83,29 +84,6 @@ export class ProcessDefDetail {
       }),
     ];
 
-    const settings: any = {
-      clickoutFiresChange: true,
-      showPalette: true,
-      palette: [],
-      localStorageKey: 'elementColors',
-      showInitial: true,
-      showInput: true,
-      allowEmpty: true,
-      showButtons: false,
-      showPaletteOnly: true,
-      togglePaletteOnly: true,
-    };
-
-    $('#colorpickerBorder').spectrum(Object.assign({},
-      settings,
-      { move: (borderColor: any): void => this.updateBorderColor(borderColor) },
-    ));
-
-    $('#colorpickerFill').spectrum(Object.assign({},
-      settings,
-      { move: (fillColor: any): void => this.updateFillColor(fillColor) },
-    ));
-
     // setTimeout() gives us the callback queue, that causes
     // the initLoadingFinished boolean to become true as late as possible
     // so as soon as the view-model is fully attached
@@ -114,6 +92,22 @@ export class ProcessDefDetail {
     setTimeout(() => {
       this.initialLoadingFinished = true;
     }, 0);
+
+    setTimeout(() => {
+      this._activateColorPicker();
+    }, environment.colorPickerSettings.loadTimeout);
+  }
+
+  private _activateColorPicker(): void {
+    $('#colorpickerBorder').spectrum(Object.assign({},
+      environment.colorPickerSettings.uiSettings,
+      { move: (borderColor: any): void => this.updateBorderColor(borderColor) },
+    ));
+
+    $('#colorpickerFill').spectrum(Object.assign({},
+      environment.colorPickerSettings.uiSettings,
+      { move: (fillColor: any): void => this.updateFillColor(fillColor) },
+    ));
   }
 
   public detached(): void {

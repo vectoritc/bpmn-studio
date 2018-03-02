@@ -78,7 +78,7 @@
             <li><a click.delegate="setColorPurple()"><i class="glyphicon glyphicon-stop purple"></i> Purple</a></li>
             <li><a click.delegate="setColorOrange()"><i class="glyphicon glyphicon-stop orange"></i> Orange</a></li>
             <li>
-              <a click.delegate="setColorPicked()">
+              <a if.bind="initialLoadingFinished" click.delegate="setColorPicked()">
                 <input id="colorpickerFill"></input>
                 <input id="colorpickerBorder"></input>
               </a>
