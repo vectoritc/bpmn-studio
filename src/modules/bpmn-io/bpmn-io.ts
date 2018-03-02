@@ -30,6 +30,7 @@ export class BpmnIo {
   private minWidth: number = environment.propertyPanel.minWidth;
   private maxWidth: number = document.body.clientWidth - environment.propertyPanel.maxWidth;
 
+  private toggleMinimap: boolean = false;
   @bindable({changeHandler: 'xmlChanged'}) public xml: string;
   public modeler: IBpmnModeler;
 
@@ -51,8 +52,48 @@ export class BpmnIo {
 
   public attached(): void {
     this.modeler.attachTo('#canvas');
+    const minimap: any = document.getElementsByClassName('djs-minimap')[0];
+    const minimapViewport: any = document.getElementsByClassName('djs-minimap-viewport')[0];
+    const minimapToggle: any = document.getElementsByClassName('djs-minimap-toggle')[0];
+    const minimapArea: any = document.getElementsByClassName('djs-minimap-map')[0];
+
+    minimapArea.style.width = '350px';
+    minimapArea.style.height = '200px';
+    minimapViewport.style.fill = 'rgba(0, 208, 255, 0.13)';
+
+    const expandIcon: HTMLElement = document.createElement('i');
+    expandIcon.id = 'expandIcon';
+    expandIcon.className = 'glyphicon glyphicon-resize-full';
+    expandIcon.style.marginLeft = '5px';
+    expandIcon.style.marginTop = '5px';
+    expandIcon.style.fontSize = '36px';
+    minimapToggle.appendChild(expandIcon);
+
+    const hideMinimap: HTMLElement = document.createElement('p');
+    hideMinimap.id = 'hideMinimap';
+    hideMinimap.style.marginLeft = '134px';
+    hideMinimap.textContent = 'Hide Minimap';
+    hideMinimap.style.display = 'none';
+    minimapToggle.appendChild(hideMinimap);
+    minimapToggle.addEventListener('click', this.toggleMinimapFunction);
 
     window.addEventListener('resize', this.resizeEventHandler);
+  }
+
+  private toggleMinimapFunction = (): void => {
+    const minimapToggle: any = document.getElementsByClassName('djs-minimap-toggle')[0];
+    const expandIcon: any = document.getElementById('expandIcon');
+    const hideMinimap: any = document.getElementById('hideMinimap');
+    if (this.toggleMinimap === false) {
+      expandIcon.style.display = 'none';
+      hideMinimap.style.display = 'inline';
+      minimapToggle.style.height = '20px';
+      this.toggleMinimap = true;
+    } else {
+      expandIcon.style.display = 'inline-block';
+      hideMinimap.style.display = 'none';
+      this.toggleMinimap = false;
+    }
   }
 
   public detached(): void {
