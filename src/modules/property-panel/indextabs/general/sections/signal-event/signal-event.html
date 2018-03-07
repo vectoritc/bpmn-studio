@@ -9,7 +9,7 @@
         <option repeat.for="signal of signals"
                 model.bind="signal.id" value="${signal.id}">${signal.name} (id: ${signal.id})</option>
       </select>
-      <div show.bind="selectedId">
+      <div show.bind="selectedId" class="event-details">
         <div class="section__btn-group">
           <label class="section__input-label">Signal Name: </label>
           <input type="text" class="form-control" value.bind="selectedSignal.name" change.delegate="updateName()">

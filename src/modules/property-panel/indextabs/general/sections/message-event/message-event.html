@@ -9,7 +9,7 @@
         <option repeat.for="message of messages"
                 model.bind="message.id" value="${message.id}">${message.name} (id: ${message.id})</option>
       </select>
-      <div show.bind="selectedId">
+      <div show.bind="selectedId" class="event-details">
         <div class="section__btn-group">
           <label class="section__input-labell">Message Name: </label>
           <input type="text" class="form-control" value.bind="selectedMessage.name" change.delegate="updateName()">

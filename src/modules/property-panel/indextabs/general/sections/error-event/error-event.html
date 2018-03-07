@@ -9,7 +9,7 @@
         <option repeat.for="error of errors"
                 model.bind="error.id" value="${error.id}">${error.name} (id: ${error.id})</option>
       </select>
-      <div show.bind="selectedId">
+      <div show.bind="selectedId" class="event-details">
         <div class="section__btn-group">
           <label class="section__input-label">Error Name: </label>
           <input type="text" class="form-control" value.bind="selectedError.name" change.delegate="updateErrorName()">
