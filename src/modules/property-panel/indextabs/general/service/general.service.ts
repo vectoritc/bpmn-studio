@@ -1,4 +1,14 @@
+import {IPagination, IProcessDefEntity} from '@process-engine/consumer_client';
+import {inject} from 'aurelia-framework';
+import {GeneralRepository} from '../repository/general.repository';
+
+@inject(GeneralRepository)
 export class GeneralService {
+  private generalRepository: GeneralRepository;
+
+  constructor(generalRepository: GeneralRepository) {
+    this.generalRepository = generalRepository;
+  }
 
   public generateRandomId(): string {
     let randomId: string = '';
@@ -10,4 +20,9 @@ export class GeneralService {
     }
     return randomId;
   }
+
+  public getAllProcesses(): Promise<IPagination<IProcessDefEntity>> {
+    return this.generalRepository.getAllProcesses();
+  }
+
 }
