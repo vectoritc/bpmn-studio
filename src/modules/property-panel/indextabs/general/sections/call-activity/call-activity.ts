@@ -2,7 +2,9 @@ import {IPagination, IProcessDefEntity} from '@process-engine/consumer_client';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {
+  IBpmnModeler,
   ICallActivityElement,
+  IModdleElement,
   IPageModel,
   ISection,
   IShape,
@@ -16,8 +18,9 @@ export class CallActivitySection implements ISection {
   public canHandleElement: boolean = false;
 
   public allProcesses: IPagination<IProcessDefEntity>;
-  public selectedId: string;
+  public selectedProcess: IProcessDefEntity;
 
+  private modeler: IBpmnModeler;
   private businessObjInPanel: ICallActivityElement;
   private generalService: GeneralService;
   private router: Router;
@@ -29,7 +32,11 @@ export class CallActivitySection implements ISection {
 
   public async activate(model: IPageModel): Promise<void> {
     this.businessObjInPanel = model.elementInPanel.businessObject;
-    this._getAllProcesses();
+    this.modeler = model.modeler;
+    await this._getAllProcesses();
+    this.selectedProcess = this.allProcesses.data.find((process: IProcessDefEntity) => {
+      return process.key === this.businessObjInPanel.calledElement;
+    });
   }
 
   public isSuitableForElement(element: IShape): boolean {
@@ -41,7 +48,19 @@ export class CallActivitySection implements ISection {
   }
 
   public navigateToCalledProcess(): void {
-    this.router.navigate(`/processdef/${this.selectedId}/detail`);
+
+    this.modeler.saveXML({}, async(error: Error, xml: string) => {
+      const processId: string = this.router.currentInstruction.params.processDefId;
+      const processDef: IProcessDefEntity = this.allProcesses.data.find((process: IProcessDefEntity) => {
+        return processId === process.id;
+      });
+      await this.generalService.updateProcessDef(processDef, xml);
+      this.router.navigate(`/processdef/${this.selectedProcess.id}/detail`);
+    });
+  }
+
+  public updateCalledProcess(): void {
+    this.businessObjInPanel.calledElement = this.selectedProcess.key;
   }
 
   private clearCalledElement(): void {
