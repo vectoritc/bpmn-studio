@@ -31,6 +31,10 @@ export class BpmnIo {
   private maxWidth: number = document.body.clientWidth - environment.propertyPanel.maxWidth;
 
   private toggleMinimap: boolean = false;
+  private minimapToggle: any;
+  private expandIcon: HTMLElement;
+  private hideMinimap: HTMLElement;
+
   @bindable({changeHandler: 'xmlChanged'}) public xml: string;
   public modeler: IBpmnModeler;
 
@@ -52,46 +56,42 @@ export class BpmnIo {
 
   public attached(): void {
     this.modeler.attachTo('#canvas');
-    const minimap: any = document.getElementsByClassName('djs-minimap')[0];
-    const minimapViewport: any = document.getElementsByClassName('djs-minimap-viewport')[0];
-    const minimapToggle: any = document.getElementsByClassName('djs-minimap-toggle')[0];
-    const minimapArea: any = document.getElementsByClassName('djs-minimap-map')[0];
+    const minimapViewport: any = this.canvasModel.getElementsByClassName('djs-minimap-viewport')[0];
+    const minimapArea: any = this.canvasModel.getElementsByClassName('djs-minimap-map')[0];
+    this.minimapToggle = this.canvasModel.getElementsByClassName('djs-minimap-toggle')[0];
 
     minimapArea.style.width = '350px';
     minimapArea.style.height = '200px';
     minimapViewport.style.fill = 'rgba(0, 208, 255, 0.13)';
 
-    const expandIcon: HTMLElement = document.createElement('i');
-    expandIcon.id = 'expandIcon';
-    expandIcon.className = 'glyphicon glyphicon-resize-full';
-    expandIcon.style.marginLeft = '5px';
-    expandIcon.style.marginTop = '5px';
-    expandIcon.style.fontSize = '36px';
-    minimapToggle.appendChild(expandIcon);
+    this.expandIcon = document.createElement('i');
+    this.expandIcon.id = 'this.expandIcon';
+    this.expandIcon.className = 'glyphicon glyphicon-resize-full';
+    this.expandIcon.style.marginLeft = '5px';
+    this.expandIcon.style.marginTop = '5px';
+    this.expandIcon.style.fontSize = '36px';
+    this.minimapToggle.appendChild(this.expandIcon);
 
-    const hideMinimap: HTMLElement = document.createElement('p');
-    hideMinimap.id = 'hideMinimap';
-    hideMinimap.style.marginLeft = '134px';
-    hideMinimap.textContent = 'Hide Minimap';
-    hideMinimap.style.display = 'none';
-    minimapToggle.appendChild(hideMinimap);
-    minimapToggle.addEventListener('click', this.toggleMinimapFunction);
+    this.hideMinimap = document.createElement('p');
+    this.hideMinimap.id = 'this.hideMinimap';
+    this.hideMinimap.style.marginLeft = '134px';
+    this.hideMinimap.textContent = 'Hide Minimap';
+    this.hideMinimap.style.display = 'none';
+    this.minimapToggle.appendChild(this.hideMinimap);
+    this.minimapToggle.addEventListener('click', this.toggleMinimapFunction);
 
     window.addEventListener('resize', this.resizeEventHandler);
   }
 
   private toggleMinimapFunction = (): void => {
-    const minimapToggle: any = document.getElementsByClassName('djs-minimap-toggle')[0];
-    const expandIcon: any = document.getElementById('expandIcon');
-    const hideMinimap: any = document.getElementById('hideMinimap');
     if (this.toggleMinimap === false) {
-      expandIcon.style.display = 'none';
-      hideMinimap.style.display = 'inline';
-      minimapToggle.style.height = '20px';
+      this.expandIcon.style.display = 'none';
+      this.hideMinimap.style.display = 'inline';
+      this.minimapToggle.style.height = '20px';
       this.toggleMinimap = true;
     } else {
-      expandIcon.style.display = 'inline-block';
-      hideMinimap.style.display = 'none';
+      this.expandIcon.style.display = 'inline-block';
+      this.hideMinimap.style.display = 'none';
       this.toggleMinimap = false;
     }
   }
