@@ -97,6 +97,9 @@
           </ul>
         </div>
         <button type="button" class="btn btn-default" click.delegate="toggleXMLView()">${!showXMLView ? 'XML' : 'Diagram'}</button>
+        <div class="btn-group extra-functionallity">
+          <button class="btn btn-primary" click.delegate="goBack()">Back</button>
+        </div>
       </div>
     </div>
     <bpmn-io show.bind="!showXMLView" view-model.ref="bpmn" xml.bind="process.xml"></bpmn-io>

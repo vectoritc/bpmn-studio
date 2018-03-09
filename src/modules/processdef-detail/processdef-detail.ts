@@ -262,6 +262,10 @@ export class ProcessDefDetail {
     return image;
   }
 
+  public goBack(): void {
+    this.router.navigateBack();
+  }
+
   private disableAndHideControlsForImageExport(): void {
     this.exportButton.setAttribute('disabled', '');
     this.exportDropdown.setAttribute('disabled', '');
