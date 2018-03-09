@@ -1,4 +1,4 @@
-import { IDocumentation } from './bpmnElements/IDocumentation';
+import {IDocumentation} from './bpmnElements/IDocumentation';
 import {IModdleElement} from './index';
 
 export interface IShape {

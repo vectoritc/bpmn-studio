@@ -1,6 +1,4 @@
-import {IModeling} from '../bpmnmodeler/IModeling';
-import {IModdleElement} from '../bpmnmodeler/index';
-import {IShape} from '../bpmnmodeler/IShape';
+import {IModdleElement, IModeling, IShape} from '../bpmnmodeler/index';
 import {IEventBus} from '../eventbus/IEventBus';
 import {IPageModel} from './IPageModel';
 
