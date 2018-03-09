@@ -18,7 +18,7 @@ export class GeneralRepository {
     return processes;
   }
 
-  public async updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<any> {
+  public updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<any> {
     const options: RequestInit = {
       method: 'post',
       headers: new Headers({
@@ -29,6 +29,6 @@ export class GeneralRepository {
       }),
     };
     const url: string = `${environment.processengine.routes.processes}/${processDef.id}/updateBpmn`;
-    return await this.httpClient.fetch(url, options);
+    return this.httpClient.fetch(url, options);
   }
 }
