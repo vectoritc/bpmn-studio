@@ -19,30 +19,16 @@ export class GeneralRepository {
   }
 
   public async updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<any> {
-
-    let updateError: Error;
-    let result: any;
-
-    try {
-      const options: RequestInit = {
-        method: 'post',
-        headers: new Headers({
-          'Content-Type': 'application/json',
-        }),
-        body: JSON.stringify({
-            xml: xml,
-        }),
-      };
-      const url: string = `${environment.processengine.routes.processes}/${processDef.id}/updateBpmn`;
-      result = await this.httpClient.fetch(url, options);
-
-    } catch (error) {
-      updateError = error;
-    }
-
-    if (updateError) {
-      throw updateError;
-    }
-    return result;
+    const options: RequestInit = {
+      method: 'post',
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+      body: JSON.stringify({
+          xml: xml,
+      }),
+    };
+    const url: string = `${environment.processengine.routes.processes}/${processDef.id}/updateBpmn`;
+    return await this.httpClient.fetch(url, options);
   }
 }
