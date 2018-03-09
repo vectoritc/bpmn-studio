@@ -85,7 +85,7 @@ export class ProcessList {
     });
   }
 
-  public async attached(): Promise<void> {
+  public attached(): void {
     this.getProcessesIntervalId = window.setInterval(async() => {
       await this.updateProcesses();
       this.updateList();

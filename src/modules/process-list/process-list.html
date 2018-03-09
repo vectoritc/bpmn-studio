@@ -24,10 +24,10 @@
       </table>
     </div>
     <div class="col-md-12 pagination" show.bind="instances && instances.length > 0">
-        <aubs-pagination page-size.bind="pageSize" total-items.bind="totalItems" current-page.bind="currentPage"
-          boundary-links.bind="true">
-        </aubs-pagination>
-      </div>
+      <aubs-pagination page-size.bind="pageSize" total-items.bind="totalItems" current-page.bind="currentPage"
+        boundary-links.bind="true">
+      </aubs-pagination>
+    </div>
     <div if.bind="succesfullRequested && (!instances || instances.length === 0)">
       <h3>No process instances found</h3>
     </div>
