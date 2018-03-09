@@ -9,6 +9,7 @@ import {
 } from '@process-engine/consumer_client';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
+import * as toastr from 'toastr';
 import {AuthenticationStateEvent, IDynamicUiService, IPagination, IProcessEngineService} from '../../contracts/index';
 import environment from '../../environment';
 import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
@@ -24,6 +25,7 @@ export class TaskList {
   private eventAggregator: EventAggregator;
   private consumerClient: IConsumerClient;
 
+  private succesfullRequested: boolean = false;
   private subscriptions: Array<Subscription>;
   private userTasks: IPagination<IUserTaskEntity>;
   private getUserTasksIntervalId: number;
@@ -40,7 +42,12 @@ export class TaskList {
   }
 
   private async updateUserTasks(): Promise<void> {
-    this.userTasks = await this.getUserTasks();
+    try {
+      this.userTasks = await this.getUserTasks();
+      this.succesfullRequested = true;
+    } catch (error) {
+      toastr.error(error);
+    }
 
     this.totalItems = this.tasks.length;
   }
