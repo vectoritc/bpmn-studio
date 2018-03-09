@@ -14,8 +14,7 @@ export class GeneralRepository {
   }
 
   public async getAllProcesses(): Promise<IPagination<IProcessDefEntity>> {
-    const processes: IPagination<IProcessDefEntity> = await this.consumerClient.getProcessDefList();
-    return processes;
+    return this.consumerClient.getProcessDefList();
   }
 
   public updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<any> {
