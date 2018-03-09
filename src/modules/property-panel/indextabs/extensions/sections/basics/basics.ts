@@ -25,7 +25,7 @@ export class BasicsSection implements ISection {
   public activate(model: IPageModel): void {
     this.businessObjInPanel = model.elementInPanel.businessObject;
     this.moddle = model.modeler.get('moddle');
-    this.init();
+    this._init();
   }
 
   public isSuitableForElement(element: IShape): boolean {
@@ -33,19 +33,13 @@ export class BasicsSection implements ISection {
       return false;
     }
 
-    const elementHasExtensions: boolean = (element.businessObject.$type !== 'bpmn:Process') &&
-                                      (element.businessObject.$type !== 'bpmn:Collaboration');
+    const elementHasExtensions: boolean = element.businessObject.$type !== 'bpmn:Process'
+                                       && element.businessObject.$type !== 'bpmn:Collaboration';
 
     return elementHasExtensions;
   }
 
-  private init(): void {
-    this.propertyElement = this.getPropertyElement();
-    this.selectedElement = this.businessObjInPanel;
-    this.reloadProperties();
-  }
-
-  private addProperty(): void {
+  public addProperty(): void {
     const bpmnPropertyProperties: Object = {
       name: '',
       value: '',
@@ -59,34 +53,55 @@ export class BasicsSection implements ISection {
     this.properties.push(bpmnProperty);
   }
 
-  private removeProperty(index: number): void {
+  public removeProperty(index: number): void {
     this.propertyElement.values.splice(index, 1);
-    this.reloadProperties();
+    this._reloadProperties();
   }
 
-  private reloadProperties(): void {
+  public changeName(index: number): void {
+    this.propertyElement.values[index].name = this.newNames[index];
+  }
+
+  public changeValue(index: number): void {
+    this.propertyElement.values[index].value = this.newValues[index];
+  }
+
+  private _init(): void {
+    this.propertyElement = this._getPropertyElement();
+    this.selectedElement = this.businessObjInPanel;
+    this._reloadProperties();
+  }
+
+  private _reloadProperties(): void {
     this.properties = [];
     this.newNames = [];
     this.newValues = [];
 
-    if (!this.propertyElement || !this.propertyElement.values) {
+    const elementHasNoProperties: boolean = this.propertyElement === undefined
+                                         || this.propertyElement === null
+                                         || this.propertyElement.values === undefined
+                                         || this.propertyElement.values === null
+                                         || this.propertyElement.values.length === 0;
+
+    if (elementHasNoProperties) {
       return;
     }
 
     const properties: Array<IProperty> = this.propertyElement.values;
     for (const property of properties) {
-      if (property.$type === `camunda:Property`) {
-        this.newNames.push(property.name);
-        this.newValues.push(property.value);
-        this.properties.push(property);
+      if (property.$type !== `camunda:Property`) {
+        continue;
       }
+      this.newNames.push(property.name);
+      this.newValues.push(property.value);
+      this.properties.push(property);
     }
   }
 
-  private getPropertyElement(): IPropertyElement {
+  private _getPropertyElement(): IPropertyElement {
     let propertyElement: IPropertyElement;
     if (!this.businessObjInPanel.extensionElements) {
-      this.createExtensionElement();
+      this._createExtensionElement();
     }
 
     for (const extensionValue of this.businessObjInPanel.extensionElements.values) {
@@ -96,17 +111,14 @@ export class BasicsSection implements ISection {
     }
 
     if (!propertyElement) {
-      const propertyValues: Array<IProperty> = [];
-
-      const extensionPropertyElement: IPropertyElement = this.moddle.create('camunda:Properties', {values: propertyValues});
-      this.businessObjInPanel.extensionElements.values.push(extensionPropertyElement);
-      return this.getPropertyElement();
+      this._createEmptyPropertyElement();
+      return this._getPropertyElement();
     }
 
     return propertyElement;
   }
 
-  private createExtensionElement(): void {
+  private _createExtensionElement(): void {
     const bpmnExecutionListenerProperties: Object = {
       class: '',
       event: '',
@@ -123,12 +135,11 @@ export class BasicsSection implements ISection {
     this.businessObjInPanel.extensionElements = extensionElements;
   }
 
-  private changeName(index: number): void {
-    this.propertyElement.values[index].name = this.newNames[index];
-  }
+  private _createEmptyPropertyElement(): void {
+    const propertyValues: Array<IProperty> = [];
 
-  private changeValue(index: number): void {
-    this.propertyElement.values[index].value = this.newValues[index];
+    const extensionPropertyElement: IPropertyElement = this.moddle.create('camunda:Properties', {values: propertyValues});
+    this.businessObjInPanel.extensionElements.values.push(extensionPropertyElement);
   }
 
 }

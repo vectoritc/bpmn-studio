@@ -57,40 +57,34 @@ export class MessageEventSection implements ISection {
   }
 
   private init(): void {
-    if (this.businessObjInPanel.eventDefinitions
-      && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:MessageEventDefinition') {
-        const messageElement: IMessageElement = this.businessObjInPanel.eventDefinitions[0];
+    const eventDefinitions: Array<IModdleElement> = this.businessObjInPanel.eventDefinitions;
+    const businessObjectHasNoMessageEvents: boolean = eventDefinitions === undefined
+                                                   || eventDefinitions === null
+                                                   || eventDefinitions[0].$type !== 'bpmn:MessageEventDefinition';
+    if (businessObjectHasNoMessageEvents) {
+      return;
+    }
 
-        if (messageElement.messageRef) {
-          this.selectedId = messageElement.messageRef.id;
-          this.updateMessage();
-        } else {
-          this.selectedMessage = null;
-          this.selectedId = null;
-        }
+    const messageElement: IMessageElement = this.businessObjInPanel.eventDefinitions[0];
+    const elementReferencesMessage: boolean = messageElement.messageRef !== undefined
+                                           && messageElement.messageRef !== null;
+
+    if (elementReferencesMessage) {
+      this.selectedId = messageElement.messageRef.id;
+      this.updateMessage();
+    } else {
+      this.selectedMessage = null;
+      this.selectedId = null;
     }
   }
 
-  private getXML(): string {
-    let xml: string;
-    this.modeler.saveXML({format: true}, (err: Error, diagrammXML: string) => {
-      xml = diagrammXML;
+  private getMessages(): Array<IMessage> {
+    const rootElements: Array<IModdleElement> = this.modeler._definitions.rootElements;
+    const messages: Array<IMessage> = rootElements.filter((element: IModdleElement) => {
+      return element.$type === 'bpmn:Message';
     });
-    return xml;
-  }
 
-  private getMessages(): Promise<Array<IMessage>> {
-    return new Promise((resolve: Function, reject: Function): void => {
-
-      this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
-        const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-        const messages: Array<IMessage> = rootElements.filter((element: IModdleElement) => {
-          return element.$type === 'bpmn:Message';
-        });
-
-        resolve(messages);
-      });
-    });
+    return messages;
   }
 
   private updateMessage(): void {
@@ -103,39 +97,26 @@ export class MessageEventSection implements ISection {
   }
 
   private updateName(): void {
-    this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
-
-      const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-      const message: IMessage = rootElements.find((element: any) => {
-        return element.$type === 'bpmn:Message' && element.id === this.selectedId;
-      });
-
-      message.name = this.selectedMessage.name;
-
-      this.moddle.toXML(definitions, (error: Error, xmlStrUpdated: string) => {
-        this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
-          await this.refreshMessages();
-          await this.setBusinessObj();
-        });
-      });
+    const rootElements: Array<IModdleElement> = this.modeler._definitions.rootElements;
+    const message: IMessage = rootElements.find((element: IModdleElement) => {
+      return element.$type === 'bpmn:Message' && element.id === this.selectedId;
     });
+
+    message.name = this.selectedMessage.name;
   }
 
-  private async addMessage(): Promise<void> {
-    this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
+  private addMessage(): void {
+    const bpmnMessageProperty: Object = {id: `Message_${this.generalService.generateRandomId()}`, name: 'Message Name'};
+    const bpmnMessage: IMessage = this.moddle.create('bpmn:Message', bpmnMessageProperty);
 
-      const bpmnMessage: IMessage = this.moddle.create('bpmn:Message',
-        {id: `Message_${this.generalService.generateRandomId()}`, name: 'Message Name'});
+    this.modeler._definitions.rootElements.push(bpmnMessage);
 
-      definitions.get('rootElements').push(bpmnMessage);
-
-      this.moddle.toXML(definitions, (error: Error, xmlStrUpdated: string) => {
-        this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
-          await this.refreshMessages();
-          await this.setBusinessObj();
-          this.selectedId = bpmnMessage.id;
-          this.updateMessage();
-        });
+    this.moddle.toXML(this.modeler._definitions.rootElements, (toXMLError: Error, xmlStrUpdated: string) => {
+      this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
+        await this.refreshMessages();
+        await this.setBusinessObj();
+        this.selectedId = bpmnMessage.id;
+        this.updateMessage();
       });
     });
   }
@@ -144,14 +125,10 @@ export class MessageEventSection implements ISection {
     this.messages = await this.getMessages();
   }
 
-  private setBusinessObj(): Promise<void> {
-    return new Promise((resolve: Function, reject: Function): void => {
-      const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
-      const elementInPanel: IShape = elementRegistry.get(this.businessObjInPanel.id);
-      this.businessObjInPanel = elementInPanel.businessObject;
-
-      resolve();
-    });
+  private setBusinessObj(): void {
+    const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
+    const elementInPanel: IShape = elementRegistry.get(this.businessObjInPanel.id);
+    this.businessObjInPanel = elementInPanel.businessObject;
   }
 
   private clearName(): void {

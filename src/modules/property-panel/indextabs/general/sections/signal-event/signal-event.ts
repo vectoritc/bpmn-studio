@@ -55,40 +55,34 @@ export class SignalEventSection implements ISection {
   }
 
   private init(): void {
-    if (this.businessObjInPanel.eventDefinitions
-      && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:SignalEventDefinition') {
-        const signalElement: ISignalElement = this.businessObjInPanel.eventDefinitions[0];
+    const eventDefinitions: Array<IModdleElement> = this.businessObjInPanel.eventDefinitions;
+    const businessObjectHasNoSignalEvents: boolean = eventDefinitions === undefined
+                                                  || eventDefinitions === null
+                                                  || eventDefinitions[0].$type !== 'bpmn:SignalEventDefinition';
+    if (businessObjectHasNoSignalEvents) {
+      return;
+    }
 
-        if (signalElement.signalRef) {
-          this.selectedId = signalElement.signalRef.id;
-          this.updateSignal();
-        } else {
-          this.selectedSignal = null;
-          this.selectedId = null;
-        }
+    const signalElement: ISignalElement = this.businessObjInPanel.eventDefinitions[0];
+    const elementReferencesSignal: boolean = signalElement.signalRef !== undefined
+                                          && signalElement.signalRef !== null;
+
+    if (elementReferencesSignal) {
+      this.selectedId = signalElement.signalRef.id;
+      this.updateSignal();
+    } else {
+      this.selectedSignal = null;
+      this.selectedId = null;
     }
   }
 
-  private getXML(): string {
-    let xml: string;
-    this.modeler.saveXML({format: true}, (err: Error, diagrammXML: string) => {
-      xml = diagrammXML;
+  private getSignals(): Array<ISignal> {
+    const rootElements: Array<IModdleElement> = this.modeler._definitions.rootElements;
+    const signals: Array<ISignal> = rootElements.filter((element: IModdleElement) => {
+      return element.$type === 'bpmn:Signal';
     });
-    return xml;
-  }
 
-  private getSignals(): Promise<Array<ISignal>> {
-    return new Promise((resolve: Function, reject: Function): void => {
-
-      this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
-        const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-        const signals: Array<ISignal> = rootElements.filter((element: IModdleElement) => {
-          return element.$type === 'bpmn:Signal';
-        });
-
-        resolve(signals);
-      });
-    });
+    return signals;
   }
 
   private updateSignal(): void {
@@ -101,40 +95,28 @@ export class SignalEventSection implements ISection {
   }
 
   private updateName(): void {
-    this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
-
-      const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-      const signal: ISignal = rootElements.find((element: any) => {
-        return element.$type === 'bpmn:Signal' && element.id === this.selectedId;
-      });
-
-      signal.name = this.selectedSignal.name;
-
-      this.moddle.toXML(definitions, (error: Error, xmlStrUpdated: string) => {
-        this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
-          await this.refreshSignals();
-          await this.setBusinessObj();
-        });
-      });
+    const rootElements: Array<IModdleElement> = this.modeler._definitions.rootElements;
+    const signal: ISignal = rootElements.find((element: IModdleElement) => {
+      const elementIsSelectedSignal: boolean = element.$type === 'bpmn:Signal' && element.id === this.selectedId;
+      return elementIsSelectedSignal;
     });
+
+    signal.name = this.selectedSignal.name;
   }
 
-  private async addSignal(): Promise<void> {
-    this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
+  private addSignal(): void {
+    const bpmnSignalProperty: Object = {id: `Signal_${this.generalService.generateRandomId()}`, name: 'Signal Name'};
+    const bpmnSignal: ISignalElement = this.moddle.create('bpmn:Signal', bpmnSignalProperty);
 
-      const bpmnSignal: ISignalElement = this.moddle.create('bpmn:Signal',
-        { id: `Signal_${this.generalService.generateRandomId()}`, name: 'Signal Name' });
+    this.modeler._definitions.rootElements.push(bpmnSignal);
 
-      definitions.get('rootElements').push(bpmnSignal);
-
-      this.moddle.toXML(definitions, (error: Error, xmlStrUpdated: string) => {
-        this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
-          await this.refreshSignals();
-          await this.setBusinessObj();
-          this.selectedId = bpmnSignal.id;
-          this.selectedSignal = bpmnSignal;
-          this.updateSignal();
-        });
+    this.moddle.toXML(this.modeler._definitions.rootElements, (toXMLError: Error, xmlStrUpdated: string) => {
+      this.modeler.importXML(xmlStrUpdated, async(importXMLError: Error) => {
+        await this.refreshSignals();
+        await this.setBusinessObj();
+        this.selectedId = bpmnSignal.id;
+        this.selectedSignal = bpmnSignal;
+        this.updateSignal();
       });
     });
   }
@@ -143,14 +125,10 @@ export class SignalEventSection implements ISection {
     this.signals = await this.getSignals();
   }
 
-  private setBusinessObj(): Promise<void> {
-    return new Promise((resolve: Function, reject: Function): void => {
+  private setBusinessObj(): void {
       const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
       const elementInPanel: IShape = elementRegistry.get(this.businessObjInPanel.id);
       this.businessObjInPanel = elementInPanel.businessObject;
-
-      resolve();
-    });
   }
 
   private clearName(): void {
