@@ -4,7 +4,6 @@ import {Router} from 'aurelia-router';
 import {
   IBpmnModeler,
   ICallActivityElement,
-  IModdleElement,
   IPageModel,
   ISection,
   IShape,
