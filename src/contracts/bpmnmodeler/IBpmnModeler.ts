@@ -2,7 +2,8 @@ import {IBpmnFunction} from './IBpmnFunction';
 
 export interface IBpmnModeler {
   _definitions: any;
-  attachTo(wrapper: string): void;
+  attachTo(dom: HTMLElement): void;
+  detach(): void;
   saveXML(options: any,
           callback: (error: Error, result: String) => void): void;
   saveSVG(options: any,

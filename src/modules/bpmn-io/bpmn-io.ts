@@ -55,7 +55,7 @@ export class BpmnIo {
   }
 
   public attached(): void {
-    this.modeler.attachTo('#canvas');
+    this.modeler.attachTo(this.canvasModel);
     const minimapViewport: any = this.canvasModel.getElementsByClassName('djs-minimap-viewport')[0];
     const minimapArea: any = this.canvasModel.getElementsByClassName('djs-minimap-map')[0];
     this.minimapToggle = this.canvasModel.getElementsByClassName('djs-minimap-toggle')[0];
@@ -95,6 +95,7 @@ export class BpmnIo {
   }
 
   public detached(): void {
+    this.modeler.detach();
     window.removeEventListener('resize', this.resizeEventHandler);
   }
 
