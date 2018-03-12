@@ -65,16 +65,12 @@ export class BpmnIo {
     minimapViewport.style.fill = 'rgba(0, 208, 255, 0.13)';
 
     this.expandIcon = document.createElement('i');
-    this.expandIcon.className = 'glyphicon glyphicon-resize-full';
-    this.expandIcon.style.marginLeft = '5px';
-    this.expandIcon.style.marginTop = '5px';
-    this.expandIcon.style.fontSize = '36px';
+    this.expandIcon.className = 'glyphicon glyphicon-resize-full expandIcon';
     this.minimapToggle.appendChild(this.expandIcon);
 
     this.hideMinimap = document.createElement('p');
-    this.hideMinimap.style.marginLeft = '134px';
+    this.hideMinimap.className = 'hideMinimap';
     this.hideMinimap.textContent = 'Hide Minimap';
-    this.hideMinimap.style.display = 'none';
     this.minimapToggle.appendChild(this.hideMinimap);
     this.minimapToggle.addEventListener('click', this.toggleMinimapFunction);
 
