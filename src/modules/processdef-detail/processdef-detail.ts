@@ -25,30 +25,21 @@ interface RouteParameters {
   processDefId: string;
 }
 
-interface ColorPickerSettings {
-  color?: string;
-  flat?: boolean;
-  showInput?: boolean;
-  showInitial?: boolean;
-  allowEmpty?: boolean;
-  showAlpha?: boolean;
-  disabled?: boolean;
-  localStorageKey?: string;
-  showPalette?: boolean;
-  showPaletteOnly?: boolean;
-  togglePaletteOnly?: boolean;
-  showSelectionPalette?: boolean;
-  clickoutFiresChange?: boolean;
-  cancelText?: string;
-  chooseText?: string;
-  togglePaletteMoreText?: string;
-  togglePaletteLessText?: string;
-  containerClassName?: string;
-  replacerClassName?: string;
-  preferredFormat?: string;
-  maxSelectionSize?: number;
-  palette?: [[string]];
-  selectionPalette?: [string];
+interface ColorPickerMoveSettings {
+  move(color: string): void;
+}
+
+interface BPMNStudioColorPickerSettings {
+  clickoutFiresChange: boolean;
+  showPalette: boolean;
+  palette: Array<string>;
+  localStorageKey: string;
+  showInitial: boolean;
+  showInput: boolean;
+  allowEmpty: boolean;
+  showButtons: boolean;
+  showPaletteOnly: boolean;
+  togglePaletteOnly: boolean;
 
   move(color: string): void;
 }
@@ -126,22 +117,22 @@ export class ProcessDefDetail {
   }
 
   private _activateColorPicker(): void {
-    const borderMoveSetting: ColorPickerSettings = {
+    const borderMoveSetting: ColorPickerMoveSettings = {
       move: (borderColor: string): void => {
         this.updateBorderColor(borderColor);
       },
     };
 
-    const colorPickerBorderSettings: ColorPickerSettings = Object.assign({}, environment.colorPickerSettings, borderMoveSetting);
+    const colorPickerBorderSettings: BPMNStudioColorPickerSettings = Object.assign({}, environment.colorPickerSettings, borderMoveSetting);
     $(this.colorpickerBorder).spectrum(colorPickerBorderSettings);
 
-    const fillMoveSetting: ColorPickerSettings = {
+    const fillMoveSetting: ColorPickerMoveSettings = {
       move: (fillColor: string): void => {
         this.updateFillColor(fillColor);
       },
     };
 
-    const colorPickerFillSettings: ColorPickerSettings = Object.assign({}, environment.colorPickerSettings, fillMoveSetting);
+    const colorPickerFillSettings: BPMNStudioColorPickerSettings = Object.assign({}, environment.colorPickerSettings, fillMoveSetting);
     $(this.colorpickerFill).spectrum(colorPickerFillSettings);
 
     this.colorpickerLoaded = true;
