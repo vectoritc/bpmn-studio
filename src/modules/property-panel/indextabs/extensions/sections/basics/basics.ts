@@ -89,7 +89,7 @@ export class BasicsSection implements ISection {
 
     const properties: Array<IProperty> = this.propertyElement.values;
     for (const property of properties) {
-      if (property.$type !== `camunda:Property`) {
+      if (property.$type !== 'camunda:Property') {
         continue;
       }
       this.newNames.push(property.name);
@@ -100,7 +100,10 @@ export class BasicsSection implements ISection {
 
   private _getPropertyElement(): IPropertyElement {
     let propertyElement: IPropertyElement;
-    if (!this.businessObjInPanel.extensionElements) {
+    const hasBusinessObjExtensionElements: boolean = this.businessObjInPanel.extensionElements === undefined
+                                                  || this.businessObjInPanel.extensionElements === null;
+
+    if (hasBusinessObjExtensionElements) {
       this._createExtensionElement();
     }
 
