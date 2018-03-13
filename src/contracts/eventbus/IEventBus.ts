@@ -20,6 +20,7 @@ export interface IEventBus {
 
      fire(name: string,
           data?: any): any;
+     // tslint:disable-next-line:unified-signatures
      fire(eventObject: {type: string},
           data?: any): any;
 }
