@@ -44,6 +44,9 @@ export class ProcessDefDetail {
   private fillColor: string;
   private borderColor: string;
   private showXMLView: boolean = false;
+  private colorpickerBorder: any;
+  private colorpickerFill: any;
+  private colorpickerLoaded: boolean = false;
 
   public validationController: ValidationController;
   public validationError: boolean;
@@ -92,28 +95,29 @@ export class ProcessDefDetail {
     setTimeout(() => {
       this.initialLoadingFinished = true;
     }, 0);
-
-    setTimeout(() => {
-      this._activateColorPicker();
-    }, environment.colorPickerSettings.loadTimeout);
   }
 
   private _activateColorPicker(): void {
-    $('#colorpickerBorder').spectrum(Object.assign({},
-      environment.colorPickerSettings.uiSettings,
+    $(this.colorpickerBorder).spectrum(Object.assign({},
+      environment.colorPickerSettings,
       { move: (borderColor: any): void => this.updateBorderColor(borderColor) },
     ));
 
-    $('#colorpickerFill').spectrum(Object.assign({},
-      environment.colorPickerSettings.uiSettings,
+    $(this.colorpickerFill).spectrum(Object.assign({},
+      environment.colorPickerSettings,
       { move: (fillColor: any): void => this.updateFillColor(fillColor) },
     ));
+
+    this.colorpickerLoaded = true;
   }
 
   public detached(): void {
     for (const subscription of this.subscriptions) {
       subscription.dispose();
     }
+
+    $(this.colorpickerBorder).spectrum('destroy');
+    $(this.colorpickerFill).spectrum('destroy');
   }
 
   public async toggleXMLView(): Promise<void> {
@@ -335,10 +339,14 @@ export class ProcessDefDetail {
   }
 
   public updateCustomColors(): void {
+    if (!this.colorpickerLoaded) {
+      this._activateColorPicker();
+    }
+
     [this.fillColor, this.borderColor] = this.bpmn.getColors();
 
-    $('#colorpickerFill').spectrum('set', this.fillColor);
-    $('#colorpickerBorder').spectrum('set', this.borderColor);
+    $(this.colorpickerFill).spectrum('set', this.fillColor);
+    $(this.colorpickerBorder).spectrum('set', this.borderColor);
   }
 
   private validateForm(event: ValidateEvent): void {
