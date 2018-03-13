@@ -25,10 +25,6 @@ interface RouteParameters {
   processDefId: string;
 }
 
-interface ColorPickerMoveSettings {
-  move(color: string): void;
-}
-
 interface ColorPickerSettings {
   color?: string;
   flat?: boolean;
@@ -130,7 +126,7 @@ export class ProcessDefDetail {
   }
 
   private _activateColorPicker(): void {
-    const borderMoveSetting: ColorPickerMoveSettings = {
+    const borderMoveSetting: ColorPickerSettings = {
       move: (borderColor: string): void => {
         this.updateBorderColor(borderColor);
       },
@@ -139,7 +135,7 @@ export class ProcessDefDetail {
     const colorPickerBorderSettings: ColorPickerSettings = Object.assign({}, environment.colorPickerSettings, borderMoveSetting);
     $(this.colorpickerBorder).spectrum(colorPickerBorderSettings);
 
-    const fillMoveSetting: ColorPickerMoveSettings = {
+    const fillMoveSetting: ColorPickerSettings = {
       move: (fillColor: string): void => {
         this.updateFillColor(fillColor);
       },
