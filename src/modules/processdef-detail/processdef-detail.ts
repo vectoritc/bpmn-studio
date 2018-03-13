@@ -25,6 +25,38 @@ interface RouteParameters {
   processDefId: string;
 }
 
+interface ColorPickerMoveSettings {
+  move(color: string): void;
+}
+
+interface ColorPickerSettings {
+  color?: string;
+  flat?: boolean;
+  showInput?: boolean;
+  showInitial?: boolean;
+  allowEmpty?: boolean;
+  showAlpha?: boolean;
+  disabled?: boolean;
+  localStorageKey?: string;
+  showPalette?: boolean;
+  showPaletteOnly?: boolean;
+  togglePaletteOnly?: boolean;
+  showSelectionPalette?: boolean;
+  clickoutFiresChange?: boolean;
+  cancelText?: string;
+  chooseText?: string;
+  togglePaletteMoreText?: string;
+  togglePaletteLessText?: string;
+  containerClassName?: string;
+  replacerClassName?: string;
+  preferredFormat?: string;
+  maxSelectionSize?: number;
+  palette?: [[string]];
+  selectionPalette?: [string];
+
+  move(color: string): void;
+}
+
 @inject('ProcessEngineService', EventAggregator, 'ConsumerClient', Router, ValidationController)
 export class ProcessDefDetail {
 
@@ -44,9 +76,9 @@ export class ProcessDefDetail {
   private fillColor: string;
   private borderColor: string;
   private showXMLView: boolean = false;
-  private colorpickerBorder: HTMLInputElement;
-  private colorpickerFill: HTMLInputElement;
-  private colorpickerLoaded: boolean = false;
+  public colorpickerBorder: HTMLInputElement;
+  public colorpickerFill: HTMLInputElement;
+  public colorpickerLoaded: boolean = false;
 
   public validationController: ValidationController;
   public validationError: boolean;
@@ -98,15 +130,23 @@ export class ProcessDefDetail {
   }
 
   private _activateColorPicker(): void {
-    $(this.colorpickerBorder).spectrum(Object.assign({},
-      environment.colorPickerSettings,
-      { move: (borderColor: any): void => this.updateBorderColor(borderColor) },
-    ));
+    const borderMoveSetting: ColorPickerMoveSettings = {
+      move: (borderColor: string): void => {
+        this.updateBorderColor(borderColor);
+      },
+    };
 
-    $(this.colorpickerFill).spectrum(Object.assign({},
-      environment.colorPickerSettings,
-      { move: (fillColor: any): void => this.updateFillColor(fillColor) },
-    ));
+    const colorPickerBorderSettings: ColorPickerSettings = Object.assign({}, environment.colorPickerSettings, borderMoveSetting);
+    $(this.colorpickerBorder).spectrum(colorPickerBorderSettings);
+
+    const fillMoveSetting: ColorPickerMoveSettings = {
+      move: (fillColor: string): void => {
+        this.updateFillColor(fillColor);
+      },
+    };
+
+    const colorPickerFillSettings: ColorPickerSettings = Object.assign({}, environment.colorPickerSettings, fillMoveSetting);
+    $(this.colorpickerFill).spectrum(colorPickerFillSettings);
 
     this.colorpickerLoaded = true;
   }
