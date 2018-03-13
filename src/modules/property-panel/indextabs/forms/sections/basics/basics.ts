@@ -70,7 +70,7 @@ export class BasicsSection implements ISection {
   public isSuitableForElement(element: IShape): boolean {
 
     const elementHasNoBusinessObject: boolean = element.businessObject === undefined
-                                              || element.businessObject === null;
+                                             || element.businessObject === null;
 
     if (elementHasNoBusinessObject) {
       return false;
@@ -252,13 +252,15 @@ export class BasicsSection implements ISection {
   }
 
   private _getTypeAndHandleCustomType(type: string): string {
-    if (this.types.includes(type) || type === null) {
+    const typeIsRegularType: boolean = this.types.includes(type) || type === null;
+
+    if (typeIsRegularType) {
       this.customType = '';
       return type;
-    } else {
-      this.customType = type;
-      return 'custom type';
     }
+
+    this.customType = type;
+    return 'custom type';
   }
 
   private _getSelectedIndex(): number {
