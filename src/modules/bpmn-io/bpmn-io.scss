@@ -1,4 +1,4 @@
-#canvas {
+.canvasModel {
   position: absolute;
   top: 0px;
   left: 0px;
@@ -67,4 +67,15 @@
   height: 50%;
   bottom: 0;
   position: absolute;
+}
+
+.expandIcon {
+  margin-left: 5px;
+  margin-top: 5px;
+  font-size: 36px;
+}
+
+.hideMinimap {
+  margin-left: 143px;
+  display: none;
 }
