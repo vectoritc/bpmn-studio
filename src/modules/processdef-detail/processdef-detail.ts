@@ -29,7 +29,7 @@ interface ColorPickerMoveSettings {
   move(color: string): void;
 }
 
-interface BPMNStudioColorPickerSettings {
+interface BpmnStudioColorPickerSettings {
   clickoutFiresChange: boolean;
   showPalette: boolean;
   palette: Array<string>;
@@ -63,9 +63,9 @@ export class ProcessDefDetail {
   private fillColor: string;
   private borderColor: string;
   private showXMLView: boolean = false;
-  public colorpickerBorder: HTMLInputElement;
-  public colorpickerFill: HTMLInputElement;
-  public colorpickerLoaded: boolean = false;
+  public colorPickerBorder: HTMLInputElement;
+  public colorPickerFill: HTMLInputElement;
+  public colorPickerLoaded: boolean = false;
 
   public validationController: ValidationController;
   public validationError: boolean;
@@ -123,8 +123,8 @@ export class ProcessDefDetail {
       },
     };
 
-    const colorPickerBorderSettings: BPMNStudioColorPickerSettings = Object.assign({}, environment.colorPickerSettings, borderMoveSetting);
-    $(this.colorpickerBorder).spectrum(colorPickerBorderSettings);
+    const colorPickerBorderSettings: BpmnStudioColorPickerSettings = Object.assign({}, environment.colorPickerSettings, borderMoveSetting);
+    $(this.colorPickerBorder).spectrum(colorPickerBorderSettings);
 
     const fillMoveSetting: ColorPickerMoveSettings = {
       move: (fillColor: string): void => {
@@ -132,10 +132,10 @@ export class ProcessDefDetail {
       },
     };
 
-    const colorPickerFillSettings: BPMNStudioColorPickerSettings = Object.assign({}, environment.colorPickerSettings, fillMoveSetting);
-    $(this.colorpickerFill).spectrum(colorPickerFillSettings);
+    const colorPickerFillSettings: BpmnStudioColorPickerSettings = Object.assign({}, environment.colorPickerSettings, fillMoveSetting);
+    $(this.colorPickerFill).spectrum(colorPickerFillSettings);
 
-    this.colorpickerLoaded = true;
+    this.colorPickerLoaded = true;
   }
 
   public detached(): void {
@@ -143,8 +143,8 @@ export class ProcessDefDetail {
       subscription.dispose();
     }
 
-    $(this.colorpickerBorder).spectrum('destroy');
-    $(this.colorpickerFill).spectrum('destroy');
+    $(this.colorPickerBorder).spectrum('destroy');
+    $(this.colorPickerFill).spectrum('destroy');
   }
 
   public async toggleXMLView(): Promise<void> {
@@ -366,14 +366,14 @@ export class ProcessDefDetail {
   }
 
   public updateCustomColors(): void {
-    if (!this.colorpickerLoaded) {
+    if (!this.colorPickerLoaded) {
       this._activateColorPicker();
     }
 
     [this.fillColor, this.borderColor] = this.bpmn.getColors();
 
-    $(this.colorpickerFill).spectrum('set', this.fillColor);
-    $(this.colorpickerBorder).spectrum('set', this.borderColor);
+    $(this.colorPickerFill).spectrum('set', this.fillColor);
+    $(this.colorPickerBorder).spectrum('set', this.borderColor);
   }
 
   private validateForm(event: ValidateEvent): void {
