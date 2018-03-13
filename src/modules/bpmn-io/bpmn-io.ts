@@ -60,6 +60,9 @@ export class BpmnIo {
     const minimapArea: any = this.canvasModel.getElementsByClassName('djs-minimap-map')[0];
     this.minimapToggle = this.canvasModel.getElementsByClassName('djs-minimap-toggle')[0];
 
+    // These style changes cannot be outsourced, because bpmn-js overwrites the css style.
+    // So the style must set directly and not in a css class.
+    // Setting the styles in a css class with an important flag is working, but not really pretty.
     minimapArea.style.width = '350px';
     minimapArea.style.height = '200px';
     minimapViewport.style.fill = 'rgba(0, 208, 255, 0.13)';
@@ -77,6 +80,9 @@ export class BpmnIo {
     window.addEventListener('resize', this.resizeEventHandler);
   }
 
+    // These style changes cannot be outsourced, because bpmn-js overwrites the css style.
+    // So the style must set directly and not in a css class.
+    // Setting the styles in a css class with an important flag is working, but not really pretty.
   private toggleMinimapFunction = (): void => {
     if (this.toggleMinimap === false) {
       this.expandIcon.style.display = 'none';
