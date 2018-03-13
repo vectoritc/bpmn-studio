@@ -44,8 +44,8 @@ export class ProcessDefDetail {
   private fillColor: string;
   private borderColor: string;
   private showXMLView: boolean = false;
-  private colorpickerBorder: any;
-  private colorpickerFill: any;
+  private colorpickerBorder: HTMLInputElement;
+  private colorpickerFill: HTMLInputElement;
   private colorpickerLoaded: boolean = false;
 
   public validationController: ValidationController;
