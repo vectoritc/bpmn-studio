@@ -79,7 +79,7 @@ export class BasicsSection implements ISection {
     return element.businessObject.$type === 'bpmn:UserTask';
   }
 
-  public removeForm(): void {
+  public removeSelectedForm(): void {
     this.formElement.fields.splice(this.selectedIndex, 1);
 
     this.isFormSelected = false;
@@ -95,13 +95,13 @@ export class BasicsSection implements ISection {
 
   public async addForm(): Promise<void> {
 
-    const bpmnForm: IForm = this.bpmnModdle.create('camunda:FormField',
-      {
-        id: `Form_${this._generateRandomId()}`,
-        type: null,
-        label: '',
-        defaultValue: '',
-      });
+    const bpmnFormObject: IForm =  {
+      id: `Form_${this._generateRandomId()}`,
+      type: null,
+      label: '',
+      defaultValue: '',
+    };
+    const bpmnForm: IForm = this.bpmnModdle.create('camunda:FormField', bpmnFormObject);
 
     if (this.formElement.fields === undefined || this.formElement.fields === null) {
       this.formElement.fields = [];
@@ -191,7 +191,7 @@ export class BasicsSection implements ISection {
       return;
     }
 
-    const bpmnFormFieldObject: Object = {
+    const bpmnFormFieldObject: IForm = {
       id: `Form_${this._generateRandomId()}`,
       type: null,
       label: '',
