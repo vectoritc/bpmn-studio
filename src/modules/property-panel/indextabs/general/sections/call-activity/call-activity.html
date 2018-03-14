@@ -4,10 +4,13 @@
   <div class="section">
     <div class="section__content">
       <label><em>Call Activity</em></label><br>
-      <div class="section__btn-group">
-        <label class="section__input-label">Called Element: </label>
-        <input type="text" class="form-control" value.bind="businessObjInPanel.calledElement">
-        <span class="glyphicon glyphicon-remove-circle section__btn-group--clear-btn" click.delegate="clearCalledElement()"></span>
+      <select class="form-control" value.bind="selectedProcess" change.delegate="updateCalledProcess()">
+        <option model.bind="null">-Choose called Process-</option>
+        <option repeat.for="process of allProcesses.data"
+                model.bind="process" value="${process.id}">${process.name} (id: ${process.id})</option>
+      </select>
+      <div class="navigation">
+        <button class="btn btn-primary" disabled.bind="!selectedProcess" click.delegate="navigateToCalledProcess()">Navigate to called Process</button>
       </div>
     </div>
     <div class="section__special">
