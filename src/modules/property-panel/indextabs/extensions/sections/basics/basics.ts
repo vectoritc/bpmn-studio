@@ -1,5 +1,6 @@
 import {
   IBpmnModdle,
+  IExtensionElement,
   IModdleElement,
   IPageModel,
   IProperty,
@@ -99,7 +100,6 @@ export class BasicsSection implements ISection {
   }
 
   private _getPropertyElement(): IPropertyElement {
-    let propertyElement: IPropertyElement;
     const hasBusinessObjExtensionElements: boolean = this.businessObjInPanel.extensionElements === undefined
                                                   || this.businessObjInPanel.extensionElements === null;
 
@@ -107,14 +107,17 @@ export class BasicsSection implements ISection {
       this._createExtensionElement();
     }
 
-    for (const extensionValue of this.businessObjInPanel.extensionElements.values) {
-      if (extensionValue.$type === 'camunda:Properties' && extensionValue.values) {
-        propertyElement = extensionValue;
-      }
-    }
+    const propertyElement: IPropertyElement  = this.businessObjInPanel.extensionElements.values.find((extensionValue: IExtensionElement) => {
+      const extensionIsPropertyElement: boolean = extensionValue.$type === 'camunda:Properties'
+                                               && extensionValue.values !== undefined
+                                               && extensionValue.values !== null;
 
-    if (!propertyElement) {
+      return extensionIsPropertyElement;
+    });
+
+    if (propertyElement === undefined) {
       this._createEmptyPropertyElement();
+
       return this._getPropertyElement();
     }
 
