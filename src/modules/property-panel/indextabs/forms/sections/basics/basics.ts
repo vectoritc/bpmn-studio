@@ -243,12 +243,11 @@ export class BasicsSection implements ISection {
       return;
     }
 
-    const forms: Array<IForm> = this.formElement.fields;
-    for (const form of forms) {
-      if (form.$type === 'camunda:FormField') {
-        this.forms.push(form);
-      }
-    }
+    this.forms = this.formElement.fields.filter((form: IForm) => {
+      const formIsFormField: boolean = form.$type === 'camunda:FormField';
+
+      return formIsFormField;
+    });
   }
 
   private _getTypeAndHandleCustomType(type: string): string {
@@ -272,15 +271,16 @@ export class BasicsSection implements ISection {
   }
 
   private _getOrCreateFormElement(): IModdleElement {
-    let formElement: IModdleElement;
+    const elementHasNoExtensionsElement: boolean = this.businessObjInPanel.extensionElements === undefined
+                                                || this.businessObjInPanel.extensionElements === null;
 
-    if (!this.businessObjInPanel.extensionElements) {
+    if (elementHasNoExtensionsElement) {
       this._createExtensionElement();
     }
 
     const extensionsValues: Array<IModdleElement> = this.businessObjInPanel.extensionElements.values;
 
-    formElement = extensionsValues.find((extensionValue: IModdleElement) => {
+    const formElement: IModdleElement = extensionsValues.find((extensionValue: IModdleElement) => {
       const extensionIsValidForm: boolean = extensionValue.$type === 'camunda:FormData';
 
       return extensionIsValidForm;
