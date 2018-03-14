@@ -100,36 +100,39 @@ export class EscalationEventSection implements ISection {
   }
 
   public updateEscalation(): void {
-    if (this.selectedId) {
-      this.selectedEscalation = this.escalations.find((escalation: IModdleElement) => {
-        return escalation.id === this.selectedId;
-      });
+    if (this.selectedId === undefined || this.selectedId === null) {
+      this.selectedEscalation =  null;
 
-      const escalationElement: IEscalationElement = this.businessObjInPanel.eventDefinitions[0];
-
-      this.escalationCodeVariable = escalationElement.escalationCodeVariable;
-      escalationElement.escalationRef = this.selectedEscalation;
-    } else {
-      this.selectedEscalation = null;
+      return;
     }
+
+    this.selectedEscalation = this.escalations.find((escalation: IModdleElement) => {
+      return escalation.id === this.selectedId;
+    });
+
+    const escalationElement: IEscalationElement = this.businessObjInPanel.eventDefinitions[0];
+
+    this.escalationCodeVariable = escalationElement.escalationCodeVariable;
+    escalationElement.escalationRef = this.selectedEscalation;
   }
 
   public updateEscalationName(): void {
-    const rootElements: Array<IModdleElement> = this.modeler._definitions.rootElements;
-    const escalation: IEscalation = rootElements.find((element: IModdleElement) => {
-      return element.$type === 'bpmn:Escalation' && element.id === this.selectedId;
-    });
-
-    escalation.name = this.selectedEscalation.name;
+    const selectedEscalation: IEscalation = this._getSelectedEscalation();
+    selectedEscalation.name = this.selectedEscalation.name;
   }
 
   public updateEscalationCode(): void {
+    const selectedEscalation: IEscalation = this._getSelectedEscalation();
+    selectedEscalation.escalationCode = this.selectedEscalation.escalationCode;
+  }
+
+  private _getSelectedEscalation(): IEscalation {
     const rootElements: Array<IModdleElement> = this.modeler._definitions.rootElements;
-    const escalation: IEscalation = rootElements.find((element: IModdleElement) => {
+    const selectedEscalation: IEscalation = rootElements.find((element: IModdleElement) => {
       return element.$type === 'bpmn:Escalation' && element.id === this.selectedId;
     });
 
-    escalation.escalationCode = this.selectedEscalation.escalationCode;
+    return selectedEscalation;
   }
 
   public updateEscalationCodeVariable(): void {
@@ -138,27 +141,30 @@ export class EscalationEventSection implements ISection {
   }
 
   public addEscalation(): void {
-    const bpmnEscalationProperty: Object = {id: `Escalation_${this.generalService.generateRandomId()}`, name: 'Escalation Name'};
+    const bpmnEscalationProperty: Object = {
+      id: `Escalation_${this.generalService.generateRandomId()}`,
+      name: 'Escalation Name',
+    };
     const bpmnEscalation: IEscalation = this.moddle.create('bpmn:Escalation', bpmnEscalationProperty);
 
     this.modeler._definitions.rootElements.push(bpmnEscalation);
 
     this.moddle.toXML(this.modeler._definitions.rootElements, (toXMLError: Error, xmlStrUpdated: string) => {
-        this.modeler.importXML(xmlStrUpdated, async(importXMLError: Error) => {
-          await this.refreshEscalations();
-          await this.setBusinessObj();
-          this.selectedId = bpmnEscalation.id;
-          this.selectedEscalation = bpmnEscalation;
-          this.updateEscalation();
-        });
+      this.modeler.importXML(xmlStrUpdated, async(importXMLError: Error) => {
+        await this.refreshEscalations();
+        await this.setBusinessObject();
+        this.selectedId = bpmnEscalation.id;
+        this.selectedEscalation = bpmnEscalation;
+        this.updateEscalation();
       });
+    });
   }
 
   private async refreshEscalations(): Promise<void> {
     this.escalations = await this.getEscalations();
   }
 
-  private setBusinessObj(): void {
+  private setBusinessObject(): void {
     const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
     const elementInPanel: IShape = elementRegistry.get(this.businessObjInPanel.id);
     this.businessObjInPanel = elementInPanel.businessObject;
