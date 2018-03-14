@@ -25,14 +25,10 @@ interface RouteParameters {
   processDefId: string;
 }
 
-interface ColorPickerMoveSettings {
-  move(color: string): void;
-}
-
 interface BpmnStudioColorPickerSettings {
   clickoutFiresChange: boolean;
   showPalette: boolean;
-  palette: Array<string>;
+  palette: Array<Array<string>>;
   localStorageKey: string;
   showInitial: boolean;
   showInput: boolean;
@@ -41,7 +37,7 @@ interface BpmnStudioColorPickerSettings {
   showPaletteOnly: boolean;
   togglePaletteOnly: boolean;
 
-  move(color: string): void;
+  move?(color: tinycolorInstance): void;
 }
 
 @inject('ProcessEngineService', EventAggregator, 'ConsumerClient', Router, ValidationController)
@@ -117,8 +113,8 @@ export class ProcessDefDetail {
   }
 
   private _activateColorPicker(): void {
-    const borderMoveSetting: ColorPickerMoveSettings = {
-      move: (borderColor: string): void => {
+    const borderMoveSetting: spectrum.Options = {
+      move: (borderColor: tinycolorInstance): void => {
         this.updateBorderColor(borderColor);
       },
     };
@@ -126,8 +122,8 @@ export class ProcessDefDetail {
     const colorPickerBorderSettings: BpmnStudioColorPickerSettings = Object.assign({}, environment.colorPickerSettings, borderMoveSetting);
     $(this.colorPickerBorder).spectrum(colorPickerBorderSettings);
 
-    const fillMoveSetting: ColorPickerMoveSettings = {
-      move: (fillColor: string): void => {
+    const fillMoveSetting: spectrum.Options = {
+      move: (fillColor: tinycolorInstance): void => {
         this.updateFillColor(fillColor);
       },
     };
