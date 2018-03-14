@@ -70,8 +70,8 @@ export class ErrorEventSection implements ISection {
   private init(): void {
     const eventDefinitions: Array<IModdleElement> = this.businessObjInPanel.eventDefinitions;
     const businessObjecthasNoErrorEvents: boolean = eventDefinitions === undefined
-                                                  || eventDefinitions === null
-                                                  || eventDefinitions[0].$type !== 'bpmn:ErrorEventDefinition';
+                                                 || eventDefinitions === null
+                                                 || eventDefinitions[0].$type !== 'bpmn:ErrorEventDefinition';
 
     if (businessObjecthasNoErrorEvents) {
       return;
@@ -79,7 +79,7 @@ export class ErrorEventSection implements ISection {
 
     const errorElement: IErrorElement = this.businessObjInPanel.eventDefinitions[0];
     const elementReferencesError: boolean = errorElement.errorRef !== undefined
-                                          && errorElement.errorRef !== null;
+                                         && errorElement.errorRef !== null;
 
     if (elementReferencesError) {
       this.selectedId = errorElement.errorRef.id;
@@ -117,22 +117,23 @@ export class ErrorEventSection implements ISection {
     }
   }
 
-  public async updateErrorName(): Promise<void> {
-    const rootElements: Array<IModdleElement> = this.modeler._definitions.rootElements;
-    const error: IError = rootElements.find((element: IModdleElement) => {
-      return element.$type === 'bpmn:Error' && element.id === this.selectedId;
-    });
-
-    error.name = this.selectedError.name;
+  public updateErrorName(): void {
+    const selectedError: IError = this._getSlectedError();
+    selectedError.name = this.selectedError.name;
   }
 
-  public async updateErrorCode(): Promise<void> {
+  public updateErrorCode(): void {
+    const selectedError: IError = this._getSlectedError();
+    selectedError.errorCode = this.selectedError.errorCode;
+  }
+
+  private _getSlectedError(): IError {
     const rootElements: Array<IModdleElement> = this.modeler._definitions.rootElements;
-    const error: IError = rootElements.find((element: IModdleElement) => {
+    const selectedError: IError = rootElements.find((element: IModdleElement) => {
       return element.$type === 'bpmn:Error' && element.id === this.selectedId;
     });
 
-    error.errorCode = this.selectedError.errorCode;
+    return selectedError;
   }
 
   public updateErrorMessage(): void {
@@ -142,7 +143,10 @@ export class ErrorEventSection implements ISection {
 
   public async addError(): Promise<void> {
 
-      const bpmnErrorObject: Object = {id: `Error_${this.generalService.generateRandomId()}`, name: 'Error Name'};
+      const bpmnErrorObject: Object = {
+        id: `Error_${this.generalService.generateRandomId()}`,
+        name: 'Error Name',
+      };
       const bpmnError: IError = this.moddle.create('bpmn:Error', bpmnErrorObject);
 
       this.modeler._definitions.rootElements.push(bpmnError);
@@ -150,7 +154,7 @@ export class ErrorEventSection implements ISection {
       this.moddle.toXML(this.modeler._definitions, (toXMLError: Error, xmlStrUpdated: string) => {
         this.modeler.importXML(xmlStrUpdated, async(importXMLError: Error) => {
           await this.refreshErrors();
-          await this.setBusinessObj();
+          await this.setBusinessObject();
           this.selectedId = bpmnError.id;
           this.selectedError = bpmnError;
           this.updateError();
@@ -162,7 +166,7 @@ export class ErrorEventSection implements ISection {
     this.errors = await this.getErrors();
   }
 
-  private setBusinessObj(): void {
+  private setBusinessObject(): void {
     const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
     const elementInPanel: IShape = elementRegistry.get(this.businessObjInPanel.id);
     this.businessObjInPanel = elementInPanel.businessObject;
