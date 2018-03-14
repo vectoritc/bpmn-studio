@@ -105,7 +105,10 @@ export class SignalEventSection implements ISection {
   }
 
   private addSignal(): void {
-    const bpmnSignalProperty: Object = {id: `Signal_${this.generalService.generateRandomId()}`, name: 'Signal Name'};
+    const bpmnSignalProperty: Object = {
+      id: `Signal_${this.generalService.generateRandomId()}`,
+      name: 'Signal Name',
+    };
     const bpmnSignal: ISignalElement = this.moddle.create('bpmn:Signal', bpmnSignalProperty);
 
     this.modeler._definitions.rootElements.push(bpmnSignal);
