@@ -7,6 +7,7 @@ import {
   IFormElement,
   IModdleElement,
   IPageModel,
+  IPropertyElement,
   ISection,
   IShape,
 } from '../../../../../../contracts';
@@ -66,98 +67,54 @@ export class BasicsSection implements ISection {
     this._validateOnDetach();
   }
 
-  private _validateOnDetach(): void {
-    if (!this.validationError) {
-      return;
-    }
-
-    this._resetIdOnSelectedOrPrevious();
-
-    this.validationController.validate();
-    this._updateId();
-  }
-
-  private _resetIdOnSelectedOrPrevious(): void {
-    if (this.selectedForm !== null) {
-      this.selectedForm.id = this.previousFormId;
-    } else {
-      this.previousForm.id = this.previousFormId;
-    }
-  }
-
   public isSuitableForElement(element: IShape): boolean {
-    if (!element.businessObject) {
+
+    const elementHasNoBusinessObject: boolean = element.businessObject === undefined
+                                             || element.businessObject === null;
+
+    if (elementHasNoBusinessObject) {
       return false;
     }
 
     return element.businessObject.$type === 'bpmn:UserTask';
   }
 
-  private _init(): void {
+  public removeSelectedForm(): void {
+    this.formElement.fields.splice(this.selectedIndex, 1);
+
     this.isFormSelected = false;
-    if (this.canHandleElement) {
-      this.formElement = this._getFormElement();
-      this._reloadForms();
-    }
+    this.selectedForm = undefined;
+    this.selectedIndex = undefined;
+
+    this._reloadForms();
   }
 
-  private _getXML(): string {
-    let xml: string;
-    this.modeler.saveXML({format: true}, (err: Error, diagrammXML: string) => {
-      xml = diagrammXML;
-    });
-    return xml;
+  public clearFormKey(): void {
+    this.businessObjInPanel.formKey = '';
   }
 
-  private _resetId(): void {
-    this._resetIdOnSelectedOrPrevious();
+  public async addForm(): Promise<void> {
 
-    this.validationController.validate();
-  }
+    const bpmnFormObject: IForm =  {
+      id: `Form_${this._generateRandomId()}`,
+      type: null,
+      label: '',
+      defaultValue: '',
+    };
+    const bpmnForm: IForm = this.bpmnModdle.create('camunda:FormField', bpmnFormObject);
 
-  private _selectForm(): void {
-    if (this.validationError) {
-      this.previousForm.id = this.previousFormId;
-    }
-
-    this.previousFormId = this.selectedForm.id;
-    this.previousForm = this.selectedForm;
-
-    this.validationController.validate();
-
-    this.isFormSelected = true;
-    this.selectedType = this._getTypeOrCustomType(this.selectedForm.type);
-    this.selectedIndex = this._getSelectedIndex();
-
-    this._setValidationRules();
-  }
-
-  private _reloadForms(): void {
-    this.forms = [];
-
-    if (!this.formElement || !this.formElement.fields) {
-      return;
+    if (this.formElement.fields === undefined || this.formElement.fields === null) {
+      this.formElement.fields = [];
     }
 
-    const forms: Array<IForm> = this.formElement.fields;
-    for (const form of forms) {
-      if (form.$type === `camunda:FormField`) {
-        this.forms.push(form);
-      }
-    }
+    this.formElement.fields.push(bpmnForm);
+    this.forms.push(bpmnForm);
+    this.selectedForm = bpmnForm;
+
+    this.selectForm();
   }
 
-  private _getTypeOrCustomType(type: string): string {
-    if (this.types.includes(type) || type === null) {
-      this.customType = '';
-      return type;
-    } else {
-      this.customType = type;
-      return 'custom type';
-    }
-  }
-
-  private _updateId(): void {
+  public updateId(): void {
     this.validationController.validate();
 
     const hasValidationErrors: boolean = this.validationController.errors.length > 0;
@@ -173,15 +130,31 @@ export class BasicsSection implements ISection {
     this.formElement.fields[this.selectedIndex].id = this.selectedForm.id;
   }
 
-  private _updateDefaultValue(): void {
-    this.formElement.fields[this.selectedIndex].defaultValue = this.selectedForm.defaultValue;
+  public clearId(): void {
+    this.selectedForm.id = '';
+    this.validationController.validate();
+    this.updateId();
+    this.validationController.validate();
   }
 
-  private _updateLabel(): void {
-    this.formElement.fields[this.selectedIndex].label = this.selectedForm.label;
+  public selectForm(): void {
+    if (this.validationError) {
+      this.previousForm.id = this.previousFormId;
+    }
+
+    this.previousFormId = this.selectedForm.id;
+    this.previousForm = this.selectedForm;
+
+    this.validationController.validate();
+
+    this.isFormSelected = true;
+    this.selectedType = this._getTypeAndHandleCustomType(this.selectedForm.type);
+    this.selectedIndex = this._getSelectedIndex();
+
+    this._setValidationRules();
   }
 
-  private _updateType(): void {
+  public updateType(): void {
     let type: string;
 
     if (this.selectedType === 'custom type') {
@@ -193,65 +166,129 @@ export class BasicsSection implements ISection {
     this.formElement.fields[this.selectedIndex].type = type;
   }
 
-  private _removeForm(): void {
-    this.formElement.fields.splice(this.selectedIndex, 1);
-
-    this.isFormSelected = false;
-    this.selectedForm = undefined;
-    this.selectedIndex = undefined;
-
-    this._reloadForms();
+  public clearType(): void {
+    this.customType = '';
   }
 
-  private async _addForm(): Promise<void> {
+  public updateLabel(): void {
+    this.formElement.fields[this.selectedIndex].label = this.selectedForm.label;
+  }
 
-    const bpmnForm: IForm = this.bpmnModdle.create('camunda:FormField',
-      {
-        id: `Form_${this._generateRandomId()}`,
-        type: null,
-        label: ``,
-        defaultValue: ``,
-      });
+  public clearLabel(): void {
+    this.selectedForm.label = '';
+  }
 
-    if (!this.formElement.fields) {
+  public updateDefaultValue(): void {
+    this.formElement.fields[this.selectedIndex].defaultValue = this.selectedForm.defaultValue;
+  }
+
+  public clearValue(): void {
+    this.selectedForm.defaultValue = '';
+  }
+
+  private _validateOnDetach(): void {
+    if (!this.validationError) {
+      return;
+    }
+
+    const bpmnFormFieldObject: IForm = {
+      id: `Form_${this._generateRandomId()}`,
+      type: null,
+      label: '',
+      defaultValue: '',
+    };
+    const bpmnForm: IForm = this.bpmnModdle.create('camunda:FormField', bpmnFormFieldObject);
+
+    if (this.formElement.fields === undefined || this.formElement.fields === null) {
       this.formElement.fields = [];
     }
 
-    this.formElement.fields.push(bpmnForm);
-    this.forms.push(bpmnForm);
-    this.selectedForm = bpmnForm;
+    this._resetIdOnSelectedOrPrevious();
 
-    this._selectForm();
+    this.validationController.validate();
+    this.updateId();
+  }
+
+  private _resetIdOnSelectedOrPrevious(): void {
+    if (this.selectedForm !== null) {
+      this.selectedForm.id = this.previousFormId;
+    } else {
+      this.previousForm.id = this.previousFormId;
+    }
+  }
+
+  private _init(): void {
+    this.isFormSelected = false;
+    if (this.canHandleElement) {
+      this.formElement = this._getOrCreateFormElement();
+      this._reloadForms();
+    }
+  }
+
+  private _resetId(): void {
+    this._resetIdOnSelectedOrPrevious();
+
+    this.validationController.validate();
+  }
+
+  private _reloadForms(): void {
+    this.forms = [];
+
+    const noFormFieldsExist: boolean = this.formElement === undefined
+                                    || this.formElement === null
+                                    || this.formElement.fields === undefined
+                                    || this.formElement.fields === null
+                                    || this.formElement.fields.length === 0;
+    if (noFormFieldsExist) {
+      return;
+    }
+
+    this.forms = this.formElement.fields.filter((form: IForm) => {
+      const formIsFormField: boolean = form.$type === 'camunda:FormField';
+
+      return formIsFormField;
+    });
+  }
+
+  private _getTypeAndHandleCustomType(type: string): string {
+    const typeIsRegularType: boolean = this.types.includes(type) || type === null;
+
+    if (typeIsRegularType) {
+      this.customType = '';
+      return type;
+    }
+
+    this.customType = type;
+    return 'custom type';
   }
 
   private _getSelectedIndex(): number {
-    const forms: Array<IForm> = this.formElement.fields;
-    for (let index: number = 0; index < forms.length; index++) {
-      if (forms[index].id === this.selectedForm.id) {
-        return index;
-      }
-    }
+    return this.formElement.fields.findIndex((form: IForm) => {
+      const formIsSelectedForm: boolean = form.id === this.selectedForm.id;
+
+      return formIsSelectedForm;
+    });
   }
 
-  private _getFormElement(): IModdleElement {
-    let formElement: IModdleElement;
+  private _getOrCreateFormElement(): IModdleElement {
+    const elementHasNoExtensionsElement: boolean = this.businessObjInPanel.extensionElements === undefined
+                                                || this.businessObjInPanel.extensionElements === null;
 
-    if (!this.businessObjInPanel.extensionElements) {
+    if (elementHasNoExtensionsElement) {
       this._createExtensionElement();
     }
 
-    for (const extensionValue of this.businessObjInPanel.extensionElements.values) {
-      if (extensionValue.$type === 'camunda:FormData') {
-        formElement = extensionValue;
-      }
-    }
+    const extensionsValues: Array<IModdleElement> = this.businessObjInPanel.extensionElements.values;
 
-    if (!formElement) {
-      const fields: Array<IModdleElement> = [];
-      const extensionFormElement: IModdleElement = this.bpmnModdle.create('camunda:FormData', {fields: fields});
-      this.businessObjInPanel.extensionElements.values.push(extensionFormElement);
+    const formElement: IModdleElement = extensionsValues.find((extensionValue: IModdleElement) => {
+      const extensionIsValidForm: boolean = extensionValue.$type === 'camunda:FormData';
 
-      return this._getFormElement();
+      return extensionIsValidForm;
+    });
+
+    if (formElement === undefined) {
+      this._createEmptyExtensionsElement();
+      return this._getOrCreateFormElement();
     }
 
     return formElement;
@@ -263,9 +300,15 @@ export class BasicsSection implements ISection {
     const formData: IFormElement = this.bpmnModdle.create('camunda:FormData', {fields: fields});
     values.push(formData);
 
-    this.businessObjInPanel.formKey = `Form Key`;
+    this.businessObjInPanel.formKey = 'Form Key';
     const extensionElements: IModdleElement = this.bpmnModdle.create('bpmn:ExtensionElements', {values: values});
     this.businessObjInPanel.extensionElements = extensionElements;
+  }
+
+  private _createEmptyExtensionsElement(): void {
+    const fields: Array<IModdleElement> = [];
+    const extensionFormElement: IModdleElement = this.bpmnModdle.create('camunda:FormData', {fields: fields});
+    this.businessObjInPanel.extensionElements.values.push(extensionFormElement);
   }
 
   private _generateRandomId(): string {
@@ -282,29 +325,6 @@ export class BasicsSection implements ISection {
   private _deleteExtensions(): void {
     delete this.businessObjInPanel.extensionElements;
     delete this.businessObjInPanel.formKey;
-  }
-
-  private _clearFormKey(): void {
-    this.businessObjInPanel.formKey = '';
-  }
-
-  private _clearId(): void {
-    this.selectedForm.id = '';
-    this.validationController.validate();
-    this._updateId();
-    this.validationController.validate();
-  }
-
-  private _clearType(): void {
-    this.customType = '';
-  }
-
-  private _clearLabel(): void {
-    this.selectedForm.label = '';
-  }
-
-  private _clearValue(): void {
-    this.selectedForm.defaultValue = '';
   }
 
   private _validateFormId(event: ValidateEvent): void {

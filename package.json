@@ -1,7 +1,7 @@
 {
   "name": "bpmn-studio",
   "description": "An Aurelia application for designing BPMN diagrams, which can also be connected to a process engine to execute these diagrams.",
-  "version": "1.0.0-rc17",
+  "version": "1.0.0",
   "author": {
     "name": "process-engine",
     "email": "hello@process-engine.io",
@@ -41,7 +41,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@process-engine/skeleton-electron": "^1.0.0-pre4",
+    "@process-engine/skeleton-electron": "^1.0.0",
     "aurelia-validation": "^1.1.2",
     "electron-is-dev": "^0.3.0",
     "electron-notifications": "^1.0.0",
@@ -56,13 +56,14 @@
   },
   "peerDependencies": {},
   "devDependencies": {
-    "@essential-projects/core_contracts": "^1.0.0-rc3",
-    "@essential-projects/event_aggregator": "^1.0.0-rc3",
-    "@process-engine/bpmn-js-custom-bundle": "^1.0.0-rc6",
-    "@process-engine/consumer_client": "^1.0.0-rc8",
-    "@process-engine/process_engine_contracts": "^1.0.0-rc4",
+    "@essential-projects/core_contracts": "^1.0.0",
+    "@essential-projects/event_aggregator": "^1.0.0",
+    "@process-engine/bpmn-js-custom-bundle": "^1.0.0",
+    "@process-engine/consumer_client": "^1.0.0",
+    "@process-engine/process_engine_contracts": "^1.0.0",
     "@types/jasmine": "^2.2.0",
     "@types/node": "^6.0.45",
+    "@types/spectrum": "^1.5.29",
     "addict-ioc": "^2.3.4",
     "aurelia-animator-css": "^1.0.2",
     "aurelia-bootstrap": "^0.1.20",

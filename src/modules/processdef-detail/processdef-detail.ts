@@ -25,6 +25,21 @@ interface RouteParameters {
   processDefId: string;
 }
 
+interface BpmnStudioColorPickerSettings {
+  clickoutFiresChange: boolean;
+  showPalette: boolean;
+  palette: Array<Array<string>>;
+  localStorageKey: string;
+  showInitial: boolean;
+  showInput: boolean;
+  allowEmpty: boolean;
+  showButtons: boolean;
+  showPaletteOnly: boolean;
+  togglePaletteOnly: boolean;
+
+  move?(color: spectrum.tinycolorInstance): void;
+}
+
 @inject('ProcessEngineService', EventAggregator, 'ConsumerClient', Router, ValidationController)
 export class ProcessDefDetail {
 
@@ -44,6 +59,9 @@ export class ProcessDefDetail {
   private fillColor: string;
   private borderColor: string;
   private showXMLView: boolean = false;
+  public colorPickerBorder: HTMLInputElement;
+  public colorPickerFill: HTMLInputElement;
+  public colorPickerLoaded: boolean = false;
 
   public validationController: ValidationController;
   public validationError: boolean;
@@ -92,28 +110,37 @@ export class ProcessDefDetail {
     setTimeout(() => {
       this.initialLoadingFinished = true;
     }, 0);
-
-    setTimeout(() => {
-      this._activateColorPicker();
-    }, environment.colorPickerSettings.loadTimeout);
   }
 
   private _activateColorPicker(): void {
-    $('#colorpickerBorder').spectrum(Object.assign({},
-      environment.colorPickerSettings.uiSettings,
-      { move: (borderColor: any): void => this.updateBorderColor(borderColor) },
-    ));
+    const borderMoveSetting: spectrum.Options = {
+      move: (borderColor: spectrum.tinycolorInstance): void => {
+        this.updateBorderColor(borderColor);
+      },
+    };
 
-    $('#colorpickerFill').spectrum(Object.assign({},
-      environment.colorPickerSettings.uiSettings,
-      { move: (fillColor: any): void => this.updateFillColor(fillColor) },
-    ));
+    const colorPickerBorderSettings: BpmnStudioColorPickerSettings = Object.assign({}, environment.colorPickerSettings, borderMoveSetting);
+    $(this.colorPickerBorder).spectrum(colorPickerBorderSettings);
+
+    const fillMoveSetting: spectrum.Options = {
+      move: (fillColor: spectrum.tinycolorInstance): void => {
+        this.updateFillColor(fillColor);
+      },
+    };
+
+    const colorPickerFillSettings: BpmnStudioColorPickerSettings = Object.assign({}, environment.colorPickerSettings, fillMoveSetting);
+    $(this.colorPickerFill).spectrum(colorPickerFillSettings);
+
+    this.colorPickerLoaded = true;
   }
 
   public detached(): void {
     for (const subscription of this.subscriptions) {
       subscription.dispose();
     }
+
+    $(this.colorPickerBorder).spectrum('destroy');
+    $(this.colorPickerFill).spectrum('destroy');
   }
 
   public async toggleXMLView(): Promise<void> {
@@ -335,10 +362,14 @@ export class ProcessDefDetail {
   }
 
   public updateCustomColors(): void {
+    if (!this.colorPickerLoaded) {
+      this._activateColorPicker();
+    }
+
     [this.fillColor, this.borderColor] = this.bpmn.getColors();
 
-    $('#colorpickerFill').spectrum('set', this.fillColor);
-    $('#colorpickerBorder').spectrum('set', this.borderColor);
+    $(this.colorPickerFill).spectrum('set', this.fillColor);
+    $(this.colorPickerBorder).spectrum('set', this.borderColor);
   }
 
   private validateForm(event: ValidateEvent): void {

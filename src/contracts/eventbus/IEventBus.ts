@@ -14,12 +14,8 @@ export interface IEventBus {
   once(events: Array<string> | string,
        callback: Function,
        callbackScope: any): void;
-
   off(event: string,
       callback?: Function): void;
-
-  fire(name: string,
-       data?: any): any;
-  fire(eventObject: { type: string }, // tslint:disable-line
+  fire(nameOrType: string | {type: string},
        data?: any): any;
 }

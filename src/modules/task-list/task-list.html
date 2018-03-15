@@ -21,7 +21,7 @@
           </td>
         </tr>
       </table>
-      <div class="col-md-12 pagination">
+      <div class="col-md-12 col-xs-12 pagination">
         <aubs-pagination page-size.bind="pageSize" total-items.bind="totalItems" current-page.bind="currentPage"
           boundary-links.bind="true" click.delegate="updateUserTasks()">
         </aubs-pagination>
@@ -31,9 +31,7 @@
       <h3>No tasks found</h3>
     </div>
     <div show.bind="!succesfullRequested" class="container">
-      <div class="loading-spinner">
-        <img src="src/resources/images/gears.svg">
-      </div>
+      <img src="src/resources/images/gears.svg" class="loading-spinner">
     </div>
   </div>
 </template>

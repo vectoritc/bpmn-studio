@@ -1,9 +1,4 @@
-import {
-  IPageModel,
-  IScriptTaskElement,
-  ISection,
-  IShape,
-} from '../../../../../../contracts';
+import {IPageModel, IScriptTaskElement, ISection, IShape} from '../../../../../../contracts';
 
 export class ScriptTaskSection implements ISection {
 

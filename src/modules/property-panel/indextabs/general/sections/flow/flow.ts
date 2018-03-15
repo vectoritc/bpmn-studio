@@ -53,8 +53,11 @@ export class FlowSection implements ISection {
     }
   }
 
-  private conditionChanged(newValue: string, oldValue: string): void {
-    if (!this.businessObjInPanel.conditionExpression) {
+  public conditionChanged(newValue: string, oldValue: string): void {
+    const objectHasNoConditionExpression: boolean = this.businessObjInPanel.conditionExpression === undefined
+                                                 || this.businessObjInPanel.conditionExpression === null;
+
+    if (objectHasNoConditionExpression) {
       this.createConditionExpression();
     }
 

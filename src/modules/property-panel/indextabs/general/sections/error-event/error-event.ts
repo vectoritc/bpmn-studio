@@ -68,147 +68,121 @@ export class ErrorEventSection implements ISection {
   }
 
   private init(): void {
-    if (this.businessObjInPanel.eventDefinitions
-      && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:ErrorEventDefinition') {
-        const errorElement: IErrorElement = this.businessObjInPanel.eventDefinitions[0];
-        if (errorElement.errorRef) {
-          this.selectedId = errorElement.errorRef.id;
-          this.updateError();
-        } else {
-          this.selectedError = null;
-          this.selectedId = null;
-        }
+    const eventDefinitions: Array<IModdleElement> = this.businessObjInPanel.eventDefinitions;
+    const businessObjecthasNoErrorEvents: boolean = eventDefinitions === undefined
+                                                 || eventDefinitions === null
+                                                 || eventDefinitions[0].$type !== 'bpmn:ErrorEventDefinition';
+
+    if (businessObjecthasNoErrorEvents) {
+      return;
     }
-  }
 
-  private getXML(): string {
-    let xml: string;
-    this.modeler.saveXML({format: true}, (err: Error, diagrammXML: string) => {
-      xml = diagrammXML;
-    });
-    return xml;
-  }
+    const errorElement: IErrorElement = this.businessObjInPanel.eventDefinitions[0];
+    const elementReferencesError: boolean = errorElement.errorRef !== undefined
+                                         && errorElement.errorRef !== null;
 
-  private getErrors(): Promise<Array<IError>> {
-    return new Promise((resolve: Function, reject: Function): void => {
-
-      this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
-        const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-        const errors: Array<IErrorElement> = rootElements.filter((element: IModdleElement) => {
-          return element.$type === 'bpmn:Error';
-        });
-
-        resolve(errors);
-      });
-    });
-  }
-
-  private updateError(): void {
-    if (this.selectedId) {
-      this.selectedError = this.errors.find((error: IError) => {
-        return error.id === this.selectedId;
-      });
-
-      const errorElement: IErrorElement = this.businessObjInPanel.eventDefinitions[0];
-
-      errorElement.errorRef = this.selectedError;
-      if (!this.isEndEvent) {
-        this.errorMessageVariable = errorElement.errorMessageVariable;
-      }
+    if (elementReferencesError) {
+      this.selectedId = errorElement.errorRef.id;
+      this.updateError();
     } else {
       this.selectedError = null;
+      this.selectedId = null;
     }
   }
 
-  private updateErrorName(): void {
-    this.moddle.fromXML(this.getXML(), async(err: Error, definitions: IDefinition) => {
-
-      const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-      const error: IError = rootElements.find((element: IModdleElement) => {
-        return element.$type === 'bpmn:Error' && element.id === this.selectedId;
-      });
-
-      error.name = this.selectedError.name;
-
-      await this.updateXML(definitions);
+  private getErrors(): Array<IErrorElement> {
+    const rootElements: Array<IModdleElement> = this.modeler._definitions.rootElements;
+    const errors: Array<IErrorElement> = rootElements.filter((element: IModdleElement) => {
+      return element.$type === 'bpmn:Error';
     });
+
+    return errors;
   }
 
-  private updateErrorCode(): void {
-    this.moddle.fromXML(this.getXML(), async(fromXMLError: Error, definitions: IDefinition) => {
-      const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-      const error: IError = rootElements.find((element: any) => {
-        return element.$type === 'bpmn:Error' && element.id === this.selectedId;
-      });
+  public updateError(): void {
+    if (this.selectedId === undefined || this.selectedId === null) {
+      this.selectedError = null;
+      return;
+    }
 
-      error.errorCode = this.selectedError.errorCode;
-
-      await this.updateXML(definitions);
+    this.selectedError = this.errors.find((error: IError) => {
+      return error.id === this.selectedId;
     });
+
+    const errorElement: IErrorElement = this.businessObjInPanel.eventDefinitions[0];
+
+    errorElement.errorRef = this.selectedError;
+    if (!this.isEndEvent) {
+      this.errorMessageVariable = errorElement.errorMessageVariable;
+    }
   }
 
-  private updateErrorMessage(): void {
+  public updateErrorName(): void {
+    const selectedError: IError = this._getSlectedError();
+    selectedError.name = this.selectedError.name;
+  }
+
+  public updateErrorCode(): void {
+    const selectedError: IError = this._getSlectedError();
+    selectedError.errorCode = this.selectedError.errorCode;
+  }
+
+  private _getSlectedError(): IError {
+    const rootElements: Array<IModdleElement> = this.modeler._definitions.rootElements;
+    const selectedError: IError = rootElements.find((element: IModdleElement) => {
+      const isSelectedError: boolean = element.$type === 'bpmn:Error' && element.id === this.selectedId;
+
+      return isSelectedError;
+    });
+
+    return selectedError;
+  }
+
+  public updateErrorMessage(): void {
     const errorElement: IErrorElement = this.businessObjInPanel.eventDefinitions[0];
     errorElement.errorMessageVariable = this.errorMessageVariable;
   }
 
-  private async addError(): Promise<void> {
-    this.moddle.fromXML(this.getXML(), async(err: Error, definitions: IDefinition) => {
+  public async addError(): Promise<void> {
 
-      const bpmnError: IError = this.moddle.create('bpmn:Error',
-        { id: `Error_${this.generalService.generateRandomId()}`, name: 'Error Name' });
+      const bpmnErrorObject: Object = {
+        id: `Error_${this.generalService.generateRandomId()}`,
+        name: 'Error Name',
+      };
+      const bpmnError: IError = this.moddle.create('bpmn:Error', bpmnErrorObject);
 
-      definitions.get('rootElements').push(bpmnError);
+      this.modeler._definitions.rootElements.push(bpmnError);
 
-      this.moddle.toXML(definitions, (error: Error, xmlStrUpdated: string) => {
-        this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
+      this.moddle.toXML(this.modeler._definitions, (toXMLError: Error, xmlStrUpdated: string) => {
+        this.modeler.importXML(xmlStrUpdated, async(importXMLError: Error) => {
           await this.refreshErrors();
-          await this.setBusinessObj();
+          await this.setBusinessObject();
           this.selectedId = bpmnError.id;
           this.selectedError = bpmnError;
           this.updateError();
         });
       });
-    });
   }
 
   private async refreshErrors(): Promise<void> {
     this.errors = await this.getErrors();
   }
 
-  private setBusinessObj(): Promise<void> {
-    return new Promise((resolve: Function, reject: Function): void => {
-      const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
-      const elementInPanel: IShape = elementRegistry.get(this.businessObjInPanel.id);
-      this.businessObjInPanel = elementInPanel.businessObject;
-
-      resolve();
-    });
+  private setBusinessObject(): void {
+    const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
+    const elementInPanel: IShape = elementRegistry.get(this.businessObjInPanel.id);
+    this.businessObjInPanel = elementInPanel.businessObject;
   }
 
-  private updateXML(definitions: IDefinition): Promise<void> {
-    return new Promise((resolve: Function, reject: Function): void => {
-
-      this.moddle.toXML(definitions, (toXMLError: Error, xmlStrUpdated: string) => {
-        this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
-          await this.refreshErrors();
-          await this.setBusinessObj();
-        });
-      });
-
-      resolve();
-    });
-  }
-
-  private clearName(): void {
+  public clearName(): void {
     this.selectedError.name = '';
   }
 
-  private clearCode(): void {
+  public clearCode(): void {
     this.selectedError.errorCode = '';
   }
 
-  private clearMessage(): void {
+  public clearMessage(): void {
     this.errorMessageVariable = '';
   }
 }

@@ -68,106 +68,97 @@ export class EscalationEventSection implements ISection {
   }
 
   private init(): void {
-    if (this.businessObjInPanel.eventDefinitions
-      && this.businessObjInPanel.eventDefinitions[0].$type === 'bpmn:EscalationEventDefinition') {
-      const escalationElement: IEscalationElement = this.businessObjInPanel.eventDefinitions[0];
+    const eventDefinitions: Array<IModdleElement> = this.businessObjInPanel.eventDefinitions;
+    const businessObjectHasNoEscalationEvents: boolean = eventDefinitions === undefined
+                                                      || eventDefinitions === null
+                                                      || eventDefinitions[0].$type !== 'bpmn:EscalationEventDefinition';
 
-      if (escalationElement.escalationRef) {
-        this.selectedId = escalationElement.escalationRef.id;
-        this.updateEscalation();
-      } else {
-        this.selectedEscalation = null;
-        this.selectedId = null;
-      }
+    if (businessObjectHasNoEscalationEvents) {
+      return;
     }
-  }
 
-  private getXML(): string {
-    let xml: string;
-    this.modeler.saveXML({format: true}, (err: Error, diagrammXML: string) => {
-      xml = diagrammXML;
-    });
-    return xml;
-  }
+    const escalationElement: IEscalationElement = this.businessObjInPanel.eventDefinitions[0];
+    const elementReferencesEscalation: boolean = escalationElement.escalationRef !== undefined
+                                              && escalationElement.escalationRef !== null;
 
-  private getEscalations(): Promise<Array<IEscalation>> {
-    return new Promise((resolve: Function, reject: Function): void => {
-
-      this.moddle.fromXML(this.getXML(), (err: Error, definitions: IDefinition) => {
-        const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-        const escalations: Array<IEscalation> = rootElements.filter((element: IModdleElement) => {
-          return element.$type === 'bpmn:Escalation';
-        });
-
-        resolve(escalations);
-      });
-    });
-  }
-
-  private updateEscalation(): void {
-    if (this.selectedId) {
-      this.selectedEscalation = this.escalations.find((escalation: IModdleElement) => {
-        return escalation.id === this.selectedId;
-      });
-
-      const escalationElement: IEscalationElement = this.businessObjInPanel.eventDefinitions[0];
-
-      this.escalationCodeVariable = escalationElement.escalationCodeVariable;
-      escalationElement.escalationRef = this.selectedEscalation;
+    if (elementReferencesEscalation) {
+      this.selectedId = escalationElement.escalationRef.id;
+      this.updateEscalation();
     } else {
       this.selectedEscalation = null;
+      this.selectedId = null;
     }
   }
 
-  private updateEscalationName(): void {
-    this.moddle.fromXML(this.getXML(), async(err: Error, definitions: IDefinition) => {
-
-      const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-      const escalation: IEscalation = rootElements.find((element: any) => {
-        return element.$type === 'bpmn:Escalation' && element.id === this.selectedId;
-      });
-
-      escalation.name = this.selectedEscalation.name;
-
-      await this.updateXML(definitions);
+  private getEscalations(): Array<IEscalation> {
+    const rootElements: Array<IModdleElement> = this.modeler._definitions.rootElements;
+    const escalations: Array<IEscalation> = rootElements.filter((element: IModdleElement) => {
+      return element.$type === 'bpmn:Escalation';
     });
+
+    return escalations;
   }
 
-  private updateEscalationCode(): void {
-    this.moddle.fromXML(this.getXML(), async(fromXMLError: Error, definitions: IDefinition) => {
-      const rootElements: Array<IModdleElement> = definitions.get('rootElements');
-      const escalation: IEscalation = rootElements.find((element: any) => {
-        return element.$type === 'bpmn:Escalation' && element.id === this.selectedId;
-      });
+  public updateEscalation(): void {
+    if (this.selectedId === undefined || this.selectedId === null) {
+      this.selectedEscalation =  null;
 
-      escalation.escalationCode = this.selectedEscalation.escalationCode;
+      return;
+    }
 
-      await this.updateXML(definitions);
+    this.selectedEscalation = this.escalations.find((escalation: IModdleElement) => {
+      return escalation.id === this.selectedId;
     });
+
+    const escalationElement: IEscalationElement = this.businessObjInPanel.eventDefinitions[0];
+
+    this.escalationCodeVariable = escalationElement.escalationCodeVariable;
+    escalationElement.escalationRef = this.selectedEscalation;
   }
 
-  private updateEscalationCodeVariable(): void {
+  public updateEscalationName(): void {
+    const selectedEscalation: IEscalation = this._getSelectedEscalation();
+    selectedEscalation.name = this.selectedEscalation.name;
+  }
+
+  public updateEscalationCode(): void {
+    const selectedEscalation: IEscalation = this._getSelectedEscalation();
+    selectedEscalation.escalationCode = this.selectedEscalation.escalationCode;
+  }
+
+  private _getSelectedEscalation(): IEscalation {
+    const rootElements: Array<IModdleElement> = this.modeler._definitions.rootElements;
+    const selectedEscalation: IEscalation = rootElements.find((element: IModdleElement) => {
+      const isSelectedEscalation: boolean = element.$type === 'bpmn:Escalation' && element.id === this.selectedId;
+
+      return isSelectedEscalation;
+    });
+
+    return selectedEscalation;
+  }
+
+  public updateEscalationCodeVariable(): void {
     const escalationElement: IEscalationElement = this.businessObjInPanel.eventDefinitions[0];
     escalationElement.escalationCodeVariable = this.escalationCodeVariable;
   }
 
-  private async addEscalation(): Promise<void> {
-    this.moddle.fromXML(this.getXML(), async(err: Error, definitions: IDefinition) => {
+  public addEscalation(): void {
+    const bpmnEscalationProperty: Object = {
+      id: `Escalation_${this.generalService.generateRandomId()}`,
+      name: 'Escalation Name',
+    };
+    const bpmnEscalation: IEscalation = this.moddle.create('bpmn:Escalation', bpmnEscalationProperty);
 
-      const bpmnEscalation: IEscalation = this.moddle.create('bpmn:Escalation',
-        { id: `Escalation_${this.generalService.generateRandomId()}`, name: 'Escalation Name' });
+    this.modeler._definitions.rootElements.push(bpmnEscalation);
 
-      definitions.get('rootElements').push(bpmnEscalation);
-
-      this.moddle.toXML(definitions, (error: Error, xmlStrUpdated: string) => {
-          this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
-            await this.refreshEscalations();
-            await this.setBusinessObj();
-            this.selectedId = bpmnEscalation.id;
-            this.selectedEscalation = bpmnEscalation;
-            this.updateEscalation();
-          });
-        });
+    this.moddle.toXML(this.modeler._definitions.rootElements, (toXMLError: Error, xmlStrUpdated: string) => {
+      this.modeler.importXML(xmlStrUpdated, async(importXMLError: Error) => {
+        await this.refreshEscalations();
+        await this.setBusinessObject();
+        this.selectedId = bpmnEscalation.id;
+        this.selectedEscalation = bpmnEscalation;
+        this.updateEscalation();
+      });
     });
   }
 
@@ -175,39 +166,21 @@ export class EscalationEventSection implements ISection {
     this.escalations = await this.getEscalations();
   }
 
-  private setBusinessObj(): Promise<void> {
-    return new Promise((resolve: Function, reject: Function): void => {
-      const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
-      const elementInPanel: IShape = elementRegistry.get(this.businessObjInPanel.id);
-      this.businessObjInPanel = elementInPanel.businessObject;
-
-      resolve();
-    });
+  private setBusinessObject(): void {
+    const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
+    const elementInPanel: IShape = elementRegistry.get(this.businessObjInPanel.id);
+    this.businessObjInPanel = elementInPanel.businessObject;
   }
 
-  private updateXML(definitions: IDefinition): Promise<void> {
-    return new Promise((resolve: Function, reject: Function): void => {
-
-      this.moddle.toXML(definitions, (toXMLError: Error, xmlStrUpdated: string) => {
-        this.modeler.importXML(xmlStrUpdated, async(errr: Error) => {
-          await this.refreshEscalations();
-          await this.setBusinessObj();
-        });
-      });
-
-      resolve();
-    });
-  }
-
-  private clearName(): void {
+  public clearName(): void {
     this.selectedEscalation.name = '';
   }
 
-  private clearCode(): void {
+  public clearCode(): void {
     this.selectedEscalation.escalationCode = '';
   }
 
-  private clearVariable(): void {
+  public clearVariable(): void {
     this.escalationCodeVariable = '';
   }
 }

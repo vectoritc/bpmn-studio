@@ -1,6 +1,7 @@
 import {INodeInstanceEntity} from '@process-engine/process_engine_contracts';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject, observable} from 'aurelia-framework';
+import * as toastr from 'toastr';
 import {
   AuthenticationStateEvent,
   IPagination,
@@ -25,6 +26,7 @@ export class ProcessList {
   private processes: IPagination<IProcessEntity>;
   private instances: Array<IProcessEntity>;
   private status: Array<string> = [];
+  private succesfullRequested: boolean = false;
 
   @observable public currentPage: number = 0;
   public pageSize: number = 10;
@@ -54,7 +56,12 @@ export class ProcessList {
   }
 
   public async updateProcesses(): Promise<void> {
-    this.processes = await this.getProcesses();
+    try {
+      this.processes = await this.getProcesses();
+      this.succesfullRequested = true;
+    } catch (error) {
+      toastr.error(error);
+    }
 
     for (const instance of this.allInstances) {
       if (!this.status.includes(instance.status)) {

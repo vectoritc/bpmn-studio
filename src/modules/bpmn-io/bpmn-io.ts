@@ -30,6 +30,11 @@ export class BpmnIo {
   private minWidth: number = environment.propertyPanel.minWidth;
   private maxWidth: number = document.body.clientWidth - environment.propertyPanel.maxWidth;
 
+  private toggleMinimap: boolean = false;
+  private minimapToggle: any;
+  private expandIcon: HTMLElement;
+  private hideMinimap: HTMLElement;
+
   @bindable({changeHandler: 'xmlChanged'}) public xml: string;
   public modeler: IBpmnModeler;
 
@@ -50,12 +55,49 @@ export class BpmnIo {
   }
 
   public attached(): void {
-    this.modeler.attachTo('#canvas');
+    this.modeler.attachTo(this.canvasModel);
+    const minimapViewport: any = this.canvasModel.getElementsByClassName('djs-minimap-viewport')[0];
+    const minimapArea: any = this.canvasModel.getElementsByClassName('djs-minimap-map')[0];
+    this.minimapToggle = this.canvasModel.getElementsByClassName('djs-minimap-toggle')[0];
+
+    // These style changes cannot be outsourced, because bpmn-js overwrites the css style.
+    // So the style must set directly and not in a css class.
+    // Setting the styles in a css class with an important flag is working, but not really pretty.
+    minimapArea.style.width = '350px';
+    minimapArea.style.height = '200px';
+    minimapViewport.style.fill = 'rgba(0, 208, 255, 0.13)';
+
+    this.expandIcon = document.createElement('i');
+    this.expandIcon.className = 'glyphicon glyphicon-resize-full expandIcon';
+    this.minimapToggle.appendChild(this.expandIcon);
+
+    this.hideMinimap = document.createElement('p');
+    this.hideMinimap.className = 'hideMinimap';
+    this.hideMinimap.textContent = 'Hide Minimap';
+    this.minimapToggle.appendChild(this.hideMinimap);
+    this.minimapToggle.addEventListener('click', this.toggleMinimapFunction);
 
     window.addEventListener('resize', this.resizeEventHandler);
   }
 
+    // These style changes cannot be outsourced, because bpmn-js overwrites the css style.
+    // So the style must set directly and not in a css class.
+    // Setting the styles in a css class with an important flag is working, but not really pretty.
+  private toggleMinimapFunction = (): void => {
+    if (this.toggleMinimap === false) {
+      this.expandIcon.style.display = 'none';
+      this.hideMinimap.style.display = 'inline';
+      this.minimapToggle.style.height = '20px';
+      this.toggleMinimap = true;
+    } else {
+      this.expandIcon.style.display = 'inline-block';
+      this.hideMinimap.style.display = 'none';
+      this.toggleMinimap = false;
+    }
+  }
+
   public detached(): void {
+    this.modeler.detach();
     window.removeEventListener('resize', this.resizeEventHandler);
   }
 
