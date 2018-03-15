@@ -129,7 +129,9 @@ export class EscalationEventSection implements ISection {
   private _getSelectedEscalation(): IEscalation {
     const rootElements: Array<IModdleElement> = this.modeler._definitions.rootElements;
     const selectedEscalation: IEscalation = rootElements.find((element: IModdleElement) => {
-      return element.$type === 'bpmn:Escalation' && element.id === this.selectedId;
+      const isSelectedEscalation: boolean = element.$type === 'bpmn:Escalation' && element.id === this.selectedId;
+
+      return isSelectedEscalation;
     });
 
     return selectedEscalation;
