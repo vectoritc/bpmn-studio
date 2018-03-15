@@ -130,7 +130,9 @@ export class ErrorEventSection implements ISection {
   private _getSlectedError(): IError {
     const rootElements: Array<IModdleElement> = this.modeler._definitions.rootElements;
     const selectedError: IError = rootElements.find((element: IModdleElement) => {
-      return element.$type === 'bpmn:Error' && element.id === this.selectedId;
+      const isSelectedError: boolean = element.$type === 'bpmn:Error' && element.id === this.selectedId;
+
+      return isSelectedError;
     });
 
     return selectedError;
