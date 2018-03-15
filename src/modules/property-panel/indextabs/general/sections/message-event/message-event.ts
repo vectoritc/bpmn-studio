@@ -98,11 +98,13 @@ export class MessageEventSection implements ISection {
 
   private updateName(): void {
     const rootElements: Array<IModdleElement> = this.modeler._definitions.rootElements;
-    const elementIsSelectedMessage: IMessage = rootElements.find((element: IModdleElement) => {
-      return element.$type === 'bpmn:Message' && element.id === this.selectedId;
+    const selectedMessage: IMessage = rootElements.find((element: IModdleElement) => {
+      const elementIsSelectedMessage: boolean = element.$type === 'bpmn:Message' && element.id === this.selectedId;
+
+      return elementIsSelectedMessage;
     });
 
-    elementIsSelectedMessage.name = this.selectedMessage.name;
+    selectedMessage.name = this.selectedMessage.name;
   }
 
   private addMessage(): void {
