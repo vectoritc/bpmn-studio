@@ -16,9 +16,6 @@ export interface IEventBus {
        callbackScope: any): void;
   off(event: string,
       callback?: Function): void;
-  fire(name: string,
-       data?: any): any;
-  // tslint:disable-next-line:unified-signatures
-  fire(eventObject: {type: string},
+  fire(nameOrType: string | {type: string},
        data?: any): any;
 }
