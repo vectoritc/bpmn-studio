@@ -1,6 +1,5 @@
 import {inject} from 'aurelia-framework';
 import {ValidateEvent, ValidationController, ValidationRules} from 'aurelia-validation';
-import {Config} from 'protractor';
 import {
   IBpmnModdle,
   IBpmnModeler,

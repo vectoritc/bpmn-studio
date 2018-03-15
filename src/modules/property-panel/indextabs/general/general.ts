@@ -1,9 +1,4 @@
-import {
-  IIndextab,
-  IPageModel,
-  ISection,
-  IShape,
-} from '../../../../contracts';
+import {IIndextab, IPageModel, ISection, IShape} from '../../../../contracts';
 import {BasicsSection} from './sections/basics/basics';
 import {CallActivitySection} from './sections/call-activity/call-activity';
 import {ErrorEventSection} from './sections/error-event/error-event';

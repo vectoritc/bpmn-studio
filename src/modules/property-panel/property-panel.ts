@@ -88,7 +88,7 @@ export class PropertyPanel {
           return element.$type === 'bpmn:StartEvent';
         });
 
-        if (!firstElement) {
+        if (firstElement === undefined || firstElement === null) {
           firstElement = process.flowElements[0];
         }
       } else if (this.processHasLanes(process)) {

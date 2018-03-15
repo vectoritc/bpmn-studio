@@ -75,31 +75,26 @@ export class BasicsSection implements ISection {
       return;
     }
 
-    if (this.businessObjInPanel.documentation && this.businessObjInPanel.documentation.length > 0) {
+    const documentationExists: boolean = this.businessObjInPanel.documentation !== undefined
+                                      && this.businessObjInPanel.documentation !== null
+                                      && this.businessObjInPanel.documentation.length > 0;
+
+    if (documentationExists) {
       this.elementDocumentation = this.businessObjInPanel.documentation[0].text;
     } else {
       this.elementDocumentation = '';
     }
   }
 
-  private _getXML(): string {
-    let xml: string;
-    this.modeler.saveXML({format: true}, (err: Error, diagrammXML: string) => {
-      xml = diagrammXML;
-    });
-    return xml;
-  }
-
   private _updateDocumentation(): void {
     this.elementInPanel.documentation = [];
 
-    const documentation: IModdleElement = this.bpmnModdle.create('bpmn:Documentation',
-    { text: this.elementDocumentation });
+    const documentationPropertyObject: Object = {text: this.elementDocumentation};
+    const documentation: IModdleElement = this.bpmnModdle.create('bpmn:Documentation', documentationPropertyObject);
     this.elementInPanel.documentation.push(documentation);
 
-    this.modeling.updateProperties(this.elementInPanel, {
-      documentation: this.elementInPanel.documentation,
-    });
+    const elementInPanelDocumentation: Object = {documentation: this.elementInPanel.documentation};
+    this.modeling.updateProperties(this.elementInPanel, elementInPanelDocumentation);
   }
 
   private _clearId(): void {
@@ -119,9 +114,8 @@ export class BasicsSection implements ISection {
   }
 
   private _updateName(): void {
-    this.modeling.updateProperties(this.elementInPanel, {
-      name: this.businessObjInPanel.name,
-    });
+    const updateProperty: Object = {name: this.businessObjInPanel.name};
+    this.modeling.updateProperties(this.elementInPanel, updateProperty);
   }
 
   private _updateId(): void {
@@ -131,9 +125,8 @@ export class BasicsSection implements ISection {
       return;
     }
 
-    this.modeling.updateProperties(this.elementInPanel, {
-      id: this.businessObjInPanel.id,
-    });
+    const updateProperty: Object = {id: this.businessObjInPanel.id};
+    this.modeling.updateProperties(this.elementInPanel, updateProperty);
   }
 
   private _validateFormId(event: ValidateEvent): void {

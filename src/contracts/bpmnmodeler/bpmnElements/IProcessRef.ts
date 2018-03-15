@@ -1,4 +1,4 @@
-import { IModdleElement } from './IModdleElement';
+import {IModdleElement} from './IModdleElement';
 
 export interface IProcessRef extends IModdleElement {
   extensionElement: IModdleElement;

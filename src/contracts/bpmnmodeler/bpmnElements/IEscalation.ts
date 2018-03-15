@@ -1,4 +1,4 @@
-import { IDocumentation } from './IDocumentation';
+import {IDocumentation} from './IDocumentation';
 
 export interface IEscalation {
   $type: string;

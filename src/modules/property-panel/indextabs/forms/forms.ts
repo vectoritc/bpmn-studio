@@ -1,9 +1,4 @@
-import {
-  IIndextab,
-  IPageModel,
-  ISection,
-  IShape,
-} from '../../../../contracts';
+import {IIndextab, IPageModel, ISection, IShape} from '../../../../contracts';
 import {BasicsSection} from './sections/basics/basics';
 
 export class Forms implements IIndextab {
@@ -23,7 +18,7 @@ export class Forms implements IIndextab {
   }
 
   public isSuitableForElement(element: IShape): boolean {
-    if (!element) {
+    if (element === undefined || element === null) {
       return false;
     }
 
