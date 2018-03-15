@@ -73,7 +73,21 @@ function createWindow () {
     })
   });
 
-
+  var template = [{
+    label: "Edit",
+    submenu: [
+        {
+          label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:"
+        },
+        {
+          label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:"
+        },
+        {
+          label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:"
+        },
+    ]}
+  ];
+  electron.Menu.setApplicationMenu(electron.Menu.buildFromTemplate(template));
 }
 
 app.on('ready', createWindow);
