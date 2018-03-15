@@ -73,7 +73,34 @@ function createWindow () {
     })
   });
 
-
+  var template = [{
+    label: "BPMN-Studio",
+    submenu: [
+        {
+          label: "About BPMN-Studio", selector: "orderFrontStandardAboutPanel:"
+        },
+        {
+          type: "separator"
+        },
+        {
+          label: "Quit", accelerator: "Command+Q", click: function() {
+          app.quit();
+        }}
+    ]}, {
+    label: "Edit",
+    submenu: [
+        {
+          label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:"
+        },
+        {
+          label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:"
+        },
+        {
+          label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:"
+        },
+    ]}
+  ];
+  electron.Menu.setApplicationMenu(electron.Menu.buildFromTemplate(template));
 }
 
 app.on('ready', createWindow);
