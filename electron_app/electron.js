@@ -28,6 +28,8 @@ function createWindow () {
     width: 1000,
     height: 800,
     title: "BPMN-Studio",
+    minWidth: 1000,
+    minHeight: 600,
   });
 
   mainWindow.loadURL(`file://${__dirname}/../index.html`);
