@@ -37,7 +37,7 @@ interface BpmnStudioColorPickerSettings {
   showPaletteOnly: boolean;
   togglePaletteOnly: boolean;
 
-  move?(color: tinycolorInstance): void;
+  move?(color: spectrum.tinycolorInstance): void;
 }
 
 @inject('ProcessEngineService', EventAggregator, 'ConsumerClient', Router, ValidationController)
@@ -114,7 +114,7 @@ export class ProcessDefDetail {
 
   private _activateColorPicker(): void {
     const borderMoveSetting: spectrum.Options = {
-      move: (borderColor: tinycolorInstance): void => {
+      move: (borderColor: spectrum.tinycolorInstance): void => {
         this.updateBorderColor(borderColor);
       },
     };
@@ -123,7 +123,7 @@ export class ProcessDefDetail {
     $(this.colorPickerBorder).spectrum(colorPickerBorderSettings);
 
     const fillMoveSetting: spectrum.Options = {
-      move: (fillColor: tinycolorInstance): void => {
+      move: (fillColor: spectrum.tinycolorInstance): void => {
         this.updateFillColor(fillColor);
       },
     };
