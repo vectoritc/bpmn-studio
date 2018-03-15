@@ -74,19 +74,6 @@ function createWindow () {
   });
 
   var template = [{
-    label: "BPMN-Studio",
-    submenu: [
-        {
-          label: "About BPMN-Studio", selector: "orderFrontStandardAboutPanel:"
-        },
-        {
-          type: "separator"
-        },
-        {
-          label: "Quit", accelerator: "Command+Q", click: function() {
-          app.quit();
-        }}
-    ]}, {
     label: "Edit",
     submenu: [
         {
