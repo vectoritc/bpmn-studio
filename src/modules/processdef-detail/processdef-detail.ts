@@ -1,4 +1,4 @@
-import {BpmnStudioClient} from '@process-engine/consumer_client';
+import {BpmnStudioClient} from '@process-engine/bpmn-studio_client';
 import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 import {bindingMode} from 'aurelia-binding';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';

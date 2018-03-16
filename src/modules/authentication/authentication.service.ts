@@ -1,4 +1,4 @@
-import {ITokenRepository} from '@process-engine/consumer_client';
+import {ITokenRepository} from '@process-engine/bpmn-studio_client';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {

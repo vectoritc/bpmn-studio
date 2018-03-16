@@ -1,4 +1,4 @@
-import {IIdentity, ITokenRepository} from '@process-engine/consumer_client';
+import {IIdentity, ITokenRepository} from '@process-engine/bpmn-studio_client';
 
 export class TokenRepository implements ITokenRepository {
 

@@ -6,7 +6,7 @@ import {
   UserTaskProceedAction,
   WidgetConfig,
   WidgetType,
-} from '@process-engine/consumer_client';
+} from '@process-engine/bpmn-studio_client';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
 import * as toastr from 'toastr';

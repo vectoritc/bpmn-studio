@@ -1,4 +1,4 @@
-import {BpmnStudioClient, IUserTaskConfig, UserTaskProceedAction} from '@process-engine/consumer_client';
+import {BpmnStudioClient, IUserTaskConfig, UserTaskProceedAction} from '@process-engine/bpmn-studio_client';
 import {IUserTaskEntity, IUserTaskMessageData} from '@process-engine/process_engine_contracts';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';

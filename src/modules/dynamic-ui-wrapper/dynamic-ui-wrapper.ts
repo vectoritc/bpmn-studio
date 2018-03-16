@@ -4,7 +4,7 @@ import {
   UserTaskProceedAction,
   WidgetConfig,
   WidgetType,
-} from '@process-engine/consumer_client';
+} from '@process-engine/bpmn-studio_client';
 import {bindable, inject} from 'aurelia-framework';
 import {IDynamicUiService} from '../../contracts';
 import environment from '../../environment';

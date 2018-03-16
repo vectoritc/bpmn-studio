@@ -1,4 +1,4 @@
-import {BpmnStudioClient, IPagination, IProcessDefEntity} from '@process-engine/consumer_client';
+import {BpmnStudioClient, IPagination, IProcessDefEntity} from '@process-engine/bpmn-studio_client';
 import {HttpClient} from 'aurelia-fetch-client';
 import {inject} from 'aurelia-framework';
 import environment from '../../../../../environment';

@@ -1,4 +1,4 @@
-import {BpmnStudioClient, IUserTaskConfig} from '@process-engine/consumer_client';
+import {BpmnStudioClient, IUserTaskConfig} from '@process-engine/bpmn-studio_client';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import * as toastr from 'toastr';

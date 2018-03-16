@@ -1,4 +1,4 @@
-import {BpmnStudioClient, ITokenRepository} from '@process-engine/consumer_client';
+import {BpmnStudioClient, ITokenRepository} from '@process-engine/bpmn-studio_client';
 import {FrameworkConfiguration} from 'aurelia-framework';
 import environment from '../../environment';
 
