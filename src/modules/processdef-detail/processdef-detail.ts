@@ -1,4 +1,4 @@
-import {ConsumerClient} from '@process-engine/consumer_client';
+import {BpmnStudioClient} from '@process-engine/consumer_client';
 import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 import {bindingMode} from 'aurelia-binding';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
@@ -40,7 +40,7 @@ interface BpmnStudioColorPickerSettings {
   move?(color: spectrum.tinycolorInstance): void;
 }
 
-@inject('ProcessEngineService', EventAggregator, 'ConsumerClient', Router, ValidationController)
+@inject('ProcessEngineService', EventAggregator, 'BpmnStudioClient', Router, ValidationController)
 export class ProcessDefDetail {
 
   private processEngineService: IProcessEngineService;
@@ -54,7 +54,7 @@ export class ProcessDefDetail {
   private exportSpinner: HTMLElement;
   private startButtonDropdown: HTMLDivElement;
   private startButton: HTMLElement;
-  private consumerClient: ConsumerClient;
+  private bpmnStudioClient: BpmnStudioClient;
   private router: Router;
   private fillColor: string;
   private borderColor: string;
@@ -73,12 +73,12 @@ export class ProcessDefDetail {
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
-              consumerClient: ConsumerClient,
+              bpmnStudioClient: BpmnStudioClient,
               router: Router,
               validationController: ValidationController) {
     this.processEngineService = processEngineService;
     this.eventAggregator = eventAggregator;
-    this.consumerClient = consumerClient;
+    this.bpmnStudioClient = bpmnStudioClient;
     this.router = router;
     this.validationController = validationController;
   }

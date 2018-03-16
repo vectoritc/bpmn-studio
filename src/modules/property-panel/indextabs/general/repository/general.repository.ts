@@ -1,20 +1,20 @@
-import {ConsumerClient, IPagination, IProcessDefEntity} from '@process-engine/consumer_client';
+import {BpmnStudioClient, IPagination, IProcessDefEntity} from '@process-engine/consumer_client';
 import {HttpClient} from 'aurelia-fetch-client';
 import {inject} from 'aurelia-framework';
 import environment from '../../../../../environment';
 
-@inject('ConsumerClient', HttpClient)
+@inject('BpmnStudioClient', HttpClient)
 export class GeneralRepository {
-  private consumerClient: ConsumerClient;
+  private bpmnStudioClient: BpmnStudioClient;
   private httpClient: HttpClient;
 
-  constructor(consumerClient: ConsumerClient, httpClient: HttpClient) {
-    this.consumerClient = consumerClient;
+  constructor(bpmnStudioClient: BpmnStudioClient, httpClient: HttpClient) {
+    this.bpmnStudioClient = bpmnStudioClient;
     this.httpClient = httpClient;
   }
 
   public async getAllProcesses(): Promise<IPagination<IProcessDefEntity>> {
-    return this.consumerClient.getProcessDefList();
+    return this.bpmnStudioClient.getProcessDefList();
   }
 
   public updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<any> {

@@ -8,7 +8,7 @@ export function configure(aurelia: Aurelia): void {
   aurelia.container.registerInstance('TokenRepository', tokenRepository);
 
   if (window.localStorage.getItem('baseRoute')) {
-    environment.consumerClient.baseRoute = window.localStorage.getItem('baseRoute');
+    environment.bpmnStudioClient.baseRoute = window.localStorage.getItem('baseRoute');
   }
 
   aurelia.use
@@ -16,7 +16,7 @@ export function configure(aurelia: Aurelia): void {
     .feature('modules/dynamic-ui')
     .feature('modules/processengine')
     .feature('modules/authentication')
-    .feature('modules/consumer-client', tokenRepository)
+    .feature('modules/bpmn-studio_client', tokenRepository)
     .feature('resources')
     .plugin('aurelia-bootstrap')
     .plugin('aurelia-validation');

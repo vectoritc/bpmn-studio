@@ -21,7 +21,7 @@ export default {
   events: {
     xmlChanged: 'xmlChanged',
   },
-  consumerClient: {
+  bpmnStudioClient: {
     baseRoute: baseRoute,
   },
   propertyPanel: {

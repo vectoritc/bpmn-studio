@@ -1,32 +1,32 @@
-import {ConsumerClient, IUserTaskConfig, UserTaskProceedAction} from '@process-engine/consumer_client';
+import {BpmnStudioClient, IUserTaskConfig, UserTaskProceedAction} from '@process-engine/consumer_client';
 import {IUserTaskEntity, IUserTaskMessageData} from '@process-engine/process_engine_contracts';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {IDynamicUiService} from '../../contracts';
 import environment from '../../environment';
 
-@inject(EventAggregator, 'ConsumerClient')
+@inject(EventAggregator, 'BpmnStudioClient')
 export class DynamicUiService implements IDynamicUiService {
 
-  private consumerClient: ConsumerClient;
+  private bpmnStudioClient: BpmnStudioClient;
   private eventAggregator: EventAggregator;
 
-  constructor(eventAggregator: EventAggregator, consumerClient: ConsumerClient) {
-    this.consumerClient = consumerClient;
+  constructor(eventAggregator: EventAggregator, bpmnStudioClient: BpmnStudioClient) {
+    this.bpmnStudioClient = bpmnStudioClient;
     this.eventAggregator = eventAggregator;
-    this.consumerClient.on('renderUserTask', (userTaskConfig: IUserTaskConfig) => {
+    this.bpmnStudioClient.on('renderUserTask', (userTaskConfig: IUserTaskConfig) => {
       this.eventAggregator.publish('render-dynamic-ui', userTaskConfig);
     });
-    this.consumerClient.on('processEnd', (message: any) => {
+    this.bpmnStudioClient.on('processEnd', (message: any) => {
       this.eventAggregator.publish('closed-process', message);
     });
   }
 
   public sendProceedAction(action: UserTaskProceedAction, userTaskConfig: IUserTaskConfig): void {
-    this.consumerClient.proceedUserTask(userTaskConfig, action);
+    this.bpmnStudioClient.proceedUserTask(userTaskConfig, action);
   }
 
   public getUserTaskConfig(userTaskId: string): Promise<IUserTaskConfig> {
-    return this.consumerClient.getUserTaskConfig(userTaskId);
+    return this.bpmnStudioClient.getUserTaskConfig(userTaskId);
   }
 }
