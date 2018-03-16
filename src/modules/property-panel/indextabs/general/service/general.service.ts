@@ -1,4 +1,4 @@
-import {IPagination, IProcessDefEntity} from '@process-engine/consumer_client';
+import {IPagination, IProcessDefEntity} from '@process-engine/bpmn-studio_client';
 import {inject} from 'aurelia-framework';
 import {GeneralRepository} from '../repository/general.repository';
 

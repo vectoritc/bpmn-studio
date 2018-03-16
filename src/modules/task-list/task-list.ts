@@ -1,12 +1,12 @@
 import {
+  BpmnStudioClient,
   IConfirmWidgetConfig,
-  IConsumerClient,
   IUserTaskConfig,
   IUserTaskEntity,
   UserTaskProceedAction,
   WidgetConfig,
   WidgetType,
-} from '@process-engine/consumer_client';
+} from '@process-engine/bpmn-studio_client';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
 import * as toastr from 'toastr';
@@ -19,11 +19,11 @@ interface ITaskListRouteParameters {
   processId?: string;
 }
 
-@inject(EventAggregator, 'ConsumerClient')
+@inject(EventAggregator, 'BpmnStudioClient')
 export class TaskList {
 
   private eventAggregator: EventAggregator;
-  private consumerClient: IConsumerClient;
+  private bpmnStudioClient: BpmnStudioClient;
 
   private succesfullRequested: boolean = false;
   private subscriptions: Array<Subscription>;
@@ -36,9 +36,9 @@ export class TaskList {
   public pageSize: number = 10;
   public totalItems: number;
 
-  constructor(eventAggregator: EventAggregator, consumerClient: IConsumerClient) {
+  constructor(eventAggregator: EventAggregator, bpmnStudioClient: BpmnStudioClient) {
     this.eventAggregator = eventAggregator;
-    this.consumerClient = consumerClient;
+    this.bpmnStudioClient = bpmnStudioClient;
   }
 
   private async updateUserTasks(): Promise<void> {
@@ -103,14 +103,14 @@ export class TaskList {
   }
 
   private getAllUserTasks(): Promise<IPagination<IUserTaskEntity>> {
-    return this.consumerClient.getUserTaskList();
+    return this.bpmnStudioClient.getUserTaskList();
   }
 
   private getUserTasksForProcessDef(processDefId: string): Promise<IPagination<IUserTaskEntity>> {
-    return this.consumerClient.getUserTaskListByProcessDefId(processDefId);
+    return this.bpmnStudioClient.getUserTaskListByProcessDefId(processDefId);
   }
 
   private getUserTasksForProcess(processId: string): Promise<IPagination<IUserTaskEntity>> {
-    return this.consumerClient.getUserTaskListByProcessInstanceId(processId);
+    return this.bpmnStudioClient.getUserTaskListByProcessInstanceId(processId);
   }
 }

@@ -188,8 +188,8 @@
             ]
           },
           {
-            "name": "@process-engine/consumer_client",
-            "path": "../node_modules/@process-engine/consumer_client/dist/amd",
+            "name": "@process-engine/bpmn-studio_client",
+            "path": "../node_modules/@process-engine/bpmn-studio_client/dist/amd",
             "main": "index.js"
           },
           {
