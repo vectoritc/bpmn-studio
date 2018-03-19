@@ -1,9 +1,11 @@
 import {Router, RouterConfiguration} from 'aurelia-router';
 import * as toastr from 'toastr';
+import environment from './environment';
 
 export class App {
 
   public router: Router;
+  public environment: any = environment;
 
   public configureRouter(config: RouterConfiguration, router: Router): void {
     this.router = router;
