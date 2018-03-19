@@ -30,6 +30,7 @@ function createWindow () {
     title: "BPMN-Studio",
     minWidth: 1000,
     minHeight: 800,
+    icon: path.join(__dirname, '../build/win_icon.png'),  // only for windows and linux
   });
 
   mainWindow.loadURL(`file://${__dirname}/../index.html`);
