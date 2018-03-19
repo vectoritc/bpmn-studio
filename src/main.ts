@@ -2,16 +2,16 @@ import {Aurelia} from 'aurelia-framework';
 import environment from './environment';
 import {TokenRepository} from './modules/token-repository/token.repository';
 
-if ((<any> window).nodeRequire) {
-  const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
-  const newHost: string = ipcRenderer.sendSync('get_host');
-  localStorage.setItem('baseRoute', `http://${newHost}`);
-}
-
 export function configure(aurelia: Aurelia): void {
 
   const tokenRepository: TokenRepository = new TokenRepository();
   aurelia.container.registerInstance('TokenRepository', tokenRepository);
+
+  if ((<any> window).nodeRequire) {
+    const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
+    const newHost: string = ipcRenderer.sendSync('get_host');
+    localStorage.setItem('baseRoute', `http://${newHost}`);
+  }
 
   if (window.localStorage.getItem('baseRoute')) {
     const baseRoute: string = window.localStorage.getItem('baseRoute');
