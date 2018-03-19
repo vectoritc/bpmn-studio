@@ -14,7 +14,14 @@ export function configure(aurelia: Aurelia): void {
   aurelia.container.registerInstance('TokenRepository', tokenRepository);
 
   if (window.localStorage.getItem('baseRoute')) {
-    environment.bpmnStudioClient.baseRoute = window.localStorage.getItem('baseRoute');
+    const baseRoute: string = window.localStorage.getItem('baseRoute');
+    environment.bpmnStudioClient.baseRoute = baseRoute;
+    environment.processengine.routes.processes = `${baseRoute}/datastore/ProcessDef`;
+    environment.processengine.routes.iam = `${baseRoute}/iam`;
+    environment.processengine.routes.messageBus = `${baseRoute}/mb`;
+    environment.processengine.routes.processInstances = `${baseRoute}/datastore/Process`;
+    environment.processengine.routes.startProcess = `${baseRoute}/processengine/start`;
+    environment.processengine.routes.userTasks =  `${baseRoute}/datastore/UserTask`;
   }
 
   aurelia.use
