@@ -7,8 +7,21 @@ export function configure(aurelia: Aurelia): void {
   const tokenRepository: TokenRepository = new TokenRepository();
   aurelia.container.registerInstance('TokenRepository', tokenRepository);
 
+  if ((<any> window).nodeRequire) {
+    const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
+    const newHost: string = ipcRenderer.sendSync('get_host');
+    localStorage.setItem('baseRoute', `http://${newHost}`);
+  }
+
   if (window.localStorage.getItem('baseRoute')) {
-    environment.bpmnStudioClient.baseRoute = window.localStorage.getItem('baseRoute');
+    const baseRoute: string = window.localStorage.getItem('baseRoute');
+    environment.bpmnStudioClient.baseRoute = baseRoute;
+    environment.processengine.routes.processes = `${baseRoute}/datastore/ProcessDef`;
+    environment.processengine.routes.iam = `${baseRoute}/iam`;
+    environment.processengine.routes.messageBus = `${baseRoute}/mb`;
+    environment.processengine.routes.processInstances = `${baseRoute}/datastore/Process`;
+    environment.processengine.routes.startProcess = `${baseRoute}/processengine/start`;
+    environment.processengine.routes.userTasks =  `${baseRoute}/datastore/UserTask`;
   }
 
   aurelia.use
