@@ -12,9 +12,9 @@ Engine verbunden werden, um diese Diagramme auszuführen.
 
 ## Relevante URLs
 
-[Process Engine](https://github.com/process-engine/process_engine)
+[ProcessEngine](https://github.com/process-engine/process_engine)
 [Dokumentation](https://github.com/process-engine/documentation)
-[Minimaler Seketon](https://github.com/process-engine/skeleton)
+[Minimales Skeleton](https://github.com/process-engine/skeleton)
 
 ## Wie kann ich das Projekt aufsetzen?
 
@@ -74,22 +74,23 @@ npm run start_dev
 
 Dieses Skript startet die Auslieferung der Anwendung für die Entwicklung.
 Bei Änderungen im Quelltext wird die Anwendung neugebaut und der Webbrowser
-automatisch neugeladen.
+automatisch neu geladen.
 
 **End-to-End-Test**
 
-Start the webserver:
+Start des Websservers:
 
 ```shell
 npm start
 ```
-Open another terminal and start the Selenium server:
+
+Ein anderes Terminal öffnen und den Selenium Server starten:
 
 ```shell
 npm run integration-test-init
 ```
 
-Finally run your tests:
+Die Tests starten:
 
 ```shell
 npm run integration-test
