@@ -4,7 +4,7 @@ import {ProcessDefListPage} from './pages/processdef-list-page';
 
 describe('processDefList', () => {
 
-  const defaultTimeout: number = 1000;
+  const defaultTimeout: number = 2000;
   const aureliaUrl: string = 'http://localhost:9000';
 
   browser.driver.manage().deleteAllCookies();
@@ -12,8 +12,16 @@ describe('processDefList', () => {
 
   it('should display process definitions', () => {
     const processDefListPage: ProcessDefListPage = new ProcessDefListPage();
+    browser.get(aureliaUrl);
     browser.sleep(defaultTimeout);
     expect(processDefListPage.processDefs.count()).toBeGreaterThan(0);
+  });
+
+  it('should navigate to details-view', () => {
+    const processDefListPage: ProcessDefListPage = new ProcessDefListPage();
+    processDefListPage.detailsButtons.first().click();
+    browser.sleep(defaultTimeout);
+    expect(browser.getCurrentUrl()).toContain('detail');
   });
 
 });
