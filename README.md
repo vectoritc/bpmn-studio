@@ -40,8 +40,8 @@ npm install
 npm run electron-build
 ```
 
-Dieses Skript baut eine ```.dmg``` Datei, welche man dann ausführen und
- installieren kann.
+Nach dem Bauen kann man in dem `dist/mac` Ordner die fertige App finden und 
+ausführen.
 
 **Alternative:**
 
