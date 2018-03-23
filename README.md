@@ -1,6 +1,6 @@
 # BPMN-Studio
 
-BPMN-Studio ist eine Web-Applikation zur Erstellung, Verwaltung,
+BPMN-Studio ist eine Web- und Desktop-Applikation zur Erstellung, Verwaltung,
 Ausführung und Auswertung von BPMN-Prozessen.
 Es setzt auf dem BPMN.io auf und den BPMN-Standard 2.x um.
 
@@ -32,6 +32,21 @@ npm install
 
 ## Wie kann ich das Projekt benutzen?
 
+### Electron Applikation
+
+**Zum bauen:**
+
+```shell
+npm run electron-build
+```
+
+Dieses Skript baut eine ```.dmg``` Datei, welche man dann ausführen und
+ installieren kann.
+
+**Alternative:**
+
+Die Releases des BPMN-Studios lassen sich alternativ auch 
+[hier](https://github.com/process-engine/bpmn-studio/releases) herunterladen. 
 
 ### Benutzung
 
