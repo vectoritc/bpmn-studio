@@ -19,4 +19,5 @@ export interface IModdleElement {
   laneSets?: Array<IModdleElement>;
   lanes?: Array<IModdleElement>;
   participants?: Array<IModdleElement>;
+  processRef?: IModdleElement;
 }

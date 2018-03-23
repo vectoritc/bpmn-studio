@@ -1,5 +1,6 @@
 import {IIndextab, ISection, IShape} from '../../../../contracts';
 import {BasicsSection} from './sections/basics/basics';
+import {ProcessSection} from './sections/process/process';
 
 export class Extensions implements IIndextab {
   public title: string = 'Extensions';
@@ -8,12 +9,14 @@ export class Extensions implements IIndextab {
   public canHandleElement: boolean = true;
 
   private basicsSection: ISection = new BasicsSection();
+  private processSection: ISection = new ProcessSection();
 
   public sections: Array<ISection>;
 
   constructor() {
     this.sections = [
       this.basicsSection,
+      this.processSection,
     ];
   }
 
@@ -22,6 +25,10 @@ export class Extensions implements IIndextab {
     if (!element) {
       return false;
     }
+
+    this.sections.forEach((section: ISection) => {
+      section.canHandleElement = section.isSuitableForElement(element);
+    });
 
     return this.sections.some((section: ISection) => {
       return section.isSuitableForElement(element);

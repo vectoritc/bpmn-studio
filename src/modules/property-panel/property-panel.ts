@@ -48,6 +48,8 @@ export class PropertyPanel {
       const elementWasClickedOn: boolean = event.type === 'element.clicked';
       const elementIsValidShape: boolean = event.type === 'shape.changed' && event.element.type !== 'label';
 
+      console.log(event);
+
       const elementIsShapeInPanel: boolean = elementIsValidShape && event.element.id === this.elementInPanel.id;
 
       if (elementWasClickedOn || elementIsShapeInPanel) {
