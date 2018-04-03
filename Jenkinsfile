@@ -49,6 +49,9 @@ pipeline {
       steps {
         sh('node --version')
         sh('npm run build --ignore-scripts')
+        withCredentials([string(credentialsId: 'apple-mac-developer-certifikate', variable: 'CSC_LINK')]) {
+          sh('npm run electron-build')
+        }
       }
     }
     stage('test') {
