@@ -48,7 +48,7 @@ pipeline {
       steps {
         sh('node --version')
         sh('npm run build --ignore-scripts')
-        stash(includes: 'node_modules, scripts', name: 'post_build')
+        stash(includes: 'node_modules/, scripts/', name: 'post_build')
       }
     }
     stage('build electron') {
