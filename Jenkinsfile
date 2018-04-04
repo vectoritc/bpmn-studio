@@ -35,8 +35,8 @@ pipeline {
           sh('node --version')
           sh('npm install')
           sh('npm rebuild node-sass')
-          
         }
+        stash(includes: 'node_modules/', name: 'node_modules')
       }
     }
     stage('lint') {
@@ -52,6 +52,7 @@ pipeline {
             label "linux"
           }
           steps {
+            unstash('node_modules')
             sh('node --version')
             sh('npm run build --ignore-scripts')
             withCredentials([string(credentialsId: 'apple-mac-developer-certifikate', variable: 'CSC_LINK')]) {
@@ -69,6 +70,7 @@ pipeline {
             label "macos"
           }
           steps {
+            unstash('node_modules')
             sh('node --version')
             sh('npm run build --ignore-scripts')
             withCredentials([string(credentialsId: 'apple-mac-developer-certifikate', variable: 'CSC_LINK')]) {
