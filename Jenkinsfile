@@ -60,7 +60,11 @@ pipeline {
           steps {
             unstash('post_build')
             sh('node --version')
-            sh('npm run electron-build-linux')
+            withCredentials([
+              string(credentialsId: 'process-engine-ci_token', variable: 'GH_TOKEN')
+            ]) {
+              sh('npm run electron-build-linux')
+            }
           }
           post {
             always {
@@ -95,7 +99,11 @@ pipeline {
           steps {
             unstash('post_build')
             sh('node --version')
-            sh('npm run electron-build-windows')
+            withCredentials([
+              string(credentialsId: 'process-engine-ci_token', variable: 'GH_TOKEN')
+            ]) {
+              sh('npm run electron-build-windows')
+            }
           }
           post {
             always {
