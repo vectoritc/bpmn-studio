@@ -79,6 +79,10 @@ pipeline {
           steps {
             unstash('post_build')
             sh('node --version')
+            // we copy the node_modules folder from the main slave
+            // which runs linux. Some dependencies may not be installed
+            // if they have a os restriction in their package.json
+            sh('npm install')
             withCredentials([
               string(credentialsId: 'apple-mac-developer-certifikate', variable: 'CSC_LINK'),
               string(credentialsId: 'process-engine-ci_token', variable: 'GH_TOKEN')
