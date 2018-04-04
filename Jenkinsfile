@@ -95,17 +95,18 @@ pipeline {
         stage('Build Windows on Linux') {
           agent {
             label "linux"
+            docker {
+              // See https://www.electron.build/multi-platform-build#to-build-app-for-windows-on-linux
+              image 'electronuserland/builder:wine'
+            }
           }
           steps {
-            // See https://www.electron.build/multi-platform-build#to-build-app-for-windows-on-linux
-            withDockerContainer('electronuserland/builder:wine') {
-              unstash('post_build')
-              sh('node --version')
-              withCredentials([
-                string(credentialsId: 'process-engine-ci_token', variable: 'GH_TOKEN')
-              ]) {
-                sh('npm run electron-build-windows')
-              }
+            unstash('post_build')
+            sh('node --version')
+            withCredentials([
+              string(credentialsId: 'process-engine-ci_token', variable: 'GH_TOKEN')
+            ]) {
+              sh('npm run electron-build-windows')
             }
           }
           post {
