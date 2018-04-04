@@ -101,6 +101,8 @@ pipeline {
           }
           steps {
             unstash('post_build')
+            sh('mkdir .cache')
+            sh('chmod 777 .cache')
             sh('node --version')
             withCredentials([
               string(credentialsId: 'process-engine-ci_token', variable: 'GH_TOKEN')
