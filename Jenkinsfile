@@ -94,15 +94,10 @@ pipeline {
         }
         stage('Build Windows on Linux') {
           agent {
-            docker {
-              // See https://www.electron.build/multi-platform-build#to-build-app-for-windows-on-linux
-              image 'electronuserland/builder:wine'
-            }
+            label "linux"
           }
           steps {
             unstash('post_build')
-            sh('mkdir .cache')
-            sh('chmod 777 .cache')
             sh('node --version')
             withCredentials([
               string(credentialsId: 'process-engine-ci_token', variable: 'GH_TOKEN')
