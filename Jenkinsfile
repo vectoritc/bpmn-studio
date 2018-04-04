@@ -75,7 +75,10 @@ pipeline {
           steps {
             unstash('post_build')
             sh('node --version')
-            withCredentials([string(credentialsId: 'apple-mac-developer-certifikate', variable: 'CSC_LINK')]) {
+            withCredentials([
+              string(credentialsId: 'apple-mac-developer-certifikate', variable: 'CSC_LINK'),
+              string(credentialsId: 'process-engine-ci_token', variable: 'GH_TOKEN')
+            ]) {
               sh('npm run electron-build-macos')
             }
           }
