@@ -19,7 +19,10 @@
     "lint": "tslint --project .",
     "test": "echo 'Currently there a no tests specified'",
     "electron-start-dev": "electron electron_app/electron.js",
-    "electron-build": "build --macos --linux --windows --publish never",
+    "electron-build": "build",
+    "electron-build-windows": "build --windows",
+    "electron-build-macos": "build --macos",
+    "electron-build-linux": "build --linux",
     "electron-shipit": "build -p always"
   },
   "build": {

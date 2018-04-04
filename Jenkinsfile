@@ -55,9 +55,8 @@ pipeline {
             unstash('node_modules')
             sh('node --version')
             sh('npm run build --ignore-scripts')
-            withCredentials([string(credentialsId: 'apple-mac-developer-certifikate', variable: 'CSC_LINK')]) {
-              sh('npm run electron-build')
-            }
+            sh('npm run electron-build-linux')
+            stash(includes: 'scripts/', name: 'scripts')
           }
           post {
             always {
@@ -74,8 +73,24 @@ pipeline {
             sh('node --version')
             sh('npm run build --ignore-scripts')
             withCredentials([string(credentialsId: 'apple-mac-developer-certifikate', variable: 'CSC_LINK')]) {
-              sh('npm run electron-build')
+              sh('npm run electron-build-macos')
             }
+          }
+          post {
+            always {
+              cleanup_workspace()
+            }
+          }
+        }
+        stage('Build Windows on Linux') {
+          agent {
+            label "linux"
+          }
+          steps {
+            unstash('node_modules')
+            sh('node --version')
+            sh('npm run build --ignore-scripts')
+            sh('npm run electron-build-windows')
           }
           post {
             always {
@@ -87,6 +102,7 @@ pipeline {
     }
     stage('test') {
       steps {
+        unstash('scripts')
         sh('node --version')
         sh('npm run test')
       }
