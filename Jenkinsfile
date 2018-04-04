@@ -47,7 +47,7 @@ pipeline {
     stage('build') {
       steps {
         sh('node --version')
-        sh('npm run build --ignore-scripts')
+        sh('npm run build')
         stash(includes: 'node_modules/, scripts/', name: 'post_build')
       }
     }
