@@ -94,7 +94,6 @@ pipeline {
         }
         stage('Build Windows on Linux') {
           agent {
-            label "linux"
             docker {
               // See https://www.electron.build/multi-platform-build#to-build-app-for-windows-on-linux
               image 'electronuserland/builder:wine'
