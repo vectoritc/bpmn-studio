@@ -20,10 +20,10 @@
     "test": "echo 'Currently there a no tests specified'",
     "electron-start-dev": "electron electron_app/electron.js",
     "electron-build": "build",
-    "electron-build-windows": "build --windows",
-    "electron-build-macos": "build --macos --publish always",
-    "electron-build-linux": "build --linux",
-    "electron-shipit": "build -p always"
+    "electron-build-windows": "build --publish always --windows",
+    "electron-build-macos": "build --publish always --macos",
+    "electron-build-linux": "build --publish always --linux",
+    "electron-shipit": "build --publish always"
   },
   "build": {
     "extraFiles": [
