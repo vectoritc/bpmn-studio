@@ -21,7 +21,7 @@
     "electron-start-dev": "electron electron_app/electron.js",
     "electron-build": "build",
     "electron-build-windows": "build --windows",
-    "electron-build-macos": "build --macos",
+    "electron-build-macos": "build --macos --publish always",
     "electron-build-linux": "build --linux",
     "electron-shipit": "build -p always"
   },
