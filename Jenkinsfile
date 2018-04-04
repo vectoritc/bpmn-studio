@@ -46,17 +46,23 @@ pipeline {
       }
     }
     stage('build') {
+      steps {
+        unstash('node_modules')
+        sh('node --version')
+        sh('npm run build --ignore-scripts')
+        stash(includes: 'node_modules/, scripts/', name: 'post_build')
+      }
+    }
+    stage('build electron') {
       parallel {
         stage('Build on Linux') {
           agent {
             label "linux"
           }
           steps {
-            unstash('node_modules')
+            unstash('post_build')
             sh('node --version')
-            sh('npm run build --ignore-scripts')
             sh('npm run electron-build-linux')
-            stash(includes: 'scripts/', name: 'scripts')
           }
           post {
             always {
@@ -69,9 +75,8 @@ pipeline {
             label "macos"
           }
           steps {
-            unstash('node_modules')
+            unstash('post_build')
             sh('node --version')
-            sh('npm run build --ignore-scripts')
             withCredentials([string(credentialsId: 'apple-mac-developer-certifikate', variable: 'CSC_LINK')]) {
               sh('npm run electron-build-macos')
             }
@@ -87,9 +92,8 @@ pipeline {
             label "linux"
           }
           steps {
-            unstash('node_modules')
+            unstash('post_build')
             sh('node --version')
-            sh('npm run build --ignore-scripts')
             sh('npm run electron-build-windows')
           }
           post {
@@ -102,7 +106,7 @@ pipeline {
     }
     stage('test') {
       steps {
-        unstash('scripts')
+        unstash('post_build')
         sh('node --version')
         sh('npm run test')
       }
