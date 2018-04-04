@@ -46,11 +46,40 @@ pipeline {
       }
     }
     stage('build') {
-      steps {
-        sh('node --version')
-        sh('npm run build --ignore-scripts')
-        withCredentials([string(credentialsId: 'apple-mac-developer-certifikate', variable: 'CSC_LINK')]) {
-          sh('npm run electron-build')
+      parallel {
+        stage('Build on Linux') {
+          agent {
+            label "linux"
+          }
+          steps {
+            sh('node --version')
+            sh('npm run build --ignore-scripts')
+            withCredentials([string(credentialsId: 'apple-mac-developer-certifikate', variable: 'CSC_LINK')]) {
+              sh('npm run electron-build')
+            }
+          }
+          post {
+            always {
+              cleanup_workspace()
+            }
+          }
+        }
+        stage('Build on MacOS') {
+          agent {
+            label "macos"
+          }
+          steps {
+            sh('node --version')
+            sh('npm run build --ignore-scripts')
+            withCredentials([string(credentialsId: 'apple-mac-developer-certifikate', variable: 'CSC_LINK')]) {
+              sh('npm run electron-build')
+            }
+          }
+          post {
+            always {
+              cleanup_workspace()
+            }
+          }
         }
       }
     }
