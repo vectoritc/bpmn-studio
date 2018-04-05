@@ -33,6 +33,7 @@ pipeline {
 
           branch = env.BRANCH_NAME;
           branch_is_master = branch == 'master';
+          branch_is_develop = branch == 'develop';
           echo("Branch is '${branch}'")
         }
         nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
@@ -90,7 +91,7 @@ pipeline {
             ]) {
               sh('npm run electron-build-macos')
             }
-            stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml', name: 'macos_results')
+            stash(includes: 'dist/*.*, dist/mac/*', excludes: 'electron-builder-effective-config.yaml', name: 'macos_results')
           }
           post {
             always {
@@ -170,12 +171,15 @@ pipeline {
       }
     }
     stage('publish electron') {
+      when {
+        expression {
+           branch_is_master// || branch_is_develop
+        }
+      }
       steps {
         unstash('linux_results')
         unstash('macos_results')
         unstash('windows_results')
-        sh('ls')
-        sh('ls dist')
         nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
           dir('.ci-tools') {
             sh('npm install')
@@ -183,7 +187,7 @@ pipeline {
           withCredentials([
             string(credentialsId: 'process-engine-ci_token', variable: 'RELEASE_GH_TOKEN')
           ]) {
-            sh("node .ci-tools/publish-github-release.js ${package_version}")
+            sh("node .ci-tools/publish-github-release.js ${package_version} true ${!branch_is_master}")
           }
         }
       }

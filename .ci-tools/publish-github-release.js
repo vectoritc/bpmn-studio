@@ -2,8 +2,26 @@ const octokit = require('@octokit/rest')();
 const fs = require('fs');
 const mime = require('mime-types')
 
+if (process.argv.length != 6) {
+  console.error('Please supply arguments: <version_to_release> <target_commit> <release_is_draft> <release_is_prerelease>');
+  process.exit(1);
+}
+
+if (!process.env['RELEASE_GH_TOKEN']
+  || process.env['RELEASE_GH_TOKEN'] === null
+  || process.env['RELEASE_GH_TOKEN'] == undefined
+  || process.env['RELEASE_GH_TOKEN'] == '') {
+  console.error('Please supply github token via RELEASE_GH_TOKEN environment variable.');
+  process.exit(1);
+}
+
 const version_to_release = process.argv[2];
 const target_commit = process.argv[3];
+const release_is_draft = process.argv[4];
+const release_is_prerelease = process.argv[5];
+
+const github_auth_token = process.env['RELEASE_GH_TOKEN'];
+
 const version_tag = `v${version_to_release}`;
 
 const files_to_upload = [
@@ -23,7 +41,7 @@ const files_to_upload = [
 async function authenticate() {
   octokit.authenticate({
     type: 'token',
-    token: process.env['RELEASE_GH_TOKEN'],
+    token: github_auth_token,
   });
 }
 
@@ -49,8 +67,8 @@ async function create_release() {
     target_commitish: target_commit,
     name: version_to_release,
     body: 'WIP',
-    draft: true,
-    prerelease: true,
+    draft: release_is_draft,
+    prerelease: release_is_prerelease,
   });
 }
 
