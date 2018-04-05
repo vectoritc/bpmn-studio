@@ -172,9 +172,20 @@ pipeline {
     stage('publish electron') {
       steps {
         unstash('linux_results')
-        unstash('macos_results');
-        unstash('windows_results');
-        sh('ls');
+        unstash('macos_results')
+        unstash('windows_results')
+        sh('ls')
+        sh('ls dist')
+        nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
+          dir('.ci-tools') {
+            sh('npm install')
+          }
+          withCredentials([
+            string(credentialsId: 'process-engine-ci_token', variable: 'RELEASE_GH_TOKEN')
+          ]) {
+            sh("node .ci-tools/publish-github-release.js ${package_version}")
+          }
+        }
       }
     }
     stage('cleanup') {
