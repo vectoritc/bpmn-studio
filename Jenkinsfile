@@ -27,9 +27,13 @@ pipeline {
     stage('prepare') {
       steps {
         script {
-          raw_package_version = sh(script: 'node --print --eval "require(\'./package.json\').version"', returnStdout: true)
-          package_version = raw_package_version.trim()
+          def raw_package_version = sh(script: 'node --print --eval "require(\'./package.json\').version"', returnStdout: true)
+          def package_version = raw_package_version.trim()
           echo("Package version is '${package_version}'")
+
+          def branch = env.BRANCH_NAME;
+          def branch_is_master = branch == 'master';
+          echo("Branch is '${branch}'")
         }
         nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
           sh('node --version')
@@ -60,10 +64,19 @@ pipeline {
           steps {
             unstash('post_build')
             sh('node --version')
-            withCredentials([
-              string(credentialsId: 'process-engine-ci_token', variable: 'GH_TOKEN')
+
+            withEnv([
+              "EP_DRAFT=true",
+              "EP_PRELEASE=${!branch_is_master}"
             ]) {
-              sh('npm run electron-build-linux')
+              echo('$EP_PRELEASE')
+              echo("${env.EP_PRELEASE}")
+
+              withCredentials([
+                string(credentialsId: 'process-engine-ci_token', variable: 'GH_TOKEN')
+              ]) {
+                sh('npm run electron-build-linux')
+              }
             }
           }
           post {
@@ -83,11 +96,20 @@ pipeline {
             // which runs linux. Some dependencies may not be installed
             // if they have a os restriction in their package.json
             sh('npm install')
-            withCredentials([
-              string(credentialsId: 'apple-mac-developer-certifikate', variable: 'CSC_LINK'),
-              string(credentialsId: 'process-engine-ci_token', variable: 'GH_TOKEN')
+
+            withEnv([
+              "EP_DRAFT=true",
+              "EP_PRELEASE=${!branch_is_master}"
             ]) {
-              sh('npm run electron-build-macos')
+              echo('$EP_PRELEASE')
+              echo("${env.EP_PRELEASE}")
+
+              withCredentials([
+                string(credentialsId: 'apple-mac-developer-certifikate', variable: 'CSC_LINK'),
+                string(credentialsId: 'process-engine-ci_token', variable: 'GH_TOKEN')
+              ]) {
+                sh('npm run electron-build-macos')
+              }
             }
           }
           post {
@@ -103,10 +125,19 @@ pipeline {
           steps {
             unstash('post_build')
             sh('node --version')
-            withCredentials([
-              string(credentialsId: 'process-engine-ci_token', variable: 'GH_TOKEN')
+
+            withEnv([
+              "EP_DRAFT=true",
+              "EP_PRELEASE=${!branch_is_master}"
             ]) {
-              sh('npm run electron-build-windows')
+              echo('$EP_PRELEASE')
+              echo("${env.EP_PRELEASE}")
+
+              withCredentials([
+                string(credentialsId: 'process-engine-ci_token', variable: 'GH_TOKEN')
+              ]) {
+                sh('npm run electron-build-windows')
+              }
             }
           }
           post {
@@ -126,8 +157,6 @@ pipeline {
     stage('publish') {
       steps {
         script {
-          def branch = env.BRANCH_NAME;
-          def branch_is_master = branch == 'master';
           def new_commit = env.GIT_PREVIOUS_COMMIT != env.GIT_COMMIT;
 
           if (branch_is_master) {
