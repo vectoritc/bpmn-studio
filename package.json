@@ -20,9 +20,9 @@
     "test": "echo 'Currently there a no tests specified'",
     "electron-start-dev": "electron electron_app/electron.js",
     "electron-build": "build",
-    "electron-build-windows": "build --publish always --windows",
-    "electron-build-macos": "build --publish always --macos",
-    "electron-build-linux": "build --publish always --linux",
+    "electron-build-windows": "build --publish never --windows",
+    "electron-build-macos": "build --publish never --macos",
+    "electron-build-linux": "build --publish never --linux",
     "electron-shipit": "build --publish always"
   },
   "build": {
