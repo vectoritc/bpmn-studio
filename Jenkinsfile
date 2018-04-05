@@ -172,7 +172,7 @@ pipeline {
     }
     stage('publish electron') {
       when {
-        expression { branch_is_master || branch_is_develop }
+        expression { branch_is_master || branch_is_develop || true }
       }
       steps {
         unstash('linux_results')
