@@ -69,7 +69,6 @@ pipeline {
               "EP_DRAFT=true",
               "EP_PRELEASE=${!branch_is_master}"
             ]) {
-              echo('$EP_PRELEASE')
               echo("${env.EP_PRELEASE}")
 
               withCredentials([
@@ -101,7 +100,6 @@ pipeline {
               "EP_DRAFT=true",
               "EP_PRELEASE=${!branch_is_master}"
             ]) {
-              echo('$EP_PRELEASE')
               echo("${env.EP_PRELEASE}")
 
               withCredentials([
@@ -130,7 +128,6 @@ pipeline {
               "EP_DRAFT=true",
               "EP_PRELEASE=${!branch_is_master}"
             ]) {
-              echo('$EP_PRELEASE')
               echo("${env.EP_PRELEASE}")
 
               withCredentials([
