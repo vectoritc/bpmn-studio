@@ -169,7 +169,7 @@ pipeline {
         }
       }
     }
-    stage('publish') {
+    stage('publish electron') {
       steps {
         unstash('linux_results')
         unstash('macos_results');
