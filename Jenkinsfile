@@ -185,7 +185,7 @@ pipeline {
           withCredentials([
             string(credentialsId: 'process-engine-ci_token', variable: 'RELEASE_GH_TOKEN')
           ]) {
-            sh("node .ci-tools/publish-github-release.js ${package_version} true ${!branch_is_master}")
+            sh("node .ci-tools/publish-github-release.js ${package_version} ${env.GIT_COMMIT} true ${!branch_is_master}")
           }
         }
       }
