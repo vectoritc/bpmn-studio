@@ -27,12 +27,12 @@ pipeline {
     stage('prepare') {
       steps {
         script {
-          def raw_package_version = sh(script: 'node --print --eval "require(\'./package.json\').version"', returnStdout: true)
-          def package_version = raw_package_version.trim()
+          raw_package_version = sh(script: 'node --print --eval "require(\'./package.json\').version"', returnStdout: true)
+          package_version = raw_package_version.trim()
           echo("Package version is '${package_version}'")
 
-          def branch = env.BRANCH_NAME;
-          def branch_is_master = branch == 'master';
+          branch = env.BRANCH_NAME;
+          branch_is_master = branch == 'master';
           echo("Branch is '${branch}'")
         }
         nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
