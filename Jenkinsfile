@@ -65,6 +65,7 @@ pipeline {
             unstash('post_build')
             sh('node --version')
             sh('npm run electron-build-linux')
+            stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml' name: 'linux_results')
           }
           post {
             always {
@@ -89,6 +90,7 @@ pipeline {
             ]) {
               sh('npm run electron-build-macos')
             }
+            stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml' name: 'macos_results')
           }
           post {
             always {
@@ -104,6 +106,7 @@ pipeline {
             unstash('post_build')
             sh('node --version')
             sh('npm run electron-build-windows')
+            stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml' name: 'windows_results')
           }
           post {
             always {
@@ -164,6 +167,14 @@ pipeline {
             }
           }
         }
+      }
+    }
+    stage('publish') {
+      steps {
+        unstash('linux_results')
+        unstash('macos_results');
+        unstash('windows_results');
+        sh('ls');
       }
     }
     stage('cleanup') {
