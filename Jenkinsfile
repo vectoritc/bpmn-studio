@@ -64,19 +64,7 @@ pipeline {
           steps {
             unstash('post_build')
             sh('node --version')
-
-            withEnv([
-              "EP_DRAFT=true",
-              "EP_PRELEASE=${!branch_is_master}"
-            ]) {
-              echo("${env.EP_PRELEASE}")
-
-              withCredentials([
-                string(credentialsId: 'process-engine-ci_token', variable: 'GH_TOKEN')
-              ]) {
-                sh('npm run electron-build-linux')
-              }
-            }
+            sh('npm run electron-build-linux')
           }
           post {
             always {
@@ -96,18 +84,10 @@ pipeline {
             // if they have a os restriction in their package.json
             sh('npm install')
 
-            withEnv([
-              "EP_DRAFT=true",
-              "EP_PRELEASE=${!branch_is_master}"
+            withCredentials([
+              string(credentialsId: 'apple-mac-developer-certifikate', variable: 'CSC_LINK'),
             ]) {
-              echo("${env.EP_PRELEASE}")
-
-              withCredentials([
-                string(credentialsId: 'apple-mac-developer-certifikate', variable: 'CSC_LINK'),
-                string(credentialsId: 'process-engine-ci_token', variable: 'GH_TOKEN')
-              ]) {
-                sh('npm run electron-build-macos')
-              }
+              sh('npm run electron-build-macos')
             }
           }
           post {
@@ -123,19 +103,7 @@ pipeline {
           steps {
             unstash('post_build')
             sh('node --version')
-
-            withEnv([
-              "EP_DRAFT=true",
-              "EP_PRELEASE=${!branch_is_master}"
-            ]) {
-              echo("${env.EP_PRELEASE}")
-
-              withCredentials([
-                string(credentialsId: 'process-engine-ci_token', variable: 'GH_TOKEN')
-              ]) {
-                sh('npm run electron-build-windows')
-              }
-            }
+            sh('npm run electron-build-windows')
           }
           post {
             always {
