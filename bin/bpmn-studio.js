@@ -8,7 +8,7 @@ config.root = __dirname + '/..';
 config.contentType.woff2 = 'application/font-woff2';
 config.contentType.woff = 'application/font-woff';
 config.contentType.ttf = 'application/x-font-ttf';
-config.contentType.svg = 'image/svg';
+config.contentType.svg = 'image/svg+xml';
 
 server.deploy(config, (result) => {
   const url = `http://localhost:${result.config.port}/`;
