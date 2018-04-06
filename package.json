@@ -20,7 +20,10 @@
     "test": "echo 'Currently there a no tests specified'",
     "electron-start-dev": "electron electron_app/electron.js",
     "electron-build": "build",
-    "electron-shipit": "build -p always"
+    "electron-build-windows": "build --publish never --windows",
+    "electron-build-macos": "build --publish never --macos",
+    "electron-build-linux": "build --publish never --linux",
+    "electron-shipit": "build --publish always"
   },
   "build": {
     "extraFiles": [
@@ -84,7 +87,7 @@
     "debug": "^3.1.0",
     "downloadjs": "1.4.4",
     "electron": "^1.7.9",
-    "electron-builder": "^19.54.0",
+    "electron-builder": "^20.8.1",
     "event-stream": "^3.3.3",
     "eventemitter2": "^4.1.2",
     "faye": "^1.2.4",
