@@ -11,6 +11,7 @@ import * as $ from 'jquery';
 import * as spectrum from 'spectrum-colorpicker';
 import 'spectrum-colorpicker/spectrum';
 import * as toastr from 'toastr';
+import * as beautify from 'xml-beautifier';
 import {AuthenticationStateEvent,
         ElementDistributeOptions,
         IExtensionElement,
@@ -242,7 +243,8 @@ export class ProcessDefDetail {
     this.disableAndHideControlsForImageExport();
 
     const xml: string = await this.bpmn.getXML();
-    download(xml, `${this.process.name}.bpmn`, 'application/bpmn20-xml');
+    const formattedXml: string = beautify(xml);
+    download(formattedXml, `${this.process.name}.bpmn`, 'application/bpmn20-xml');
 
     this.enableAndShowControlsForImageExport();
   }
