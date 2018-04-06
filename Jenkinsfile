@@ -172,7 +172,7 @@ pipeline {
     }
     stage('publish electron') {
       when {
-        expression { branch_is_master || branch_is_develop || true }
+        expression { branch_is_master || branch_is_develop }
       }
       steps {
         unstash('linux_results')
@@ -185,7 +185,7 @@ pipeline {
           withCredentials([
             string(credentialsId: 'process-engine-ci_token', variable: 'RELEASE_GH_TOKEN')
           ]) {
-            sh("node .ci-tools/publish-github-release.js ${package_version} ${env.GIT_COMMIT} true ${!branch_is_master}")
+            sh("node .ci-tools/publish-github-release.js ${package_version} ${env.GIT_COMMIT} false ${!branch_is_master}")
           }
         }
       }
