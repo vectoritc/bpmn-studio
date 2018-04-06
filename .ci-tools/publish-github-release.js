@@ -17,8 +17,8 @@ if (!process.env['RELEASE_GH_TOKEN']
 
 const version_to_release = process.argv[2];
 const target_commit = process.argv[3];
-const release_is_draft = process.argv[4];
-const release_is_prerelease = process.argv[5];
+const release_is_draft = process.argv[4] === 'true';
+const release_is_prerelease = process.argv[5] === 'true';
 
 const github_auth_token = process.env['RELEASE_GH_TOKEN'];
 
