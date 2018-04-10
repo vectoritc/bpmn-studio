@@ -29,6 +29,10 @@
     "extraFiles": [
       "config/**/*"
     ],
+    "nsis": {
+      "perMachine": true,
+      "oneClick": false
+    },
     "win": {
       "target": "nsis",
       "fileAssociations": [
