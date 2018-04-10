@@ -123,29 +123,29 @@ getPort({port: 8000, host: '0.0.0.0'})
       app.quit();
     }
   });
-  app.on('will-finish-launching', function() {
-    let filePath;
+  let filePath;
 
-    electron.ipcMain.on('get_opened_file', (event) => {
-      if (filePath === undefined) {
-        event.returnValue = null;
-        return;
-      }
-
-      event.returnValue = {
-        path: filePath,
-        content: fs.readFileSync(filePath, 'utf8'),
-      }
-    });
-  
+  app.on('will-finish-launching', () => {
     // for windows
     if (process.platform == 'win32' && process.argv.length >= 2) {
       filePath = process.argv[1];
     }
     
     // for non-windows
-    app.on('open-file', function(event, path) {
+    app.on('open-file', (event, path) => {
       filePath = path;
     });
+  });
+
+  electron.ipcMain.on('get_opened_file', (event) => {
+    if (filePath === undefined) {
+      event.returnValue = {};
+      return;
+    }
+
+    event.returnValue = {
+      path: filePath,
+      content: fs.readFileSync(filePath, 'utf8'),
+    }
   });
 });
