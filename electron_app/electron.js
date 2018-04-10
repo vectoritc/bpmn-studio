@@ -5,6 +5,7 @@ const app = electron.app;
 const notifier = require('electron-notifications');
 const isDev = require('electron-is-dev');
 const getPort = require('get-port');
+const fs = require('fs');
 
 if (!isDev) {
   const userDataFolder = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : '/var/local');
@@ -45,6 +46,8 @@ getPort({port: 8000, host: '0.0.0.0'})
     mainWindow.on('closed', () => {
       mainWindow = null;
     });
+
+    mainWindow.webContents.openDevTools();
 
     autoUpdater.checkForUpdates();
 
@@ -121,5 +124,30 @@ getPort({port: 8000, host: '0.0.0.0'})
     if (process.platform !== 'darwin') {
       app.quit();
     }
+  });
+  app.on('will-finish-launching', function() {
+    let filePath;
+
+    electron.ipcMain.on('get_opened_file', (event) => {
+      if (filePath === undefined) {
+        event.returnValue = null;
+        return;
+      }
+
+      event.returnValue = {
+        path: filePath,
+        content: fs.readFileSync(filePath, 'utf8'),
+      }
+    });
+  
+    // for windows
+    if (process.platform == 'win32' && process.argv.length >= 2) {
+      filePath = process.argv[1];
+    }
+    
+    // for non-windows
+    app.on('open-file', function(event, path) {
+      filePath = path;
+    });
   });
 });

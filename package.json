@@ -28,7 +28,26 @@
   "build": {
     "extraFiles": [
       "config/**/*"
-    ]
+    ],
+    "win": {
+      "target": "nsis",
+      "fileAssociations": [
+        {
+          "ext": ["bpmn"],
+          "name": "BPMN",
+          "description": "BPMN diagram extension"
+        }
+      ]
+    },
+    "mac": {
+      "target": "dmg",
+      "fileAssociations": [
+        {
+          "ext": ["bpmn"],
+          "name": "BPMN"
+        }
+      ]
+    }
   },
   "files": [
     "scripts",

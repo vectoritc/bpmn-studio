@@ -10,6 +10,7 @@ export function configure(aurelia: Aurelia): void {
   if ((<any> window).nodeRequire) {
     const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
     const newHost: string = ipcRenderer.sendSync('get_host');
+    const fileInfo: any = ipcRenderer.sendSync('get_opened_file');
     localStorage.setItem('baseRoute', `http://${newHost}`);
   }
 
