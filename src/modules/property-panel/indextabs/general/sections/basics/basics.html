@@ -8,7 +8,7 @@
         <tr>
           <th>Id</th>
           <td>
-            <input type="text" class="props-input" value.bind="businessObjInPanel.id & validateOnChange" change.delegate="updateId()">
+            <input type="text" class="props-input" id="elementId" value.bind="businessObjInPanel.id & validateOnChange" change.delegate="updateId()">
           </td>
           <td>
             <span class="glyphicon glyphicon-remove-circle props-table--clear-button" click.delegate="clearId()"></span>
