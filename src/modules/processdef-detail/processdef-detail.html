@@ -4,109 +4,163 @@
   <require from="./processdef-detail.css"></require>
   <require from="spectrum-colorpicker/spectrum.css"></require>
   <require from="../bpmn-xml-view/bpmn-xml-view"></require>
+  <require from="../property-panel/property-panel"></require>
+  <!--
+    MENU BAR
+  -->
+  <div class="menu-bar menu-bar--system-macos">
+    <div class="menu-bar__menu menu-bar__menu--left">
+    </div>
+    <div class="menu-bar__menu menu-bar__menu--center">
+      <div class="menu__element">
+        <span class="faint">
+          <i class="fas fa-save"></i>
+        </span>
+        MDOS_PCI_WLP_Transformation.bpmnx
+        <i class="fas fa-angle-down"></i>
+        <span class="faint">&ndash; edited</span>
+      </div>
+    </div>
+    <div class="menu-bar__menu menu-bar__menu--right">
+      <div class="menu__element">
+        René Föhring
+        <i class="fas fa-angle-down"></i>
+      </div>
+      <div class="menu__element">
+        <i class="far fa-question-circle"></i>
+      </div>
+    </div>
+  </div>
 
-  <div if.bind="process">
-    <div class="bpmn-toolbar-holder">
-      <div class="bpmn-toolbar">
-        <div class="action-dropdown ${startedProcessId ? 'action-dropdown-open' : ''}" ref="startButtonDropdown">
-          <button click.delegate="startProcess()" class="btn btn-success">
-            <i class="glyphicon glyphicon-play"></i> Start
-          </button>
-          <div class="action-dropdown-content">
-            <div class="action-dropdown-bar action-dropdown-header">
-              <h5 class="header">Process Instance
-                <a href="#" title="Close" class="pull-right" click.delegate="closeProcessStartDropdown()">&times;</a>
-              </h5>
-              <span class="text-muted">${startedProcessId}</span>
-            </div>
-            <ul class="action-dropdown-list-group">
-              <li class="action-dropdown-list-group-item">
-                <a href="#/process/${startedProcessId}/">
-                  <i class="glyphicon glyphicon-info-sign"></i> Details
-                </a>
-              </li>
-              <li class="action-dropdown-list-group-item">
-                <a href="#/process/${startedProcessId}/task">
-                  <i class="glyphicon glyphicon-list-alt"></i> Tasks
-                </a>
-              </li>
-            </ul>
-          </div>
+  <div class="window-layout">
+    <!--
+      DIAGRAM TOOLS
+    -->
+    <div class="window-layout__tools-left">
+      <div class="tool-list tool-list--vertical">
+        <div class="tool tool--active">
+          <i class="fas fa-mouse-pointer"></i>
         </div>
-        <div class="btn-group">
-          <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-            Navigate
-            <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu">
-            <li><a href="#/processdef/${process.id}/process">Processes</a></li>
-            <li><a href="#/processdef/${process.id}/task">Tasks</a></li>
-          </ul>
+        <div class="tool">
+          <i class="far fa-square"></i>
         </div>
-        <button class="btn btn-success save-button" click.delegate="saveDiagram()" disabled.bind="validationError">
-            <i class="glyphicon glyphicon-floppy-disk"></i> Save
-        </button>
-        <!--<button disabled.bind="true" class="btn btn-danger" click.delegate="deleteProcess()">
-          <i class="glyphicon glyphicon-trash"></i> Delete Process
-        </button>-->
-        <div class="btn-group">
-          <a ref="exportButton" class="btn btn-primary export-button" click.delegate="exportBPMN()">
-            <i ref="exportSpinner" class="glyphicon glyphicon-repeat fa-spin hidden"></i>
-            <i class="glyphicon glyphicon-export"></i> Export Diagram
-          </a>
-          <a ref="exportDropdown" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="caret"></span>
-            <span class="sr-only">Toggle Dropdown</span>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a href="#" click.delegate="exportBPMN()">BPMN (default)</a></li>
-            <li><a href="#" click.delegate="exportSVG()">SVG</a></li>
-            <li><a href="#" click.delegate="exportPNG()">PNG</a></li>
-            <li><a href="#" click.delegate="exportJPEG()">JPEG</a></li>
-          </ul>
+        <div class="tool">
+          <i class="far fa-circle"></i>
         </div>
-        <import-process-button desired-process-import-key.bind="process.key" callback.bind="onModdlelImported.bind($this)"></import-process-button>
-        <div class="btn-group elements-workspace">
-          <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" click.delegate="updateCustomColors()">
-            <i class="glyphicon glyphicon-tint"></i>
-            <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a click.delegate="setColorRed()"><i class="glyphicon glyphicon-stop red"></i> Red</a></li>
-            <li><a click.delegate="setColorBlue()"><i class="glyphicon glyphicon-stop blue"></i> Blue</a></li>
-            <li><a click.delegate="setColorGreen()"><i class="glyphicon glyphicon-stop green"></i> Green</a></li>
-            <li><a click.delegate="setColorPurple()"><i class="glyphicon glyphicon-stop purple"></i> Purple</a></li>
-            <li><a click.delegate="setColorOrange()"><i class="glyphicon glyphicon-stop orange"></i> Orange</a></li>
-            <li>
-              <a show.bind="colorPickerLoaded" click.delegate="setColorPicked()">
-                <input ref="colorPickerFill"></input>
-                <input ref="colorPickerBorder"></input>
-              </a>
-            </li>
-            <li><a click.delegate="removeColor()"><i class="glyphicon glyphicon-stop none"></i> None</a></li>
-          </ul>
+        <div class="tool">
+          <i class="fas fa-eye-dropper"></i>
         </div>
-        <div class="btn-group">
-          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-            Distribute
-            <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu">
-            <li><a click.delegate="distributeElementsHorizontal()"><i class="glyphicon glyphicon-object-align-horizontal"></i> Horizontal</a></li>
-            <li><a click.delegate="distributeElementsVertical()"><i class="glyphicon glyphicon-object-align-vertical"></i> Vertical</a></li>
-          </ul>
+        <div class="tool">
+          <i class="fas fa-heading"></i>
         </div>
-        <button type="button" class="btn btn-default" click.delegate="toggleXMLView()">${!showXMLView ? 'XML' : 'Diagram'}</button>
-        <div class="btn-group extra-functionallity">
-          <button class="btn btn-primary" click.delegate="goBack()">Back</button>
+        <div class="tool">
+          <i class="fas fa-magic"></i>
+        </div>
+        <div class="tool">
+          <i class="fas fa-search"></i>
+        </div>
+      </div>
+      <div class="tool-list tool-list--vertical tool-list--bottom">
+        <div class="tool tool--active" data-tool-toggle=".js-window-panel-left">
+          <i class="fas fa-sitemap"></i>
+        </div>
+        <div class="tool">
+          <i class="fas fa-cog"></i>
         </div>
       </div>
     </div>
-    <bpmn-io show.bind="!showXMLView" view-model.ref="bpmn" xml.bind="process.xml"></bpmn-io>
-    <bpmn-xml-view if.bind="initialLoadingFinished" show.bind="showXMLView" xml.bind="process.xml"></bpmn-xml-view>
-  </div>
 
-  <div class="container" if.bind="!process">
-    <h3>Process Definition not found</h3>
+    <!--
+      MAIN CANVAS
+    -->
+    <div class="window-layout__main js-main">
+      <bpmn-io show.bind="!showXMLView" view-model.ref="bpmn" xml.bind="process.xml"></bpmn-io>
+    </div>
+
+    <!--
+      PROPERTIES PANEL
+    -->
+    <!--<div class="window-layout__panel-right js-window-panel-right">
+      <div class="panel">
+        <div class="tool-list tool-list--horizontal tool-list--stretch">
+          <div class="tool">
+            <i class="fas fa-clone"></i>
+          </div>
+          <div class="tool">
+            <i class="far fa-clone"></i>
+          </div>
+          <div class="tool">
+            <i class="fas fa-compress"></i>
+          </div>
+          <div class="tool">
+            <i class="far fa-expand"></i>
+          </div>
+          <div class="tool">
+            <i class="far fa-sticky-note"></i>
+          </div>
+        </div>
+      </div>-->
+
+      <!--<div class="panel panel--grow">
+        <div class="panel__heading">General</div>
+        <div class="panel__content">
+          <table class="props-table">
+            <tr>
+              <th>Id</th>
+              <td>
+                <input type="text" class="props-input" value="Task_01b43wb">
+              </td>
+            </tr>
+            <tr>
+              <th>Name</th>
+              <td>
+                <input type="text" class="props-input" value="Pay the pizza">
+              </td>
+            </tr>
+            <tr>
+              <th>Docs</th>
+              <td>
+                <input type="text" class="props-input">
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="panel panel--grow">
+        <div class="panel__heading">Properties</div>
+        <div class="panel__content">
+          <table class="props-table">
+            <tr>
+              <th>Name</th>
+              <th>Value</th>
+            </tr>
+            <tr>
+              <th>
+                <input type="text" class="props-input props-input--name" value="module">
+              </th>
+              <td>
+                <input type="text" class="props-input" value="DatastoreService">
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <input type="text" class="props-input props-input--name" value="method">
+              </th>
+              <td>
+                <input type="text" class="props-input" value="removeEntity">
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <input type="text" class="props-input props-input--name" value="params">
+              </th>
+              <td>
+                <input type="text" class="props-input" value="['ProcessDef', token.history.StartEvent.id, context]">
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>-->
+    </div>
   </div>
 </template>

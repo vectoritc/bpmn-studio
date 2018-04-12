@@ -1,31 +1,24 @@
+.modeler {
+  height: 100%;
+  display: flex;
+}
+
 .canvasModel {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  right: 350px;
-  bottom: 0px;
+  height: 100%;
 }
 
-#js-properties-panel {
-  position: absolute;
-  top: 0px;
-  bottom: 0;
-  right: 0;
-  z-index: 10;
-  border-left: 1px solid #ccc;
-  overflow-y: auto;
-  overflow-x: hidden;
-  width: 350px;
-  background-color: #f8f8f8;
+.diagramm {
+  height: 100%;
+  padding-right: 0;
+  flex: 1;
 }
 
-#js-properties-panel:empty {
-  display: none;
-}
-
-#js-properties-panel > .djs-properties-panel {
-  padding-bottom: 70px;
-  min-height: 100%;
+.properties {
+  height: 100%;
+  background: rgb(220, 219, 219);
+  padding-left: 2px;
+  padding-right: 2px;
+  width: 250px;
 }
 
 .modeler .label {
@@ -46,26 +39,34 @@
 .toggle_panel {
   position: relative;
   transform: rotate(-90deg);
-  bottom: 0;
+  bottom: 1px;
+  background-color: rgb(220, 219, 219);;
+  border: 0;
+  border-top-left-radius: 5px;
+  right: 3px;
 }
 
 .resize_button {
   position: relative;
   transform: rotate(-90deg);
   bottom: 0;
+  background-color: rgb(220, 219, 219);;
+  border: 0;
+  border-top-right-radius: 5px;
+  right: 3px;
 }
 
 .resize_div {
-  right: 331px;
+  right: 231px;
   height: 50%;
-  bottom: 80px;
+  bottom: 0px;
   position: absolute;
 }
 
 .toggle_div {
-  right: 337px;
+  right: 237px;
   height: 50%;
-  bottom: 0;
+  bottom: -50px;
   position: absolute;
 }
 

@@ -1,0 +1,112 @@
+<template>
+  <require from="../bpmn-io/bpmn-io"></require>
+  <require from="../import-process-button/import-process-button"></require>
+  <require from="./processdef-detail.css"></require>
+  <require from="spectrum-colorpicker/spectrum.css"></require>
+  <require from="../bpmn-xml-view/bpmn-xml-view"></require>
+
+  <div if.bind="process">
+    <div class="bpmn-toolbar-holder">
+      <div class="bpmn-toolbar">
+        <div class="action-dropdown ${startedProcessId ? 'action-dropdown-open' : ''}" ref="startButtonDropdown">
+          <button click.delegate="startProcess()" class="btn btn-success">
+            <i class="glyphicon glyphicon-play"></i> Start
+          </button>
+          <div class="action-dropdown-content">
+            <div class="action-dropdown-bar action-dropdown-header">
+              <h5 class="header">Process Instance
+                <a href="#" title="Close" class="pull-right" click.delegate="closeProcessStartDropdown()">&times;</a>
+              </h5>
+              <span class="text-muted">${startedProcessId}</span>
+            </div>
+            <ul class="action-dropdown-list-group">
+              <li class="action-dropdown-list-group-item">
+                <a href="#/process/${startedProcessId}/">
+                  <i class="glyphicon glyphicon-info-sign"></i> Details
+                </a>
+              </li>
+              <li class="action-dropdown-list-group-item">
+                <a href="#/process/${startedProcessId}/task">
+                  <i class="glyphicon glyphicon-list-alt"></i> Tasks
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="btn-group">
+          <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+            Navigate
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a href="#/processdef/${process.id}/process">Processes</a></li>
+            <li><a href="#/processdef/${process.id}/task">Tasks</a></li>
+          </ul>
+        </div>
+        <button class="btn btn-success save-button" click.delegate="saveDiagram()" disabled.bind="validationError">
+            <i class="glyphicon glyphicon-floppy-disk"></i> Save
+        </button>
+        <!--<button disabled.bind="true" class="btn btn-danger" click.delegate="deleteProcess()">
+          <i class="glyphicon glyphicon-trash"></i> Delete Process
+        </button>-->
+        <div class="btn-group">
+          <a ref="exportButton" class="btn btn-primary export-button" click.delegate="exportBPMN()">
+            <i ref="exportSpinner" class="glyphicon glyphicon-repeat fa-spin hidden"></i>
+            <i class="glyphicon glyphicon-export"></i> Export Diagram
+          </a>
+          <a ref="exportDropdown" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="caret"></span>
+            <span class="sr-only">Toggle Dropdown</span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="#" click.delegate="exportBPMN()">BPMN (default)</a></li>
+            <li><a href="#" click.delegate="exportSVG()">SVG</a></li>
+            <li><a href="#" click.delegate="exportPNG()">PNG</a></li>
+            <li><a href="#" click.delegate="exportJPEG()">JPEG</a></li>
+          </ul>
+        </div>
+        <import-process-button desired-process-import-key.bind="process.key" callback.bind="onModdlelImported.bind($this)"></import-process-button>
+        <div class="btn-group elements-workspace">
+          <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" click.delegate="updateCustomColors()">
+            <i class="glyphicon glyphicon-tint"></i>
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a click.delegate="setColorRed()"><i class="glyphicon glyphicon-stop red"></i> Red</a></li>
+            <li><a click.delegate="setColorBlue()"><i class="glyphicon glyphicon-stop blue"></i> Blue</a></li>
+            <li><a click.delegate="setColorGreen()"><i class="glyphicon glyphicon-stop green"></i> Green</a></li>
+            <li><a click.delegate="setColorPurple()"><i class="glyphicon glyphicon-stop purple"></i> Purple</a></li>
+            <li><a click.delegate="setColorOrange()"><i class="glyphicon glyphicon-stop orange"></i> Orange</a></li>
+            <li>
+              <a show.bind="colorPickerLoaded" click.delegate="setColorPicked()">
+                <input ref="colorPickerFill"></input>
+                <input ref="colorPickerBorder"></input>
+              </a>
+            </li>
+            <li><a click.delegate="removeColor()"><i class="glyphicon glyphicon-stop none"></i> None</a></li>
+          </ul>
+        </div>
+        <div class="btn-group">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            Distribute
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a click.delegate="distributeElementsHorizontal()"><i class="glyphicon glyphicon-object-align-horizontal"></i> Horizontal</a></li>
+            <li><a click.delegate="distributeElementsVertical()"><i class="glyphicon glyphicon-object-align-vertical"></i> Vertical</a></li>
+          </ul>
+        </div>
+        <button type="button" class="btn btn-default" click.delegate="toggleXMLView()">${!showXMLView ? 'XML' : 'Diagram'}</button>
+        <div class="btn-group extra-functionallity">
+          <button class="btn btn-primary" click.delegate="goBack()">Back</button>
+        </div>
+      </div>
+    </div>
+    <bpmn-io show.bind="!showXMLView" view-model.ref="bpmn" xml.bind="process.xml"></bpmn-io>
+    <bpmn-xml-view if.bind="initialLoadingFinished" show.bind="showXMLView" xml.bind="process.xml"></bpmn-xml-view>
+  </div>
+
+  <div class="container" if.bind="!process">
+    <h3>Process Definition not found</h3>
+  </div>
+</template>

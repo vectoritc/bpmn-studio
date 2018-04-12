@@ -24,8 +24,8 @@ export class BpmnIo {
   private refresh: boolean = true;
   private isResizeClicked: boolean = false;
 
-  private toggleButtonRight: number = 337;
-  private resizeButtonRight: number = 331;
+  private toggleButtonRight: number = 237;
+  private resizeButtonRight: number = 231;
   private canvasRight: number = 350;
   private minWidth: number = environment.propertyPanel.minWidth;
   private maxWidth: number = document.body.clientWidth - environment.propertyPanel.maxWidth;
