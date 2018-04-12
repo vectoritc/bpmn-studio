@@ -2,21 +2,21 @@
   <require from="./call-activity.css"></require>
   <require from="../../../../styles/sections.css"></require>
   <div class="panel panel--grow">
-      <div class="panel__heading">Call Activity</div>
-      <div class="panel__content">
-        <table class="props-table">
-          <tr>
-            <th>Process</th>
-            <td>
-              <select class="props-input" value.bind="selectedProcess" change.delegate="updateCalledProcess()">
-                <option model.bind="null">-Choose called Process-</option>
-                <option repeat.for="process of allProcesses.data"
-                        model.bind="process" value="${process.id}">${process.name}</option>
-              </select>
-            </td>
-          </tr>
-        </table>
-        <button class="navigation-button" disabled.bind="!selectedProcess" click.delegate="navigateToCalledProcess()">Navigate to called Process</button>
-      </div>
+    <div class="panel__heading">Call Activity</div>
+    <div class="panel__content">
+      <table class="props-table">
+        <tr>
+          <th>Process</th>
+          <td>
+            <select class="props-input" value.bind="selectedProcess" change.delegate="updateCalledProcess()">
+              <option model.bind="null">-Choose called Process-</option>
+              <option repeat.for="process of allProcesses.data"
+                      model.bind="process" value="${process.id}">${process.name}</option>
+            </select>
+          </td>
+        </tr>
+      </table>
+      <button class="navigation-button" disabled.bind="!selectedProcess" click.delegate="navigateToCalledProcess()">Navigate to called Process</button>
     </div>
+  </div>
 </template>

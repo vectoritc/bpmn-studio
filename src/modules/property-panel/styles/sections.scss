@@ -42,15 +42,19 @@
 }
 
 .props-table th {
-  width: 35px;
+  width: 40px;
   font-weight: normal;
   color: #a5a5a5;
-  padding-right: 15px;
+  padding-right: 10px;
 }
 
 .props-table td {
   color: #a5a5a5;
   width: 100%;
+}
+
+.probs-table--details {
+  margin-top: 20px;
 }
 
 .props-input {
