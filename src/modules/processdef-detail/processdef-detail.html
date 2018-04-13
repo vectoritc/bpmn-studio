@@ -38,9 +38,6 @@
     </div>
     <div class="menu-bar__menu menu-bar__menu--center">
       <div class="menu__element btn-group">
-        <span class="faint">
-          <i class="fas fa-save"></i>
-        </span>
         ${process.name}
         <button class="menu-bar__menu-center--action-button dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="fas fa-angle-down"></i>
@@ -62,13 +59,7 @@
       </div>
     </div>
     <div class="menu-bar__menu menu-bar__menu--right">
-      <div class="menu__element">
-        René Föhring
-        <i class="fas fa-angle-down"></i>
-      </div>
-      <div class="menu__element">
-        <i class="far fa-question-circle"></i>
-      </div>
+      <user-login></user-login>
     </div>
   </div>
 
@@ -112,8 +103,12 @@
         </div>
       </div>
       <div class="tool-list tool-list--vertical tool-list--bottom">
-        <div class="tool tool--active" data-tool-toggle=".js-window-panel-left">
-          <i class="fas fa-sitemap"></i>
+        <div class="tool btn-group">
+          <i class="fas fa-sitemap" data-toggle="dropdown"></i>
+          <ul class="dropdown-menu">
+            <li><a href="#/processdef/${process.id}/process">Show Processes</a></li>
+            <li><a href="#/processdef/${process.id}/task">Show Tasks</a></li>
+          </ul>
         </div>
         <div class="tool">
           <i class="fas fa-cog"></i>
