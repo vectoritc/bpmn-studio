@@ -20,8 +20,8 @@
   <div class="panel panel--grow">
     <div class="panel__heading">
       Form Fields
-      <button class="remove-forms__button btn btn-xs btn-danger" disabled.bind="!isFormSelected" click.delegate="removeSelectedForm()">x</button>
-      <button class="add-forms__button btn btn-xs btn-primary" click.delegate="addForm()">+</button>
+      <button class="remove-context-button" disabled.bind="!isFormSelected" click.delegate="removeSelectedForm()">x</button>
+      <button class="add-context-button" click.delegate="addForm()">+</button>
     </div>
       <div class="panel__content">
         <select class="form-control forms-list" value.bind="selectedForm" change.delegate="selectForm()" size="5">

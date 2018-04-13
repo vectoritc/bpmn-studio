@@ -25,18 +25,6 @@
   font-size: 12px;
 }
 
-.window-layout__panel-left {
-  margin-left: 2px;
-}
-
-.window-layout__panel-right {
-  margin-right: 2px;
-}
-
-.window-layout__main {
-  flex: 1 100%;
-}
-
 .props-table {
   width: 100%;
 }
@@ -70,4 +58,21 @@
 
 .props-table--clear-button {
   right: 15px;
+}
+
+.add-context-button {
+  color: black;
+  float: right;
+  background-color: rgb(144, 186, 218);
+}
+
+.remove-context-button:disabled {
+  background-color: rgb(248, 118, 118);
+}
+
+.remove-context-button {
+  color: black;
+  float: right;
+  margin-left: 5px;
+  background-color: red;
 }
