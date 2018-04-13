@@ -23,7 +23,7 @@ body {
   background-color: #f7f7f7;
   border-left: 1px solid #eee;
   border-right: 1px solid #eee;
-  min-width: 36px;
+  min-width: 45px;
   padding: 2px;
 }
 
@@ -248,6 +248,34 @@ body {
 
 .hidden {
   display: none;
+}
+
+.dropdown-menu {
+  width: 375px;
+}
+
+.red {
+  color: #E53935;
+}
+
+.blue {
+  color: #1E88E5;
+}
+
+.orange {
+  color: #FB8C00;
+}
+
+.green {
+  color: #43A047;
+}
+
+.purple {
+  color: #8E24AA;
+}
+
+.none {
+  color: transparent;
 }
 
 
