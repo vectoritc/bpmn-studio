@@ -42,7 +42,6 @@ getPort({port: 8000, host: '0.0.0.0'})
     });
     
     mainWindow.loadURL(`file://${__dirname}/../index.html`);
-    // mainWindow.webContents.openDevTools();
     mainWindow.on('closed', () => {
       mainWindow = null;
     });
