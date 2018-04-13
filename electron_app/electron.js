@@ -116,14 +116,16 @@ getPort({port: 8000, host: '0.0.0.0'})
     electron.Menu.setApplicationMenu(electron.Menu.buildFromTemplate(template));
   }
 
+  let filePath;
+
   app.on('ready', createWindow);
   app.on('activate', createWindow);
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
       app.quit();
     }
+    filePath = undefined;
   });
-  let filePath;
 
   app.on('will-finish-launching', () => {
     // for windows
@@ -145,7 +147,7 @@ getPort({port: 8000, host: '0.0.0.0'})
 
     event.returnValue = {
       path: filePath,
-      content: fs.readFileSync(filePath, 'utf8'),
+      content: JSON.stringify(fs.readFileSync(filePath, 'utf8')),
     }
   });
 });
