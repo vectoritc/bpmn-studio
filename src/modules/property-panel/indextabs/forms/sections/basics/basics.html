@@ -1,24 +1,113 @@
 <template>
   <require from="./basics.css"></require>
   <require from="../../../../styles/sections.css"></require>
-  <div class="section">
-    <div class="section__content">
-      <div class="section__btn-group">
-        <label class="section__input-label">Form Key: </label>
-        <input type="text" class="form-control" value.bind="businessObjInPanel.formKey">
-        <span class="glyphicon glyphicon-remove-circle section__btn-group--clear-btn" click.delegate="clearFormKey()"></span>
+  <div class="panel panel--grow">
+    <div class="panel__heading">User Task</div>
+    <div class="panel__content">
+      <table class="props-table">
+        <tr>
+          <th>Form Key</th>
+          <td>
+            <input type="text" class="props-input" value.bind="businessObjInPanel.formKey">
+          </td>
+          <td>
+            <span class="glyphicon glyphicon-remove-circle props-table--clear-button" click.delegate="clearFormKey()"></span>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="panel panel--grow">
+    <div class="panel__heading">
+      Form Fields
+      <button class="remove-forms__button btn btn-xs btn-danger" disabled.bind="!isFormSelected" click.delegate="removeSelectedForm()">x</button>
+      <button class="add-forms__button btn btn-xs btn-primary" click.delegate="addForm()">+</button>
+    </div>
+      <div class="panel__content">
+        <select class="form-control forms-list" value.bind="selectedForm" change.delegate="selectForm()" size="5">
+          <option repeat.for="form of forms" model.bind="form">${form.id}</option>
+        </select>
       </div>
-      <div class="form-fields-label-group">
-        <label class="section__input-label">Form Fields: </label>
-        <button class="remove-forms__button btn btn-xs btn-danger" disabled.bind="!isFormSelected" click.delegate="removeSelectedForm()">x</button>
-        <button class="add-forms__button btn btn-xs btn-primary" click.delegate="addForm()">+</button>
-      </div>
+    </div>
+  </div>
+  <div class="panel panel--grow" show.bind="isFormSelected">
+    <div class="panel__heading">Form Field</div>
+    <div class="panel__content">
+      <table class="props-table">
+        <tr>
+          <th>ID</th>
+          <td>
+            <input type="text" class="props-input" id="formId" value.bind="selectedForm.id & validateOnChange" placeholder="ID" change.delegate="updateId()">
+          </td>
+          <td>
+            <span class="glyphicon glyphicon-remove-circle props-table--clear-button" click.delegate="clearId()"></span>
+          </td>
+          <td>
+            <div show.bind="isFormSelected">
+                <div class="id-tooltip-error" if.bind="validationError">
+                  <div class="tooltip">
+                    <span class="glyphicon glyphicon-remove"></span>
+                    <span class="tooltiptext">
+                      <div repeat.for="error of validationController.errors">
+                        ${error}
+                      </div>
+                    </span>
+                  </div>
+                </div>
+                <div class="id-tooltip-ok" if.bind="!validationError">
+                  <div class="tooltip">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    <span class="tooltiptext">This Id is fine!</span>
+                  </div>
+                </div>
+              </div>
+          </td>
+        </tr>
+        <tr>
+          <th>Type</th>
+          <td>
+            <select class="props-input" value.bind="selectedType" change.delegate="updateType()">
+              <option model.bind="null">-Choose Type-</option>
+              <option repeat.for="type of types" model.bind="type">${type}</option>
+            </select>
+          </td>
+        </tr>
+        <tr if.bind="selectedType === types[5]">
+          <th>Custom Type</th>
+          <td>
+            <input type="text" class="props-input" value.bind="customType" placeholder="Custom Type" change.delegate="updateType()">
+          </td>
+          <td>
+            <span class="glyphicon glyphicon-remove-circle props-table--clear-button" click.delegate="clearType()"></span>
+          </td>
+        </tr>
+        <tr>
+          <th>Label</th>
+          <td>
+            <input type="text" class="props-input" value.bind="selectedForm.label"  placeholder="Label" change.delegate="updateLabel()">
+          </td>
+          <td>
+            <span class="glyphicon glyphicon-remove-circle props-table--clear-button" click.delegate="clearLabel()"></span>
+          </td>
+        </tr>
+        <tr>
+          <th>Default Value</th>
+          <td>
+            <input type="text" class="props-input" value.bind="selectedForm.defaultValue"  placeholder="Default Value" change.delegate="updateDefaultValue()">
+          </td>
+          <td>
+            <span class="glyphicon glyphicon-remove-circle props-table--clear-button" click.delegate="clearValue()"></span>
+          </td>
+        </tr>
+    </div>
+  </div>
 
-      <select class="form-control forms-list" value.bind="selectedForm" change.delegate="selectForm()" size="5">
-        <option repeat.for="form of forms" model.bind="form">${form.id}</option>
-      </select>
 
-      <div show.bind="isFormSelected">
+
+
+
+
+      <!--<div show.bind="isFormSelected">
         <h4><label class="header-label">Form Field</label></h4>
         <div class="section__btn-group">
           <label class="section__input-label">ID: </label>
@@ -71,5 +160,5 @@
         </div>
       </div>
     </div>
-  </div>
+  </div>-->
 </template>
