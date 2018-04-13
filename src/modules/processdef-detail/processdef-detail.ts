@@ -84,12 +84,13 @@ export class ProcessDefDetail {
     this.validationController = validationController;
   }
 
-  public activate(routeParameters: RouteParameters): void {
+  public async activate(routeParameters: RouteParameters): Promise<void> {
     this.processId = routeParameters.processDefId;
     this.refreshProcess();
   }
 
   public attached(): void {
+    this.refreshProcess();
     this.validationController.subscribe((event: ValidateEvent) => {
       this.validateForm(event);
     });

@@ -51,7 +51,6 @@ export class BpmnIo {
         return 0;
       });
     }
-
   }
 
   public attached(): void {
