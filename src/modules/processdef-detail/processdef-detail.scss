@@ -90,13 +90,19 @@ body {
   margin-top: 9px;
 }
 
-.menu-bar__menu-action-button {
+.menu-bar__menu-center--action-button {
   border: none;
   background-color: inherit;
+  opacity: 0.5;
 }
 
-.menu-bar__menu-action-button:hover {
-  border: 1px black solid;
+.menu-bar__menu-center--action-button:hover {
+  opacity: 1;
+}
+
+.menu-bar__menu-left--tool {
+  border: none;
+  background-color: inherit;
 }
 
 .menu__menu-tabbed-link {

@@ -11,12 +11,12 @@
   <div class="menu-bar menu-bar--system-macos">
     <div class="menu-bar__menu menu-bar__menu--left">
       <div class="menu-bar__menu-action-link">
-        <button class="menu-bar__menu-action-button" click.delegate="saveDiagram()" disabled.bind="validationError" title="Save Diagram">
+        <button class="menu-bar__menu-center--action-button" click.delegate="saveDiagram()" disabled.bind="validationError" title="Save Diagram">
           <i class="fas fa-save"></i>
         </button>
       </div>
       <div class="menu-bar__menu-action-link">
-        <button class="menu-bar__menu-action-button dropdown-toggle" ref="exportButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button class="menu-bar__menu-center--action-button dropdown-toggle" ref="exportButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i ref="exportIcon" class="fas fa-download"></i>
           <i ref="exportSpinner" class="glyphicon glyphicon-repeat fa-spin hidden"></i>
         </button>
@@ -31,7 +31,7 @@
         <import-process-button desired-process-import-key.bind="process.key" callback.bind="onModdlelImported.bind($this)"></import-process-button>
       </div>
       <div class="menu-bar__menu-action-link">
-        <button class="menu-bar__menu-action-button" click.delegate="startProcess()" disabled.bind="validationError" title="Start Process">
+        <button class="menu-bar__menu-center--action-button" click.delegate="startProcess()" disabled.bind="validationError" title="Start Process">
           <i class="fas fa-play"></i>
         </button>
       </div>
@@ -42,7 +42,7 @@
           <i class="fas fa-save"></i>
         </span>
         ${process.name}
-        <button class="menu-bar__menu-action-button dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button class="menu-bar__menu-center--action-button dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="fas fa-angle-down"></i>
         </button>
         <table class="dropdown-menu">
@@ -78,11 +78,11 @@
     -->
     <div class="window-layout__tools-left">
       <div class="tool-list tool-list--vertical">
-        <div class="tool tool--active">
+        <div class="tool">
           <i class="fas fa-mouse-pointer"></i>
         </div>
         <div class="tool btn-group">
-          <button class="menu-bar__menu-action-button dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" click.delegate="updateCustomColors()">
+          <button class="menu-bar__menu-left--tool dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" click.delegate="updateCustomColors()">
             <i class="fas fa-eye-dropper"></i>
           </button>
           <ul class="dropdown-menu pull-left">
@@ -99,6 +99,16 @@
             </li>
             <li><a click.delegate="removeColor()"><i class="glyphicon glyphicon-stop none"></i> None</a></li>
           </ul>
+        </div>
+        <div class="tool">
+          <button class="menu-bar__menu-left--tool dropdown-toggle" title="Distribute Elements Vertically" click.delegate="distributeElementsVertical()">
+            <i class="glyphicon glyphicon-object-align-vertical"></i>
+          </button>
+        </div>
+        <div class="tool">
+          <button class="menu-bar__menu-left--tool dropdown-toggle" title="Distribute Elements Vertically" click.delegate="distributeElementsHorizontal()">
+            <i class="glyphicon glyphicon-object-align-horizontal"></i>
+          </button>
         </div>
       </div>
       <div class="tool-list tool-list--vertical tool-list--bottom">
