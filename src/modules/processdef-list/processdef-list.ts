@@ -36,6 +36,8 @@ export class ProcessDefList {
     this.reader.onload = async(fileInformations: any): Promise<void> => {
       const xml: string = fileInformations.target.result;
       await this.processEngineService.createProcessfromXML(xml);
+      this.fileInput.value = null;
+      this.selectedFiles = null;
     };
   }
 
