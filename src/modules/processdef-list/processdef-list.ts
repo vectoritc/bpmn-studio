@@ -1,12 +1,13 @@
 import {BpmnStudioClient, IPagination, IProcessDefEntity, IUserTaskConfig} from '@process-engine/bpmn-studio_client';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {inject, observable} from 'aurelia-framework';
+import {bindable, inject, observable} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import {AuthenticationStateEvent} from '../../contracts/index';
+import {AuthenticationStateEvent, IProcessEngineService} from '../../contracts/index';
 import environment from '../../environment';
 
-@inject(EventAggregator, 'BpmnStudioClient', Router)
+@inject(EventAggregator, 'BpmnStudioClient', Router, 'ProcessEngineService')
 export class ProcessDefList {
+  private processEngineService: IProcessEngineService;
   private bpmnStudioClient: BpmnStudioClient;
   private eventAggregator: EventAggregator;
   private router: Router;
@@ -16,16 +17,32 @@ export class ProcessDefList {
   private getProcessesIntervalId: number;
   private subscriptions: Array<Subscription>;
 
+  @bindable()
+  private selectedFiles: FileList;
+  private fileInput: HTMLInputElement;
+  private reader: FileReader = new FileReader();
+
   @observable public currentPage: number = 1;
   public pageSize: number = 10;
   public totalItems: number;
 
-  constructor(eventAggregator: EventAggregator, bpmnStudioClient: BpmnStudioClient, router: Router) {
+  constructor(eventAggregator: EventAggregator, bpmnStudioClient: BpmnStudioClient, router: Router, processEngineService: IProcessEngineService) {
+    this.processEngineService = processEngineService;
     this.eventAggregator = eventAggregator;
     this.bpmnStudioClient = bpmnStudioClient;
     this.router = router;
 
     this.refreshProcesslist();
+    this.reader.onload = async(fileInformations: any): Promise<void> => {
+      const xml: string = fileInformations.target.result;
+      await this.processEngineService.createProcessfromXML(xml);
+    };
+  }
+
+  public selectedFilesChanged(): void {
+    if (this.selectedFiles !== null && this.selectedFiles.length > 0) {
+      this.reader.readAsText(this.selectedFiles[0]);
+    }
   }
 
   public currentPageChanged(newValue: number, oldValue: number): void {
