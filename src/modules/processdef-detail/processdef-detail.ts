@@ -86,11 +86,10 @@ export class ProcessDefDetail {
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
     this.processId = routeParameters.processDefId;
-    this.refreshProcess();
+    await this.refreshProcess();
   }
 
   public attached(): void {
-    this.refreshProcess();
     this.validationController.subscribe((event: ValidateEvent) => {
       this.validateForm(event);
     });
@@ -154,13 +153,15 @@ export class ProcessDefDetail {
     }
   }
 
-  private refreshProcess(): void {
-    this.processEngineService.getProcessDefById(this.processId)
+  private refreshProcess(): Promise<IProcessDefEntity> {
+    return this.processEngineService.getProcessDefById(this.processId)
       .then((result: any) => {
         if (result && !result.error) {
           this._process = result;
+          return this._process;
         } else {
           this._process = null;
+          return result.error;
         }
     });
   }
