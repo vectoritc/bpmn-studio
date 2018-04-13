@@ -1,6 +1,14 @@
-.addPropertyButton {
-  width: 24px;
-  height: 24px;
+.add-property-button {
+  color: black;
+  float: right;
+}
+
+.key-value-column {
+  width: 50%;
+}
+
+.key-value-input {
+  width: 100%;
 }
 
 .removePropertyButton {
