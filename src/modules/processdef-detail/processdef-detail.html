@@ -15,6 +15,26 @@
           <i class="fas fa-save"></i>
         </button>
       </div>
+      <div class="menu-bar__menu-action-link">
+        <button class="menu-bar__menu-action-button dropdown-toggle" ref="exportButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i ref="exportIcon" class="fas fa-download"></i>
+          <i ref="exportSpinner" class="glyphicon glyphicon-repeat fa-spin hidden"></i>
+        </button>
+        <ul class="dropdown-menu">
+          <li><a href="#" click.delegate="exportBPMN()">as BPMN</a></li>
+          <li><a href="#" click.delegate="exportSVG()">as SVG</a></li>
+          <li><a href="#" click.delegate="exportPNG()">as PNG</a></li>
+          <li><a href="#" click.delegate="exportJPEG()">as JPEG</a></li>
+        </ul>
+      </div>
+      <div class="menu-bar__menu-action-link">
+        <import-process-button desired-process-import-key.bind="process.key" callback.bind="onModdlelImported.bind($this)"></import-process-button>
+      </div>
+      <div class="menu-bar__menu-action-link">
+        <button class="menu-bar__menu-action-button" click.delegate="startProcess()" disabled.bind="validationError" title="Start Process">
+          <i class="fas fa-play"></i>
+        </button>
+      </div>
     </div>
     <div class="menu-bar__menu menu-bar__menu--center">
       <div class="menu__element">

@@ -51,7 +51,6 @@ export class ProcessDefDetail {
   private _process: IProcessDefEntity;
   private bpmn: BpmnIo;
   private exportButton: HTMLButtonElement;
-  private exportDropdown: HTMLButtonElement;
   private exportSpinner: HTMLElement;
   private startButtonDropdown: HTMLDivElement;
   private startButton: HTMLElement;
@@ -299,13 +298,11 @@ export class ProcessDefDetail {
 
   private disableAndHideControlsForImageExport(): void {
     this.exportButton.setAttribute('disabled', '');
-    this.exportDropdown.setAttribute('disabled', '');
     this.exportSpinner.classList.remove('hidden');
   }
 
   private enableAndShowControlsForImageExport(): void {
     this.exportButton.removeAttribute('disabled');
-    this.exportDropdown.removeAttribute('disabled');
     this.exportSpinner.classList.add('hidden');
   }
 

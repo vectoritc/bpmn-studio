@@ -1,7 +1,6 @@
 html,
 body {
   height: 100%;
-
   font-size: 14px;
 }
 
@@ -245,6 +244,10 @@ body {
 .canvas__inner {
   margin: 0 2px;
   background: #fff;
+}
+
+.hidden {
+  display: none;
 }
 
 
