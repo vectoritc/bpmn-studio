@@ -18,8 +18,8 @@ export class ProcessDefList {
   private subscriptions: Array<Subscription>;
 
   @bindable()
-  private selectedFiles: FileList;
-  private fileInput: HTMLInputElement;
+  public selectedFiles: FileList;
+  public fileInput: HTMLInputElement;
   private reader: FileReader = new FileReader();
 
   @observable public currentPage: number = 1;
@@ -36,15 +36,12 @@ export class ProcessDefList {
     this.reader.onload = async(fileInformations: any): Promise<void> => {
       const xml: string = fileInformations.target.result;
       await this.processEngineService.createProcessfromXML(xml);
-      this.fileInput.value = null;
-      this.selectedFiles = null;
+      this.refreshProcesslist();
     };
   }
 
   public selectedFilesChanged(): void {
-    if (this.selectedFiles !== null && this.selectedFiles.length > 0) {
-      this.reader.readAsText(this.selectedFiles[0]);
-    }
+    this.reader.readAsText(this.selectedFiles[0]);
   }
 
   public currentPageChanged(newValue: number, oldValue: number): void {

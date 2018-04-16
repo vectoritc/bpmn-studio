@@ -2,7 +2,13 @@ import {IQueryClause} from '@essential-projects/core_contracts';
 import {IProcessDefEntity, IUserTaskEntity} from '@process-engine/process_engine_contracts';
 import {HttpClient, Interceptor} from 'aurelia-fetch-client';
 import {inject} from 'aurelia-framework';
-import {IAuthenticationService, IIdentity, IPagination, IProcessEngineRepository, IProcessEntity} from '../../contracts';
+import {
+  IAuthenticationService,
+  IErrorResponse, IIdentity,
+  IPagination,
+  IProcessEngineRepository,
+  IProcessEntity,
+} from '../../contracts';
 import environment from '../../environment';
 import {throwOnErrorResponse} from '../../resources/http-repository-tools';
 
@@ -73,7 +79,7 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
     const xmlString: string = JSON.stringify({
       xml: xml,
     });
-    // const xmlString: string = `{"xml": ${JSON.stringify(xml)}}`;
+
     const options: RequestInit = {
       method: 'post',
       headers: new Headers({
@@ -85,7 +91,7 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
     const url: string = environment.processengine.routes.importBPMN;
     const response: Response = await this.http.fetch(url, options);
 
-    return throwOnErrorResponse<any>(response);
+    return throwOnErrorResponse<IErrorResponse>(response);
   }
 
   public async updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<any> {
