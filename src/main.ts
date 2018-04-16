@@ -1,4 +1,5 @@
 import {Aurelia} from 'aurelia-framework';
+import {IFileInfo} from './contracts/processengine/index';
 import environment from './environment';
 import {TokenRepository} from './modules/token-repository/token.repository';
 
@@ -10,7 +11,7 @@ export function configure(aurelia: Aurelia): void {
   if ((<any> window).nodeRequire) {
     const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
     const newHost: string = ipcRenderer.sendSync('get_host');
-    const fileInfo: any = ipcRenderer.sendSync('get_opened_file');
+    const fileInfo: IFileInfo = ipcRenderer.sendSync('get_opened_file');
     aurelia.container.registerInstance('FileContent', fileInfo);
     localStorage.setItem('baseRoute', `http://${newHost}`);
   }
