@@ -70,7 +70,10 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
   }
 
   public async createProcessfromXML(xml: string): Promise<any> {
-    const xmlString: string = `{"xml": ${JSON.stringify(xml)}}`;
+    const xmlString: string = JSON.stringify({
+      xml: xml,
+    });
+    // const xmlString: string = `{"xml": ${JSON.stringify(xml)}}`;
     const options: RequestInit = {
       method: 'post',
       headers: new Headers({
