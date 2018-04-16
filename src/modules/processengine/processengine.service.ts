@@ -2,13 +2,18 @@ import {IProcessDefEntity, IUserTaskEntity} from '@process-engine/process_engine
 import {inject} from 'aurelia-framework';
 import {IPagination, IProcessEngineRepository, IProcessEngineService, IProcessEntity} from '../../contracts';
 
-@inject('ProcessEngineRepository')
+@inject('ProcessEngineRepository', 'FileContent')
 export class ProcessEngineService implements IProcessEngineService {
 
   private repository: IProcessEngineRepository;
+  private fileInfo: any = undefined;
 
-  constructor(repository: IProcessEngineRepository) {
+  constructor(repository: IProcessEngineRepository, fileInfo: any) {
     this.repository = repository;
+    this.fileInfo = fileInfo;
+    if (this.fileInfo !== undefined) {
+      this.createProcessfromXML(this.fileInfo.content);
+    }
   }
 
   public deleteProcessDef(processId: string): Promise<void> {

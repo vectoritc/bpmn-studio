@@ -147,7 +147,8 @@ getPort({port: 8000, host: '0.0.0.0'})
 
     event.returnValue = {
       path: filePath,
-      content: JSON.stringify(fs.readFileSync(filePath, 'utf8')),
+      content: fs.readFileSync(filePath, 'utf8'),
     }
+
   });
 });
