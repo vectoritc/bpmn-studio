@@ -69,6 +69,25 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
     return throwOnErrorResponse<any>(response);
   }
 
+  public async createProcessfromXML(xml: string): Promise<any> {
+    const xmlString: string = JSON.stringify({
+      xml: xml,
+    });
+    // const xmlString: string = `{"xml": ${JSON.stringify(xml)}}`;
+    const options: RequestInit = {
+      method: 'post',
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+      body: xmlString,
+    };
+
+    const url: string = environment.processengine.routes.importBPMN;
+    const response: Response = await this.http.fetch(url, options);
+
+    return throwOnErrorResponse<any>(response);
+  }
+
   public async updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<any> {
 
     let updateError: Error;
