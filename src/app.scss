@@ -87,6 +87,24 @@ body {
   border-bottom: 1px solid #5c5c5c;
 }
 
+.menu-tabbed-link--disabled:hover {
+  color: #a5a5a5;
+  text-decoration: none;
+  cursor: default;
+}
+
+.menu-tabbed-link--disabled:visited {
+  color: #a5a5a5;
+  text-decoration: none;
+  cursor: default;
+}
+
+.menu-tabbed-link--disabled:focus {
+  color: #a5a5a5;
+  text-decoration: none;
+  cursor: default;
+}
+
 .menu-tabbed-link {
   display: block;
   line-height: 40px;
