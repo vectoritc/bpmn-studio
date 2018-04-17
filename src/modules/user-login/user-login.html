@@ -1,31 +1,27 @@
 <template>
   <require from="./user-login.css"></require>
-  <ul class="nav navbar-nav navbar-right">
-    <li ref="dropdown" class="dropdown">
-      <a href="#" class="dropdown-toggle" click.delegate="toggleDropdown()">
-        <span>Hi, ${identity ? identity.name : 'Guest'} </span>
-        <img class="user-profile-image" src="src/resources/images/default-avatar.png">
-        <span class="caret"></span>
-      </a>
-      <ul class="dropdown-menu user-profile-dropdown">
-        <li>
-          <div class="user-profile-dropdown-content clearfix">
-            <form if.bind="!isLoggedIn" submit.delegate="login()" role="form">
-              <div class="form-group">
-                <label for="loginUsername">Username</label>
-                <input id="loginUsername" class="form-control" type="text" value.bind="username" placeholder="Username" />
-              </div>
-              <div class="form-group">
-                <label for="loginPassword">Password</label>
-                <input id="loginPassword" class="form-control" type="password" value.bind="password" placeholder="Password" />
-              </div>
-              <p if.bind="loginError" class="text-danger"><b>Error</b>: ${loginError}</p>
-              <button class="btn btn-success pull-right" type="submit">Login</button>
-            </form>
-            <button if.bind="isLoggedIn" class="btn btn-danger pull-right" click.delegate="logout()">Logout</button>
-          </div>
-        </li>
-      </ul>
-    </li>
-  </ul>
+  <div class="btn-group user-login">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+      <span>Hi, ${identity ? identity.name : 'Guest'} </span>
+    </a>
+    <img class="user-profile-image" src="src/resources/images/default-avatar.png">
+      <span class="caret"></span>
+    <div class="dropdown-menu dropdown-menu-right">
+      <div class="user-profile-dropdown-content clearfix">
+          <form if.bind="!isLoggedIn" submit.delegate="login()" role="form">
+            <div class="form-group">
+              <label for="loginUsername">Username</label>
+              <input id="loginUsername" class="form-control" type="text" value.bind="username" placeholder="Username" />
+            </div>
+            <div class="form-group">
+              <label for="loginPassword">Password</label>
+              <input id="loginPassword" class="form-control" type="password" value.bind="password" placeholder="Password" />
+            </div>
+            <p if.bind="loginError" class="text-danger"><b>Error</b>: ${loginError}</p>
+            <button class="btn btn-success pull-right" type="submit">Login</button>
+          </form>
+          <button if.bind="isLoggedIn" class="btn btn-danger pull-right" click.delegate="logout()">Logout</button>
+        </div>
+    </div>
+  </div>
 </template>

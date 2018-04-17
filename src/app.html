@@ -1,31 +1,8 @@
 <template>
   <require from="bootstrap/css/bootstrap.css"></require>
   <require from="font-awesome/css/font-awesome.min.css"></require>
-  <require from="./modules/user-login/user-login"></require>
   <require from="./app.css"></require>
   <require from="toastr/build/toastr.min.css"></require>
-
-  <nav class="navbar navbar-inverse navbar-static-top">
-    <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
-          aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-          </button>
-        <a class="navbar-brand" href="#">BPMN-Studio</a>
-      </div>
-      <div id="navbar" class="collapse navbar-collapse">
-        <ul class="nav navbar-nav">
-          <li><a href="#/configuration" class="settings-glyphicon"><span class="glyphicon glyphicon-cog"></span></a></li>
-          <li repeat.for="row of router.navigation" class="${row.isActive ? 'active' : ''}">
-            <a href.bind="row.href">${row.title}</a>
-          </li>
-        </ul>
-        <user-login></user-login>
-      </div>
-    </div>
-  </nav>
 
   <router-view></router-view>
   <span class="small baseroute-text">Connected to: ${environment.bpmnStudioClient.baseRoute}</span>

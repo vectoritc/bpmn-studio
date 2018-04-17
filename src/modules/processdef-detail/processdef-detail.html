@@ -5,11 +5,27 @@
   <require from="spectrum-colorpicker/spectrum.css"></require>
   <require from="../bpmn-xml-view/bpmn-xml-view"></require>
   <require from="../property-panel/property-panel"></require>
+  <require from="../user-login/user-login"></require>
+
   <!--
     MENU BAR
   -->
   <div class="menu-bar menu-bar--system-macos">
     <div class="menu-bar__menu menu-bar__menu--left">
+      <div class="menu__menu-tabbed-link">
+        <a class="menu-tabbed-link" href="#">
+          <i class="fas fa-folder"></i>
+        </a>
+      </div>
+      <div class="menu__menu-tabbed-link">
+        <a class="menu-tabbed-link" href="#/">Processes</a>
+      </div>
+      <div class="menu__menu-tabbed-link menu__menu-tabbed-link--active">
+        <a class="menu-tabbed-link" href="#">Design</a>
+      </div>
+      <div class="menu__menu-tabbed-link">
+        <a class="menu-tabbed-link" href="#">Execute</a>
+      </div>
       <div class="menu-bar__menu-action-link">
         <button class="menu-bar__menu-center--action-button menu-bar__menu-center--back-button back-button" click.delegate="goBack()" title="Navigate back">
           <i class="fas fa-arrow-circle-left"></i>
@@ -47,7 +63,7 @@
         <button class="menu-bar__menu-center--action-button dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="fas fa-angle-down"></i>
         </button>
-        <table class="dropdown-menu">
+        <table class="dropdown-menu process-details-dropdown-menu">
           <tr>
             <th>Process Id: </th>
             <td>${process.id}</td>
