@@ -32,6 +32,7 @@ export function configure(aurelia: Aurelia): void {
     .standardConfiguration()
     .feature('modules/dynamic-ui')
     .feature('modules/processengine')
+    .feature('modules/notification')
     .feature('modules/authentication')
     .feature('modules/bpmn-studio_client', tokenRepository)
     .feature('resources')

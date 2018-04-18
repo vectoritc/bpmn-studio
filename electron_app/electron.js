@@ -149,6 +149,8 @@ getPort({port: 8000, host: '0.0.0.0'})
       path: filePath,
       content: fs.readFileSync(filePath, 'utf8'),
     }
+    filePath = undefined;
+    app.focus();
 
   });
 });

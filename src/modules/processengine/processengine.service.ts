@@ -1,18 +1,30 @@
 import {IProcessDefEntity, IUserTaskEntity} from '@process-engine/process_engine_contracts';
 import {inject} from 'aurelia-framework';
 import {IFileInfo, IPagination, IProcessEngineRepository, IProcessEngineService, IProcessEntity} from '../../contracts';
+import {NotificationService} from './../notification/notification.service';
 
-@inject('ProcessEngineRepository', 'FileContent')
+@inject('ProcessEngineRepository', 'FileContent', 'NotificationService')
 export class ProcessEngineService implements IProcessEngineService {
 
   private repository: IProcessEngineRepository;
   private fileInfo: IFileInfo = undefined;
+  private notificationService: NotificationService;
 
-  constructor(repository: IProcessEngineRepository, fileInfo: IFileInfo) {
+  constructor(repository: IProcessEngineRepository, fileInfo: IFileInfo, notificationService: NotificationService) {
     this.repository = repository;
     this.fileInfo = fileInfo;
+    this.notificationService = notificationService;
     if (this.fileInfo.content !== undefined) {
-      this.createProcessfromXML(this.fileInfo.content);
+      this.createAndPublish();
+    }
+  }
+
+  private async createAndPublish(): Promise<void> {
+    try {
+      await this.createProcessfromXML(this.fileInfo.content);
+      this.notificationService.showNotification('success');
+    } catch (error) {
+      this.notificationService.showNotification(error.message);
     }
   }
 
