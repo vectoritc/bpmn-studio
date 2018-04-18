@@ -16,7 +16,7 @@ export class App {
     this.notificationService.setToastrInstance(toastr);
   }
 
-  public configureRouter(config: RouterConfiguration, router: Router, notificationService: NotificationService): void {
+  public configureRouter(config: RouterConfiguration, router: Router): void {
     this.router = router;
     config.title = 'BPMN-Studio';
     config.map([
