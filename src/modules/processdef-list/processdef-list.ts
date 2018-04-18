@@ -39,7 +39,7 @@ export class ProcessDefList {
         const xml: string = fileInformations.target.result;
         const response: any = await this.processEngineService.createProcessfromXML(xml);
         this.refreshProcesslist();
-        toastr.success('Diagram succesfully imported!');
+        toastr.success('Diagram successfully imported!');
       } catch (error) {
         toastr.error(`Error while importing file: ${error.message}`);
       }
