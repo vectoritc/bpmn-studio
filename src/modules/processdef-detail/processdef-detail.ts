@@ -53,7 +53,8 @@ export class ProcessDefDetail {
   private exportButton: HTMLButtonElement;
   private exportSpinner: HTMLElement;
   private startButtonDropdown: HTMLDivElement;
-  private startButton: HTMLElement;
+  private startButton: HTMLButtonElement;
+  private saveButton: HTMLButtonElement;
   private bpmnStudioClient: BpmnStudioClient;
   private router: Router;
   private fillColor: string;
@@ -166,7 +167,9 @@ export class ProcessDefDetail {
   }
 
   public startProcess(): void {
-    this.router.navigate(`processdef/${this.process.id}/start`);
+    if (!this.startButton.disabled) {
+     this.router.navigate(`processdef/${this.process.id}/start`);
+    }
   }
 
   public closeProcessStartDropdown(): void {
@@ -198,22 +201,23 @@ export class ProcessDefDetail {
   }
 
   public async saveDiagram(): Promise<void> {
+    if (!this.saveButton.disabled) {
+      this.validateXML();
 
-    this.validateXML();
+      try {
+        const xml: string = await this.bpmn.getXML();
+        const response: any = await this.processEngineService.updateProcessDef(this.process, xml);
 
-    try {
-      const xml: string = await this.bpmn.getXML();
-      const response: any = await this.processEngineService.updateProcessDef(this.process, xml);
-
-      if (response.error) {
-        toastr.error(`Error while saving file: ${response.error}`);
-      } else if (response.result) {
-        toastr.success('File saved.');
-      } else {
-        toastr.warning(`Unknown error: ${JSON.stringify(response)}`);
+        if (response.error) {
+          toastr.error(`Error while saving file: ${response.error}`);
+        } else if (response.result) {
+          toastr.success('File saved.');
+        } else {
+          toastr.warning(`Unknown error: ${JSON.stringify(response)}`);
+        }
+      } catch (error) {
+        toastr.error(`Error: ${error.message}`);
       }
-    } catch (error) {
-      toastr.error(`Error: ${error.message}`);
     }
   }
 

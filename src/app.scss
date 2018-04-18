@@ -125,6 +125,11 @@ body {
   opacity: 1;
 }
 
+.menu-bar__menu-center--action-button:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
 .menu-bar__menu-left--tool {
   border: none;
   background-color: inherit;

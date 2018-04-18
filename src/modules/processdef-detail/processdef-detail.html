@@ -45,7 +45,7 @@
         </button>
       </div>
       <div class="menu-bar__menu-action-link">
-        <button class="menu-bar__menu-center--action-button" click.delegate="saveDiagram()" disabled.bind="validationError" title="Save Diagram">
+        <button class="menu-bar__menu-center--action-button" ref="saveButton" click.delegate="saveDiagram()" disabled.bind="validationError" title="Save Diagram">
           <i class="fas fa-save"></i>
         </button>
       </div>
@@ -65,7 +65,7 @@
         <import-process-button desired-process-import-key.bind="process.key" callback.bind="onModdlelImported.bind($this)" title="Import XML"></import-process-button>
       </div>
       <div class="menu-bar__menu-action-link">
-        <button class="menu-bar__menu-center--action-button" click.delegate="startProcess()" disabled.bind="validationError" title="Start Process">
+        <button class="menu-bar__menu-center--action-button" ref="startButton" click.delegate="startProcess()" disabled.bind="validationError" title="Start Process">
           <i class="fas fa-play"></i>
         </button>
       </div>
