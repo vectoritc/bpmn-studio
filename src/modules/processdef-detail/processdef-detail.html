@@ -164,25 +164,14 @@
     -->
     <div class="status-bar status-bar--system-macos">
       <div class="status-bar__left-bar">
-        <div class="status-bar__element">
-          <i class="fas fa-times-circle"></i> 0
-          <i class="fas fa-exclamation-triangle"></i> 3
-        </div>
+        <span class="status-bar__element">Connected to: ${environment.bpmnStudioClient.baseRoute}</span>
       </div>
-      <div class="status-bar__center-bar">
-        <div class="status-bar__element">
-          Pizza Delivery Subprocess
-          <i class="fas fa-angle-up"></i>
-          <span style="opacity: 0.5">&ndash; Pizza Customer</span>
-        </div>
-      </div>
+      <div class="status-bar__center-bar"></div>
       <div class="status-bar__right-bar">
         <div class="status-bar__element">
-          <i class="far fa-file-code"></i> Show XML
-        </div>
-        <div class="status-bar__separator"></div>
-        <div class="status-bar__element">
-          <i class="fas fa-code-branch"></i> feature/add_more_bpmns
+          <button class="status-bar__show-xml-button" click.delegate="toggleXMLView()">
+            <i class="far fa-file-code"></i> Show XML
+          </button>
         </div>
       </div>
     </div>
