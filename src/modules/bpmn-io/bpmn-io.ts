@@ -77,6 +77,9 @@ export class BpmnIo {
     this.minimapToggle.addEventListener('click', this.toggleMinimapFunction);
 
     window.addEventListener('resize', this.resizeEventHandler);
+
+    const camundaIcon: any = this.canvasModel.getElementsByClassName('bjs-powered-by')[0];
+    camundaIcon.style = 'display: none';
   }
 
     // These style changes cannot be outsourced, because bpmn-js overwrites the css style.

@@ -158,5 +158,33 @@
     <div class="window-layout__main js-main">
       <bpmn-io show.bind="!showXMLView" view-model.ref="bpmn" xml.bind="process.xml"></bpmn-io>
     </div>
+
+    <!--
+    STATUS BAR
+    -->
+    <div class="status-bar status-bar--system-macos">
+      <div class="status-bar__left-bar">
+        <div class="status-bar__element">
+          <i class="fas fa-times-circle"></i> 0
+          <i class="fas fa-exclamation-triangle"></i> 3
+        </div>
+      </div>
+      <div class="status-bar__center-bar">
+        <div class="status-bar__element">
+          Pizza Delivery Subprocess
+          <i class="fas fa-angle-up"></i>
+          <span style="opacity: 0.5">&ndash; Pizza Customer</span>
+        </div>
+      </div>
+      <div class="status-bar__right-bar">
+        <div class="status-bar__element">
+          <i class="far fa-file-code"></i> Show XML
+        </div>
+        <div class="status-bar__separator"></div>
+        <div class="status-bar__element">
+          <i class="fas fa-code-branch"></i> feature/add_more_bpmns
+        </div>
+      </div>
+    </div>
   </div>
 </template>
