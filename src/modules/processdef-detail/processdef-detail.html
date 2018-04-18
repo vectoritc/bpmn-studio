@@ -49,7 +49,7 @@
           <i class="fas fa-save"></i>
         </button>
       </div>
-      <div class="menu-bar__menu-action-link">
+      <div class="menu-bar__menu-action-link btn-group">
         <button class="menu-bar__menu-center--action-button dropdown-toggle" title="Export Diagram" ref="exportButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i ref="exportIcon" class="fas fa-download"></i>
           <i ref="exportSpinner" class="glyphicon glyphicon-repeat fa-spin hidden"></i>
@@ -62,7 +62,7 @@
         </ul>
       </div>
       <div class="menu-bar__menu-action-link">
-        <import-process-button desired-process-import-key.bind="process.key" callback.bind="onModdlelImported.bind($this)" title="Import Diagram"></import-process-button>
+        <import-process-button desired-process-import-key.bind="process.key" callback.bind="onModdlelImported.bind($this)" title="Import XML"></import-process-button>
       </div>
       <div class="menu-bar__menu-action-link">
         <button class="menu-bar__menu-center--action-button" click.delegate="startProcess()" disabled.bind="validationError" title="Start Process">
