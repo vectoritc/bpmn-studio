@@ -76,19 +76,16 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
   }
 
   public async createProcessfromXML(xml: string): Promise<any> {
-    let importError: Error;
     let result: any;
-
-    const xmlString: string = JSON.stringify({
-      xml: xml,
-    });
 
     const options: RequestInit = {
       method: 'post',
       headers: new Headers({
         'Content-Type': 'application/json',
       }),
-      body: xmlString,
+      body: JSON.stringify({
+        xml: xml,
+      }),
     };
 
     try {
@@ -96,11 +93,7 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
       const response: Response = await this.http.fetch(url, options);
       result = await throwOnErrorResponse<IErrorResponse>(response);
     } catch (error) {
-      importError = error;
-    }
-
-    if (importError) {
-      throw importError;
+      throw error;
     }
 
     return result;
