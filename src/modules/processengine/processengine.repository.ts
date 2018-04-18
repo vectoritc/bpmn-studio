@@ -76,6 +76,9 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
   }
 
   public async createProcessfromXML(xml: string): Promise<any> {
+    let importError: Error;
+    let result: any;
+
     const xmlString: string = JSON.stringify({
       xml: xml,
     });
@@ -88,10 +91,19 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
       body: xmlString,
     };
 
-    const url: string = environment.processengine.routes.importBPMN;
-    const response: Response = await this.http.fetch(url, options);
+    try {
+      const url: string = environment.processengine.routes.importBPMN;
+      const response: Response = await this.http.fetch(url, options);
+      result = await throwOnErrorResponse<IErrorResponse>(response);
+    } catch (error) {
+      importError = error;
+    }
 
-    return throwOnErrorResponse<IErrorResponse>(response);
+    if (importError) {
+      throw importError;
+    }
+
+    return result;
   }
 
   public async updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<any> {

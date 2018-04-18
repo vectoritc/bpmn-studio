@@ -2,6 +2,7 @@ import {BpmnStudioClient, IPagination, IProcessDefEntity, IUserTaskConfig} from 
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
+import * as toastr from 'toastr';
 import {AuthenticationStateEvent, IProcessEngineService} from '../../contracts/index';
 import environment from '../../environment';
 
@@ -34,14 +35,21 @@ export class ProcessDefList {
 
     this.refreshProcesslist();
     this.reader.onload = async(fileInformations: any): Promise<void> => {
-      const xml: string = fileInformations.target.result;
-      await this.processEngineService.createProcessfromXML(xml);
-      this.refreshProcesslist();
+      try {
+        const xml: string = fileInformations.target.result;
+        const response: any = await this.processEngineService.createProcessfromXML(xml);
+        this.refreshProcesslist();
+        toastr.success('Diagram succesfully imported!');
+      } catch (error) {
+        toastr.error(`Error while importing file: ${error.message}`);
+      }
     };
   }
 
   public selectedFilesChanged(): void {
-    this.reader.readAsText(this.selectedFiles[0]);
+    if (this.selectedFiles !== undefined && this.selectedFiles.length > 0) {
+      this.reader.readAsText(this.selectedFiles[0]);
+    }
   }
 
   public currentPageChanged(newValue: number, oldValue: number): void {
