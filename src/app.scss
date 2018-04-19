@@ -109,6 +109,16 @@ body {
   display: block;
   line-height: 40px;
   color: #a5a5a5;
+  cursor: pointer;
+}
+
+.menu-bar__dashboard-dropdown {
+  background-color: #f7f7f7;
+  border-top: none;
+  top: 40px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  box-shadow: none;
 }
 
 .menu-bar__menu-action-link {
