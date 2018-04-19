@@ -185,11 +185,8 @@ pipeline {
           withCredentials([
             string(credentialsId: 'process-engine-ci_token', variable: 'RELEASE_GH_TOKEN')
           ]) {
-            def full_release_version_string;
-            
-            if (branch_is_master) {
-              full_release_version_string = "${package_version}";
-            } else {
+            full_release_version_string == "${package_version}";
+            if (!branch_is_master) {
               full_release_version_string = "${package_version}-pre-b${env.BUILD_NUMBER}"
             }
 
