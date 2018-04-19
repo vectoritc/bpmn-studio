@@ -185,12 +185,17 @@ pipeline {
           withCredentials([
             string(credentialsId: 'process-engine-ci_token', variable: 'RELEASE_GH_TOKEN')
           ]) {
-            full_release_version_string == "${package_version}";
-            if (!branch_is_master) {
-              full_release_version_string = "${package_version}-pre-b${env.BUILD_NUMBER}"
-            }
+            script {
+              def full_release_version_string;
+              
+              if (branch_is_master) {
+                full_release_version_string = "${package_version}";
+              } else {
+                full_release_version_string = "${package_version}-pre-b${env.BUILD_NUMBER}";
+              }
 
-            sh("node .ci-tools/publish-github-release.js ${full_release_version_string} ${branch} false ${!branch_is_master}")
+              sh("node .ci-tools/publish-github-release.js ${full_release_version_string} ${branch} false ${!branch_is_master}");
+            }
           }
         }
       }
