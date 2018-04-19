@@ -30,12 +30,16 @@ pipeline {
           raw_package_version = sh(script: 'node --print --eval "require(\'./package.json\').version"', returnStdout: true)
           package_version = raw_package_version.trim()
           echo("Package version is '${package_version}'")
+
+          branch = env.BRANCH_NAME;
+          branch_is_master = branch == 'master';
+          branch_is_develop = branch == 'develop';
+          echo("Branch is '${branch}'")
         }
         nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
           sh('node --version')
           sh('npm install')
           sh('npm rebuild node-sass')
-          
         }
       }
     }
@@ -48,7 +52,69 @@ pipeline {
     stage('build') {
       steps {
         sh('node --version')
-        sh('npm run build --ignore-scripts')
+        sh('npm run build')
+        stash(includes: 'node_modules/, scripts/', name: 'post_build')
+      }
+    }
+    stage('build electron') {
+      parallel {
+        stage('Build on Linux') {
+          agent {
+            label "linux"
+          }
+          steps {
+            unstash('post_build')
+            sh('node --version')
+            sh('npm run electron-build-linux')
+            stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml', name: 'linux_results')
+          }
+          post {
+            always {
+              cleanup_workspace()
+            }
+          }
+        }
+        stage('Build on MacOS') {
+          agent {
+            label "macos"
+          }
+          steps {
+            unstash('post_build')
+            sh('node --version')
+            // we copy the node_modules folder from the main slave
+            // which runs linux. Some dependencies may not be installed
+            // if they have a os restriction in their package.json
+            sh('npm install')
+
+            withCredentials([
+              string(credentialsId: 'apple-mac-developer-certifikate', variable: 'CSC_LINK'),
+            ]) {
+              sh('npm run electron-build-macos')
+            }
+            stash(includes: 'dist/*.*, dist/mac/*', excludes: 'electron-builder-effective-config.yaml', name: 'macos_results')
+          }
+          post {
+            always {
+              cleanup_workspace()
+            }
+          }
+        }
+        stage('Build Windows on Linux') {
+          agent {
+            label "linux"
+          }
+          steps {
+            unstash('post_build')
+            sh('node --version')
+            sh('npm run electron-build-windows')
+            stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml', name: 'windows_results')
+          }
+          post {
+            always {
+              cleanup_workspace()
+            }
+          }
+        }
       }
     }
     stage('test') {
@@ -60,8 +126,6 @@ pipeline {
     stage('publish') {
       steps {
         script {
-          def branch = env.BRANCH_NAME;
-          def branch_is_master = branch == 'master';
           def new_commit = env.GIT_PREVIOUS_COMMIT != env.GIT_COMMIT;
 
           if (branch_is_master) {
@@ -102,6 +166,26 @@ pipeline {
               sh("npm version ${publish_version} --no-git-tag-version --force")
               sh("npm publish --tag ${publish_tag} --ignore-scripts")
             }
+          }
+        }
+      }
+    }
+    stage('publish electron') {
+      when {
+        expression { branch_is_master || branch_is_develop }
+      }
+      steps {
+        unstash('linux_results')
+        unstash('macos_results')
+        unstash('windows_results')
+        nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
+          dir('.ci-tools') {
+            sh('npm install')
+          }
+          withCredentials([
+            string(credentialsId: 'process-engine-ci_token', variable: 'RELEASE_GH_TOKEN')
+          ]) {
+            sh("node .ci-tools/publish-github-release.js ${package_version} ${env.GIT_COMMIT} false ${!branch_is_master}")
           }
         }
       }

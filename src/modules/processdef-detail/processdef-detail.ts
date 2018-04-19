@@ -1,4 +1,4 @@
-import {ConsumerClient} from '@process-engine/consumer_client';
+import {BpmnStudioClient} from '@process-engine/bpmn-studio_client';
 import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 import {bindingMode} from 'aurelia-binding';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
@@ -11,6 +11,7 @@ import * as $ from 'jquery';
 import * as spectrum from 'spectrum-colorpicker';
 import 'spectrum-colorpicker/spectrum';
 import * as toastr from 'toastr';
+import * as beautify from 'xml-beautifier';
 import {AuthenticationStateEvent,
         ElementDistributeOptions,
         IExtensionElement,
@@ -40,7 +41,7 @@ interface BpmnStudioColorPickerSettings {
   move?(color: spectrum.tinycolorInstance): void;
 }
 
-@inject('ProcessEngineService', EventAggregator, 'ConsumerClient', Router, ValidationController)
+@inject('ProcessEngineService', EventAggregator, 'BpmnStudioClient', Router, ValidationController)
 export class ProcessDefDetail {
 
   private processEngineService: IProcessEngineService;
@@ -54,7 +55,7 @@ export class ProcessDefDetail {
   private exportSpinner: HTMLElement;
   private startButtonDropdown: HTMLDivElement;
   private startButton: HTMLElement;
-  private consumerClient: ConsumerClient;
+  private bpmnStudioClient: BpmnStudioClient;
   private router: Router;
   private fillColor: string;
   private borderColor: string;
@@ -73,12 +74,12 @@ export class ProcessDefDetail {
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
-              consumerClient: ConsumerClient,
+              bpmnStudioClient: BpmnStudioClient,
               router: Router,
               validationController: ValidationController) {
     this.processEngineService = processEngineService;
     this.eventAggregator = eventAggregator;
-    this.consumerClient = consumerClient;
+    this.bpmnStudioClient = bpmnStudioClient;
     this.router = router;
     this.validationController = validationController;
   }
@@ -242,7 +243,8 @@ export class ProcessDefDetail {
     this.disableAndHideControlsForImageExport();
 
     const xml: string = await this.bpmn.getXML();
-    download(xml, `${this.process.name}.bpmn`, 'application/bpmn20-xml');
+    const formattedXml: string = beautify(xml);
+    download(formattedXml, `${this.process.name}.bpmn`, 'application/bpmn20-xml');
 
     this.enableAndShowControlsForImageExport();
   }

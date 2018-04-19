@@ -1,4 +1,4 @@
-import {IUserTaskConfig} from '@process-engine/consumer_client';
+import {IUserTaskConfig} from '@process-engine/bpmn-studio_client';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';

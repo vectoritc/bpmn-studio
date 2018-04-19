@@ -1,4 +1,4 @@
-import {IFormWidgetStringField} from '@process-engine/consumer_client';
+import {IFormWidgetStringField} from '@process-engine/bpmn-studio_client';
 import {bindable} from 'aurelia-framework';
 
 export class DynamicUiNumberElement {

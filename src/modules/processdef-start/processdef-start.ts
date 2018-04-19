@@ -1,4 +1,4 @@
-import {ConsumerClient, IUserTaskConfig} from '@process-engine/consumer_client';
+import {BpmnStudioClient, IUserTaskConfig} from '@process-engine/bpmn-studio_client';
 import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {computedFrom, inject} from 'aurelia-framework';
@@ -7,7 +7,7 @@ import * as toastr from 'toastr';
 import {AuthenticationStateEvent, IProcessEngineService} from '../../contracts/index';
 import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
 
-@inject('ProcessEngineService', EventAggregator, Router, 'ConsumerClient')
+@inject('ProcessEngineService', EventAggregator, Router, 'BpmnStudioClient')
 export class ProcessDefStart {
 
   private processEngineService: IProcessEngineService;
@@ -17,16 +17,16 @@ export class ProcessDefStart {
   private processDefId: string;
   private _process: IProcessDefEntity;
   private router: Router;
-  private consumerClient: ConsumerClient;
+  private bpmnStudioClient: BpmnStudioClient;
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
               router: Router,
-              consumerClient: ConsumerClient) {
+              bpmnStudioClient: BpmnStudioClient) {
     this.processEngineService = processEngineService;
     this.eventAggregator = eventAggregator;
     this.router = router;
-    this.consumerClient = consumerClient;
+    this.bpmnStudioClient = bpmnStudioClient;
   }
 
   private async activate(routeParameters: {processDefId: string}): Promise<void> {
@@ -71,6 +71,6 @@ export class ProcessDefStart {
   }
 
   public startProcess(): void {
-    this.consumerClient.startProcessByKey(this.process.key);
+    this.bpmnStudioClient.startProcessByKey(this.process.key);
   }
 }

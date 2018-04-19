@@ -1,4 +1,4 @@
-import {FormWidgetFieldType, IFormWidgetConfig, SpecificFormWidgetField} from '@process-engine/consumer_client';
+import {FormWidgetFieldType, IFormWidgetConfig, SpecificFormWidgetField} from '@process-engine/bpmn-studio_client';
 import {bindable} from 'aurelia-framework';
 import * as toastr from 'toastr';
 

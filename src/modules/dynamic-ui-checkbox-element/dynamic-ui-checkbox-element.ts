@@ -1,4 +1,4 @@
-import {IFormWidgetBooleanField} from '@process-engine/consumer_client';
+import {IFormWidgetBooleanField} from '@process-engine/bpmn-studio_client';
 import {bindable} from 'aurelia-framework';
 
 export class DynamicUiCheckboxElement {

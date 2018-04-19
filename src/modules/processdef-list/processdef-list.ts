@@ -1,13 +1,13 @@
-import {ConsumerClient, IPagination, IProcessDefEntity, IUserTaskConfig} from '@process-engine/consumer_client';
+import {BpmnStudioClient, IPagination, IProcessDefEntity, IUserTaskConfig} from '@process-engine/bpmn-studio_client';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject, observable} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {AuthenticationStateEvent} from '../../contracts/index';
 import environment from '../../environment';
 
-@inject(EventAggregator, 'ConsumerClient', Router)
+@inject(EventAggregator, 'BpmnStudioClient', Router)
 export class ProcessDefList {
-  private consumerClient: ConsumerClient;
+  private bpmnStudioClient: BpmnStudioClient;
   private eventAggregator: EventAggregator;
   private router: Router;
 
@@ -20,9 +20,9 @@ export class ProcessDefList {
   public pageSize: number = 10;
   public totalItems: number;
 
-  constructor(eventAggregator: EventAggregator, consumerClient: ConsumerClient, router: Router) {
+  constructor(eventAggregator: EventAggregator, bpmnStudioClient: BpmnStudioClient, router: Router) {
     this.eventAggregator = eventAggregator;
-    this.consumerClient = consumerClient;
+    this.bpmnStudioClient = bpmnStudioClient;
     this.router = router;
 
     this.refreshProcesslist();
@@ -35,9 +35,9 @@ export class ProcessDefList {
   }
 
   public async getProcessesFromService(): Promise<void> {
-    const processCount: IPagination<IProcessDefEntity> = await this.consumerClient.getProcessDefList();
+    const processCount: IPagination<IProcessDefEntity> = await this.bpmnStudioClient.getProcessDefList();
     this.totalItems = processCount.count;
-    this._processes = await this.consumerClient.getProcessDefList(this.pageSize, this.pageSize * (this.currentPage - 1));
+    this._processes = await this.bpmnStudioClient.getProcessDefList(this.pageSize, this.pageSize * (this.currentPage - 1));
   }
 
   public attached(): void {
@@ -75,7 +75,7 @@ export class ProcessDefList {
   }
 
   public async createProcess(): Promise<void> {
-    const processesDefList: IPagination<IProcessDefEntity> = await this.consumerClient.getProcessDefList();
+    const processesDefList: IPagination<IProcessDefEntity> = await this.bpmnStudioClient.getProcessDefList();
     const processes: Array<IProcessDefEntity> = processesDefList.data;
 
     const processId: string = processes.find((process: IProcessDefEntity) => {
