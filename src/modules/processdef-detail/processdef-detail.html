@@ -28,7 +28,7 @@
       </div>
       <div class="btn-group">
         <div class="menu__menu-tabbed-link" data-toggle="dropdown">
-          <a class="menu-tabbed-link">Execute</a>
+          <a class="menu-tabbed-link">Executables</a>
         </div>
         <ul class="dropdown-menu">
           <li>
@@ -157,6 +157,12 @@
     -->
     <div class="window-layout__main js-main">
       <bpmn-io show.bind="!showXMLView" view-model.ref="bpmn" xml.bind="process.xml"></bpmn-io>
+      <bpmn-xml-view if.bind="initialLoadingFinished" show.bind="showXMLView" xml.bind="process.xml"></bpmn-xml-view>
+    </div>
+
+    <div class="window-layout__tools-right">
+      <div class="tool-list tool-list--vertical">
+      </div>
     </div>
 
     <!--
