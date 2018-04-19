@@ -21,6 +21,8 @@ const release_is_draft = process.argv[4] === 'true';
 const release_is_prerelease = process.argv[5] === 'true';
 
 const github_auth_token = process.env['RELEASE_GH_TOKEN'];
+const github_repo_namespace = process.env['RELEASE_GH_NAMESPACE'] || 'process-engine';
+const github_repo_name = process.env['RELEASE_GH_NAMESPACE'] || 'bpmn-studio';
 
 const version_tag = `v${version_to_release}`;
 
@@ -48,8 +50,8 @@ async function authenticate() {
 async function check_for_existing_release() {
   try {
     await octokit.repos.getReleaseByTag({
-      owner: 'process-engine',
-      repo: 'bpmn-studio',
+      owner: github_repo_namespace,
+      repo: github_repo_name,
       tag: version_tag,
     });
   } catch(error) {
@@ -61,8 +63,8 @@ async function check_for_existing_release() {
 async function create_release() {
   console.log('Creating GitHub Release');
   return octokit.repos.createRelease({
-    owner: 'process-engine',
-    repo: 'bpmn-studio',
+    owner: github_repo_namespace,
+    repo: github_repo_name,
     tag_name: version_tag,
     target_commitish: target_commit,
     name: version_to_release,
