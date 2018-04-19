@@ -201,23 +201,24 @@ export class ProcessDefDetail {
   }
 
   public async saveDiagram(): Promise<void> {
-    if (!this.saveButton.disabled) {
-      this.validateXML();
+    if (this.saveButton.disabled) {
+      return;
+    }
+    this.validateXML();
 
-      try {
-        const xml: string = await this.bpmn.getXML();
-        const response: any = await this.processEngineService.updateProcessDef(this.process, xml);
+    try {
+      const xml: string = await this.bpmn.getXML();
+      const response: any = await this.processEngineService.updateProcessDef(this.process, xml);
 
-        if (response.error) {
-          toastr.error(`Error while saving file: ${response.error}`);
-        } else if (response.result) {
-          toastr.success('File saved.');
-        } else {
-          toastr.warning(`Unknown error: ${JSON.stringify(response)}`);
-        }
-      } catch (error) {
-        toastr.error(`Error: ${error.message}`);
+      if (response.error) {
+        toastr.error(`Error while saving file: ${response.error}`);
+      } else if (response.result) {
+        toastr.success('File saved.');
+      } else {
+        toastr.warning(`Unknown error: ${JSON.stringify(response)}`);
       }
+    } catch (error) {
+      toastr.error(`Error: ${error.message}`);
     }
   }
 
