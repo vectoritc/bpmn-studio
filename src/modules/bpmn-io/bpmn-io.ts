@@ -13,6 +13,7 @@ import environment from '../../environment';
 
 const toggleButtonWidth: number = 13;
 const resizeButtonWidth: number = 19;
+const sideBarRightSize: number = 45;
 
 export class BpmnIo {
 
@@ -24,8 +25,8 @@ export class BpmnIo {
   private refresh: boolean = true;
   private isResizeClicked: boolean = false;
 
-  private toggleButtonRight: number = 237;
-  private resizeButtonRight: number = 231;
+  private toggleButtonRight: number = 282;
+  private resizeButtonRight: number = 276;
   private canvasRight: number = 350;
   private minWidth: number = environment.propertyPanel.minWidth;
   private maxWidth: number = document.body.clientWidth - environment.propertyPanel.maxWidth;
@@ -187,7 +188,7 @@ export class BpmnIo {
       this.toggled = false;
     } else {
       this.panel.style.display = 'none';
-      this.toggleButton.style.right = '-16px';
+      this.toggleButton.style.right = '27px';
       this.resizeButton.style.right = '-18px';
       this.canvasModel.style.right = '1px';
       this.toggled = true;
@@ -200,7 +201,9 @@ export class BpmnIo {
       if (this.isResizeClicked === false) {
         return;
       }
+
       let currentWidth: number = document.body.clientWidth - event.clientX;
+      currentWidth = currentWidth - sideBarRightSize;
 
       if (currentWidth < this.minWidth) {
         currentWidth = this.minWidth;
@@ -208,8 +211,8 @@ export class BpmnIo {
         currentWidth = this.maxWidth;
       }
 
-      this.toggleButtonRight = currentWidth - toggleButtonWidth;
-      this.resizeButtonRight = currentWidth - resizeButtonWidth;
+      this.toggleButtonRight = currentWidth - toggleButtonWidth + sideBarRightSize;
+      this.resizeButtonRight = currentWidth - resizeButtonWidth + sideBarRightSize;
       this.canvasRight = currentWidth;
 
       this.panel.style.width = `${currentWidth}px`;
