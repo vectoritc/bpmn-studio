@@ -317,7 +317,7 @@
       "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff": "bootstrap/fonts",
       "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf": "bootstrap/fonts",
       "src/resources/images/default-avatar.png": "src/resources/images",
-      "node_modules/font-awesome/fonts/fontawesome-webfont.woff2": "font-awesome/fonts"
+      "node_modules/font-awesome/fonts/fontawesome-webfont.woff2": "fonts"
     }
   }
 }

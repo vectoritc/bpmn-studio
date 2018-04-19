@@ -14,7 +14,7 @@
     <div class="menu-bar__menu menu-bar__menu--left">
       <div class="menu__menu-tabbed-link">
         <a class="menu-tabbed-link" href="#">
-          <i class="fas fa-folder"></i>
+          <i class="fa fa-folder"></i>
         </a>
       </div>
       <div class="menu__menu-tabbed-link">
@@ -41,17 +41,17 @@
       </div>
       <div class="menu-bar__menu-action-link">
         <button class="menu-bar__menu-center--action-button menu-bar__menu-center--back-button back-button" click.delegate="goBack()" title="Navigate back">
-          <i class="fas fa-arrow-circle-left"></i>
+          <i class="fa fa-arrow-circle-left"></i>
         </button>
       </div>
       <div class="menu-bar__menu-action-link">
         <button class="menu-bar__menu-center--action-button" ref="saveButton" click.delegate="saveDiagram()" disabled.bind="validationError" title="Save Diagram">
-          <i class="fas fa-save"></i>
+          <i class="fa fa-save"></i>
         </button>
       </div>
       <div class="menu-bar__menu-action-link btn-group">
         <button class="menu-bar__menu-center--action-button dropdown-toggle" title="Export Diagram" ref="exportButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i ref="exportIcon" class="fas fa-download"></i>
+          <i ref="exportIcon" class="fa fa-download"></i>
           <i ref="exportSpinner" class="glyphicon glyphicon-repeat fa-spin hidden"></i>
         </button>
         <ul class="dropdown-menu">
@@ -66,7 +66,7 @@
       </div>
       <div class="menu-bar__menu-action-link">
         <button class="menu-bar__menu-center--action-button" ref="startButton" click.delegate="startProcess()" disabled.bind="validationError" title="Start Process">
-          <i class="fas fa-play"></i>
+          <i class="fa fa-play"></i>
         </button>
       </div>
     </div>
@@ -74,7 +74,7 @@
       <div class="menu__element btn-group">
         ${process.name}
         <button class="menu-bar__menu-center--action-button dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i class="fas fa-angle-down"></i>
+          <i class="fa fa-angle-down"></i>
         </button>
         <table class="dropdown-menu process-details-dropdown-menu">
           <tr>
@@ -104,11 +104,11 @@
     <div class="window-layout__tools-left">
       <div class="tool-list tool-list--vertical">
         <div class="tool">
-          <i class="fas fa-mouse-pointer"></i>
+          <i class="fa fa-mouse-pointer"></i>
         </div>
         <div class="tool btn-group">
-          <button class="menu-bar__menu-left--tool dropdown-toggle" title="Color Element" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" click.delegate="updateCustomColors()">
-            <i class="fas fa-eye-dropper"></i>
+          <button class="menu-bar__menu-left--tool dropdown-toggle" title="Color Element" data-toggle="dropdown" click.delegate="updateCustomColors()">
+            <i class="fa fa-eyedropper"></i>
           </button>
           <ul class="dropdown-menu pull-left">
             <li><a click.delegate="setColorRed()"><i class="glyphicon glyphicon-stop red"></i> Red</a></li>
@@ -138,7 +138,7 @@
       </div>
       <div class="tool-list tool-list--vertical tool-list--bottom">
         <div class="tool btn-group">
-          <i class="fas fa-sitemap" data-toggle="dropdown"></i>
+          <i class="fa fa-sitemap" data-toggle="dropdown"></i>
           <ul class="dropdown-menu">
             <li><a href="#/processdef/${process.id}/process">Show Processes</a></li>
             <li><a href="#/processdef/${process.id}/task">Show Tasks</a></li>
@@ -146,7 +146,7 @@
         </div>
         <div class="tool">
           <a href="#/configuration" title="To Settings">
-            <i class="fas fa-cog"></i>
+            <i class="fa fa-cog"></i>
           </a>
         </div>
       </div>
