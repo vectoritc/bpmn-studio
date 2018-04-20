@@ -20,7 +20,7 @@ interface ITaskListRouteParameters {
   processId?: string;
 }
 
-@inject(EventAggregator, 'BpmnStudioClient')
+@inject(EventAggregator, 'BpmnStudioClient', Router)
 export class TaskList {
 
   private eventAggregator: EventAggregator;

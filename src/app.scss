@@ -76,7 +76,6 @@ body {
 .menu__menu-tabbed-link {
   display: flex;
   align-items: stretch;
-  margin: 0 10px;
 }
 
 .menu__menu-tabbed-link--active {
@@ -112,6 +111,12 @@ body {
   line-height: 40px;
   color: #a5a5a5;
   cursor: pointer;
+  padding: 0 15px;
+}
+
+.menu-tabbed-link:hover {
+  text-decoration: none;
+  background-color: #dcdbdb;
 }
 
 .menu-bar__dashboard-dropdown {
@@ -121,6 +126,7 @@ body {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
   box-shadow: none;
+  padding: 0;
 }
 
 .menu-bar__menu-action-link {
@@ -157,5 +163,5 @@ body {
 }
 
 .dropdown-menu > li > a:hover {
-  background-color: #bdbdbd;
+  background-color: #dcdbdb;
 }
