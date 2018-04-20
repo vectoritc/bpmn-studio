@@ -28,13 +28,13 @@ const github_repo_name = process.env['RELEASE_GH_NAMESPACE'] || 'bpmn-studio';
 const version_tag = `v${version_to_release}`;
 
 const files_to_upload = [
-  `dist/bpmn-studio Setup ${version_to_release}.exe`,
-  `dist/bpmn-studio Setup ${version_to_release}.exe.blockmap`,
-  `dist/bpmn-studio-${version_to_release}-mac.zip`,
-  `dist/bpmn-studio-${version_to_release}-x86_64.AppImage`,
-  `dist/bpmn-studio-${version_to_release}.dmg`,
-  `dist/bpmn-studio-${version_to_release}.dmg.blockmap`,
-  `dist/bpmn-studio_${version_to_release}_amd64.snap`,
+  `dist/bpmn-studio Setup ${version_for_filenames}.exe`,
+  `dist/bpmn-studio Setup ${version_for_filenames}.exe.blockmap`,
+  `dist/bpmn-studio-${version_for_filenames}-mac.zip`,
+  `dist/bpmn-studio-${version_for_filenames}-x86_64.AppImage`,
+  `dist/bpmn-studio-${version_for_filenames}.dmg`,
+  `dist/bpmn-studio-${version_for_filenames}.dmg.blockmap`,
+  `dist/bpmn-studio_${version_for_filenames}_amd64.snap`,
   `dist/github/latest-mac.json`,
   `dist/latest-linux.yml`,
   `dist/latest-mac.yml`,
