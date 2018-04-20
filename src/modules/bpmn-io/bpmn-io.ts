@@ -13,8 +13,7 @@ import {ElementDistributeOptions,
         IShape} from '../../contracts/index';
 import environment from '../../environment';
 
-const toggleButtonWidth: number = 13;
-const resizeButtonWidth: number = 19;
+const resizeButtonWidth: number = 5;
 const sideBarRightSize: number = 45;
 
 interface BpmnStudioColorPickerSettings {
@@ -37,7 +36,7 @@ export class BpmnIo {
   private borderColor: string;
 
   private toggled: boolean = false;
-  private toggleButton: HTMLButtonElement;
+  private toggleButtonPropertyPanel: HTMLButtonElement;
   private resizeButton: HTMLButtonElement;
   private panel: HTMLElement;
   private canvasModel: HTMLDivElement;
@@ -45,8 +44,7 @@ export class BpmnIo {
   private isResizeClicked: boolean = false;
   private showXMLView: boolean = false;
 
-  private toggleButtonRight: number = 282;
-  private resizeButtonRight: number = 276;
+  private resizeButtonRight: number = 294;
   private canvasRight: number = 350;
   private minWidth: number = environment.propertyPanel.minWidth;
   private maxWidth: number = document.body.clientWidth - environment.propertyPanel.maxWidth;
@@ -194,15 +192,13 @@ export class BpmnIo {
 
   public togglePanel(): void {
     if (this.toggled === true) {
+      this.toggleButtonPropertyPanel.classList.add('tool--active');
       this.panel.style.display = 'inline';
-      this.toggleButton.style.right = `${this.toggleButtonRight}px`;
-      this.resizeButton.style.right = `${this.resizeButtonRight}px`;
       this.canvasModel.style.right = `${this.canvasRight}px`;
       this.toggled = false;
     } else {
+      this.toggleButtonPropertyPanel.classList.remove('tool--active');
       this.panel.style.display = 'none';
-      this.toggleButton.style.right = '27px';
-      this.resizeButton.style.right = '-18px';
       this.canvasModel.style.right = '1px';
       this.toggled = true;
     }
@@ -224,12 +220,10 @@ export class BpmnIo {
         currentWidth = this.maxWidth;
       }
 
-      this.toggleButtonRight = currentWidth - toggleButtonWidth + sideBarRightSize;
       this.resizeButtonRight = currentWidth - resizeButtonWidth + sideBarRightSize;
       this.canvasRight = currentWidth;
 
       this.panel.style.width = `${currentWidth}px`;
-      this.toggleButton.style.right = `${this.toggleButtonRight}px`;
       this.resizeButton.style.right = `${this.resizeButtonRight}px`;
       this.canvasModel.style.right = `${this.canvasRight}px`;
     });

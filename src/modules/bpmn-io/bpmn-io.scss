@@ -56,11 +56,16 @@
   right: 3px;
 }
 
-.resize_div {
-  right: 276px;
-  height: 50%;
-  bottom: 0px;
+.resize-div {
   position: absolute;
+  right: 294px;
+  height: 100%;
+  width: 5px;
+}
+
+.resize-div:hover {
+  background-color: gray;
+  cursor: col-resize;
 }
 
 .toggle_div {
@@ -79,4 +84,103 @@
 .hideMinimap {
   margin-left: 143px;
   display: none;
+}
+
+/*
+ * TOOLS
+ *
+*/
+
+.tool-list--horizontal {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.tool-list--stretch .tool {
+  flex: 1;
+}
+
+.tool-list--bottom {
+  position: absolute;
+  bottom: 26px;
+}
+
+.tool {
+  display: block;
+  text-align: center;
+  padding: 5px;
+  opacity: 0.5;
+}
+
+.tool__right {
+  display: block;
+  text-align: center;
+  padding: 8px;
+  opacity: 0.5;
+}
+
+.tool:hover {
+  opacity: 1;
+}
+
+.tool--active {
+  opacity: 1;
+  background-color: #dcdbdb;
+}
+
+/*
+ * WINDOW
+ *
+*/
+
+.window-layout {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  width: 100%;
+  height: 100%;
+  padding-top: 42px;
+  background: white;
+}
+
+.window-layout__tools-left,
+.window-layout__tools-right {
+  background-color: #f7f7f7;
+  min-width: 45px;
+}
+
+.window-layout__panel-left,
+.window-layout__panel-right {
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.window-layout__panel-left,
+.panel {
+  background-color: #f7f7f7;
+  border-left: 1px solid #eee;
+  border-right: 1px solid #eee;
+}
+
+.window-layout__main {
+  flex: 1 100%;
+}
+
+/*
+ * MENUES
+ *
+*/
+
+.menu-bar__menu-left--tool {
+  border: none;
+  background-color: inherit;
+}
+
+.menu-bar__menu-right--tool {
+  border: none;
+  background-color: inherit;
 }

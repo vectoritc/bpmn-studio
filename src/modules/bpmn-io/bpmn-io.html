@@ -61,12 +61,7 @@
         <div class="diagramm">
           <div ref="canvasModel" class="canvasModel"></div>
         </div>
-        <!--<div class="resize_div" ref="resizeButton">
-          <button show.bind="!toggled" class="resize_button" title="Resize" click.delegate="resize()">Resize</button>
-        </div>
-        <div class="toggle_div" ref="toggleButton">
-          <button class="toggle_panel" title="Toggle PropertyPanel" click.delegate="togglePanel()">${ !toggled ? 'Hide' : 'Show'}</button>
-        </div>-->
+        <div class="resize-div" ref="resizeButton" click.delegate="resize()"></div>
         <div class="properties" ref="panel">
           <property-panel id="js-properties-panel" modeler.bind="modeler" xml.bind="xml"></property-panel>
         </div>
@@ -76,25 +71,13 @@
 
     <div class="window-layout__tools-right">
       <div class="tool-list tool-list--vertical">
-      </div>
-    </div>
-    <!--
-    STATUS BAR
-    -->
-    <div class="status-bar status-bar--system-macos">
-      <div class="status-bar__left-bar">
-        <a class="status-bar__element status-bar__element--config-link" href="#/configuration">
-          <span>Connected to: ${env.bpmnStudioClient.baseRoute}</span>
-        </a>
-      </div>
-      <div class="status-bar__center-bar"></div>
-      <div class="status-bar__right-bar">
-        <div class="status-bar__element">
-          <button class="status-bar__show-xml-button" click.delegate="toggleXMLView()">
-            <i class="fa fa-file-code-o"></i> Show XML
+        <div ref="toggleButtonPropertyPanel" class="tool__right tool--active">
+          <button class="menu-bar__menu-left--tool" click.delegate="togglePanel()">
+            <i class="fa fa-sliders"></i>
           </button>
         </div>
       </div>
     </div>
+
   </div>
 </template>
