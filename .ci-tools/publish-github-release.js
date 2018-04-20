@@ -2,8 +2,8 @@ const octokit = require('@octokit/rest')();
 const fs = require('fs');
 const mime = require('mime-types')
 
-if (process.argv.length != 6) {
-  console.error('Please supply arguments: <version_to_release> <target_commit> <release_is_draft> <release_is_prerelease>');
+if (process.argv.length != 7) {
+  console.error('Please supply arguments: <version_to_release> <version_for_filenames> <target_commit> <release_is_draft> <release_is_prerelease>');
   process.exit(1);
 }
 
@@ -16,9 +16,10 @@ if (!process.env['RELEASE_GH_TOKEN']
 }
 
 const version_to_release = process.argv[2];
-const target_commit = process.argv[3];
-const release_is_draft = process.argv[4] === 'true';
-const release_is_prerelease = process.argv[5] === 'true';
+const version_for_filenames = process.argv[3];
+const target_commit = process.argv[4];
+const release_is_draft = process.argv[5] === 'true';
+const release_is_prerelease = process.argv[6] === 'true';
 
 const github_auth_token = process.env['RELEASE_GH_TOKEN'];
 const github_repo_namespace = process.env['RELEASE_GH_NAMESPACE'] || 'process-engine';

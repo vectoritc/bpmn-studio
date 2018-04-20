@@ -194,7 +194,7 @@ pipeline {
                 full_release_version_string = "${package_version}-pre-b${env.BUILD_NUMBER}";
               }
 
-              sh("node .ci-tools/publish-github-release.js ${full_release_version_string} ${branch} false ${!branch_is_master}");
+              sh("node .ci-tools/publish-github-release.js ${full_release_version_string} ${package_version} ${branch} false ${!branch_is_master}");
             }
           }
         }
