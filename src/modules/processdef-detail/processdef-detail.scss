@@ -124,7 +124,13 @@
 
 .status-bar__element {
   padding: 0 10px;
-  padding-top: 3px;
+  padding-top: 2.5px;
+  color: white;
+}
+
+.status-bar__element--config-link:hover {
+  color: white;
+  text-decoration: none;
 }
 
 .status-bar__element:hover {

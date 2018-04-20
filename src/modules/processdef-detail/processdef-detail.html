@@ -137,17 +137,12 @@
         </div>
       </div>
       <div class="tool-list tool-list--vertical tool-list--bottom">
-        <div class="tool btn-group">
-          <i class="fa fa-sitemap" data-toggle="dropdown"></i>
-          <ul class="dropdown-menu">
-            <li><a href="#/processdef/${process.id}/process">Show Processes</a></li>
-            <li><a href="#/processdef/${process.id}/task">Show Tasks</a></li>
-          </ul>
-        </div>
         <div class="tool">
-          <a href="#/configuration" title="To Settings">
-            <i class="fa fa-cog"></i>
-          </a>
+          <button class="menu-bar__menu-left--tool">
+            <a href="#/configuration" title="To Settings">
+              <i class="fa fa-cog"></i>
+            </a>
+          </button>
         </div>
       </div>
     </div>
@@ -170,13 +165,15 @@
     -->
     <div class="status-bar status-bar--system-macos">
       <div class="status-bar__left-bar">
-        <span class="status-bar__element">Connected to: ${environment.bpmnStudioClient.baseRoute}</span>
+        <a class="status-bar__element status-bar__element--config-link" href="#/configuration">
+          <span class="">Connected to: ${environment.bpmnStudioClient.baseRoute}</span>
+        </a>
       </div>
       <div class="status-bar__center-bar"></div>
       <div class="status-bar__right-bar">
         <div class="status-bar__element">
           <button class="status-bar__show-xml-button" click.delegate="toggleXMLView()">
-            <i class="far fa-file-code"></i> Show XML
+            <i class="fa fa-file-code-o"></i> Show XML
           </button>
         </div>
       </div>
