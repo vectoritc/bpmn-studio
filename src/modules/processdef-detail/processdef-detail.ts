@@ -236,6 +236,10 @@ export class ProcessDefDetail {
     this.router.navigateBack();
   }
 
+  public toggleXMLView(): void {
+    this.bpmn.toggleXMLView();
+  }
+
   private disableAndHideControlsForImageExport(): void {
     this.exportButton.setAttribute('disabled', '');
     this.exportSpinner.classList.remove('hidden');
