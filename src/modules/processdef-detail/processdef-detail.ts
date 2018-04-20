@@ -8,7 +8,6 @@ import {ValidateEvent, ValidationController} from 'aurelia-validation';
 import * as canvg from 'canvg-browser';
 import * as download from 'downloadjs';
 import * as $ from 'jquery';
-import * as spectrum from 'spectrum-colorpicker';
 import 'spectrum-colorpicker/spectrum';
 import * as toastr from 'toastr';
 import * as beautify from 'xml-beautifier';
@@ -24,21 +23,6 @@ import {BpmnIo} from '../bpmn-io/bpmn-io';
 
 interface RouteParameters {
   processDefId: string;
-}
-
-interface BpmnStudioColorPickerSettings {
-  clickoutFiresChange: boolean;
-  showPalette: boolean;
-  palette: Array<Array<string>>;
-  localStorageKey: string;
-  showInitial: boolean;
-  showInput: boolean;
-  allowEmpty: boolean;
-  showButtons: boolean;
-  showPaletteOnly: boolean;
-  togglePaletteOnly: boolean;
-
-  move?(color: spectrum.tinycolorInstance): void;
 }
 
 @inject('ProcessEngineService', EventAggregator, 'BpmnStudioClient', Router, ValidationController)
@@ -57,12 +41,6 @@ export class ProcessDefDetail {
   private saveButton: HTMLButtonElement;
   private bpmnStudioClient: BpmnStudioClient;
   private router: Router;
-  private fillColor: string;
-  private borderColor: string;
-  private showXMLView: boolean = false;
-  public colorPickerBorder: HTMLInputElement;
-  public colorPickerFill: HTMLInputElement;
-  public colorPickerLoaded: boolean = false;
 
   public validationController: ValidationController;
   public validationError: boolean;
@@ -102,54 +80,11 @@ export class ProcessDefDetail {
         this.refreshProcess();
       }),
     ];
-
-    // setTimeout() gives us the callback queue, that causes
-    // the initLoadingFinished boolean to become true as late as possible
-    // so as soon as the view-model is fully attached
-    // the bpmn-xml-view module gets attached and calls
-    // the highlight method
-    setTimeout(() => {
-      this.initialLoadingFinished = true;
-    }, 0);
-  }
-
-  private _activateColorPicker(): void {
-    const borderMoveSetting: spectrum.Options = {
-      move: (borderColor: spectrum.tinycolorInstance): void => {
-        this.updateBorderColor(borderColor);
-      },
-    };
-
-    const colorPickerBorderSettings: BpmnStudioColorPickerSettings = Object.assign({}, environment.colorPickerSettings, borderMoveSetting);
-    $(this.colorPickerBorder).spectrum(colorPickerBorderSettings);
-
-    const fillMoveSetting: spectrum.Options = {
-      move: (fillColor: spectrum.tinycolorInstance): void => {
-        this.updateFillColor(fillColor);
-      },
-    };
-
-    const colorPickerFillSettings: BpmnStudioColorPickerSettings = Object.assign({}, environment.colorPickerSettings, fillMoveSetting);
-    $(this.colorPickerFill).spectrum(colorPickerFillSettings);
-
-    this.colorPickerLoaded = true;
   }
 
   public detached(): void {
     for (const subscription of this.subscriptions) {
       subscription.dispose();
-    }
-
-    $(this.colorPickerBorder).spectrum('destroy');
-    $(this.colorPickerFill).spectrum('destroy');
-  }
-
-  public async toggleXMLView(): Promise<void> {
-    if (!this.showXMLView) {
-      this.process.xml = await this.bpmn.getXML();
-      this.showXMLView = true;
-    } else {
-      this.showXMLView = false;
     }
   }
 
@@ -309,73 +244,6 @@ export class ProcessDefDetail {
   private enableAndShowControlsForImageExport(): void {
     this.exportButton.removeAttribute('disabled');
     this.exportSpinner.classList.add('hidden');
-  }
-
-  public distributeElementsHorizontal(): void {
-    this.bpmn.distributeElements(ElementDistributeOptions.HORIZONTAL);
-  }
-
-  public distributeElementsVertical(): void {
-    this.bpmn.distributeElements(ElementDistributeOptions.VERTICAL);
-  }
-
-  public setColorRed(): void {
-    this.bpmn.setColor('#FFCDD2', '#E53935');
-  }
-
-  public setColorBlue(): void {
-    this.bpmn.setColor('#BBDEFB', '#1E88E5');
-  }
-
-  public setColorOrange(): void {
-    this.bpmn.setColor('#FFE0B2', '#FB8C00');
-  }
-
-  public setColorGreen(): void {
-    this.bpmn.setColor('#C8E6C9', '#43A047');
-  }
-
-  public setColorPurple(): void {
-    this.bpmn.setColor('#E1BEE7', '#8E24AA');
-  }
-
-  public removeColor(): void {
-    this.bpmn.setColor(null, null);
-  }
-
-  public setColorPicked(): void {
-    this.bpmn.setColor(this.fillColor, this.borderColor);
-  }
-
-  private updateFillColor(fillColor: any): void {
-    if (fillColor) {
-      this.fillColor = fillColor.toHexString();
-    } else {
-      this.fillColor = null;
-    }
-
-    this.setColorPicked();
-  }
-
-  private updateBorderColor(borderColor: any): void {
-    if (borderColor) {
-      this.borderColor = borderColor.toHexString();
-    } else {
-      this.borderColor = null;
-    }
-
-    this.setColorPicked();
-  }
-
-  public updateCustomColors(): void {
-    if (!this.colorPickerLoaded) {
-      this._activateColorPicker();
-    }
-
-    [this.fillColor, this.borderColor] = this.bpmn.getColors();
-
-    $(this.colorPickerFill).spectrum('set', this.fillColor);
-    $(this.colorPickerBorder).spectrum('set', this.borderColor);
   }
 
   private validateForm(event: ValidateEvent): void {

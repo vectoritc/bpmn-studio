@@ -76,13 +76,18 @@
   opacity: 1;
 }
 
+.bpmnio-container {
+  height: 100%;
+  margin-bottom: 22px;
+}
+
 /*
  * STATUS BAR
  *
 */
 
 .status-bar {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   padding: 0 5px;
   width: 100%;

@@ -1,5 +1,6 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {bindable, observable} from 'aurelia-framework';
+import * as spectrum from 'spectrum-colorpicker';
 import { setTimeout } from 'timers';
 import * as toastr from 'toastr';
 import {ElementDistributeOptions,
@@ -8,6 +9,7 @@ import {ElementDistributeOptions,
         IDefinition,
         IModdleElement,
         IModeling,
+        IProcessDefEntity,
         IShape} from '../../contracts/index';
 import environment from '../../environment';
 
@@ -15,7 +17,24 @@ const toggleButtonWidth: number = 13;
 const resizeButtonWidth: number = 19;
 const sideBarRightSize: number = 45;
 
+interface BpmnStudioColorPickerSettings {
+  clickoutFiresChange: boolean;
+  showPalette: boolean;
+  palette: Array<Array<string>>;
+  localStorageKey: string;
+  showInitial: boolean;
+  showInput: boolean;
+  allowEmpty: boolean;
+  showButtons: boolean;
+  showPaletteOnly: boolean;
+  togglePaletteOnly: boolean;
+
+  move?(color: spectrum.tinycolorInstance): void;
+}
+
 export class BpmnIo {
+  private fillColor: string;
+  private borderColor: string;
 
   private toggled: boolean = false;
   private toggleButton: HTMLButtonElement;
@@ -24,6 +43,7 @@ export class BpmnIo {
   private canvasModel: HTMLDivElement;
   private refresh: boolean = true;
   private isResizeClicked: boolean = false;
+  private showXMLView: boolean = false;
 
   private toggleButtonRight: number = 282;
   private resizeButtonRight: number = 276;
@@ -37,7 +57,13 @@ export class BpmnIo {
   private hideMinimap: HTMLElement;
 
   @bindable({changeHandler: 'xmlChanged'}) public xml: string;
+
+  public initialLoadingFinished: boolean;
   public modeler: IBpmnModeler;
+  public colorPickerBorder: HTMLInputElement;
+  public colorPickerFill: HTMLInputElement;
+  public colorPickerLoaded: boolean = false;
+  public env: any;
 
   public created(): void {
     this.modeler = new bundle.modeler({
@@ -60,9 +86,6 @@ export class BpmnIo {
     const minimapArea: any = this.canvasModel.getElementsByClassName('djs-minimap-map')[0];
     this.minimapToggle = this.canvasModel.getElementsByClassName('djs-minimap-toggle')[0];
 
-    // These style changes cannot be outsourced, because bpmn-js overwrites the css style.
-    // So the style must set directly and not in a css class.
-    // Setting the styles in a css class with an important flag is working, but not really pretty.
     minimapArea.style.width = '350px';
     minimapArea.style.height = '200px';
     minimapViewport.style.fill = 'rgba(0, 208, 255, 0.13)';
@@ -81,27 +104,17 @@ export class BpmnIo {
 
     const camundaIcon: any = this.canvasModel.getElementsByClassName('bjs-powered-by')[0];
     camundaIcon.style = 'display: none';
-  }
 
-    // These style changes cannot be outsourced, because bpmn-js overwrites the css style.
-    // So the style must set directly and not in a css class.
-    // Setting the styles in a css class with an important flag is working, but not really pretty.
-  private toggleMinimapFunction = (): void => {
-    if (this.toggleMinimap === false) {
-      this.expandIcon.style.display = 'none';
-      this.hideMinimap.style.display = 'inline';
-      this.minimapToggle.style.height = '20px';
-      this.toggleMinimap = true;
-    } else {
-      this.expandIcon.style.display = 'inline-block';
-      this.hideMinimap.style.display = 'none';
-      this.toggleMinimap = false;
-    }
+    this.env = environment;
+
+    this.initialLoadingFinished = true;
   }
 
   public detached(): void {
     this.modeler.detach();
     window.removeEventListener('resize', this.resizeEventHandler);
+    $(this.colorPickerBorder).spectrum('destroy');
+    $(this.colorPickerFill).spectrum('destroy');
   }
 
   public xmlChanged(newValue: string, oldValue: string): void {
@@ -227,7 +240,119 @@ export class BpmnIo {
 
   }
 
+  public setColorRed(): void {
+    this.setColor('#FFCDD2', '#E53935');
+  }
+
+  public setColorBlue(): void {
+    this.setColor('#BBDEFB', '#1E88E5');
+  }
+
+  public setColorOrange(): void {
+    this.setColor('#FFE0B2', '#FB8C00');
+  }
+
+  public setColorGreen(): void {
+    this.setColor('#C8E6C9', '#43A047');
+  }
+
+  public setColorPurple(): void {
+    this.setColor('#E1BEE7', '#8E24AA');
+  }
+
+  public removeColor(): void {
+    this.setColor(null, null);
+  }
+
+  public setColorPicked(): void {
+    this.setColor(this.fillColor, this.borderColor);
+  }
+
+  public updateCustomColors(): void {
+    if (!this.colorPickerLoaded) {
+      this._activateColorPicker();
+    }
+
+    [this.fillColor, this.borderColor] = this.getColors();
+
+    $(this.colorPickerFill).spectrum('set', this.fillColor);
+    $(this.colorPickerBorder).spectrum('set', this.borderColor);
+  }
+
+  public async toggleXMLView(): Promise<void> {
+    if (!this.showXMLView) {
+      this.xml = await this.getXML();
+      this.showXMLView = true;
+    } else {
+      this.showXMLView = false;
+    }
+  }
+
+  public distributeElementsHorizontal(): void {
+    this.distributeElements(ElementDistributeOptions.HORIZONTAL);
+  }
+
+  public distributeElementsVertical(): void {
+    this.distributeElements(ElementDistributeOptions.VERTICAL);
+  }
+
   private resizeEventHandler = (event: any): void => {
     this.maxWidth = document.body.clientWidth - environment.propertyPanel.maxWidth;
   }
+
+  private _activateColorPicker(): void {
+    const borderMoveSetting: spectrum.Options = {
+      move: (borderColor: spectrum.tinycolorInstance): void => {
+        this.updateBorderColor(borderColor);
+      },
+    };
+
+    const colorPickerBorderSettings: BpmnStudioColorPickerSettings = Object.assign({}, environment.colorPickerSettings, borderMoveSetting);
+    $(this.colorPickerBorder).spectrum(colorPickerBorderSettings);
+
+    const fillMoveSetting: spectrum.Options = {
+      move: (fillColor: spectrum.tinycolorInstance): void => {
+        this.updateFillColor(fillColor);
+      },
+    };
+
+    const colorPickerFillSettings: BpmnStudioColorPickerSettings = Object.assign({}, environment.colorPickerSettings, fillMoveSetting);
+    $(this.colorPickerFill).spectrum(colorPickerFillSettings);
+
+    this.colorPickerLoaded = true;
+  }
+
+  private toggleMinimapFunction = (): void => {
+    if (this.toggleMinimap === false) {
+      this.expandIcon.style.display = 'none';
+      this.hideMinimap.style.display = 'inline';
+      this.minimapToggle.style.height = '20px';
+      this.toggleMinimap = true;
+    } else {
+      this.expandIcon.style.display = 'inline-block';
+      this.hideMinimap.style.display = 'none';
+      this.toggleMinimap = false;
+    }
+  }
+
+  private updateFillColor(fillColor: any): void {
+    if (fillColor) {
+      this.fillColor = fillColor.toHexString();
+    } else {
+      this.fillColor = null;
+    }
+
+    this.setColorPicked();
+  }
+
+  private updateBorderColor(borderColor: any): void {
+    if (borderColor) {
+      this.borderColor = borderColor.toHexString();
+    } else {
+      this.borderColor = null;
+    }
+
+    this.setColorPicked();
+  }
+
 }
