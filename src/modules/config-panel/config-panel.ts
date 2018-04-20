@@ -29,12 +29,12 @@ export class ConfigPanel {
     environment.processengine.routes.userTasks =  `${this.config.baseRoute}/datastore/UserTask`;
     this.bpmnStudioClient.updateConfig(this.config);
     toastr.success('Sucessfully saved settings!');
-    this.router.navigate('');
+    this.router.navigateBack();
   }
 
   public cancelUpdate(): void {
     toastr.warning('Settings dismissed!');
-    this.router.navigate('');
+    this.router.navigateBack();
   }
 
 }
