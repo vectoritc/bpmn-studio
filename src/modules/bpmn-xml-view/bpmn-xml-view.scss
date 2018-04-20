@@ -21,8 +21,12 @@ pre {
   height: 100%;
 }
 
-.hljs-ln-line {
-  white-space: pre-wrap;
+.hljs-tag {
+  white-space: normal;
+}
+
+tr td:last-child {
+  width: unset !important;
 }
 
 td.hljs-ln-numbers {
