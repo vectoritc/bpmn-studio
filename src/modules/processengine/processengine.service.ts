@@ -1,6 +1,6 @@
 import {IProcessDefEntity, IUserTaskEntity} from '@process-engine/process_engine_contracts';
 import {inject} from 'aurelia-framework';
-import {IFileInfo, IPagination, IProcessEngineRepository, IProcessEngineService, IProcessEntity} from '../../contracts';
+import {IFileInfo, IPagination, IProcessEngineRepository, IProcessEngineService, IProcessEntity, NotificationType} from '../../contracts/index';
 import {NotificationService} from './../notification/notification.service';
 
 @inject('ProcessEngineRepository', 'FileContent', 'NotificationService')
@@ -22,9 +22,9 @@ export class ProcessEngineService implements IProcessEngineService {
   private async createAndPublish(): Promise<void> {
     try {
       await this.createProcessfromXML(this.fileInfo.content);
-      this.notificationService.showNotification('success');
+      this.notificationService.showNotification(NotificationType.SUCCESS, 'Diagram successfully imported!');
     } catch (error) {
-      this.notificationService.showNotification(error.message);
+      this.notificationService.showNotification(NotificationType.ERROR,  `Error while importing file: ${error.message}`);
     }
   }
 

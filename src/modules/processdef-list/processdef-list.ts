@@ -2,7 +2,7 @@ import {BpmnStudioClient, IPagination, IProcessDefEntity, IUserTaskConfig} from 
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import {AuthenticationStateEvent, IProcessEngineService} from '../../contracts/index';
+import {AuthenticationStateEvent, IProcessEngineService, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
@@ -42,9 +42,9 @@ export class ProcessDefList {
         const xml: string = fileInformations.target.result;
         const response: any = await this.processEngineService.createProcessfromXML(xml);
         this.refreshProcesslist();
-        this.notificationService.showNotification('success');
+        this.notificationService.showNotification(NotificationType.SUCCESS, 'Diagram successfully imported!');
       } catch (error) {
-        this.notificationService.showNotification(error.message);
+        this.notificationService.showNotification(NotificationType.ERROR, `Error while importing file: ${error.message}`);
       }
     };
   }

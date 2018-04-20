@@ -1,15 +1,22 @@
+import {INotification, NotificationType} from '../../contracts/index';
+
 export class NotificationService {
 
   private toastrInstance: any;
-  private _savedNotifications: Array<string> = [];
+  private _savedNotifications: Array<INotification> = [];
 
-  public showNotification(message: string): void {
+  public showNotification(type: NotificationType, message: string): void {
+    const notification: INotification = {
+      type: type,
+      message: message,
+    };
+
     if (this.toastrInstance === undefined) {
-      this._saveNotification(message);
+      this._saveNotification(notification);
       return;
     }
 
-    this._showNotification(message);
+    this._showNotification(notification);
   }
 
   public setToastrInstance(toastr: any): void {
@@ -21,15 +28,19 @@ export class NotificationService {
     this._savedNotifications = [];
   }
 
-  private _saveNotification(message: string): void {
-    this._savedNotifications.push(message);
+  private _saveNotification(notification: INotification): void {
+    this._savedNotifications.push(notification);
   }
 
-  private _showNotification(message: string): void {
-    if (message === 'success') {
-      this.toastrInstance.success('Diagram successfully imported!');
-    } else {
-      this.toastrInstance.error(`Error while importing file: ${message}`);
+  private _showNotification(notification: INotification): void {
+    if (notification.type === NotificationType.SUCCESS) {
+      this.toastrInstance.success(notification.message);
+    } else if (notification.type === NotificationType.ERROR) {
+      this.toastrInstance.error(notification.message);
+    } else if (notification.type === NotificationType.INFO) {
+      this.toastrInstance.info(notification.message);
+    } else if (notification.type === NotificationType.WARNING) {
+      this.toastrInstance.warning(notification.message);
     }
   }
 
