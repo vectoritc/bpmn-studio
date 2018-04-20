@@ -106,6 +106,21 @@ export class BpmnIo {
     this.env = environment;
 
     this.initialLoadingFinished = true;
+
+    let clicked: boolean;
+    this.resizeButton.addEventListener('mousedown', () => {
+      clicked = true;
+      window.event.cancelBubble = true;
+      document.addEventListener('mousemove', (event: any) => {
+        if (clicked) {
+          this.resize(event);
+          document.getSelection().empty();
+        }
+      });
+      document.addEventListener('mouseup', (event: any) => {
+        clicked = false;
+      });
+    });
   }
 
   public detached(): void {
@@ -204,34 +219,22 @@ export class BpmnIo {
     }
   }
 
-  public resize(): void {
-    this.isResizeClicked = true;
-    document.addEventListener('mousemove', (event: any) => {
-      if (this.isResizeClicked === false) {
-        return;
-      }
+  public resize(event: any): void {
+    let currentWidth: number = document.body.clientWidth - event.clientX;
+    currentWidth = currentWidth - sideBarRightSize;
 
-      let currentWidth: number = document.body.clientWidth - event.clientX;
-      currentWidth = currentWidth - sideBarRightSize;
+    if (currentWidth < this.minWidth) {
+      currentWidth = this.minWidth;
+    } else if (currentWidth > this.maxWidth) {
+      currentWidth = this.maxWidth;
+    }
 
-      if (currentWidth < this.minWidth) {
-        currentWidth = this.minWidth;
-      } else if (currentWidth > this.maxWidth) {
-        currentWidth = this.maxWidth;
-      }
+    this.resizeButtonRight = currentWidth - resizeButtonWidth + sideBarRightSize;
+    this.canvasRight = currentWidth;
 
-      this.resizeButtonRight = currentWidth - resizeButtonWidth + sideBarRightSize;
-      this.canvasRight = currentWidth;
-
-      this.panel.style.width = `${currentWidth}px`;
-      this.resizeButton.style.right = `${this.resizeButtonRight}px`;
-      this.canvasModel.style.right = `${this.canvasRight}px`;
-    });
-
-    document.addEventListener('click', (event: any) => {
-      this.isResizeClicked = false;
-    }, {once: true});
-
+    this.panel.style.width = `${currentWidth}px`;
+    this.resizeButton.style.right = `${this.resizeButtonRight}px`;
+    this.canvasModel.style.right = `${this.canvasRight}px`;
   }
 
   public setColorRed(): void {
