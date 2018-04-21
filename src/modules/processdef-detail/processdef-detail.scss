@@ -2,8 +2,39 @@
   opacity: 0.5;
 }
 
-.bpmnio-container {
+.process-def-detail {
+  display: flex;
+  align-items: stretch;
   height: 100%;
+}
+
+.bpmnio-container {
+  flex: 1;
+  height: 100%;
+}
+
+/*
+ * PROCESS SOLUTION PANEL
+ *
+*/
+
+.process-solution-explorer {
+  background-color: #f7f7f7;
+  padding: 2px;
+  max-width: 220px;
+  padding-top: 40px;
+  border-right: 2.5px solid #dcdbdb;
+}
+
+.process-structure-item {
+  padding: 5px;
+  padding-left: 24px;
+}
+
+.panel__heading {
+  padding: 5px 10px;
+  font-weight: 400;
+  color: #a5a5a5;
 }
 
 /*

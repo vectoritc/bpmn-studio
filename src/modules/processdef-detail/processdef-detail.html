@@ -5,7 +5,7 @@
   <require from="spectrum-colorpicker/spectrum.css"></require>
   <require from="../property-panel/property-panel"></require>
   <require from="../user-login/user-login"></require>
-
+  <div class="process-def-detail">
   <!--
     MENU BAR
   -->
@@ -98,13 +98,45 @@
       <user-login></user-login>
     </div>
   </div>
+  <div class="process-solution-explorer">
+    <div class="panel__heading">Process Solution Explorer</div>
+    <div class="panel__heading">
+      <i class="fa fa-caret-down"></i> MDOS-PCI</div>
+    <div>
+      <div class="process-structure-item">WLP-GCS-Kommunikation</div>
+      <div class="process-structure-item">WLP-Event-Weiterleitung-MDOSCore</div>
+      <div class="process-structure-item">GCS-Quittierung-Weiterleitung-MDOSCore</div>
+      <div class="process-structure-item">WLP-Quittierung-Weiterleitung-MDOSCore</div>
+    </div>
+    <div class="panel__heading">
+      <i class="fa fa-caret-right"></i> MDOS-PCI-NonPCI</div>
+    <div class="panel__heading">
+      <i class="fa fa-caret-down"></i> MDOS-NonPCI</div>
+    <div>
+      <div class="process-structure-item">GCS-Quittierung-Verarbeitung</div>
+      <div class="process-structure-item">WLP-Quittierung-Verarbeitung</div>
+      <div class="process-structure-item">WLP-Event-Verarbeitung</div>
+      <div class="process-structure-item">TxnEvent-Routing</div>
+      <div class="process-structure-item">Giro-Routing</div>
+      <div class="process-structure-item">Giro-Txn-Lebenszyklus</div>
+      <div class="process-structure-item">Giro_Vorautorisierung</div>
+      <div class="process-structure-item">Giro_Autorisierung</div>
+      <div class="process-structure-item">Giro_Stornierung</div>
+      <div class="process-structure-item">Giro_Clearing</div>
+      <div class="process-structure-item">Giro_Clearing-Fehler</div>
+      <div class="process-structure-item">Giro_Clearing-Verarbeitung</div>
+      <div class="process-structure-item">Giro_SAP-Reporting</div>
+    </div>
+  </div>
+
+
 
   <div class="bpmnio-container">
     <bpmn-io view-model.ref="bpmn" xml.bind="process.xml"></bpmn-io>
   </div>
   <!--
   STATUS BAR
-  -->
+
   <div class="status-bar status-bar--system-macos">
     <div class="status-bar__left-bar">
       <a class="status-bar__element status-bar__element--config-link" href="#/configuration">
@@ -120,4 +152,6 @@
       </div>
     </div>
   </div>
+-->
+</div>
 </template>
