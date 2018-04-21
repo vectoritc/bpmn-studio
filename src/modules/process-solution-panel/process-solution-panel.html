@@ -2,7 +2,9 @@
   <require from="./process-solution-panel.css"></require>
   <div class="process-solution-explorer">
     <div class="panel__heading">Process Solution Explorer</div>
-      <div class="process-structure-item">WLP-GCS-Kommunikation</div>
+      <div repeat.for="process of processes.data" class="process-structure-item">
+          <a href="#/processdef/${process.id}/detail"><i class="fa fa-sitemap process-icon"></i>${process.name}</a>
+      </div>
     </div>
   </div>
 </template>
