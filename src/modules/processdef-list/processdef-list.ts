@@ -20,7 +20,6 @@ export class ProcessDefList {
   public pageSize: number = 10;
   public totalItems: number;
   public solutionExplorerIsShown: boolean = true;
-  public solutionPanel: HTMLElement;
 
   constructor(eventAggregator: EventAggregator, bpmnStudioClient: BpmnStudioClient, router: Router) {
     this.eventAggregator = eventAggregator;
@@ -98,10 +97,8 @@ export class ProcessDefList {
   public toggleSolutionExplorer(): void {
     if (this.solutionExplorerIsShown) {
       this.solutionExplorerIsShown = false;
-      this.solutionPanel.style.display = 'none';
     } else {
       this.solutionExplorerIsShown = true;
-      this.solutionPanel.style.display = 'flex';
     }
   }
 

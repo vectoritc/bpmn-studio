@@ -99,7 +99,7 @@
       <user-login></user-login>
     </div>
   </div>
-  <process-solution-panel ref="solutionPanel"></process-solution-panel>
+  <process-solution-panel show.bind="solutionExplorerIsShown"></process-solution-panel>
 
   <div class="bpmnio-container">
     <bpmn-io view-model.ref="bpmn" xml.bind="process.xml"></bpmn-io>

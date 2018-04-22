@@ -33,7 +33,6 @@ export class ProcessList {
   @observable public currentPage: number = 0;
   public pageSize: number = 10;
   public totalItems: number;
-  public solutionPanel: HTMLElement;
   public solutionExplorerIsShown: boolean = true;
 
   constructor(processEngineService: IProcessEngineService, eventAggregator: EventAggregator, router: Router) {
@@ -128,10 +127,8 @@ export class ProcessList {
   public toggleSolutionExplorer(): void {
     if (this.solutionExplorerIsShown) {
       this.solutionExplorerIsShown = false;
-      this.solutionPanel.style.display = 'none';
     } else {
       this.solutionExplorerIsShown = true;
-      this.solutionPanel.style.display = 'flex';
     }
   }
 

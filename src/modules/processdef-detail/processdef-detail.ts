@@ -41,11 +41,10 @@ export class ProcessDefDetail {
   private saveButton: HTMLButtonElement;
   private bpmnStudioClient: BpmnStudioClient;
   private router: Router;
-  private solutionExplorerIsShown: boolean = true;
 
   public validationController: ValidationController;
   public validationError: boolean;
-  public solutionPanel: HTMLElement;
+  public solutionExplorerIsShown: boolean = true;
 
   @bindable() public uri: string;
   @bindable() public name: string;
@@ -245,10 +244,8 @@ export class ProcessDefDetail {
   public toggleSolutionExplorer(): void {
     if (this.solutionExplorerIsShown) {
       this.solutionExplorerIsShown = false;
-      this.solutionPanel.style.display = 'none';
     } else {
       this.solutionExplorerIsShown = true;
-      this.solutionPanel.style.display = 'flex';
     }
   }
 
