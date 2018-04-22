@@ -1,14 +1,15 @@
 <template>
   <require from="./task-list.css"></require>
   <require from="../user-login/user-login"></require>
+  <require from="../process-solution-panel/process-solution-panel"></require>
 
   <div>
     <div class="menu-bar menu-bar--system-macos">
       <div class="menu-bar__menu menu-bar__menu--left">
         <div class="menu__menu-tabbed-link">
-          <a class="menu-tabbed-link" href="#">
+          <button class="menu-tabbed-link menu-bar__menu-center--action-button" click.delegate="toggleSolutionExplorer()">
             <i class="fa fa-folder"></i>
-          </a>
+          </button>
         </div>
         <div class="menu__menu-tabbed-link">
           <a class="menu-tabbed-link" href="#">Processes</a>

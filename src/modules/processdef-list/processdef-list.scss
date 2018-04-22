@@ -22,7 +22,15 @@ tr td:last-child {
   margin-top: 100px;
 }
 
-.process-def-list-container {
+.processdef-list-container {
+  flex: 1;
+  height: 100%;
   padding-top: 60px;
+}
+
+.process-def-list {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
 }
 

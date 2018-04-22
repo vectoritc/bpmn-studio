@@ -19,6 +19,8 @@ export class ProcessDefList {
   @observable public currentPage: number = 1;
   public pageSize: number = 10;
   public totalItems: number;
+  public solutionExplorerIsShown: boolean = true;
+  public solutionPanel: HTMLElement;
 
   constructor(eventAggregator: EventAggregator, bpmnStudioClient: BpmnStudioClient, router: Router) {
     this.eventAggregator = eventAggregator;
@@ -91,6 +93,16 @@ export class ProcessDefList {
 
   public showDetails(processId: string): void {
     this.router.navigate(`processdef/${processId}/detail`);
+  }
+
+  public toggleSolutionExplorer(): void {
+    if (this.solutionExplorerIsShown) {
+      this.solutionExplorerIsShown = false;
+      this.solutionPanel.style.display = 'none';
+    } else {
+      this.solutionExplorerIsShown = true;
+      this.solutionPanel.style.display = 'flex';
+    }
   }
 
 }
