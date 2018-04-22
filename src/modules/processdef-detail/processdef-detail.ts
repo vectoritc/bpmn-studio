@@ -41,9 +41,11 @@ export class ProcessDefDetail {
   private saveButton: HTMLButtonElement;
   private bpmnStudioClient: BpmnStudioClient;
   private router: Router;
+  private solutionExplorerIsShown: boolean = true;
 
   public validationController: ValidationController;
   public validationError: boolean;
+  public solutionPanel: HTMLElement;
 
   @bindable() public uri: string;
   @bindable() public name: string;
@@ -238,6 +240,16 @@ export class ProcessDefDetail {
 
   public toggleXMLView(): void {
     this.bpmn.toggleXMLView();
+  }
+
+  public toggleSolutionExplorer(): void {
+    if (this.solutionExplorerIsShown) {
+      this.solutionExplorerIsShown = false;
+      this.solutionPanel.style.display = 'none';
+    } else {
+      this.solutionExplorerIsShown = true;
+      this.solutionPanel.style.display = 'flex';
+    }
   }
 
   private disableAndHideControlsForImageExport(): void {
