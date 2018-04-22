@@ -37,6 +37,8 @@ export class TaskList {
   public currentPage: number = 0;
   public pageSize: number = 10;
   public totalItems: number;
+  public solutionExplorerIsShown: boolean = true;
+  public solutionPanel: HTMLElement;
 
   constructor(eventAggregator: EventAggregator, bpmnStudioClient: BpmnStudioClient, router: Router) {
     this.eventAggregator = eventAggregator;
@@ -107,6 +109,16 @@ export class TaskList {
     return this.userTasks.data.filter((entry: IUserTaskEntity): boolean => {
       return entry.state === 'wait';
     });
+  }
+
+  public toggleSolutionExplorer(): void {
+    if (this.solutionExplorerIsShown) {
+      this.solutionExplorerIsShown = false;
+      this.solutionPanel.style.display = 'none';
+    } else {
+      this.solutionExplorerIsShown = true;
+      this.solutionPanel.style.display = 'flex';
+    }
   }
 
   private getAllUserTasks(): Promise<IPagination<IUserTaskEntity>> {
