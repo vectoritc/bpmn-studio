@@ -22,6 +22,7 @@ export function configure(aurelia: Aurelia): void {
     environment.processengine.routes.processInstances = `${baseRoute}/datastore/Process`;
     environment.processengine.routes.startProcess = `${baseRoute}/processengine/start`;
     environment.processengine.routes.userTasks =  `${baseRoute}/datastore/UserTask`;
+    environment.processengine.routes.importBPMN =  `${baseRoute}/processengine/create_bpmn_from_xml`;
   }
 
   aurelia.use
