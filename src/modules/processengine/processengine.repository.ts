@@ -76,8 +76,6 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
   }
 
   public async createProcessfromXML(xml: string): Promise<any> {
-    let result: any;
-
     const options: RequestInit = {
       method: 'post',
       headers: new Headers({
@@ -88,15 +86,10 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
       }),
     };
 
-    try {
-      const url: string = environment.processengine.routes.importBPMN;
-      const response: Response = await this.http.fetch(url, options);
-      result = await throwOnErrorResponse<IErrorResponse>(response);
-    } catch (error) {
-      throw error;
-    }
+    const url: string = environment.processengine.routes.importBPMN;
+    const response: Response = await this.http.fetch(url, options);
 
-    return result;
+    return throwOnErrorResponse<IErrorResponse>(response);
   }
 
   public async updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<any> {
