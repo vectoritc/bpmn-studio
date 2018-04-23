@@ -2,7 +2,7 @@ import {INotification, NotificationType} from '../../contracts/index';
 
 export class NotificationService {
 
-  private toastrInstance: any;
+  private _toastrInstance: Toastr;
   private _savedNotifications: Array<INotification> = [];
 
   public showNotification(type: NotificationType, message: string): void {
@@ -11,7 +11,7 @@ export class NotificationService {
       message: message,
     };
 
-    if (this.toastrInstance === undefined) {
+    if (this._toastrInstance === undefined) {
       this._saveNotification(notification);
       return;
     }
@@ -19,8 +19,8 @@ export class NotificationService {
     this._showNotification(notification);
   }
 
-  public setToastrInstance(toastr: any): void {
-    this.toastrInstance = toastr;
+  public setToastrInstance(toastr: Toastr): void {
+    this._toastrInstance = toastr;
     this._initializeToastr();
     for (const notification of this._savedNotifications) {
       this._showNotification(notification);
@@ -33,18 +33,25 @@ export class NotificationService {
   }
 
   private _showNotification(notification: INotification): void {
-    if (notification.type === NotificationType.SUCCESS) {
-      this.toastrInstance.success(notification.message);
-    } else if (notification.type === NotificationType.ERROR) {
-      this.toastrInstance.error(notification.message);
-    } else if (notification.type === NotificationType.INFO) {
-      this.toastrInstance.info(notification.message);
-    } else if (notification.type === NotificationType.WARNING) {
-      this.toastrInstance.warning(notification.message);
+    switch (notification.type) {
+      case NotificationType.SUCCESS:
+        this._toastrInstance.success(notification.message);
+        break;
+      case NotificationType.ERROR:
+        this._toastrInstance.error(notification.message);
+        break;
+      case NotificationType.INFO:
+        this._toastrInstance.info(notification.message);
+        break;
+      case NotificationType.WARNING:
+        this._toastrInstance.warning(notification.message);
+        break;
+      default:
+        break;
     }
   }
 
   private _initializeToastr(): void {
-    this.toastrInstance.options.preventDuplicates = true;
+    this._toastrInstance.options.preventDuplicates = true;
   }
 }

@@ -7,7 +7,7 @@ import {NotificationService} from './../notification/notification.service';
 export class ProcessEngineService implements IProcessEngineService {
 
   private repository: IProcessEngineRepository;
-  private fileInfo: IFileInfo = undefined;
+  private fileInfo: IFileInfo;
   private notificationService: NotificationService;
 
   constructor(repository: IProcessEngineRepository, fileInfo: IFileInfo, notificationService: NotificationService) {

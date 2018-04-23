@@ -37,7 +37,9 @@
       "target": "nsis",
       "fileAssociations": [
         {
-          "ext": ["bpmn"],
+          "ext": [
+            "bpmn"
+          ],
           "name": "BPMN",
           "description": "BPMN diagram extension"
         }
@@ -47,7 +49,9 @@
       "target": "dmg",
       "fileAssociations": [
         {
-          "ext": ["bpmn"],
+          "ext": [
+            "bpmn"
+          ],
           "name": "BPMN"
         }
       ]
@@ -91,6 +95,7 @@
     "@types/jasmine": "^2.2.0",
     "@types/node": "^6.0.45",
     "@types/spectrum": "^1.5.29",
+    "@types/toastr": "^2.1.35",
     "addict-ioc": "^2.3.4",
     "aurelia-animator-css": "^1.0.2",
     "aurelia-bootstrap": "^0.1.20",
