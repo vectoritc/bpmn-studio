@@ -1,4 +1,5 @@
 import {Aurelia} from 'aurelia-framework';
+import {IFileInfo} from './contracts/processengine/index';
 import environment from './environment';
 import {TokenRepository} from './modules/token-repository/token.repository';
 
@@ -10,6 +11,8 @@ export function configure(aurelia: Aurelia): void {
   if ((<any> window).nodeRequire) {
     const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
     const newHost: string = ipcRenderer.sendSync('get_host');
+    const fileInfo: IFileInfo = ipcRenderer.sendSync('get_opened_file');
+    aurelia.container.registerInstance('FileContent', fileInfo);
     localStorage.setItem('baseRoute', `http://${newHost}`);
   }
 
@@ -22,12 +25,14 @@ export function configure(aurelia: Aurelia): void {
     environment.processengine.routes.processInstances = `${baseRoute}/datastore/Process`;
     environment.processengine.routes.startProcess = `${baseRoute}/processengine/start`;
     environment.processengine.routes.userTasks =  `${baseRoute}/datastore/UserTask`;
+    environment.processengine.routes.importBPMN = `${baseRoute}/processengine/create_bpmn_from_xml`;
   }
 
   aurelia.use
     .standardConfiguration()
     .feature('modules/dynamic-ui')
     .feature('modules/processengine')
+    .feature('modules/notification')
     .feature('modules/authentication')
     .feature('modules/bpmn-studio_client', tokenRepository)
     .feature('resources')

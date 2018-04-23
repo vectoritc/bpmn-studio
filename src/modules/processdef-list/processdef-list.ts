@@ -1,31 +1,58 @@
 import {BpmnStudioClient, IPagination, IProcessDefEntity, IUserTaskConfig} from '@process-engine/bpmn-studio_client';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {inject, observable} from 'aurelia-framework';
+import {bindable, inject, observable} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import {AuthenticationStateEvent} from '../../contracts/index';
+import {AuthenticationStateEvent, IProcessEngineService, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
+import {NotificationService} from '../notification/notification.service';
 
-@inject(EventAggregator, 'BpmnStudioClient', Router)
+@inject(EventAggregator, 'BpmnStudioClient', Router, 'ProcessEngineService', 'NotificationService')
 export class ProcessDefList {
+  private processEngineService: IProcessEngineService;
   private bpmnStudioClient: BpmnStudioClient;
   private eventAggregator: EventAggregator;
   private router: Router;
+  private notificationService: NotificationService;
 
   private offset: number;
   private _processes: IPagination<IProcessDefEntity>;
   private getProcessesIntervalId: number;
   private subscriptions: Array<Subscription>;
 
+  @bindable()
+  public selectedFiles: FileList;
+  public fileInput: HTMLInputElement;
+  private reader: FileReader = new FileReader();
+
   @observable public currentPage: number = 1;
   public pageSize: number = 10;
   public totalItems: number;
 
-  constructor(eventAggregator: EventAggregator, bpmnStudioClient: BpmnStudioClient, router: Router) {
+  constructor(eventAggregator: EventAggregator, bpmnStudioClient: BpmnStudioClient, router: Router, processEngineService: IProcessEngineService,
+              notificationService: NotificationService) {
+    this.processEngineService = processEngineService;
     this.eventAggregator = eventAggregator;
     this.bpmnStudioClient = bpmnStudioClient;
     this.router = router;
+    this.notificationService = notificationService;
 
     this.refreshProcesslist();
+    this.reader.onload = async(fileInformations: any): Promise<void> => {
+      try {
+        const xml: string = fileInformations.target.result;
+        const response: any = await this.processEngineService.createProcessfromXML(xml);
+        this.refreshProcesslist();
+        this.notificationService.showNotification(NotificationType.SUCCESS, 'Diagram successfully imported!');
+      } catch (error) {
+        this.notificationService.showNotification(NotificationType.ERROR, `Error while importing file: ${error.message}`);
+      }
+    };
+  }
+
+  public selectedFilesChanged(): void {
+    if (this.selectedFiles !== undefined && this.selectedFiles.length > 0) {
+      this.reader.readAsText(this.selectedFiles[0]);
+    }
   }
 
   public currentPageChanged(newValue: number, oldValue: number): void {

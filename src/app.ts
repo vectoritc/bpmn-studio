@@ -4,6 +4,7 @@ import * as toastr from 'toastr';
 import environment from './environment';
 import {NotificationService} from './modules/notification/notification.service';
 
+@inject('NotificationService')
 export class App {
 
   public router: Router;
