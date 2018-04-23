@@ -139,7 +139,7 @@ pipeline {
                 }
               }
 
-              def raw_package_name = sh(script: 'node --print --eval "require(\'./package.json\').name"', returnStdout: true)
+              def raw_package_name = sh(script: 'node --print --eval "require(\'./package.json\').name"', returnStdout: true).trim();
               def current_published_version = sh(script: "npm show ${raw_package_name} version", returnStdout: true).trim();
               def version_has_changed = current_published_version != raw_package_version;
 
@@ -185,7 +185,17 @@ pipeline {
           withCredentials([
             string(credentialsId: 'process-engine-ci_token', variable: 'RELEASE_GH_TOKEN')
           ]) {
-            sh("node .ci-tools/publish-github-release.js ${package_version} ${env.GIT_COMMIT} false ${!branch_is_master}")
+            script {
+              def full_release_version_string;
+              
+              if (branch_is_master) {
+                full_release_version_string = "${package_version}";
+              } else {
+                full_release_version_string = "${package_version}-pre-b${env.BUILD_NUMBER}";
+              }
+
+              sh("node .ci-tools/publish-github-release.js ${full_release_version_string} ${package_version} ${branch} false ${!branch_is_master}");
+            }
           }
         }
       }
