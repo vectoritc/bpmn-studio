@@ -1,14 +1,16 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
-import {bindable} from 'aurelia-framework';
-import * as toastr from 'toastr';
-import {IChooseDialogOption} from '../../contracts';
+import {bindable, inject} from 'aurelia-framework';
+import {IChooseDialogOption, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
+import {NotificationService} from './../notification/notification.service';
 
+@inject('NotificationService')
 export class ImportProcessButton {
 
   private reader: FileReader = new FileReader();
   private model: any;
+  private notificationService: NotificationService;
 
   @bindable()
   private desiredProcessImportKey: string;
@@ -22,7 +24,8 @@ export class ImportProcessButton {
   private processes: Array<any>;
   private fileInput: HTMLInputElement;
 
-  constructor() {
+  constructor(notificationService: NotificationService) {
+    this.notificationService = notificationService;
     this.model = new bundle.moddle({
       camunda: bundle.camundaModdleDescriptor,
     });
@@ -44,19 +47,19 @@ export class ImportProcessButton {
     reader.fromXML(xml, rootHandler, (err: Error, bpmn: any, context: any) => {
 
       if (err) {
-        toastr.error(`File could not be imported: ${err}`);
+        this.notificationService.showNotification(NotificationType.ERROR, `File could not be imported: ${err}`);
         return;
       }
 
       if (context.warnings.length) {
-        toastr.warning(`Warnings during import: ${JSON.stringify(context.warnings)}.`);
+        this.notificationService.showNotification(NotificationType.WARNING, `Warnings during import: ${JSON.stringify(context.warnings)}.`);
       }
 
       this.currentImportModdle = bpmn;
       this.processes = this.getDefinedProcessesInModdle();
 
       if (this.processes.length === 0) {
-        toastr.warning('Could not find any processes in the diagram.');
+        this.notificationService.showNotification(NotificationType.WARNING, 'Could not find any processes in the diagram.');
         this.abortImport();
       } else if (this.processes.length === 1) {
         this.onProcessModdleSelected(this.processes[0]);
