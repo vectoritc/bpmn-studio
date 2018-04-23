@@ -1,11 +1,20 @@
+import {inject} from 'aurelia-framework';
 import {Router, RouterConfiguration} from 'aurelia-router';
 import * as toastr from 'toastr';
 import environment from './environment';
+import {NotificationService} from './modules/notification/notification.service';
 
+@inject('NotificationService')
 export class App {
 
   public router: Router;
   public environment: any = environment;
+  public notificationService: NotificationService;
+
+  constructor(notificationService: NotificationService) {
+    this.notificationService = notificationService;
+    this.notificationService.setToastrInstance(toastr);
+  }
 
   public configureRouter(config: RouterConfiguration, router: Router): void {
     this.router = router;
@@ -63,7 +72,5 @@ export class App {
         moduleId: 'modules/waiting-room/waiting-room',
       },
     ]);
-
-    toastr.options.preventDuplicates = true;
   }
 }

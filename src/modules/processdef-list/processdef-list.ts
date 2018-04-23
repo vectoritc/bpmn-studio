@@ -2,16 +2,17 @@ import {BpmnStudioClient, IPagination, IProcessDefEntity, IUserTaskConfig} from 
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import * as toastr from 'toastr';
-import {AuthenticationStateEvent, IProcessEngineService} from '../../contracts/index';
+import {AuthenticationStateEvent, IProcessEngineService, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
+import {NotificationService} from '../notification/notification.service';
 
-@inject(EventAggregator, 'BpmnStudioClient', Router, 'ProcessEngineService')
+@inject(EventAggregator, 'BpmnStudioClient', Router, 'ProcessEngineService', 'NotificationService')
 export class ProcessDefList {
   private processEngineService: IProcessEngineService;
   private bpmnStudioClient: BpmnStudioClient;
   private eventAggregator: EventAggregator;
   private router: Router;
+  private notificationService: NotificationService;
 
   private offset: number;
   private _processes: IPagination<IProcessDefEntity>;
@@ -27,11 +28,13 @@ export class ProcessDefList {
   public pageSize: number = 10;
   public totalItems: number;
 
-  constructor(eventAggregator: EventAggregator, bpmnStudioClient: BpmnStudioClient, router: Router, processEngineService: IProcessEngineService) {
+  constructor(eventAggregator: EventAggregator, bpmnStudioClient: BpmnStudioClient, router: Router, processEngineService: IProcessEngineService,
+              notificationService: NotificationService) {
     this.processEngineService = processEngineService;
     this.eventAggregator = eventAggregator;
     this.bpmnStudioClient = bpmnStudioClient;
     this.router = router;
+    this.notificationService = notificationService;
 
     this.refreshProcesslist();
     this.reader.onload = async(fileInformations: any): Promise<void> => {
@@ -39,9 +42,9 @@ export class ProcessDefList {
         const xml: string = fileInformations.target.result;
         const response: any = await this.processEngineService.createProcessfromXML(xml);
         this.refreshProcesslist();
-        toastr.success('Diagram successfully imported!');
+        this.notificationService.showNotification(NotificationType.SUCCESS, 'Diagram successfully imported!');
       } catch (error) {
-        toastr.error(`Error while importing file: ${error.message}`);
+        this.notificationService.showNotification(NotificationType.ERROR, `Error while importing file: ${error.message}`);
       }
     };
   }

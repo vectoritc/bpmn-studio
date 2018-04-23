@@ -5,3 +5,4 @@ export * from './choose-dialog/index';
 export * from './authentication/index';
 export * from './eventbus/index';
 export * from './propertypanel/index';
+export * from './notification/index';
