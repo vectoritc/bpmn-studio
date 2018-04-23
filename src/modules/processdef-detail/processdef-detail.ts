@@ -10,17 +10,20 @@ import * as download from 'downloadjs';
 import * as $ from 'jquery';
 import * as spectrum from 'spectrum-colorpicker';
 import 'spectrum-colorpicker/spectrum';
-import * as toastr from 'toastr';
 import * as beautify from 'xml-beautifier';
-import {AuthenticationStateEvent,
-        ElementDistributeOptions,
-        IExtensionElement,
-        IFormElement,
-        IModdleElement,
-        IProcessEngineService,
-        IShape} from '../../contracts/index';
+import {
+  AuthenticationStateEvent,
+  ElementDistributeOptions,
+  IExtensionElement,
+  IFormElement,
+  IModdleElement,
+  IProcessEngineService,
+  IShape,
+  NotificationType,
+} from '../../contracts/index';
 import environment from '../../environment';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
+import {NotificationService} from './../notification/notification.service';
 
 interface RouteParameters {
   processDefId: string;
@@ -41,10 +44,11 @@ interface BpmnStudioColorPickerSettings {
   move?(color: spectrum.tinycolorInstance): void;
 }
 
-@inject('ProcessEngineService', EventAggregator, 'BpmnStudioClient', Router, ValidationController)
+@inject('ProcessEngineService', EventAggregator, 'BpmnStudioClient', Router, ValidationController, 'NotificationService')
 export class ProcessDefDetail {
 
   private processEngineService: IProcessEngineService;
+  private notificationService: NotificationService;
   private eventAggregator: EventAggregator;
   private subscriptions: Array<Subscription>;
   private processId: string;
@@ -76,12 +80,14 @@ export class ProcessDefDetail {
               eventAggregator: EventAggregator,
               bpmnStudioClient: BpmnStudioClient,
               router: Router,
-              validationController: ValidationController) {
+              validationController: ValidationController,
+              notificationService: NotificationService) {
     this.processEngineService = processEngineService;
     this.eventAggregator = eventAggregator;
     this.bpmnStudioClient = bpmnStudioClient;
     this.router = router;
     this.validationController = validationController;
+    this.notificationService = notificationService;
   }
 
   public activate(routeParameters: RouteParameters): void {
@@ -183,7 +189,7 @@ export class ProcessDefDetail {
         this.router.navigate('');
       })
       .catch((error: Error) => {
-        toastr.error(error.message);
+        this.notificationService.showNotification(NotificationType.ERROR, error.message);
       });
   }
 
@@ -205,14 +211,14 @@ export class ProcessDefDetail {
       const response: any = await this.processEngineService.updateProcessDef(this.process, xml);
 
       if (response.error) {
-        toastr.error(`Error while saving file: ${response.error}`);
+        this.notificationService.showNotification(NotificationType.ERROR, `Error while saving file: ${response.error}`);
       } else if (response.result) {
-        toastr.success('File saved.');
+        this.notificationService.showNotification(NotificationType.SUCCESS, 'File saved.');
       } else {
-        toastr.warning(`Unknown error: ${JSON.stringify(response)}`);
+        this.notificationService.showNotification(NotificationType.WARNING, `Unknown error: ${JSON.stringify(response)}`);
       }
     } catch (error) {
-      toastr.error(`Error: ${error.message}`);
+      this.notificationService.showNotification(NotificationType.ERROR, `Error: ${error.message}`);
     }
   }
 
