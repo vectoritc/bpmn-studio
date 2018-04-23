@@ -1,19 +1,21 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
-import {bindable, observable} from 'aurelia-framework';
+import { bindable, inject, observable } from 'aurelia-framework';
 import { setTimeout } from 'timers';
-import * as toastr from 'toastr';
 import {ElementDistributeOptions,
         IBpmnFunction,
         IBpmnModeler,
         IDefinition,
         IModdleElement,
         IModeling,
-        IShape} from '../../contracts/index';
+        IShape,
+        NotificationType} from '../../contracts/index';
 import environment from '../../environment';
+import {NotificationService} from './../notification/notification.service';
 
 const toggleButtonWidth: number = 13;
 const resizeButtonWidth: number = 19;
 
+@inject('NotificationService')
 export class BpmnIo {
 
   private toggled: boolean = false;
@@ -34,9 +36,14 @@ export class BpmnIo {
   private minimapToggle: any;
   private expandIcon: HTMLElement;
   private hideMinimap: HTMLElement;
+  private notificationService: NotificationService;
 
   @bindable({changeHandler: 'xmlChanged'}) public xml: string;
   public modeler: IBpmnModeler;
+
+  constructor(notificationService: NotificationService) {
+    this.notificationService = notificationService;
+  }
 
   public created(): void {
     this.modeler = new bundle.modeler({
@@ -148,7 +155,7 @@ export class BpmnIo {
     const selectedElements: Array<IShape> = this.getSelectedElements();
 
     if (selectedElements.length < 1 || selectedElements.length === 1 && selectedElements[0].$type === 'bpmn:Collaboration') {
-      toastr.error(`Error while changing the color: No valid element was selected.`);
+      this.notificationService.showNotification(NotificationType.ERROR, 'Error while changing the color: No valid element was selected.');
       return;
     }
 
