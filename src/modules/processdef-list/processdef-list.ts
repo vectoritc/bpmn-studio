@@ -122,11 +122,7 @@ export class ProcessDefList {
   }
 
   public toggleSolutionExplorer(): void {
-    if (this.solutionExplorerIsShown) {
-      this.solutionExplorerIsShown = false;
-    } else {
-      this.solutionExplorerIsShown = true;
-    }
+    this.solutionExplorerIsShown = !this.solutionExplorerIsShown;
   }
 
 }

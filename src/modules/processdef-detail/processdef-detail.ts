@@ -249,11 +249,7 @@ export class ProcessDefDetail {
   }
 
   public toggleSolutionExplorer(): void {
-    if (this.solutionExplorerIsShown) {
-      this.solutionExplorerIsShown = false;
-    } else {
-      this.solutionExplorerIsShown = true;
-    }
+    this.solutionExplorerIsShown = !this.solutionExplorerIsShown;
   }
 
   private disableAndHideControlsForImageExport(): void {

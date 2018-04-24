@@ -101,7 +101,7 @@ export class BpmnIo {
     window.addEventListener('resize', this.resizeEventHandler);
 
     const camundaIcon: any = this.canvasModel.getElementsByClassName('bjs-powered-by')[0];
-    camundaIcon.style = 'display: none';
+    camundaIcon.classList.add('camunda-icon-placement');
 
     this.env = environment;
 
@@ -336,7 +336,7 @@ export class BpmnIo {
     if (fillColor) {
       this.fillColor = fillColor.toHexString();
     } else {
-      this.fillColor = null;
+      this.fillColor = undefined;
     }
 
     this.setColorPicked();
@@ -346,7 +346,7 @@ export class BpmnIo {
     if (borderColor) {
       this.borderColor = borderColor.toHexString();
     } else {
-      this.borderColor = null;
+      this.borderColor = undefined;
     }
 
     this.setColorPicked();

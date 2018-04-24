@@ -111,11 +111,7 @@ export class TaskList {
   }
 
   public toggleSolutionExplorer(): void {
-    if (this.solutionExplorerIsShown) {
-      this.solutionExplorerIsShown = false;
-    } else {
-      this.solutionExplorerIsShown = true;
-    }
+    this.solutionExplorerIsShown = !this.solutionExplorerIsShown;
   }
 
   private getAllUserTasks(): Promise<IPagination<IUserTaskEntity>> {

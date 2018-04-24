@@ -125,11 +125,7 @@ export class ProcessList {
   }
 
   public toggleSolutionExplorer(): void {
-    if (this.solutionExplorerIsShown) {
-      this.solutionExplorerIsShown = false;
-    } else {
-      this.solutionExplorerIsShown = true;
-    }
+    this.solutionExplorerIsShown = !this.solutionExplorerIsShown;
   }
 
   private async getAllProcesses(): Promise<IPagination<IProcessEntity>> {
