@@ -107,19 +107,21 @@ export class BpmnIo {
 
     this.initialLoadingFinished = true;
 
-    let clicked: boolean;
     this.resizeButton.addEventListener('mousedown', () => {
-      clicked = true;
       window.event.cancelBubble = true;
-      document.addEventListener('mousemove', (event: any) => {
-        if (clicked) {
-          this.resize(event);
-          document.getSelection().empty();
-        }
-      });
-      document.addEventListener('mouseup', (event: any) => {
-        clicked = false;
-      });
+
+      const mousemoveFunction: EventListenerOrEventListenerObject =  (event: Event): void => {
+        this.resize(event);
+        document.getSelection().empty();
+      };
+
+      const mouseUpFunction: EventListenerOrEventListenerObject =  (event: Event): void => {
+        document.removeEventListener('mousemove', mousemoveFunction);
+        document.removeEventListener('mouseup', mouseUpFunction);
+      };
+
+      document.addEventListener('mousemove', mousemoveFunction);
+      document.addEventListener('mouseup', mouseUpFunction);
     });
   }
 
@@ -223,11 +225,8 @@ export class BpmnIo {
     let currentWidth: number = document.body.clientWidth - event.clientX;
     currentWidth = currentWidth - sideBarRightSize;
 
-    if (currentWidth < this.minWidth) {
-      currentWidth = this.minWidth;
-    } else if (currentWidth > this.maxWidth) {
-      currentWidth = this.maxWidth;
-    }
+    currentWidth = Math.max(currentWidth, this.minWidth);
+    currentWidth = Math.min(currentWidth, this.maxWidth);
 
     this.resizeButtonRight = currentWidth - resizeButtonWidth + sideBarRightSize;
     this.canvasRight = currentWidth;
