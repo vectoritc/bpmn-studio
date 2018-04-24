@@ -1,3 +1,4 @@
+import {Toastr} from 'toastr';
 import {INotification, NotificationType} from '../../contracts/index';
 
 export class NotificationService {
