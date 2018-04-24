@@ -16,6 +16,7 @@ export default {
       messageBus: `${baseRoute}/mb`,
       iam: `${baseRoute}/iam`,
       userTasks: `${baseRoute}/datastore/UserTask`,
+      importBPMN: `${baseRoute}/processengine/create_bpmn_from_xml`,
     },
   },
   events: {

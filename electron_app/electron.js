@@ -5,6 +5,8 @@ const app = electron.app;
 const notifier = require('electron-notifications');
 const isDev = require('electron-is-dev');
 const getPort = require('get-port');
+const fs = require('fs');
+const prereleaseRegex = /\d+\.\d+\.\d+-pre-b\d+/;
 
 if (!isDev) {
   const userDataFolder = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : '/var/local');
@@ -49,6 +51,13 @@ getPort({port: 8000, host: '0.0.0.0'})
     mainWindow.webContents.toggleDevTools();
 
     autoUpdater.checkForUpdates();
+
+    const currentVersion = electron.app.getVersion();
+    const currentVersionIsPrerelease = prereleaseRegex.test(currentVersion);
+
+    autoUpdater.allowPrerelease = currentVersionIsPrerelease;
+
+    console.log(`CurrentVersion: ${currentVersion}, CurrentVersionIsPrerelease: ${currentVersionIsPrerelease}`);
 
     autoUpdater.addListener('error', (error) => {
       const notification = notifier.notify('Update error', {
@@ -117,11 +126,41 @@ getPort({port: 8000, host: '0.0.0.0'})
     electron.Menu.setApplicationMenu(electron.Menu.buildFromTemplate(template));
   }
 
+  let filePath;
+
   app.on('ready', createWindow);
   app.on('activate', createWindow);
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
       app.quit();
     }
+    filePath = undefined;
+  });
+
+  app.on('will-finish-launching', () => {
+    // for windows
+    if (process.platform == 'win32' && process.argv.length >= 2) {
+      filePath = process.argv[1];
+    }
+    
+    // for non-windows
+    app.on('open-file', (event, path) => {
+      filePath = path;
+    });
+  });
+
+  electron.ipcMain.on('get_opened_file', (event) => {
+    if (filePath === undefined) {
+      event.returnValue = {};
+      return;
+    }
+
+    event.returnValue = {
+      path: filePath,
+      content: fs.readFileSync(filePath, 'utf8'),
+    }
+    filePath = undefined;
+    app.focus();
+
   });
 });

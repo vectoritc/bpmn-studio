@@ -2,22 +2,31 @@ import {IQueryClause} from '@essential-projects/core_contracts';
 import {IProcessDefEntity, IUserTaskEntity} from '@process-engine/process_engine_contracts';
 import {HttpClient, Interceptor} from 'aurelia-fetch-client';
 import {inject} from 'aurelia-framework';
-import {IAuthenticationService, IIdentity, IPagination, IProcessEngineRepository, IProcessEntity} from '../../contracts';
+import {Router} from 'aurelia-router';
+import {
+  IAuthenticationService,
+  IErrorResponse, IIdentity,
+  IPagination,
+  IProcessEngineRepository,
+  IProcessEntity,
+} from '../../contracts';
 import environment from '../../environment';
 import {throwOnErrorResponse} from '../../resources/http-repository-tools';
 
-@inject(HttpClient, 'AuthenticationService')
+@inject(HttpClient, 'AuthenticationService', Router)
 export class ProcessEngineRepository implements IProcessEngineRepository {
 
   private http: HttpClient;
   private authenticationService: IAuthenticationService;
+  private router: Router;
 
-  constructor(http: HttpClient, authenticationService: IAuthenticationService) {
+  constructor(http: HttpClient, authenticationService: IAuthenticationService, router: Router) {
     this.http = http;
     this.authenticationService = authenticationService;
     if (http.defaults === null || http.defaults === undefined) {
       http.defaults = {};
     }
+    this.router = router;
     this.http = http.configure((config: any): void => {
       config.withInterceptor({
         request(request: Request): Request {
@@ -67,6 +76,31 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
     const response: Response = await this.http.fetch(url, options);
 
     return throwOnErrorResponse<any>(response);
+  }
+
+  public async createProcessfromXML(xml: string): Promise<any> {
+    const options: RequestInit = {
+      method: 'post',
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+      body: JSON.stringify({
+        xml: xml,
+      }),
+    };
+
+    const url: string = environment.processengine.routes.importBPMN;
+    const response: Response = await this.http.fetch(url, options);
+    const responseBody: IProcessDefEntity | any = await response.json();
+    if (responseBody.error === undefined) {
+      this.navigateToProcessDefDetail(responseBody.id);
+    }
+
+    return throwOnErrorResponse<IErrorResponse>(responseBody);
+  }
+
+  private navigateToProcessDefDetail(processDefId: string): void {
+    this.router.navigate(`processdef/${processDefId}/detail`);
   }
 
   public async updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<any> {
