@@ -117,9 +117,14 @@
     </div>
     <div class="status-bar__center-bar"></div>
     <div class="status-bar__right-bar">
-      <div class="status-bar__element">
+      <div class="status-bar__element" if.bind="!xmlIsShown">
         <button class="status-bar__show-xml-button" click.delegate="toggleXMLView()">
           <i class="fa fa-file-code-o"></i> Show XML
+        </button>
+      </div>
+      <div class="status-bar__element" if.bind="xmlIsShown">
+        <button class="status-bar__show-xml-button" click.delegate="toggleXMLView()">
+          <i class="fa fa-file-code-o"></i> Show Diagramm
         </button>
       </div>
     </div>

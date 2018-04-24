@@ -45,6 +45,7 @@ export class ProcessDefDetail {
   public validationController: ValidationController;
   public validationError: boolean;
   public solutionExplorerIsShown: boolean = false;
+  public xmlIsShown: boolean = false;
 
   @bindable() public uri: string;
   @bindable() public name: string;
@@ -238,6 +239,12 @@ export class ProcessDefDetail {
   }
 
   public toggleXMLView(): void {
+    if (this.xmlIsShown) {
+      this.xmlIsShown = false;
+    } else {
+      this.xmlIsShown = true;
+    }
+
     this.bpmn.toggleXMLView();
   }
 
