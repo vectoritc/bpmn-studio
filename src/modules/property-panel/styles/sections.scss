@@ -66,13 +66,14 @@
 }
 
 .remove-context-button:disabled {
-  background-color: rgb(248, 175, 175);
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .remove-context-button {
   color: black;
   float: right;
   margin-left: 5px;
-  background-color: red;
   border-radius: 2px;
+  opacity: 1;
 }

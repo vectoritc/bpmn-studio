@@ -20,7 +20,9 @@
   <div class="panel panel--grow">
     <div class="panel__heading">
       Form Fields
-      <button class="remove-context-button" disabled.bind="!isFormSelected" click.delegate="removeSelectedForm()">x</button>
+      <button class="remove-context-button" disabled.bind="!isFormSelected" click.delegate="removeSelectedForm()">
+        <span class="fa fa-trash"></span>
+      </button>
       <button class="add-context-button" click.delegate="addForm()">+</button>
     </div>
       <div class="panel__content">
@@ -100,65 +102,5 @@
           </td>
         </tr>
     </div>
-  </div>
-
-
-
-
-
-
-      <!--<div show.bind="isFormSelected">
-        <h4><label class="header-label">Form Field</label></h4>
-        <div class="section__btn-group">
-          <label class="section__input-label">ID: </label>
-          <input type="text" class="form-control" id="formId" value.bind="selectedForm.id & validateOnChange" placeholder="ID" change.delegate="updateId()">
-          <span class="glyphicon glyphicon-remove-circle section__btn-group--clear-btn" click.delegate="clearId()"></span>
-        </div>
-        <div class="type-input">
-          <label class="section__input-label">Type: </label>
-          <select class="form-control" value.bind="selectedType" change.delegate="updateType()">
-            <option model.bind="null">-Choose Type-</option>
-            <option repeat.for="type of types" model.bind="type">${type}</option>
-          </select>
-        </div>
-        <div if.bind="selectedType === types[5]">
-          <div class="section__btn-group">
-            <label class="section__input-label">Custom Type: </label>
-            <input type="text" class="form-control" value.bind="customType" placeholder="Custom Type" change.delegate="updateType()">
-            <span class="glyphicon glyphicon-remove-circle section__btn-group--clear-btn" click.delegate="clearType()"></span>
-          </div>
-        </div>
-        <div class="section__btn-group">
-          <label class="section__input-label">Label: </label>
-          <input type="text" class="form-control" value.bind="selectedForm.label"  placeholder="Label" change.delegate="updateLabel()">
-          <span class="glyphicon glyphicon-remove-circle section__btn-group--clear-btn" click.delegate="clearLabel()"></span>
-        </div>
-        <div class="section__btn-group">
-          <label class="section__input-label">Default Value: </label>
-          <input type="text" class="form-control" value.bind="selectedForm.defaultValue"  placeholder="Default Value" change.delegate="updateDefaultValue()">
-          <span class="glyphicon glyphicon-remove-circle section__btn-group--clear-btn" click.delegate="clearValue()"></span>
-        </div>
-      </div>
-    </div>
-    <div class="section__special">
-      <div class="section__special--form-id" show.bind="isFormSelected">
-        <div class="id-tooltip-error" if.bind="validationError">
-          <div class="tooltip">
-            <span class="glyphicon glyphicon-remove"></span>
-            <span class="tooltiptext">
-              <div repeat.for="error of validationController.errors">
-                ${error}
-              </div>
-            </span>
-          </div>
-        </div>
-        <div class="id-tooltip-ok" if.bind="!validationError">
-          <div class="tooltip">
-            <span class="glyphicon glyphicon-ok"></span>
-            <span class="tooltiptext">This Id is fine!</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>-->
+  </div>YW
 </template>
