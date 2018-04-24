@@ -69,7 +69,6 @@ async function create_release() {
     tag_name: version_tag,
     target_commitish: target_commit,
     name: version_to_release,
-    body: 'WIP',
     draft: release_is_draft,
     prerelease: release_is_prerelease,
   });
