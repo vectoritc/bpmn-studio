@@ -27,7 +27,7 @@ export class ProcessDefList {
   @observable public currentPage: number = 1;
   public pageSize: number = 10;
   public totalItems: number;
-  public solutionExplorerIsShown: boolean = true;
+  public solutionExplorerIsShown: boolean = false;
 
   constructor(eventAggregator: EventAggregator, bpmnStudioClient: BpmnStudioClient, router: Router, processEngineService: IProcessEngineService,
               notificationService: NotificationService) {

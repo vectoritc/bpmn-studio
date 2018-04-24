@@ -35,10 +35,10 @@ getPort({port: 8000, host: '0.0.0.0'})
     }
 
     mainWindow = new electron.BrowserWindow({
-      width: 1000,
+      width: 1300,
       height: 800,
       title: "BPMN-Studio",
-      minWidth: 1000,
+      minWidth: 1300,
       minHeight: 800,
       icon: path.join(__dirname, '../build/icon.png'),  // only for windows and linux
     });
@@ -47,8 +47,6 @@ getPort({port: 8000, host: '0.0.0.0'})
     mainWindow.on('closed', () => {
       mainWindow = null;
     });
-
-    mainWindow.webContents.toggleDevTools();
 
     autoUpdater.checkForUpdates();
 
@@ -142,7 +140,7 @@ getPort({port: 8000, host: '0.0.0.0'})
     if (process.platform == 'win32' && process.argv.length >= 2) {
       filePath = process.argv[1];
     }
-    
+
     // for non-windows
     app.on('open-file', (event, path) => {
       filePath = path;

@@ -51,7 +51,7 @@
     <process-solution-panel show.bind="solutionExplorerIsShown"></process-solution-panel>
 
     <div class="processdef-list-container">
-      <div show.bind="_processes" class="container">
+      <div show.bind="_processes">
         <a class="btn btn-success create-process" click.delegate="createProcess()">Create Process Definition</a>
         <a class="btn btn-primary import-bpmn" click.delegate="fileInput.click()">
           <i class="glyphicon glyphicon-import"></i> Import XML

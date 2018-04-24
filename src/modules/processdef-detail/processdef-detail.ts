@@ -44,7 +44,7 @@ export class ProcessDefDetail {
 
   public validationController: ValidationController;
   public validationError: boolean;
-  public solutionExplorerIsShown: boolean = false;
+  public solutionExplorerIsShown: boolean = true;
   public xmlIsShown: boolean = false;
 
   @bindable() public uri: string;
