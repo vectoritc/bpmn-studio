@@ -51,10 +51,10 @@
     <div class="window-layout__main js-main">
       <div class="modeler" show.bind="!showXMLView">
         <div class="diagramm">
-          <div ref="canvasModel" class="canvasModel"></div>
+          <div ref="canvasModel" class="canvasModel" css="right: ${canvasRight}px;"></div>
         </div>
-        <div class="resize-div" ref="resizeButton"></div>
-        <div class="properties" ref="panel">
+        <div class="resize-div" ref="resizeButton" css="right: ${resizeButtonRight}px;"></div>
+        <div class="properties" ref="panel" css="width: ${ppWidth}px; display: ${ppDisplay}">
           <property-panel id="js-properties-panel" modeler.bind="modeler" xml.bind="xml"></property-panel>
         </div>
       </div>
