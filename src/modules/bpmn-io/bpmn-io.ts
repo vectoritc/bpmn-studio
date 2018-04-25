@@ -63,7 +63,6 @@ export class BpmnIo {
   public colorPickerBorder: HTMLInputElement;
   public colorPickerFill: HTMLInputElement;
   public colorPickerLoaded: boolean = false;
-  public env: any;
 
   public created(): void {
     this.modeler = new bundle.modeler({
@@ -104,8 +103,6 @@ export class BpmnIo {
 
     const camundaIcon: any = this.canvasModel.getElementsByClassName('bjs-powered-by')[0];
     camundaIcon.classList.add('camunda-icon-placement');
-
-    this.env = environment;
 
     this.initialLoadingFinished = true;
 

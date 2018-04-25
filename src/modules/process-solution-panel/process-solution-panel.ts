@@ -1,4 +1,4 @@
-import {BpmnStudioClient, IPagination, IProcessDefEntity, IUserTaskConfig} from '@process-engine/bpmn-studio_client';
+import {BpmnStudioClient, IPagination, IProcessDefEntity} from '@process-engine/bpmn-studio_client';
 import {inject} from 'aurelia-framework';
 
 @inject('BpmnStudioClient')

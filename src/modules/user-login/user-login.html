@@ -7,20 +7,20 @@
     <img class="user-profile-image" src="src/resources/images/default-avatar.png">
     <div class="dropdown-menu dropdown-menu-right user-profile-dropdown">
       <div class="user-profile-dropdown-content clearfix">
-          <form if.bind="!isLoggedIn" submit.delegate="login()" role="form">
-            <div class="form-group">
-              <label for="loginUsername">Username</label>
-              <input id="loginUsername" class="form-control" type="text" value.bind="username" placeholder="Username" />
-            </div>
-            <div class="form-group">
-              <label for="loginPassword">Password</label>
-              <input id="loginPassword" class="form-control" type="password" value.bind="password" placeholder="Password" />
-            </div>
-            <p if.bind="loginError" class="text-danger"><b>Error</b>: ${loginError}</p>
-            <button class="btn btn-success pull-right" type="submit">Login</button>
-          </form>
-          <button if.bind="isLoggedIn" class="btn btn-danger pull-right" click.delegate="logout()">Logout</button>
-        </div>
+        <form if.bind="!isLoggedIn" submit.delegate="login()" role="form">
+          <div class="form-group">
+            <label for="loginUsername">Username</label>
+            <input id="loginUsername" class="form-control" type="text" value.bind="username" placeholder="Username" />
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <input id="loginPassword" class="form-control" type="password" value.bind="password" placeholder="Password" />
+          </div>
+          <p if.bind="loginError" class="text-danger"><b>Error</b>: ${loginError}</p>
+          <button class="btn btn-success pull-right" type="submit">Login</button>
+        </form>
+        <button if.bind="isLoggedIn" class="btn btn-danger pull-right" click.delegate="logout()">Logout</button>
+      </div>
     </div>
   </div>
 </template>
