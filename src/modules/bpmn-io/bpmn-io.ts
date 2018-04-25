@@ -38,7 +38,6 @@ export class BpmnIo {
   private toggled: boolean = false;
   private toggleButtonPropertyPanel: HTMLButtonElement;
   private resizeButton: HTMLButtonElement;
-  private panel: HTMLElement;
   private canvasModel: HTMLDivElement;
   private refresh: boolean = true;
   private isResizeClicked: boolean = false;
@@ -48,6 +47,9 @@ export class BpmnIo {
   private canvasRight: number = 350;
   private minWidth: number = environment.propertyPanel.minWidth;
   private maxWidth: number = document.body.clientWidth - environment.propertyPanel.maxWidth;
+  private ppWidth: number = 250;
+  private ppDisplay: string = 'inline';
+  private lastCanvasRight: number = 350;
 
   private toggleMinimap: boolean = false;
   private minimapToggle: any;
@@ -210,13 +212,15 @@ export class BpmnIo {
   public togglePanel(): void {
     if (this.toggled === true) {
       this.toggleButtonPropertyPanel.classList.add('tool--active');
-      this.panel.style.display = 'inline';
-      this.canvasModel.style.right = `${this.canvasRight}px`;
+      this.ppDisplay = 'inline';
+      this.canvasRight = this.lastCanvasRight;
       this.toggled = false;
     } else {
+      this.lastCanvasRight = this.canvasRight;
+
       this.toggleButtonPropertyPanel.classList.remove('tool--active');
-      this.panel.style.display = 'none';
-      this.canvasModel.style.right = '1px';
+      this.ppDisplay = 'none';
+      this.canvasRight = 1;
       this.toggled = true;
     }
   }
@@ -230,10 +234,7 @@ export class BpmnIo {
 
     this.resizeButtonRight = currentWidth - resizeButtonWidth + sideBarRightSize;
     this.canvasRight = currentWidth;
-
-    this.panel.style.width = `${currentWidth}px`;
-    this.resizeButton.style.right = `${this.resizeButtonRight}px`;
-    this.canvasModel.style.right = `${this.canvasRight}px`;
+    this.ppWidth = currentWidth;
   }
 
   public setColorRed(): void {
