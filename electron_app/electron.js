@@ -101,6 +101,11 @@ getPort({port: 8000, host: '0.0.0.0'})
             type: "separator"
           },
           {
+            label: "Open Dev Tools", accelerator: "Command+Alt+I", click: function() {
+              mainWindow.webContents.toggleDevTools();
+            }
+          },
+          {
             label: "Quit", accelerator: "Command+Q", click: function() {
             app.quit();
           }}
