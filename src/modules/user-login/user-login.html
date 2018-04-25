@@ -5,7 +5,7 @@
       <span>Hi, ${identity ? identity.name : 'Guest'} </span>
     </a>
     <img class="user-profile-image" src="src/resources/images/default-avatar.png">
-    <div class="dropdown-menu dropdown-menu-right">
+    <div class="dropdown-menu dropdown-menu-right user-profile-dropdown">
       <div class="user-profile-dropdown-content clearfix">
           <form if.bind="!isLoggedIn" submit.delegate="login()" role="form">
             <div class="form-group">

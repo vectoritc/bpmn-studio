@@ -48,6 +48,8 @@ getPort({port: 8000, host: '0.0.0.0'})
       mainWindow = null;
     });
 
+    mainWindow.webContents.toggleDevTools();
+
     autoUpdater.checkForUpdates();
 
     const currentVersion = electron.app.getVersion();
