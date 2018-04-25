@@ -23,7 +23,9 @@
       <button class="remove-context-button" disabled.bind="!isFormSelected" click.delegate="removeSelectedForm()">
         <span class="fa fa-trash"></span>
       </button>
-      <button class="add-context-button" click.delegate="addForm()">+</button>
+      <button class="add-context-button" click.delegate="addForm()">
+        <span class="fa fa-plus"></span>
+      </button>
     </div>
       <div class="panel__content">
         <select class="form-control forms-list" value.bind="selectedForm" change.delegate="selectForm()" size="5">
