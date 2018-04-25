@@ -37,7 +37,7 @@ export class TaskList {
   public currentPage: number = 0;
   public pageSize: number = 10;
   public totalItems: number;
-  public solutionExplorerIsShown: boolean = true;
+  public solutionExplorerIsShown: boolean = false;
 
   constructor(eventAggregator: EventAggregator, bpmnStudioClient: BpmnStudioClient, router: Router) {
     this.eventAggregator = eventAggregator;

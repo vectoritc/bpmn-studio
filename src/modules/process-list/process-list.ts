@@ -33,7 +33,7 @@ export class ProcessList {
   @observable public currentPage: number = 0;
   public pageSize: number = 10;
   public totalItems: number;
-  public solutionExplorerIsShown: boolean = true;
+  public solutionExplorerIsShown: boolean = false;
 
   constructor(processEngineService: IProcessEngineService, eventAggregator: EventAggregator, router: Router) {
     this.processEngineService = processEngineService;
