@@ -67,6 +67,9 @@
   color: black;
   float: right;
   border-radius: 2px;
+  background-color: white;
+  border: 1px solid darkgray;
+  padding: 3px 9px;
 }
 
 .remove-context-button:disabled {
@@ -80,4 +83,7 @@
   margin-left: 5px;
   border-radius: 2px;
   opacity: 1;
+  background-color: white;
+  border: 1px solid darkgray;
+  padding: 2px 9px;
 }
