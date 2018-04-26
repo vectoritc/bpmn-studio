@@ -101,9 +101,6 @@ export class BpmnIo {
 
     window.addEventListener('resize', this.resizeEventHandler);
 
-    const camundaIcon: any = this.canvasModel.getElementsByClassName('bjs-powered-by')[0];
-    camundaIcon.classList.add('camunda-icon-placement');
-
     this.initialLoadingFinished = true;
 
     this.resizeButton.addEventListener('mousedown', () => {
