@@ -180,9 +180,9 @@ pipeline {
       }
     }
     stage('publish electron') {
-      // when {
-      //   expression { branch_is_master || branch_is_develop }
-      // }
+      when {
+        expression { branch_is_master || branch_is_develop }
+      }
       steps {
         unstash('linux_results')
         unstash('macos_results')
@@ -202,12 +202,6 @@ pipeline {
               } else {
                 full_release_version_string = "${package_version}-pre-b${env.BUILD_NUMBER}";
               }
-
-              sh("ls dist")
-              sh("ls")
-              
-              
-              echo("node .ci-tools/publish-github-release.js ${full_release_version_string} ${publish_version} ${branch} false ${!branch_is_master}");
 
               sh("node .ci-tools/publish-github-release.js ${full_release_version_string} ${publish_version} ${branch} false ${!branch_is_master}");
             }
