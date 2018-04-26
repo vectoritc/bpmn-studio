@@ -65,7 +65,7 @@ pipeline {
       steps {
         sh('node --version')
         sh('npm run build')
-        stash(includes: 'node_modules/, scripts/', name: 'post_build')
+        stash(includes: 'node_modules/, scripts/, package.json', name: 'post_build')
       }
     }
     stage('build electron') {
