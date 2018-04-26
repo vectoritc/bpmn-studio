@@ -35,12 +35,14 @@ pipeline {
           branch_is_master = branch == 'master';
           branch_is_develop = branch == 'develop';
 
-          if (!branch_is_master) {
+          if (branch_is_master) {
+            publish_version = package_version;
+          } else {
             first_seven_digits_of_git_hash = env.GIT_COMMIT.substring(0, 8);
-            non_master_publish_version = "${package_version}-${first_seven_digits_of_git_hash}-b${env.BUILD_NUMBER}";
+            publish_version = "${package_version}-${first_seven_digits_of_git_hash}-b${env.BUILD_NUMBER}";
             
             nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
-              sh("npm version ${non_master_publish_version} --no-git-tag-version --force")
+              sh("npm version ${publish_version} --no-git-tag-version --force")
             }
           }
 
@@ -178,9 +180,9 @@ pipeline {
       }
     }
     stage('publish electron') {
-      when {
-        expression { branch_is_master || branch_is_develop }
-      }
+      // when {
+      //   expression { branch_is_master || branch_is_develop }
+      // }
       steps {
         unstash('linux_results')
         unstash('macos_results')
@@ -201,7 +203,7 @@ pipeline {
                 full_release_version_string = "${package_version}-pre-b${env.BUILD_NUMBER}";
               }
 
-              sh("node .ci-tools/publish-github-release.js ${full_release_version_string} ${package_version} ${branch} false ${!branch_is_master}");
+              sh("node .ci-tools/publish-github-release.js ${full_release_version_string} ${publish_version} ${branch} false ${!branch_is_master}");
             }
           }
         }
