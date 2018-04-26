@@ -78,4 +78,8 @@ export class ProcessDefStart {
   public toggleSolutionExplorer(): void {
     this.solutionExplorerIsShown = !this.solutionExplorerIsShown;
   }
+
+  public goBack(): void {
+    this.router.navigateBack();
+  }
 }
