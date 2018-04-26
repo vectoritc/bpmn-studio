@@ -40,7 +40,7 @@ pipeline {
             non_master_publish_version = "${package_version}-${first_seven_digits_of_git_hash}-b${env.BUILD_NUMBER}";
             
             nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
-              sh("npm version ${publish_version} --no-git-tag-version --force")
+              sh("npm version ${non_master_publish_version} --no-git-tag-version --force")
             }
           }
 
