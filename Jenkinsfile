@@ -34,6 +34,16 @@ pipeline {
           branch = env.BRANCH_NAME;
           branch_is_master = branch == 'master';
           branch_is_develop = branch == 'develop';
+
+          if (!branch_is_master) {
+            first_seven_digits_of_git_hash = env.GIT_COMMIT.substring(0, 8);
+            non_master_publish_version = "${package_version}-${first_seven_digits_of_git_hash}-b${env.BUILD_NUMBER}";
+            
+            nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
+              sh("npm version ${publish_version} --no-git-tag-version --force")
+            }
+          }
+
           echo("Branch is '${branch}'")
         }
         nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
@@ -157,13 +167,10 @@ pipeline {
             // when not on master, publish a prerelease based on the package version, the
             // current git commit and the build number.
             // the published version gets tagged as the branch name.
-            def first_seven_digits_of_git_hash = env.GIT_COMMIT.substring(0, 8);
-            def publish_version = "${package_version}-${first_seven_digits_of_git_hash}-b${env.BUILD_NUMBER}";
             def publish_tag = branch.replace("/", "~");
 
             nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
               sh('node --version')
-              sh("npm version ${publish_version} --no-git-tag-version --force")
               sh("npm publish --tag ${publish_tag} --ignore-scripts")
             }
           }
