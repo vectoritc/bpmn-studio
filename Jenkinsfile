@@ -61,6 +61,7 @@ pipeline {
       steps {
         sh('node --version')
         sh('npm run build')
+        sh("npm version ${full_electron_release_version_string} --no-git-tag-version --force")
         stash(includes: 'node_modules/, scripts/', name: 'post_build')
       }
     }
@@ -73,7 +74,6 @@ pipeline {
           steps {
             unstash('post_build')
             sh('node --version')
-            sh("npm version ${full_electron_release_version_string} --no-git-tag-version --force")
             sh('npm run electron-build-linux')
             stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml', name: 'linux_results')
           }
@@ -90,7 +90,6 @@ pipeline {
           steps {
             unstash('post_build')
             sh('node --version')
-            sh("npm version ${full_electron_release_version_string} --no-git-tag-version --force")
             // we copy the node_modules folder from the main slave
             // which runs linux. Some dependencies may not be installed
             // if they have a os restriction in their package.json
@@ -116,7 +115,6 @@ pipeline {
           steps {
             unstash('post_build')
             sh('node --version')
-            sh("npm version ${full_electron_release_version_string} --no-git-tag-version --force")
             sh('npm run electron-build-windows')
             stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml', name: 'windows_results')
           }
