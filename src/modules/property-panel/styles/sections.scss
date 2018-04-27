@@ -1,36 +1,89 @@
-.section {
-  width: 100%;
-  display: table;
+.panel {
+  margin-bottom: 2px;
+  border-bottom: 1px solid #eee;
 }
 
-.section__content {
-  display: table-cell;
-  width: auto;
-}
-
-.section__special {
-  display: table-cell;
-  width: 30px
-}
-
-.section__btn-group {
-  display: inline-block;
-  width: 100%;
-}
-
-.section__btn-group--clear-btn {
-  position: relative;
-  top: -25px;
-  left: 100%;
-  width: 100%;
-  margin-left: -23px;
-  color: #ccc;
-}
-
-.section__input-label {
+.panel:last-child {
   margin-bottom: 0;
+  border-bottom: none;
 }
 
-.form-control {
-  padding-right: 25px;
+.panel--grow {
+  flex: 1 100%;
+  margin-top: 2px;
+}
+
+.panel__heading {
+  padding: 5px 10px;
+  font-weight: 400;
+  color: #a5a5a5;
+}
+
+.panel__content {
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+.props-table {
+  width: 100%;
+}
+
+.props-table th {
+  width: 40px;
+  font-weight: normal;
+  color: #a5a5a5;
+  padding: 5px 10px 5px 0px;
+}
+
+.props-table td {
+  color: #a5a5a5;
+  width: 100%;
+  padding: 5px 0;
+}
+
+
+.probs-table--details {
+  margin-top: 20px;
+}
+
+.props-input {
+  width: 100%;
+  margin-top: 5px;
+  font-weight: 400;
+  color: #5c5c5c;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #e9e9e9;
+  padding-bottom: 5px;
+  padding-right: 17px;
+}
+
+.props-table--clear-button {
+  right: 15px;
+  top: 2px;
+}
+
+.add-context-button {
+  color: black;
+  float: right;
+  border-radius: 2px;
+  background-color: whitesmoke;
+  border: 1px solid darkgray;
+  padding: 2px 7px;
+}
+
+.remove-context-button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.remove-context-button {
+  color: black;
+  float: right;
+  margin-left: 5px;
+  border-radius: 2px;
+  opacity: 1;
+  background-color: whitesmoke;
+  border: 1px solid darkgray;
+  padding: 2px 7px;
 }

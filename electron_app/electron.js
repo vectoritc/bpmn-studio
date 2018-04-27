@@ -5,6 +5,9 @@ const app = electron.app;
 const notifier = require('electron-notifications');
 const isDev = require('electron-is-dev');
 const getPort = require('get-port');
+const fs = require('fs');
+
+const prereleaseRegex = /\d+\.\d+\.\d+-[0-9a-z]{8}-b\d+/;
 
 if (!isDev) {
   const userDataFolder = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : '/var/local');
@@ -33,12 +36,12 @@ getPort({port: 8000, host: '0.0.0.0'})
     }
 
     mainWindow = new electron.BrowserWindow({
-      width: 1000,
+      width: 1300,
       height: 800,
       title: "BPMN-Studio",
-      minWidth: 1000,
+      minWidth: 1300,
       minHeight: 800,
-      icon: path.join(__dirname, '../build/win_icon.png'),  // only for windows and linux
+      icon: path.join(__dirname, '../build/icon.png'),  // only for windows and linux
     });
 
     mainWindow.loadURL(`file://${__dirname}/../index.html`);
@@ -47,6 +50,13 @@ getPort({port: 8000, host: '0.0.0.0'})
     });
 
     autoUpdater.checkForUpdates();
+
+    const currentVersion = electron.app.getVersion();
+    const currentVersionIsPrerelease = prereleaseRegex.test(currentVersion);
+
+    autoUpdater.allowPrerelease = currentVersionIsPrerelease;
+
+    console.log(`CurrentVersion: ${currentVersion}, CurrentVersionIsPrerelease: ${currentVersionIsPrerelease}`);
 
     autoUpdater.addListener('error', (error) => {
       const notification = notifier.notify('Update error', {
@@ -92,6 +102,11 @@ getPort({port: 8000, host: '0.0.0.0'})
             type: "separator"
           },
           {
+            label: "Open Dev Tools", accelerator: "Command+Alt+I", click: function() {
+              mainWindow.webContents.toggleDevTools();
+            }
+          },
+          {
             label: "Quit", accelerator: "Command+Q", click: function() {
             app.quit();
           }}
@@ -115,11 +130,41 @@ getPort({port: 8000, host: '0.0.0.0'})
     electron.Menu.setApplicationMenu(electron.Menu.buildFromTemplate(template));
   }
 
+  let filePath;
+
   app.on('ready', createWindow);
   app.on('activate', createWindow);
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
       app.quit();
     }
+    filePath = undefined;
+  });
+
+  app.on('will-finish-launching', () => {
+    // for windows
+    if (process.platform == 'win32' && process.argv.length >= 2) {
+      filePath = process.argv[1];
+    }
+
+    // for non-windows
+    app.on('open-file', (event, path) => {
+      filePath = path;
+    });
+  });
+
+  electron.ipcMain.on('get_opened_file', (event) => {
+    if (filePath === undefined) {
+      event.returnValue = {};
+      return;
+    }
+
+    event.returnValue = {
+      path: filePath,
+      content: fs.readFileSync(filePath, 'utf8'),
+    }
+    filePath = undefined;
+    app.focus();
+
   });
 });

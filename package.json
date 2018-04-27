@@ -1,7 +1,7 @@
 {
   "name": "bpmn-studio",
   "description": "An Aurelia application for designing BPMN diagrams, which can also be connected to a process engine to execute these diagrams.",
-  "version": "1.1.0",
+  "version": "1.2.1",
   "author": {
     "name": "process-engine",
     "email": "hello@process-engine.io",
@@ -20,12 +20,42 @@
     "test": "echo 'Currently there a no tests specified'",
     "electron-start-dev": "electron electron_app/electron.js",
     "electron-build": "build",
-    "electron-shipit": "build -p always"
+    "electron-build-windows": "build --publish never --windows",
+    "electron-build-macos": "build --publish never --macos",
+    "electron-build-linux": "build --publish never --linux",
+    "electron-shipit": "build --publish always"
   },
   "build": {
     "extraFiles": [
       "config/**/*"
-    ]
+    ],
+    "nsis": {
+      "perMachine": true,
+      "oneClick": false
+    },
+    "win": {
+      "target": "nsis",
+      "fileAssociations": [
+        {
+          "ext": [
+            "bpmn"
+          ],
+          "name": "BPMN",
+          "description": "BPMN diagram extension"
+        }
+      ]
+    },
+    "mac": {
+      "target": "dmg",
+      "fileAssociations": [
+        {
+          "ext": [
+            "bpmn"
+          ],
+          "name": "BPMN"
+        }
+      ]
+    }
   },
   "files": [
     "scripts",
@@ -65,6 +95,7 @@
     "@types/jasmine": "^2.2.0",
     "@types/node": "^6.0.45",
     "@types/spectrum": "^1.5.29",
+    "@types/toastr": "^2.1.35",
     "addict-ioc": "^2.3.4",
     "aurelia-animator-css": "^1.0.2",
     "aurelia-bootstrap": "^0.1.20",
@@ -84,7 +115,7 @@
     "debug": "^3.1.0",
     "downloadjs": "1.4.4",
     "electron": "^1.7.9",
-    "electron-builder": "^19.54.0",
+    "electron-builder": "^20.8.1",
     "event-stream": "^3.3.3",
     "eventemitter2": "^4.1.2",
     "faye": "^1.2.4",

@@ -16,6 +16,7 @@ export default {
       messageBus: `${baseRoute}/mb`,
       iam: `${baseRoute}/iam`,
       userTasks: `${baseRoute}/datastore/UserTask`,
+      importBPMN: `${baseRoute}/processengine/create_bpmn_from_xml`,
     },
   },
   events: {
@@ -26,7 +27,7 @@ export default {
   },
   propertyPanel: {
     minWidth: 190,
-    maxWidth: 150,
+    maxWidth: 300,
   },
   colorPickerSettings: {
     clickoutFiresChange: true,

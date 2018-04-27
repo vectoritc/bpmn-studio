@@ -9,6 +9,7 @@ import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
 
 @inject('ProcessEngineService', EventAggregator, Router, 'BpmnStudioClient')
 export class ProcessDefStart {
+  public solutionExplorerIsShown: boolean = false;
 
   private processEngineService: IProcessEngineService;
   private eventAggregator: EventAggregator;
@@ -72,5 +73,13 @@ export class ProcessDefStart {
 
   public startProcess(): void {
     this.bpmnStudioClient.startProcessByKey(this.process.key);
+  }
+
+  public toggleSolutionExplorer(): void {
+    this.solutionExplorerIsShown = !this.solutionExplorerIsShown;
+  }
+
+  public goBack(): void {
+    this.router.navigateBack();
   }
 }

@@ -1,7 +1,4 @@
-tr td:last-child {
-  width: 1%;
-  white-space: nowrap;
-}
+
 
 .create-process {
   margin-bottom: 5px;
@@ -20,4 +17,20 @@ tr td:last-child {
   margin-left: auto;
   margin-right: auto;
   margin-top: 100px;
+}
+
+.processdef-list-container {
+  flex: 1;
+  height: 100%;
+  padding: 60px 60px;
+}
+
+.process-def-list {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+}
+
+.import-bpmn {
+  margin-bottom: 4px;
 }
