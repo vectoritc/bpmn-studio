@@ -21,7 +21,7 @@
     "electron-start-dev": "electron electron_app/electron.js",
     "electron-build": "build",
     "electron-build-windows": "build --publish never --windows",
-    "electron-build-macos": "build --publish never --macos",
+    "electron-build-macos": "build --publish never --macos=dmg --macos=zip",
     "electron-build-linux": "build --publish never --linux",
     "electron-shipit": "build --publish always"
   },
