@@ -1,7 +1,6 @@
 <template>
   <require from="./extensions.css"></require>
   <require from="../../styles/registers.css"></require>
-  <h3>Properties</h3>
   <div repeat.for="section of sections">
     <div if.bind="section.isSuitableForElement(elementInPanel)">
       <compose
