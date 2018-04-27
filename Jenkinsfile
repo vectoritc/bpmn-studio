@@ -194,9 +194,7 @@ pipeline {
             string(credentialsId: 'process-engine-ci_token', variable: 'RELEASE_GH_TOKEN')
           ]) {
             script {
-              
-
-              sh("node .ci-tools/publish-github-release.js ${full_release_version_string} ${package_version} ${branch} false ${!branch_is_master}");
+              sh("node .ci-tools/publish-github-release.js ${full_electron_release_version_string} ${full_electron_release_version_string} ${branch} false ${!branch_is_master}");
             }
           }
         }
