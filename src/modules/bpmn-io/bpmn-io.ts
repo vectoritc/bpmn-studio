@@ -1,6 +1,8 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {bindable, inject, observable} from 'aurelia-framework';
+import * as $ from 'jquery';
 import * as spectrum from 'spectrum-colorpicker';
+import 'spectrum-colorpicker/spectrum';
 import {setTimeout} from 'timers';
 import {ElementDistributeOptions,
         IBpmnFunction,
