@@ -9,6 +9,7 @@ import {NotificationService} from './../notification/notification.service';
 
 @inject('ProcessEngineService', EventAggregator, Router, 'BpmnStudioClient', 'NotificationService')
 export class ProcessDefStart {
+  public solutionExplorerIsShown: boolean = false;
 
   private processEngineService: IProcessEngineService;
   private notificationService: NotificationService;
@@ -75,5 +76,13 @@ export class ProcessDefStart {
 
   public startProcess(): void {
     this.bpmnStudioClient.startProcessByKey(this.process.key);
+  }
+
+  public toggleSolutionExplorer(): void {
+    this.solutionExplorerIsShown = !this.solutionExplorerIsShown;
+  }
+
+  public goBack(): void {
+    this.router.navigateBack();
   }
 }

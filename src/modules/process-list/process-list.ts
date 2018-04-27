@@ -1,6 +1,7 @@
 import {INodeInstanceEntity} from '@process-engine/process_engine_contracts';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject, observable} from 'aurelia-framework';
+import {Router} from 'aurelia-router';
 import {
   AuthenticationStateEvent,
   IPagination,
@@ -15,7 +16,7 @@ interface IProcessListRouteParameters {
   processDefId?: string;
 }
 
-@inject('ProcessEngineService', EventAggregator, 'NotificationService')
+@inject('ProcessEngineService', EventAggregator, Router, 'NotificationService')
 export class ProcessList {
 
   private processEngineService: IProcessEngineService;
@@ -29,15 +30,21 @@ export class ProcessList {
   private instances: Array<IProcessEntity>;
   private status: Array<string> = [];
   private succesfullRequested: boolean = false;
+  private router: Router;
 
   @observable public currentPage: number = 0;
   public pageSize: number = 10;
   public totalItems: number;
+  public solutionExplorerIsShown: boolean = false;
 
-  constructor(processEngineService: IProcessEngineService, eventAggregator: EventAggregator, notificationService: NotificationService) {
+  constructor(processEngineService: IProcessEngineService,
+              eventAggregator: EventAggregator,
+              router: Router,
+              notificationService: NotificationService) {
     this.processEngineService = processEngineService;
     this.eventAggregator = eventAggregator;
     this.notificationService = notificationService;
+    this.router = router;
   }
 
   public currentPageChanged(newValue: number, oldValue: number): void {
@@ -111,12 +118,20 @@ export class ProcessList {
     }
   }
 
+  public goBack(): void {
+    this.router.navigateBack();
+  }
+
   public get shownProcesses(): Array<IProcessEntity> {
     return this.instances.slice((this.currentPage - 1) * this.pageSize, this.pageSize * this.currentPage);
   }
 
   public get allInstances(): Array<IProcessEntity> {
     return this.processes.data;
+  }
+
+  public toggleSolutionExplorer(): void {
+    this.solutionExplorerIsShown = !this.solutionExplorerIsShown;
   }
 
   private async getAllProcesses(): Promise<IPagination<IProcessEntity>> {
