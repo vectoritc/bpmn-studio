@@ -35,7 +35,6 @@ pipeline {
           branch_is_master = branch == 'master';
           branch_is_develop = branch == 'develop';
 
-          def full_electron_release_version_string;
           if (branch_is_master) {
             full_electron_release_version_string = "${package_version}";
           } else {
