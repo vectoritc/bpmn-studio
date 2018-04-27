@@ -35,15 +35,11 @@ pipeline {
           branch_is_master = branch == 'master';
           branch_is_develop = branch == 'develop';
 
+          def full_electron_release_version_string;
           if (branch_is_master) {
-            publish_version = package_version;
+            full_electron_release_version_string = "${package_version}";
           } else {
-            first_seven_digits_of_git_hash = env.GIT_COMMIT.substring(0, 8);
-            publish_version = "${package_version}-${first_seven_digits_of_git_hash}-b${env.BUILD_NUMBER}";
-            
-            nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
-              sh("npm version ${publish_version} --no-git-tag-version --force")
-            }
+            full_electron_release_version_string = "${package_version}-pre-b${env.BUILD_NUMBER}";
           }
 
           echo("Branch is '${branch}'")
@@ -65,7 +61,7 @@ pipeline {
       steps {
         sh('node --version')
         sh('npm run build')
-        stash(includes: 'node_modules/, scripts/, package.json', name: 'post_build')
+        stash(includes: 'node_modules/, scripts/', name: 'post_build')
       }
     }
     stage('build electron') {
@@ -77,6 +73,7 @@ pipeline {
           steps {
             unstash('post_build')
             sh('node --version')
+            sh("npm version ${full_electron_release_version_string} --no-git-tag-version --force")
             sh('npm run electron-build-linux')
             stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml', name: 'linux_results')
           }
@@ -93,6 +90,7 @@ pipeline {
           steps {
             unstash('post_build')
             sh('node --version')
+            sh("npm version ${full_electron_release_version_string} --no-git-tag-version --force")
             // we copy the node_modules folder from the main slave
             // which runs linux. Some dependencies may not be installed
             // if they have a os restriction in their package.json
@@ -118,6 +116,7 @@ pipeline {
           steps {
             unstash('post_build')
             sh('node --version')
+            sh("npm version ${full_electron_release_version_string} --no-git-tag-version --force")
             sh('npm run electron-build-windows')
             stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml', name: 'windows_results')
           }
@@ -169,10 +168,13 @@ pipeline {
             // when not on master, publish a prerelease based on the package version, the
             // current git commit and the build number.
             // the published version gets tagged as the branch name.
+            def first_seven_digits_of_git_hash = env.GIT_COMMIT.substring(0, 8);
+            def publish_version = "${package_version}-${first_seven_digits_of_git_hash}-b${env.BUILD_NUMBER}";
             def publish_tag = branch.replace("/", "~");
 
             nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
               sh('node --version')
+              sh("npm version ${publish_version} --no-git-tag-version --force")
               sh("npm publish --tag ${publish_tag} --ignore-scripts")
             }
           }
@@ -195,15 +197,9 @@ pipeline {
             string(credentialsId: 'process-engine-ci_token', variable: 'RELEASE_GH_TOKEN')
           ]) {
             script {
-              def full_release_version_string;
               
-              if (branch_is_master) {
-                full_release_version_string = "${package_version}";
-              } else {
-                full_release_version_string = "${package_version}-pre-b${env.BUILD_NUMBER}";
-              }
 
-              sh("node .ci-tools/publish-github-release.js ${full_release_version_string} ${publish_version} ${branch} false ${!branch_is_master}");
+              sh("node .ci-tools/publish-github-release.js ${full_release_version_string} ${package_version} ${branch} false ${!branch_is_master}");
             }
           }
         }
