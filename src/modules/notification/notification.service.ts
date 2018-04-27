@@ -12,7 +12,7 @@ export class NotificationService {
 
   constructor(eventAggregator: EventAggregator) {
     this._eventAggregator = eventAggregator;
-    this._eventAggregator.subscribe('router:navigation:complete', () => {
+    this._eventAggregator.subscribeOnce('router:navigation:complete', () => {
       this.setToastrInstance(toastr);
     });
   }
