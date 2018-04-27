@@ -76,11 +76,8 @@ export class ProcessSection {
     this.newNames = [];
     this.newValues = [];
 
-    const elementHasNoProperties: boolean = this.propertyElement === undefined
-                                         || this.propertyElement === null
-                                         || this.propertyElement.values === undefined
-                                         || this.propertyElement.values === null
-                                         || this.propertyElement.values.length === 0;
+    const elementHasNoProperties: boolean = !Array.isArray(this.propertyElement.values)
+                                          || this.propertyElement.values.length === 0;
 
     if (elementHasNoProperties) {
       return;
