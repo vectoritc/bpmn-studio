@@ -67,7 +67,6 @@ export class PropertyPanel {
     });
 
     this.setFirstElement();
-
   }
 
   public updateIndextab(selectedIndextab: IIndextab): void {

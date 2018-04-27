@@ -9,6 +9,7 @@ import {
 } from '@process-engine/bpmn-studio_client';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
+import {Router} from 'aurelia-router';
 import * as toastr from 'toastr';
 import {AuthenticationStateEvent, IDynamicUiService, IPagination, IProcessEngineService} from '../../contracts/index';
 import environment from '../../environment';
@@ -19,7 +20,7 @@ interface ITaskListRouteParameters {
   processId?: string;
 }
 
-@inject(EventAggregator, 'BpmnStudioClient')
+@inject(EventAggregator, 'BpmnStudioClient', Router)
 export class TaskList {
 
   private eventAggregator: EventAggregator;
@@ -31,14 +32,17 @@ export class TaskList {
   private getUserTasksIntervalId: number;
   private dynamicUiWrapper: DynamicUiWrapper;
   private getUserTasks: () => Promise<IPagination<IUserTaskEntity>>;
+  private router: Router;
 
   public currentPage: number = 0;
   public pageSize: number = 10;
   public totalItems: number;
+  public solutionExplorerIsShown: boolean = false;
 
-  constructor(eventAggregator: EventAggregator, bpmnStudioClient: BpmnStudioClient) {
+  constructor(eventAggregator: EventAggregator, bpmnStudioClient: BpmnStudioClient, router: Router) {
     this.eventAggregator = eventAggregator;
     this.bpmnStudioClient = bpmnStudioClient;
+    this.router = router;
   }
 
   private async updateUserTasks(): Promise<void> {
@@ -89,6 +93,10 @@ export class TaskList {
     }
   }
 
+  public goBack(): void {
+    this.router.navigateBack();
+  }
+
   public get shownTasks(): Array<IUserTaskEntity> {
     return this.tasks.slice((this.currentPage - 1) * this.pageSize, this.pageSize * this.currentPage);
   }
@@ -100,6 +108,10 @@ export class TaskList {
     return this.userTasks.data.filter((entry: IUserTaskEntity): boolean => {
       return entry.state === 'wait';
     });
+  }
+
+  public toggleSolutionExplorer(): void {
+    this.solutionExplorerIsShown = !this.solutionExplorerIsShown;
   }
 
   private getAllUserTasks(): Promise<IPagination<IUserTaskEntity>> {

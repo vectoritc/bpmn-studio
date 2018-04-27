@@ -86,7 +86,7 @@ export class BasicsSection implements ISection {
     }
   }
 
-  private _updateDocumentation(): void {
+  public updateDocumentation(): void {
     this.elementInPanel.documentation = [];
 
     const documentationPropertyObject: Object = {text: this.elementDocumentation};
@@ -97,28 +97,28 @@ export class BasicsSection implements ISection {
     this.modeling.updateProperties(this.elementInPanel, elementInPanelDocumentation);
   }
 
-  private _clearId(): void {
+  public clearId(): void {
     this.businessObjInPanel.id = '';
     this.validationController.validate();
-    this._updateId();
+    this.updateId();
   }
 
-  private _clearName(): void {
+  public clearName(): void {
     this.businessObjInPanel.name = '';
-    this._updateName();
+    this.updateName();
   }
 
-  private _clearDocumentation(): void {
+  public clearDocumentation(): void {
     this.elementDocumentation = '';
-    this._updateDocumentation();
+    this.updateDocumentation();
   }
 
-  private _updateName(): void {
+  public updateName(): void {
     const updateProperty: Object = {name: this.businessObjInPanel.name};
     this.modeling.updateProperties(this.elementInPanel, updateProperty);
   }
 
-  private _updateId(): void {
+  public updateId(): void {
     this.validationController.validate();
 
     if (this.validationController.errors.length > 0) {
