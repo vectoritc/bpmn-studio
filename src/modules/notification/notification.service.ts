@@ -1,9 +1,21 @@
+import {inject} from 'aurelia-dependency-injection';
+import {EventAggregator} from 'aurelia-event-aggregator';
+import * as toastr from 'toastr';
 import {INotification, NotificationType} from '../../contracts/index';
 
+@inject(EventAggregator)
 export class NotificationService {
 
+  private _eventAggregator: EventAggregator;
   private _toastrInstance: Toastr;
   private _savedNotifications: Array<INotification> = [];
+
+  constructor(eventAggregator: EventAggregator) {
+    this._eventAggregator = eventAggregator;
+    this._eventAggregator.subscribeOnce('router:navigation:complete', () => {
+      this.setToastrInstance(toastr);
+    });
+  }
 
   public showNotification(type: NotificationType, message: string): void {
     const notification: INotification = {
@@ -19,8 +31,8 @@ export class NotificationService {
     this._showNotification(notification);
   }
 
-  public setToastrInstance(toastr: Toastr): void {
-    this._toastrInstance = toastr;
+  public setToastrInstance(toastrInstance: Toastr): void {
+    this._toastrInstance = toastrInstance;
     this._initializeToastr();
     for (const notification of this._savedNotifications) {
       this._showNotification(notification);

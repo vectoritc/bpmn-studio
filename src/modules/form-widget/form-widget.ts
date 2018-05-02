@@ -1,11 +1,18 @@
 import {FormWidgetFieldType, IFormWidgetConfig, SpecificFormWidgetField} from '@process-engine/bpmn-studio_client';
-import {bindable} from 'aurelia-framework';
-import * as toastr from 'toastr';
+import {bindable, inject} from 'aurelia-framework';
+import {NotificationType} from './../../contracts/index';
+import {NotificationService} from './../notification/notification.service';
 
+@inject('NotificationService')
 export class FormWidget {
 
   @bindable()
   private widget: IFormWidgetConfig;
+  private notificationService: NotificationService;
+
+  constructor(notificationService: NotificationService) {
+    this.notificationService = notificationService;
+  }
 
   public getFieldControl(field: SpecificFormWidgetField): string {
     switch (field.type) {
@@ -18,7 +25,7 @@ export class FormWidget {
       case FormWidgetFieldType.long:
         return 'number';
       default:
-        toastr.error(`Not supported FromWidgetFieldType: ${field.type}`);
+        this.notificationService.showNotification(NotificationType.ERROR, `Not supported FromWidgetFieldType: ${field.type}`);
         return null;
     }
   }
