@@ -2,26 +2,31 @@ import {IUserTaskConfig} from '@process-engine/bpmn-studio_client';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import * as toastr from 'toastr';
-import {AuthenticationStateEvent, IDynamicUiService} from '../../contracts/index';
+import {AuthenticationStateEvent, IDynamicUiService, NotificationType} from '../../contracts/index';
 import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
+import {NotificationService} from './../notification/notification.service';
 
-@inject(EventAggregator, 'DynamicUiService', Router)
+@inject(EventAggregator, 'DynamicUiService', Router, 'NotificationService')
 export class TaskDynamicUi {
 
   private eventAggregator: EventAggregator;
   private dynamicUiService: IDynamicUiService;
   private router: Router;
+  private notificationService: NotificationService;
 
   private subscriptions: Array<Subscription>;
   private userTaskId: string;
   private dynamicUiWrapper: DynamicUiWrapper;
   private _userTask: IUserTaskConfig;
 
-  constructor(eventAggregator: EventAggregator, dynamicUiService: IDynamicUiService, router: Router) {
+  constructor(eventAggregator: EventAggregator,
+              dynamicUiService: IDynamicUiService,
+              router: Router,
+              notificationService: NotificationService) {
     this.eventAggregator = eventAggregator;
     this.dynamicUiService = dynamicUiService;
     this.router = router;
+    this.notificationService = notificationService;
   }
 
   private activate(routeParameters: {userTaskId: string}): void {
@@ -58,7 +63,7 @@ export class TaskDynamicUi {
     try {
       this.userTask = await this.dynamicUiService.getUserTaskConfig(this.userTaskId);
     } catch (error) {
-      toastr.error(`Failed to refresh user task: ${error.message}`);
+      this.notificationService.showNotification(NotificationType.ERROR, `Failed to refresh user task: ${error.message}`);
       throw error;
     }
   }

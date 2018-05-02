@@ -2,23 +2,25 @@ import {INodeInstanceEntity} from '@process-engine/process_engine_contracts';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject, observable} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import * as toastr from 'toastr';
 import {
   AuthenticationStateEvent,
   IPagination,
   IProcessEngineService,
   IProcessEntity,
+  NotificationType,
 } from '../../contracts/index';
 import environment from '../../environment';
+import {NotificationService} from './../notification/notification.service';
 
 interface IProcessListRouteParameters {
   processDefId?: string;
 }
 
-@inject('ProcessEngineService', EventAggregator, Router)
+@inject('ProcessEngineService', EventAggregator, Router, 'NotificationService')
 export class ProcessList {
 
   private processEngineService: IProcessEngineService;
+  private notificationService: NotificationService;
   private eventAggregator: EventAggregator;
   private selectedState: HTMLSelectElement;
   private getProcessesIntervalId: number;
@@ -35,9 +37,13 @@ export class ProcessList {
   public totalItems: number;
   public solutionExplorerIsShown: boolean = false;
 
-  constructor(processEngineService: IProcessEngineService, eventAggregator: EventAggregator, router: Router) {
+  constructor(processEngineService: IProcessEngineService,
+              eventAggregator: EventAggregator,
+              router: Router,
+              notificationService: NotificationService) {
     this.processEngineService = processEngineService;
     this.eventAggregator = eventAggregator;
+    this.notificationService = notificationService;
     this.router = router;
   }
 
@@ -64,7 +70,7 @@ export class ProcessList {
       this.processes = await this.getProcesses();
       this.succesfullRequested = true;
     } catch (error) {
-      toastr.error(error);
+      this.notificationService.showNotification(NotificationType.ERROR, error.message);
     }
 
     for (const instance of this.allInstances) {
