@@ -60,8 +60,10 @@ pipeline {
       steps {
         sh('node --version')
         sh('npm run build')
+        sh('cat package.json')
         sh("npm version ${full_electron_release_version_string} --no-git-tag-version --force")
         stash(includes: 'node_modules/, scripts/ package.json', name: 'post_build')
+        sh('cat package.json')
       }
     }
     stage('build electron') {
@@ -72,9 +74,11 @@ pipeline {
           }
           steps {
             unstash('post_build')
+            sh('cat package.json')
             sh('node --version')
             sh('npm run electron-build-linux')
             stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml', name: 'linux_results')
+            sh('ls dist')
           }
           post {
             always {
@@ -88,6 +92,7 @@ pipeline {
           }
           steps {
             unstash('post_build')
+            sh('cat package.json')
             sh('node --version')
             // we copy the node_modules folder from the main slave
             // which runs linux. Some dependencies may not be installed
@@ -100,6 +105,7 @@ pipeline {
               sh('npm run electron-build-macos')
             }
             stash(includes: 'dist/*.*, dist/mac/*', excludes: 'electron-builder-effective-config.yaml', name: 'macos_results')
+            sh('ls dist')
           }
           post {
             always {
@@ -113,9 +119,11 @@ pipeline {
           }
           steps {
             unstash('post_build')
+            sh('cat package.json')
             sh('node --version')
             sh('npm run electron-build-windows')
             stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml', name: 'windows_results')
+            sh('ls dist')
           }
           post {
             always {
@@ -186,6 +194,8 @@ pipeline {
         unstash('linux_results')
         unstash('macos_results')
         unstash('windows_results')
+        sh('ls dist')
+        sh('cat package.json')
         nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
           dir('.ci-tools') {
             sh('npm install')
