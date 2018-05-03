@@ -7,7 +7,7 @@ const isDev = require('electron-is-dev');
 const getPort = require('get-port');
 const fs = require('fs');
 
-const prereleaseRegex = /\d+\.\d+\.\d+-[0-9a-z]{8}-b\d+/;
+const prereleaseRegex = /\d+\.\d+\.\d+-pre-b\d+/;
 
 if (!isDev) {
   const userDataFolder = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : '/var/local');
