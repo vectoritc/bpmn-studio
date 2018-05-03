@@ -80,6 +80,7 @@ export class BpmnIo {
       moddleExtensions: {
         camunda: bundle.camundaModdleDescriptor,
       },
+      keyboard: { bindTo: document },
     });
 
     if (this.xml !== undefined && this.xml !== null) {
