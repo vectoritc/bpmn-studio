@@ -114,7 +114,13 @@ getPort({port: 8000, host: '0.0.0.0'})
       label: "Edit",
       submenu: [
           {
-            label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:"
+            label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:"
+          },
+          {
+            label: "Redo", accelerator: "CmdOrCtrl+Shift+Z", selector: "redo:"
+          },
+          {
+            type: "separator"
           },
           {
             label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:"
