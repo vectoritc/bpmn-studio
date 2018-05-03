@@ -61,7 +61,7 @@ pipeline {
         sh('node --version')
         sh('npm run build')
         sh("npm version ${full_electron_release_version_string} --no-git-tag-version --force")
-        stash(includes: 'node_modules/, scripts/ package.json', name: 'post_build')
+        stash(includes: 'node_modules/, scripts/, package.json', name: 'post_build')
       }
     }
     stage('build electron') {
