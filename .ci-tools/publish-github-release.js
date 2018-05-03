@@ -35,7 +35,6 @@ const files_to_upload = [
   `dist/bpmn-studio-${version_for_filenames}.dmg`,
   `dist/bpmn-studio-${version_for_filenames}.dmg.blockmap`,
   `dist/bpmn-studio_${version_for_filenames}_amd64.snap`,
-  `dist/github/latest-mac.json`,
   `dist/latest-linux.yml`,
   `dist/latest-mac.yml`,
   `dist/latest.yml`,
