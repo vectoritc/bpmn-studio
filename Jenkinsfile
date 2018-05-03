@@ -179,9 +179,9 @@ pipeline {
       }
     }
     stage('publish electron') {
-      when {
-        expression { branch_is_master || branch_is_develop }
-      }
+      // when {
+      //   expression { branch_is_master || branch_is_develop }
+      // }
       steps {
         unstash('linux_results')
         unstash('macos_results')
