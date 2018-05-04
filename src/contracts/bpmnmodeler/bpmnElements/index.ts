@@ -1,4 +1,3 @@
-import {ITimerElement} from './ITimerElement';
 export {ICallActivityElement} from './ICallActivityElement';
 export {IConditionExpression} from './IConditionExpression';
 export {IDocumentation} from './IDocumentation';

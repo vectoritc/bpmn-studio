@@ -1,7 +1,6 @@
 import {IConditionExpression} from './IConditionExpression';
 import {IDocumentation} from './IDocumentation';
 import {IExtensionElement} from './IExtensionElement';
-import {ITimerElement} from './ITimerElement';
 
 export interface IModdleElement {
   id: string;
@@ -21,7 +20,8 @@ export interface IModdleElement {
   lanes?: Array<IModdleElement>;
   participants?: Array<IModdleElement>;
   default?: IModdleElement;
-  timeDuration?: ITimerElement;
-  timeCycle?: ITimerElement;
-  timeDate?: ITimerElement;
+  timeDuration?: IModdleElement;
+  timeCycle?: IModdleElement;
+  timeDate?: IModdleElement;
+  body?: string;
 }
