@@ -7,6 +7,12 @@ import {
   IShape,
 } from '../../../../../../contracts';
 
+enum TimerType {
+  Date = 1,
+  Duration = 2,
+  Cycle = 3,
+}
+
 export class TimerEventSection implements ISection {
 
   public path: string = '/sections/timer-event/timer-event';
@@ -18,8 +24,8 @@ export class TimerEventSection implements ISection {
 
   private isBoundaryEvent: boolean = true;
 
-  public selectedId: number;
   public timerElement: IModdleElement;
+  public timerType: TimerType;
 
   public async activate(model: IPageModel): Promise<void> {
     this.businessObjInPanel = model.elementInPanel.businessObject;
@@ -32,37 +38,45 @@ export class TimerEventSection implements ISection {
   }
 
   private _init(): void {
-    const elementHasNoTimeDate: boolean = this.businessObjInPanel.eventDefinitions[0].timeDate === undefined;
-    const elementHasNoTimeDuration: boolean = this.businessObjInPanel.eventDefinitions[0].timeDuration === undefined;
-    const elementHasNoTimeCycle: boolean = this.businessObjInPanel.eventDefinitions[0].timeCycle === undefined;
+    const {timeDate, timeDuration, timeCycle} = this.businessObjInPanel.eventDefinitions[0];
 
-    if (elementHasNoTimeCycle && elementHasNoTimeDate && elementHasNoTimeDuration) {
+    if ((timeDate === undefined)
+        && (timeDuration === undefined)
+        && (timeCycle === undefined)) {
       return;
     }
 
-    if (!elementHasNoTimeCycle) {
-      this.selectedId = 3; // tslint:disable-line:no-magic-numbers
-    } else if (!elementHasNoTimeDuration) {
-      this.selectedId = 2; // tslint:disable-line:no-magic-numbers
-    } else if (!elementHasNoTimeDate) {
-      this.selectedId = 1;
-    } else {
-      this.selectedId = undefined;
+    if (timeCycle !== undefined) {
+      this.timerType = TimerType.Cycle;
+      return;
     }
 
+    if (timeDuration !== undefined) {
+      this.timerType = TimerType.Duration;
+      return;
+    }
+
+    if (timeDate !== undefined) {
+      this.timerType = TimerType.Date;
+      return;
+    }
   }
 
   private _getTimerElement(): IModdleElement {
-    if (this.businessObjInPanel.eventDefinitions[0].timeDuration !== undefined) {
-      return this.businessObjInPanel.eventDefinitions[0].timeDuration;
-    } else if (this.businessObjInPanel.eventDefinitions[0].timeDate !== undefined) {
-      return this.businessObjInPanel.eventDefinitions[0].timeDate;
-    } else if (this.businessObjInPanel.eventDefinitions[0].timeCycle !== undefined) {
-      return this.businessObjInPanel.eventDefinitions[0].timeCycle;
-    } else {
-      const timerEventDefinition: IModdleElement = this.moddle.create('bpmn:FormalExpression', {body: ''});
-      return timerEventDefinition;
+    const {timeDuration, timeDate, timeCycle} = this.businessObjInPanel.eventDefinitions[0];
+
+    if (timeDuration !== undefined) {
+       return timeDuration;
     }
+    if (timeDate !== undefined) {
+      return timeDate;
+    }
+    if (timeCycle !== undefined) {
+      return timeCycle;
+    }
+
+    const timerEventDefinition: IModdleElement = this.moddle.create('bpmn:FormalExpression', {body: ''});
+    return timerEventDefinition;
   }
 
   public isSuitableForElement(element: IShape): boolean {
@@ -87,38 +101,14 @@ export class TimerEventSection implements ISection {
   }
 
   public updateTimerType(): void {
-    switch (this.selectedId) {
-      case undefined:
-        this.businessObjInPanel.eventDefinitions[0].timeDuration = undefined;
-        this.businessObjInPanel.eventDefinitions[0].timeCycle = undefined;
-        this.businessObjInPanel.eventDefinitions[0].timeDate = undefined;
-        break;
-      case 1:
-        const timeDate: IModdleElement = this.moddle.create('bpmn:FormalExpression', {body: this.timerElement.body});
+    const moddleElement: IModdleElement = this.moddle.create('bpmn:FormalExpression', {body: this.timerElement.body});
+    const timerTypeObject: Object = {
+      timeDate: (this.timerType === TimerType.Date) ? moddleElement : undefined,
+      timeDuration: (this.timerType === TimerType.Duration) ? moddleElement : undefined,
+      timeCycle: (this.timerType === TimerType.Cycle) ? moddleElement : undefined,
+    };
 
-        this.businessObjInPanel.eventDefinitions[0].timeDate = timeDate;
-        this.businessObjInPanel.eventDefinitions[0].timeDuration = undefined;
-        this.businessObjInPanel.eventDefinitions[0].timeCycle = undefined;
-        break;
-      // tslint:disable-next-line:no-magic-numbers
-      case 2:
-        const timeDuration: IModdleElement = this.moddle.create('bpmn:FormalExpression', {body: this.timerElement.body});
-
-        this.businessObjInPanel.eventDefinitions[0].timeDuration = timeDuration;
-        this.businessObjInPanel.eventDefinitions[0].timeCycle = undefined;
-        this.businessObjInPanel.eventDefinitions[0].timeDate = undefined;
-        break;
-      // tslint:disable-next-line:no-magic-numbers
-      case 3:
-        const timeCycle: IModdleElement = this.moddle.create('bpmn:FormalExpression', {body: this.timerElement.body});
-
-        this.businessObjInPanel.eventDefinitions[0].timeCycle = timeCycle;
-        this.businessObjInPanel.eventDefinitions[0].timeDuration = undefined;
-        this.businessObjInPanel.eventDefinitions[0].timeDate = undefined;
-        break;
-      default:
-        break;
-    }
+    Object.assign(this.businessObjInPanel.eventDefinitions[0], timerTypeObject);
   }
 
   public updateTimerDefinition(): void {
