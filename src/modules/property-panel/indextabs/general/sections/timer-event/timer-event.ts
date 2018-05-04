@@ -22,12 +22,10 @@ export class TimerEventSection implements ISection {
   private moddle: IBpmnModdle;
   private modeler: IBpmnModeler;
 
-  private isBoundaryEvent: boolean = true;
-
   public timerElement: IModdleElement;
   public timerType: TimerType;
 
-  public async activate(model: IPageModel): Promise<void> {
+  public activate(model: IPageModel): void {
     this.businessObjInPanel = model.elementInPanel.businessObject;
 
     this.moddle = model.modeler.get('moddle');
@@ -81,7 +79,6 @@ export class TimerEventSection implements ISection {
 
   public isSuitableForElement(element: IShape): boolean {
     if (this._elementIsTimerEvent(element)) {
-      this.isBoundaryEvent = this._elementIsBoundaryEvent(element);
       return true;
     }
     return false;
@@ -92,12 +89,6 @@ export class TimerEventSection implements ISection {
         && element.businessObject !== undefined
         && element.businessObject.eventDefinitions !== undefined
         && element.businessObject.eventDefinitions[0].$type === 'bpmn:TimerEventDefinition';
-  }
-
-  private _elementIsBoundaryEvent(element: IShape): boolean {
-    return element !== undefined
-        && element.businessObject !== undefined
-        && element.businessObject.$type === 'bpmn:BoundaryEvent';
   }
 
   public updateTimerType(): void {
