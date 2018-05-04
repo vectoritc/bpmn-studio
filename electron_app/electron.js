@@ -7,7 +7,7 @@ const isDev = require('electron-is-dev');
 const getPort = require('get-port');
 const fs = require('fs');
 
-const prereleaseRegex = /\d+\.\d+\.\d+-[0-9a-z]{8}-b\d+/;
+const prereleaseRegex = /\d+\.\d+\.\d+-pre-b\d+/;
 
 if (!isDev) {
   const userDataFolder = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : '/var/local');
@@ -114,7 +114,13 @@ getPort({port: 8000, host: '0.0.0.0'})
       label: "Edit",
       submenu: [
           {
-            label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:"
+            label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:"
+          },
+          {
+            label: "Redo", accelerator: "CmdOrCtrl+Shift+Z", selector: "redo:"
+          },
+          {
+            type: "separator"
           },
           {
             label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:"
