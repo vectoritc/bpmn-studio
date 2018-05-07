@@ -8,6 +8,11 @@ export function configure(aurelia: Aurelia): void {
   const tokenRepository: TokenRepository = new TokenRepository();
   aurelia.container.registerInstance('TokenRepository', tokenRepository);
 
+  if (navigator.cookieEnabled === false) {
+    const url: string = location.href;
+    throw new Error(`In order to use the web version of BPMN Studio please enable cookies for this URL: ${url}.`);
+  }
+
   if ((<any> window).nodeRequire) {
     const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
     const newHost: string = ipcRenderer.sendSync('get_host');
