@@ -8,9 +8,9 @@ import {
 } from '../../../../../../contracts';
 
 enum TimerType {
-  Date = 1,
-  Duration = 2,
-  Cycle = 3,
+  Date,
+  Duration,
+  Cycle,
 }
 
 export class TimerEventSection implements ISection {
@@ -23,6 +23,7 @@ export class TimerEventSection implements ISection {
   private modeler: IBpmnModeler;
 
   public timerElement: IModdleElement;
+  public TimerType: typeof TimerType = TimerType;
   public timerType: TimerType;
 
   public activate(model: IPageModel): void {
@@ -78,13 +79,6 @@ export class TimerEventSection implements ISection {
   }
 
   public isSuitableForElement(element: IShape): boolean {
-    if (this._elementIsTimerEvent(element)) {
-      return true;
-    }
-    return false;
-  }
-
-  private _elementIsTimerEvent(element: IShape): boolean {
     return element !== undefined
         && element.businessObject !== undefined
         && element.businessObject.eventDefinitions !== undefined
