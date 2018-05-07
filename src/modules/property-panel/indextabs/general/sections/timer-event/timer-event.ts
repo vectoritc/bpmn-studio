@@ -94,6 +94,7 @@ export class TimerEventSection implements ISection {
     };
 
     Object.assign(this.businessObjInPanel.eventDefinitions[0], timerTypeObject);
+    this.timerElement.body = '';
   }
 
   public updateTimerDefinition(): void {
