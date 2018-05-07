@@ -41,13 +41,56 @@ export class ProcessDefList {
     this.reader.onload = async(fileInformations: any): Promise<void> => {
       try {
         const xml: string = fileInformations.target.result;
-        const response: any = await this.processEngineService.createProcessfromXML(xml);
+        const processId: string = this.getProcessIdFromXml(xml);
+        const processDefName: string = await this.getProcessDefName(processId);
+        if (processDefName === null) {
+          return;
+        }
+
+        const response: any = await this.processEngineService.createProcessfromXML(processDefName, xml);
         this.refreshProcesslist();
         this.notificationService.showNotification(NotificationType.SUCCESS, 'Diagram successfully imported!');
       } catch (error) {
         this.notificationService.showNotification(NotificationType.ERROR, `Error while importing file: ${error.message}`);
       }
     };
+  }
+
+  private getProcessIdFromXml(xml: string): string {
+    const processId: RegExpExecArray = /<bpmn:process id="(.*?)"/g.exec(xml);
+
+    return processId[1];
+  }
+
+  public async getProcessDefName(processId: string): Promise<string> {
+    const userInput: string = prompt('Please enter a name for the ProcessDef:', processId);
+
+    const isNameUnique: boolean = await this.checkIfProcessDefNameUnique(userInput);
+
+    if (userInput === '') {
+      return this.getProcessDefName(processId);
+    }
+    if (!isNameUnique) {
+      const response: boolean = confirm('There is already a Process Definition with that Name. Would you like to override it?');
+      if (!response) {
+        return this.getProcessDefName(processId);
+      }
+    }
+
+    return userInput;
+  }
+
+  public async checkIfProcessDefNameUnique(processDefName: string): Promise<boolean> {
+    const processes: IPagination<IProcessDefEntity> = await this.bpmnStudioClient.getProcessDefList();
+    const existingProcess: IProcessDefEntity = processes.data.find((process: IProcessDefEntity) => {
+      return process.name === processDefName;
+    });
+
+    if (existingProcess === undefined) {
+      return true;
+    }
+
+    return false;
   }
 
   public selectedFilesChanged(): void {

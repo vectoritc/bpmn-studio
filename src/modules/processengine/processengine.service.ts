@@ -21,7 +21,7 @@ export class ProcessEngineService implements IProcessEngineService {
 
   private async createAndPublish(): Promise<void> {
     try {
-      await this.createProcessfromXML(this.fileInfo.content);
+      await this.createProcessfromXML(undefined, this.fileInfo.content);
       this.notificationService.showNotification(NotificationType.SUCCESS, 'Diagram successfully imported!');
     } catch (error) {
       this.notificationService.showNotification(NotificationType.ERROR,  `Error while importing file: ${error.message}`);
@@ -40,8 +40,8 @@ export class ProcessEngineService implements IProcessEngineService {
     return this.repository.updateProcessDef(processDef, xml);
   }
 
-  public createProcessfromXML(xml: string): Promise<any> {
-    return this.repository.createProcessfromXML(xml);
+  public createProcessfromXML(name: string, xml: string): Promise<any> {
+    return this.repository.createProcessfromXML(name, xml);
   }
 
   public getIdentity(): Promise<any> {
