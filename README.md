@@ -68,7 +68,7 @@ Dieses Skript baut die Anwendung, das Ergebnis ist produktionsreif.
 npm start
 ```
 
-Dieses Skript startet die statische Auslieferung der Anwendung auf Port 9000.
+Dieses Skript startet die statische Auslieferung der Anwendung auf Port 8080.
 Zuerst muss die Anwendung gebaut sein.
 
 **Zum starten (Entwicklung)**
