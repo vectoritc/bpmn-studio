@@ -25,11 +25,20 @@ Engine verbunden werden, um diese Diagramme auszuführen.
 
 ### Setup/Installation
 
+**TL;DR**
+
+1. `npm install`
+1. `npm run electron-build'
+1. `npm run build`
+1. `npm start` / `npm run start_dev`
+
+## Wie kann ich das Projekt benutzen?
+
+### Intallation der Abhängigkeiten
+
 ```shell
 npm install
 ```
-
-## Wie kann ich das Projekt benutzen?
 
 ### Electron Applikation
 
