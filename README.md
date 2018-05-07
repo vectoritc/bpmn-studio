@@ -32,6 +32,12 @@ Engine verbunden werden, um diese Diagramme auszuführen.
 1. `npm run build`
 1. `npm start` / `npm run start_dev`
 
+**TL;DR Tests**
+
+1. `npm start`
+1. `npm run integration-test-init`
+1. `npm run integration-test`
+
 ## Wie kann ich das Projekt benutzen?
 
 ### Intallation der Abhängigkeiten
