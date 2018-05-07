@@ -28,9 +28,13 @@ Engine verbunden werden, um diese Diagramme auszuführen.
 **TL;DR**
 
 1. `npm install`
-1. `npm run electron-build`
 1. `npm run build`
+1. `npm run electron-build`
 1. `npm start` / `npm run start_dev`
+
+**Notizen:**
+
+1. `npm run build` soll vor `npm run electron-build` ausgeführt werden.
 
 **TL;DR Tests**
 
@@ -47,23 +51,6 @@ Die Abhängigkeiten werden wie folgt installiert:
 ```shell
 npm install
 ```
-
-### Electron Applikation
-
-**Zum bauen:**
-
-```shell
-npm run electron-build
-```
-
-Nach dem Bauen kann man in dem `dist/mac` Ordner die fertige App finden und
-ausführen.
-
-**Alternative:**
-
-Die Releases des BPMN-Studios lassen sich alternativ auch
-[hier](https://github.com/process-engine/bpmn-studio/releases)
-herunterladen.
 
 ### Benutzung
 
@@ -94,9 +81,26 @@ Dieses Skript startet die Auslieferung der Anwendung für die Entwicklung.
 Bei Änderungen im Quelltext wird die Anwendung neugebaut und der Webbrowser
 automatisch neu geladen.
 
+### Electron Applikation
+
+**Zum bauen:**
+
+```shell
+npm run electron-build
+```
+
+Nach dem Bauen kann man in dem `dist/mac` Ordner die fertige Applikation finden
+und ausführen.
+
+**Alternative:**
+
+Die Releases des BPMN-Studios lassen sich alternativ auch
+[hier](https://github.com/process-engine/bpmn-studio/releases)
+herunterladen.
+
 ### End-to-End-Tests
 
-Start des Websservers:
+Start des Webservers:
 
 ```shell
 npm start
