@@ -28,7 +28,7 @@ Engine verbunden werden, um diese Diagramme auszuführen.
 **TL;DR**
 
 1. `npm install`
-1. `npm run electron-build'
+1. `npm run electron-build`
 1. `npm run build`
 1. `npm start` / `npm run start_dev`
 
