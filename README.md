@@ -120,5 +120,6 @@ Die Konfiguration liegt unter `aurelia_project/environments/dev|stage|prod.ts`.
 
 # Wen kann ich auf das Projekt ansprechen?
 
+[Christoph Gnip](mailto:christoph.gnip@5minds.de)
 [Alexander Kasten](mailto:alexander.kasten@5minds.de)
 [Paul Heidenreich](mailto:paul.heidenreich@5minds.de)
