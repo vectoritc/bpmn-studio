@@ -40,7 +40,9 @@ Engine verbunden werden, um diese Diagramme auszuführen.
 
 ## Wie kann ich das Projekt benutzen?
 
-### Intallation der Abhängigkeiten
+### Installation der Abhängigkeiten
+
+Die Abhängigkeiten werden wie folgt installiert:
 
 ```shell
 npm install
@@ -60,7 +62,8 @@ ausführen.
 **Alternative:**
 
 Die Releases des BPMN-Studios lassen sich alternativ auch
-[hier](https://github.com/process-engine/bpmn-studio/releases) herunterladen.
+[hier](https://github.com/process-engine/bpmn-studio/releases)
+herunterladen.
 
 ### Benutzung
 
@@ -91,7 +94,7 @@ Dieses Skript startet die Auslieferung der Anwendung für die Entwicklung.
 Bei Änderungen im Quelltext wird die Anwendung neugebaut und der Webbrowser
 automatisch neu geladen.
 
-**End-to-End-Test**
+### End-to-End-Tests
 
 Start des Websservers:
 
