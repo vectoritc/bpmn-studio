@@ -8,6 +8,7 @@ import {MessageEventSection} from './sections/message-event/message-event';
 import {PoolSection} from './sections/pool/pool';
 import {ScriptTaskSection} from './sections/script-task/script-task';
 import {SignalEventSection} from './sections/signal-event/signal-event';
+import {TimerEventSection} from './sections/timer-event/timer-event';
 
 export class General implements IIndextab {
   public title: string = 'General';
@@ -23,6 +24,7 @@ export class General implements IIndextab {
   public flowSection: ISection = new FlowSection();
   public errorEventSection: ISection = new ErrorEventSection();
   public escalationEventSection: ISection = new EscalationEventSection();
+  public timerEventSection: ISection = new TimerEventSection();
 
   public sections: Array<ISection> = [
     this.basicsSection,
@@ -34,6 +36,7 @@ export class General implements IIndextab {
     this.flowSection,
     this.errorEventSection,
     this.escalationEventSection,
+    this.timerEventSection,
   ];
 
   public canHandleElement: boolean = true;
