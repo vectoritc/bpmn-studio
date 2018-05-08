@@ -23,6 +23,8 @@ export class ProcessDefList {
   public selectedFiles: FileList;
   public fileInput: HTMLInputElement;
   private reader: FileReader = new FileReader();
+  public diagrammToOverride: any;
+  public diagrammToImport: any;
 
   @observable public currentPage: number = 1;
   public pageSize: number = 10;

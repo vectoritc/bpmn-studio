@@ -4,6 +4,48 @@
   <require from="../process-solution-panel/process-solution-panel"></require>
 
   <div class="process-def-list">
+    <div if.bind="diagrammToOverride">
+      <div class="modal  fade in show" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Diagramm already existing!</h5>
+            </div>
+            <div class="modal-body">
+              <p>There is already a Diagramm with that name.</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal" click.delegate="cancelOverride(diagrammToOverride)">Cancel</button>
+              <button type="button" class="btn btn-success" data-dismiss="modal" click.delegate="changeName(diagrammToOverride)">Change Name</button>
+              <button type="button" class="btn btn-warning" click.delegate="overrideDiagramm(diagrammToOverride)">Override</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-backdrop fade in"></div>
+    </div>
+    <div if.bind="diagrammToImport">
+      <div class="modal  fade in show" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Diagramm already existing!</h5>
+            </div>
+            <div class="modal-body">
+              <p>Please enter a name for the Process Definition:</p>
+            </div>
+            <form submit.delegate = "checkDiagrammName()">
+              <input type="text" class="import-process-textbox" value.bind="diagrammToImport.name" focus.one-time="true" placeholder="Definition Name">
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal" click.delegate="cancelImport()">Cancel</button>
+                <button type="button" class="btn btn-success" click.delegate="checkDiagrammName()">Confirm</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-backdrop fade in"></div>
+    </div>
     <div class="menu-bar menu-bar--system-macos">
       <div class="menu-bar__menu menu-bar__menu--left">
         <div class="menu__menu-tabbed-link">
