@@ -114,8 +114,9 @@ export class BpmnIo {
 
     this.initialLoadingFinished = true;
 
-    this.resizeButton.addEventListener('mousedown', () => {
-      window.event.cancelBubble = true;
+    this.resizeButton.addEventListener('mousedown', (e: Event) => {
+      const windowEvent: Event = e || window.event;
+      windowEvent.cancelBubble = true;
 
       const mousemoveFunction: EventListenerOrEventListenerObject =  (event: Event): void => {
         this.resize(event);
