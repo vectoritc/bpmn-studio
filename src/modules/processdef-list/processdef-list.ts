@@ -41,45 +41,65 @@ export class ProcessDefList {
 
     this.refreshProcesslist();
     this.reader.onload = async(fileInformations: any): Promise<void> => {
-      try {
-        const xml: string = fileInformations.target.result;
-        const processId: string = this.getProcessIdFromXml(xml);
-        const processDefName: string = await this.getProcessDefName(processId);
-        if (processDefName === null) {
-          return;
-        }
-
-        const response: any = await this.processEngineService.createProcessfromXML(processDefName, xml);
-        this.refreshProcesslist();
-        this.notificationService.showNotification(NotificationType.SUCCESS, 'Diagram successfully imported!');
-      } catch (error) {
-        this.notificationService.showNotification(NotificationType.ERROR, `Error while importing file: ${error.message}`);
-      }
+      const xml: string = fileInformations.target.result;
+      const processId: string = this._getProcessIdFromXml(xml);
+      this.diagrammToImport = {name: processId, xml: xml};
     };
   }
 
-  private getProcessIdFromXml(xml: string): string {
-    const processId: RegExpExecArray = /<bpmn:process id="(.*?)"/g.exec(xml);
+  private async _importProcess(name: string, xml: string): Promise<void> {
+    try {
+      const response: any = await this.processEngineService.createProcessfromXML(name, xml);
+      this.refreshProcesslist();
+      this.notificationService.showNotification(NotificationType.SUCCESS, 'Diagram successfully imported!');
+    } catch (error) {
+      this.notificationService.showNotification(NotificationType.ERROR, `Error while importing file: ${error.message}`);
+    }
+  }
+
+  public async checkDiagrammName(): Promise<void> {
+    const diagramm: any = this.diagrammToImport;
+    if (diagramm.name === '' || diagramm.name === undefined) {
+      this.notificationService.showNotification(NotificationType.ERROR, 'Name can not be empty');
+      this.diagrammToImport.name = this._getProcessIdFromXml(diagramm.xml);
+      return;
+    }
+    this.diagrammToImport = undefined;
+
+    const isNameUnique: boolean = await this.checkIfProcessDefNameUnique(diagramm.name);
+    if (!isNameUnique) {
+      this.diagrammToOverride = {name: diagramm.name, xml: diagramm.xml};
+      return;
+    }
+
+    this._importProcess(diagramm.name, diagramm.xml);
+  }
+
+  public cancelImport(): void {
+    this.diagrammToImport = undefined;
+  }
+
+  private _getProcessIdFromXml(xml: string): string {
+    let processId: RegExpExecArray = /<bpmn:process id="[^"]+" name="(.*?)"/.exec(xml);
+    if (processId === null) {
+      processId = /<bpmn:process id="(.*?)"/.exec(xml);
+    }
 
     return processId[1];
   }
 
-  public async getProcessDefName(processId: string): Promise<string> {
-    const userInput: string = prompt('Please enter a name for the ProcessDef:', processId);
+  public overrideDiagramm(diagramm: any): void {
+    this._importProcess(diagramm.name, diagramm.xml);
+    this.diagrammToOverride = undefined;
+  }
 
-    const isNameUnique: boolean = await this.checkIfProcessDefNameUnique(userInput);
+  public cancelOverride(): void {
+    this.diagrammToOverride = undefined;
+  }
 
-    if (userInput === '') {
-      return this.getProcessDefName(processId);
-    }
-    if (!isNameUnique) {
-      const response: boolean = confirm('There is already a Process Definition with that Name. Would you like to override it?');
-      if (!response) {
-        return this.getProcessDefName(processId);
-      }
-    }
-
-    return userInput;
+  public async changeName(diagramm: any): Promise<void> {
+    this.diagrammToOverride = undefined;
+    this.diagrammToImport = {name: diagramm.name, xml: diagramm.xml};
   }
 
   public async checkIfProcessDefNameUnique(processDefName: string): Promise<boolean> {
