@@ -10,12 +10,13 @@
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Import BPMN Diagram</h5>
+              <h1 class="modal-dialog__headline">Import BPMN Diagram</h1>
             </div>
-            <form class="modal-dialog__import-bpmn" submit.delegate = "checkDiagrammName()">
-              <p>Import as:</p>
-              <input type="text" value.bind="diagrammToImport.name" focus.one-time="true" placeholder="Definition Name">
-            </form>
+            <div class="modal-body">
+              <form submit.delegate = "checkDiagrammName()">
+                Import as: <input type="text" value.bind="diagrammToImport.name" focus.one-time="true" placeholder="Definition Name">
+              </form>
+            </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal" click.delegate="cancelImport()">Cancel</button>
                 <button type="button" class="btn btn-success" click.delegate="checkDiagrammName()">Confirm</button>
@@ -30,10 +31,10 @@
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Diagramm already existing!</h5>
+              <h1 class="modal-dialog__headline">Diagramm already exists!</h1>
             </div>
             <div class="modal-body">
-              <p>There is already a Diagramm with that name.</p>
+              A diagramm with that name is already imported. Hit Cancel to change the name.
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-danger" data-dismiss="modal" click.delegate="cancelOverride(diagrammToOverride)">Cancel</button>
