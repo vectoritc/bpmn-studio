@@ -94,10 +94,6 @@ export class ProcessDefList {
     this.diagrammToOverride = undefined;
   }
 
-  public cancelOverride(): void {
-    this.diagrammToOverride = undefined;
-  }
-
   public async changeName(diagramm: any): Promise<void> {
     this.diagrammToOverride = undefined;
     this.diagrammToImport = {name: diagramm.name, xml: diagramm.xml};
