@@ -11,8 +11,9 @@
             <div class="modal-header">
               <h5 class="modal-title">Import BPMN Diagram</h5>
             </div>
-            <form submit.delegate = "checkDiagrammName()">
-              <input type="text" class="import-process-textbox" value.bind="diagrammToImport.name" focus.one-time="true" placeholder="Definition Name">
+            <form class="modal-dialog__import-bpmn" submit.delegate = "checkDiagrammName()">
+              <p>Import as:</p>
+              <input type="text" value.bind="diagrammToImport.name" focus.one-time="true" placeholder="Definition Name">
             </form>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal" click.delegate="cancelImport()">Cancel</button>
