@@ -1,17 +1,22 @@
-import {BpmnStudioClient, IPagination, IProcessDefEntity} from '@process-engine/bpmn-studio_client';
 import {inject} from 'aurelia-framework';
+
+import {
+  BpmnStudioClient,
+  IPagination,
+  IProcessDefEntity
+} from '@process-engine/bpmn-studio_client';
 
 @inject('BpmnStudioClient')
 export class ProcessSolutionPanel {
-  private bpmnStudioClient: BpmnStudioClient;
+  private _bpmnStudioClient: BpmnStudioClient;
+
   public processes: IPagination<IProcessDefEntity>;
 
   constructor(bpmnStudioClient: BpmnStudioClient) {
-    this.bpmnStudioClient = bpmnStudioClient;
+    this._bpmnStudioClient = bpmnStudioClient;
   }
 
   public async attached(): Promise<void> {
-    this.processes = await this.bpmnStudioClient.getProcessDefList();
+    this.processes = await this._bpmnStudioClient.getProcessDefList();
   }
-
 }
