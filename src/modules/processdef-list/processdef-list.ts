@@ -1,3 +1,5 @@
+// TODO: Refector the Process Definition List entirely
+// TODO: Sort the imports: 1. Framework Deps 2. 3rd Party Deps 3. Own Deps
 import {BpmnStudioClient, IPagination, IProcessDefEntity, IUserTaskConfig} from '@process-engine/bpmn-studio_client';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
@@ -8,6 +10,7 @@ import {NotificationService} from '../notification/notification.service';
 
 @inject(EventAggregator, 'BpmnStudioClient', Router, 'ProcessEngineService', 'NotificationService')
 export class ProcessDefList {
+  // TODO: Refactor all private names needs to start with '_'
   private processEngineService: IProcessEngineService;
   private bpmnStudioClient: BpmnStudioClient;
   private eventAggregator: EventAggregator;
@@ -23,12 +26,14 @@ export class ProcessDefList {
   @bindable()
   public selectedFiles: FileList;
   public fileInput: HTMLInputElement;
+  // TODO: define Type for this; ANY is hardly acceptable
   public diagrammToOverwrite: any;
   public diagrammToImport: any;
 
   @observable public currentPage: number = 1;
   public pageSize: number = 10;
   public totalItems: number;
+  // TODO: Find better name for this; suggestion: showSolutionExplorer
   public solutionExplorerIsShown: boolean = false;
 
   constructor(eventAggregator: EventAggregator,
