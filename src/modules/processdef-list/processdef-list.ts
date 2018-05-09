@@ -9,13 +9,13 @@ import {
   BpmnStudioClient,
   IPagination,
   IProcessDefEntity,
-  IUserTaskConfig
+  IUserTaskConfig,
 } from '@process-engine/bpmn-studio_client';
 
 import {
   AuthenticationStateEvent,
   IProcessEngineService,
-  NotificationType
+  NotificationType,
 } from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
