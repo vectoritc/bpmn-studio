@@ -23,7 +23,7 @@ export class ProcessDefList {
   public selectedFiles: FileList;
   public fileInput: HTMLInputElement;
   private reader: FileReader = new FileReader();
-  public diagrammToOverride: any;
+  public diagrammToOverwrite: any;
   public diagrammToImport: any;
 
   @observable public currentPage: number = 1;
@@ -69,7 +69,7 @@ export class ProcessDefList {
 
     const isNameUnique: boolean = await this.checkIfProcessDefNameUnique(diagramm.name);
     if (!isNameUnique) {
-      this.diagrammToOverride = {name: diagramm.name, xml: diagramm.xml};
+      this.diagrammToOverwrite = {name: diagramm.name, xml: diagramm.xml};
       return;
     }
 
@@ -89,13 +89,13 @@ export class ProcessDefList {
     return processId[1];
   }
 
-  public overrideDiagramm(diagramm: any): void {
+  public overwriteDiagramm(diagramm: any): void {
     this._importProcess(diagramm.name, diagramm.xml);
-    this.diagrammToOverride = undefined;
+    this.diagrammToOverwrite = undefined;
   }
 
   public async changeName(diagramm: any): Promise<void> {
-    this.diagrammToOverride = undefined;
+    this.diagrammToOverwrite = undefined;
     this.diagrammToImport = {name: diagramm.name, xml: diagramm.xml};
   }
 
