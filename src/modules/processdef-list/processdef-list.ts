@@ -44,6 +44,7 @@ export class ProcessDefList {
       const xml: string = fileInformations.target.result;
       const processId: string = this._getProcessIdFromXml(xml);
       this.diagrammToImport = {name: processId, xml: xml};
+      this.fileInput.value = '';
     };
   }
 
