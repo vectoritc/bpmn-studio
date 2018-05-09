@@ -1,4 +1,6 @@
 // TODO: Refector the Process Definition List entirely
+//       The big issue with this file is: it is the main
+//       anchor for the studio; but it is not aaparent why.
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
@@ -28,6 +30,7 @@ export class ProcessDefList {
   public fileInput: HTMLInputElement;
   public showOverwriteDialog: boolean;
   public showDiagramNameDialog: boolean;
+  // TODO: Put this into an interface IBpmnDiagramm and into the contracts folder
   public newDiagram: {
                         name: string,
                         xml: string,
