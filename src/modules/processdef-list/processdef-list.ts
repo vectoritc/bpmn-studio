@@ -54,7 +54,10 @@ export class ProcessDefList {
     this._fileReader.onload = async(fileInformations: any): Promise<void> => {
       const xml: string = fileInformations.target.result;
       const processId: string = this._getProcessIdFromXml(xml);
-      this.newDiagram = {name: processId, xml: xml};
+      this.newDiagram = {
+        name: processId,
+        xml: xml,
+      };
       this.showDiagramNameDialog  = true;
       this.fileInput.value = '';
     };
