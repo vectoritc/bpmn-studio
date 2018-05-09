@@ -5,6 +5,7 @@
 
   <div class="process-def-list">
     <!-- Modal dialog for importing BPMN diagrams {{{ -->
+    <!-- Import Dialog {{{ -->
     <div if.bind="showDiagramNameDialog">
       <div class="modal fade in show" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
@@ -24,8 +25,12 @@
           </div>
         </div>
       </div>
+      <!-- Modal Gray Bacground {{{ -->
       <div class="modal-backdrop fade in"></div>
+      <!-- }}} Modal Gray Bacground -->
     </div>
+    <!-- }}} Import Dialog -->
+    <!-- Overwrite Dialog {{{ -->
     <div if.bind="showOverwriteDialog">
       <div class="modal  fade in show" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
@@ -45,8 +50,11 @@
           </div>
         </div>
       </div>
+      <!-- Modal Gray Bacground {{{ -->
       <div class="modal-backdrop fade in"></div>
+      <!-- }}} Modal Gray Bacground -->
     </div>
+    <!-- }}} Overwrite Dialog -->
     <!-- }}} Modal dialog for importing BPMN diagrams -->
 
     <!-- TODO: Refactor this...  this has to land in the router! {{{ -->
