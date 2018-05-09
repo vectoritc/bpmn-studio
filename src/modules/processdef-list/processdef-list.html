@@ -13,13 +13,13 @@
               <h1 class="modal-dialog__headline">Import BPMN Diagram</h1>
             </div>
             <div class="modal-body process-def-list__modal-body">
-              <form submit.delegate = "checkDiagramName()">
+              <form submit.delegate = "importNewDiagram()">
                 Import as: <input type="text" value.bind="newDiagram.name" focus.one-time="true" placeholder="Definition Name">
               </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal" click.delegate="cancelImport()">Cancel</button>
-                <button type="button" class="btn btn-success" click.delegate="checkDiagramName()">Confirm</button>
+                <button type="button" class="btn btn-success" click.delegate="importNewDiagram()">Confirm</button>
             </div>
           </div>
         </div>
@@ -40,7 +40,7 @@
               <button type="button" class="btn btn-danger" data-dismiss="modal"
                 click.delegate="changeNewDiagramName()">Cancel</button>
               <button type="button" class="btn btn-warning"
-                click.delegate="overwriteDiagram()">Override!</button>
+                click.delegate="overwriteDiagram()">Overwrite!</button>
             </div>
           </div>
         </div>
