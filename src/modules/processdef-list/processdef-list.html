@@ -4,6 +4,7 @@
   <require from="../process-solution-panel/process-solution-panel"></require>
 
   <div class="process-def-list">
+    <!-- Modal dialog for importing BPMN diagrams {{{ -->
     <div if.bind="diagrammToImport">
       <div class="modal  fade in show" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
@@ -44,6 +45,9 @@
       </div>
       <div class="modal-backdrop fade in"></div>
     </div>
+    <!-- }}} Modal dialog for importing BPMN diagrams -->
+
+    <!-- TODO: Refactor this...  this has to land in the router! {{{ -->
     <div class="menu-bar menu-bar--system-macos">
       <div class="menu-bar__menu menu-bar__menu--left">
         <div class="menu__menu-tabbed-link">
@@ -87,9 +91,13 @@
         <user-login></user-login>
       </div>
     </div>
+    <!-- }}} TODO: Refactor this... this has to land in the router!  -->
 
+    <!-- The solution explorer panel {{{ -->
     <process-solution-panel show.bind="solutionExplorerIsShown"></process-solution-panel>
+    <!-- }}} The solution explorer panel -->
 
+    <!-- TODO: Refactor this - put into a component {{{ -->
     <div class="processdef-list-container">
       <div show.bind="_processes">
         <a class="btn btn-success create-process" click.delegate="createProcess()">
@@ -125,4 +133,5 @@
       </div>
     </div>
   </div>
+    <!-- }}} TODO: Refactor this - put into a component -->
 </template>
