@@ -102,10 +102,10 @@
     <!-- TODO: Refactor this - put into a component {{{ -->
     <div class="processdef-list-container">
       <div show.bind="_processes">
-        <a class="btn btn-success create-process" click.delegate="createProcess()">
+        <a class="btn btn-success processdef-list__btn-create" click.delegate="createProcess()">
           <i class="fa fa-magic"></i> Create Process Definition
         </a>
-        <a class="btn btn-primary import-bpmn" click.delegate="fileInput.click()">
+        <a class="btn btn-primary processdef-list__btn-import" click.delegate="fileInput.click()">
           <i class="fa fa-download"></i> Import BPMN
         </a>
         <input type="file" ref="fileInput" accept=".xml,.bpmn" files.bind="selectedFiles" class="hidden">
