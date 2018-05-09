@@ -5,9 +5,18 @@ import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
-import {BpmnStudioClient, IPagination, IProcessDefEntity, IUserTaskConfig} from '@process-engine/bpmn-studio_client';
+import {
+  BpmnStudioClient,
+  IPagination,
+  IProcessDefEntity,
+  IUserTaskConfig
+} from '@process-engine/bpmn-studio_client';
 
-import {AuthenticationStateEvent, IProcessEngineService, NotificationType} from '../../contracts/index';
+import {
+  AuthenticationStateEvent,
+  IProcessEngineService,
+  NotificationType
+} from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
@@ -19,11 +28,11 @@ export class ProcessDefList {
   private _router: Router;
   private _notificationService: NotificationService;
 
-  private _offset: number;
   private _processes: IPagination<IProcessDefEntity>;
-  private _getProcessesIntervalId: number;
   private _subscriptions: Array<Subscription>;
   private _fileReader: FileReader = new FileReader();
+  private _offset: number;
+  private _getProcessesIntervalId: number;
 
   @bindable()
   public selectedFiles: FileList;
