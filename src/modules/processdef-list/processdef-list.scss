@@ -26,10 +26,8 @@
   padding: 60px 60px;
 }
 
-.process-def-list {
-  display: flex;
-  align-items: stretch;
-  height: 100%;
+.process-def-list__modal-body {
+  height: 100px;
 }
 
 .loading-spinner {

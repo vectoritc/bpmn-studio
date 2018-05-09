@@ -12,7 +12,7 @@
             <div class="modal-header">
               <h1 class="modal-dialog__headline">Import BPMN Diagram</h1>
             </div>
-            <div class="modal-body">
+            <div class="modal-body process-def-list__modal-body">
               <form submit.delegate = "checkDiagrammName()">
                 Import as: <input type="text" value.bind="diagrammToImport.name" focus.one-time="true" placeholder="Definition Name">
               </form>
@@ -33,7 +33,7 @@
             <div class="modal-header">
               <h1 class="modal-dialog__headline">Diagramm already exists!</h1>
             </div>
-            <div class="modal-body">
+            <div class="modal-body process-def-list__modal-body">
               A diagramm with that name is already imported. Hit Cancel to change the name.
             </div>
             <div class="modal-footer">
