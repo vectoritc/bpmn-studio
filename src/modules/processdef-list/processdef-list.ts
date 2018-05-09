@@ -26,11 +26,9 @@ export class ProcessDefList {
   @bindable()
   public selectedFiles: FileList;
   public fileInput: HTMLInputElement;
-  public diagramToOverwrite: {
-                                name: string,
-                                xml: string,
-                              };
-  public diagramToImport: {
+  public showOverwriteDialog: boolean;
+  public showDiagramNameDialog: boolean;
+  public newDiagram: {
                             name: string,
                             xml: string,
                           };
@@ -56,7 +54,8 @@ export class ProcessDefList {
     this._fileReader.onload = async(fileInformations: any): Promise<void> => {
       const xml: string = fileInformations.target.result;
       const processId: string = this._getProcessIdFromXml(xml);
-      this.diagramToImport = {name: processId, xml: xml};
+      this.newDiagram = {name: processId, xml: xml};
+      this.showDiagramNameDialog  = true;
       this.fileInput.value = '';
     };
   }
@@ -72,25 +71,28 @@ export class ProcessDefList {
   }
 
   public async checkDiagramName(): Promise<void> {
-    const diagram: any = this.diagramToImport;
+    this.showDiagramNameDialog = false;
+
+    const diagram: any = this.newDiagram;
     if (diagram.name === '' || diagram.name === undefined) {
       this._notificationService.showNotification(NotificationType.ERROR, 'Name can not be empty');
-      this.diagramToImport.name = this._getProcessIdFromXml(diagram.xml);
+      this.newDiagram.name = this._getProcessIdFromXml(diagram.xml);
       return;
     }
-    this.diagramToImport = undefined;
 
     const isNameUnique: boolean = await this.checkIfProcessDefNameUnique(diagram.name);
     if (!isNameUnique) {
-      this.diagramToOverwrite = {name: diagram.name, xml: diagram.xml};
+      this.showOverwriteDialog = true;
       return;
     }
 
     this._importProcess(diagram.name, diagram.xml);
+    this.newDiagram = undefined;
   }
 
   public cancelImport(): void {
-    this.diagramToImport = undefined;
+    this.newDiagram = undefined;
+    this.showDiagramNameDialog = false;
   }
 
   private _getProcessIdFromXml(xml: string): string {
@@ -104,12 +106,13 @@ export class ProcessDefList {
 
   public overwriteDiagrmm(diagram: any): void {
     this._importProcess(diagram.name, diagram.xml);
-    this.diagramToOverwrite = undefined;
+    this.showOverwriteDialog = false;
+    this.newDiagram = undefined;
   }
 
-  public async changeName(diagram: any): Promise<void> {
-    this.diagramToOverwrite = undefined;
-    this.diagramToImport = {name: diagram.name, xml: diagram.xml};
+  public async changeNewDiagramName(): Promise<void> {
+    this.showOverwriteDialog = false;
+    this.showDiagramNameDialog = true;
   }
 
   public async checkIfProcessDefNameUnique(processDefName: string): Promise<boolean> {

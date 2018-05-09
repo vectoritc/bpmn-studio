@@ -5,7 +5,7 @@
 
   <div class="process-def-list">
     <!-- Modal dialog for importing BPMN diagrams {{{ -->
-    <div if.bind="diagramToImport">
+    <div if.bind="showDiagramNameDialog">
       <div class="modal fade in show" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
@@ -14,7 +14,7 @@
             </div>
             <div class="modal-body process-def-list__modal-body">
               <form submit.delegate = "checkDiagramName()">
-                Import as: <input type="text" value.bind="diagramToImport.name" focus.one-time="true" placeholder="Definition Name">
+                Import as: <input type="text" value.bind="newDiagram.name" focus.one-time="true" placeholder="Definition Name">
               </form>
             </div>
             <div class="modal-footer">
@@ -26,7 +26,7 @@
       </div>
       <div class="modal-backdrop fade in"></div>
     </div>
-    <div if.bind="diagramToOverride">
+    <div if.bind="showOverwriteDialog">
       <div class="modal  fade in show" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
@@ -38,9 +38,9 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-danger" data-dismiss="modal"
-                click.delegate="changeName(diagramToOverride)">Cancel</button>
+                click.delegate="changeNewDiagramName()">Cancel</button>
               <button type="button" class="btn btn-warning"
-                click.delegate="overrideDiagram(diagramToOverride)">Override!</button>
+                click.delegate="overwriteDiagram()">Override!</button>
             </div>
           </div>
         </div>
