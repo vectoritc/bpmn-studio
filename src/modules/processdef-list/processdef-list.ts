@@ -11,16 +11,16 @@ import {NotificationService} from '../notification/notification.service';
 @inject(EventAggregator, 'BpmnStudioClient', Router, 'ProcessEngineService', 'NotificationService')
 export class ProcessDefList {
   // TODO: Refactor all private names needs to start with '_'
-  private processEngineService: IProcessEngineService;
-  private bpmnStudioClient: BpmnStudioClient;
-  private eventAggregator: EventAggregator;
-  private router: Router;
-  private notificationService: NotificationService;
+  private _processEngineService: IProcessEngineService;
+  private _bpmnStudioClient: BpmnStudioClient;
+  private _eventAggregator: EventAggregator;
+  private _router: Router;
+  private _notificationService: NotificationService;
 
-  private offset: number;
+  private _offset: number;
   private _processes: IPagination<IProcessDefEntity>;
-  private getProcessesIntervalId: number;
-  private subscriptions: Array<Subscription>;
+  private _getProcessesIntervalId: number;
+  private _subscriptions: Array<Subscription>;
   private _fileReader: FileReader = new FileReader();
 
   @bindable()
@@ -45,11 +45,11 @@ export class ProcessDefList {
               router: Router,
               processEngineService: IProcessEngineService,
               notificationService: NotificationService) {
-    this.processEngineService = processEngineService;
-    this.eventAggregator = eventAggregator;
-    this.bpmnStudioClient = bpmnStudioClient;
-    this.router = router;
-    this.notificationService = notificationService;
+    this._processEngineService = processEngineService;
+    this._eventAggregator = eventAggregator;
+    this._bpmnStudioClient = bpmnStudioClient;
+    this._router = router;
+    this._notificationService = notificationService;
 
     this.refreshProcesslist();
 
@@ -63,18 +63,18 @@ export class ProcessDefList {
 
   private async _importProcess(name: string, xml: string): Promise<void> {
     try {
-      const response: any = await this.processEngineService.createProcessfromXML(name, xml);
+      const response: any = await this._processEngineService.createProcessfromXML(name, xml);
       this.refreshProcesslist();
-      this.notificationService.showNotification(NotificationType.SUCCESS, 'Diagram successfully imported!');
+      this._notificationService.showNotification(NotificationType.SUCCESS, 'Diagram successfully imported!');
     } catch (error) {
-      this.notificationService.showNotification(NotificationType.ERROR, `Error while importing file: ${error.message}`);
+      this._notificationService.showNotification(NotificationType.ERROR, `Error while importing file: ${error.message}`);
     }
   }
 
   public async checkDiagrammName(): Promise<void> {
     const diagramm: any = this.diagrammToImport;
     if (diagramm.name === '' || diagramm.name === undefined) {
-      this.notificationService.showNotification(NotificationType.ERROR, 'Name can not be empty');
+      this._notificationService.showNotification(NotificationType.ERROR, 'Name can not be empty');
       this.diagrammToImport.name = this._getProcessIdFromXml(diagramm.xml);
       return;
     }
@@ -113,7 +113,7 @@ export class ProcessDefList {
   }
 
   public async checkIfProcessDefNameUnique(processDefName: string): Promise<boolean> {
-    const processes: IPagination<IProcessDefEntity> = await this.bpmnStudioClient.getProcessDefList();
+    const processes: IPagination<IProcessDefEntity> = await this._bpmnStudioClient.getProcessDefList();
     const existingProcess: IProcessDefEntity = processes.data.find((process: IProcessDefEntity) => {
       return process.name === processDefName;
     });
@@ -138,30 +138,30 @@ export class ProcessDefList {
   }
 
   public async getProcessesFromService(): Promise<void> {
-    const processCount: IPagination<IProcessDefEntity> = await this.bpmnStudioClient.getProcessDefList();
+    const processCount: IPagination<IProcessDefEntity> = await this._bpmnStudioClient.getProcessDefList();
     this.totalItems = processCount.count;
-    this._processes = await this.bpmnStudioClient.getProcessDefList(this.pageSize, this.pageSize * (this.currentPage - 1));
+    this._processes = await this._bpmnStudioClient.getProcessDefList(this.pageSize, this.pageSize * (this.currentPage - 1));
   }
 
   public attached(): void {
-    this.getProcessesIntervalId = window.setInterval(() => {
+    this._getProcessesIntervalId = window.setInterval(() => {
       this.getProcessesFromService();
       // tslint:disable-next-line
     }, environment.processengine.poolingInterval);
 
-    this.subscriptions = [
-      this.eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
+    this._subscriptions = [
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
         this.refreshProcesslist();
       }),
-      this.eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
         this.refreshProcesslist();
       }),
     ];
   }
 
   public detached(): void {
-    clearInterval(this.getProcessesIntervalId);
-    for (const subscription of this.subscriptions) {
+    clearInterval(this._getProcessesIntervalId);
+    for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
   }
@@ -178,22 +178,22 @@ export class ProcessDefList {
   }
 
   public async createProcess(): Promise<void> {
-    const processesDefList: IPagination<IProcessDefEntity> = await this.bpmnStudioClient.getProcessDefList();
+    const processesDefList: IPagination<IProcessDefEntity> = await this._bpmnStudioClient.getProcessDefList();
     const processes: Array<IProcessDefEntity> = processesDefList.data;
 
     const processId: string = processes.find((process: IProcessDefEntity) => {
       return process.key === 'CreateProcessDef';
     }).id;
 
-    this.router.navigate(`processdef/${processId}/start`);
+    this._router.navigate(`processdef/${processId}/start`);
   }
 
   public startProcess(processId: string): void {
-    this.router.navigate(`processdef/${processId}/start`);
+    this._router.navigate(`processdef/${processId}/start`);
   }
 
   public showDetails(processId: string): void {
-    this.router.navigate(`processdef/${processId}/detail`);
+    this._router.navigate(`processdef/${processId}/detail`);
   }
 
   public toggleSolutionExplorer(): void {
