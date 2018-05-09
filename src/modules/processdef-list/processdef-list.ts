@@ -18,11 +18,11 @@ export class ProcessDefList {
   private _processes: IPagination<IProcessDefEntity>;
   private getProcessesIntervalId: number;
   private subscriptions: Array<Subscription>;
+  private _fileReader: FileReader = new FileReader();
 
   @bindable()
   public selectedFiles: FileList;
   public fileInput: HTMLInputElement;
-  private reader: FileReader = new FileReader();
   public diagrammToOverwrite: any;
   public diagrammToImport: any;
 
@@ -31,7 +31,10 @@ export class ProcessDefList {
   public totalItems: number;
   public solutionExplorerIsShown: boolean = false;
 
-  constructor(eventAggregator: EventAggregator, bpmnStudioClient: BpmnStudioClient, router: Router, processEngineService: IProcessEngineService,
+  constructor(eventAggregator: EventAggregator,
+              bpmnStudioClient: BpmnStudioClient,
+              router: Router,
+              processEngineService: IProcessEngineService,
               notificationService: NotificationService) {
     this.processEngineService = processEngineService;
     this.eventAggregator = eventAggregator;
@@ -40,7 +43,8 @@ export class ProcessDefList {
     this.notificationService = notificationService;
 
     this.refreshProcesslist();
-    this.reader.onload = async(fileInformations: any): Promise<void> => {
+
+    this._fileReader.onload = async(fileInformations: any): Promise<void> => {
       const xml: string = fileInformations.target.result;
       const processId: string = this._getProcessIdFromXml(xml);
       this.diagrammToImport = {name: processId, xml: xml};
@@ -114,7 +118,7 @@ export class ProcessDefList {
 
   public selectedFilesChanged(): void {
     if (this.selectedFiles !== undefined && this.selectedFiles.length > 0) {
-      this.reader.readAsText(this.selectedFiles[0]);
+      this._fileReader.readAsText(this.selectedFiles[0]);
     }
   }
 
