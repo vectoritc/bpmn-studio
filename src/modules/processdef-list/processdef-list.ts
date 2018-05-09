@@ -1,16 +1,16 @@
 // TODO: Refector the Process Definition List entirely
-// TODO: Sort the imports: 1. Framework Deps 2. 3rd Party Deps 3. Own Deps
-import {BpmnStudioClient, IPagination, IProcessDefEntity, IUserTaskConfig} from '@process-engine/bpmn-studio_client';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
+
+import {BpmnStudioClient, IPagination, IProcessDefEntity, IUserTaskConfig} from '@process-engine/bpmn-studio_client';
+
 import {AuthenticationStateEvent, IProcessEngineService, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
 @inject(EventAggregator, 'BpmnStudioClient', Router, 'ProcessEngineService', 'NotificationService')
 export class ProcessDefList {
-  // TODO: Refactor all private names needs to start with '_'
   private _processEngineService: IProcessEngineService;
   private _bpmnStudioClient: BpmnStudioClient;
   private _eventAggregator: EventAggregator;
