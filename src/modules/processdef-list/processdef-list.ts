@@ -65,9 +65,10 @@ export class ProcessDefList {
 
     this._fileReader.onload = async(fileInformations: any): Promise<void> => {
       const xml: string = fileInformations.target.result;
-      const processId: string = this._getProcessIdFromXml(xml);
+      const fileName: string = this.selectedFiles[0].name;
+      const diagrammName: string = fileName.substring(0, fileName.lastIndexOf('.'));
       this.newDiagram = {
-        name: processId,
+        name: diagrammName,
         xml: xml,
       };
       this.showDiagramNameDialog  = true;
@@ -115,15 +116,6 @@ export class ProcessDefList {
   public cancelImport(): void {
     this.newDiagram = undefined;
     this.showDiagramNameDialog = false;
-  }
-
-  private _getProcessIdFromXml(xml: string): string {
-    let processId: RegExpExecArray = /<bpmn:process id="[^"]+" name="(.*?)"/.exec(xml);
-    if (processId === null) {
-      processId = /<bpmn:process id="(.*?)"/.exec(xml);
-    }
-
-    return processId[1];
   }
 
   public overwriteDiagram(): void {
