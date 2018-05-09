@@ -38,8 +38,7 @@ export class ProcessDefList {
   @observable public currentPage: number = 1;
   public pageSize: number = 10;
   public totalItems: number;
-  // TODO: Find better name for this; suggestion: showSolutionExplorer
-  public solutionExplorerIsShown: boolean = false;
+  public showSolutionExplorer: boolean = false;
 
   constructor(eventAggregator: EventAggregator,
               bpmnStudioClient: BpmnStudioClient,
@@ -198,7 +197,7 @@ export class ProcessDefList {
   }
 
   public toggleSolutionExplorer(): void {
-    this.solutionExplorerIsShown = !this.solutionExplorerIsShown;
+    this.showSolutionExplorer = !this.showSolutionExplorer;
   }
 
 }

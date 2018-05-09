@@ -58,7 +58,7 @@
           </a>
         </div>
         <div class="menu__menu-tabbed-link">
-          <button class="menu-tabbed-link menu-bar__menu-center--action-button" class.bind="solutionExplorerIsShown ? 'solution-explorer__active' : ''" click.delegate="toggleSolutionExplorer()">
+          <button class="menu-tabbed-link menu-bar__menu-center--action-button" class.bind="showSolutionExplorer ? 'solution-explorer__active' : ''" click.delegate="toggleSolutionExplorer()">
             <i class="fa fa-folder"></i>
           </button>
         </div>
@@ -96,7 +96,7 @@
     <!-- }}} TODO: Refactor this... this has to land in the router!  -->
 
     <!-- The solution explorer panel {{{ -->
-    <process-solution-panel show.bind="solutionExplorerIsShown"></process-solution-panel>
+    <process-solution-panel show.bind="showSolutionExplorer"></process-solution-panel>
     <!-- }}} The solution explorer panel -->
 
     <!-- TODO: Refactor this - put into a component {{{ -->
