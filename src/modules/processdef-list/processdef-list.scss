@@ -1,7 +1,6 @@
-.pagination {
-  text-align: center;
-}
-
+/*
+ * Process Definition List Styles
+ */
 .process-def-list {
   display: flex;
   align-items: stretch;
@@ -30,6 +29,9 @@
   height: 100px;
 }
 
+/*
+ * Miscellaneous Styles
+ */
 .loading-spinner {
   display: block;
   margin-left: auto;
@@ -40,6 +42,9 @@
 /*
  * Modal Import Dialogs
  */
+.pagination {
+  text-align: center;
+}
 
 .modal-dialog__headline {
   font-size: 30px;
