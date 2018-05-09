@@ -26,9 +26,14 @@ export class ProcessDefList {
   @bindable()
   public selectedFiles: FileList;
   public fileInput: HTMLInputElement;
-  // TODO: define Type for this; ANY is hardly acceptable
-  public diagrammToOverwrite: any;
-  public diagrammToImport: any;
+  public diagrammToOverwrite: {
+                                name: string,
+                                xml: string,
+                              };
+  public diagrammToImport: {
+                            name: string,
+                            xml: string,
+                          };
 
   @observable public currentPage: number = 1;
   public pageSize: number = 10;
