@@ -5,7 +5,7 @@
 
   <div class="process-def-list">
     <!-- Modal dialog for importing BPMN diagrams {{{ -->
-    <div if.bind="diagrammToImport">
+    <div if.bind="diagramToImport">
       <div class="modal fade in show" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
@@ -13,34 +13,34 @@
               <h1 class="modal-dialog__headline">Import BPMN Diagram</h1>
             </div>
             <div class="modal-body process-def-list__modal-body">
-              <form submit.delegate = "checkDiagrammName()">
-                Import as: <input type="text" value.bind="diagrammToImport.name" focus.one-time="true" placeholder="Definition Name">
+              <form submit.delegate = "checkDiagramName()">
+                Import as: <input type="text" value.bind="diagramToImport.name" focus.one-time="true" placeholder="Definition Name">
               </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal" click.delegate="cancelImport()">Cancel</button>
-                <button type="button" class="btn btn-success" click.delegate="checkDiagrammName()">Confirm</button>
+                <button type="button" class="btn btn-success" click.delegate="checkDiagramName()">Confirm</button>
             </div>
           </div>
         </div>
       </div>
       <div class="modal-backdrop fade in"></div>
     </div>
-    <div if.bind="diagrammToOverride">
+    <div if.bind="diagramToOverride">
       <div class="modal  fade in show" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h1 class="modal-dialog__headline">Diagramm already exists!</h1>
+              <h1 class="modal-dialog__headline">Diagram already exists!</h1>
             </div>
             <div class="modal-body process-def-list__modal-body">
-              A diagramm with that name is already imported. Hit Cancel to change the name.
+              A diagram with that name is already imported. Hit Cancel to change the name.
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-danger" data-dismiss="modal"
-                click.delegate="changeName(diagrammToOverride)">Cancel</button>
+                click.delegate="changeName(diagramToOverride)">Cancel</button>
               <button type="button" class="btn btn-warning"
-                click.delegate="overrideDiagramm(diagrammToOverride)">Override!</button>
+                click.delegate="overrideDiagram(diagramToOverride)">Override!</button>
             </div>
           </div>
         </div>
