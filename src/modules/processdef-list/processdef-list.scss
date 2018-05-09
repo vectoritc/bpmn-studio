@@ -1,3 +1,5 @@
+
+
 .create-process {
   margin-bottom: 5px;
 }
@@ -22,9 +24,10 @@
   padding: 60px 60px;
 }
 
-// Introduced to use for proper spacing between icons and their text
-.processdef-list__btn-image {
-  margin-right: 5px;
+.process-def-list {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
 }
 
 .loading-spinner {
