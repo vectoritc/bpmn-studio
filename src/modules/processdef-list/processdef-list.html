@@ -91,9 +91,11 @@
 
     <div class="processdef-list-container">
       <div show.bind="_processes">
-        <a class="btn btn-success create-process" click.delegate="createProcess()">Create Process Definition</a>
+        <a class="btn btn-success create-process" click.delegate="createProcess()">
+          <i class="fa fa-magic processdef-list__btn-image"></i>Create Process Definition
+        </a>
         <a class="btn btn-primary import-bpmn" click.delegate="fileInput.click()">
-          <i class="glyphicon glyphicon-import"></i> Import XML
+          <i class="glyphicon glyphicon-import processdef-list__btn-image"></i>Import BPMN
         </a>
         <input type="file" ref="fileInput" accept=".xml,.bpmn" files.bind="selectedFiles" class="hidden">
         <table class="table table-striped table-bordered">
