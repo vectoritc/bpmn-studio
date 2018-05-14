@@ -25,6 +25,7 @@ body {
 
 .bpmn-studio-layout {
   display: flex;
+  height: 100%;
 }
 
 .router-view {
@@ -160,11 +161,6 @@ body {
 
 .dropdown-menu > li > a:hover {
   background-color: #dcdbdb;
-}
-
-.solution-explorer__active {
-  background-color: #dcdbdb;
-  opacity: 1;
 }
 
 .menu-bar__menu-left--options {
