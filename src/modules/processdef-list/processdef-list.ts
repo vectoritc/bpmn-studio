@@ -40,10 +40,8 @@ export class ProcessDefList {
   public showOverwriteDialog: boolean;
   public showDiagramNameDialog: boolean;
   // TODO: Put this into an interface IBpmnDiagramm and into the contracts folder
-  public newDiagram: {
-                        name: string,
-                        xml: string,
-                      };
+  public newDiagramName: string;
+  private _newDiagramXml: string;
 
   @observable public currentPage: number = 1;
   public pageSize: number = 10;
@@ -64,43 +62,42 @@ export class ProcessDefList {
     this.refreshProcesslist();
 
     this._fileReader.onload = async(fileInformations: any): Promise<void> => {
-      const xml: string = fileInformations.target.result;
+      this._newDiagramXml = fileInformations.target.result;
       const fileName: string = this.selectedFiles[0].name;
-      const diagrammName: string = fileName.substring(0, fileName.lastIndexOf('.'));
-      this.newDiagram = {
-        name: diagrammName,
-        xml: xml,
-      };
+      this.newDiagramName = fileName.substring(0, fileName.lastIndexOf('.'));
       this.showDiagramNameDialog  = true;
       this.fileInput.value = '';
     };
   }
 
   public async importNewDiagram(): Promise<void> {
-    const isDiagrammNameUnique: boolean = await this._checkIsDiagramNameUniqueOrEmpty();
-    if (isDiagrammNameUnique === undefined) {
+    try{
+      const isDiagramNameUnique: boolean = await this._isDiagramNameUniqueOrEmpty();
+
+      this.showDiagramNameDialog = false;
+
+      if (!isDiagramNameUnique) {
+        this.showOverwriteDialog = true;
+        return;
+      }
+
+      this._saveNewDiagram();
+    } catch(error) {
+      this._notificationService.showNotification(NotificationType.ERROR, 'Name can not be empty');
       return;
     }
-
-    this.showDiagramNameDialog = false;
-
-    if (!isDiagrammNameUnique) {
-      this.showOverwriteDialog = true;
-      return;
-    }
-
-    this._saveNewDiagram();
-    this.newDiagram = undefined;
   }
 
   private async _saveNewDiagram(): Promise<void> {
     try {
-      const response: any = await this._processEngineService.createProcessfromXML(this.newDiagram.xml, this.newDiagram.name);
+      const response: any = await this._processEngineService.createProcessfromXML(this._newDiagramXml, this.newDiagramName);
       this.refreshProcesslist();
       this._notificationService.showNotification(NotificationType.SUCCESS, 'Diagram successfully imported!');
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, `Error while importing file: ${error.message}`);
     }
+    this.newDiagramName = undefined;
+    this._newDiagramXml = undefined;
   }
 
   private async _checkIsDiagramNameUniqueOrEmpty(): Promise<boolean> {
@@ -109,19 +106,19 @@ export class ProcessDefList {
       return;
     }
 
-    const isNameUnique: boolean = await this.checkIfProcessDefNameUnique(this.newDiagram.name);
+    const isNameUnique: boolean = await this.checkIfProcessDefNameUnique(this.newDiagramName);
     return isNameUnique;
   }
 
   public cancelImport(): void {
-    this.newDiagram = undefined;
+    this.newDiagramName = undefined;
+    this._newDiagramXml = undefined;
     this.showDiagramNameDialog = false;
   }
 
   public overwriteDiagram(): void {
     this._saveNewDiagram();
     this.showOverwriteDialog = false;
-    this.newDiagram = undefined;
   }
 
   public async changeNewDiagramName(): Promise<void> {
