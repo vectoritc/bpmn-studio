@@ -71,7 +71,7 @@ export class ProcessDefList {
   }
 
   public async importNewDiagram(): Promise<void> {
-    try{
+    try {
       const isDiagramNameUnique: boolean = await this._isDiagramNameUniqueOrEmpty();
 
       this.showDiagramNameDialog = false;
@@ -82,7 +82,7 @@ export class ProcessDefList {
       }
 
       this._saveNewDiagram();
-    } catch(error) {
+    } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, 'Name can not be empty');
       return;
     }

@@ -3,7 +3,7 @@ import {inject} from 'aurelia-framework';
 import {
   BpmnStudioClient,
   IPagination,
-  IProcessDefEntity
+  IProcessDefEntity,
 } from '@process-engine/bpmn-studio_client';
 
 @inject('BpmnStudioClient')
