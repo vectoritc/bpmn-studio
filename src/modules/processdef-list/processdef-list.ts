@@ -100,10 +100,9 @@ export class ProcessDefList {
     this._newDiagramXml = undefined;
   }
 
-  private async _checkIsDiagramNameUniqueOrEmpty(): Promise<boolean> {
-    if (this.newDiagram.name === '' || this.newDiagram.name === undefined) {
-      this._notificationService.showNotification(NotificationType.ERROR, 'Name can not be empty');
-      return;
+  private async _isDiagramNameUniqueOrEmpty(): Promise<boolean> {
+    if (this.newDiagramName === '' || this.newDiagramName === undefined) {
+      throw new Error('Name can not be empty');
     }
 
     const isNameUnique: boolean = await this.checkIfProcessDefNameUnique(this.newDiagramName);
