@@ -2,8 +2,18 @@
   <require from="./navbar.css"></require>
   <div class="navbar">
     <div class="menu-bar__menu menu-bar__menu--left">
-      <div repeat.for="route of routes" class="menu__menu-tabbed-link" class.bind="activeRouteTitle === route.title ? 'menu__menu-tabbed-link--active' : ''">
-        <a class="menu-tabbed-link" click.delegate="navigate(route)">${route.title}</a>
+      <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'Process Definition List' ? 'menu__menu-tabbed-link--active' : ''">
+        <a class="menu-tabbed-link" click.delegate="navigate('Process Definition List')">Plan</a>
+      </div>
+      <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'ProcessDef Detail' ? 'menu__menu-tabbed-link--active' : ''">
+        <a class="menu-tabbed-link" click.delegate="navigate('ProcessDef Detail')">Design</a>
+      </div>
+      <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'Publish' ? 'menu__menu-tabbed-link--active' : ''">
+        <a class="menu-tabbed-link" click.delegate="navigate('Publish')">Publish</a>
+      </div>
+      <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'Task List' || activeRouteTitle === 'Process Instance List'
+                                                        ? 'menu__menu-tabbed-link--active' : ''">
+        <a class="menu-tabbed-link" click.delegate="navigate('Task List')">Dashboard</a>
       </div>
     </div>
     <div class="menu-bar__menu menu-bar__menu--center"></div>
