@@ -300,7 +300,7 @@ export class BpmnIo {
 
   private resizeEventHandler = (event: any): void => {
     this.maxWidth = document.body.clientWidth - environment.propertyPanel.maxWidth;
-    if (this.ppWidth > this.maxWidth) {
+    if (this.ppWidth > this.maxWidth && this.maxWidth > this.minWidth) {
       const currentWidth: number = this.maxWidth;
 
       this.resizeButtonRight = currentWidth - resizeButtonWidth + sideBarRightSize;
