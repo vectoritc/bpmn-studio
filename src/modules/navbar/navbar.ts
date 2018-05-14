@@ -8,6 +8,7 @@ export class NavBar {
   private eventAggregator: EventAggregator;
 
   public activeRouteTitle: string;
+  public showSolutionExplorer: boolean;
 
   constructor(router: Router, eventAggregator: EventAggregator) {
     this.router = router;
@@ -25,7 +26,12 @@ export class NavBar {
     const route: RouteConfig = this.router.routes.find((r: RouteConfig) => {
       return r.title === routeTitle;
     });
+
     this.router.navigate(`/${route.route}`);
+  }
+
+  public toggelSolutionExplorer(): void {
+    this.showSolutionExplorer = !this.showSolutionExplorer;
   }
 
   private isRouteActive(routeTitle: string): boolean {

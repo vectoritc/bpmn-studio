@@ -1,6 +1,8 @@
-.navbar {
+.bpmn-studio-navbar {
   height: 42px;
   background-color: #f7f7f7;
+  display: flex;
+  border-bottom: 2.5px solid #dcdbdb;
 }
 
 .menu-bar__menu--left {
@@ -20,7 +22,7 @@
   justify-content: flex-start;
   align-items: stretch;
   text-align: center;
-  border-bottom: 2.5px solid #dcdbdb;
+
 }
 
 .menu-bar__menu--center {
