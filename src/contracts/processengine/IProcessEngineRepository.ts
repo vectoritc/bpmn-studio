@@ -4,7 +4,7 @@ import {IPagination} from './IPagination';
 export interface IProcessEngineRepository {
   getProcessDefById(processDefId: string): Promise<IProcessDefEntity>;
   updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<any>;
-  createProcessfromXML(name: string, xml: string): Promise<any>;
+  createProcessfromXML(xml: string, name?: string): Promise<any>;
   deleteProcessDef(processId: string): Promise<void>;
   getIdentity(): Promise<any>;
   getProcesses(): Promise<IPagination<IProcessEntity>>;

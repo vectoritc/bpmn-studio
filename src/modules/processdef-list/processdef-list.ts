@@ -95,7 +95,7 @@ export class ProcessDefList {
 
   private async _saveNewDiagram(): Promise<void> {
     try {
-      const response: any = await this._processEngineService.createProcessfromXML(this.newDiagram.name, this.newDiagram.xml);
+      const response: any = await this._processEngineService.createProcessfromXML(this.newDiagram.xml, this.newDiagram.name);
       this.refreshProcesslist();
       this._notificationService.showNotification(NotificationType.SUCCESS, 'Diagram successfully imported!');
     } catch (error) {

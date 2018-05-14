@@ -78,7 +78,7 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
     return throwOnErrorResponse<any>(response);
   }
 
-  public async createProcessfromXML(name: string, xml: string): Promise<any> {
+  public async createProcessfromXML(xml: string, name?: string): Promise<any> {
     const options: RequestInit = {
       method: 'post',
       headers: new Headers({
