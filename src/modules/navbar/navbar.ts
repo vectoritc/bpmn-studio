@@ -1,5 +1,5 @@
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {inject} from 'aurelia-framework';
+import {bindable, inject} from 'aurelia-framework';
 import {RouteConfig, Router} from 'aurelia-router';
 
 @inject(Router, EventAggregator)
@@ -8,7 +8,7 @@ export class NavBar {
   private eventAggregator: EventAggregator;
 
   public activeRouteTitle: string;
-  public showSolutionExplorer: boolean;
+  @bindable() public showSolutionExplorer: boolean;
 
   constructor(router: Router, eventAggregator: EventAggregator) {
     this.router = router;
@@ -30,8 +30,9 @@ export class NavBar {
     this.router.navigate(`/${route.route}`);
   }
 
-  public toggelSolutionExplorer(): void {
+  public toggleSolutionExplorer(): void {
     this.showSolutionExplorer = !this.showSolutionExplorer;
+
   }
 
   private isRouteActive(routeTitle: string): boolean {
