@@ -39,7 +39,7 @@ export class ProcessDefList {
   public fileInput: HTMLInputElement;
   public showOverwriteDialog: boolean;
   public showDiagramNameDialog: boolean;
-  // TODO: Put this into an interface IBpmnDiagramm and into the contracts folder
+  // TODO: Put this into an interface IBpmnDiagram and into the contracts folder
   public newDiagramName: string;
   private _newDiagramXml: string;
 
