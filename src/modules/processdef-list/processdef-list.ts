@@ -131,11 +131,7 @@ export class ProcessDefList {
       return process.name === processDefName;
     });
 
-    if (existingProcess === undefined) {
-      return true;
-    }
-
-    return false;
+    return (existingProcess === undefined);
   }
 
   public selectedFilesChanged(): void {
