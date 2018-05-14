@@ -74,60 +74,6 @@
     <!-- }}} Overwrite Dialog -->
     <!-- }}} Modal dialog for importing BPMN diagrams -->
 
-    <!-- TODO: Refactor this...  this has to land in the router! {{{ -->
-    <div class="menu-bar menu-bar--system-macos">
-      <div class="menu-bar__menu menu-bar__menu--left">
-        <div class="menu__menu-tabbed-link">
-          <a class="menu-tabbed-link menu-bar__menu-left--options" href="#/configuration">
-            <i class="fa fa-cog"></i>
-          </a>
-        </div>
-        <div class="menu__menu-tabbed-link">
-          <button class="menu-tabbed-link menu-bar__menu-center--action-button"
-            class.bind="showSolutionExplorer ? 'solution-explorer__active' : ''"
-            click.delegate="toggleSolutionExplorer()">
-            <i class="fa fa-folder"></i>
-          </button>
-        </div>
-        <div class="menu__menu-tabbed-link menu__menu-tabbed-link--active">
-          <a class="menu-tabbed-link" href="#">Plan</a>
-        </div>
-        <div class="menu__menu-tabbed-link">
-          <a class="menu-tabbed-link menu-tabbed-link--disabled">Design</a>
-        </div>
-        <div class="menu__menu-tabbed-link">
-          <a class="menu-tabbed-link menu-tabbed-link--disabled">Publish</a>
-        </div>
-
-        <div class="btn-group">
-          <div class="menu__menu-tabbed-link" data-toggle="dropdown">
-            <a class="menu-tabbed-link">Dashboard</a>
-          </div>
-          <ul class="dropdown-menu menu-bar__dashboard-dropdown">
-            <li>
-              <a href="#/task">Task List</a>
-            </li>
-            <li>
-              <a href="#/process">Process Instance List</a>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="menu-bar__menu menu-bar__menu--center"></div>
-
-      <!-- TODO: Check if this is currently useful at all. -->
-      <div class="menu-bar__menu menu-bar__menu--right">
-        <user-login></user-login>
-      </div>
-    </div>
-    <!-- }}} TODO: Refactor this... this has to land in the router!  -->
-
-    <!-- The solution explorer panel {{{ -->
-    <process-solution-panel show.bind="showSolutionExplorer"></process-solution-panel>
-    <!-- }}} The solution explorer panel -->
-
-    <!-- TODO: Refactor this - put into a component {{{ -->
     <div class="processdef-list-container">
       <div show.bind="_processes">
         <a class="btn btn-success processdef-list__btn-create" click.delegate="createProcess()">
