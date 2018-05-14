@@ -3,8 +3,8 @@
   <require from="../user-login/user-login"></require>
   <div class="bpmn-studio-navbar">
     <div class="menu-bar__menu menu-bar__menu--left">
-      <div class="menu__menu-tabbed-link">
-        <a class="menu-tabbed-link menu-bar__menu-left--options" href="#/configuration">
+      <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'Configuration' ? 'menu__menu-tabbed-link--active' : ''">
+        <a class="menu-tabbed-link menu-bar__menu-left--options" click.delegate="navigate('Configuration')">
           <i class="fa fa-cog"></i>
         </a>
       </div>
