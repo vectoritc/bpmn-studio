@@ -39,6 +39,7 @@ export function configure(aurelia: Aurelia): void {
     .feature('modules/processengine')
     .feature('modules/notification')
     .feature('modules/authentication')
+    .feature('modules/navbar')
     .feature('modules/bpmn-studio_client', tokenRepository)
     .feature('resources')
     .plugin('aurelia-bootstrap')
