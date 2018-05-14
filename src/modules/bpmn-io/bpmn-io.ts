@@ -300,6 +300,13 @@ export class BpmnIo {
 
   private resizeEventHandler = (event: any): void => {
     this.maxWidth = document.body.clientWidth - environment.propertyPanel.maxWidth;
+    if (this.ppWidth > this.maxWidth) {
+      const currentWidth: number = this.maxWidth;
+
+      this.resizeButtonRight = currentWidth - resizeButtonWidth + sideBarRightSize;
+      this.canvasRight = currentWidth;
+      this.ppWidth = currentWidth;
+    }
   }
 
   private _activateColorPicker(): void {
