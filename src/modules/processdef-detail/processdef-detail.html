@@ -1,6 +1,5 @@
 <template>
   <require from="../bpmn-io/bpmn-io"></require>
-  <require from="../import-process-button/import-process-button"></require>
   <require from="./processdef-detail.css"></require>
   <require from="spectrum-colorpicker/spectrum.css"></require>
   <require from="../property-panel/property-panel"></require>
@@ -56,7 +55,7 @@
       </div>
       <div class="menu-bar__menu-action-link btn-group">
         <button class="menu-bar__menu-center--action-button dropdown-toggle" title="Export Diagram" ref="exportButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i ref="exportIcon" class="fa fa-download"></i>
+          <i ref="exportIcon" class="fa fa-upload"></i>
           <i ref="exportSpinner" class="glyphicon glyphicon-repeat fa-spin hidden"></i>
         </button>
         <ul class="dropdown-menu">
@@ -65,9 +64,6 @@
           <li><a href="#" click.delegate="exportPNG()">as PNG</a></li>
           <li><a href="#" click.delegate="exportJPEG()">as JPEG</a></li>
         </ul>
-      </div>
-      <div class="menu-bar__menu-action-link">
-        <import-process-button desired-process-import-key.bind="process.key" callback.bind="onModdlelImported.bind($this)" title="Import XML"></import-process-button>
       </div>
       <div class="menu-bar__menu-action-link">
         <button class="menu-bar__menu-center--action-button" ref="startButton" click.delegate="startProcess()" disabled.bind="validationError" title="Start Process">

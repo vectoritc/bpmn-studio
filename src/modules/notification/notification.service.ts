@@ -17,6 +17,7 @@ export class NotificationService {
     });
   }
 
+  // TODO: Could better be named 'notify' or 'show'
   public showNotification(type: NotificationType, message: string): void {
     const notification: INotification = {
       type: type,

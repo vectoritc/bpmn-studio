@@ -40,8 +40,8 @@ export class ProcessEngineService implements IProcessEngineService {
     return this.repository.updateProcessDef(processDef, xml);
   }
 
-  public createProcessfromXML(xml: string): Promise<any> {
-    return this.repository.createProcessfromXML(xml);
+  public createProcessfromXML(xml: string, name?: string): Promise<any> {
+    return this.repository.createProcessfromXML(xml, name);
   }
 
   public getIdentity(): Promise<any> {
