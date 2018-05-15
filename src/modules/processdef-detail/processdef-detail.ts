@@ -101,9 +101,13 @@ export class ProcessDefDetail {
       this.eventAggregator.subscribe('processdefdetail:process:start', () => {
         this.startProcess();
       }),
+      this.eventAggregator.subscribe('processdefdetail:xmlview:toggle', () => {
+        this.toggleXMLView();
+      }),
     ];
 
     this.eventAggregator.publish('navbar:tools:show', this.process);
+    this.eventAggregator.publish('statusbar:xmlbutton:show');
   }
 
   public detached(): void {
@@ -112,6 +116,7 @@ export class ProcessDefDetail {
     }
 
     this.eventAggregator.publish('navbar:tools:hide');
+    this.eventAggregator.publish('statusbar:xmlbutton:hide');
   }
 
   private refreshProcess(): Promise<IProcessDefEntity> {
