@@ -17,10 +17,10 @@
         <a class="menu-tabbed-link" click.delegate="navigate('Process Definition List')">Plan</a>
       </div>
       <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'ProcessDef Detail' ? 'menu__menu-tabbed-link--active' : ''">
-        <a class="menu-tabbed-link menu-tabbed-link--disabled" click.delegate="navigate('ProcessDef Detail')" disabled>Design</a>
+        <a class="menu-tabbed-link menu-tabbed-link--disabled">Design</a>
       </div>
       <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'Publish' ? 'menu__menu-tabbed-link--active' : ''">
-        <a class="menu-tabbed-link menu-tabbed-link--disabled" click.delegate="navigate('Publish')">Publish</a>
+        <a class="menu-tabbed-link menu-tabbed-link--disabled">Publish</a>
       </div>
       <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'Task List' || activeRouteTitle === 'Process Instance List'
                                                         ? 'menu__menu-tabbed-link--active' : ''">
