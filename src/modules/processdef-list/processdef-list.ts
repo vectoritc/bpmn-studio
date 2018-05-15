@@ -121,7 +121,7 @@ export class ProcessDefList {
     const processExists: boolean = processes.data.some((process: IProcessDefEntity) => {
           return process.name === processDefName;
     });
-    return processExists;
+    return !processExists;
   }
 
   public selectedFilesChanged(): void {
