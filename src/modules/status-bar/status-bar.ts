@@ -23,6 +23,10 @@ export class StatusBar {
     this.eventAggregator.subscribe('statusbar:xmlbutton:hide', () => {
       this.showXMLButton = false;
     });
+
+    this.eventAggregator.subscribe('statusbar:baseRoute:update', (newBaseRoute: string) => {
+      this.baseRoute = newBaseRoute;
+    });
   }
 
   public toggleXMLView(): void {
