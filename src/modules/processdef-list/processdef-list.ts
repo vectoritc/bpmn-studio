@@ -1,4 +1,4 @@
-// TODO: Refector the Process Definition List entirely
+// TODO: Refactor the Process Definition List entirely
 //       The big issue with this file is: it is the main
 //       anchor for the studio; but it is not aaparent why.
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
@@ -70,7 +70,7 @@ export class ProcessDefList {
     };
   }
 
-  //TODO: This needs to be refactored into an importService; Therefore it is not very usefuly to engenieer too much now.
+  // TODO: This needs to be refactored into an importService; Therefore it is not very usefuly to engenieer too much now.
   public async importNewDiagram(): Promise<void> {
     //  Check is name is empty; do not close dialog if it is {{{ //
     const nameIsEmpty: boolean = this._diagramNameIsEmpty();
