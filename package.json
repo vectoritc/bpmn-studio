@@ -82,6 +82,7 @@
     "get-port": "^3.2.0",
     "highlight.js": "^9.12.0",
     "highlightjs-line-numbers.js": "^2.2.0",
+    "minimist": "^1.2.0",
     "node-http-server": "^8.1.2",
     "open": "0.0.5",
     "proxy-polyfill": "^0.1.7",
