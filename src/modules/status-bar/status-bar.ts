@@ -16,21 +16,21 @@ export class StatusBar {
   }
 
   public attached(): void {
-    this.eventAggregator.subscribe('statusbar:xmlbutton:show', () => {
+    this.eventAggregator.subscribe(environment.events.statusBar.showXMLButton, () => {
       this.showXMLButton = true;
     });
 
-    this.eventAggregator.subscribe('statusbar:xmlbutton:hide', () => {
+    this.eventAggregator.subscribe(environment.events.statusBar.hideXMLButton, () => {
       this.showXMLButton = false;
     });
 
-    this.eventAggregator.subscribe('statusbar:baseRoute:update', (newBaseRoute: string) => {
+    this.eventAggregator.subscribe(environment.events.statusBar.updateBaseRoute, (newBaseRoute: string) => {
       this.baseRoute = newBaseRoute;
     });
   }
 
   public toggleXMLView(): void {
-    this.eventAggregator.publish('processdefdetail:xmlview:toggle');
-    this.xmlIsShown = !this.xmlIsShown;
+    this.eventAggregator.publish(environment.events.processDefDetail.toggleXMLView);
+    this.xmlIsShown = !this.xmlIsShown; ,
   }
 }

@@ -2,6 +2,7 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
 import {RouteConfig, Router} from 'aurelia-router';
 import { IProcessDefEntity } from '../../contracts';
+import environment from '../../environment';
 
 @inject(Router, EventAggregator)
 export class NavBar {
@@ -27,16 +28,16 @@ export class NavBar {
       this.dertermineActiveRoute();
     });
 
-    this.eventAggregator.subscribe('navbar:tools:show', (process: IProcessDefEntity) => {
+    this.eventAggregator.subscribe(environment.events.navBar.showTools, (process: IProcessDefEntity) => {
       this.showTools = true;
       this.process = process;
     });
 
-    this.eventAggregator.subscribe('navbar:tools:hide', () => {
+    this.eventAggregator.subscribe(environment.events.navBar.hideTools, () => {
       this.showTools = false;
     });
 
-    this.eventAggregator.subscribe('navbar:process:update', (process: IProcessDefEntity) => {
+    this.eventAggregator.subscribe(environment.events.navBar.updateProcess, (process: IProcessDefEntity) => {
       this.process = process;
     });
   }
@@ -58,15 +59,15 @@ export class NavBar {
   }
 
   public saveDiagram(): void {
-    this.eventAggregator.publish('processdefdetail:diagram:save');
+    this.eventAggregator.publish(environment.events.processDefDetail.saveDiagramm);
   }
 
   public exportDiagram(exportAs: string): void {
-    this.eventAggregator.publish(`processdefdetail:diagram:exportAs:${exportAs}`);
+    this.eventAggregator.publish(`${environment.events.processDefDetail.exportDiagramAs}:${exportAs}`);
   }
 
   public startProcess(): void {
-    this.eventAggregator.publish('processdefdetail:process:start');
+    this.eventAggregator.publish(environment.events.processDefDetail.startProcess);
   }
 
   private isRouteActive(routeTitle: string): boolean {
