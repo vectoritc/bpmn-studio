@@ -46,6 +46,7 @@ function _applicationPortIsValid(port) {
   const boundariesInvalid = (!lowerPortBoundValid || !upperPortBoundValid);
 
   if (boundariesInvalid) {
+    console.log("Port is not in the supported range [1000, 65535]. Using default port.\n");
     return false;
   }
 
