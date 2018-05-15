@@ -107,7 +107,7 @@ export class ProcessDefDetail {
     ];
 
     this.eventAggregator.publish(environment.events.navBar.showTools, this.process);
-    this.eventAggregator.publish(environment.events.statusBar.toggleXMLButton);
+    this.eventAggregator.publish(environment.events.statusBar.showXMLButton);
   }
 
   public detached(): void {
@@ -116,7 +116,7 @@ export class ProcessDefDetail {
     }
 
     this.eventAggregator.publish(environment.events.navBar.hideTools);
-    this.eventAggregator.publish(environment.events.statusBar.toggleXMLButton);
+    this.eventAggregator.publish(environment.events.statusBar.hideXMLButton);
   }
 
   private refreshProcess(): Promise<IProcessDefEntity> {
