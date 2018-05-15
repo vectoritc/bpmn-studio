@@ -83,31 +83,31 @@ export class ProcessDefDetail {
       this.eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
         this.refreshProcess();
       }),
-      this.eventAggregator.subscribe('processdefdetail:diagram:save', () => {
+      this.eventAggregator.subscribe(environment.events.processDefDetail.saveDiagramm, () => {
         this.saveDiagram();
       }),
-      this.eventAggregator.subscribe('processdefdetail:diagram:exportAs:BPMN', () => {
+      this.eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, () => {
         this.exportBPMN();
       }),
-      this.eventAggregator.subscribe('processdefdetail:diagram:exportAs:SVG', () => {
+      this.eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, () => {
         this.exportSVG();
       }),
-      this.eventAggregator.subscribe('processdefdetail:diagram:exportAs:PNG', () => {
+      this.eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, () => {
         this.exportPNG();
       }),
-      this.eventAggregator.subscribe('processdefdetail:diagram:exportAs:JPEG', () => {
+      this.eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, () => {
         this.exportJPEG();
       }),
-      this.eventAggregator.subscribe('processdefdetail:process:start', () => {
+      this.eventAggregator.subscribe(environment.events.processDefDetail.startProcess, () => {
         this.startProcess();
       }),
-      this.eventAggregator.subscribe('processdefdetail:xmlview:toggle', () => {
+      this.eventAggregator.subscribe(environment.events.processDefDetail.toggleXMLView, () => {
         this.toggleXMLView();
       }),
     ];
 
-    this.eventAggregator.publish('navbar:tools:show', this.process);
-    this.eventAggregator.publish('statusbar:xmlbutton:show');
+    this.eventAggregator.publish(environment.events.navBar.showTools, this.process);
+    this.eventAggregator.publish(environment.events.statusBar.toggleXMLButton);
   }
 
   public detached(): void {
@@ -115,8 +115,8 @@ export class ProcessDefDetail {
       subscription.dispose();
     }
 
-    this.eventAggregator.publish('navbar:tools:hide');
-    this.eventAggregator.publish('statusbar:xmlbutton:hide');
+    this.eventAggregator.publish(environment.events.navBar.hideTools);
+    this.eventAggregator.publish(environment.events.statusBar.toggleXMLButton);
   }
 
   private refreshProcess(): Promise<IProcessDefEntity> {
