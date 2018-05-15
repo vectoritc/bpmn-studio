@@ -33,6 +33,7 @@ export class ProcessDefList {
   private _fileReader: FileReader = new FileReader();
   private _offset: number;
   private _getProcessesIntervalId: number;
+  private _newDiagramXml: string;
 
   @bindable()
   public selectedFiles: FileList;
@@ -41,7 +42,6 @@ export class ProcessDefList {
   public showDiagramNameDialog: boolean;
   // TODO: Put this into an interface IBpmnDiagram and into the contracts folder
   public newDiagramName: string;
-  private _newDiagramXml: string;
 
   @observable public currentPage: number = 1;
   public pageSize: number = 10;
@@ -142,7 +142,7 @@ export class ProcessDefList {
 
   public currentPageChanged(newValue: number, oldValue: number): void {
     if (oldValue !== undefined && oldValue !== null) {
-      this.refreshProcesslist();
+      this._refreshProcesslist();
     }
   }
 
@@ -160,10 +160,10 @@ export class ProcessDefList {
 
     this._subscriptions = [
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
-        this.refreshProcesslist();
+        this._refreshProcesslist();
       }),
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
-        this.refreshProcesslist();
+        this._refreshProcesslist();
       }),
     ];
   }
@@ -173,10 +173,6 @@ export class ProcessDefList {
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
-  }
-
-  private refreshProcesslist(): void {
-    this.getProcessesFromService();
   }
 
   public get processes(): Array<IProcessDefEntity> {
@@ -207,6 +203,31 @@ export class ProcessDefList {
 
   public toggleSolutionExplorer(): void {
     this.showSolutionExplorer = !this.showSolutionExplorer;
+  }
+
+  private _refreshProcesslist(): void {
+    this.getProcessesFromService();
+  }
+
+  private async _saveNewDiagram(): Promise<void> {
+    try {
+      const response: any = await this._processEngineService.createProcessfromXML(this._newDiagramXml, this.newDiagramName);
+      this._refreshProcesslist();
+      this._notificationService.showNotification(NotificationType.SUCCESS, 'Diagram successfully imported!');
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR, `Error while importing file: ${error.message}`);
+    }
+    this.newDiagramName = undefined;
+    this._newDiagramXml = undefined;
+  }
+
+  private _diagramNameIsEmpty(): boolean {
+    return (this.newDiagramName === '' || this.newDiagramName === undefined);
+  }
+
+  private async _diagramNameIsUnique(): Promise<boolean> {
+    const isNameUnique: boolean = await this.checkIfProcessDefNameUnique(this.newDiagramName);
+    return isNameUnique;
   }
 
 }
