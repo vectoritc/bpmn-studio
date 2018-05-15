@@ -70,7 +70,7 @@ export class ProcessDefList {
     };
   }
 
-  //TODO: This needs to be refactored into an importService; Therefore it is not very usefuly to engenieer too much now.
+  // TODO: This needs to be refactored into an importService; Therefore it is not very usefuly to engenieer too much now.
   public async importNewDiagram(): Promise<void> {
     //  Check is name is empty; do not close dialog if it is {{{ //
     const nameIsEmpty: boolean = this._diagramNameIsEmpty();
