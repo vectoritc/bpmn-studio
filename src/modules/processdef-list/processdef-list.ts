@@ -59,54 +59,44 @@ export class ProcessDefList {
     this._router = router;
     this._notificationService = notificationService;
 
-    this.refreshProcesslist();
+    this._refreshProcesslist();
 
     this._fileReader.onload = async(fileInformations: any): Promise<void> => {
       this._newDiagramXml = fileInformations.target.result;
       const fileName: string = this.selectedFiles[0].name;
       this.newDiagramName = fileName.substring(0, fileName.lastIndexOf('.'));
-      this.showDiagramNameDialog  = true;
+      this.showDiagramNameDialog = true;
       this.fileInput.value = '';
     };
   }
 
+  //TODO: This needs to be refactored into an importService; Therefore it is not very usefuly to engenieer too much now.
   public async importNewDiagram(): Promise<void> {
-    try {
-      const isDiagramNameUnique: boolean = await this._isDiagramNameUniqueOrEmpty();
-
-      this.showDiagramNameDialog = false;
-
-      if (!isDiagramNameUnique) {
-        this.showOverwriteDialog = true;
-        return;
-      }
-
-      this._saveNewDiagram();
-    } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, 'Name can not be empty');
+    //  Check is name is empty; do not close dialog if it is {{{ //
+    const nameIsEmpty: boolean = this._diagramNameIsEmpty();
+    if (nameIsEmpty) {
+      this._notificationService
+        .showNotification(NotificationType.ERROR, 'Name can not be empty. Please specify a name.');
       return;
     }
-  }
+    //  }}} Check is name is empty; do not close dialog if it is //
 
-  private async _saveNewDiagram(): Promise<void> {
-    try {
-      const response: any = await this._processEngineService.createProcessfromXML(this._newDiagramXml, this.newDiagramName);
-      this.refreshProcesslist();
-      this._notificationService.showNotification(NotificationType.SUCCESS, 'Diagram successfully imported!');
-    } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, `Error while importing file: ${error.message}`);
+    const diagramNameNotUnique: boolean = ! await this._diagramNameIsUnique();
+
+    //  Close the dialog and check for uniqueness {{{ //
+    // close the previous dialog, we do not need it for the next steps.
+    this.showDiagramNameDialog = false;
+
+    if (diagramNameNotUnique) {
+      this.showOverwriteDialog = true;
+      this._notificationService
+        .showNotification(NotificationType.WARNING, 'Name is already taken.');
+      return;
+    } else {
+      this._saveNewDiagram();
+      return;
     }
-    this.newDiagramName = undefined;
-    this._newDiagramXml = undefined;
-  }
-
-  private async _isDiagramNameUniqueOrEmpty(): Promise<boolean> {
-    if (this.newDiagramName === '' || this.newDiagramName === undefined) {
-      throw new Error('Name can not be empty');
-    }
-
-    const isNameUnique: boolean = await this.checkIfProcessDefNameUnique(this.newDiagramName);
-    return isNameUnique;
+    //  }}} Close the dialog and check for uniqueness //
   }
 
   public cancelImport(): void {
