@@ -116,12 +116,12 @@ export class ProcessDefList {
   }
 
   public async checkIfProcessDefNameUnique(processDefName: string): Promise<boolean> {
+    // TODO: Check if IPagination is needed, why can't this be a simple list.
     const processes: IPagination<IProcessDefEntity> = await this._bpmnStudioClient.getProcessDefList();
-    const existingProcess: IProcessDefEntity = processes.data.find((process: IProcessDefEntity) => {
-      return process.name === processDefName;
+    const processExists: boolean = processes.data.some((process: IProcessDefEntity) => {
+          return process.name === processDefName;
     });
-
-    return (existingProcess === undefined);
+    return processExists;
   }
 
   public selectedFilesChanged(): void {
