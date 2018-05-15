@@ -3,6 +3,8 @@
 const server = require('node-http-server');
 const config = new server.Config;
 const open = require('open');
+const argv = require('minimist')(process.argv.slice(2));
+console.dir(argv);
 
 const defaultPort = 17290;
 
@@ -12,8 +14,7 @@ config.contentType.woff = 'application/font-woff';
 config.contentType.ttf = 'application/x-font-ttf';
 config.contentType.svg = 'image/svg+xml';
 
-const port = _getPortFromArgv();
-config.port = port ? port : defaultPort;
+config.port = _applicationPortIsValid(argv.port) ? argv.port : defaultPort;
 
 server.deploy(config, (result) => {
   const url = `http://localhost:${result.config.port}/`;
@@ -22,24 +23,32 @@ server.deploy(config, (result) => {
   open(url);
 });
 
-/**
- * Get the port from the argv.
+/*
+ * Check if a given port is okay.
  *
- * Example:
+ * This will perform a boundary check for the port, and general sanity checks.
  *
- * > npm start port=12345
- *
- * 'port=12345' will be parsed to 12345; this will be the port of this application.
+ * @param[in]: port The port, specified from argv.
+ * @return true If the everything is okay; false otherwise.
  */
-function _getPortFromArgv() {
-  const customPort = process.argv.find((entry) => {
-    return entry.includes('--port=');
-  });
-
-  if (!customPort) {
-    return "";
+function _applicationPortIsValid(port) {
+  if (port === null || port === undefined) {
+    return false;
+  }
+  if (!Number.isInteger(port)) {
+    return false;
   }
 
-  const portNumber = customPort.substr(7);
-  return portNumber;
+  const portNumber = parseInt(port);
+
+  // would require more priviledges
+  const lowerPortBoundValid = portNumber > 1000;
+  const upperPortBoundValid = portNumber < 65535;
+  const boundariesInvalid = (!lowerPortBoundValid || !upperPortBoundValid);
+
+  if (boundariesInvalid) {
+    return false;
+  }
+
+  return true;
 }
