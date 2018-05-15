@@ -134,7 +134,7 @@
  *
 */
 
-.window-layout {
+.bpmn-io-layout {
   display: flex;
   flex-direction: row;
   align-items: stretch;
@@ -143,28 +143,28 @@
   background: white;
 }
 
-.window-layout__tools-left,
-.window-layout__tools-right {
+.bpmn-io-layout__tools-left,
+.bpmn-io-layout__tools-right {
   background-color: #f7f7f7;
   min-width: 45px;
 }
 
-.window-layout__panel-left,
-.window-layout__panel-right {
+.bpmn-io-layout__panel-left,
+.bpmn-io-layout__panel-right {
   min-width: 220px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
 }
 
-.window-layout__panel-left,
+.bpmn-io-layout__panel-left,
 .panel {
   background-color: #f7f7f7;
   border-left: 1px solid #eee;
   border-right: 1px solid #eee;
 }
 
-.window-layout__main {
+.bpmn-io-layout__main {
   flex: 1 100%;
 }
 
