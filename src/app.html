@@ -1,16 +1,15 @@
 <template>
   <require from="bootstrap/css/bootstrap.css"></require>
   <require from="font-awesome/css/font-awesome.min.css"></require>
-  <require from="./app.css"></require>
   <require from="toastr/build/toastr.min.css"></require>
+  <require from="./app.css"></require>
   <require from="./modules/navbar/navbar"></require>
   <require from="./modules/process-solution-panel/process-solution-panel"></require>
 
   <nav-bar show-solution-explorer.two-way="showSolutionExplorer" ref="navbar"></nav-bar>
+
   <div class="bpmn-studio-layout">
-    <div>
-      <process-solution-panel show.bind="showSolutionExplorer"></process-solution-panel>
-    </div>
+    <process-solution-panel show.bind="showSolutionExplorer"></process-solution-panel>
     <div class="router-view">
       <router-view></router-view>
     </div>
