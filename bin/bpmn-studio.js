@@ -12,10 +12,8 @@ config.contentType.woff = 'application/font-woff';
 config.contentType.ttf = 'application/x-font-ttf';
 config.contentType.svg = 'image/svg+xml';
 
-const customPort = process.argv.find((entry) => {
-  return entry.includes('port=');
-});
-config.port = customPort ? customPort.substr(5) : defaultPort;
+const port = _getPortFromArgv();
+config.port = port ? port : defaultPort;
 
 server.deploy(config, (result) => {
   const url = `http://localhost:${result.config.port}/`;
@@ -23,3 +21,25 @@ server.deploy(config, (result) => {
   console.log(`Press CRTL+C to exit.`);
   open(url);
 });
+
+/**
+ * Get the port from the argv.
+ *
+ * Example:
+ *
+ * > npm start port=12345
+ *
+ * 'port=12345' will be parsed to 12345; this will be the port of this application.
+ */
+function _getPortFromArgv() {
+  const customPort = process.argv.find((entry) => {
+    return entry.includes('port=');
+  });
+
+  if (!customPort) {
+    return "";
+  }
+
+  const portNumber = customPort.substr(5);
+  return portNumber;
+}
