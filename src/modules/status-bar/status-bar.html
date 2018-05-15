@@ -1,0 +1,26 @@
+<template>
+  <require from="./status-bar.css"></require>
+  <!--
+    STATUS BAR
+  -->
+  <div class="status-bar status-bar--system-macos">
+    <div class="status-bar__left-bar">
+      <a class="status-bar__element status-bar__element--config-link" href="#/configuration">
+        <span>Connected to: ${baseRoute}</span>
+      </a>
+    </div>
+    <div class="status-bar__center-bar"></div>
+    <div class="status-bar__right-bar" if.bind="showXMLButton">
+      <div class="status-bar__element" if.bind="!xmlIsShown">
+        <button class="status-bar__show-xml-button" click.delegate="toggleXMLView()">
+          <i class="fa fa-file-code-o"></i> Show XML
+        </button>
+      </div>
+      <div class="status-bar__element" if.bind="xmlIsShown">
+        <button class="status-bar__show-xml-button" click.delegate="toggleXMLView()">
+          <i class="fa fa-file-code-o"></i> Show Diagramm
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
