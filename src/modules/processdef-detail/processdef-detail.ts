@@ -36,8 +36,6 @@ export class ProcessDefDetail {
   private processId: string;
   private _process: IProcessDefEntity;
   private bpmn: BpmnIo;
-  private exportButton: HTMLButtonElement;
-  private exportSpinner: HTMLElement;
   private startButtonDropdown: HTMLDivElement;
   private startButton: HTMLButtonElement;
   private saveButton: HTMLButtonElement;
@@ -85,13 +83,35 @@ export class ProcessDefDetail {
       this.eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
         this.refreshProcess();
       }),
+      this.eventAggregator.subscribe('processdefdetail:diagram:save', () => {
+        this.saveDiagram();
+      }),
+      this.eventAggregator.subscribe('processdefdetail:diagram:exportAs:BPMN', () => {
+        this.exportBPMN();
+      }),
+      this.eventAggregator.subscribe('processdefdetail:diagram:exportAs:SVG', () => {
+        this.exportSVG();
+      }),
+      this.eventAggregator.subscribe('processdefdetail:diagram:exportAs:PNG', () => {
+        this.exportPNG();
+      }),
+      this.eventAggregator.subscribe('processdefdetail:diagram:exportAs:JPEG', () => {
+        this.exportJPEG();
+      }),
+      this.eventAggregator.subscribe('processdefdetail:process:start', () => {
+        this.startProcess();
+      }),
     ];
+
+    this.eventAggregator.publish('navbar:tools:show', this.process);
   }
 
   public detached(): void {
     for (const subscription of this.subscriptions) {
       subscription.dispose();
     }
+
+    this.eventAggregator.publish('navbar:tools:hide');
   }
 
   private refreshProcess(): Promise<IProcessDefEntity> {
@@ -108,9 +128,8 @@ export class ProcessDefDetail {
   }
 
   public startProcess(): void {
-    if (!this.startButton.disabled) {
-     this.router.navigate(`processdef/${this.process.id}/start`);
-    }
+    this.validateXML();
+    this.router.navigate(`processdef/${this.process.id}/start`);
   }
 
   public closeProcessStartDropdown(): void {
@@ -142,9 +161,7 @@ export class ProcessDefDetail {
   }
 
   public async saveDiagram(): Promise<void> {
-    if (this.saveButton.disabled) {
-      return;
-    }
+
     this.validateXML();
 
     try {
@@ -187,40 +204,24 @@ export class ProcessDefDetail {
   }
 
   public async exportBPMN(): Promise<void> {
-    this.disableAndHideControlsForImageExport();
-
     const xml: string = await this.bpmn.getXML();
     const formattedXml: string = beautify(xml);
     download(formattedXml, `${this.process.name}.bpmn`, 'application/bpmn20-xml');
-
-    this.enableAndShowControlsForImageExport();
   }
 
   public async exportSVG(): Promise<void> {
-    this.disableAndHideControlsForImageExport();
-
     const svg: string = await this.bpmn.getSVG();
     download(svg, `${this.process.name}.svg`, 'image/svg+xml');
-
-    this.enableAndShowControlsForImageExport();
   }
 
   public async exportPNG(): Promise<void> {
-    this.disableAndHideControlsForImageExport();
-
     const svg: string = await this.bpmn.getSVG();
     download(this.generateImageFromSVG('png', svg), `${this.process.name}.png`, 'image/png');
-
-    this.enableAndShowControlsForImageExport();
   }
 
   public async exportJPEG(): Promise<void> {
-    this.disableAndHideControlsForImageExport();
-
     const svg: string = await this.bpmn.getSVG();
     download(this.generateImageFromSVG('jpeg', svg), `${this.process.name}.jpeg`, 'image/jpeg');
-
-    this.enableAndShowControlsForImageExport();
   }
 
   public generateImageFromSVG(desiredImageType: string, svg: any): string {
@@ -238,10 +239,6 @@ export class ProcessDefDetail {
     return image;
   }
 
-  public goBack(): void {
-    this.router.navigateBack();
-  }
-
   public toggleXMLView(): void {
     if (this.xmlIsShown) {
       this.xmlIsShown = false;
@@ -254,16 +251,6 @@ export class ProcessDefDetail {
 
   public toggleSolutionExplorer(): void {
     this.solutionExplorerIsShown = !this.solutionExplorerIsShown;
-  }
-
-  private disableAndHideControlsForImageExport(): void {
-    this.exportButton.setAttribute('disabled', '');
-    this.exportSpinner.classList.remove('hidden');
-  }
-
-  private enableAndShowControlsForImageExport(): void {
-    this.exportButton.removeAttribute('disabled');
-    this.exportSpinner.classList.add('hidden');
   }
 
   private validateForm(event: ValidateEvent): void {
