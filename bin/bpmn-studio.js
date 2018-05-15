@@ -4,7 +4,6 @@ const server = require('node-http-server');
 const config = new server.Config;
 const open = require('open');
 const argv = require('minimist')(process.argv.slice(2));
-console.dir(argv);
 
 const defaultPort = 17290;
 
