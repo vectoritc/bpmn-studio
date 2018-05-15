@@ -33,13 +33,13 @@ server.deploy(config, (result) => {
  */
 function _getPortFromArgv() {
   const customPort = process.argv.find((entry) => {
-    return entry.includes('port=');
+    return entry.includes('--port=');
   });
 
   if (!customPort) {
     return "";
   }
 
-  const portNumber = customPort.substr(5);
+  const portNumber = customPort.substr(7);
   return portNumber;
 }
