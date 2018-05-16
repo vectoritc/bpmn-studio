@@ -2,9 +2,9 @@
   <require from="./user-login.css"></require>
   <div class="btn-group user-login">
     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-      <span>Hi, ${identity ? identity.name : 'Guest'} </span>
+      <span>${identity ? identity.name : 'Guest'} </span>
+      <i class="fa fa-caret-down"></i>
     </a>
-    <img class="user-profile-image" src="src/resources/images/default-avatar.png">
     <div class="dropdown-menu dropdown-menu-right user-profile-dropdown">
       <div class="user-profile-dropdown-content clearfix">
         <form if.bind="!isLoggedIn" submit.delegate="login()" role="form">
