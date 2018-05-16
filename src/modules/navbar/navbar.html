@@ -1,7 +1,7 @@
 <template>
   <require from="./navbar.css"></require>
   <require from="../user-login/user-login"></require>
-  <div class="bpmn-studio-navbar">
+  <div class="bpmn-studio-navbar bpmn-studio-navbar--macos">
     <div class="menu-bar__menu menu-bar__menu--left">
       <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'Configuration' ? 'menu__menu-tabbed-link--active' : ''">
         <a class="menu-tabbed-link menu-bar__menu-left--options" click.delegate="navigate('Configuration')">
