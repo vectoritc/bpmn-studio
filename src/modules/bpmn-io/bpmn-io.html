@@ -3,11 +3,11 @@
   <require from="@process-engine/bpmn-js-custom-bundle/bpmn-modeler-custom.css"></require>
   <require from="../bpmn-xml-view/bpmn-xml-view"></require>
   <require from="./bpmn-io.css"></require>
-  <div class="window-layout">
+  <div class="bpmn-io-layout">
     <!--
       DIAGRAM TOOLS
     -->
-    <div class="window-layout__tools-left">
+    <div class="bpmn-io-layout__tools-left">
       <div class="tool-list tool-list--vertical">
         <div class="tool">
           <i class="fa fa-mouse-pointer"></i>
@@ -48,7 +48,7 @@
     <!--
       MAIN CANVAS
     -->
-    <div class="window-layout__main js-main">
+    <div class="bpmn-io-layout__main js-main">
       <div class="modeler" show.bind="!showXMLView">
         <div class="diagramm">
           <div ref="canvasModel" class="canvasModel" css="right: ${canvasRight}px;"></div>
@@ -61,7 +61,7 @@
       <bpmn-xml-view if.bind="initialLoadingFinished" show.bind="showXMLView" xml.bind="xml"></bpmn-xml-view>
     </div>
 
-    <div class="window-layout__tools-right">
+    <div class="bpmn-io-layout__tools-right">
       <div class="tool-list tool-list--vertical">
         <div ref="toggleButtonPropertyPanel" class="tool__right tool--active">
           <button class="menu-bar__menu-left--tool" click.delegate="togglePanel()">

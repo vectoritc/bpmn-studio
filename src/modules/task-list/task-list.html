@@ -1,61 +1,7 @@
 <template>
   <require from="./task-list.css"></require>
   <require from="../user-login/user-login"></require>
-  <require from="../process-solution-panel/process-solution-panel"></require>
-
   <div class="task-list">
-    <div class="menu-bar menu-bar--system-macos">
-      <div class="menu-bar__menu menu-bar__menu--left">
-        <div class="menu__menu-tabbed-link">
-          <a class="menu-tabbed-link menu-bar__menu-left--options" href="#/configuration">
-            <i class="fa fa-cog"></i>
-          </a>
-        </div>
-        <div class="menu__menu-tabbed-link">
-          <button class="menu-tabbed-link menu-bar__menu-center--action-button" class.bind="solutionExplorerIsShown ? 'solution-explorer__active' : ''" click.delegate="toggleSolutionExplorer()">
-            <i class="fa fa-folder"></i>
-          </button>
-        </div>
-        <div class="menu__menu-tabbed-link">
-          <a class="menu-tabbed-link" href="#">Plan</a>
-        </div>
-        <div class="menu__menu-tabbed-link">
-          <a class="menu-tabbed-link menu-tabbed-link--disabled">Design</a>
-        </div>
-        <div class="menu__menu-tabbed-link">
-          <a class="menu-tabbed-link menu-tabbed-link--disabled">Publish</a>
-        </div>
-
-        <div class="btn-group">
-          <div class="menu__menu-tabbed-link menu__menu-tabbed-link--active" data-toggle="dropdown">
-            <a class="menu-tabbed-link">Dashboard</a>
-          </div>
-          <ul class="dropdown-menu menu-bar__dashboard-dropdown">
-            <li>
-              <a href="#/task">Task List</a>
-            </li>
-            <li>
-              <a href="#/process">Process Instance List</a>
-            </li>
-          </ul>
-        </div>
-
-        <div class="menu-bar__menu-action-link">
-          <button class="menu-bar__menu-center--action-button menu-bar__menu-center--back-button back-button" click.delegate="goBack()" title="Navigate back">
-            <i class="fa fa-arrow-circle-left"></i>
-          </button>
-        </div>
-      </div>
-
-      <div class="menu-bar__menu menu-bar__menu--center"></div>
-
-      <div class="menu-bar__menu menu-bar__menu--right">
-        <user-login></user-login>
-      </div>
-    </div>
-
-    <process-solution-panel show.bind="solutionExplorerIsShown"></process-solution-panel>
-
     <div class="container task-list-container">
       <div show.bind="tasks && tasks.length > 0">
         <table class="table table-striped table-bordered">

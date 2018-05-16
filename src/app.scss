@@ -23,143 +23,20 @@ body {
   margin-bottom: 0;
 }
 
-/*
- * MENU BAR
- *
-*/
-
-.menu-bar {
-  position: absolute;
-  width: 100%;
+.bpmn-studio-layout {
   display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
+  flex-direction: column;
   align-items: stretch;
-  height: 42px;
-  background-color: #f7f7f7;
-  border-bottom: 2.5px solid #dcdbdb
+  height: 100%
 }
 
-.menu-bar--system-macos .menu-bar__menu--left {
-  padding-left: 60px;
-}
-
-.menu-bar__menu--right {
-  padding-right: 60px;
-}
-
-.menu-bar__menu {
-  flex: 1 100%;
-}
-
-.menu-bar__menu--left {
+.bpmn-studio-layout__content {
   display: flex;
-  justify-content: flex-start;
+  flex: 1;
   align-items: stretch;
-  text-align: center;
+  height: 100%;
 }
 
-.menu-bar__menu--center {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
-
-.menu-bar__menu--right {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  text-align: right;
-}
-
-.menu__menu-tabbed-link {
-  display: flex;
-  align-items: stretch;
-}
-
-.menu__menu-tabbed-link--active {
-  border-bottom: 1px solid #5e5e5e;
-}
-
-.menu__menu-tabbed-link--active .menu-tabbed-link {
-  font-weight: bold;
-  color: #5c5c5c;
-  border-bottom: 1px solid #5c5c5c;
-}
-
-.menu-tabbed-link.menu-tabbed-link--disabled:hover {
-  color: #a5a5a5;
-  text-decoration: none;
-  background-color: inherit;
-  cursor: not-allowed;
-}
-
-.menu-tabbed-link {
-  display: block;
-  line-height: 40px;
-  color: #a5a5a5;
-  cursor: pointer;
-  padding: 0 15px;
-}
-
-.menu-tabbed-link:hover {
-  text-decoration: none;
-  background-color: #dcdbdb;
-}
-
-.menu-bar__dashboard-dropdown {
-  background-color: #f7f7f7;
-  border-top: none;
-  top: 40px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-  box-shadow: none;
-  padding: 0;
-}
-
-.menu-bar__menu-action-link {
-  margin-top: 9px;
-}
-
-.menu-bar__menu-center--action-button {
-  border: none;
-  background-color: inherit;
-  opacity: 0.5;
-}
-
-.menu-bar__menu-center--action-button:hover {
-  opacity: 1;
-}
-
-.menu-bar__menu-center--action-button:disabled {
-  opacity: 0.2;
-  cursor: not-allowed;
-}
-
-.menu__element {
-  color: #5c5c5c;
-  margin: 0 10px;
-}
-
-.menu__element--title {
-  margin-bottom: 1px;
-}
-
-.menu-bar__menu-center--back-button {
-  margin-right: 20px;
-  margin-left: 20px;
-}
-
-.dropdown-menu > li > a:hover {
-  background-color: #dcdbdb;
-}
-
-.solution-explorer__active {
-  background-color: #dcdbdb;
-  opacity: 1;
-}
-
-.menu-bar__menu-left--options {
-  position: absolute;
-  left: 0;
+.router-view {
+  flex: 1;
 }

@@ -21,6 +21,22 @@ export default {
   },
   events: {
     xmlChanged: 'xmlChanged',
+    statusBar: {
+      showXMLButton: 'statusbar:xmlbutton:show',
+      hideXMLButton: 'statusbar:xmlbutton:hide',
+      updateBaseRoute: 'statusbar:baseRoute:update',
+    },
+    navBar: {
+      showTools: 'navbar:tools:show',
+      hideTools: 'navbar:tools:hide',
+      updateProcess: 'navbar:process:update',
+    },
+    processDefDetail: {
+      saveDiagramm: 'processdefdetail:diagram:save',
+      exportDiagramAs: 'processdefdetail:diagram:exportas',
+      startProcess: 'processdefdetail:process:start',
+      toggleXMLView: 'processdefdetail:xmlview:toggle',
+    },
   },
   bpmnStudioClient: {
     baseRoute: baseRoute,

@@ -5,6 +5,7 @@ export class App {
 
   public router: Router;
   public environment: any = environment;
+  public showSolutionExplorer: boolean = false;
 
   public configureRouter(config: RouterConfiguration, router: Router): void {
     this.router = router;
