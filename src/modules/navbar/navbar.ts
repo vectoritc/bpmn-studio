@@ -1,57 +1,58 @@
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
 import {RouteConfig, Router} from 'aurelia-router';
-import { IProcessDefEntity } from '../../contracts';
+import {IProcessDefEntity} from '../../contracts';
 import environment from '../../environment';
 
 @inject(Router, EventAggregator)
 export class NavBar {
-  private router: Router;
-  private eventAggregator: EventAggregator;
-  private exportButton: HTMLButtonElement;
-  private exportSpinner: HTMLElement;
-  private exportIcon: HTMLElement;
+  private _router: Router;
+  private _eventAggregator: EventAggregator;
 
   @bindable() public showSolutionExplorer: boolean;
   public activeRouteTitle: string;
   public showTools: boolean = false;
   public process: IProcessDefEntity;
+  public exportButton: HTMLButtonElement;
+  public exportSpinner: HTMLElement;
+  public exportIcon: HTMLElement;
 
   constructor(router: Router, eventAggregator: EventAggregator) {
-    this.router = router;
-    this.eventAggregator = eventAggregator;
+    this._router = router;
+    this._eventAggregator = eventAggregator;
   }
 
   public attached(): void {
-    this.dertermineActiveRoute();
-    this.eventAggregator.subscribe('router:navigation:complete', () => {
-      this.dertermineActiveRoute();
+    this._dertermineActiveRoute();
+
+    this._eventAggregator.subscribe('router:navigation:complete', () => {
+      this._dertermineActiveRoute();
     });
 
-    this.eventAggregator.subscribe(environment.events.navBar.showTools, (process: IProcessDefEntity) => {
+    this._eventAggregator.subscribe(environment.events.navBar.showTools, (process: IProcessDefEntity) => {
       this.showTools = true;
       this.process = process;
     });
 
-    this.eventAggregator.subscribe(environment.events.navBar.hideTools, () => {
+    this._eventAggregator.subscribe(environment.events.navBar.hideTools, () => {
       this.showTools = false;
     });
 
-    this.eventAggregator.subscribe(environment.events.navBar.updateProcess, (process: IProcessDefEntity) => {
+    this._eventAggregator.subscribe(environment.events.navBar.updateProcess, (process: IProcessDefEntity) => {
       this.process = process;
     });
   }
 
   public navigate(routeTitle: string): void {
-    const route: RouteConfig = this.router.routes.find((r: RouteConfig) => {
+    const route: RouteConfig = this._router.routes.find((r: RouteConfig) => {
       return r.title === routeTitle;
     });
 
-    this.router.navigate(`/${route.route}`);
+    this._router.navigate(`/${route.route}`);
   }
 
   public navigateBack(): void {
-    this.router.navigateBack();
+    this._router.navigateBack();
   }
 
   public toggleSolutionExplorer(): void {
@@ -59,27 +60,27 @@ export class NavBar {
   }
 
   public saveDiagram(): void {
-    this.eventAggregator.publish(environment.events.processDefDetail.saveDiagramm);
+    this._eventAggregator.publish(environment.events.processDefDetail.saveDiagramm);
   }
 
   public exportDiagram(exportAs: string): void {
-    this.eventAggregator.publish(`${environment.events.processDefDetail.exportDiagramAs}:${exportAs}`);
+    this._eventAggregator.publish(`${environment.events.processDefDetail.exportDiagramAs}:${exportAs}`);
   }
 
   public startProcess(): void {
-    this.eventAggregator.publish(environment.events.processDefDetail.startProcess);
+    this._eventAggregator.publish(environment.events.processDefDetail.startProcess);
   }
 
-  private isRouteActive(routeTitle: string): boolean {
-    if (this.router.currentInstruction.config.title === routeTitle) {
+  private _isRouteActive(routeTitle: string): boolean {
+    if (this._router.currentInstruction.config.title === routeTitle) {
       return true;
     }
     return false;
   }
 
-  private dertermineActiveRoute(): void {
-    this.router.routes.forEach((route: RouteConfig) => {
-      if (this.isRouteActive(route.title)) {
+  private _dertermineActiveRoute(): void {
+    this._router.routes.forEach((route: RouteConfig) => {
+      if (this._isRouteActive(route.title)) {
         this.activeRouteTitle = route.title;
       }
     });
