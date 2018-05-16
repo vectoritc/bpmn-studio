@@ -14,7 +14,7 @@
 }
 
 .menu-bar__menu--right {
-
+  padding-right: 20px;
 }
 
 .menu-bar__menu {
@@ -40,6 +40,10 @@
   justify-content: flex-end;
   align-items: center;
   text-align: right;
+}
+
+.menu-bar__tools {
+  padding-right: 30px;
 }
 
 .menu__menu-tabbed-link {
@@ -91,10 +95,6 @@
   padding: 0;
 }
 
-.menu-bar__menu-action-link {
-  margin-top: 9px;
-}
-
 .menu-bar__menu-center--action-button {
   border: none;
   background-color: inherit;
@@ -127,4 +127,8 @@
 .solution-explorer--active {
   background-color: #dcdbdb;
   opacity: 1;
+}
+
+.menu-bar__last-tool {
+  padding-right: 100px;
 }
