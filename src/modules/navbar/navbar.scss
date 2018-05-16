@@ -72,17 +72,13 @@
   display: block;
   line-height: 40px;
   color: #a5a5a5;
-  cursor: pointer;
   padding: 0 15px;
-}
-
-.menu-tabbed-link:focus {
-  outline-width: 0;
 }
 
 .menu-tabbed-link:hover {
   text-decoration: none;
-  background-color: #dcdbdb;
+  color: #5e5e5e;
+  cursor: default;
 }
 
 .menu-bar__dashboard-dropdown {
@@ -98,7 +94,7 @@
 .menu-bar__menu-center--action-button {
   border: none;
   background-color: inherit;
-  opacity: 0.5;
+  opacity: 1;
 }
 
 .menu-bar__menu-center--action-button:hover {
@@ -124,9 +120,12 @@
   margin-left: 20px;
 }
 
+.solution-explorer {
+  color: #5c5c5c;
+}
+
 .solution-explorer--active {
-  background-color: #dcdbdb;
-  opacity: 1;
+  color: #5e5e5e;
 }
 
 .menu-bar__last-tool {
