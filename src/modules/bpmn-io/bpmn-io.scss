@@ -16,8 +16,6 @@
 .properties {
   height: 100%;
   background: rgb(220, 219, 219);
-  padding-left: 2px;
-  padding-right: 2px;
   width: 250px;
 }
 
@@ -140,6 +138,14 @@
   width: 100%;
   height: 100%;
   background: white;
+}
+
+.bpmn-io-layout__tools-left {
+  border-right: 2.5px solid #dcdbdb;
+}
+
+.bpmn-io-layout__tools-right {
+  border-left: 2.5px solid #dcdbdb;
 }
 
 .bpmn-io-layout__tools-left,
