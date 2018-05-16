@@ -1,8 +1,9 @@
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
+import {Router} from 'aurelia-router';
 import environment from '../../environment';
 
-@inject(EventAggregator)
+@inject(EventAggregator, Router)
 export class StatusBar {
 
   public baseRoute: string = environment.bpmnStudioClient.baseRoute;
@@ -10,9 +11,11 @@ export class StatusBar {
   public xmlIsShown: boolean = false;
 
   private _eventAggregator: EventAggregator;
+  private _router: Router;
 
-  constructor(eventAggregator: EventAggregator) {
+  constructor(eventAggregator: EventAggregator, router: Router) {
     this._eventAggregator = eventAggregator;
+    this._router = router;
   }
 
   public attached(): void {
@@ -32,5 +35,9 @@ export class StatusBar {
   public toggleXMLView(): void {
     this._eventAggregator.publish(environment.events.processDefDetail.toggleXMLView);
     this.xmlIsShown = !this.xmlIsShown;
+  }
+
+  public navigateToSettings(): void {
+    this._router.navigate('/configuration');
   }
 }
