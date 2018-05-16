@@ -4,6 +4,11 @@ body {
   font-size: 14px;
 }
 
+a:focus,
+button:focus {
+  outline: none;
+}
+
 .settings-glyphicon {
   top: 12px;
   font-size: 2em;
