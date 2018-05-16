@@ -9,28 +9,28 @@ export class StatusBar {
   public showXMLButton: boolean = false;
   public xmlIsShown: boolean = false;
 
-  private eventAggregator: EventAggregator;
+  private _eventAggregator: EventAggregator;
 
   constructor(eventAggregator: EventAggregator) {
-    this.eventAggregator = eventAggregator;
+    this._eventAggregator = eventAggregator;
   }
 
   public attached(): void {
-    this.eventAggregator.subscribe(environment.events.statusBar.showXMLButton, () => {
+    this._eventAggregator.subscribe(environment.events.statusBar.showXMLButton, () => {
       this.showXMLButton = true;
     });
 
-    this.eventAggregator.subscribe(environment.events.statusBar.hideXMLButton, () => {
+    this._eventAggregator.subscribe(environment.events.statusBar.hideXMLButton, () => {
       this.showXMLButton = false;
     });
 
-    this.eventAggregator.subscribe(environment.events.statusBar.updateBaseRoute, (newBaseRoute: string) => {
+    this._eventAggregator.subscribe(environment.events.statusBar.updateBaseRoute, (newBaseRoute: string) => {
       this.baseRoute = newBaseRoute;
     });
   }
 
   public toggleXMLView(): void {
-    this.eventAggregator.publish(environment.events.processDefDetail.toggleXMLView);
+    this._eventAggregator.publish(environment.events.processDefDetail.toggleXMLView);
     this.xmlIsShown = !this.xmlIsShown;
   }
 }
