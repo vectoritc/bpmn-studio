@@ -70,21 +70,18 @@
 }
 
 .menu-tabbed-link--disabled:hover {
-  display: block;
-  line-height: 40px;
   color: #a5a5a5;
-  padding: 0 15px;
 }
 
 .menu__menu-tabbed-link--active
 .menu-tabbed-link--disabled:hover {
-  display: block;
-  line-height: 40px;
   color: #5c5c5c;
-  padding: 0 15px;
 }
 
-
+.action-button {
+  border: none;
+  background: inherit;
+}
 
 .menu-bar__dashboard-dropdown {
   background-color: #f7f7f7;
