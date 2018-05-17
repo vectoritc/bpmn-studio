@@ -6,7 +6,12 @@
 }
 
 .bpmn-studio-navbar--macos {
-  padding-left: 70px;
+  -webkit-app-region: drag;
+}
+
+.bpmn-studio-navbar--macos .menu-bar__menu--left::before {
+  padding-left: 80px;
+  content: "";
 }
 
 .menu-bar__menu--left {
