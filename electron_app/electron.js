@@ -26,7 +26,12 @@ getPort({port: 8000, host: '0.0.0.0'})
   const internalProcessEngineStatusListeners = [];
 
   function sendInternalProcessEngineStatus(sender) {
-    const serializedStartupError = JSON.stringify(internalProcessEngineStatupError, Object.getOwnPropertyNames(internalProcessEngineStatupError));
+    let serializedStartupError;
+    if (internalProcessEngineStatupError !== undefined && internalProcessEngineStatupError !== null) {
+      serializedStartupError = JSON.stringify(internalProcessEngineStatupError, Object.getOwnPropertyNames(internalProcessEngineStatupError));
+    } else {
+      serializedStartupError = undefined;
+    }
     sender.send('internal_processengine_status', internalProcessEngineStatus, serializedStartupError);
   }
 
