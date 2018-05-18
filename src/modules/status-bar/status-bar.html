@@ -10,15 +10,22 @@
       </a>
     </div>
     <div class="status-bar__center-bar"></div>
-    <div class="status-bar__right-bar" if.bind="showXMLButton">
-      <div class="status-bar__element" if.bind="!xmlIsShown">
-        <button class="status-bar__show-xml-button" click.delegate="toggleXMLView()">
-          <i class="fa fa-file-code-o"></i> Show XML
-        </button>
+    <div class="status-bar__right-bar">
+      <div class="status-bar__show-xml-button-div " if.bind="showXMLButton">
+        <div class="status-bar__element" if.bind="!xmlIsShown">
+          <button class="status-bar__show-xml-button" click.delegate="toggleXMLView()">
+            <i class="fa fa-file-code-o"></i> Show XML
+          </button>
+        </div>
+        <div class="status-bar__element" if.bind="xmlIsShown">
+          <button class="status-bar__show-xml-button" click.delegate="toggleXMLView()">
+            <i class="fa fa-file-code-o"></i> Show Diagramm
+          </button>
+        </div>
       </div>
-      <div class="status-bar__element" if.bind="xmlIsShown">
-        <button class="status-bar__show-xml-button" click.delegate="toggleXMLView()">
-          <i class="fa fa-file-code-o"></i> Show Diagramm
+      <div class="status-bar__element">
+        <button class="status-bar__show-xml-button" click.delegate="navigateToSettings()">
+          <i class="fa fa-wrench"></i> Settings
         </button>
       </div>
     </div>

@@ -129,6 +129,7 @@ getPort({port: 8000, host: '0.0.0.0'})
       minWidth: 1300,
       minHeight: 800,
       icon: path.join(__dirname, '../build/icon.png'),  // only for windows and linux
+      titleBarStyle: 'hidden-inset'
     });
 
     mainWindow.loadURL(`file://${__dirname}/../index.html`);
