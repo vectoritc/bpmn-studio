@@ -12,7 +12,6 @@ import environment from '../../environment';
 @inject('BpmnStudioClient', EventAggregator)
 export class ProcessSolutionPanel {
   private _bpmnStudioClient: BpmnStudioClient;
-  private _getProcessesIntervalId: number;
   private _subscriptions: Array<Subscription>;
   private _eventAggregator: EventAggregator;
 
@@ -43,7 +42,6 @@ export class ProcessSolutionPanel {
   }
 
   public detached(): void {
-    clearInterval(this._getProcessesIntervalId);
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
