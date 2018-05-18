@@ -18,19 +18,19 @@ export function configure(aurelia: Aurelia): void {
     const newHost: string = ipcRenderer.sendSync('get_host');
     const fileInfo: IFileInfo = ipcRenderer.sendSync('get_opened_file');
     aurelia.container.registerInstance('FileContent', fileInfo);
-    localStorage.setItem('baseRoute', `http://${newHost}`);
+    localStorage.setItem('processEngineRoute', `http://${newHost}`);
   }
 
-  if (window.localStorage.getItem('baseRoute')) {
-    const baseRoute: string = window.localStorage.getItem('baseRoute');
-    environment.bpmnStudioClient.baseRoute = baseRoute;
-    environment.processengine.routes.processes = `${baseRoute}/datastore/ProcessDef`;
-    environment.processengine.routes.iam = `${baseRoute}/iam`;
-    environment.processengine.routes.messageBus = `${baseRoute}/mb`;
-    environment.processengine.routes.processInstances = `${baseRoute}/datastore/Process`;
-    environment.processengine.routes.startProcess = `${baseRoute}/processengine/start`;
-    environment.processengine.routes.userTasks =  `${baseRoute}/datastore/UserTask`;
-    environment.processengine.routes.importBPMN = `${baseRoute}/processengine/create_bpmn_from_xml`;
+  if (window.localStorage.getItem('processEngineRoute')) {
+    const processEngineRoute: string = window.localStorage.getItem('processEngineRoute');
+    environment.bpmnStudioClient.baseRoute = processEngineRoute;
+    environment.processengine.routes.processes = `${processEngineRoute}/datastore/ProcessDef`;
+    environment.processengine.routes.iam = `${processEngineRoute}/iam`;
+    environment.processengine.routes.messageBus = `${processEngineRoute}/mb`;
+    environment.processengine.routes.processInstances = `${processEngineRoute}/datastore/Process`;
+    environment.processengine.routes.startProcess = `${processEngineRoute}/processengine/start`;
+    environment.processengine.routes.userTasks =  `${processEngineRoute}/datastore/UserTask`;
+    environment.processengine.routes.importBPMN = `${processEngineRoute}/processengine/create_bpmn_from_xml`;
   }
 
   aurelia.use
