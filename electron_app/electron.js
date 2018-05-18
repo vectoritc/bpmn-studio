@@ -6,6 +6,7 @@ const notifier = require('electron-notifications');
 const isDev = require('electron-is-dev');
 const getPort = require('get-port');
 const fs = require('fs');
+const startProcessEngine = require('@process-engine/skeleton-electron');
 
 const prereleaseRegex = /\d+\.\d+\.\d+-pre-b\d+/;
 
@@ -19,7 +20,75 @@ if (!isDev) {
 getPort({port: 8000, host: '0.0.0.0'})
 .then((port) => {
   process.env.http__http_extension__server__port = port;
-  const pe = require('@process-engine/skeleton-electron');
+
+  let internalProcessEngineStatus = undefined;
+  let internalProcessEngineStatupError = undefined;
+  const internalProcessEngineStatusListeners = [];
+
+  function sendInternalProcessEngineStatus(sender) {
+    const serializedStartupError = JSON.stringify(internalProcessEngineStatupError, Object.getOwnPropertyNames(internalProcessEngineStatupError));
+    sender.send('internal_processengine_status', internalProcessEngineStatus, serializedStartupError);
+  }
+
+  function publishProcessEngineStatus() {
+    internalProcessEngineStatusListeners.forEach(sendInternalProcessEngineStatus);
+  }
+
+  // When someone wants to subscribe to the internal processengine status, he
+  // must first send a `add_internal_processengine_status_listener` message
+  // over the event aggregator. We recieve this message here and add them
+  // to our listeners array.
+  //
+  // As soon the processengine status is updated, we send the listeners a
+  // notification about this change.
+  //
+  // If the processengine status is known at the time the listener registered,
+  // we instantly send the listener a notification.
+  //
+  // This is quite a unusual pattern, the problem this solves this the
+  // following: Its impossible to do interactions between threads in
+  // electron like this:
+  //
+  //  'renderer process'              'main process'
+  //          |                             |
+  //          o   <<<- Send Message  -<<<   x
+  //
+  // -------------------------------------------------
+  //
+  // Instead our interaction now locks like this:
+  //
+  //  'renderer process'              'main process'
+  //          |                             |
+  //          x   >>>--  Subscribe  -->>>   o
+  //          |                             |
+  //          o   <<<- Send Message  -<<<   x
+  //          |           (...)             |
+  //          o   <<<- Send Message  -<<<   x
+  //
+  electron.ipcMain.on('add_internal_processengine_status_listener', (event) => {
+    if (!internalProcessEngineStatusListeners.includes(event.sender)) {
+      internalProcessEngineStatusListeners.push(event.sender);
+    }
+
+    if (internalProcessEngineStatus !== undefined) {
+      sendInternalProcessEngineStatus(event.sender);
+    }
+  });
+
+  // TODO: Check if the ProcessEngine instance is now run on the UI thread.
+  // See issue https://github.com/process-engine/bpmn-studio/issues/312
+  startProcessEngine()
+    .then((processengine) => {
+      console.log(`Internal ProcessEngine started successfully.`);
+      internalProcessEngineStatus = 'success';
+      publishProcessEngineStatus();
+
+    }).catch((error) => {
+      console.log('Failed to start internal ProcessEngine: ', error);
+      internalProcessEngineStatus = 'error';
+      internalProcessEngineStatupError = error;
+      publishProcessEngineStatus();
+    });
 
   electron.ipcMain.on('get_host', (event) => {
     event.returnValue = `localhost:${port}`;

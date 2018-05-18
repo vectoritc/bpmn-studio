@@ -1,6 +1,8 @@
 import {Aurelia} from 'aurelia-framework';
+import {NotificationType} from './contracts/index';
 import {IFileInfo} from './contracts/processengine/index';
 import environment from './environment';
+import {NotificationService} from './modules/notification/notification.service';
 import {TokenRepository} from './modules/token-repository/token.repository';
 
 export function configure(aurelia: Aurelia): void {
@@ -52,5 +54,23 @@ export function configure(aurelia: Aurelia): void {
     aurelia.use.plugin('aurelia-testing');
   }
 
-  aurelia.start().then(() => aurelia.setRoot());
+  aurelia.start().then(() => {
+    aurelia.setRoot();
+
+    // check if the processengine started successfull
+    if ((<any> window).nodeRequire) {
+      const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
+      // subscribe to processengine status
+      ipcRenderer.send('add_internal_processengine_status_listener');
+      // wait for status to be reported
+      ipcRenderer.on('internal_processengine_status', (event: any, status: string, error: string) => {
+        if (status !== 'error') {
+          return;
+        }
+        const errorMessage: string = `Failed to start ProcessEngine.`;
+        const notificationService: NotificationService = aurelia.container.get('NotificationService');
+        notificationService.showNotification(NotificationType.ERROR, errorMessage);
+      });
+    }
+  });
 }
