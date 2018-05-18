@@ -67,7 +67,7 @@ export function configure(aurelia: Aurelia): void {
         if (status !== 'error') {
           return;
         }
-        const errorMessage: string = `Failed to start ProcessEngine.`;
+        const errorMessage: string = 'Failed to start ProcessEngine.';
         const notificationService: NotificationService = aurelia.container.get('NotificationService');
         notificationService.showNotification(NotificationType.ERROR, errorMessage);
       });

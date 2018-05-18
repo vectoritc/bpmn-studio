@@ -84,7 +84,7 @@ getPort({port: 8000, host: '0.0.0.0'})
   // See issue https://github.com/process-engine/bpmn-studio/issues/312
   startProcessEngine()
     .then((processengine) => {
-      console.log(`Internal ProcessEngine started successfully.`);
+      console.log('Internal ProcessEngine started successfully.');
       internalProcessEngineStatus = 'success';
       publishProcessEngineStatus();
 
