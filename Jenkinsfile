@@ -65,6 +65,9 @@ pipeline {
       }
     }
     stage('build electron') {
+      when {
+        expression { branch_is_master || branch_is_develop }
+      }
       parallel {
         stage('Build on Linux') {
           agent {
