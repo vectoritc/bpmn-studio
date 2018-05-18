@@ -22,61 +22,71 @@ getPort({port: 8000, host: '0.0.0.0'})
   process.env.http__http_extension__server__port = port;
 
   let internalProcessEngineStatus = undefined;
-  let internalProcessEngineStatupError = undefined;
-  const internalProcessEngineStatusListeners = [];
+  let internalProcessEngineStartupError  = undefined;
+  const processEngineStatusListeners = [];
 
-  function sendInternalProcessEngineStatus(sender) {
+  function _sendInternalProcessEngineStatus(sender) {
     let serializedStartupError;
-    if (internalProcessEngineStatupError !== undefined && internalProcessEngineStatupError !== null) {
-      serializedStartupError = JSON.stringify(internalProcessEngineStatupError, Object.getOwnPropertyNames(internalProcessEngineStatupError));
+    const processEngineStartSuccessful = (internalProcessEngineStartupError  !== undefined
+                                         && internalProcessEngineStartupError  !== null);
+
+    if (processEngineStartSuccessful) {
+      serializedStartupError = JSON.stringify(
+                                    internalProcessEngineStartupError ,
+                                    Object.getOwnPropertyNames(internalProcessEngineStartupError ));
+
     } else {
       serializedStartupError = undefined;
     }
-    sender.send('internal_processengine_status', internalProcessEngineStatus, serializedStartupError);
+
+    sender.send(
+      'internal_processengine_status',
+      internalProcessEngineStatus,
+      serializedStartupError);
   }
 
-  function publishProcessEngineStatus() {
-    internalProcessEngineStatusListeners.forEach(sendInternalProcessEngineStatus);
+  function _publishProcessEngineStatus() {
+    processEngineStatusListeners.forEach(_sendInternalProcessEngineStatus);
   }
 
-  // When someone wants to subscribe to the internal processengine status, he
-  // must first send a `add_internal_processengine_status_listener` message
-  // over the event aggregator. We recieve this message here and add them
-  // to our listeners array.
-  //
-  // As soon the processengine status is updated, we send the listeners a
-  // notification about this change.
-  //
-  // If the processengine status is known at the time the listener registered,
-  // we instantly send the listener a notification.
-  //
-  // This is quite a unusual pattern, the problem this solves this the
-  // following: Its impossible to do interactions between threads in
-  // electron like this:
-  //
-  //  'renderer process'              'main process'
-  //          |                             |
-  //          o   <<<- Send Message  -<<<   x
-  //
-  // -------------------------------------------------
-  //
-  // Instead our interaction now locks like this:
-  //
-  //  'renderer process'              'main process'
-  //          |                             |
-  //          x   >>>--  Subscribe  -->>>   o
-  //          |                             |
-  //          o   <<<- Send Message  -<<<   x
-  //          |           (...)             |
-  //          o   <<<- Send Message  -<<<   x
-  //
+  /* When someone wants to know to the internal processengine status, he
+   * must first send a `add_internal_processengine_status_listener` message
+   * to the event mechanism. We recieve this message here and add the sender
+   * to our listeners array.
+   *
+   * As soon, as the processengine status is updated, we send the listeners a
+   * notification about this change; this message contains the state and the
+   * error text (if there was an error).
+   *
+   * If the processengine status is known by the time the listener registers,
+   * we instantly respond to the listener with a notification message.
+   *
+   * This is quite a unusual pattern, the problem this approves solves is the
+   * following: It's impossible to do interactions between threads in
+   * electron like this:
+   *
+   *  'renderer process'              'main process'
+   *          |                             |
+   *          o   <<<- Send Message  -<<<   x
+   *
+   * -------------------------------------------------
+   *
+   * Instead our interaction now locks like this:
+   *
+   *  'renderer process'              'main process'
+   *          |                             |
+   *          x   >>>--  Subscribe  -->>>   o
+   *          o   <<<- Send Message  -<<<   x
+   *          |       (event occurs)        |
+   *          o   <<<- Send Message  -<<<   x
+   */
   electron.ipcMain.on('add_internal_processengine_status_listener', (event) => {
-    if (!internalProcessEngineStatusListeners.includes(event.sender)) {
-      internalProcessEngineStatusListeners.push(event.sender);
+    if (!processEngineStatusListeners.includes(event.sender)) {
+      processEngineStatusListeners.push(event.sender);
     }
 
     if (internalProcessEngineStatus !== undefined) {
-      sendInternalProcessEngineStatus(event.sender);
+      _sendInternalProcessEngineStatus(event.sender);
     }
   });
 
@@ -86,15 +96,18 @@ getPort({port: 8000, host: '0.0.0.0'})
     .then((processengine) => {
       console.log('Internal ProcessEngine started successfully.');
       internalProcessEngineStatus = 'success';
-      publishProcessEngineStatus();
+
+      _publishProcessEngineStatus();
 
     }).catch((error) => {
       console.log('Failed to start internal ProcessEngine: ', error);
       internalProcessEngineStatus = 'error';
-      internalProcessEngineStatupError = error;
-      publishProcessEngineStatus();
+      internalProcessEngineStartupError  = error;
+
+      _publishProcessEngineStatus();
     });
 
+  // TODO: Whats is happening here? Comment please.
   electron.ipcMain.on('get_host', (event) => {
     event.returnValue = `localhost:${port}`;
   });
@@ -166,7 +179,7 @@ getPort({port: 8000, host: '0.0.0.0'})
       })
     });
 
-    var template = [{
+    let template = [{
       label: "BPMN-Studio",
       submenu: [
           {
@@ -207,9 +220,11 @@ getPort({port: 8000, host: '0.0.0.0'})
           }
       ]}
     ];
+
     electron.Menu.setApplicationMenu(electron.Menu.buildFromTemplate(template));
   }
 
+  // TODO: Comment please; what is the use of this block?
   let filePath;
 
   app.on('ready', createWindow);
