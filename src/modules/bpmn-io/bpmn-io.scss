@@ -34,42 +34,14 @@
   border-bottom: none;
 }
 
-.toggle_panel {
-  position: relative;
-  transform: rotate(-90deg);
-  bottom: 1px;
-  background-color: rgb(220, 219, 219);;
-  border: 0;
-  border-top-left-radius: 5px;
-  right: 3px;
-}
-
-.resize_button {
-  position: relative;
-  transform: rotate(-90deg);
-  bottom: 0;
-  background-color: rgb(220, 219, 219);;
-  border: 0;
-  border-top-right-radius: 5px;
-  right: 3px;
-}
-
 .resize-div {
   position: absolute;
-  right: 294px;
   height: 90%;
   width: 5px;
 }
 
 .resize-div:hover {
   cursor: col-resize;
-}
-
-.toggle_div {
-  right: 282px;
-  height: 50%;
-  bottom: -50px;
-  position: absolute;
 }
 
 .expandIcon {
