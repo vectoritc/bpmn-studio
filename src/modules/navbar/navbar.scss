@@ -14,10 +14,6 @@
   content: "";
 }
 
-.menu-bar__menu--left {
-
-}
-
 .menu-bar__menu--right {
   padding-right: 20px;
 }
@@ -31,7 +27,6 @@
   justify-content: flex-start;
   align-items: stretch;
   text-align: center;
-
 }
 
 .menu-bar__menu--center {
@@ -96,6 +91,7 @@
   border-top-right-radius: 0;
   box-shadow: none;
   padding: 0;
+  cursor: pointer;
 }
 
 .menu-bar__menu-center--action-button {
