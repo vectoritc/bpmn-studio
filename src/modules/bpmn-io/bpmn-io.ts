@@ -54,6 +54,8 @@ export class BpmnIo {
   private ppWidth: number = 250;
   private ppDisplay: string = 'inline';
   private lastCanvasRight: number = 350;
+  private lastPpWidth: number = this.ppWidth;
+  private _ppHiddenBecauseLackOfSpace: boolean = false;
 
   private toggleMinimap: boolean = false;
   private minimapToggle: any;
@@ -216,6 +218,11 @@ export class BpmnIo {
 
   public togglePanel(): void {
     if (this.toggled === true) {
+      if (this._ppHiddenBecauseLackOfSpace) {
+        this.notificationService.showNotification(NotificationType.ERROR, 'There is not enough space for the property panel!');
+        return;
+      }
+
       this.toggleButtonPropertyPanel.classList.add('tool--active');
       this.ppDisplay = 'inline';
       this.canvasRight = this.lastCanvasRight;
@@ -240,6 +247,7 @@ export class BpmnIo {
     this.resizeButtonRight = currentWidth + sideBarRightSize;
     this.canvasRight = currentWidth;
     this.ppWidth = currentWidth;
+    this.lastPpWidth = currentWidth;
   }
 
   public setColorRed(): void {
@@ -300,12 +308,32 @@ export class BpmnIo {
 
   private resizeEventHandler = (event: any): void => {
     this.maxWidth = document.body.clientWidth - environment.propertyPanel.maxWidth;
-    if (this.ppWidth > this.maxWidth && this.maxWidth > this.minWidth) {
+
+    const notEnoughSpaceForPp: boolean = this.maxWidth < this.minWidth;
+    if (notEnoughSpaceForPp) {
+      this._ppHiddenBecauseLackOfSpace = true;
+      this.toggled = false;
+      this.togglePanel();
+      return;
+    }
+
+    if (this._ppHiddenBecauseLackOfSpace) {
+      this._ppHiddenBecauseLackOfSpace = false;
+      this.toggled = true;
+      this.togglePanel();
+      return;
+    }
+
+    this.ppWidth = this.lastPpWidth;
+    if (this.ppWidth > this.maxWidth) {
       const currentWidth: number = this.maxWidth;
 
       this.resizeButtonRight = currentWidth - resizeButtonWidth + sideBarRightSize;
       this.canvasRight = currentWidth;
       this.ppWidth = currentWidth;
+    } else {
+      this.resizeButtonRight = this.lastPpWidth - resizeButtonWidth + sideBarRightSize;
+      this.canvasRight = this.lastPpWidth;
     }
   }
 
