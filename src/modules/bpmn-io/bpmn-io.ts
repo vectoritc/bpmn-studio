@@ -17,8 +17,7 @@ import {ElementDistributeOptions,
 import environment from '../../environment';
 import {NotificationService} from './../notification/notification.service';
 
-const resizeButtonWidth: number = 5;
-const sideBarRightSize: number = 45;
+const sideBarRightSize: number = 35;
 
 interface BpmnStudioColorPickerSettings {
   clickoutFiresChange: boolean;
@@ -48,7 +47,7 @@ export class BpmnIo {
   private isResizeClicked: boolean = false;
   private showXMLView: boolean = false;
 
-  private resizeButtonRight: number = 294;
+  private resizeButtonRight: number = 285;
   private canvasRight: number = 350;
   private minWidth: number = environment.propertyPanel.minWidth;
   private maxWidth: number = document.body.clientWidth - environment.propertyPanel.maxWidth;
@@ -238,7 +237,7 @@ export class BpmnIo {
     currentWidth = Math.max(currentWidth, this.minWidth);
     currentWidth = Math.min(currentWidth, this.maxWidth);
 
-    this.resizeButtonRight = currentWidth - resizeButtonWidth + sideBarRightSize;
+    this.resizeButtonRight = currentWidth + sideBarRightSize;
     this.canvasRight = currentWidth;
     this.ppWidth = currentWidth;
   }
