@@ -5,7 +5,7 @@ import environment from '../../environment';
 @inject(EventAggregator)
 export class StatusBar {
 
-  public baseRoute: string = environment.bpmnStudioClient.baseRoute;
+  public processEngineRoute: string = environment.bpmnStudioClient.baseRoute;
   public showXMLButton: boolean = false;
   public xmlIsShown: boolean = false;
 
@@ -24,8 +24,8 @@ export class StatusBar {
       this.showXMLButton = false;
     });
 
-    this._eventAggregator.subscribe(environment.events.statusBar.updateBaseRoute, (newBaseRoute: string) => {
-      this.baseRoute = newBaseRoute;
+    this._eventAggregator.subscribe(environment.events.statusBar.updateProcessEngineRoute, (newProcessEngineRoute: string) => {
+      this.processEngineRoute = newProcessEngineRoute;
     });
   }
 

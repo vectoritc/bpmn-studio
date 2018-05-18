@@ -19,23 +19,23 @@ export class ConfigPanel {
   constructor(router: Router, bpmnStudioClient: BpmnStudioClient, notificationService: NotificationService, eventAggregator: EventAggregator) {
     this.router = router;
     this.bpmnStudioClient = bpmnStudioClient;
-    this.config.baseRoute = environment.bpmnStudioClient.baseRoute;
+    this.config.processEngineRoute = environment.bpmnStudioClient.baseRoute;
     this.notificationService = notificationService;
     this.eventAggregator = eventAggregator;
   }
 
   public updateSettings(): void {
-    environment.bpmnStudioClient.baseRoute = this.config.baseRoute;
-    window.localStorage.setItem('baseRoute', this.config.baseRoute);
-    environment.processengine.routes.processes = `${this.config.baseRoute}/datastore/ProcessDef`;
-    environment.processengine.routes.iam = `${this.config.baseRoute}/iam`;
-    environment.processengine.routes.messageBus = `${this.config.baseRoute}/mb`;
-    environment.processengine.routes.processInstances = `${this.config.baseRoute}/datastore/Process`;
-    environment.processengine.routes.startProcess = `${this.config.baseRoute}/processengine/start`;
-    environment.processengine.routes.userTasks =  `${this.config.baseRoute}/datastore/UserTask`;
+    environment.bpmnStudioClient.baseRoute = this.config.processEngineRoute;
+    window.localStorage.setItem('processEngineRoute', this.config.processEngineRoute);
+    environment.processengine.routes.processes = `${this.config.processEngineRoute}/datastore/ProcessDef`;
+    environment.processengine.routes.iam = `${this.config.processEngineRoute}/iam`;
+    environment.processengine.routes.messageBus = `${this.config.processEngineRoute}/mb`;
+    environment.processengine.routes.processInstances = `${this.config.processEngineRoute}/datastore/Process`;
+    environment.processengine.routes.startProcess = `${this.config.processEngineRoute}/processengine/start`;
+    environment.processengine.routes.userTasks =  `${this.config.processEngineRoute}/datastore/UserTask`;
     this.bpmnStudioClient.updateConfig(this.config);
     this.notificationService.showNotification(NotificationType.SUCCESS, 'Sucessfully saved settings!');
-    this.eventAggregator.publish('statusbar:baseRoute:update', this.config.baseRoute);
+    this.eventAggregator.publish('statusbar:processEngineRoute:update', this.config.processEngineRoute);
     this.router.navigateBack();
   }
 
