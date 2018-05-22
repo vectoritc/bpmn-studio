@@ -1,12 +1,17 @@
 /*
  * Process Solution Explorer Panel
 */
+body {
+  overflow: hidden;
+}
+
 .process-explorer__solution-explorer {
   background-color: #f7f7f7;
   padding: 2px;
   width: 220px;
   border-right: 2px solid #dcdbdb;
   height: 100%;
+  overflow-y: scroll;
 }
 
 .process-explorer__structure-item {

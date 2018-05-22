@@ -60,6 +60,7 @@ export class ProcessDefList {
     this._notificationService = notificationService;
 
     this._refreshProcesslist();
+    this._eventAggregator.publish(environment.events.refreshProcessDefs);
 
     this._fileReader.onload = async(fileInformations: any): Promise<void> => {
       this._newDiagramXml = fileInformations.target.result;
@@ -145,6 +146,7 @@ export class ProcessDefList {
   public attached(): void {
     this._getProcessesIntervalId = window.setInterval(() => {
       this.getProcessesFromService();
+      this._eventAggregator.publish(environment.events.refreshProcessDefs);
       // tslint:disable-next-line
     }, environment.processengine.poolingInterval);
 
