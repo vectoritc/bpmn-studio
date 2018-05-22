@@ -107,7 +107,8 @@ getPort({port: 8000, host: '0.0.0.0'})
       _publishProcessEngineStatus();
     });
 
-  // TODO: Whats is happening here? Comment please.
+  // This tells the frontend the location at which the electron-skeleton
+  // will be running; this 'get_host' request ist emitted in src/main.ts.
   electron.ipcMain.on('get_host', (event) => {
     event.returnValue = `localhost:${port}`;
   });
@@ -225,7 +226,9 @@ getPort({port: 8000, host: '0.0.0.0'})
     electron.Menu.setApplicationMenu(electron.Menu.buildFromTemplate(template));
   }
 
-  // TODO: Comment please; what is the use of this block?
+  // If BPMN-Studio was opened by double-clicking a .bpmn file, then the
+  // following code tells the frontend the name and content of that file;
+  // this 'get_opened_file' request is emmitted in src/main.ts.
   let filePath;
 
   app.on('ready', createWindow);
