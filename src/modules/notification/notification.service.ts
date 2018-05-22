@@ -1,11 +1,7 @@
 import {inject} from 'aurelia-dependency-injection';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import * as toastr from 'toastr';
-import {INotification, INotificationOptions, NotificationType} from '../../contracts/index';
-
-const defaultNotificationOptions: INotificationOptions = {
-  noTimeOut: false,
-};
+import {INotification, NotificationType} from '../../contracts/index';
 
 @inject(EventAggregator)
 export class NotificationService {
@@ -77,16 +73,6 @@ export class NotificationService {
       default:
         break;
     }
-  }
-
-  private _convertToToastrOptions(options: INotificationOptions): ToastrOptions {
-    if (options.noTimeOut) {
-      return {
-        timeOut: -1,
-        closeButton: true,
-      };
-    }
-    return {};
   }
 
   private _initializeToastr(): void {
