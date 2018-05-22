@@ -1,7 +1,11 @@
 import {inject} from 'aurelia-dependency-injection';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import * as toastr from 'toastr';
-import {INotification, NotificationType} from '../../contracts/index';
+import {INotification, INotificationOptions, NotificationType} from '../../contracts/index';
+
+const defaultNotificationOptions: INotificationOptions = {
+  noTimeOut: false,
+};
 
 @inject(EventAggregator)
 export class NotificationService {
@@ -18,10 +22,11 @@ export class NotificationService {
   }
 
   // TODO: Could better be named 'notify' or 'show'
-  public showNotification(type: NotificationType, message: string): void {
+  public showNotification(type: NotificationType, message: string, options: INotificationOptions = defaultNotificationOptions): void {
     const notification: INotification = {
       type: type,
       message: message,
+      options: options,
     };
 
     if (this._toastrInstance === undefined) {
@@ -46,22 +51,34 @@ export class NotificationService {
   }
 
   private _showNotification(notification: INotification): void {
+    const toastrOptions: ToastrOptions = this._convertToToastrOptions(notification.options);
+
     switch (notification.type) {
       case NotificationType.SUCCESS:
-        this._toastrInstance.success(notification.message);
+        this._toastrInstance.success(notification.message, undefined, toastrOptions);
         break;
       case NotificationType.ERROR:
-        this._toastrInstance.error(notification.message);
+        this._toastrInstance.error(notification.message, undefined, toastrOptions);
         break;
       case NotificationType.INFO:
-        this._toastrInstance.info(notification.message);
+        this._toastrInstance.info(notification.message, undefined, toastrOptions);
         break;
       case NotificationType.WARNING:
-        this._toastrInstance.warning(notification.message);
+        this._toastrInstance.warning(notification.message, undefined, toastrOptions);
         break;
       default:
         break;
     }
+  }
+
+  private _convertToToastrOptions(options: INotificationOptions): ToastrOptions {
+    if (options.noTimeOut) {
+      return {
+        timeOut: -1,
+        closeButton: true,
+      };
+    }
+    return {};
   }
 
   private _initializeToastr(): void {
