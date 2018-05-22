@@ -9,7 +9,6 @@ pre {
   word-break: unset;
   word-wrap: unset;
   background-color: unset;
-  display: grid;
 }
 
 .xml-view {
@@ -42,5 +41,4 @@ td.hljs-ln-numbers {
 
 td.hljs-ln-code {
   padding-left: 10px;
-  white-space: pre !important;
 }
