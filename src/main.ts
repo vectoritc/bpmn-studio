@@ -70,8 +70,9 @@ export function configure(aurelia: Aurelia): void {
         if (status !== 'error') {
           return;
         }
+        const targetHref: string = `javascript:nodeRequire('open')('https://github.com/process-engine/bpmn-studio/issues/316')`;
         const errorMessage: string = `Failed to start ProcessEngine.
-For further information <a href="javascript:nodeRequire('open')('https://github.com/process-engine/bpmn-studio/issues/316')">click here</a>.`;
+For further information <a href='${targetHref}'>click here</a>.`;
         const notificationService: NotificationService = aurelia.container.get('NotificationService');
 
         notificationService.showNonDisappearingNotification(NotificationType.ERROR, errorMessage);
