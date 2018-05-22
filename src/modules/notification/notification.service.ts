@@ -21,37 +21,45 @@ export class NotificationService {
     });
   }
 
-  // TODO: Could better be named 'notify' or 'show'
-  public showNotification(type: NotificationType, message: string, options: INotificationOptions = defaultNotificationOptions): void {
+  public showNonDisappearingNotification(type: NotificationType, message: string): void {
     const notification: INotification = {
       type: type,
       message: message,
-      options: options,
+      nonDisappearing: true,
     };
+    this._queueOrDisplay(notification);
+  }
 
+  // TODO: Could better be named 'notify' or 'show'
+  public showNotification(type: NotificationType, message: string): void {
+    const notification: INotification = {
+      type: type,
+      message: message,
+      nonDisappearing: false,
+    };
+    this._queueOrDisplay(notification);
+  }
+
+  private _queueOrDisplay(notification: INotification): void {
     if (this._toastrInstance === undefined) {
-      this._saveNotification(notification);
+      this._savedNotifications.push(notification);
       return;
     }
 
-    this._showNotification(notification);
+    this._publishNotificationToToastr(notification);
   }
 
   public setToastrInstance(toastrInstance: Toastr): void {
     this._toastrInstance = toastrInstance;
     this._initializeToastr();
     for (const notification of this._savedNotifications) {
-      this._showNotification(notification);
+      this._publishNotificationToToastr(notification);
     }
     this._savedNotifications = [];
   }
 
-  private _saveNotification(notification: INotification): void {
-    this._savedNotifications.push(notification);
-  }
-
-  private _showNotification(notification: INotification): void {
-    const toastrOptions: ToastrOptions = this._convertToToastrOptions(notification.options);
+  private _publishNotificationToToastr(notification: INotification): void {
+    const toastrOptions: ToastrOptions = this._mapOptionsToToastrOptions(notification);
 
     switch (notification.type) {
       case NotificationType.SUCCESS:
@@ -83,5 +91,15 @@ export class NotificationService {
 
   private _initializeToastr(): void {
     this._toastrInstance.options.preventDuplicates = true;
+  }
+
+  private _mapOptionsToToastrOptions(notification: INotification): ToastrOptions {
+    if (notification.nonDisappearing) {
+      return {
+        closeButton: true,
+        timeOut: -1,
+      };
+    }
+    return {};
   }
 }
