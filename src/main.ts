@@ -70,10 +70,18 @@ export function configure(aurelia: Aurelia): void {
         if (status !== 'error') {
           return;
         }
-        const errorMessage: string = 'Failed to start ProcessEngine.';
+        /* This is the URL to an issue in GitHub, describing
+         * what the user can do about this failure.
+         *
+         * TODO: Implement a proper FAQ section and link to that.
+         */
+        // tslint:disable-next-line: max-line-length
+        const targetHref: string = `<a href="javascript:nodeRequire('open')('https://github.com/process-engine/bpmn-studio/issues/316')">click here</a>`;
+
+        const errorMessage: string = `Failed to start ProcessEngine. For further information ${targetHref}.`;
         const notificationService: NotificationService = aurelia.container.get('NotificationService');
 
-        notificationService.showNotification(NotificationType.ERROR, errorMessage);
+        notificationService.showNonDisappearingNotification(NotificationType.ERROR, errorMessage);
       });
     }
   });
