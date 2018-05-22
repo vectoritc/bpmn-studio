@@ -83,6 +83,7 @@ export class NotificationService {
     if (notification.nonDisappearing) {
       return {
         closeButton: true,
+        closeOnHover: false,
         timeOut: -1,
       };
     }
