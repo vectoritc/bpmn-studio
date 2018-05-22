@@ -31,7 +31,7 @@ export class ProcessSolutionPanel {
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
         this._refreshProcesslist();
       }),
-      this._eventAggregator.subscribe('process-solution-panel--refresh', () => {
+      this._eventAggregator.subscribe(environment.events.refreshProcessDefs, () => {
         this._refreshProcesslist();
       }),
     ];
