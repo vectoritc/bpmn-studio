@@ -13,25 +13,38 @@ export class NotificationService {
   constructor(eventAggregator: EventAggregator) {
     this._eventAggregator = eventAggregator;
     this._eventAggregator.subscribeOnce('router:navigation:complete', () => {
-      this.setToastrInstance(toastr);
+      this._setToastrInstance(toastr);
     });
   }
 
-  public showNonDisappearingNotification(type: NotificationType, message: string): void {
-    const notification: INotification = {
-      type: type,
-      message: message,
-      nonDisappearing: true,
-    };
-    this._queueOrDisplay(notification);
-  }
-
-  // TODO: Could better be named 'notify' or 'show'
+  /**
+   * Shows a notification message to the user. The notification will disappear
+   * after a certain amount of time.
+   *
+   * @argument type the severity of the notification
+   * @argument message the message to display
+   */
   public showNotification(type: NotificationType, message: string): void {
     const notification: INotification = {
       type: type,
       message: message,
       nonDisappearing: false,
+    };
+    this._queueOrDisplay(notification);
+  }
+
+  /**
+   * Shows a notification message to the user. The notification will disappear
+   * when the user closes it.
+   *
+   * @argument type the severity of the notification
+   * @argument message the message to display
+   */
+  public showNonDisappearingNotification(type: NotificationType, message: string): void {
+    const notification: INotification = {
+      type: type,
+      message: message,
+      nonDisappearing: true,
     };
     this._queueOrDisplay(notification);
   }
@@ -45,7 +58,7 @@ export class NotificationService {
     this._publishNotificationToToastr(notification);
   }
 
-  public setToastrInstance(toastrInstance: Toastr): void {
+  private _setToastrInstance(toastrInstance: Toastr): void {
     this._toastrInstance = toastrInstance;
     this._initializeToastr();
     for (const notification of this._savedNotifications) {
