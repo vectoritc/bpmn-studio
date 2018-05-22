@@ -21,8 +21,8 @@ export class NotificationService {
    * Shows a automatically-disappearing notification message to the user;
    * the notification will disappear after a certain amount of time (@see toastr documenation).
    *
-   * @argument type The severity of the notification.
-   * @argument message The message to display.
+   * @argument type The severity of the notification (@see NotificationType for possible severity level).
+   * @argument message The message to display as String.
    */
   public showNotification(type: NotificationType, message: string): void {
     const notification: INotification = {
@@ -37,8 +37,8 @@ export class NotificationService {
    * Shows a non-disappearing notification message to the user, with a close button;
    * the notification will disappear when the user hit the close button.
    *
-   * @argument type The severity of the notification.
-   * @argument message The message to display.
+   * @argument type The severity of the notification (@see NotificationType for possible severity level).
+   * @argument message The message to display as String.
    */
   public showNonDisappearingNotification(type: NotificationType, message: string): void {
     const notification: INotification = {
