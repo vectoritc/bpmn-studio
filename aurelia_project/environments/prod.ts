@@ -21,6 +21,7 @@ export default {
   },
   events: {
     xmlChanged: 'xmlChanged',
+    refreshProcessDefs: 'processdefs:refresh',
     statusBar: {
       showXMLButton: 'statusbar:xmlbutton:show',
       hideXMLButton: 'statusbar:xmlbutton:hide',
