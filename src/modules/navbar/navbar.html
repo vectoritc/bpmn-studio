@@ -63,7 +63,7 @@
         </button>
       </div>
       <div if.bind="showTools">
-        <button class="menu-bar__menu-center--action-button" ref="saveButton" click.delegate="saveDiagram()" disabled.bind="validationError" title="Save Diagram">
+        <button class="menu-bar__menu-center--action-button" ref="saveButton" click.delegate="saveDiagram()" disabled.bind="disableSaveButton" title="Save Diagram">
           <i class="fa fa-save"></i>
         </button>
       </div>
