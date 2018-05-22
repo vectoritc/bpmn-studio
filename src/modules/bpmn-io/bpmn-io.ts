@@ -328,11 +328,11 @@ export class BpmnIo {
     if (this.ppWidth > this.maxWidth) {
       const currentWidth: number = this.maxWidth;
 
-      this.resizeButtonRight = currentWidth - resizeButtonWidth + sideBarRightSize;
+      this.resizeButtonRight = currentWidth + sideBarRightSize;
       this.canvasRight = currentWidth;
       this.ppWidth = currentWidth;
     } else {
-      this.resizeButtonRight = this.lastPpWidth - resizeButtonWidth + sideBarRightSize;
+      this.resizeButtonRight = this.lastPpWidth + sideBarRightSize;
       this.canvasRight = this.lastPpWidth;
     }
   }
