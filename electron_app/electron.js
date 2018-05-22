@@ -191,36 +191,48 @@ getPort({port: 8000, host: '0.0.0.0'})
             type: "separator"
           },
           {
-            label: "Open Dev Tools", accelerator: "Command+Alt+I", click: function() {
-              mainWindow.webContents.toggleDevTools();
-            }
-          },
-          {
-            label: "Quit", accelerator: "Command+Q", click: function() {
-            app.quit();
-          }}
-      ]}, {
-      label: "Edit",
-      submenu: [
-          {
-            label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:"
-          },
-          {
-            label: "Redo", accelerator: "CmdOrCtrl+Shift+Z", selector: "redo:"
-          },
-          {
-            type: "separator"
-          },
-          {
-            label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:"
-          },
-          {
-            label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:"
-          },
-          {
-            label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:"
+            label: "Quit", role: "quit"
           }
-      ]}
+      ]}, {
+        label: "Edit",
+        submenu: [
+            {
+              label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:"
+            },
+            {
+              label: "Redo", accelerator: "CmdOrCtrl+Shift+Z", selector: "redo:"
+            },
+            {
+              type: "separator"
+            },
+            {
+              label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:"
+            },
+            {
+              label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:"
+            },
+            {
+              label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:"
+            }
+        ]}, {
+          label: "Window",
+          submenu: [
+            {
+              role: "minimize"
+            },
+            {
+              role: "close"
+            },
+            {
+              type: "separator"
+            },
+            {
+              role: "reload"
+            },
+            {
+              role: "toggledevtools"
+            }
+        ]}
     ];
 
     electron.Menu.setApplicationMenu(electron.Menu.buildFromTemplate(template));
