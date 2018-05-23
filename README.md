@@ -97,12 +97,31 @@ automatisch neu geladen.
 
 **Zum bauen:**
 
+**Mac:**
+
 ```shell
-npm run electron-build
+npm run electron-build-macos
 ```
 
 Nach dem Bauen kann man in dem `dist/mac` Ordner die fertige Applikation finden
 und ausführen.
+
+**Windows:**
+
+Vor dem erstmaligen Builden müssen windows-build-tools installiert werden:
+
+```shell
+npm install --global --production windows-build-tools
+```
+
+Danach kann gebuildet werden:
+
+```shell
+npm run electron-build-windows
+```
+
+Nach dem Bauen kann man in dem `dist/` Ordner die `bpmn-studio Setup 1.2.1.exe`
+ausführen, um die Applikation zu installieren.
 
 **Alternative:**
 
