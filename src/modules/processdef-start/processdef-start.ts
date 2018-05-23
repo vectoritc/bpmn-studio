@@ -33,6 +33,31 @@ export class ProcessDefStart {
     this.notificationService = notificationService;
   }
 
+  public detached(): void {
+    for (const subscription of this.subscriptions) {
+      subscription.dispose();
+    }
+  }
+
+  @computedFrom('_process')
+  public get process(): IProcessDefEntity {
+    return this._process;
+  }
+
+  public startProcess(): void {
+    this.bpmnStudioClient.startProcessByKey(this.process.key);
+  }
+
+  // TODO: Delete this! It shouldn't be here.
+  public toggleSolutionExplorer(): void {
+    this.solutionExplorerIsShown = !this.solutionExplorerIsShown;
+  }
+
+  // TODO: Delete this! It shouldn't be here.
+  public goBack(): void {
+    this.router.navigateBack();
+  }
+
   private async activate(routeParameters: {processDefId: string}): Promise<void> {
     this.processDefId = routeParameters.processDefId;
     await this.refreshProcess();
@@ -54,12 +79,6 @@ export class ProcessDefStart {
     ];
   }
 
-  public detached(): void {
-    for (const subscription of this.subscriptions) {
-      subscription.dispose();
-    }
-  }
-
   private async refreshProcess(): Promise<void> {
     try {
       this._process = await this.processEngineService.getProcessDefById(this.processDefId);
@@ -69,20 +88,4 @@ export class ProcessDefStart {
     }
   }
 
-  @computedFrom('_process')
-  public get process(): IProcessDefEntity {
-    return this._process;
-  }
-
-  public startProcess(): void {
-    this.bpmnStudioClient.startProcessByKey(this.process.key);
-  }
-
-  public toggleSolutionExplorer(): void {
-    this.solutionExplorerIsShown = !this.solutionExplorerIsShown;
-  }
-
-  public goBack(): void {
-    this.router.navigateBack();
-  }
 }
