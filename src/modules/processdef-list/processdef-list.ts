@@ -205,6 +205,7 @@ export class ProcessDefList {
     try {
       const response: any = await this._processEngineService.createProcessfromXML(this._newDiagramXml, this.newDiagramName);
       this._refreshProcesslist();
+      this._eventAggregator.publish(environment.events.refreshProcessDefs);
       this._notificationService.showNotification(NotificationType.SUCCESS, 'Diagram successfully imported!');
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, `Error while importing file: ${error.message}`);

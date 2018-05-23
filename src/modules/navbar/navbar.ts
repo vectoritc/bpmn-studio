@@ -12,6 +12,7 @@ export class NavBar {
   @bindable() public showSolutionExplorer: boolean;
   public activeRouteTitle: string;
   public showTools: boolean = false;
+  public disableSaveButton: boolean = false;
   public process: IProcessDefEntity;
   public exportButton: HTMLButtonElement;
   public exportSpinner: HTMLElement;
@@ -41,6 +42,14 @@ export class NavBar {
     this._eventAggregator.subscribe(environment.events.navBar.updateProcess, (process: IProcessDefEntity) => {
       this.process = process;
     });
+
+    this._eventAggregator.subscribe(environment.events.navBar.disableSaveButton, () => {
+      this.disableSaveButton = true;
+    });
+
+    this._eventAggregator.subscribe(environment.events.navBar.enableSaveButton, () => {
+      this.disableSaveButton = false;
+    });
   }
 
   public navigate(routeTitle: string): void {
@@ -60,7 +69,9 @@ export class NavBar {
   }
 
   public saveDiagram(): void {
-    this._eventAggregator.publish(environment.events.processDefDetail.saveDiagramm);
+    if (!this.disableSaveButton) {
+      this._eventAggregator.publish(environment.events.processDefDetail.saveDiagramm);
+    }
   }
 
   public exportDiagram(exportAs: string): void {

@@ -206,6 +206,9 @@ getPort({port: 8000, host: '0.0.0.0'})
               type: "separator"
             },
             {
+              label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:"
+            },
+            {
               label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:"
             },
             {
