@@ -120,8 +120,13 @@ Danach kann gebuildet werden:
 npm run electron-build-windows
 ```
 
-Nach dem Bauen kann man in dem `dist/` Ordner die `bpmn-studio Setup 1.2.1.exe`
-ausführen, um die Applikation zu installieren.
+Nach dem Bauen, kann man in dem `dist/` Ordner die Datei `bpmn-studio Setup
+<VERSION>.exe` ausführen, um die Applikation zu installieren; `<VERSION>` wird
+durch die entsprechende Version ersetzt.
+
+Beispiel:
+
+`dist/bpmn-studio Setup 1.2.1.exe`
 
 **Alternative:**
 
