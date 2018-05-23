@@ -20,10 +20,10 @@
     "test": "echo 'Currently there a no tests specified'",
     "electron-start-dev": "electron electron_app/electron.js",
     "rebuild": "electron-rebuild -f -w deasync",
-    "electron-build-windows": "npm run rebuild && build --publish never --windows",
-    "electron-build-macos": "build --publish never --macos",
-    "electron-build-linux": "build --publish never --linux",
-    "electron-shipit": "build --publish always"
+    "electron-build-windows": "npm run rebuild && npm run build && build --publish never --windows",
+    "electron-build-macos": "npm run build && build --publish never --macos",
+    "electron-build-linux": "npm run build && build --publish never --linux",
+    "electron-shipit": "npm run build && build --publish always"
   },
   "build": {
     "extraFiles": [
