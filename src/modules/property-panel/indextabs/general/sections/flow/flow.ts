@@ -32,6 +32,11 @@ export class FlowSection implements ISection {
       if (!this.elementIsFlow(element)) {
         return false;
       }
+
+      const isDefaultFlow: boolean = element.sourceRef.default && element.sourceRef.default.id === element.id;
+      if (isDefaultFlow) {
+        return false;
+      }
       const flowPointsAtExclusiveGateway: boolean = element.targetRef.$type === 'bpmn:ExclusiveGateway';
       const flowStartsAtExclusiveGateway: boolean = element.sourceRef.$type === 'bpmn:ExclusiveGateway';
 
@@ -48,8 +53,10 @@ export class FlowSection implements ISection {
   }
 
   private init(): void {
-    if (this.businessObjInPanel.conditionExpression) {
+    if (this.businessObjInPanel.conditionExpression && this.businessObjInPanel.conditionExpression.body !== undefined) {
       this.condition = this.businessObjInPanel.conditionExpression.body;
+    } else {
+      this.condition = '';
     }
   }
 

@@ -1,0 +1,90 @@
+<template>
+  <require from="./navbar.css"></require>
+  <require from="../user-login/user-login"></require>
+  <div class="bpmn-studio-navbar bpmn-studio-navbar--macos">
+    <div class="menu-bar__menu menu-bar__menu--left">
+      <div class="menu__menu-tabbed-link">
+        <button class="menu-tabbed-link action-button" class.bind="showSolutionExplorer ? 'solution-explorer--active' : ''" click.delegate="toggleSolutionExplorer()">
+          <i class="fa fa-folder"></i>
+        </button>
+      </div>
+      <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'Process Definition List' ? 'menu__menu-tabbed-link--active' : ''">
+        <a class="menu-tabbed-link" click.delegate="navigate('Process Definition List')">Plan</a>
+      </div>
+      <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'ProcessDef Detail' ? 'menu__menu-tabbed-link--active' : ''">
+        <a class="menu-tabbed-link menu-tabbed-link--disabled">Design</a>
+      </div>
+      <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'Publish' ? 'menu__menu-tabbed-link--active' : ''">
+        <a class="menu-tabbed-link menu-tabbed-link--disabled">Publish</a>
+      </div>
+      <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'Task List' || activeRouteTitle === 'Process Instance List'
+                                                        ? 'menu__menu-tabbed-link--active' : ''">
+        <div class="btn-group">
+          <div class="menu__menu-tabbed-link" data-toggle="dropdown">
+            <a class="menu-tabbed-link">Dashboard</a>
+          </div>
+          <ul class="dropdown-menu menu-bar__dashboard-dropdown">
+            <li>
+              <a click.delegate="navigate('Task List')">Task List</a>
+            </li>
+            <li>
+              <a click.delegate="navigate('Process Instance List')">Process Instance List</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="menu-bar__menu menu-bar__menu--center">
+      <div class="menu__element menu__element--title btn-group" if.bind="showTools">
+        <span>${process.name}</span>
+        <button class="menu-bar__menu-center--action-button dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fa fa-angle-down"></i>
+        </button>
+        <table class="dropdown-menu process-details-dropdown-menu">
+          <tr>
+            <th>Process Id: </th>
+            <td>${process.id}</td>
+          </tr>
+          <tr>
+            <th>Process Name: </th>
+            <td>${process.name}</td>
+          </tr>
+          <tr>
+            <th>Process Key: </th>
+            <td>${process.key}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="menu-bar__menu menu-bar__menu--right">
+      <div if.bind="showTools">
+        <button class="menu-bar__menu-center--action-button menu-bar__menu-center--back-button back-button" click.delegate="navigateBack()" title="Navigate back">
+          <i class="fa fa-arrow-circle-left"></i>
+        </button>
+      </div>
+      <div if.bind="showTools">
+        <button class="menu-bar__menu-center--action-button" ref="saveButton" click.delegate="saveDiagram()" disabled.bind="disableSaveButton" title="Save Diagram">
+          <i class="fa fa-save"></i>
+        </button>
+      </div>
+      <div class="btn-group" if.bind="showTools">
+        <button class="menu-bar__menu-center--action-button dropdown-toggle" title="Export Diagram" ref="exportButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i ref="exportIcon" class="fa fa-upload"></i>
+          <i ref="exportSpinner" class="glyphicon glyphicon-repeat fa-spin hidden"></i>
+        </button>
+        <ul class="dropdown-menu">
+          <li><a href="#" click.delegate="exportDiagram('BPMN')">as BPMN</a></li>
+          <li><a href="#" click.delegate="exportDiagram('SVG')">as SVG</a></li>
+          <li><a href="#" click.delegate="exportDiagram('PNG')">as PNG</a></li>
+          <li><a href="#" click.delegate="exportDiagram('JPEG')">as JPEG</a></li>
+        </ul>
+      </div>
+      <div class="menu-bar__last-tool" if.bind="showTools">
+        <button class="menu-bar__menu-center--action-button" ref="startButton" click.delegate="startProcess()" disabled.bind="validationError" title="Start Process">
+          <i class="fa fa-play"></i>
+        </button>
+      </div>
+      <user-login></user-login>
+    </div>
+  </div>
+</template>

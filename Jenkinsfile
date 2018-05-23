@@ -34,6 +34,13 @@ pipeline {
           branch = env.BRANCH_NAME;
           branch_is_master = branch == 'master';
           branch_is_develop = branch == 'develop';
+
+          if (branch_is_master) {
+            full_electron_release_version_string = "${package_version}";
+          } else {
+            full_electron_release_version_string = "${package_version}-pre-b${env.BUILD_NUMBER}";
+          }
+
           echo("Branch is '${branch}'")
         }
         nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
@@ -53,10 +60,14 @@ pipeline {
       steps {
         sh('node --version')
         sh('npm run build')
-        stash(includes: 'node_modules/, scripts/', name: 'post_build')
+        sh("npm version ${full_electron_release_version_string} --no-git-tag-version --force")
+        stash(includes: 'node_modules/, scripts/, package.json', name: 'post_build')
       }
     }
     stage('build electron') {
+      when {
+        expression { branch_is_master || branch_is_develop }
+      }
       parallel {
         stage('Build on Linux') {
           agent {
@@ -185,7 +196,9 @@ pipeline {
           withCredentials([
             string(credentialsId: 'process-engine-ci_token', variable: 'RELEASE_GH_TOKEN')
           ]) {
-            sh("node .ci-tools/publish-github-release.js ${package_version} ${env.GIT_COMMIT} false ${!branch_is_master}")
+            script {
+              sh("node .ci-tools/publish-github-release.js ${full_electron_release_version_string} ${full_electron_release_version_string} ${branch} false ${!branch_is_master}");
+            }
           }
         }
       }

@@ -1,14 +1,36 @@
 import {IProcessDefEntity, IUserTaskEntity} from '@process-engine/process_engine_contracts';
+import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
-import {IPagination, IProcessEngineRepository, IProcessEngineService, IProcessEntity} from '../../contracts';
+import {IFileInfo, IPagination, IProcessEngineRepository, IProcessEngineService, IProcessEntity, NotificationType} from '../../contracts/index';
+import environment from '../../environment';
+import {NotificationService} from './../notification/notification.service';
 
-@inject('ProcessEngineRepository')
+@inject('ProcessEngineRepository', 'FileContent', 'NotificationService', EventAggregator)
 export class ProcessEngineService implements IProcessEngineService {
 
   private repository: IProcessEngineRepository;
+  private fileInfo: IFileInfo;
+  private notificationService: NotificationService;
+  private _eventAggregator: EventAggregator;
 
-  constructor(repository: IProcessEngineRepository) {
+  constructor(repository: IProcessEngineRepository, fileInfo: IFileInfo, notificationService: NotificationService, eventAggregator: EventAggregator) {
     this.repository = repository;
+    this.fileInfo = fileInfo;
+    this.notificationService = notificationService;
+    this._eventAggregator = eventAggregator;
+    if (this.fileInfo.content !== undefined) {
+      this.createAndPublish();
+    }
+  }
+
+  private async createAndPublish(): Promise<void> {
+    try {
+      await this.createProcessfromXML(this.fileInfo.content);
+      this._eventAggregator.publish(environment.events.refreshProcessDefs);
+      this.notificationService.showNotification(NotificationType.SUCCESS, 'Diagram successfully imported!');
+    } catch (error) {
+      this.notificationService.showNotification(NotificationType.ERROR,  `Error while importing file: ${error.message}`);
+    }
   }
 
   public deleteProcessDef(processId: string): Promise<void> {
@@ -21,6 +43,10 @@ export class ProcessEngineService implements IProcessEngineService {
 
   public updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<any> {
     return this.repository.updateProcessDef(processDef, xml);
+  }
+
+  public createProcessfromXML(xml: string, name?: string): Promise<any> {
+    return this.repository.createProcessfromXML(xml, name);
   }
 
   public getIdentity(): Promise<any> {

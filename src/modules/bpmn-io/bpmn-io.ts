@@ -1,42 +1,80 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
-import {bindable, observable} from 'aurelia-framework';
-import { setTimeout } from 'timers';
-import * as toastr from 'toastr';
+import {bindable, inject, observable} from 'aurelia-framework';
+import * as $ from 'jquery';
+import * as spectrum from 'spectrum-colorpicker';
+import 'spectrum-colorpicker/spectrum';
+import {setTimeout} from 'timers';
 import {ElementDistributeOptions,
         IBpmnFunction,
         IBpmnModeler,
         IDefinition,
         IModdleElement,
         IModeling,
-        IShape} from '../../contracts/index';
+        IProcessDefEntity,
+        IShape,
+        NotificationType,
+      } from '../../contracts/index';
 import environment from '../../environment';
+import {NotificationService} from './../notification/notification.service';
 
-const toggleButtonWidth: number = 13;
-const resizeButtonWidth: number = 19;
+const sideBarRightSize: number = 35;
 
+interface BpmnStudioColorPickerSettings {
+  clickoutFiresChange: boolean;
+  showPalette: boolean;
+  palette: Array<Array<string>>;
+  localStorageKey: string;
+  showInitial: boolean;
+  showInput: boolean;
+  allowEmpty: boolean;
+  showButtons: boolean;
+  showPaletteOnly: boolean;
+  togglePaletteOnly: boolean;
+
+  move?(color: spectrum.tinycolorInstance): void;
+}
+
+@inject('NotificationService')
 export class BpmnIo {
+  private fillColor: string;
+  private borderColor: string;
 
   private toggled: boolean = false;
-  private toggleButton: HTMLButtonElement;
+  private toggleButtonPropertyPanel: HTMLButtonElement;
   private resizeButton: HTMLButtonElement;
-  private panel: HTMLElement;
   private canvasModel: HTMLDivElement;
   private refresh: boolean = true;
   private isResizeClicked: boolean = false;
+  private showXMLView: boolean = false;
 
-  private toggleButtonRight: number = 337;
-  private resizeButtonRight: number = 331;
+  private resizeButtonRight: number = 285;
   private canvasRight: number = 350;
   private minWidth: number = environment.propertyPanel.minWidth;
   private maxWidth: number = document.body.clientWidth - environment.propertyPanel.maxWidth;
+  private ppWidth: number = 250;
+  private ppDisplay: string = 'inline';
+  private lastCanvasRight: number = 350;
+  private lastPpWidth: number = this.ppWidth;
+  private _ppHiddenBecauseLackOfSpace: boolean = false;
+  private _propertyPanelHasNoSpace: boolean = false;
 
   private toggleMinimap: boolean = false;
   private minimapToggle: any;
   private expandIcon: HTMLElement;
   private hideMinimap: HTMLElement;
+  private notificationService: NotificationService;
 
   @bindable({changeHandler: 'xmlChanged'}) public xml: string;
+
+  public initialLoadingFinished: boolean;
   public modeler: IBpmnModeler;
+  public colorPickerBorder: HTMLInputElement;
+  public colorPickerFill: HTMLInputElement;
+  public colorPickerLoaded: boolean = false;
+
+  constructor(notificationService: NotificationService) {
+    this.notificationService = notificationService;
+  }
 
   public created(): void {
     this.modeler = new bundle.modeler({
@@ -44,6 +82,7 @@ export class BpmnIo {
       moddleExtensions: {
         camunda: bundle.camundaModdleDescriptor,
       },
+      keyboard: { bindTo: document },
     });
 
     if (this.xml !== undefined && this.xml !== null) {
@@ -51,7 +90,6 @@ export class BpmnIo {
         return 0;
       });
     }
-
   }
 
   public attached(): void {
@@ -60,9 +98,6 @@ export class BpmnIo {
     const minimapArea: any = this.canvasModel.getElementsByClassName('djs-minimap-map')[0];
     this.minimapToggle = this.canvasModel.getElementsByClassName('djs-minimap-toggle')[0];
 
-    // These style changes cannot be outsourced, because bpmn-js overwrites the css style.
-    // So the style must set directly and not in a css class.
-    // Setting the styles in a css class with an important flag is working, but not really pretty.
     minimapArea.style.width = '350px';
     minimapArea.style.height = '200px';
     minimapViewport.style.fill = 'rgba(0, 208, 255, 0.13)';
@@ -78,27 +113,33 @@ export class BpmnIo {
     this.minimapToggle.addEventListener('click', this.toggleMinimapFunction);
 
     window.addEventListener('resize', this.resizeEventHandler);
-  }
 
-    // These style changes cannot be outsourced, because bpmn-js overwrites the css style.
-    // So the style must set directly and not in a css class.
-    // Setting the styles in a css class with an important flag is working, but not really pretty.
-  private toggleMinimapFunction = (): void => {
-    if (this.toggleMinimap === false) {
-      this.expandIcon.style.display = 'none';
-      this.hideMinimap.style.display = 'inline';
-      this.minimapToggle.style.height = '20px';
-      this.toggleMinimap = true;
-    } else {
-      this.expandIcon.style.display = 'inline-block';
-      this.hideMinimap.style.display = 'none';
-      this.toggleMinimap = false;
-    }
+    this.initialLoadingFinished = true;
+
+    this.resizeButton.addEventListener('mousedown', (e: Event) => {
+      const windowEvent: Event = e || window.event;
+      windowEvent.cancelBubble = true;
+
+      const mousemoveFunction: EventListenerOrEventListenerObject =  (event: Event): void => {
+        this.resize(event);
+        document.getSelection().empty();
+      };
+
+      const mouseUpFunction: EventListenerOrEventListenerObject =  (event: Event): void => {
+        document.removeEventListener('mousemove', mousemoveFunction);
+        document.removeEventListener('mouseup', mouseUpFunction);
+      };
+
+      document.addEventListener('mousemove', mousemoveFunction);
+      document.addEventListener('mouseup', mouseUpFunction);
+    });
   }
 
   public detached(): void {
     this.modeler.detach();
     window.removeEventListener('resize', this.resizeEventHandler);
+    $(this.colorPickerBorder).spectrum('destroy');
+    $(this.colorPickerFill).spectrum('destroy');
   }
 
   public xmlChanged(newValue: string, oldValue: string): void {
@@ -148,7 +189,7 @@ export class BpmnIo {
     const selectedElements: Array<IShape> = this.getSelectedElements();
 
     if (selectedElements.length < 1 || selectedElements.length === 1 && selectedElements[0].$type === 'bpmn:Collaboration') {
-      toastr.error(`Error while changing the color: No valid element was selected.`);
+      this.notificationService.showNotification(NotificationType.ERROR, 'Error while changing the color: No valid element was selected.');
       return;
     }
 
@@ -178,51 +219,191 @@ export class BpmnIo {
 
   public togglePanel(): void {
     if (this.toggled === true) {
-      this.panel.style.display = 'inline';
-      this.toggleButton.style.right = `${this.toggleButtonRight}px`;
-      this.resizeButton.style.right = `${this.resizeButtonRight}px`;
-      this.canvasModel.style.right = `${this.canvasRight}px`;
+      if (this._propertyPanelHasNoSpace) {
+        this.notificationService.showNotification(NotificationType.ERROR, 'There is not enough space for the property panel!');
+        return;
+      }
+
+      this.toggleButtonPropertyPanel.classList.add('tool--active');
+      this.ppDisplay = 'inline';
+      this.canvasRight = this.lastCanvasRight;
       this.toggled = false;
     } else {
-      this.panel.style.display = 'none';
-      this.toggleButton.style.right = '-16px';
-      this.resizeButton.style.right = '-18px';
-      this.canvasModel.style.right = '1px';
+      this.lastCanvasRight = this.canvasRight;
+
+      this.toggleButtonPropertyPanel.classList.remove('tool--active');
+      this.ppDisplay = 'none';
+      this.canvasRight = 1;
       this.toggled = true;
     }
   }
 
-  public resize(): void {
-    this.isResizeClicked = true;
-    document.addEventListener('mousemove', (event: any) => {
-      if (this.isResizeClicked === false) {
-        return;
-      }
-      let currentWidth: number = document.body.clientWidth - event.clientX;
+  public resize(event: any): void {
+    let currentWidth: number = document.body.clientWidth - event.clientX;
+    currentWidth = currentWidth - sideBarRightSize;
 
-      if (currentWidth < this.minWidth) {
-        currentWidth = this.minWidth;
-      } else if (currentWidth > this.maxWidth) {
-        currentWidth = this.maxWidth;
-      }
+    currentWidth = Math.max(currentWidth, this.minWidth);
+    currentWidth = Math.min(currentWidth, this.maxWidth);
 
-      this.toggleButtonRight = currentWidth - toggleButtonWidth;
-      this.resizeButtonRight = currentWidth - resizeButtonWidth;
-      this.canvasRight = currentWidth;
+    this.resizeButtonRight = currentWidth + sideBarRightSize;
+    this.canvasRight = currentWidth;
+    this.ppWidth = currentWidth;
+    this.lastPpWidth = currentWidth;
+  }
 
-      this.panel.style.width = `${currentWidth}px`;
-      this.toggleButton.style.right = `${this.toggleButtonRight}px`;
-      this.resizeButton.style.right = `${this.resizeButtonRight}px`;
-      this.canvasModel.style.right = `${this.canvasRight}px`;
-    });
+  public setColorRed(): void {
+    this.setColor('#FFCDD2', '#E53935');
+  }
 
-    document.addEventListener('click', (event: any) => {
-      this.isResizeClicked = false;
-    }, {once: true});
+  public setColorBlue(): void {
+    this.setColor('#BBDEFB', '#1E88E5');
+  }
 
+  public setColorOrange(): void {
+    this.setColor('#FFE0B2', '#FB8C00');
+  }
+
+  public setColorGreen(): void {
+    this.setColor('#C8E6C9', '#43A047');
+  }
+
+  public setColorPurple(): void {
+    this.setColor('#E1BEE7', '#8E24AA');
+  }
+
+  public removeColor(): void {
+    this.setColor(null, null);
+  }
+
+  public setColorPicked(): void {
+    this.setColor(this.fillColor, this.borderColor);
+  }
+
+  public updateCustomColors(): void {
+    if (!this.colorPickerLoaded) {
+      this._activateColorPicker();
+    }
+
+    [this.fillColor, this.borderColor] = this.getColors();
+
+    $(this.colorPickerFill).spectrum('set', this.fillColor);
+    $(this.colorPickerBorder).spectrum('set', this.borderColor);
+  }
+
+  public async toggleXMLView(): Promise<void> {
+    if (!this.showXMLView) {
+      this.xml = await this.getXML();
+      this.showXMLView = true;
+    } else {
+      this.showXMLView = false;
+    }
+  }
+
+  public distributeElementsHorizontal(): void {
+    this.distributeElements(ElementDistributeOptions.HORIZONTAL);
+  }
+
+  public distributeElementsVertical(): void {
+    this.distributeElements(ElementDistributeOptions.VERTICAL);
   }
 
   private resizeEventHandler = (event: any): void => {
     this.maxWidth = document.body.clientWidth - environment.propertyPanel.maxWidth;
+
+    const notEnoughSpaceForPp: boolean = this.maxWidth < this.minWidth;
+    if (notEnoughSpaceForPp) {
+      if (this._propertyPanelHasNoSpace) {
+        return;
+      }
+
+      this._propertyPanelHasNoSpace = true;
+
+      if (this.toggled === false) {
+        this._ppHiddenBecauseLackOfSpace = true;
+        this.togglePanel();
+      }
+
+      return;
+    }
+
+    if (this._propertyPanelHasNoSpace) {
+      this._propertyPanelHasNoSpace = false;
+
+      if (this._ppHiddenBecauseLackOfSpace) {
+        this.toggled = true;
+        this._ppHiddenBecauseLackOfSpace = false;
+        this.togglePanel();
+      }
+
+      return;
+    }
+
+    this.ppWidth = this.lastPpWidth;
+    if (this.ppWidth > this.maxWidth) {
+      const currentWidth: number = this.maxWidth;
+
+      this.resizeButtonRight = currentWidth + sideBarRightSize;
+      this.canvasRight = currentWidth;
+      this.ppWidth = currentWidth;
+    } else {
+      this.resizeButtonRight = this.lastPpWidth + sideBarRightSize;
+      this.canvasRight = this.lastPpWidth;
+    }
   }
+
+  private _activateColorPicker(): void {
+    const borderMoveSetting: spectrum.Options = {
+      move: (borderColor: spectrum.tinycolorInstance): void => {
+        this.updateBorderColor(borderColor);
+      },
+    };
+
+    const colorPickerBorderSettings: BpmnStudioColorPickerSettings = Object.assign({}, environment.colorPickerSettings, borderMoveSetting);
+    $(this.colorPickerBorder).spectrum(colorPickerBorderSettings);
+
+    const fillMoveSetting: spectrum.Options = {
+      move: (fillColor: spectrum.tinycolorInstance): void => {
+        this.updateFillColor(fillColor);
+      },
+    };
+
+    const colorPickerFillSettings: BpmnStudioColorPickerSettings = Object.assign({}, environment.colorPickerSettings, fillMoveSetting);
+    $(this.colorPickerFill).spectrum(colorPickerFillSettings);
+
+    this.colorPickerLoaded = true;
+  }
+
+  private toggleMinimapFunction = (): void => {
+    if (this.toggleMinimap === false) {
+      this.expandIcon.style.display = 'none';
+      this.hideMinimap.style.display = 'inline';
+      this.minimapToggle.style.height = '20px';
+      this.toggleMinimap = true;
+    } else {
+      this.expandIcon.style.display = 'inline-block';
+      this.hideMinimap.style.display = 'none';
+      this.toggleMinimap = false;
+    }
+  }
+
+  private updateFillColor(fillColor: any): void {
+    if (fillColor) {
+      this.fillColor = fillColor.toHexString();
+    } else {
+      this.fillColor = undefined;
+    }
+
+    this.setColorPicked();
+  }
+
+  private updateBorderColor(borderColor: any): void {
+    if (borderColor) {
+      this.borderColor = borderColor.toHexString();
+    } else {
+      this.borderColor = undefined;
+    }
+
+    this.setColorPicked();
+  }
+
 }

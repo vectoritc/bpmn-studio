@@ -7,65 +7,45 @@ import {Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 import * as canvg from 'canvg-browser';
 import * as download from 'downloadjs';
-import * as $ from 'jquery';
-import * as spectrum from 'spectrum-colorpicker';
-import 'spectrum-colorpicker/spectrum';
-import * as toastr from 'toastr';
 import * as beautify from 'xml-beautifier';
-import {AuthenticationStateEvent,
-        ElementDistributeOptions,
-        IExtensionElement,
-        IFormElement,
-        IModdleElement,
-        IProcessEngineService,
-        IShape} from '../../contracts/index';
+import {
+  AuthenticationStateEvent,
+  ElementDistributeOptions,
+  IExtensionElement,
+  IFormElement,
+  IModdleElement,
+  IProcessEngineService,
+  IShape,
+  NotificationType,
+} from '../../contracts/index';
 import environment from '../../environment';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
+import {NotificationService} from './../notification/notification.service';
 
 interface RouteParameters {
   processDefId: string;
 }
 
-interface BpmnStudioColorPickerSettings {
-  clickoutFiresChange: boolean;
-  showPalette: boolean;
-  palette: Array<Array<string>>;
-  localStorageKey: string;
-  showInitial: boolean;
-  showInput: boolean;
-  allowEmpty: boolean;
-  showButtons: boolean;
-  showPaletteOnly: boolean;
-  togglePaletteOnly: boolean;
-
-  move?(color: spectrum.tinycolorInstance): void;
-}
-
-@inject('ProcessEngineService', EventAggregator, 'BpmnStudioClient', Router, ValidationController)
+@inject('ProcessEngineService', EventAggregator, 'BpmnStudioClient', Router, ValidationController, 'NotificationService')
 export class ProcessDefDetail {
 
   private processEngineService: IProcessEngineService;
+  private notificationService: NotificationService;
   private eventAggregator: EventAggregator;
   private subscriptions: Array<Subscription>;
   private processId: string;
   private _process: IProcessDefEntity;
   private bpmn: BpmnIo;
-  private exportButton: HTMLButtonElement;
-  private exportDropdown: HTMLButtonElement;
-  private exportSpinner: HTMLElement;
   private startButtonDropdown: HTMLDivElement;
-  private startButton: HTMLElement;
+  private startButton: HTMLButtonElement;
+  private saveButton: HTMLButtonElement;
   private bpmnStudioClient: BpmnStudioClient;
   private router: Router;
-  private fillColor: string;
-  private borderColor: string;
-  private showXMLView: boolean = false;
-  public colorPickerBorder: HTMLInputElement;
-  public colorPickerFill: HTMLInputElement;
-  public colorPickerLoaded: boolean = false;
 
   public validationController: ValidationController;
   public validationError: boolean;
+  public solutionExplorerIsShown: boolean = false;
+  public xmlIsShown: boolean = false;
 
   @bindable() public uri: string;
   @bindable() public name: string;
@@ -76,17 +56,19 @@ export class ProcessDefDetail {
               eventAggregator: EventAggregator,
               bpmnStudioClient: BpmnStudioClient,
               router: Router,
-              validationController: ValidationController) {
+              validationController: ValidationController,
+              notificationService: NotificationService) {
     this.processEngineService = processEngineService;
     this.eventAggregator = eventAggregator;
     this.bpmnStudioClient = bpmnStudioClient;
     this.router = router;
     this.validationController = validationController;
+    this.notificationService = notificationService;
   }
 
-  public activate(routeParameters: RouteParameters): void {
+  public async activate(routeParameters: RouteParameters): Promise<void> {
     this.processId = routeParameters.processDefId;
-    this.refreshProcess();
+    await this.refreshProcess();
   }
 
   public attached(): void {
@@ -101,38 +83,31 @@ export class ProcessDefDetail {
       this.eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
         this.refreshProcess();
       }),
+      this.eventAggregator.subscribe(environment.events.processDefDetail.saveDiagramm, () => {
+        this.saveDiagram();
+      }),
+      this.eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, () => {
+        this.exportBPMN();
+      }),
+      this.eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, () => {
+        this.exportSVG();
+      }),
+      this.eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, () => {
+        this.exportPNG();
+      }),
+      this.eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, () => {
+        this.exportJPEG();
+      }),
+      this.eventAggregator.subscribe(environment.events.processDefDetail.startProcess, () => {
+        this.startProcess();
+      }),
+      this.eventAggregator.subscribe(environment.events.processDefDetail.toggleXMLView, () => {
+        this.toggleXMLView();
+      }),
     ];
 
-    // setTimeout() gives us the callback queue, that causes
-    // the initLoadingFinished boolean to become true as late as possible
-    // so as soon as the view-model is fully attached
-    // the bpmn-xml-view module gets attached and calls
-    // the highlight method
-    setTimeout(() => {
-      this.initialLoadingFinished = true;
-    }, 0);
-  }
-
-  private _activateColorPicker(): void {
-    const borderMoveSetting: spectrum.Options = {
-      move: (borderColor: spectrum.tinycolorInstance): void => {
-        this.updateBorderColor(borderColor);
-      },
-    };
-
-    const colorPickerBorderSettings: BpmnStudioColorPickerSettings = Object.assign({}, environment.colorPickerSettings, borderMoveSetting);
-    $(this.colorPickerBorder).spectrum(colorPickerBorderSettings);
-
-    const fillMoveSetting: spectrum.Options = {
-      move: (fillColor: spectrum.tinycolorInstance): void => {
-        this.updateFillColor(fillColor);
-      },
-    };
-
-    const colorPickerFillSettings: BpmnStudioColorPickerSettings = Object.assign({}, environment.colorPickerSettings, fillMoveSetting);
-    $(this.colorPickerFill).spectrum(colorPickerFillSettings);
-
-    this.colorPickerLoaded = true;
+    this.eventAggregator.publish(environment.events.navBar.showTools, this.process);
+    this.eventAggregator.publish(environment.events.statusBar.showXMLButton);
   }
 
   public detached(): void {
@@ -140,31 +115,25 @@ export class ProcessDefDetail {
       subscription.dispose();
     }
 
-    $(this.colorPickerBorder).spectrum('destroy');
-    $(this.colorPickerFill).spectrum('destroy');
+    this.eventAggregator.publish(environment.events.navBar.hideTools);
+    this.eventAggregator.publish(environment.events.statusBar.hideXMLButton);
   }
 
-  public async toggleXMLView(): Promise<void> {
-    if (!this.showXMLView) {
-      this.process.xml = await this.bpmn.getXML();
-      this.showXMLView = true;
-    } else {
-      this.showXMLView = false;
-    }
-  }
-
-  private refreshProcess(): void {
-    this.processEngineService.getProcessDefById(this.processId)
+  private refreshProcess(): Promise<IProcessDefEntity> {
+    return this.processEngineService.getProcessDefById(this.processId)
       .then((result: any) => {
         if (result && !result.error) {
           this._process = result;
+          return this._process;
         } else {
           this._process = null;
+          return result.error;
         }
     });
   }
 
   public startProcess(): void {
+    this.validateXML();
     this.router.navigate(`processdef/${this.process.id}/start`);
   }
 
@@ -183,7 +152,7 @@ export class ProcessDefDetail {
         this.router.navigate('');
       })
       .catch((error: Error) => {
-        toastr.error(error.message);
+        this.notificationService.showNotification(NotificationType.ERROR, error.message);
       });
   }
 
@@ -205,14 +174,14 @@ export class ProcessDefDetail {
       const response: any = await this.processEngineService.updateProcessDef(this.process, xml);
 
       if (response.error) {
-        toastr.error(`Error while saving file: ${response.error}`);
+        this.notificationService.showNotification(NotificationType.ERROR, `Error while saving file: ${response.error}`);
       } else if (response.result) {
-        toastr.success('File saved.');
+        this.notificationService.showNotification(NotificationType.SUCCESS, 'File saved.');
       } else {
-        toastr.warning(`Unknown error: ${JSON.stringify(response)}`);
+        this.notificationService.showNotification(NotificationType.WARNING, `Unknown error: ${JSON.stringify(response)}`);
       }
     } catch (error) {
-      toastr.error(`Error: ${error.message}`);
+      this.notificationService.showNotification(NotificationType.ERROR, `Error: ${error.message}`);
     }
   }
 
@@ -240,40 +209,24 @@ export class ProcessDefDetail {
   }
 
   public async exportBPMN(): Promise<void> {
-    this.disableAndHideControlsForImageExport();
-
     const xml: string = await this.bpmn.getXML();
     const formattedXml: string = beautify(xml);
     download(formattedXml, `${this.process.name}.bpmn`, 'application/bpmn20-xml');
-
-    this.enableAndShowControlsForImageExport();
   }
 
   public async exportSVG(): Promise<void> {
-    this.disableAndHideControlsForImageExport();
-
     const svg: string = await this.bpmn.getSVG();
     download(svg, `${this.process.name}.svg`, 'image/svg+xml');
-
-    this.enableAndShowControlsForImageExport();
   }
 
   public async exportPNG(): Promise<void> {
-    this.disableAndHideControlsForImageExport();
-
     const svg: string = await this.bpmn.getSVG();
     download(this.generateImageFromSVG('png', svg), `${this.process.name}.png`, 'image/png');
-
-    this.enableAndShowControlsForImageExport();
   }
 
   public async exportJPEG(): Promise<void> {
-    this.disableAndHideControlsForImageExport();
-
     const svg: string = await this.bpmn.getSVG();
     download(this.generateImageFromSVG('jpeg', svg), `${this.process.name}.jpeg`, 'image/jpeg');
-
-    this.enableAndShowControlsForImageExport();
   }
 
   public generateImageFromSVG(desiredImageType: string, svg: any): string {
@@ -291,87 +244,18 @@ export class ProcessDefDetail {
     return image;
   }
 
-  public goBack(): void {
-    this.router.navigateBack();
-  }
-
-  private disableAndHideControlsForImageExport(): void {
-    this.exportButton.setAttribute('disabled', '');
-    this.exportDropdown.setAttribute('disabled', '');
-    this.exportSpinner.classList.remove('hidden');
-  }
-
-  private enableAndShowControlsForImageExport(): void {
-    this.exportButton.removeAttribute('disabled');
-    this.exportDropdown.removeAttribute('disabled');
-    this.exportSpinner.classList.add('hidden');
-  }
-
-  public distributeElementsHorizontal(): void {
-    this.bpmn.distributeElements(ElementDistributeOptions.HORIZONTAL);
-  }
-
-  public distributeElementsVertical(): void {
-    this.bpmn.distributeElements(ElementDistributeOptions.VERTICAL);
-  }
-
-  public setColorRed(): void {
-    this.bpmn.setColor('#FFCDD2', '#E53935');
-  }
-
-  public setColorBlue(): void {
-    this.bpmn.setColor('#BBDEFB', '#1E88E5');
-  }
-
-  public setColorOrange(): void {
-    this.bpmn.setColor('#FFE0B2', '#FB8C00');
-  }
-
-  public setColorGreen(): void {
-    this.bpmn.setColor('#C8E6C9', '#43A047');
-  }
-
-  public setColorPurple(): void {
-    this.bpmn.setColor('#E1BEE7', '#8E24AA');
-  }
-
-  public removeColor(): void {
-    this.bpmn.setColor(null, null);
-  }
-
-  public setColorPicked(): void {
-    this.bpmn.setColor(this.fillColor, this.borderColor);
-  }
-
-  private updateFillColor(fillColor: any): void {
-    if (fillColor) {
-      this.fillColor = fillColor.toHexString();
+  public toggleXMLView(): void {
+    if (this.xmlIsShown) {
+      this.xmlIsShown = false;
     } else {
-      this.fillColor = null;
+      this.xmlIsShown = true;
     }
 
-    this.setColorPicked();
+    this.bpmn.toggleXMLView();
   }
 
-  private updateBorderColor(borderColor: any): void {
-    if (borderColor) {
-      this.borderColor = borderColor.toHexString();
-    } else {
-      this.borderColor = null;
-    }
-
-    this.setColorPicked();
-  }
-
-  public updateCustomColors(): void {
-    if (!this.colorPickerLoaded) {
-      this._activateColorPicker();
-    }
-
-    [this.fillColor, this.borderColor] = this.bpmn.getColors();
-
-    $(this.colorPickerFill).spectrum('set', this.fillColor);
-    $(this.colorPickerBorder).spectrum('set', this.borderColor);
+  public toggleSolutionExplorer(): void {
+    this.solutionExplorerIsShown = !this.solutionExplorerIsShown;
   }
 
   private validateForm(event: ValidateEvent): void {
@@ -379,11 +263,11 @@ export class ProcessDefDetail {
       return;
     }
 
-    this.validationError = false;
+    this.eventAggregator.publish(environment.events.navBar.enableSaveButton);
 
     for (const result of event.results) {
       if (result.valid === false) {
-        this.validationError = true;
+        this.eventAggregator.publish(environment.events.navBar.disableSaveButton);
         return;
       }
     }

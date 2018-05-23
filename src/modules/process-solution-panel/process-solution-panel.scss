@@ -1,0 +1,35 @@
+/*
+ * Process Solution Explorer Panel
+*/
+body {
+  overflow: hidden;
+}
+
+.process-explorer__solution-explorer {
+  background-color: #f7f7f7;
+  padding: 2px;
+  width: 220px;
+  border-right: 2px solid #dcdbdb;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.process-explorer__structure-item {
+  padding-left: 24px;
+  padding-top: 5px;
+}
+
+.process-explorer__structure-item a {
+  color: #5c5c5c;
+}
+
+.process-explorer__icon {
+  padding-right: 5px;
+}
+
+.process-explorer__heading {
+  color: #a5a5a5;
+  font-weight: 400;
+  padding-left: 10px;
+  padding-top: 10px;
+}

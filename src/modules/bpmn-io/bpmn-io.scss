@@ -1,31 +1,22 @@
+.modeler {
+  height: 100%;
+  display: flex;
+}
+
 .canvasModel {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  right: 350px;
-  bottom: 0px;
+  height: 100%;
 }
 
-#js-properties-panel {
-  position: absolute;
-  top: 0px;
-  bottom: 0;
-  right: 0;
-  z-index: 10;
-  border-left: 1px solid #ccc;
-  overflow-y: auto;
-  overflow-x: hidden;
-  width: 350px;
-  background-color: #f8f8f8;
+.diagramm {
+  height: 100%;
+  padding-right: 0;
+  flex: 1;
 }
 
-#js-properties-panel:empty {
-  display: none;
-}
-
-#js-properties-panel > .djs-properties-panel {
-  padding-bottom: 70px;
-  min-height: 100%;
+.properties {
+  height: 100%;
+  background: rgb(220, 219, 219);
+  width: 250px;
 }
 
 .modeler .label {
@@ -43,30 +34,14 @@
   border-bottom: none;
 }
 
-.toggle_panel {
-  position: relative;
-  transform: rotate(-90deg);
-  bottom: 0;
-}
-
-.resize_button {
-  position: relative;
-  transform: rotate(-90deg);
-  bottom: 0;
-}
-
-.resize_div {
-  right: 331px;
-  height: 50%;
-  bottom: 80px;
+.resize-div {
   position: absolute;
+  height: 90%;
+  width: 5px;
 }
 
-.toggle_div {
-  right: 337px;
-  height: 50%;
-  bottom: 0;
-  position: absolute;
+.resize-div:hover {
+  cursor: col-resize;
 }
 
 .expandIcon {
@@ -78,4 +53,110 @@
 .hideMinimap {
   margin-left: 143px;
   display: none;
+}
+
+/*
+ * TOOLS
+ *
+*/
+
+.tool-list--horizontal {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.tool-list--stretch .tool {
+  flex: 1;
+}
+
+.tool-list--bottom {
+  position: absolute;
+  bottom: 26px;
+}
+
+.tool {
+  display: block;
+  text-align: center;
+  padding: 5px;
+  opacity: 0.5;
+}
+
+.tool__right {
+  color: #5e5e5e;
+  display: block;
+  text-align: center;
+  padding: 2px;
+  opacity: 0.5;
+}
+
+.tool:hover {
+  opacity: 1;
+}
+
+.tool--active {
+  opacity: 1;
+}
+
+/*
+ * WINDOW
+ *
+*/
+
+.bpmn-io-layout {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  width: 100%;
+  height: 100%;
+  background: white;
+}
+
+.bpmn-io-layout__tools-left {
+  border-right: 2px solid #dcdbdb;
+}
+
+.bpmn-io-layout__tools-right {
+  border-left: 2px solid #dcdbdb;
+}
+
+.bpmn-io-layout__tools-left,
+.bpmn-io-layout__tools-right {
+  background-color: #f7f7f7;
+  min-width: 36px;
+}
+
+.bpmn-io-layout__panel-left,
+.bpmn-io-layout__panel-right {
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.bpmn-io-layout__panel-left,
+.panel {
+  background-color: #f7f7f7;
+  border-left: 1px solid #eee;
+  border-right: 1px solid #eee;
+}
+
+.bpmn-io-layout__main {
+  flex: 1 100%;
+}
+
+/*
+ * MENUES
+ *
+*/
+
+.menu-bar__menu-left--tool {
+  border: none;
+  background-color: inherit;
+}
+
+.menu-bar__menu-right--tool {
+  border: none;
+  background-color: inherit;
 }

@@ -1,23 +1,55 @@
-tr td:last-child {
-  width: 1%;
-  white-space: nowrap;
-}
-
-.create-process {
-  margin-bottom: 5px;
-}
-
-.pagination {
-  text-align: center;
+/*
+ * Process Definition List Styles
+ */
+.process-def-list {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
 }
 
 .processdef-list__btn-table-cell {
   text-align: center;
 }
 
+.processdef-list__btn-import {
+  margin-bottom: 10px;
+}
+
+.processdef-list__btn-create {
+  margin-bottom: 10px;
+}
+
+.processdef-list-container {
+  flex: 1;
+  padding: 20px 60px;
+}
+
+.process-def-list__modal-body {
+  height: 100px;
+}
+
+/*
+ * Miscellaneous Styles
+ */
 .loading-spinner {
   display: block;
   margin-left: auto;
   margin-right: auto;
   margin-top: 100px;
+}
+
+/*
+ * Modal Import Dialogs
+ */
+.pagination {
+  text-align: center;
+}
+
+.modal-dialog__headline {
+  font-size: 30px;
+}
+
+.modal-dialog__import-bpmn {
+  margin-top: 4px;
+  margin-bottom: 4px;
 }
