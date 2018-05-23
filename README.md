@@ -25,27 +25,32 @@ Engine verbunden werden, um diese Diagramme auszuführen.
 
 ### Setup/Installation
 
-```shell
-npm install
-```
+**TL;DR**
+
+1. `npm install`
+1. `npm run build`
+1. `npm run electron-build`
+1. `npm start` / `npm run start_dev`
+
+**Notizen:**
+
+1. `npm run build` soll vor `npm run electron-build` ausgeführt werden.
+
+**TL;DR Tests**
+
+1. `npm start`
+1. `npm run integration-test-init`
+1. `npm run integration-test`
 
 ## Wie kann ich das Projekt benutzen?
 
-### Electron Applikation
+### Installation der Abhängigkeiten
 
-**Zum bauen:**
+Die Abhängigkeiten werden wie folgt installiert:
 
 ```shell
-npm run electron-build
+npm install
 ```
-
-Nach dem Bauen kann man in dem `dist/mac` Ordner die fertige App finden und
-ausführen.
-
-**Alternative:**
-
-Die Releases des BPMN-Studios lassen sich alternativ auch
-[hier](https://github.com/process-engine/bpmn-studio/releases) herunterladen.
 
 ### Benutzung
 
@@ -63,8 +68,20 @@ Dieses Skript baut die Anwendung, das Ergebnis ist produktionsreif.
 npm start
 ```
 
-Dieses Skript startet die statische Auslieferung der Anwendung auf Port 9000.
-Zuerst muss die Anwendung gebaut sein.
+Dieses Skript startet die statische Auslieferung der Anwendung auf Port 17290.
+Zuerst muss die Anwendung gebaut worden sein.
+
+Es ist möglich einen anderen Port zu spezifizieren:
+
+```shell
+npm start -- --port 9000
+```
+
+Das startet das BPMN-Studio auf Port 9000.
+
+**Anmerkung**
+
+Der Port muss aus technischen Gründen zwischen 1000 und 65535 liegen.
 
 **Zum starten (Entwicklung)**
 
@@ -76,9 +93,26 @@ Dieses Skript startet die Auslieferung der Anwendung für die Entwicklung.
 Bei Änderungen im Quelltext wird die Anwendung neugebaut und der Webbrowser
 automatisch neu geladen.
 
-**End-to-End-Test**
+### Electron Applikation
 
-Start des Websservers:
+**Zum bauen:**
+
+```shell
+npm run electron-build
+```
+
+Nach dem Bauen kann man in dem `dist/mac` Ordner die fertige Applikation finden
+und ausführen.
+
+**Alternative:**
+
+Die Releases des BPMN-Studios lassen sich alternativ auch
+[hier](https://github.com/process-engine/bpmn-studio/releases)
+herunterladen.
+
+### End-to-End-Tests
+
+Start des Webservers:
 
 ```shell
 npm start
@@ -102,5 +136,6 @@ Die Konfiguration liegt unter `aurelia_project/environments/dev|stage|prod.ts`.
 
 # Wen kann ich auf das Projekt ansprechen?
 
+[Christoph Gnip](mailto:christoph.gnip@5minds.de)
 [Alexander Kasten](mailto:alexander.kasten@5minds.de)
 [Paul Heidenreich](mailto:paul.heidenreich@5minds.de)

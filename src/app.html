@@ -1,8 +1,26 @@
 <template>
   <require from="bootstrap/css/bootstrap.css"></require>
   <require from="font-awesome/css/font-awesome.min.css"></require>
-  <require from="./app.css"></require>
   <require from="toastr/build/toastr.min.css"></require>
+  <require from="./app.css"></require>
+  <require from="./modules/navbar/navbar"></require>
+  <require from="./modules/process-solution-panel/process-solution-panel"></require>
+  <require from="./modules/status-bar/status-bar"></require>
 
-  <router-view></router-view>
+
+  <div class="bpmn-studio-layout">
+    <nav-bar show-solution-explorer.two-way="showSolutionExplorer"></nav-bar>
+
+    <div class="bpmn-studio-layout__content">
+      <process-solution-panel show.bind="showSolutionExplorer"></process-solution-panel>
+      <div class="router-view">
+        <router-view></router-view>
+      </div>
+    </div>
+
+    <status-bar></status-bar>
+  </div>
+
+
+
 </template>

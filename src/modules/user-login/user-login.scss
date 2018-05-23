@@ -7,7 +7,7 @@
   top: 27px;
   right: -16px;
   width: 250px;
-  border: 2.5px solid #dcdbdb;
+  border: 2px solid #dcdbdb;
   border-radius: 0;
 }
 
@@ -17,4 +17,9 @@
 
 .user-login a {
  color: #5c5c5c;
+}
+
+.dropdown-toggle--user-login {
+  padding: 13px;
+  cursor: pointer;
 }

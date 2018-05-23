@@ -1,8 +1,9 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
-import {bindable, observable} from 'aurelia-framework';
+import {bindable, inject, observable} from 'aurelia-framework';
+import * as $ from 'jquery';
 import * as spectrum from 'spectrum-colorpicker';
-import { setTimeout } from 'timers';
-import * as toastr from 'toastr';
+import 'spectrum-colorpicker/spectrum';
+import {setTimeout} from 'timers';
 import {ElementDistributeOptions,
         IBpmnFunction,
         IBpmnModeler,
@@ -10,11 +11,13 @@ import {ElementDistributeOptions,
         IModdleElement,
         IModeling,
         IProcessDefEntity,
-        IShape} from '../../contracts/index';
+        IShape,
+        NotificationType,
+      } from '../../contracts/index';
 import environment from '../../environment';
+import {NotificationService} from './../notification/notification.service';
 
-const resizeButtonWidth: number = 5;
-const sideBarRightSize: number = 45;
+const sideBarRightSize: number = 35;
 
 interface BpmnStudioColorPickerSettings {
   clickoutFiresChange: boolean;
@@ -31,6 +34,7 @@ interface BpmnStudioColorPickerSettings {
   move?(color: spectrum.tinycolorInstance): void;
 }
 
+@inject('NotificationService')
 export class BpmnIo {
   private fillColor: string;
   private borderColor: string;
@@ -43,18 +47,21 @@ export class BpmnIo {
   private isResizeClicked: boolean = false;
   private showXMLView: boolean = false;
 
-  private resizeButtonRight: number = 294;
+  private resizeButtonRight: number = 285;
   private canvasRight: number = 350;
   private minWidth: number = environment.propertyPanel.minWidth;
   private maxWidth: number = document.body.clientWidth - environment.propertyPanel.maxWidth;
   private ppWidth: number = 250;
   private ppDisplay: string = 'inline';
   private lastCanvasRight: number = 350;
+  private lastPpWidth: number = this.ppWidth;
+  private _ppHiddenBecauseLackOfSpace: boolean = false;
 
   private toggleMinimap: boolean = false;
   private minimapToggle: any;
   private expandIcon: HTMLElement;
   private hideMinimap: HTMLElement;
+  private notificationService: NotificationService;
 
   @bindable({changeHandler: 'xmlChanged'}) public xml: string;
 
@@ -64,12 +71,17 @@ export class BpmnIo {
   public colorPickerFill: HTMLInputElement;
   public colorPickerLoaded: boolean = false;
 
+  constructor(notificationService: NotificationService) {
+    this.notificationService = notificationService;
+  }
+
   public created(): void {
     this.modeler = new bundle.modeler({
       additionalModules: bundle.additionalModules,
       moddleExtensions: {
         camunda: bundle.camundaModdleDescriptor,
       },
+      keyboard: { bindTo: document },
     });
 
     if (this.xml !== undefined && this.xml !== null) {
@@ -103,8 +115,9 @@ export class BpmnIo {
 
     this.initialLoadingFinished = true;
 
-    this.resizeButton.addEventListener('mousedown', () => {
-      window.event.cancelBubble = true;
+    this.resizeButton.addEventListener('mousedown', (e: Event) => {
+      const windowEvent: Event = e || window.event;
+      windowEvent.cancelBubble = true;
 
       const mousemoveFunction: EventListenerOrEventListenerObject =  (event: Event): void => {
         this.resize(event);
@@ -175,7 +188,7 @@ export class BpmnIo {
     const selectedElements: Array<IShape> = this.getSelectedElements();
 
     if (selectedElements.length < 1 || selectedElements.length === 1 && selectedElements[0].$type === 'bpmn:Collaboration') {
-      toastr.error(`Error while changing the color: No valid element was selected.`);
+      this.notificationService.showNotification(NotificationType.ERROR, 'Error while changing the color: No valid element was selected.');
       return;
     }
 
@@ -205,6 +218,11 @@ export class BpmnIo {
 
   public togglePanel(): void {
     if (this.toggled === true) {
+      if (this._ppHiddenBecauseLackOfSpace) {
+        this.notificationService.showNotification(NotificationType.ERROR, 'There is not enough space for the property panel!');
+        return;
+      }
+
       this.toggleButtonPropertyPanel.classList.add('tool--active');
       this.ppDisplay = 'inline';
       this.canvasRight = this.lastCanvasRight;
@@ -226,9 +244,10 @@ export class BpmnIo {
     currentWidth = Math.max(currentWidth, this.minWidth);
     currentWidth = Math.min(currentWidth, this.maxWidth);
 
-    this.resizeButtonRight = currentWidth - resizeButtonWidth + sideBarRightSize;
+    this.resizeButtonRight = currentWidth + sideBarRightSize;
     this.canvasRight = currentWidth;
     this.ppWidth = currentWidth;
+    this.lastPpWidth = currentWidth;
   }
 
   public setColorRed(): void {
@@ -289,6 +308,33 @@ export class BpmnIo {
 
   private resizeEventHandler = (event: any): void => {
     this.maxWidth = document.body.clientWidth - environment.propertyPanel.maxWidth;
+
+    const notEnoughSpaceForPp: boolean = this.maxWidth < this.minWidth;
+    if (notEnoughSpaceForPp) {
+      this._ppHiddenBecauseLackOfSpace = true;
+      this.toggled = false;
+      this.togglePanel();
+      return;
+    }
+
+    if (this._ppHiddenBecauseLackOfSpace) {
+      this._ppHiddenBecauseLackOfSpace = false;
+      this.toggled = true;
+      this.togglePanel();
+      return;
+    }
+
+    this.ppWidth = this.lastPpWidth;
+    if (this.ppWidth > this.maxWidth) {
+      const currentWidth: number = this.maxWidth;
+
+      this.resizeButtonRight = currentWidth + sideBarRightSize;
+      this.canvasRight = currentWidth;
+      this.ppWidth = currentWidth;
+    } else {
+      this.resizeButtonRight = this.lastPpWidth + sideBarRightSize;
+      this.canvasRight = this.lastPpWidth;
+    }
   }
 
   private _activateColorPicker(): void {

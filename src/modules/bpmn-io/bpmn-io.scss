@@ -16,8 +16,6 @@
 .properties {
   height: 100%;
   background: rgb(220, 219, 219);
-  padding-left: 2px;
-  padding-right: 2px;
   width: 250px;
 }
 
@@ -36,42 +34,14 @@
   border-bottom: none;
 }
 
-.toggle_panel {
-  position: relative;
-  transform: rotate(-90deg);
-  bottom: 1px;
-  background-color: rgb(220, 219, 219);;
-  border: 0;
-  border-top-left-radius: 5px;
-  right: 3px;
-}
-
-.resize_button {
-  position: relative;
-  transform: rotate(-90deg);
-  bottom: 0;
-  background-color: rgb(220, 219, 219);;
-  border: 0;
-  border-top-right-radius: 5px;
-  right: 3px;
-}
-
 .resize-div {
   position: absolute;
-  right: 294px;
   height: 90%;
   width: 5px;
 }
 
 .resize-div:hover {
   cursor: col-resize;
-}
-
-.toggle_div {
-  right: 282px;
-  height: 50%;
-  bottom: -50px;
-  position: absolute;
 }
 
 .expandIcon {
@@ -114,9 +84,10 @@
 }
 
 .tool__right {
+  color: #5e5e5e;
   display: block;
   text-align: center;
-  padding: 8px;
+  padding: 2px;
   opacity: 0.5;
 }
 
@@ -126,7 +97,6 @@
 
 .tool--active {
   opacity: 1;
-  background-color: #dcdbdb;
 }
 
 /*
@@ -134,38 +104,45 @@
  *
 */
 
-.window-layout {
+.bpmn-io-layout {
   display: flex;
   flex-direction: row;
   align-items: stretch;
   width: 100%;
   height: 100%;
-  padding-top: 42px;
   background: white;
 }
 
-.window-layout__tools-left,
-.window-layout__tools-right {
-  background-color: #f7f7f7;
-  min-width: 45px;
+.bpmn-io-layout__tools-left {
+  border-right: 2px solid #dcdbdb;
 }
 
-.window-layout__panel-left,
-.window-layout__panel-right {
+.bpmn-io-layout__tools-right {
+  border-left: 2px solid #dcdbdb;
+}
+
+.bpmn-io-layout__tools-left,
+.bpmn-io-layout__tools-right {
+  background-color: #f7f7f7;
+  min-width: 36px;
+}
+
+.bpmn-io-layout__panel-left,
+.bpmn-io-layout__panel-right {
   min-width: 220px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
 }
 
-.window-layout__panel-left,
+.bpmn-io-layout__panel-left,
 .panel {
   background-color: #f7f7f7;
   border-left: 1px solid #eee;
   border-right: 1px solid #eee;
 }
 
-.window-layout__main {
+.bpmn-io-layout__main {
   flex: 1 100%;
 }
 

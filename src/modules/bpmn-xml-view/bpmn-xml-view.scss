@@ -1,9 +1,6 @@
 pre {
   line-height: 13px;
   font-size: 13px;
-  padding: 10px;
-  margin-left: -10px;
-  margin-top: -5px;
   font-family: monospace;
   width: 100%;
   height: 100%;
@@ -16,8 +13,6 @@ pre {
 
 .xml-view {
   display: flex;
-  overflow-y: scroll;
-  overflow-x: scroll;
   height: 100%;
 }
 
@@ -46,5 +41,4 @@ td.hljs-ln-numbers {
 
 td.hljs-ln-code {
   padding-left: 10px;
-  white-space: pre !important;
 }
