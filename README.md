@@ -35,10 +35,10 @@ Engine verbunden werden, um diese Diagramme auszuführen.
 **Notizen:**
 
 1. `npm run build` soll vor `npm run electron-build-<OS>` ausgeführt werden.
-1. Für OS können folgende Betriebssysteme eingetragen werden
-  - Linux (linux)
-  - Mac (macos)
-  - Windows (windows)
+1. Für den Platzhalter OS können folgende Werte eingesetzt werden:
+  - linux (Linux)
+  - macos (Mac)
+  - windows (Windows)
 
   Beispiel:
   `npm run electron-build-macos`
