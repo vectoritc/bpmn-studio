@@ -124,6 +124,9 @@ export class ProcessDefDetail {
       .then((result: any) => {
         if (result && !result.error) {
           this._process = result;
+
+          this.eventAggregator.publish(environment.events.navBar.updateProcess, this._process);
+
           return this._process;
         } else {
           this._process = null;
