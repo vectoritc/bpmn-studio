@@ -29,12 +29,19 @@ Engine verbunden werden, um diese Diagramme auszuführen.
 
 1. `npm install`
 1. `npm run build`
-1. `npm run electron-build`
+1. `npm run electron-build-<OS>`
 1. `npm start` / `npm run start_dev`
 
 **Notizen:**
 
-1. `npm run build` soll vor `npm run electron-build` ausgeführt werden.
+1. `npm run build` soll vor `npm run electron-build-<OS>` ausgeführt werden.
+1. Für OS können folgende Betriebssysteme eingetragen werden
+  - Linux (linux)
+  - Mac (macos)
+  - Windows (windows)
+
+  Beispiel:
+  `npm run electron-build-macos`
 
 **TL;DR Tests**
 
