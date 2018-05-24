@@ -142,6 +142,10 @@ export class BpmnIo {
     $(this.colorPickerFill).spectrum('destroy');
   }
 
+  public unbind(): void {
+    this.modeler.destroy();
+  }
+
   public xmlChanged(newValue: string, oldValue: string): void {
     if (this.modeler !== undefined && this.modeler !== null) {
       this.modeler.importXML(newValue, (err: Error) => {
