@@ -115,6 +115,7 @@
 
 .bpmn-io-layout__tools-left {
   border-right: 2px solid #dcdbdb;
+  width: 36px;
 }
 
 .bpmn-io-layout__tools-right {
@@ -124,7 +125,7 @@
 .bpmn-io-layout__tools-left,
 .bpmn-io-layout__tools-right {
   background-color: #f7f7f7;
-  min-width: 36px;
+  width: 36px;
 }
 
 .bpmn-io-layout__panel-left,
