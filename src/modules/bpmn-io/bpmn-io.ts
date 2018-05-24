@@ -137,13 +137,10 @@ export class BpmnIo {
 
   public detached(): void {
     this.modeler.detach();
+    this.modeler.destroy();
     window.removeEventListener('resize', this.resizeEventHandler);
     $(this.colorPickerBorder).spectrum('destroy');
     $(this.colorPickerFill).spectrum('destroy');
-  }
-
-  public unbind(): void {
-    this.modeler.destroy();
   }
 
   public xmlChanged(newValue: string, oldValue: string): void {
