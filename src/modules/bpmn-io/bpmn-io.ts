@@ -152,14 +152,6 @@ export class BpmnIo {
     });
   }
 
-  public distributeElements(option: ElementDistributeOptions): void {
-    const distribute: IBpmnFunction = this.modeler.get('distributeElements');
-
-    const selectedElements: Array<IShape> = this.getSelectedElements();
-
-    distribute.trigger(selectedElements, option);
-  }
-
   private getSelectedElements(): Array<IShape> {
     return this.modeler.get('selection')._selectedElements;
   }
@@ -205,14 +197,6 @@ export class BpmnIo {
     } else {
       this.showXMLView = false;
     }
-  }
-
-  public distributeElementsHorizontal(): void {
-    this.distributeElements(ElementDistributeOptions.HORIZONTAL);
-  }
-
-  public distributeElementsVertical(): void {
-    this.distributeElements(ElementDistributeOptions.VERTICAL);
   }
 
   private resizeEventHandler = (event: any): void => {
