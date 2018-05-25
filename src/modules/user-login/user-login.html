@@ -15,9 +15,9 @@
         <label for="loginPassword">Password</label>
         <input id="loginPassword" class="form-control" type="password" value.bind="password" placeholder="Password" />
 
-        <button class="login-button" click.delegate="login()">Login</button>
+        <button class="btn custom-button pull-right" click.delegate="login()">Login</button>
       </div>
-      <button if.bind="isLoggedIn" class="btn btn-danger pull-right" click.delegate="logout()">Logout</button>
+      <button if.bind="isLoggedIn" class="btn custom-button pull-right" click.delegate="logout()">Logout</button>
     </div>
   </div>
 

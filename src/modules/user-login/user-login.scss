@@ -28,13 +28,7 @@ label {
   cursor: pointer;
 }
 
-.login-button {
-  margin: 10px 0;
-  float: right;
-  background-color: whitesmoke
-}
-
-.login-button:focus {
-  outline: 1px dotted #212121;
-  outline: 5px auto -webkit-focus-ring-color;
+.custom-button {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
