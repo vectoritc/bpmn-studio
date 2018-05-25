@@ -36,8 +36,8 @@ export class UserLogin {
   public async login(): Promise<void> {
     try {
       await this.authenticationService.login(this.username, this.password);
-      this.username = null;
-      this.password = null;
+      this.username = undefined;
+      this.password = undefined;
       this.toggleDropdown();
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, error.message);
