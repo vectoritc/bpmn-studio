@@ -1,5 +1,8 @@
 import {bindable, inject} from 'aurelia-framework';
+import environment from '../../environment';
+
 import * as spectrum from 'spectrum-colorpicker';
+
 import {ElementDistributeOptions,
         IBpmnFunction,
         IBpmnModeler,
@@ -8,7 +11,6 @@ import {ElementDistributeOptions,
         IModeling,
         IShape,
         NotificationType} from '../../contracts/index';
-import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
 @inject('NotificationService')
@@ -21,12 +23,12 @@ export class DiagrammToolsRight {
   public colorPickerFill: HTMLInputElement;
   public colorPickerLoaded: boolean = false;
 
-  private fillColor: string;
-  private borderColor: string;
-  private notificationService: NotificationService;
+  private _fillColor: string;
+  private _borderColor: string;
+  private _notificationService: NotificationService;
 
   constructor(notificationService: NotificationService) {
-    this.notificationService = notificationService;
+    this._notificationService = notificationService;
   }
 
   public detached(): void {
@@ -34,13 +36,64 @@ export class DiagrammToolsRight {
     $(this.colorPickerFill).spectrum('destroy');
   }
 
-  public setColor(fillColor: string, strokeColor: string): void {
+  public setColorRed(): void {
+    this._setColor('#FFCDD2', '#E53935');
+  }
+
+  public setColorBlue(): void {
+    this._setColor('#BBDEFB', '#1E88E5');
+  }
+
+  public setColorOrange(): void {
+    this._setColor('#FFE0B2', '#FB8C00');
+  }
+
+  public setColorGreen(): void {
+    this._setColor('#C8E6C9', '#43A047');
+  }
+
+  public setColorPurple(): void {
+    this._setColor('#E1BEE7', '#8E24AA');
+  }
+
+  public removeColor(): void {
+    this._setColor(null, null);
+  }
+
+  public setPickedColor(): void {
+    this._setColor(this._fillColor, this._borderColor);
+  }
+
+  public updateCustomColors(): void {
+    if (!this.colorPickerLoaded) {
+      this._activateColorPicker();
+    }
+
+    [this._fillColor, this._borderColor] = this._getColors();
+
+    $(this.colorPickerFill).spectrum('set', this._fillColor);
+    $(this.colorPickerBorder).spectrum('set', this._borderColor);
+  }
+
+  public distributeElementsVertical(): void {
+    this._distributeElements(ElementDistributeOptions.VERTICAL);
+  }
+
+  public distributeElementsHorizontal(): void {
+    this._distributeElements(ElementDistributeOptions.HORIZONTAL);
+  }
+
+  private _setColor(fillColor: string, strokeColor: string): void {
     const modeling: IModeling = this.modeler.get('modeling');
 
     const selectedElements: Array<IShape> = this._getSelectedElements();
 
-    if (selectedElements.length < 1 || selectedElements.length === 1 && selectedElements[0].$type === 'bpmn:Collaboration') {
-      this.notificationService.showNotification(NotificationType.ERROR, 'Error while changing the color: No valid element was selected.');
+    const isNoValidElement: boolean = selectedElements.length < 1
+                                    || selectedElements.length === 1
+                                    && selectedElements[0].$type === 'bpmn:Collaboration';
+
+    if (isNoValidElement) {
+      this._notificationService.showNotification(NotificationType.ERROR, 'Error while changing the color: No valid element was selected.');
       return;
     }
 
@@ -50,39 +103,14 @@ export class DiagrammToolsRight {
     });
   }
 
-  public setColorRed(): void {
-    this.setColor('#FFCDD2', '#E53935');
-  }
-
-  public setColorBlue(): void {
-    this.setColor('#BBDEFB', '#1E88E5');
-  }
-
-  public setColorOrange(): void {
-    this.setColor('#FFE0B2', '#FB8C00');
-  }
-
-  public setColorGreen(): void {
-    this.setColor('#C8E6C9', '#43A047');
-  }
-
-  public setColorPurple(): void {
-    this.setColor('#E1BEE7', '#8E24AA');
-  }
-
-  public removeColor(): void {
-    this.setColor(null, null);
-  }
-
-  public setColorPicked(): void {
-    this.setColor(this.fillColor, this.borderColor);
-  }
-
-  public getColors(): Array<string> {
+  private _getColors(): Array<string> {
     const selectedElements: Array<IShape> = this._getSelectedElements();
 
-    if (!selectedElements || !selectedElements[0] || !selectedElements[0].businessObject) {
-      return [undefined, undefined];
+    const noElementSelected: boolean = !selectedElements || !selectedElements[0] || !selectedElements[0].businessObject;
+
+    if (noElementSelected) {
+      const undefinedFillColorUndefinedBorderColor: Array<string> = [undefined, undefined];
+      return undefinedFillColorUndefinedBorderColor;
     }
 
     const firstElement: IModdleElement = selectedElements[0].businessObject;
@@ -90,25 +118,6 @@ export class DiagrammToolsRight {
     const borderColor: string = firstElement.di.stroke;
 
     return [fillColor, borderColor];
-  }
-
-  public updateCustomColors(): void {
-    if (!this.colorPickerLoaded) {
-      this._activateColorPicker();
-    }
-
-    [this.fillColor, this.borderColor] = this.getColors();
-
-    $(this.colorPickerFill).spectrum('set', this.fillColor);
-    $(this.colorPickerBorder).spectrum('set', this.borderColor);
-  }
-
-  public distributeElementsVertical(): void {
-    this._distributeElements(ElementDistributeOptions.VERTICAL);
-  }
-
-  public distributeElementsHorizontal(): void {
-    this._distributeElements(ElementDistributeOptions.HORIZONTAL);
   }
 
   private _distributeElements(option: ElementDistributeOptions): void {
@@ -122,7 +131,7 @@ export class DiagrammToolsRight {
   private _activateColorPicker(): void {
     const borderMoveSetting: spectrum.Options = {
       move: (borderColor: spectrum.tinycolorInstance): void => {
-        this.updateBorderColor(borderColor);
+        this._updateBorderColor(borderColor);
       },
     };
 
@@ -131,7 +140,7 @@ export class DiagrammToolsRight {
 
     const fillMoveSetting: spectrum.Options = {
       move: (fillColor: spectrum.tinycolorInstance): void => {
-        this.updateFillColor(fillColor);
+        this._updateFillColor(fillColor);
       },
     };
 
@@ -141,24 +150,24 @@ export class DiagrammToolsRight {
     this.colorPickerLoaded = true;
   }
 
-  private updateFillColor(fillColor: any): void {
+  private _updateFillColor(fillColor: spectrum.tinycolorInstance): void {
     if (fillColor) {
-      this.fillColor = fillColor.toHexString();
+      this._fillColor = fillColor.toHexString();
     } else {
-      this.fillColor = undefined;
+      this._fillColor = undefined;
     }
 
-    this.setColorPicked();
+    this.setPickedColor();
   }
 
-  private updateBorderColor(borderColor: any): void {
+  private _updateBorderColor(borderColor: spectrum.tinycolorInstance): void {
     if (borderColor) {
-      this.borderColor = borderColor.toHexString();
+      this._borderColor = borderColor.toHexString();
     } else {
-      this.borderColor = undefined;
+      this._borderColor = undefined;
     }
 
-    this.setColorPicked();
+    this.setPickedColor();
   }
 
   private _getSelectedElements(): Array<IShape> {
