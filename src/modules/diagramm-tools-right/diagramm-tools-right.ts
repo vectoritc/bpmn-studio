@@ -107,6 +107,10 @@ export class DiagrammToolsRight {
     this._distributeElements(ElementDistributeOptions.VERTICAL);
   }
 
+  public distributeElementsHorizontal(): void {
+    this._distributeElements(ElementDistributeOptions.HORIZONTAL);
+  }
+
   private _distributeElements(option: ElementDistributeOptions): void {
     const distribute: IBpmnFunction = this.modeler.get('distributeElements');
 
