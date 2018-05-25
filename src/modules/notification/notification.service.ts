@@ -2,6 +2,7 @@ import {inject} from 'aurelia-dependency-injection';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import * as toastr from 'toastr';
 import {INotification, NotificationType} from '../../contracts/index';
+import environment from '../../environment';
 
 @inject(EventAggregator)
 export class NotificationService {
@@ -60,6 +61,9 @@ export class NotificationService {
 
   private _setToastrInstance(toastrInstance: Toastr): void {
     this._toastrInstance = toastrInstance;
+
+    this._toastrInstance.options = environment.toastrSettings;
+
     this._initializeToastr();
     for (const notification of this._savedNotifications) {
       this._publishNotificationToToastr(notification);
