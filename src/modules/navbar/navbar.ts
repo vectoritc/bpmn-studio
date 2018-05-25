@@ -66,6 +66,12 @@ export class NavBar {
 
   public toggleSolutionExplorer(): void {
     this.showSolutionExplorer = !this.showSolutionExplorer;
+
+    if (this.showSolutionExplorer) {
+      this._eventAggregator.publish(environment.events.bpmnIo.showProcessSolutionExplorer);
+    } else {
+      this._eventAggregator.publish(environment.events.bpmnIo.hideProcessSolutionExplorer);
+    }
   }
 
   public saveDiagram(): void {
