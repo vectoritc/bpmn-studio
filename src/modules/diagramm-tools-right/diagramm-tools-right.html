@@ -1,10 +1,10 @@
 <template>
   <require from="./diagramm-tools-right.css"></require>
   <div class="diagramm-tools-panel">
-    <div class="tool btn-group">
-      <button class="dropdown-toggle" title="Color Element" data-toggle="dropdown" click.delegate="updateCustomColors()">
+    <div class="btn-group">
+      <a class="dropdown-toggle tool" title="Color Element" data-toggle="dropdown" click.delegate="updateCustomColors()">
         <i class="fa fa-eyedropper"></i>
-      </button>
+      </a>
       <ul class="dropdown-menu pull-left">
         <li><a click.delegate="setColorRed()"><i class="glyphicon glyphicon-stop red"></i> Red</a></li>
         <li><a click.delegate="setColorBlue()"><i class="glyphicon glyphicon-stop blue"></i> Blue</a></li>
@@ -20,16 +20,12 @@
         <li><a click.delegate="removeColor()"><i class="glyphicon glyphicon-stop none"></i> None</a></li>
       </ul>
     </div>
-    <div class="tool">
-      <button title="Distribute Elements Vertically" click.delegate="distributeElementsVertical()">
-        <i class="glyphicon glyphicon-object-align-vertical"></i>
-      </button>
-    </div>
-    <div class="tool">
-      <button title="Distribute Elements Horizontally" click.delegate="distributeElementsHorizontal()">
-        <i class="glyphicon glyphicon-object-align-horizontal"></i>
-      </button>
-    </div>
+    <a class="tool" title="Distribute Elements Vertically" click.delegate="distributeElementsVertical()">
+      <i class="glyphicon glyphicon-object-align-vertical"></i>
+    </a>
+    <a class="tool" title="Distribute Elements Horizontally" click.delegate="distributeElementsHorizontal()">
+      <i class="glyphicon glyphicon-object-align-horizontal"></i>
+    </a>
     <div class="tool">
 
     </div>

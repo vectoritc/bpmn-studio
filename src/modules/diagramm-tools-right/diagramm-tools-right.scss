@@ -8,27 +8,21 @@
   display: flex;
 }
 
-.diagramm-tools-panel
 .tool {
   display: block;
   text-align: center;
   padding: 5px;
+  margin: 0 5px;
+  border: none;
+  background: inherit;
   color: darkgray;
 }
 
-.tool
-button {
-  border: none;
-  background: inherit;
-}
-
-.diagramm-tools-panel
 .tool:hover {
   color: black;
 }
 
-.tool.btn-group.open
-button {
+.open .tool {
   color: black;
-  box-shadow: none;
+  box-shadow: none !important; //Overwrite Bootstrap btn-group class combination
 }
