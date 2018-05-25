@@ -1,5 +1,7 @@
 import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {IAuthenticationService, IIdentity} from '../../contracts/index';
+import {IAuthenticationService, IIdentity, NotificationType} from '../../contracts/index';
+import {NotificationService} from './../notification/notification.service';
 
 @inject('AuthenticationService')
 export class UserLogin {
@@ -7,10 +9,11 @@ export class UserLogin {
   private authenticationService: IAuthenticationService;
   private username: string;
   private password: string;
-  private loginError: string;
+  private _notificationService: NotificationService;
 
   constructor(authenticationService: IAuthenticationService) {
     this.authenticationService = authenticationService;
+    this._notificationService = notificationService;
   }
 
   }
@@ -20,9 +23,8 @@ export class UserLogin {
       await this.authenticationService.login(this.username, this.password);
       this.username = null;
       this.password = null;
-      this.loginError = null;
     } catch (error) {
-      this.loginError = error.message;
+      this._notificationService.showNotification(NotificationType.ERROR, error.message);
     }
   }
 
