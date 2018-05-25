@@ -13,10 +13,16 @@ export class UserLogin {
   private _eventAggregator: EventAggregator;
   private _notificationService: NotificationService;
 
+  public dropdownIsOpen: boolean = false;
+
   constructor(authenticationService: IAuthenticationService, eventAggregator: EventAggregator, notificationService: NotificationService) {
     this.authenticationService = authenticationService;
     this._eventAggregator = eventAggregator;
     this._notificationService = notificationService;
+  }
+
+  public toggleDropdown(): void {
+    this.dropdownIsOpen = !this.dropdownIsOpen;
   }
 
   public attached(): void {
@@ -30,8 +36,9 @@ export class UserLogin {
   public async login(): Promise<void> {
     try {
       await this.authenticationService.login(this.username, this.password);
-      this.username = undefined;
-      this.password = undefined;
+      this.username = null;
+      this.password = null;
+      this.toggleDropdown();
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, error.message);
     }
@@ -39,6 +46,7 @@ export class UserLogin {
 
   public logout(): void {
     this.authenticationService.logout();
+    this.toggleDropdown();
   }
 
   @computedFrom('authenticationService.tokenRepository.token')
