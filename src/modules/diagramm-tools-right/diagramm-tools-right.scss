@@ -15,3 +15,20 @@
   padding: 5px;
   color: darkgray;
 }
+
+.tool
+button {
+  border: none;
+  background: inherit;
+}
+
+.diagramm-tools-panel
+.tool:hover {
+  color: black;
+}
+
+.tool.btn-group.open
+button {
+  color: black;
+  box-shadow: none;
+}
