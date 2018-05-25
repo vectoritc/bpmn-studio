@@ -10,21 +10,22 @@ import {
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import * as toastr from 'toastr';
-import {AuthenticationStateEvent, IDynamicUiService, IPagination, IProcessEngineService} from '../../contracts/index';
+import {AuthenticationStateEvent, IDynamicUiService, IPagination, IProcessEngineService, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
+import {NotificationService} from './../notification/notification.service';
 
 interface ITaskListRouteParameters {
   processDefId?: string;
   processId?: string;
 }
 
-@inject(EventAggregator, 'BpmnStudioClient', Router)
+@inject(EventAggregator, 'BpmnStudioClient', Router, 'NotificationService')
 export class TaskList {
 
   private eventAggregator: EventAggregator;
   private bpmnStudioClient: BpmnStudioClient;
+  private notificationService: NotificationService;
 
   private succesfullRequested: boolean = false;
   private subscriptions: Array<Subscription>;
@@ -39,10 +40,11 @@ export class TaskList {
   public totalItems: number;
   public solutionExplorerIsShown: boolean = false;
 
-  constructor(eventAggregator: EventAggregator, bpmnStudioClient: BpmnStudioClient, router: Router) {
+  constructor(eventAggregator: EventAggregator, bpmnStudioClient: BpmnStudioClient, router: Router, notificationService: NotificationService) {
     this.eventAggregator = eventAggregator;
     this.bpmnStudioClient = bpmnStudioClient;
     this.router = router;
+    this.notificationService = notificationService;
   }
 
   private async updateUserTasks(): Promise<void> {
@@ -50,7 +52,7 @@ export class TaskList {
       this.userTasks = await this.getUserTasks();
       this.succesfullRequested = true;
     } catch (error) {
-      toastr.error(error);
+      this.notificationService.showNotification(NotificationType.ERROR, error.message);
     }
 
     this.totalItems = this.tasks.length;

@@ -25,27 +25,39 @@ Engine verbunden werden, um diese Diagramme auszuführen.
 
 ### Setup/Installation
 
-```shell
-npm install
-```
+**TL;DR**
+
+1. `npm install`
+1. `npm run build`
+1. `npm run electron-build-<OS>`
+1. `npm start` / `npm run start_dev`
+
+**Notizen:**
+
+1. Für `npm run electron-build-<OS>` gilt:
+  Für den Platzhalter `<OS>` können folgende Werte eingesetzt werden:
+  - `linux` für Linux
+  - `macos` für MacOS
+  - `windows` für Windows
+
+  Beispiel:
+  `npm run electron-build-macos`
+
+**TL;DR Tests**
+
+1. `npm start`
+1. `npm run integration-test-init`
+1. `npm run integration-test`
 
 ## Wie kann ich das Projekt benutzen?
 
-### Electron Applikation
+### Installation der Abhängigkeiten
 
-**Zum bauen:**
+Die Abhängigkeiten werden wie folgt installiert:
 
 ```shell
-npm run electron-build
+npm install
 ```
-
-Nach dem Bauen kann man in dem `dist/mac` Ordner die fertige App finden und
-ausführen.
-
-**Alternative:**
-
-Die Releases des BPMN-Studios lassen sich alternativ auch
-[hier](https://github.com/process-engine/bpmn-studio/releases) herunterladen.
 
 ### Benutzung
 
@@ -63,8 +75,20 @@ Dieses Skript baut die Anwendung, das Ergebnis ist produktionsreif.
 npm start
 ```
 
-Dieses Skript startet die statische Auslieferung der Anwendung auf Port 9000.
-Zuerst muss die Anwendung gebaut sein.
+Dieses Skript startet die statische Auslieferung der Anwendung auf Port 17290.
+Zuerst muss die Anwendung gebaut worden sein.
+
+Es ist möglich einen anderen Port zu spezifizieren:
+
+```shell
+npm start -- --port 9000
+```
+
+Das startet das BPMN-Studio auf Port 9000.
+
+**Anmerkung**
+
+Der Port muss aus technischen Gründen zwischen 1000 und 65535 liegen.
 
 **Zum starten (Entwicklung)**
 
@@ -76,9 +100,50 @@ Dieses Skript startet die Auslieferung der Anwendung für die Entwicklung.
 Bei Änderungen im Quelltext wird die Anwendung neugebaut und der Webbrowser
 automatisch neu geladen.
 
-**End-to-End-Test**
+### Electron Applikation
 
-Start des Websservers:
+**Zum bauen:**
+
+**Mac:**
+
+```shell
+npm run electron-build-macos
+```
+
+Nach dem Bauen kann man in dem `dist/mac` Ordner die fertige Applikation finden
+und ausführen.
+
+**Windows:**
+
+Vor dem erstmaligen Builden müssen windows-build-tools installiert werden:
+
+```shell
+npm install --global --production windows-build-tools
+```
+
+Danach kann gebuildet werden:
+
+```shell
+npm run electron-build-windows
+```
+
+Nach dem Bauen, kann man in dem `dist/` Ordner die Datei `bpmn-studio Setup
+<VERSION>.exe` ausführen, um die Applikation zu installieren; `<VERSION>` wird
+durch die entsprechende Version ersetzt.
+
+Beispiel:
+
+`dist/bpmn-studio Setup 1.2.1.exe`
+
+**Alternative:**
+
+Die Releases des BPMN-Studios lassen sich alternativ auch
+[hier](https://github.com/process-engine/bpmn-studio/releases)
+herunterladen.
+
+### End-to-End-Tests
+
+Start des Webservers:
 
 ```shell
 npm start
@@ -102,5 +167,6 @@ Die Konfiguration liegt unter `aurelia_project/environments/dev|stage|prod.ts`.
 
 # Wen kann ich auf das Projekt ansprechen?
 
+[Christoph Gnip](mailto:christoph.gnip@5minds.de)
 [Alexander Kasten](mailto:alexander.kasten@5minds.de)
 [Paul Heidenreich](mailto:paul.heidenreich@5minds.de)

@@ -7,35 +7,35 @@ import {Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 import * as canvg from 'canvg-browser';
 import * as download from 'downloadjs';
-import * as $ from 'jquery';
-import 'spectrum-colorpicker/spectrum';
-import * as toastr from 'toastr';
 import * as beautify from 'xml-beautifier';
-import {AuthenticationStateEvent,
-        ElementDistributeOptions,
-        IExtensionElement,
-        IFormElement,
-        IModdleElement,
-        IProcessEngineService,
-        IShape} from '../../contracts/index';
+import {
+  AuthenticationStateEvent,
+  ElementDistributeOptions,
+  IExtensionElement,
+  IFormElement,
+  IModdleElement,
+  IProcessEngineService,
+  IShape,
+  NotificationType,
+} from '../../contracts/index';
 import environment from '../../environment';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
+import {NotificationService} from './../notification/notification.service';
 
 interface RouteParameters {
   processDefId: string;
 }
 
-@inject('ProcessEngineService', EventAggregator, 'BpmnStudioClient', Router, ValidationController)
+@inject('ProcessEngineService', EventAggregator, 'BpmnStudioClient', Router, ValidationController, 'NotificationService')
 export class ProcessDefDetail {
 
   private processEngineService: IProcessEngineService;
+  private notificationService: NotificationService;
   private eventAggregator: EventAggregator;
   private subscriptions: Array<Subscription>;
   private processId: string;
   private _process: IProcessDefEntity;
   private bpmn: BpmnIo;
-  private exportButton: HTMLButtonElement;
-  private exportSpinner: HTMLElement;
   private startButtonDropdown: HTMLDivElement;
   private startButton: HTMLButtonElement;
   private saveButton: HTMLButtonElement;
@@ -56,12 +56,14 @@ export class ProcessDefDetail {
               eventAggregator: EventAggregator,
               bpmnStudioClient: BpmnStudioClient,
               router: Router,
-              validationController: ValidationController) {
+              validationController: ValidationController,
+              notificationService: NotificationService) {
     this.processEngineService = processEngineService;
     this.eventAggregator = eventAggregator;
     this.bpmnStudioClient = bpmnStudioClient;
     this.router = router;
     this.validationController = validationController;
+    this.notificationService = notificationService;
   }
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
@@ -81,13 +83,40 @@ export class ProcessDefDetail {
       this.eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
         this.refreshProcess();
       }),
+      this.eventAggregator.subscribe(environment.events.processDefDetail.saveDiagramm, () => {
+        this.saveDiagram();
+      }),
+      this.eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, () => {
+        this.exportBPMN();
+      }),
+      this.eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, () => {
+        this.exportSVG();
+      }),
+      this.eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, () => {
+        this.exportPNG();
+      }),
+      this.eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, () => {
+        this.exportJPEG();
+      }),
+      this.eventAggregator.subscribe(environment.events.processDefDetail.startProcess, () => {
+        this.startProcess();
+      }),
+      this.eventAggregator.subscribe(environment.events.processDefDetail.toggleXMLView, () => {
+        this.toggleXMLView();
+      }),
     ];
+
+    this.eventAggregator.publish(environment.events.navBar.showTools, this.process);
+    this.eventAggregator.publish(environment.events.statusBar.showXMLButton);
   }
 
   public detached(): void {
     for (const subscription of this.subscriptions) {
       subscription.dispose();
     }
+
+    this.eventAggregator.publish(environment.events.navBar.hideTools);
+    this.eventAggregator.publish(environment.events.statusBar.hideXMLButton);
   }
 
   private refreshProcess(): Promise<IProcessDefEntity> {
@@ -95,6 +124,9 @@ export class ProcessDefDetail {
       .then((result: any) => {
         if (result && !result.error) {
           this._process = result;
+
+          this.eventAggregator.publish(environment.events.navBar.updateProcess, this._process);
+
           return this._process;
         } else {
           this._process = null;
@@ -104,9 +136,8 @@ export class ProcessDefDetail {
   }
 
   public startProcess(): void {
-    if (!this.startButton.disabled) {
-     this.router.navigate(`processdef/${this.process.id}/start`);
-    }
+    this.validateXML();
+    this.router.navigate(`processdef/${this.process.id}/start`);
   }
 
   public closeProcessStartDropdown(): void {
@@ -124,7 +155,7 @@ export class ProcessDefDetail {
         this.router.navigate('');
       })
       .catch((error: Error) => {
-        toastr.error(error.message);
+        this.notificationService.showNotification(NotificationType.ERROR, error.message);
       });
   }
 
@@ -138,9 +169,7 @@ export class ProcessDefDetail {
   }
 
   public async saveDiagram(): Promise<void> {
-    if (this.saveButton.disabled) {
-      return;
-    }
+
     this.validateXML();
 
     try {
@@ -148,14 +177,14 @@ export class ProcessDefDetail {
       const response: any = await this.processEngineService.updateProcessDef(this.process, xml);
 
       if (response.error) {
-        toastr.error(`Error while saving file: ${response.error}`);
+        this.notificationService.showNotification(NotificationType.ERROR, `Error while saving file: ${response.error}`);
       } else if (response.result) {
-        toastr.success('File saved.');
+        this.notificationService.showNotification(NotificationType.SUCCESS, 'File saved.');
       } else {
-        toastr.warning(`Unknown error: ${JSON.stringify(response)}`);
+        this.notificationService.showNotification(NotificationType.WARNING, `Unknown error: ${JSON.stringify(response)}`);
       }
     } catch (error) {
-      toastr.error(`Error: ${error.message}`);
+      this.notificationService.showNotification(NotificationType.ERROR, `Error: ${error.message}`);
     }
   }
 
@@ -183,40 +212,24 @@ export class ProcessDefDetail {
   }
 
   public async exportBPMN(): Promise<void> {
-    this.disableAndHideControlsForImageExport();
-
     const xml: string = await this.bpmn.getXML();
     const formattedXml: string = beautify(xml);
     download(formattedXml, `${this.process.name}.bpmn`, 'application/bpmn20-xml');
-
-    this.enableAndShowControlsForImageExport();
   }
 
   public async exportSVG(): Promise<void> {
-    this.disableAndHideControlsForImageExport();
-
     const svg: string = await this.bpmn.getSVG();
     download(svg, `${this.process.name}.svg`, 'image/svg+xml');
-
-    this.enableAndShowControlsForImageExport();
   }
 
   public async exportPNG(): Promise<void> {
-    this.disableAndHideControlsForImageExport();
-
     const svg: string = await this.bpmn.getSVG();
     download(this.generateImageFromSVG('png', svg), `${this.process.name}.png`, 'image/png');
-
-    this.enableAndShowControlsForImageExport();
   }
 
   public async exportJPEG(): Promise<void> {
-    this.disableAndHideControlsForImageExport();
-
     const svg: string = await this.bpmn.getSVG();
     download(this.generateImageFromSVG('jpeg', svg), `${this.process.name}.jpeg`, 'image/jpeg');
-
-    this.enableAndShowControlsForImageExport();
   }
 
   public generateImageFromSVG(desiredImageType: string, svg: any): string {
@@ -234,10 +247,6 @@ export class ProcessDefDetail {
     return image;
   }
 
-  public goBack(): void {
-    this.router.navigateBack();
-  }
-
   public toggleXMLView(): void {
     if (this.xmlIsShown) {
       this.xmlIsShown = false;
@@ -252,26 +261,16 @@ export class ProcessDefDetail {
     this.solutionExplorerIsShown = !this.solutionExplorerIsShown;
   }
 
-  private disableAndHideControlsForImageExport(): void {
-    this.exportButton.setAttribute('disabled', '');
-    this.exportSpinner.classList.remove('hidden');
-  }
-
-  private enableAndShowControlsForImageExport(): void {
-    this.exportButton.removeAttribute('disabled');
-    this.exportSpinner.classList.add('hidden');
-  }
-
   private validateForm(event: ValidateEvent): void {
     if (event.type !== 'validate') {
       return;
     }
 
-    this.validationError = false;
+    this.eventAggregator.publish(environment.events.navBar.enableSaveButton);
 
     for (const result of event.results) {
       if (result.valid === false) {
-        this.validationError = true;
+        this.eventAggregator.publish(environment.events.navBar.disableSaveButton);
         return;
       }
     }

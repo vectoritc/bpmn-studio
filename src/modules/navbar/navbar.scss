@@ -1,0 +1,141 @@
+.bpmn-studio-navbar {
+  height: 42px;
+  background-color: #f7f7f7;
+  display: flex;
+  border-bottom: 2px solid #dcdbdb;
+}
+
+.bpmn-studio-navbar--macos {
+  -webkit-app-region: drag;
+}
+
+a,
+button {
+  -webkit-app-region: no-drag;
+}
+
+.bpmn-studio-navbar--macos .menu-bar__menu--left::before {
+  padding-left: 80px;
+  content: "";
+}
+
+.menu-bar__menu--right {
+  padding-right: 20px;
+}
+
+.menu-bar__menu {
+  flex: 1 100%;
+}
+
+.menu-bar__menu--left {
+  display: flex;
+  justify-content: flex-start;
+  align-items: stretch;
+  text-align: center;
+}
+
+.menu-bar__menu--center {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.menu-bar__menu--right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  text-align: right;
+}
+
+.menu__menu-tabbed-link {
+  display: flex;
+  align-items: stretch;
+}
+
+.menu__menu-tabbed-link--active {
+  border-bottom: 2px solid #5e5e5e;
+}
+
+.menu__menu-tabbed-link--active .menu-tabbed-link {
+  font-weight: bold;
+  color: #5c5c5c;
+}
+
+.menu-tabbed-link {
+  display: block;
+  line-height: 40px;
+  color: #a5a5a5;
+  padding: 0 15px;
+}
+
+.menu-tabbed-link:hover {
+  text-decoration: none;
+  color: #5e5e5e;
+  cursor: default;
+}
+
+.menu-tabbed-link--disabled:hover {
+  color: #a5a5a5;
+}
+
+.menu__menu-tabbed-link--active
+.menu-tabbed-link--disabled:hover {
+  color: #5c5c5c;
+}
+
+.action-button {
+  border: none;
+  background: inherit;
+}
+
+.menu-bar__dashboard-dropdown {
+  background-color: #f7f7f7;
+  border-top: none;
+  top: 40px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.menu-bar__menu-center--action-button {
+  border: none;
+  background-color: inherit;
+  opacity: 0.5;
+}
+
+.menu-bar__menu-center--action-button:hover {
+  opacity: 1;
+}
+
+.menu-bar__menu-center--action-button:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+.menu__element {
+  color: #5c5c5c;
+  margin: 0 10px;
+}
+
+.menu__element--title {
+  margin-bottom: 1px;
+}
+
+.menu-bar__menu-center--back-button {
+  margin-right: 20px;
+  margin-left: 20px;
+}
+
+.solution-explorer {
+  color: #5c5c5c;
+}
+
+.solution-explorer--active {
+  color: #5e5e5e;
+}
+
+.menu-bar__last-tool {
+  padding-right: 100px;
+}

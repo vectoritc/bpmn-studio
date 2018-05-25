@@ -1,4 +1,4 @@
-const baseRoute: string = 'http://localhost:8000';
+const processEngineRoute: string = 'http://localhost:8000';
 
 // tslint:disable-next-line no-default-export
 export default {
@@ -10,20 +10,39 @@ export default {
   processengine: {
     poolingInterval: 5000,
     routes: {
-      processes: `${baseRoute}/datastore/ProcessDef`,
-      startProcess: `${baseRoute}/processengine/start`,
-      processInstances: `${baseRoute}/datastore/Process`,
-      messageBus: `${baseRoute}/mb`,
-      iam: `${baseRoute}/iam`,
-      userTasks: `${baseRoute}/datastore/UserTask`,
-      importBPMN: `${baseRoute}/processengine/create_bpmn_from_xml`,
+      processes: `${processEngineRoute}/datastore/ProcessDef`,
+      startProcess: `${processEngineRoute}/processengine/start`,
+      processInstances: `${processEngineRoute}/datastore/Process`,
+      messageBus: `${processEngineRoute}/mb`,
+      iam: `${processEngineRoute}/iam`,
+      userTasks: `${processEngineRoute}/datastore/UserTask`,
+      importBPMN: `${processEngineRoute}/processengine/create_bpmn_from_xml`,
     },
   },
   events: {
     xmlChanged: 'xmlChanged',
+    refreshProcessDefs: 'processdefs:refresh',
+    statusBar: {
+      showXMLButton: 'statusbar:xmlbutton:show',
+      hideXMLButton: 'statusbar:xmlbutton:hide',
+      updateProcessEngineRoute: 'statusbar:processEngineRoute:update',
+    },
+    navBar: {
+      showTools: 'navbar:tools:show',
+      hideTools: 'navbar:tools:hide',
+      updateProcess: 'navbar:process:update',
+      disableSaveButton: 'navbar:saveButton:disable',
+      enableSaveButton: 'navbar:saveButton:enable',
+    },
+    processDefDetail: {
+      saveDiagramm: 'processdefdetail:diagram:save',
+      exportDiagramAs: 'processdefdetail:diagram:exportas',
+      startProcess: 'processdefdetail:process:start',
+      toggleXMLView: 'processdefdetail:xmlview:toggle',
+    },
   },
   bpmnStudioClient: {
-    baseRoute: baseRoute,
+    baseRoute: processEngineRoute,
   },
   propertyPanel: {
     minWidth: 190,

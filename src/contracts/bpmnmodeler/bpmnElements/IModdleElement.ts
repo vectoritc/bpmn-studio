@@ -21,4 +21,12 @@ export interface IModdleElement {
   lanes?: Array<IModdleElement>;
   participants?: Array<IModdleElement>;
   processRef?: IProcessRef;
+  default?: IModdleElement;
+  timeDuration?: IModdleElement;
+  timeCycle?: IModdleElement;
+  timeDate?: IModdleElement;
+  condition?: IModdleElement;
+  body?: string;
+  variableName?: string;
+  variableEvent?: string;
 }
