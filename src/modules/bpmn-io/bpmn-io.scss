@@ -87,6 +87,14 @@
   opacity: 0.5;
 }
 
+.tool:hover {
+  opacity: 1;
+}
+
+.tool--active {
+  opacity: 1;
+}
+
 /*
  * WINDOW
  *
