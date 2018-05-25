@@ -1,0 +1,17 @@
+.diagramm-tools-panel {
+  margin-bottom: 2px;
+  border-bottom: 1px solid #eee;
+  background-color: #f7f7f7;
+  border-left: 1px solid #eee;
+  margin-left: 2px;
+
+  display: flex;
+}
+
+.diagramm-tools-panel
+.tool {
+  display: block;
+  text-align: center;
+  padding: 5px;
+  color: darkgray;
+}

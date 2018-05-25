@@ -1,0 +1,36 @@
+<template>
+  <require from="./diagramm-tools-right.css"></require>
+  <div class="diagramm-tools-panel">
+    <div class="tool btn-group">
+      <button class="menu-bar__menu-left--tool dropdown-toggle" title="Color Element" data-toggle="dropdown" click.delegate="updateCustomColors()">
+        <i class="fa fa-eyedropper"></i>
+      </button>
+      <ul class="dropdown-menu pull-left">
+        <li><a click.delegate="setColorRed()"><i class="glyphicon glyphicon-stop red"></i> Red</a></li>
+        <li><a click.delegate="setColorBlue()"><i class="glyphicon glyphicon-stop blue"></i> Blue</a></li>
+        <li><a click.delegate="setColorGreen()"><i class="glyphicon glyphicon-stop green"></i> Green</a></li>
+        <li><a click.delegate="setColorPurple()"><i class="glyphicon glyphicon-stop purple"></i> Purple</a></li>
+        <li><a click.delegate="setColorOrange()"><i class="glyphicon glyphicon-stop orange"></i> Orange</a></li>
+        <li>
+          <a show.bind="colorPickerLoaded" click.delegate="setColorPicked()">
+            <input ref="colorPickerFill"></input>
+            <input ref="colorPickerBorder"></input>
+          </a>
+        </li>
+        <li><a click.delegate="removeColor()"><i class="glyphicon glyphicon-stop none"></i> None</a></li>
+      </ul>
+    </div>
+    <div class="tool">
+      <a></a>
+    </div>
+    <div class="tool">
+      <a></a>
+    </div>
+    <div class="tool">
+      <a></a>
+    </div>
+    <div class="tool">
+      <a></a>
+    </div>
+  </div>
+</template>
