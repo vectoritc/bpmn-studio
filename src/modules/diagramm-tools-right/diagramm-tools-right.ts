@@ -75,12 +75,12 @@ export class DiagrammToolsRight {
     $(this.colorPickerBorder).spectrum('set', this._borderColor);
   }
 
-  public distributeElementsVertical(): void {
-    this._distributeElements(ElementDistributeOptions.VERTICAL);
+  public distributeElementsVertically(): void {
+    this._distributeElementsVertically();
   }
 
-  public distributeElementsHorizontal(): void {
-    this._distributeElements(ElementDistributeOptions.HORIZONTAL);
+  public distributeElementsHorizontally(): void {
+    this._distributeElementsHorizontally();
   }
 
   private _setColor(fillColor: string, strokeColor: string): void {
@@ -120,12 +120,28 @@ export class DiagrammToolsRight {
     return [fillColor, borderColor];
   }
 
-  private _distributeElements(option: ElementDistributeOptions): void {
-    const distribute: IBpmnFunction = this.modeler.get('distributeElements');
+  private _distributeElementsVertically(): void {
+    const distributor: IBpmnFunction = this.modeler.get('distributeElements');
 
-    const selectedElements: Array<IShape> = this._getSelectedElements();
+    const elements: Array<IShape> = this._getSelectedElements();
 
-    distribute.trigger(selectedElements, option);
+    distributor
+      .trigger(
+        elements,
+        ElementDistributeOptions.VERTICAL,
+      );
+  }
+
+  private _distributeElementsHorizontally(): void {
+    const distributor: IBpmnFunction = this.modeler.get('distributeElements');
+
+    const elements: Array<IShape> = this._getSelectedElements();
+
+    distributor
+      .trigger(
+        elements,
+        ElementDistributeOptions.HORIZONTAL,
+      );
   }
 
   private _activateColorPicker(): void {
