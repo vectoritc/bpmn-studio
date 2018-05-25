@@ -220,18 +220,23 @@ export class BpmnIo {
     }
   }
 
+  private _recalculatePropertyPanelWidth(): void {
+    this.maxWidth = document.body.clientWidth - environment.propertyPanel.maxWidth - this._processSolutionExplorerWidth;
+
+    this._currentWidth = Math.max(this._currentWidth, this.minWidth);
+    this._currentWidth = Math.min(this._currentWidth, this.maxWidth);
+
+    this.resizeButtonRight = this._currentWidth + sideBarRightSize;
+    this.canvasRight = this._currentWidth;
+    this.ppWidth = this._currentWidth;
+    this.lastPpWidth = this._currentWidth;
+  }
+
   public resize(event: any): void {
-    let currentWidth: number = document.body.clientWidth - event.clientX;
-    currentWidth = currentWidth - sideBarRightSize;
-    currentWidth = Math.max(currentWidth, this.minWidth);
-    currentWidth = Math.min(currentWidth, this.maxWidth);
+    this._currentWidth = document.body.clientWidth - event.clientX;
+    this._currentWidth = this._currentWidth - sideBarRightSize;
 
-    const resizeDivAdjustmentPixel: number = 3;
-
-    this.resizeButtonRight = currentWidth + sideBarRightSize - resizeDivAdjustmentPixel;
-    this.canvasRight = currentWidth;
-    this.ppWidth = currentWidth;
-    this.lastPpWidth = currentWidth;
+    this._recalculatePropertyPanelWidth();
   }
 
   public async toggleXMLView(): Promise<void> {
@@ -244,7 +249,7 @@ export class BpmnIo {
   }
 
   private resizeEventHandler = (event: any): void => {
-    this.maxWidth = document.body.clientWidth - environment.propertyPanel.maxWidth;
+    this.maxWidth = document.body.clientWidth - environment.propertyPanel.maxWidth - this._processSolutionExplorerWidth;
 
     const notEnoughSpaceForPp: boolean = this.maxWidth < this.minWidth;
     if (notEnoughSpaceForPp) {
