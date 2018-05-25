@@ -16,7 +16,7 @@ export class ProcessSection {
   private businessObjInPanel: IModdleElement;
   private moddle: IBpmnModdle;
 
-  private properties: Array<any> = [];
+  private properties: Array<IProperty> = [];
   private selectedElement: IModdleElement;
   private newNames: Array<string> = [];
   private newValues: Array<string> = [];
