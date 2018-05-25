@@ -25,6 +25,7 @@ export class StatusBar {
 
     this._eventAggregator.subscribe(environment.events.statusBar.hideXMLButton, () => {
       this.showXMLButton = false;
+      this.xmlIsShown = false;
     });
 
     this._eventAggregator.subscribe(environment.events.statusBar.updateProcessEngineRoute, (newProcessEngineRoute: string) => {
