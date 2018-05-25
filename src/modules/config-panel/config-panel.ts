@@ -4,7 +4,6 @@ import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import environment from '../../environment';
 import {NotificationType} from './../../contracts/index';
-import {AuthenticationService} from './../authentication/authentication.service';
 import {NotificationService} from './../notification/notification.service';
 
 @inject(Router, 'BpmnStudioClient', 'NotificationService', EventAggregator, 'AuthenticationService')
@@ -14,7 +13,6 @@ export class ConfigPanel {
   private bpmnStudioClient: BpmnStudioClient;
   private notificationService: NotificationService;
   private eventAggregator: EventAggregator;
-  private _authenticationService: AuthenticationService;
 
   public config: any = environment.bpmnStudioClient;
 
@@ -22,17 +20,14 @@ export class ConfigPanel {
               bpmnStudioClient: BpmnStudioClient,
               notificationService: NotificationService,
               eventAggregator: EventAggregator,
-              authenticationService: AuthenticationService) {
     this.router = router;
     this.bpmnStudioClient = bpmnStudioClient;
     this.config.processEngineRoute = environment.bpmnStudioClient.baseRoute;
     this.notificationService = notificationService;
     this.eventAggregator = eventAggregator;
-    this._authenticationService = authenticationService;
   }
 
   public updateSettings(): void {
-    this._authenticationService.logout();
     environment.bpmnStudioClient.baseRoute = this.config.processEngineRoute;
     window.localStorage.setItem('processEngineRoute', this.config.processEngineRoute);
     environment.processengine.routes.processes = `${this.config.processEngineRoute}/datastore/ProcessDef`;
