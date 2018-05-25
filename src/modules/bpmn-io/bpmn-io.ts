@@ -41,6 +41,8 @@ export class BpmnIo {
   private lastPpWidth: number = this.ppWidth;
   private _ppHiddenBecauseLackOfSpace: boolean = false;
   private _propertyPanelHasNoSpace: boolean = false;
+  private _processSolutionExplorerWidth: number = 0;
+  private _currentWidth: number = 250;
 
   private toggleMinimap: boolean = false;
   private minimapToggle: any;
@@ -139,6 +141,18 @@ export class BpmnIo {
     this.paletteContainer.appendChild(bpmnIoPaletteContainer);
 
     document.addEventListener('keydown', this._saveHotkeyEventHandler);
+
+    this._eventAggregator.subscribe(environment.events.bpmnIo.showProcessSolutionExplorer, () => {
+      this._processSolutionExplorerWidth = 220; // tslint:disable-line
+
+      this._recalculatePropertyPanelWidth();
+    });
+
+    this._eventAggregator.subscribe(environment.events.bpmnIo.hideProcessSolutionExplorer, () => {
+      this._processSolutionExplorerWidth = 0;
+
+      this._recalculatePropertyPanelWidth();
+    });
   }
 
   public detached(): void {
