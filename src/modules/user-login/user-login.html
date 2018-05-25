@@ -16,7 +16,6 @@
             <label for="loginPassword">Password</label>
             <input id="loginPassword" class="form-control" type="password" value.bind="password" placeholder="Password" />
           </div>
-          <p if.bind="loginError" class="text-danger"><b>Error</b>: ${loginError}</p>
           <button class="btn btn-success pull-right" type="submit">Login</button>
         </form>
         <button if.bind="isLoggedIn" class="btn btn-danger pull-right" click.delegate="logout()">Logout</button>
