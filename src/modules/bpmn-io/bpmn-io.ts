@@ -1,7 +1,6 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {bindable, inject, observable} from 'aurelia-framework';
 import * as $ from 'jquery';
-import * as spectrum from 'spectrum-colorpicker';
 import 'spectrum-colorpicker/spectrum';
 import {setTimeout} from 'timers';
 import {ElementDistributeOptions,
@@ -19,26 +18,8 @@ import {NotificationService} from './../notification/notification.service';
 
 const sideBarRightSize: number = 35;
 
-interface BpmnStudioColorPickerSettings {
-  clickoutFiresChange: boolean;
-  showPalette: boolean;
-  palette: Array<Array<string>>;
-  localStorageKey: string;
-  showInitial: boolean;
-  showInput: boolean;
-  allowEmpty: boolean;
-  showButtons: boolean;
-  showPaletteOnly: boolean;
-  togglePaletteOnly: boolean;
-
-  move?(color: spectrum.tinycolorInstance): void;
-}
-
 @inject('NotificationService')
 export class BpmnIo {
-  private fillColor: string;
-  private borderColor: string;
-
   private toggled: boolean = false;
   private toggleButtonPropertyPanel: HTMLButtonElement;
   private resizeButton: HTMLButtonElement;
@@ -68,9 +49,6 @@ export class BpmnIo {
 
   public initialLoadingFinished: boolean;
   public modeler: IBpmnModeler;
-  public colorPickerBorder: HTMLInputElement;
-  public colorPickerFill: HTMLInputElement;
-  public colorPickerLoaded: boolean = false;
 
   constructor(notificationService: NotificationService) {
     this.notificationService = notificationService;
@@ -139,8 +117,6 @@ export class BpmnIo {
     this.modeler.detach();
     this.modeler.destroy();
     window.removeEventListener('resize', this.resizeEventHandler);
-    $(this.colorPickerBorder).spectrum('destroy');
-    $(this.colorPickerFill).spectrum('destroy');
   }
 
   public xmlChanged(newValue: string, oldValue: string): void {
@@ -174,44 +150,6 @@ export class BpmnIo {
         }
       });
     });
-  }
-
-  public distributeElements(option: ElementDistributeOptions): void {
-    const distribute: IBpmnFunction = this.modeler.get('distributeElements');
-
-    const selectedElements: Array<IShape> = this.getSelectedElements();
-
-    distribute.trigger(selectedElements, option);
-  }
-
-  public setColor(fillColor: string, strokeColor: string): void {
-    const modeling: IModeling = this.modeler.get('modeling');
-
-    const selectedElements: Array<IShape> = this.getSelectedElements();
-
-    if (selectedElements.length < 1 || selectedElements.length === 1 && selectedElements[0].$type === 'bpmn:Collaboration') {
-      this.notificationService.showNotification(NotificationType.ERROR, 'Error while changing the color: No valid element was selected.');
-      return;
-    }
-
-    modeling.setColor(selectedElements, {
-      fill: fillColor,
-      stroke: strokeColor,
-    });
-  }
-
-  public getColors(): Array<string> {
-    const selectedElements: Array<IShape> = this.getSelectedElements();
-
-    if (!selectedElements || !selectedElements[0] || !selectedElements[0].businessObject) {
-      return [undefined, undefined];
-    }
-
-    const firstElement: IModdleElement = selectedElements[0].businessObject;
-    const fillColor: string = firstElement.di.fill;
-    const borderColor: string = firstElement.di.stroke;
-
-    return [fillColor, borderColor];
   }
 
   private getSelectedElements(): Array<IShape> {
@@ -252,45 +190,6 @@ export class BpmnIo {
     this.lastPpWidth = currentWidth;
   }
 
-  public setColorRed(): void {
-    this.setColor('#FFCDD2', '#E53935');
-  }
-
-  public setColorBlue(): void {
-    this.setColor('#BBDEFB', '#1E88E5');
-  }
-
-  public setColorOrange(): void {
-    this.setColor('#FFE0B2', '#FB8C00');
-  }
-
-  public setColorGreen(): void {
-    this.setColor('#C8E6C9', '#43A047');
-  }
-
-  public setColorPurple(): void {
-    this.setColor('#E1BEE7', '#8E24AA');
-  }
-
-  public removeColor(): void {
-    this.setColor(null, null);
-  }
-
-  public setColorPicked(): void {
-    this.setColor(this.fillColor, this.borderColor);
-  }
-
-  public updateCustomColors(): void {
-    if (!this.colorPickerLoaded) {
-      this._activateColorPicker();
-    }
-
-    [this.fillColor, this.borderColor] = this.getColors();
-
-    $(this.colorPickerFill).spectrum('set', this.fillColor);
-    $(this.colorPickerBorder).spectrum('set', this.borderColor);
-  }
-
   public async toggleXMLView(): Promise<void> {
     if (!this.showXMLView) {
       this.xml = await this.getXML();
@@ -298,14 +197,6 @@ export class BpmnIo {
     } else {
       this.showXMLView = false;
     }
-  }
-
-  public distributeElementsHorizontal(): void {
-    this.distributeElements(ElementDistributeOptions.HORIZONTAL);
-  }
-
-  public distributeElementsVertical(): void {
-    this.distributeElements(ElementDistributeOptions.VERTICAL);
   }
 
   private resizeEventHandler = (event: any): void => {
@@ -352,28 +243,6 @@ export class BpmnIo {
     }
   }
 
-  private _activateColorPicker(): void {
-    const borderMoveSetting: spectrum.Options = {
-      move: (borderColor: spectrum.tinycolorInstance): void => {
-        this.updateBorderColor(borderColor);
-      },
-    };
-
-    const colorPickerBorderSettings: BpmnStudioColorPickerSettings = Object.assign({}, environment.colorPickerSettings, borderMoveSetting);
-    $(this.colorPickerBorder).spectrum(colorPickerBorderSettings);
-
-    const fillMoveSetting: spectrum.Options = {
-      move: (fillColor: spectrum.tinycolorInstance): void => {
-        this.updateFillColor(fillColor);
-      },
-    };
-
-    const colorPickerFillSettings: BpmnStudioColorPickerSettings = Object.assign({}, environment.colorPickerSettings, fillMoveSetting);
-    $(this.colorPickerFill).spectrum(colorPickerFillSettings);
-
-    this.colorPickerLoaded = true;
-  }
-
   private toggleMinimapFunction = (): void => {
     if (this.toggleMinimap === false) {
       this.expandIcon.style.display = 'none';
@@ -385,26 +254,6 @@ export class BpmnIo {
       this.hideMinimap.style.display = 'none';
       this.toggleMinimap = false;
     }
-  }
-
-  private updateFillColor(fillColor: any): void {
-    if (fillColor) {
-      this.fillColor = fillColor.toHexString();
-    } else {
-      this.fillColor = undefined;
-    }
-
-    this.setColorPicked();
-  }
-
-  private updateBorderColor(borderColor: any): void {
-    if (borderColor) {
-      this.borderColor = borderColor.toHexString();
-    } else {
-      this.borderColor = undefined;
-    }
-
-    this.setColorPicked();
   }
 
 }
