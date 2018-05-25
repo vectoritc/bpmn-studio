@@ -2,7 +2,6 @@ import {inject} from 'aurelia-dependency-injection';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import * as toastr from 'toastr';
 import {INotification, NotificationType} from '../../contracts/index';
-import environment from '../../environment';
 
 @inject(EventAggregator)
 export class NotificationService {
