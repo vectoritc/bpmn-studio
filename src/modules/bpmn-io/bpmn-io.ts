@@ -47,7 +47,6 @@ export class BpmnIo {
   private expandIcon: HTMLElement;
   private hideMinimap: HTMLElement;
   private notificationService: NotificationService;
-
   private _eventAggregator: EventAggregator;
 
   @bindable({changeHandler: 'xmlChanged'}) public xml: string;
