@@ -3,10 +3,11 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import environment from '../../environment';
+import {AuthenticationStateEvent} from './../../contracts/index';
 import {NotificationType} from './../../contracts/index';
 import {NotificationService} from './../notification/notification.service';
 
-@inject(Router, 'BpmnStudioClient', 'NotificationService', EventAggregator, 'AuthenticationService')
+@inject(Router, 'BpmnStudioClient', 'NotificationService', EventAggregator)
 export class ConfigPanel {
 
   private router: Router;
@@ -19,7 +20,7 @@ export class ConfigPanel {
   constructor(router: Router,
               bpmnStudioClient: BpmnStudioClient,
               notificationService: NotificationService,
-              eventAggregator: EventAggregator,
+              eventAggregator: EventAggregator) {
     this.router = router;
     this.bpmnStudioClient = bpmnStudioClient;
     this.config.processEngineRoute = environment.bpmnStudioClient.baseRoute;
@@ -28,6 +29,7 @@ export class ConfigPanel {
   }
 
   public updateSettings(): void {
+    this.eventAggregator.publish(AuthenticationStateEvent.LOGOUT);
     environment.bpmnStudioClient.baseRoute = this.config.processEngineRoute;
     window.localStorage.setItem('processEngineRoute', this.config.processEngineRoute);
     environment.processengine.routes.processes = `${this.config.processEngineRoute}/datastore/ProcessDef`;
