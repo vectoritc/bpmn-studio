@@ -32,44 +32,29 @@
 .status-bar__left-bar {
   display: flex;
   justify-content: flex-start;
+  align-items: center;
 }
 
 .status-bar__center-bar {
   display: flex;
   justify-content: space-around;
+  align-items: center;
 }
 
 .status-bar__right-bar {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
 }
 
 .status-bar__element {
-  padding: 0 10px;
-  padding-top: 2px;
+  display: block;
+  padding: 2px 10px;
   color: white;
-}
-
-.status-bar__element--config-link:hover {
-  color: white;
-  text-decoration: none;
 }
 
 .status-bar__element:hover {
   background-color: #445a65;
+  text-decoration: none;
 }
 
-.status-bar__separator {
-  margin: 0 10px;
-}
-
-.status-bar__show-xml-button {
-  background: inherit;
-  color: white;
-  border: none;
-  padding: 0;
-}
-
-.status-bar__show-xml-button-div {
-  display: flex;
-}
