@@ -1,6 +1,13 @@
 import {bindable, inject} from 'aurelia-framework';
 import * as spectrum from 'spectrum-colorpicker';
-import {IBpmnModeler, IColorPickerSettings, IModdleElement, IModeling, IShape, NotificationType} from '../../contracts/index';
+import {ElementDistributeOptions,
+        IBpmnFunction,
+        IBpmnModeler,
+        IColorPickerSettings,
+        IModdleElement,
+        IModeling,
+        IShape,
+        NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
@@ -30,7 +37,7 @@ export class DiagrammToolsRight {
   public setColor(fillColor: string, strokeColor: string): void {
     const modeling: IModeling = this.modeler.get('modeling');
 
-    const selectedElements: Array<IShape> = this.getSelectedElements();
+    const selectedElements: Array<IShape> = this._getSelectedElements();
 
     if (selectedElements.length < 1 || selectedElements.length === 1 && selectedElements[0].$type === 'bpmn:Collaboration') {
       this.notificationService.showNotification(NotificationType.ERROR, 'Error while changing the color: No valid element was selected.');
@@ -72,7 +79,7 @@ export class DiagrammToolsRight {
   }
 
   public getColors(): Array<string> {
-    const selectedElements: Array<IShape> = this.getSelectedElements();
+    const selectedElements: Array<IShape> = this._getSelectedElements();
 
     if (!selectedElements || !selectedElements[0] || !selectedElements[0].businessObject) {
       return [undefined, undefined];
@@ -94,6 +101,18 @@ export class DiagrammToolsRight {
 
     $(this.colorPickerFill).spectrum('set', this.fillColor);
     $(this.colorPickerBorder).spectrum('set', this.borderColor);
+  }
+
+  public distributeElementsVertical(): void {
+    this._distributeElements(ElementDistributeOptions.VERTICAL);
+  }
+
+  private _distributeElements(option: ElementDistributeOptions): void {
+    const distribute: IBpmnFunction = this.modeler.get('distributeElements');
+
+    const selectedElements: Array<IShape> = this._getSelectedElements();
+
+    distribute.trigger(selectedElements, option);
   }
 
   private _activateColorPicker(): void {
@@ -138,7 +157,7 @@ export class DiagrammToolsRight {
     this.setColorPicked();
   }
 
-  private getSelectedElements(): Array<IShape> {
+  private _getSelectedElements(): Array<IShape> {
     return this.modeler.get('selection')._selectedElements;
   }
 }
