@@ -62,7 +62,9 @@ export class NotificationService {
   private _setToastrInstance(toastrInstance: Toastr): void {
     this._toastrInstance = toastrInstance;
 
-    this._toastrInstance.options = environment.toastrSettings;
+    this._toastrInstance.options = {
+      positionClass: 'toast-bottom-left',
+    };
 
     this._initializeToastr();
     for (const notification of this._savedNotifications) {

@@ -60,7 +60,4 @@ export default {
     showPaletteOnly: true,
     togglePaletteOnly: true,
   },
-  toastrSettings: {
-    positionClass: 'toast-bottom-left',
-  },
 };
