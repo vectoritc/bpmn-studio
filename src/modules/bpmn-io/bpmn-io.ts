@@ -1,5 +1,8 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
+<<<<<<< HEAD
 
+=======
+>>>>>>> :sparkles: Hide or Show Property Panel For Space Reasons
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 import * as $ from 'jquery';
@@ -230,27 +233,11 @@ export class BpmnIo {
     this.canvasRight = this._currentWidth;
     this.ppWidth = this._currentWidth;
     this.lastPpWidth = this._currentWidth;
+
+    this._HideAndShowPropertyPanelForPlaceReasons();
   }
 
-  public resize(event: any): void {
-    this._currentWidth = document.body.clientWidth - event.clientX;
-    this._currentWidth = this._currentWidth - sideBarRightSize;
-
-    this._recalculatePropertyPanelWidth();
-  }
-
-  public async toggleXMLView(): Promise<void> {
-    if (!this.showXMLView) {
-      this.xml = await this.getXML();
-      this.showXMLView = true;
-    } else {
-      this.showXMLView = false;
-    }
-  }
-
-  private resizeEventHandler = (event: any): void => {
-    this.maxWidth = document.body.clientWidth - environment.propertyPanel.maxWidth - this._processSolutionExplorerWidth;
-
+  private _HideAndShowPropertyPanelForPlaceReasons(): void { // TODO: Refactor this Function
     const notEnoughSpaceForPp: boolean = this.maxWidth < this.minWidth;
     if (notEnoughSpaceForPp) {
       if (this._propertyPanelHasNoSpace) {
@@ -278,7 +265,29 @@ export class BpmnIo {
 
       return;
     }
-    const resizeDivAdjustmentPixel: number = 3;
+  }
+
+  public resize(event: any): void {
+    this._currentWidth = document.body.clientWidth - event.clientX;
+    this._currentWidth = this._currentWidth - sideBarRightSize;
+
+    this._recalculatePropertyPanelWidth();
+  }
+
+  public async toggleXMLView(): Promise<void> {
+    if (!this.showXMLView) {
+      this.xml = await this.getXML();
+      this.showXMLView = true;
+    } else {
+      this.showXMLView = false;
+    }
+  }
+
+  private resizeEventHandler = (event: any): void => {
+    this.maxWidth = document.body.clientWidth - environment.propertyPanel.maxWidth - this._processSolutionExplorerWidth;
+
+    this._HideAndShowPropertyPanelForPlaceReasons();
+
     this.ppWidth = this.lastPpWidth;
     if (this.ppWidth > this.maxWidth) {
       const currentWidth: number = this.maxWidth;
