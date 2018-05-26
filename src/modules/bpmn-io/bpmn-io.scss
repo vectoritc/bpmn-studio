@@ -157,3 +157,36 @@
   border: none;
   background-color: inherit;
 }
+
+
+.djs-palette-override {
+  position: relative !important;
+  left: auto !important;
+  top: 4px !important;
+  width: 36px !important;
+  background: transparent !important;
+  border: none !important;
+
+  .entry,
+  .djs-palette-toggle {
+    width: 36px;
+    height: 32px;
+    line-height: 24px;
+    cursor: default;
+    font-size: 18px;
+  }
+
+  .entry {
+    opacity: 0.5;
+  }
+
+  .highlighted-entry,
+  .entry:hover {
+    color: #000 !important;
+    opacity: 1;
+  }
+
+  .djs-palette-toggle {
+    display: none !important;
+  }
+}

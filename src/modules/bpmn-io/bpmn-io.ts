@@ -49,6 +49,7 @@ export class BpmnIo {
 
   public initialLoadingFinished: boolean;
   public modeler: IBpmnModeler;
+  public paletteContainer: HTMLDivElement;
 
   constructor(notificationService: NotificationService) {
     this.notificationService = notificationService;
@@ -111,6 +112,13 @@ export class BpmnIo {
       document.addEventListener('mousemove', mousemoveFunction);
       document.addEventListener('mouseup', mouseUpFunction);
     });
+
+
+    var bpmnIoPaletteContainer = document.getElementsByClassName('djs-palette')[0];
+
+    bpmnIoPaletteContainer.className += " djs-palette-override";
+
+    this.paletteContainer.appendChild(bpmnIoPaletteContainer);
   }
 
   public detached(): void {
