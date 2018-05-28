@@ -11,6 +11,7 @@ export class UserLogin {
   public password: string;
   public userLogin: HTMLElement;
   public dropdown: HTMLElement;
+  public logoutButton: HTMLButtonElement;
 
   private _authenticationService: IAuthenticationService;
   private _eventAggregator: EventAggregator;
@@ -43,7 +44,7 @@ export class UserLogin {
 
   public dropdownClickListener: EventListenerOrEventListenerObject =  (event: MouseEvent): void => {
     const eventTarget: Node = event.target as Node;
-    if (this.dropdown.contains(eventTarget)) {
+    if (this.dropdown.contains(eventTarget) && event.target !== this.logoutButton) {
       this.userLogin.className = 'user-login open';
     }
   }

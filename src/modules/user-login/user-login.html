@@ -16,7 +16,7 @@
 
           <button class="btn custom-button pull-right" type="submit">Login</button>
         </form>
-        <button if.bind="isLoggedIn" class="btn custom-button pull-right" click.delegate="logout()">Logout</button>
+        <button ref="logoutButton" if.bind="isLoggedIn" class="btn custom-button pull-right" click.delegate="logout()">Logout</button>
       </div>
     </div>
   </div>
