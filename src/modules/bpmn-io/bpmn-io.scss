@@ -106,10 +106,6 @@
   overflow: hidden;
 }
 
-.bpmn-io-layout__tools-left .tool {
-  padding: 5px 5px 5px 9px;
-}
-
 .bpmn-io-layout__tools-right {
   border-left: 2px solid #dcdbdb;
 }
@@ -154,11 +150,6 @@
   background-color: inherit;
 }
 
-
-.djs-palette-container {
-
-}
-
 .djs-palette-override {
   position: relative !important;
   left: auto !important;
@@ -169,7 +160,7 @@
 
   .entry,
   .djs-palette-toggle {
-    width: 36px;
+    width: 30px;
     height: 32px;
     line-height: 24px;
     cursor: default;
@@ -191,7 +182,7 @@
   }
 
   .djs-palette-entries .separator {
-    margin: 5px;
+    margin: 5px 0;
     padding: 0;
   }
 }
