@@ -70,7 +70,7 @@ export class NavBar {
 
   public saveDiagram(): void {
     if (!this.disableSaveButton) {
-      this._eventAggregator.publish(environment.events.processDefDetail.saveDiagramm);
+      this._eventAggregator.publish(environment.events.processDefDetail.saveDiagram);
     }
   }
 

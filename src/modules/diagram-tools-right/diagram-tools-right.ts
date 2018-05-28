@@ -14,7 +14,7 @@ import {ElementDistributeOptions,
 import {NotificationService} from '../notification/notification.service';
 
 @inject('NotificationService')
-export class DiagrammToolsRight {
+export class DiagramToolsRight {
 
   @bindable()
   public modeler: IBpmnModeler;
