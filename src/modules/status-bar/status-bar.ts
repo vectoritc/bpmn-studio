@@ -36,7 +36,7 @@ export class StatusBar {
   }
 
   private _setProcessEngineRoute(processEngineRoute: string): void {
-    const [, protocol, route]: any = /^([^\:]+:\/\/)?(.*)$/i.exec(processEngineRoute);
+    const [, protocol, route]: RegExpExecArray = /^([^\:]+:\/\/)?(.*)$/i.exec(processEngineRoute);
     this.isEncryptedCommunication = protocol === 'https://';
     this.processEngineRoute = route;
   }
