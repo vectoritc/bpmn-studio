@@ -7,16 +7,16 @@ import {NotificationService} from './../notification/notification.service';
 @inject('AuthenticationService', EventAggregator, 'NotificationService')
 export class UserLogin {
 
-  private authenticationService: IAuthenticationService;
-  private username: string;
-  private password: string;
+  private _authenticationService: IAuthenticationService;
   private _eventAggregator: EventAggregator;
   private _notificationService: NotificationService;
 
+  public username: string;
+  public password: string;
   public dropdownIsOpen: boolean = false;
 
   constructor(authenticationService: IAuthenticationService, eventAggregator: EventAggregator, notificationService: NotificationService) {
-    this.authenticationService = authenticationService;
+    this._authenticationService = authenticationService;
     this._eventAggregator = eventAggregator;
     this._notificationService = notificationService;
   }
@@ -35,7 +35,7 @@ export class UserLogin {
 
   public async login(): Promise<void> {
     try {
-      await this.authenticationService.login(this.username, this.password);
+      await this._authenticationService.login(this.username, this.password);
       this.username = undefined;
       this.password = undefined;
       this.toggleDropdown();
@@ -45,17 +45,17 @@ export class UserLogin {
   }
 
   public logout(): void {
-    this.authenticationService.logout();
+    this._authenticationService.logout();
     this.toggleDropdown();
   }
 
-  @computedFrom('authenticationService.tokenRepository.token')
+  @computedFrom('_authenticationService.tokenRepository.token')
   public get isLoggedIn(): boolean {
-    return this.authenticationService.hasToken();
+    return this._authenticationService.hasToken();
   }
 
   @computedFrom('isLoggedIn')
   public get identity(): IIdentity {
-    return this.authenticationService.getIdentity();
+    return this._authenticationService.getIdentity();
   }
 }
