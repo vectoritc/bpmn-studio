@@ -77,13 +77,15 @@ export class BasicsSection implements ISection {
   }
 
   public removeSelectedForm(): void {
-    this._formElement.fields.splice(this._selectedIndex, 1);
+    if (this.isFormSelected) {
+      this._formElement.fields.splice(this._selectedIndex, 1);
 
-    this.isFormSelected = false;
-    this.selectedForm = undefined;
-    this._selectedIndex = undefined;
+      this.isFormSelected = false;
+      this.selectedForm = undefined;
+      this._selectedIndex = undefined;
 
-    this._reloadForms();
+      this._reloadForms();
+    }
   }
 
   public async addForm(): Promise<void> {
