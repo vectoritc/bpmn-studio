@@ -115,6 +115,10 @@ button {
   cursor: default;
 }
 
+.process-details-dropdown-menu {
+  user-select: text;
+}
+
 .menu__element {
   color: #5c5c5c;
   margin: 0 10px;
