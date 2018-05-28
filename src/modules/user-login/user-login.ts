@@ -10,7 +10,7 @@ export class UserLogin {
   public username: string;
   public password: string;
   public userLogin: HTMLElement;
-  public dropDown: HTMLElement;
+  public dropdown: HTMLElement;
 
   private _authenticationService: IAuthenticationService;
   private _eventAggregator: EventAggregator;
@@ -24,7 +24,7 @@ export class UserLogin {
   }
 
   public attached(): void {
-    document.addEventListener('click', this.isDropdownClicked);
+    document.addEventListener('click', this.dropdownClickListener);
     this._subscriptions = [
       this._eventAggregator.subscribe('user-login:triggerlogout', () => {
         if (this.isLoggedIn) {
@@ -35,15 +35,15 @@ export class UserLogin {
   }
 
   public detached(): void {
-    document.removeEventListener('click', this.isDropdownClicked);
+    document.removeEventListener('click', this.dropdownClickListener);
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
   }
 
-  public isDropdownClicked: EventListenerOrEventListenerObject =  (event: MouseEvent): void => {
+  public dropdownClickListener: EventListenerOrEventListenerObject =  (event: MouseEvent): void => {
     const eventTarget: Node = event.target as Node;
-    if (this.dropDown.contains(eventTarget)) {
+    if (this.dropdown.contains(eventTarget)) {
       this.userLogin.className = 'user-login open';
     }
   }
