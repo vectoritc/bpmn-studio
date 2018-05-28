@@ -113,10 +113,9 @@ export class BpmnIo {
       document.addEventListener('mouseup', mouseUpFunction);
     });
 
+    const bpmnIoPaletteContainer: Element = document.getElementsByClassName('djs-palette')[0];
 
-    var bpmnIoPaletteContainer = document.getElementsByClassName('djs-palette')[0];
-
-    bpmnIoPaletteContainer.className += " djs-palette-override";
+    bpmnIoPaletteContainer.className += ' djs-palette-override';
 
     this.paletteContainer.appendChild(bpmnIoPaletteContainer);
   }
