@@ -14,7 +14,7 @@ export class UserLogin {
 
   public username: string;
   public password: string;
-  public dropdownIsOpen: boolean = false;
+  public userLogin: HTMLElement;
 
   constructor(authenticationService: IAuthenticationService, eventAggregator: EventAggregator, notificationService: NotificationService) {
     this._authenticationService = authenticationService;
@@ -22,11 +22,12 @@ export class UserLogin {
     this._notificationService = notificationService;
   }
 
-  public toggleDropdown(): void {
-    this.dropdownIsOpen = !this.dropdownIsOpen;
+  public closeDropdown(): void {
+    this.userLogin.className = 'user-login';
   }
 
   public attached(): void {
+    document.addEventListener('click', this.isDropdownClicked);
     this._subscriptions = [
       this._eventAggregator.subscribe('user-login:triggerLogout', () => {
         if (this.isLoggedIn) {
@@ -37,8 +38,16 @@ export class UserLogin {
   }
 
   public detached(): void {
+    document.removeEventListener('click', this.isDropdownClicked);
     for (const subscription of this._subscriptions) {
       subscription.dispose();
+    }
+  }
+
+  public isDropdownClicked: EventListenerOrEventListenerObject =  (event: MouseEvent): void => {
+    const dropdown: any = document.querySelector('#dropdown');
+    if (dropdown.contains(event.target)) {
+      this.userLogin.className = 'user-login open';
     }
   }
 
@@ -47,7 +56,7 @@ export class UserLogin {
       await this._authenticationService.login(this.username, this.password);
       this.username = undefined;
       this.password = undefined;
-      this.toggleDropdown();
+      this.closeDropdown();
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, error.message);
     }
@@ -55,7 +64,7 @@ export class UserLogin {
 
   public logout(): void {
     this._authenticationService.logout();
-    this.toggleDropdown();
+    this.closeDropdown();
   }
 
   @computedFrom('_authenticationService.tokenRepository.token')

@@ -1,24 +1,23 @@
 <template>
   <require from="./user-login.css"></require>
-  <div class="user-login">
-    <a href="#" class="user-login-dropdown__toggle" click.delegate="toggleDropdown()">
+  <div class="user-login" ref="userLogin">
+    <a href="#" class="dropdown-toggle user-login-dropdown__toggle" data-toggle="dropdown">
       <span>${identity ? identity.name : 'Guest'} </span>
       <i class="fa fa-caret-down"></i>
     </a>
-  </div>
-  <div class="user-login-dropdown" if.bind="dropdownIsOpen">
-    <div class="user-login-dropdown__content">
-      <div if.bind="!isLoggedIn">
-        <label for="login_username">Username</label>
-        <input id="login_username" class="form-control" type="text" value.bind="username" placeholder="Username" />
+    <div id="dropdown" class="dropdown-menu dropdown-menu-right user-login-dropdown">
+      <div class="user-login-dropdown__content clearfix">
+        <form if.bind="!isLoggedIn" submit.delegate="login()" role="form">
+          <label for="login_username">Username</label>
+          <input id="login_username" class="form-control" type="text" value.bind="username" placeholder="Username" />
 
-        <label for="login_password">Password</label>
-        <input id="login_password" class="form-control" type="password" value.bind="password" placeholder="Password" />
+          <label for="login_password">Password</label>
+          <input id="login_password" class="form-control" type="password" value.bind="password" placeholder="Password" />
 
-        <button class="btn custom-button pull-right" click.delegate="login()">Login</button>
+          <button class="btn custom-button pull-right" type="submit">Login</button>
+        </form>
+        <button if.bind="isLoggedIn" class="btn custom-button pull-right" click.delegate="logout()">Logout</button>
       </div>
-      <button if.bind="isLoggedIn" class="btn custom-button pull-right" click.delegate="logout()">Logout</button>
     </div>
   </div>
-
 </template>
