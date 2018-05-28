@@ -22,10 +22,6 @@ export class UserLogin {
     this._notificationService = notificationService;
   }
 
-  public closeDropdown(): void {
-    this.userLogin.className = 'user-login';
-  }
-
   public attached(): void {
     document.addEventListener('click', this.isDropdownClicked);
     this._subscriptions = [
@@ -56,7 +52,7 @@ export class UserLogin {
       await this._authenticationService.login(this.username, this.password);
       this.username = undefined;
       this.password = undefined;
-      this.closeDropdown();
+      this._closeDropdown();
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, error.message);
     }
@@ -64,7 +60,7 @@ export class UserLogin {
 
   public logout(): void {
     this._authenticationService.logout();
-    this.closeDropdown();
+    this._closeDropdown();
   }
 
   @computedFrom('_authenticationService.tokenRepository.token')
@@ -75,5 +71,9 @@ export class UserLogin {
   @computedFrom('isLoggedIn')
   public get identity(): IIdentity {
     return this._authenticationService.getIdentity();
+  }
+
+  private _closeDropdown(): void {
+    this.userLogin.className = 'user-login';
   }
 }
