@@ -29,7 +29,7 @@ export class ConfigPanel {
   }
 
   public updateSettings(): void {
-    this._eventAggregator.publish('user-login:triggerLogout');
+    this._eventAggregator.publish('user-login:triggerlogout');
     environment.bpmnStudioClient.baseRoute = this.config.processEngineRoute;
     window.localStorage.setItem('processEngineRoute', this.config.processEngineRoute);
     environment.processengine.routes.processes = `${this.config.processEngineRoute}/datastore/ProcessDef`;

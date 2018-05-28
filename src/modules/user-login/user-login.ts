@@ -26,7 +26,7 @@ export class UserLogin {
   public attached(): void {
     document.addEventListener('click', this.isDropdownClicked);
     this._subscriptions = [
-      this._eventAggregator.subscribe('user-login:triggerLogout', () => {
+      this._eventAggregator.subscribe('user-login:triggerlogout', () => {
         if (this.isLoggedIn) {
           this.logout();
         }
