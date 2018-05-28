@@ -14,12 +14,12 @@ export class BasicsSection implements ISection {
   public path: string = '/sections/basics/basics';
   public canHandleElement: boolean = false;
   public properties: Array<any> = [];
+  public newNames: Array<string> = [];
+  public newValues: Array<string> = [];
 
   private _businessObjInPanel: IModdleElement;
   private _moddle: IBpmnModdle;
   private _selectedElement: IModdleElement;
-  private _newNames: Array<string> = [];
-  private _newValues: Array<string> = [];
   private _propertyElement: IPropertyElement;
 
   public activate(model: IPageModel): void {
@@ -46,8 +46,8 @@ export class BasicsSection implements ISection {
     };
     const bpmnProperty: IProperty = this._moddle.create('camunda:Property', bpmnPropertyProperties);
 
-    this._newNames.push('');
-    this._newValues.push('');
+    this.newNames.push('');
+    this.newValues.push('');
 
     this._propertyElement.values.push(bpmnProperty);
     this.properties.push(bpmnProperty);
@@ -59,11 +59,11 @@ export class BasicsSection implements ISection {
   }
 
   public changeName(index: number): void {
-    this._propertyElement.values[index].name = this._newNames[index];
+    this._propertyElement.values[index].name = this.newNames[index];
   }
 
   public changeValue(index: number): void {
-    this._propertyElement.values[index].value = this._newValues[index];
+    this._propertyElement.values[index].value = this.newValues[index];
   }
 
   private _init(): void {
@@ -74,8 +74,8 @@ export class BasicsSection implements ISection {
 
   private _reloadProperties(): void {
     this.properties = [];
-    this._newNames = [];
-    this._newValues = [];
+    this.newNames = [];
+    this.newValues = [];
 
     const elementHasNoProperties: boolean = this._propertyElement === undefined
                                          || this._propertyElement === null
@@ -92,8 +92,8 @@ export class BasicsSection implements ISection {
       if (property.$type !== 'camunda:Property') {
         continue;
       }
-      this._newNames.push(property.name);
-      this._newValues.push(property.value);
+      this.newNames.push(property.name);
+      this.newValues.push(property.value);
       this.properties.push(property);
     }
   }
