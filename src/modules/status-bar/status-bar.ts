@@ -9,7 +9,7 @@ export class StatusBar {
   public processEngineRoute: string = '';
   public showXMLButton: boolean = false;
   public xmlIsShown: boolean = false;
-  public isRouteHttps: boolean = false;
+  public isEncryptedCommunication: boolean = false;
 
   private _eventAggregator: EventAggregator;
   private _router: Router;
@@ -37,7 +37,7 @@ export class StatusBar {
 
   private _setProcessEngineRoute(processEngineRoute: string): void {
     const [, protocol, route]: any = /^([^\:]+:\/\/)?(.*)$/i.exec(processEngineRoute);
-    this.isRouteHttps = protocol === 'https://';
+    this.isEncryptedCommunication = protocol === 'https://';
     this.processEngineRoute = route;
   }
 
