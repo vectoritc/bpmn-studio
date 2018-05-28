@@ -68,19 +68,6 @@ export class PoolSection implements ISection {
         && element.businessObject.$type === 'bpmn:Participant';
   }
 
-  private _clearVersion(): void {
-    this.businessObjInPanel.processRef.versionTag = '';
-  }
-
-  private _clearId(): void {
-    this.businessObjInPanel.processRef.id = '';
-    this.validationController.validate();
-  }
-
-  private _clearName(): void {
-    this.businessObjInPanel.processRef.name = '';
-  }
-
   private _validateId(event: ValidateEvent): void {
     if (event.type !== 'validate') {
       return;
