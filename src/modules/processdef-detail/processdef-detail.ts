@@ -83,7 +83,7 @@ export class ProcessDefDetail {
       this.eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
         this.refreshProcess();
       }),
-      this.eventAggregator.subscribe(environment.events.processDefDetail.saveDiagramm, () => {
+      this.eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
         this.saveDiagram();
       }),
       this.eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, () => {
@@ -124,6 +124,9 @@ export class ProcessDefDetail {
       .then((result: any) => {
         if (result && !result.error) {
           this._process = result;
+
+          this.eventAggregator.publish(environment.events.navBar.updateProcess, this._process);
+
           return this._process;
         } else {
           this._process = null;

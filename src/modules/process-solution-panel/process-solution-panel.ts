@@ -37,13 +37,13 @@ export class ProcessSolutionPanel {
     ];
   }
 
-  private async _refreshProcesslist(): Promise<void> {
-    this.processes = await this._bpmnStudioClient.getProcessDefList();
-  }
-
   public detached(): void {
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
+  }
+
+  private async _refreshProcesslist(): Promise<void> {
+    this.processes = await this._bpmnStudioClient.getProcessDefList();
   }
 }

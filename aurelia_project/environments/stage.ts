@@ -35,7 +35,7 @@ export default {
       enableSaveButton: 'navbar:saveButton:enable',
     },
     processDefDetail: {
-      saveDiagramm: 'processdefdetail:diagram:save',
+      saveDiagram: 'processdefdetail:diagram:save',
       exportDiagramAs: 'processdefdetail:diagram:exportas',
       startProcess: 'processdefdetail:process:start',
       toggleXMLView: 'processdefdetail:xmlview:toggle',
