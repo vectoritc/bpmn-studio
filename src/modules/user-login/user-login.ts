@@ -31,6 +31,7 @@ export class UserLogin {
         this.logout();
       }
     });
+      this._eventAggregator.subscribe('user-login:triggerLogout', () => {
   }
 
   public async login(): Promise<void> {
