@@ -9,6 +9,7 @@ export class StatusBar {
   public processEngineRoute: string = environment.bpmnStudioClient.baseRoute;
   public showXMLButton: boolean = false;
   public xmlIsShown: boolean = false;
+  public isRouteHttps: boolean = false;
 
   private _eventAggregator: EventAggregator;
   private _router: Router;
@@ -29,8 +30,14 @@ export class StatusBar {
     });
 
     this._eventAggregator.subscribe(environment.events.statusBar.updateProcessEngineRoute, (newProcessEngineRoute: string) => {
-      this.processEngineRoute = newProcessEngineRoute;
+      this._setProcessEngineRoute(newProcessEngineRoute);
     });
+  }
+
+  private _setProcessEngineRoute(processEngineRoute: string): void {
+    const [, protocol, , route]: any = /^(http(s)?:\/\/)?(.+)$/i.exec(processEngineRoute);
+    this.isRouteHttps = protocol === 'https://';
+    this.processEngineRoute = route;
   }
 
   public toggleXMLView(): void {
