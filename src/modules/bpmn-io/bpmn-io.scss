@@ -17,6 +17,9 @@
   height: 100%;
   background: rgb(220, 219, 219);
   width: 250px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
 }
 
 .modeler .label {
@@ -100,6 +103,7 @@
 .bpmn-io-layout__tools-left {
   border-right: 2px solid #dcdbdb;
   width: 36px;
+  overflow: hidden;
 }
 
 .bpmn-io-layout__tools-left .tool {
@@ -150,6 +154,10 @@
   background-color: inherit;
 }
 
+
+.djs-palette-container {
+
+}
 
 .djs-palette-override {
   position: relative !important;
