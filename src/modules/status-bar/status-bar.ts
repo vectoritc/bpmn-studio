@@ -6,7 +6,7 @@ import environment from '../../environment';
 @inject(EventAggregator, Router)
 export class StatusBar {
 
-  public processEngineRoute: string = environment.bpmnStudioClient.baseRoute;
+  public processEngineRoute: string;
   public showXMLButton: boolean = false;
   public xmlIsShown: boolean = false;
   public isRouteHttps: boolean = false;
@@ -17,6 +17,7 @@ export class StatusBar {
   constructor(eventAggregator: EventAggregator, router: Router) {
     this._eventAggregator = eventAggregator;
     this._router = router;
+    this._setProcessEngineRoute(environment.bpmnStudioClient.baseRoute);
   }
 
   public attached(): void {
