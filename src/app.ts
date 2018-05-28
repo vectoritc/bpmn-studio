@@ -1,4 +1,4 @@
-import { EventAggregator } from 'aurelia-event-aggregator';
+import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject, observable} from 'aurelia-framework';
 import {Router, RouterConfiguration} from 'aurelia-router';
 import environment from './environment';
