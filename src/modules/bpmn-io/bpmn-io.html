@@ -2,7 +2,7 @@
   <require from="../property-panel/property-panel"></require>
   <require from="@process-engine/bpmn-js-custom-bundle/bpmn-modeler-custom.css"></require>
   <require from="../bpmn-xml-view/bpmn-xml-view"></require>
-  <require from="../diagramm-tools-right/diagramm-tools-right"></require>
+  <require from="../diagram-tools-right/diagram-tools-right"></require>
   <require from="./bpmn-io.css"></require>
   <div class="bpmn-io-layout">
     <!--
@@ -22,12 +22,12 @@
     -->
     <div class="bpmn-io-layout__main js-main">
       <div class="modeler" show.bind="!showXMLView">
-        <div class="diagramm">
+        <div class="diagram">
           <div ref="canvasModel" class="canvasModel" css="right: ${canvasRight}px;"></div>
         </div>
         <div class="resize-div" ref="resizeButton" css="right: ${resizeButtonRight}px;"></div>
         <div class="properties" ref="panel" css="width: ${ppWidth}px; display: ${ppDisplay}">
-          <diagramm-tools-right modeler.bind="modeler"></diagramm-tools-right>
+          <diagram-tools-right modeler.bind="modeler"></diagram-tools-right>
           <property-panel id="js-properties-panel" modeler.bind="modeler" xml.bind="xml"></property-panel>
         </div>
       </div>
