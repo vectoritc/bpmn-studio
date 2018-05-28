@@ -1,8 +1,10 @@
 <template>
   <require from="./extensions.css"></require>
   <require from="../../styles/registers.css"></require>
+  <div class="index-tab">
     <compose repeat.for="section of sections"
       view-model=".${section.path}"
       view=".${section.path}.html"
       model.bind="{modeler: modeler, elementInPanel: elementInPanel}"></compose>
+  </div>
 </template>
