@@ -6,7 +6,7 @@ import environment from './environment';
 @inject(EventAggregator)
 export class App {
 
-  public _router: Router;
+  private _router: Router;
   public environment: any = environment;
   @observable
   public showSolutionExplorer: boolean = false;
