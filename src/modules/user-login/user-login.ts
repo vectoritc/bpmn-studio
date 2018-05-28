@@ -1,4 +1,4 @@
-import {EventAggregator} from 'aurelia-event-aggregator';
+import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {IAuthenticationService, IIdentity, NotificationType} from '../../contracts/index';
 import {AuthenticationStateEvent} from './../../contracts/index';
@@ -10,6 +10,7 @@ export class UserLogin {
   private _authenticationService: IAuthenticationService;
   private _eventAggregator: EventAggregator;
   private _notificationService: NotificationService;
+  private _subscriptions: Array<Subscription>;
 
   public username: string;
   public password: string;
@@ -26,12 +27,19 @@ export class UserLogin {
   }
 
   public attached(): void {
-    this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
-      if (this.isLoggedIn) {
-        this.logout();
-      }
-    });
+    this._subscriptions = [
       this._eventAggregator.subscribe('user-login:triggerLogout', () => {
+        if (this.isLoggedIn) {
+          this.logout();
+        }
+      }),
+    ];
+  }
+
+  public detached(): void {
+    for (const subscription of this._subscriptions) {
+      subscription.dispose();
+    }
   }
 
   public async login(): Promise<void> {
