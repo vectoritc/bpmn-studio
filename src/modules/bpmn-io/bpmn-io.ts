@@ -42,7 +42,7 @@ export class BpmnIo {
   private ppDisplay: string = 'inline';
   private lastCanvasRight: number = 350;
   private lastPpWidth: number = this.ppWidth;
-  private _ppHiddenBecauseLackOfSpace: boolean = false;
+  private _propertyPanelHiddenForSpaceReasons: boolean = false;
   private _propertyPanelHasNoSpace: boolean = false;
   private _processSolutionExplorerWidth: number = 0;
   private _currentWidth: number = 250;
@@ -145,8 +145,8 @@ export class BpmnIo {
 
     document.addEventListener('keydown', this._saveHotkeyEventHandler);
 
-    this._eventAggregator.subscribe(environment.events.bpmnIo.showProcessSolutionExplorer, () => {
-      this._processSolutionExplorerWidth = 220; // tslint:disable-line
+    this._eventAggregator.subscribe(environment.events.bpmnIo.showProcessSolutionExplorer, (processSolutionExplorerWidth: number) => {
+      this._processSolutionExplorerWidth = processSolutionExplorerWidth; // tslint:disable-line
 
       this._recalculatePropertyPanelWidth();
     });
@@ -229,42 +229,40 @@ export class BpmnIo {
     this._currentWidth = Math.max(this._currentWidth, this.minWidth);
     this._currentWidth = Math.min(this._currentWidth, this.maxWidth);
 
+    const propertyPanelHasEnoughSpace: boolean = this._hasPropertyPanelEnoughSpace();
+    if (propertyPanelHasEnoughSpace) {
+      this._hidePropertyPanelForSpaceReasons();
+    } else if (this._propertyPanelHiddenForSpaceReasons) {
+      this._showPropertyPanelForSpaceReasons();
+    }
+
     this.resizeButtonRight = this._currentWidth + sideBarRightSize;
     this.canvasRight = this._currentWidth;
     this.ppWidth = this._currentWidth;
     this.lastPpWidth = this._currentWidth;
-
-    this._HideAndShowPropertyPanelForPlaceReasons();
   }
 
-  private _HideAndShowPropertyPanelForPlaceReasons(): void { // TODO: Refactor this Function
-    const notEnoughSpaceForPp: boolean = this.maxWidth < this.minWidth;
-    if (notEnoughSpaceForPp) {
-      if (this._propertyPanelHasNoSpace) {
-        return;
-      }
+  private _hidePropertyPanelForSpaceReasons(): void {
+    this._propertyPanelHasNoSpace = true;
 
-      this._propertyPanelHasNoSpace = true;
-
-      if (this.toggled === false) {
-        this._ppHiddenBecauseLackOfSpace = true;
-        this.togglePanel();
-      }
-
-      return;
+    if (this.toggled === false) {
+      this._propertyPanelHiddenForSpaceReasons = true;
+      this.togglePanel();
     }
+  }
 
-    if (this._propertyPanelHasNoSpace) {
-      this._propertyPanelHasNoSpace = false;
+  private _hasPropertyPanelEnoughSpace(): boolean {
+    const notEnoughSpaceForPropertyPanel: boolean = this.maxWidth < this.minWidth;
 
-      if (this._ppHiddenBecauseLackOfSpace) {
-        this.toggled = true;
-        this._ppHiddenBecauseLackOfSpace = false;
-        this.togglePanel();
-      }
+    return notEnoughSpaceForPropertyPanel;
+  }
 
-      return;
-    }
+  private _showPropertyPanelForSpaceReasons(): void {
+    this._propertyPanelHasNoSpace = false;
+    this._propertyPanelHiddenForSpaceReasons = false;
+
+    this.toggled = true;
+    this.togglePanel();
   }
 
   public resize(event: any): void {
@@ -286,9 +284,15 @@ export class BpmnIo {
   private resizeEventHandler = (event: any): void => {
     this.maxWidth = document.body.clientWidth - environment.propertyPanel.maxWidth - this._processSolutionExplorerWidth;
 
-    this._HideAndShowPropertyPanelForPlaceReasons();
+    const propertyPanelHasEnoughSpace: boolean = this._hasPropertyPanelEnoughSpace();
+    if (propertyPanelHasEnoughSpace) {
+      this._hidePropertyPanelForSpaceReasons();
+      return;
+    } else if (this._propertyPanelHiddenForSpaceReasons) {
+      this._showPropertyPanelForSpaceReasons();
+    }
 
-    this.ppWidth = this.lastPpWidth;
+    this.ppWidth = this.lastPpWidth + this._processSolutionExplorerWidth;
     if (this.ppWidth > this.maxWidth) {
       const currentWidth: number = this.maxWidth;
 
