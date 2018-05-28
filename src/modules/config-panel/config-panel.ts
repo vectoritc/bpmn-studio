@@ -10,10 +10,10 @@ import {NotificationService} from './../notification/notification.service';
 @inject(Router, 'BpmnStudioClient', 'NotificationService', EventAggregator)
 export class ConfigPanel {
 
-  private router: Router;
-  private bpmnStudioClient: BpmnStudioClient;
-  private notificationService: NotificationService;
-  private eventAggregator: EventAggregator;
+  private _router: Router;
+  private _bpmnStudioClient: BpmnStudioClient;
+  private _notificationService: NotificationService;
+  private _eventAggregator: EventAggregator;
 
   public config: any = environment.bpmnStudioClient;
 
@@ -21,15 +21,15 @@ export class ConfigPanel {
               bpmnStudioClient: BpmnStudioClient,
               notificationService: NotificationService,
               eventAggregator: EventAggregator) {
-    this.router = router;
-    this.bpmnStudioClient = bpmnStudioClient;
+    this._router = router;
+    this._bpmnStudioClient = bpmnStudioClient;
     this.config.processEngineRoute = environment.bpmnStudioClient.baseRoute;
-    this.notificationService = notificationService;
-    this.eventAggregator = eventAggregator;
+    this._notificationService = notificationService;
+    this._eventAggregator = eventAggregator;
   }
 
   public updateSettings(): void {
-    this.eventAggregator.publish('user-login:triggerLogout');
+    this._eventAggregator.publish('user-login:triggerLogout');
     environment.bpmnStudioClient.baseRoute = this.config.processEngineRoute;
     window.localStorage.setItem('processEngineRoute', this.config.processEngineRoute);
     environment.processengine.routes.processes = `${this.config.processEngineRoute}/datastore/ProcessDef`;
@@ -39,15 +39,15 @@ export class ConfigPanel {
     environment.processengine.routes.startProcess = `${this.config.processEngineRoute}/processengine/start`;
     environment.processengine.routes.userTasks =  `${this.config.processEngineRoute}/datastore/UserTask`;
     environment.processengine.routes.importBPMN = `${this.config.processEngineRoute}/processengine/create_bpmn_from_xml`;
-    this.bpmnStudioClient.updateConfig(this.config);
-    this.notificationService.showNotification(NotificationType.SUCCESS, 'Sucessfully saved settings!');
-    this.eventAggregator.publish('statusbar:processEngineRoute:update', this.config.processEngineRoute);
-    this.router.navigateBack();
+    this._bpmnStudioClient.updateConfig(this.config);
+    this._notificationService.showNotification(NotificationType.SUCCESS, 'Sucessfully saved settings!');
+    this._eventAggregator.publish('statusbar:processEngineRoute:update', this.config.processEngineRoute);
+    this._router.navigateBack();
   }
 
   public cancelUpdate(): void {
-    this.notificationService.showNotification(NotificationType.WARNING, 'Settings dismissed!');
-    this.router.navigateBack();
+    this._notificationService.showNotification(NotificationType.WARNING, 'Settings dismissed!');
+    this._router.navigateBack();
   }
 
 }
