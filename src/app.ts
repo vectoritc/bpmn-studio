@@ -6,7 +6,7 @@ import environment from './environment';
 @inject(EventAggregator)
 export class App {
 
-  public router: Router;
+  public _router: Router;
   public environment: any = environment;
   @observable
   public showSolutionExplorer: boolean = false;
@@ -19,7 +19,7 @@ export class App {
   }
 
   public configureRouter(config: RouterConfiguration, router: Router): void {
-    this.router = router;
+    this._router = router;
     config.title = 'BPMN-Studio';
     config.map([
       {
