@@ -1,11 +1,22 @@
+import { EventAggregator } from 'aurelia-event-aggregator';
+import {inject, observable} from 'aurelia-framework';
 import {Router, RouterConfiguration} from 'aurelia-router';
 import environment from './environment';
 
+@inject(EventAggregator)
 export class App {
 
   public router: Router;
   public environment: any = environment;
+  @observable
   public showSolutionExplorer: boolean = false;
+  public processSolutionPanelWidth: number = 220;
+
+  private _eventAggregator: EventAggregator;
+
+  constructor(eventAggregator: EventAggregator) {
+    this._eventAggregator = eventAggregator;
+  }
 
   public configureRouter(config: RouterConfiguration, router: Router): void {
     this.router = router;
@@ -63,5 +74,17 @@ export class App {
         moduleId: 'modules/waiting-room/waiting-room',
       },
     ]);
+  }
+
+  public showSolutionExplorerChanged(showSolutionExplorer: boolean): void {
+    if (this._eventAggregator === undefined) {
+      return;
+    }
+
+    if (showSolutionExplorer) {
+      this._eventAggregator.publish(environment.events.bpmnIo.showProcessSolutionExplorer, this.processSolutionPanelWidth);
+    } else {
+      this._eventAggregator.publish(environment.events.bpmnIo.hideProcessSolutionExplorer);
+    }
   }
 }

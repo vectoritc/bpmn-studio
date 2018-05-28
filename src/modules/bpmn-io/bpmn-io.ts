@@ -146,7 +146,7 @@ export class BpmnIo {
     document.addEventListener('keydown', this._saveHotkeyEventHandler);
 
     this._eventAggregator.subscribe(environment.events.bpmnIo.showProcessSolutionExplorer, (processSolutionExplorerWidth: number) => {
-      this._processSolutionExplorerWidth = processSolutionExplorerWidth; // tslint:disable-line
+      this._processSolutionExplorerWidth = processSolutionExplorerWidth;
 
       this._recalculatePropertyPanelWidth();
     });
