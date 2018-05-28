@@ -5,7 +5,7 @@
       <span>${identity ? identity.name : 'Guest'} </span>
       <i class="fa fa-caret-down"></i>
     </a>
-    <div id="dropdown" class="dropdown-menu dropdown-menu-right user-login-dropdown">
+    <div ref="dropdown" class="dropdown-menu dropdown-menu-right user-login-dropdown">
       <div class="user-login-dropdown__content clearfix">
         <form if.bind="!isLoggedIn" submit.delegate="login()" role="form">
           <label for="login_username">Username</label>

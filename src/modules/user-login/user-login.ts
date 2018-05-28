@@ -10,6 +10,7 @@ export class UserLogin {
   public username: string;
   public password: string;
   public userLogin: HTMLElement;
+  public dropDown: HTMLElement;
 
   private _authenticationService: IAuthenticationService;
   private _eventAggregator: EventAggregator;
@@ -41,8 +42,8 @@ export class UserLogin {
   }
 
   public isDropdownClicked: EventListenerOrEventListenerObject =  (event: MouseEvent): void => {
-    const dropdown: any = document.querySelector('#dropdown');
-    if (dropdown.contains(event.target)) {
+    const eventTarget: Node = event.target as Node;
+    if (this.dropDown.contains(eventTarget)) {
       this.userLogin.className = 'user-login open';
     }
   }
