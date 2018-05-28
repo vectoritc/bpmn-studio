@@ -6,7 +6,7 @@ import environment from '../../environment';
 @inject(EventAggregator, Router)
 export class StatusBar {
 
-  public processEngineRoute: string;
+  public processEngineRoute: string = '';
   public showXMLButton: boolean = false;
   public xmlIsShown: boolean = false;
   public isRouteHttps: boolean = false;
