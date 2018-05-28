@@ -143,17 +143,18 @@ export class BpmnIo {
 
     document.addEventListener('keydown', this._saveHotkeyEventHandler);
 
-    this._eventAggregator.subscribe(environment.events.bpmnIo.showProcessSolutionExplorer, (processSolutionExplorerWidth: number) => {
-      this._processSolutionExplorerWidth = processSolutionExplorerWidth;
+    this._subscriptions = [
+      this._eventAggregator.subscribe(environment.events.bpmnIo.showProcessSolutionExplorer, (processSolutionExplorerWidth: number) => {
+        this._processSolutionExplorerWidth = processSolutionExplorerWidth;
 
-      this._recalculatePropertyPanelWidth();
-    });
+        this._recalculatePropertyPanelWidth();
+      }),
+      this._eventAggregator.subscribe(environment.events.bpmnIo.hideProcessSolutionExplorer, () => {
+        this._processSolutionExplorerWidth = 0;
 
-    this._eventAggregator.subscribe(environment.events.bpmnIo.hideProcessSolutionExplorer, () => {
-      this._processSolutionExplorerWidth = 0;
-
-      this._recalculatePropertyPanelWidth();
-    });
+        this._recalculatePropertyPanelWidth();
+      }),
+    ];
   }
 
   public detached(): void {
@@ -169,6 +170,10 @@ export class BpmnIo {
         return 0;
       });
       this.xml = newValue;
+    }
+
+    for (const subscription of this._subscriptions) {
+      subscription.dispose();
     }
   }
 
