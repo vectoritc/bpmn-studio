@@ -7,14 +7,14 @@ import {NotificationService} from './../notification/notification.service';
 @inject('AuthenticationService', EventAggregator, 'NotificationService')
 export class UserLogin {
 
+  public username: string;
+  public password: string;
+  public userLogin: HTMLElement;
+
   private _authenticationService: IAuthenticationService;
   private _eventAggregator: EventAggregator;
   private _notificationService: NotificationService;
   private _subscriptions: Array<Subscription>;
-
-  public username: string;
-  public password: string;
-  public userLogin: HTMLElement;
 
   constructor(authenticationService: IAuthenticationService, eventAggregator: EventAggregator, notificationService: NotificationService) {
     this._authenticationService = authenticationService;
