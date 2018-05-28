@@ -49,6 +49,14 @@ export class BpmnIo {
 
   public initialLoadingFinished: boolean;
   public modeler: IBpmnModeler;
+
+  /**
+   * We are using the direct reference of an HTMLElement to place the tools of bpmn-js
+   * in the sidebar.
+   * This is not the best way to do it and it needs to be refactored soon.
+   *
+   * https://github.com/process-engine/bpmn-studio/issues/455
+   */
   public paletteContainer: HTMLDivElement;
 
   constructor(notificationService: NotificationService) {
