@@ -36,7 +36,7 @@ export class StatusBar {
   }
 
   private _setProcessEngineRoute(processEngineRoute: string): void {
-    const [, protocol, , route]: any = /^(http(s)?:\/\/)?(.+)$/i.exec(processEngineRoute);
+    const [, protocol, route]: any = /^([^\:]+:\/\/)?(.*)$/i.exec(processEngineRoute);
     this.isRouteHttps = protocol === 'https://';
     this.processEngineRoute = route;
   }
