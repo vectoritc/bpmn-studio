@@ -5,3 +5,16 @@
 .key-value-input {
   width: 100%;
 }
+
+.key-value-delete-button {
+  border: none;
+  background: inherit;
+}
+
+.key-value-delete-button i {
+  color: darkgray;
+}
+
+.key-value-delete-button:hover i {
+  color: black;
+}
