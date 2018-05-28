@@ -10,9 +10,6 @@
           <td>
             <input type="text" class="props-input" value.bind="businessObjInPanel.formKey">
           </td>
-          <td>
-            <span class="glyphicon glyphicon-remove-circle props-table--clear-button" click.delegate="clearFormKey()"></span>
-          </td>
         </tr>
       </table>
     </div>
@@ -44,9 +41,6 @@
             <input type="text" class="props-input" id="formId" value.bind="selectedForm.id & validateOnChange" placeholder="ID" change.delegate="updateId()">
           </td>
           <td>
-            <span class="glyphicon glyphicon-remove-circle props-table--clear-button" click.delegate="clearId()"></span>
-          </td>
-          <td>
             <div show.bind="isFormSelected">
               <div class="id-tooltip-error" if.bind="validationError">
                 <div class="tooltip">
@@ -56,12 +50,6 @@
                       ${error}
                     </div>
                   </span>
-                </div>
-              </div>
-              <div class="id-tooltip-ok" if.bind="!validationError">
-                <div class="tooltip">
-                  <span class="glyphicon glyphicon-ok"></span>
-                  <span class="tooltiptext">This Id is fine!</span>
                 </div>
               </div>
             </div>
@@ -81,26 +69,17 @@
           <td>
             <input type="text" class="props-input" value.bind="customType" placeholder="Custom Type" change.delegate="updateType()">
           </td>
-          <td>
-            <span class="glyphicon glyphicon-remove-circle props-table--clear-button" click.delegate="clearType()"></span>
-          </td>
         </tr>
         <tr>
           <th>Label</th>
           <td>
             <input type="text" class="props-input" value.bind="selectedForm.label"  placeholder="Label" change.delegate="updateLabel()">
           </td>
-          <td>
-            <span class="glyphicon glyphicon-remove-circle props-table--clear-button" click.delegate="clearLabel()"></span>
-          </td>
         </tr>
         <tr>
           <th>Default Value</th>
           <td>
             <input type="text" class="props-input" value.bind="selectedForm.defaultValue"  placeholder="Default Value" change.delegate="updateDefaultValue()">
-          </td>
-          <td>
-            <span class="glyphicon glyphicon-remove-circle props-table--clear-button" click.delegate="clearValue()"></span>
           </td>
         </tr>
     </div>
