@@ -29,12 +29,19 @@ Engine verbunden werden, um diese Diagramme auszuführen.
 
 1. `npm install`
 1. `npm run build`
-1. `npm run electron-build`
+1. `npm run electron-build-<OS>`
 1. `npm start` / `npm run start_dev`
 
 **Notizen:**
 
-1. `npm run build` soll vor `npm run electron-build` ausgeführt werden.
+1. Für `npm run electron-build-<OS>` gilt:
+  Für den Platzhalter `<OS>` können folgende Werte eingesetzt werden:
+  - `linux` für Linux
+  - `macos` für MacOS
+  - `windows` für Windows
+
+  Beispiel:
+  `npm run electron-build-macos`
 
 **TL;DR Tests**
 
@@ -97,12 +104,36 @@ automatisch neu geladen.
 
 **Zum bauen:**
 
+**Mac:**
+
 ```shell
-npm run electron-build
+npm run electron-build-macos
 ```
 
 Nach dem Bauen kann man in dem `dist/mac` Ordner die fertige Applikation finden
 und ausführen.
+
+**Windows:**
+
+Vor dem erstmaligen Builden müssen windows-build-tools installiert werden:
+
+```shell
+npm install --global --production windows-build-tools
+```
+
+Danach kann gebuildet werden:
+
+```shell
+npm run electron-build-windows
+```
+
+Nach dem Bauen, kann man in dem `dist/` Ordner die Datei `bpmn-studio Setup
+<VERSION>.exe` ausführen, um die Applikation zu installieren; `<VERSION>` wird
+durch die entsprechende Version ersetzt.
+
+Beispiel:
+
+`dist/bpmn-studio Setup 1.2.1.exe`
 
 **Alternative:**
 

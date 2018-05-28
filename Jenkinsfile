@@ -60,7 +60,7 @@ pipeline {
       steps {
         sh('node --version')
         sh('npm run build')
-        sh("npm version ${full_electron_release_version_string} --no-git-tag-version --force")
+        sh("npm version ${full_electron_release_version_string} --allow-same-version --force --no-git-tag-version")
         stash(includes: 'node_modules/, scripts/, package.json', name: 'post_build')
       }
     }
@@ -174,7 +174,7 @@ pipeline {
 
             nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
               sh('node --version')
-              sh("npm version ${publish_version} --no-git-tag-version --force")
+              sh("npm version ${publish_version} --allow-same-version --force --no-git-tag-version ")
               sh("npm publish --tag ${publish_tag} --ignore-scripts")
             }
           }

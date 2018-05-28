@@ -1,0 +1,28 @@
+.diagramm-tools-panel {
+  margin-bottom: 2px;
+  border-bottom: 1px solid #eee;
+  background-color: #f7f7f7;
+  border-left: 1px solid #eee;
+  margin-left: 2px;
+
+  display: flex;
+}
+
+.tool {
+  display: block;
+  text-align: center;
+  padding: 5px;
+  margin: 0 5px;
+  border: none;
+  background: inherit;
+  color: darkgray;
+}
+
+.tool:hover {
+  color: black;
+}
+
+.open .tool {
+  color: black;
+  box-shadow: none !important; //Overwrite Bootstrap btn-group class combination
+}

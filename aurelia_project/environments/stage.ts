@@ -31,6 +31,8 @@ export default {
       showTools: 'navbar:tools:show',
       hideTools: 'navbar:tools:hide',
       updateProcess: 'navbar:process:update',
+      disableSaveButton: 'navbar:saveButton:disable',
+      enableSaveButton: 'navbar:saveButton:enable',
     },
     processDefDetail: {
       saveDiagramm: 'processdefdetail:diagram:save',
