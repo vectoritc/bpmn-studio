@@ -5,9 +5,9 @@ import environment from './environment';
 
 @inject(EventAggregator)
 export class App {
-
   @observable
-  public showSolutionExplorer: boolean = false;
+  public showSolutionExplorer: boolean;
+
   public processSolutionPanelWidth: number = 220;
   public environment: any = environment;
 
@@ -77,10 +77,6 @@ export class App {
   }
 
   public showSolutionExplorerChanged(showSolutionExplorer: boolean): void {
-    if (this._eventAggregator === undefined) {
-      return;
-    }
-
     if (showSolutionExplorer) {
       this._eventAggregator.publish(environment.events.bpmnIo.showProcessSolutionExplorer, this.processSolutionPanelWidth);
     } else {
