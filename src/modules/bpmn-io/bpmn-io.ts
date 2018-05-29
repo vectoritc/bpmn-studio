@@ -3,7 +3,6 @@ import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 import * as $ from 'jquery';
-import 'spectrum-colorpicker/spectrum';
 
 import {ElementDistributeOptions,
         IBpmnFunction,
@@ -22,23 +21,26 @@ const sideBarRightSize: number = 35;
 
 @inject('NotificationService', EventAggregator)
 export class BpmnIo {
-  private _fillColor: string;
-  private _borderColor: string;
+  public modeler: IBpmnModeler;
+
+  public toggleButtonPropertyPanel: HTMLButtonElement;
+  public resizeButton: HTMLButtonElement;
+  public canvasModel: HTMLDivElement;
+
+  @bindable({changeHandler: 'xmlChanged'}) public xml: string;
+  public ppDisplay: string = 'inline';
+  public initialLoadingFinished: boolean = false;
+  public showXMLView: boolean = false;
+  public colorPickerLoaded: boolean = false;
+  public resizeButtonRight: number = 285;
+  public canvasRight: number = 350;
+  public ppWidth: number = 250;
 
   private _toggled: boolean = false;
-  private _toggleButtonPropertyPanel: HTMLButtonElement;
-  private _resizeButton: HTMLButtonElement;
-  private _canvasModel: HTMLDivElement;
-  private _showXMLView: boolean = false;
-
-  private _resizeButtonRight: number = 285;
-  private _canvasRight: number = 350;
   private _minWidth: number = environment.propertyPanel.minWidth;
   private _maxWidth: number = document.body.clientWidth - environment.propertyPanel.maxWidth;
-  private _ppWidth: number = 250;
-  private _ppDisplay: string = 'inline';
   private _lastCanvasRight: number = 350;
-  private _lastPpWidth: number = this._ppWidth;
+  private _lastPpWidth: number = this.ppWidth;
   private _propertyPanelHiddenForSpaceReasons: boolean = false;
   private _propertyPanelHasNoSpace: boolean = false;
   private _processSolutionExplorerWidth: number = 0;
@@ -51,11 +53,6 @@ export class BpmnIo {
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
-
-  @bindable({changeHandler: 'xmlChanged'}) public xml: string;
-
-  public initialLoadingFinished: boolean;
-  public modeler: IBpmnModeler;
 
   /**
    * We are using the direct reference of a container element to place the tools of bpmn-js
@@ -91,10 +88,10 @@ export class BpmnIo {
   }
 
   public attached(): void {
-    this.modeler.attachTo(this._canvasModel);
-    const minimapViewport: any = this._canvasModel.getElementsByClassName('djs-minimap-viewport')[0];
-    const minimapArea: any = this._canvasModel.getElementsByClassName('djs-minimap-map')[0];
-    this._minimapToggle = this._canvasModel.getElementsByClassName('djs-minimap-toggle')[0];
+    this.modeler.attachTo(this.canvasModel);
+    const minimapViewport: any = this.canvasModel.getElementsByClassName('djs-minimap-viewport')[0];
+    const minimapArea: any = this.canvasModel.getElementsByClassName('djs-minimap-map')[0];
+    this._minimapToggle = this.canvasModel.getElementsByClassName('djs-minimap-toggle')[0];
 
     // TODO: Refactor to CSS classes; Ref: https://github.com/process-engine/bpmn-studio/issues/462
     //  Styling for Minimap {{{ //
@@ -117,7 +114,7 @@ export class BpmnIo {
 
     this.initialLoadingFinished = true;
 
-    this._resizeButton.addEventListener('mousedown', (e: Event) => {
+    this.resizeButton.addEventListener('mousedown', (e: Event) => {
       const windowEvent: Event = e || window.event;
       windowEvent.cancelBubble = true;
 
@@ -162,6 +159,10 @@ export class BpmnIo {
     this.modeler.destroy();
     window.removeEventListener('resize', this.resizeEventHandler);
     document.removeEventListener('keydown', this._saveHotkeyEventHandler);
+
+    for (const subscription of this._subscriptions) {
+      subscription.dispose();
+    }
   }
 
   public xmlChanged(newValue: string, oldValue: string): void {
@@ -170,10 +171,6 @@ export class BpmnIo {
         return 0;
       });
       this.xml = newValue;
-    }
-
-    for (const subscription of this._subscriptions) {
-      subscription.dispose();
     }
   }
 
@@ -212,16 +209,16 @@ export class BpmnIo {
         return;
       }
 
-      this._toggleButtonPropertyPanel.classList.add('tool--active');
-      this._ppDisplay = 'inline';
-      this._canvasRight = this._lastCanvasRight;
+      this.toggleButtonPropertyPanel.classList.add('tool--active');
+      this.ppDisplay = 'inline';
+      this.canvasRight = this._lastCanvasRight;
       this._toggled = false;
     } else {
-      this._lastCanvasRight = this._canvasRight;
+      this._lastCanvasRight = this.canvasRight;
 
-      this._toggleButtonPropertyPanel.classList.remove('tool--active');
-      this._ppDisplay = 'none';
-      this._canvasRight = 1;
+      this.toggleButtonPropertyPanel.classList.remove('tool--active');
+      this.ppDisplay = 'none';
+      this.canvasRight = 1;
       this._toggled = true;
     }
   }
@@ -239,9 +236,9 @@ export class BpmnIo {
       this._showPropertyPanelForSpaceReasons();
     }
 
-    this._resizeButtonRight = this._currentWidth + sideBarRightSize;
-    this._canvasRight = this._currentWidth;
-    this._ppWidth = this._currentWidth;
+    this.resizeButtonRight = this._currentWidth + sideBarRightSize;
+    this.canvasRight = this._currentWidth;
+    this.ppWidth = this._currentWidth;
     this._lastPpWidth = this._currentWidth;
   }
 
@@ -276,11 +273,11 @@ export class BpmnIo {
   }
 
   public async toggleXMLView(): Promise<void> {
-    if (!this._showXMLView) {
+    if (!this.showXMLView) {
       this.xml = await this.getXML();
-      this._showXMLView = true;
+      this.showXMLView = true;
     } else {
-      this._showXMLView = false;
+      this.showXMLView = false;
     }
   }
 
@@ -295,16 +292,16 @@ export class BpmnIo {
       this._showPropertyPanelForSpaceReasons();
     }
 
-    this._ppWidth = this._lastPpWidth + this._processSolutionExplorerWidth;
-    if (this._ppWidth > this._maxWidth) {
+    this.ppWidth = this._lastPpWidth + this._processSolutionExplorerWidth;
+    if (this.ppWidth > this._maxWidth) {
       const currentWidth: number = this._maxWidth;
 
-      this._resizeButtonRight = currentWidth + sideBarRightSize;
-      this._canvasRight = currentWidth;
-      this._ppWidth = currentWidth;
+      this.resizeButtonRight = currentWidth + sideBarRightSize;
+      this.canvasRight = currentWidth;
+      this.ppWidth = currentWidth;
     } else {
-      this._resizeButtonRight = this._lastPpWidth + sideBarRightSize;
-      this._canvasRight = this._lastPpWidth;
+      this.resizeButtonRight = this._lastPpWidth + sideBarRightSize;
+      this.canvasRight = this._lastPpWidth;
     }
   }
 
