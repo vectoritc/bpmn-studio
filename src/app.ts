@@ -9,7 +9,6 @@ export class App {
   public showSolutionExplorer: boolean;
 
   public processSolutionPanelWidth: number = 220;
-  public environment: any = environment;
 
   private _router: Router;
   private _eventAggregator: EventAggregator;
