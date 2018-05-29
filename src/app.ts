@@ -16,6 +16,7 @@ export class App {
 
   constructor(eventAggregator: EventAggregator) {
     this._eventAggregator = eventAggregator;
+    this.showSolutionExplorer = false;
   }
 
   public configureRouter(config: RouterConfiguration, router: Router): void {
