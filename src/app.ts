@@ -6,12 +6,12 @@ import environment from './environment';
 @inject(EventAggregator)
 export class App {
 
-  private _router: Router;
-  public environment: any = environment;
   @observable
   public showSolutionExplorer: boolean = false;
   public processSolutionPanelWidth: number = 220;
+  public environment: any = environment;
 
+  private _router: Router;
   private _eventAggregator: EventAggregator;
 
   constructor(eventAggregator: EventAggregator) {
