@@ -35,13 +35,6 @@ export class StatusBar {
     });
   }
 
-  private _setProcessEngineRoute(processEngineRoute: string): void {
-    // This Regex returns the protocol and the route from the processEngineRoute string
-    const [, protocol, route]: RegExpExecArray = /^([^\:]+:\/\/)?(.*)$/i.exec(processEngineRoute);
-    this.isEncryptedCommunication = protocol === 'https://';
-    this.processEngineRoute = route;
-  }
-
   public toggleXMLView(): void {
     this._eventAggregator.publish(environment.events.processDefDetail.toggleXMLView);
     this.xmlIsShown = !this.xmlIsShown;
@@ -49,5 +42,11 @@ export class StatusBar {
 
   public navigateToSettings(): void {
     this._router.navigate('/configuration');
+  }
+
+  private _setProcessEngineRoute(processEngineRoute: string): void {
+    const [, protocol, , route]: any = /^(http(s)?:\/\/)?(.+)$/i.exec(processEngineRoute);
+    this.isRouteHttps = protocol === 'https://';
+    this.processEngineRoute = route;
   }
 }
