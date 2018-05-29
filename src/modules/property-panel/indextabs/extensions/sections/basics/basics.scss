@@ -9,14 +9,14 @@
 
 .key-value-delete-button {
   border: none;
-  background: inherit;
+  background: transparent;
   padding-top: 2px;
 }
 
-.key-value-delete-button i {
+.key-value-delete-button {
   color: darkgray;
 }
 
-.key-value-delete-button:hover i {
+.key-value-delete-button:hover {
   color: black;
 }
