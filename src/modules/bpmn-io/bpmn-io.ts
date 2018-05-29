@@ -230,16 +230,16 @@ export class BpmnIo {
 
       return;
     }
-
+    const resizeDivAdjustmentPixel: number = 3;
     this.ppWidth = this.lastPpWidth;
     if (this.ppWidth > this.maxWidth) {
       const currentWidth: number = this.maxWidth;
 
-      this.resizeButtonRight = currentWidth + sideBarRightSize;
+      this.resizeButtonRight = currentWidth + sideBarRightSize - resizeDivAdjustmentPixel;
       this.canvasRight = currentWidth;
       this.ppWidth = currentWidth;
     } else {
-      this.resizeButtonRight = this.lastPpWidth + sideBarRightSize;
+      this.resizeButtonRight = this.lastPpWidth + sideBarRightSize - resizeDivAdjustmentPixel;
       this.canvasRight = this.lastPpWidth;
     }
   }
