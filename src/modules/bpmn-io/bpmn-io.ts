@@ -51,9 +51,12 @@ export class BpmnIo {
   public modeler: IBpmnModeler;
 
   /**
-   * We are using the direct reference of an HTMLElement to place the tools of bpmn-js
-   * in the sidebar.
-   * This is not the best way to do it and it needs to be refactored soon.
+   * We are using the direct reference of a container element to place the tools of bpmn-js
+   * in the left sidebar (bpmn-io-layout__tools-left).
+   *
+   * This needs to be refactored.
+   * To get more control over certain elements in the palette it would be nice to have
+   * an aurelia-component for handling the logic behind it.
    *
    * https://github.com/process-engine/bpmn-studio/issues/455
    */
