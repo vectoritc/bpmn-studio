@@ -5,32 +5,17 @@ import {IFileInfo, IPagination, IProcessEngineRepository, IProcessEngineService,
 import environment from '../../environment';
 import {NotificationService} from './../notification/notification.service';
 
-@inject('ProcessEngineRepository', 'FileContent', 'NotificationService', EventAggregator)
+@inject('ProcessEngineRepository', 'NotificationService', EventAggregator)
 export class ProcessEngineService implements IProcessEngineService {
 
   private repository: IProcessEngineRepository;
-  private fileInfo: IFileInfo;
   private notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
 
-  constructor(repository: IProcessEngineRepository, fileInfo: IFileInfo, notificationService: NotificationService, eventAggregator: EventAggregator) {
+  constructor(repository: IProcessEngineRepository, notificationService: NotificationService, eventAggregator: EventAggregator) {
     this.repository = repository;
-    this.fileInfo = fileInfo;
     this.notificationService = notificationService;
     this._eventAggregator = eventAggregator;
-    if (this.fileInfo.content !== undefined) {
-      this.createAndPublish();
-    }
-  }
-
-  private async createAndPublish(): Promise<void> {
-    try {
-      await this.createProcessfromXML(this.fileInfo.content);
-      this._eventAggregator.publish(environment.events.refreshProcessDefs);
-      this.notificationService.showNotification(NotificationType.SUCCESS, 'Diagram successfully imported!');
-    } catch (error) {
-      this.notificationService.showNotification(NotificationType.ERROR,  `Error while importing file: ${error.message}`);
-    }
   }
 
   public deleteProcessDef(processId: string): Promise<void> {
