@@ -28,7 +28,7 @@ export class BpmnIo {
   private isResizeClicked: boolean = false;
   private showXMLView: boolean = false;
 
-  private resizeButtonRight: number = 285;
+  private resizeButtonRight: number = 282;
   private canvasRight: number = 350;
   private minWidth: number = environment.propertyPanel.minWidth;
   private maxWidth: number = document.body.clientWidth - environment.propertyPanel.maxWidth;
@@ -180,11 +180,12 @@ export class BpmnIo {
   public resize(event: any): void {
     let currentWidth: number = document.body.clientWidth - event.clientX;
     currentWidth = currentWidth - sideBarRightSize;
-
     currentWidth = Math.max(currentWidth, this.minWidth);
     currentWidth = Math.min(currentWidth, this.maxWidth);
 
-    this.resizeButtonRight = currentWidth + sideBarRightSize;
+    const resizeDivAdjustmentPixel: number = 3;
+
+    this.resizeButtonRight = currentWidth + sideBarRightSize - resizeDivAdjustmentPixel;
     this.canvasRight = currentWidth;
     this.ppWidth = currentWidth;
     this.lastPpWidth = currentWidth;
@@ -229,16 +230,16 @@ export class BpmnIo {
 
       return;
     }
-
+    const resizeDivAdjustmentPixel: number = 3;
     this.ppWidth = this.lastPpWidth;
     if (this.ppWidth > this.maxWidth) {
       const currentWidth: number = this.maxWidth;
 
-      this.resizeButtonRight = currentWidth + sideBarRightSize;
+      this.resizeButtonRight = currentWidth + sideBarRightSize - resizeDivAdjustmentPixel;
       this.canvasRight = currentWidth;
       this.ppWidth = currentWidth;
     } else {
-      this.resizeButtonRight = this.lastPpWidth + sideBarRightSize;
+      this.resizeButtonRight = this.lastPpWidth + sideBarRightSize - resizeDivAdjustmentPixel;
       this.canvasRight = this.lastPpWidth;
     }
   }
