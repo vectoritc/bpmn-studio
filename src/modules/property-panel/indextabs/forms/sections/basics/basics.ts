@@ -77,6 +77,11 @@ export class BasicsSection implements ISection {
   }
 
   public removeSelectedForm(): void {
+    const noFormFieldSelected: boolean = !this.isFormSelected;
+    if (noFormFieldSelected) {
+      return;
+    }
+
     this._formElement.fields.splice(this._selectedIndex, 1);
 
     this.isFormSelected = false;
