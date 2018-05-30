@@ -72,12 +72,20 @@ export class ProcessDefList {
     this._eventAggregator.publish(environment.events.refreshProcessDefs);
 
     this._fileReader.onload = async(fileInformations: any): Promise<void> => {
-      this._newDiagramXml = fileInformations.target.result;
-      const fileName: string = this.selectedFiles[0].name;
-      this.newDiagramName = fileName.substring(0, fileName.lastIndexOf('.'));
-      this.showDiagramNameDialog = true;
+      const xml: string = fileInformations.target.result;
+      const filename: string = this.selectedFiles[0].name;
+
       this.fileInput.value = '';
+
+      this._importXmlFromFile(filename, xml);
     };
+  }
+
+  private _importXmlFromFile(filename: string, xml: string): void {
+    this._newDiagramXml = xml;
+    this.newDiagramName = filename.substring(0, filename.lastIndexOf('.'));
+
+    this.showDiagramNameDialog = true;
   }
 
   // TODO: This needs to be refactored into an importService; Therefore it is not very usefuly to engenieer too much now.
