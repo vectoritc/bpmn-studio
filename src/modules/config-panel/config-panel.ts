@@ -3,32 +3,36 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import environment from '../../environment';
+import {IAuthenticationService} from './../../contracts/authentication/IAuthenticationService';
 import {NotificationType} from './../../contracts/index';
 import {NotificationService} from './../notification/notification.service';
 
-@inject(Router, 'BpmnStudioClient', 'NotificationService', EventAggregator)
+@inject(Router, 'BpmnStudioClient', 'NotificationService', EventAggregator, 'AuthenticationService')
 export class ConfigPanel {
 
   private _router: Router;
   private _bpmnStudioClient: BpmnStudioClient;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
+  private _authenticationService: IAuthenticationService;
 
   public config: any = environment.bpmnStudioClient;
 
   constructor(router: Router,
               bpmnStudioClient: BpmnStudioClient,
               notificationService: NotificationService,
-              eventAggregator: EventAggregator) {
+              eventAggregator: EventAggregator,
+              authenticationService: IAuthenticationService) {
     this._router = router;
     this._bpmnStudioClient = bpmnStudioClient;
     this.config.processEngineRoute = environment.bpmnStudioClient.baseRoute;
     this._notificationService = notificationService;
     this._eventAggregator = eventAggregator;
+    this._authenticationService = authenticationService;
   }
 
   public updateSettings(): void {
-    this._eventAggregator.publish('user-login:triggerlogout');
+    this._authenticationService.logout();
     environment.bpmnStudioClient.baseRoute = this.config.processEngineRoute;
     window.localStorage.setItem('processEngineRoute', this.config.processEngineRoute);
     environment.processengine.routes.processes = `${this.config.processEngineRoute}/datastore/ProcessDef`;
