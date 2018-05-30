@@ -14,13 +14,14 @@ import {
 
 import {
   AuthenticationStateEvent,
+  IFileInfo,
   IProcessEngineService,
   NotificationType,
 } from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
-@inject(EventAggregator, 'BpmnStudioClient', Router, 'ProcessEngineService', 'NotificationService')
+@inject(EventAggregator, 'BpmnStudioClient', 'FileContent', 'NotificationService', Router, 'ProcessEngineService')
 export class ProcessDefList {
   private _processEngineService: IProcessEngineService;
   private _bpmnStudioClient: BpmnStudioClient;
@@ -40,6 +41,7 @@ export class ProcessDefList {
   public fileInput: HTMLInputElement;
   public showOverwriteDialog: boolean;
   public showDiagramNameDialog: boolean;
+
   // TODO: Put this into an interface IBpmnDiagram and into the contracts folder
   public newDiagramName: string;
 
@@ -50,28 +52,43 @@ export class ProcessDefList {
 
   constructor(eventAggregator: EventAggregator,
               bpmnStudioClient: BpmnStudioClient,
+              fileInfo: IFileInfo,
+              notificationService: NotificationService,
               router: Router,
-              processEngineService: IProcessEngineService,
-              notificationService: NotificationService) {
+              processEngineService: IProcessEngineService) {
     this._processEngineService = processEngineService;
     this._eventAggregator = eventAggregator;
     this._bpmnStudioClient = bpmnStudioClient;
     this._router = router;
     this._notificationService = notificationService;
 
+    const fileHasContent: boolean = fileInfo.content !== undefined;
+
+    if (fileHasContent) {
+      // This Regex cuts out the filename from the filepath.
+      const filename: string = /[^\\/:*?"<>|\r\n]+$/.exec(fileInfo.path)[0];
+      const xml: string = fileInfo.content;
+
+      fileInfo.content = undefined;
+
+      this._importXmlFromFile(filename, xml);
+    }
+
     this._refreshProcesslist();
     this._eventAggregator.publish(environment.events.refreshProcessDefs);
 
     this._fileReader.onload = async(fileInformations: any): Promise<void> => {
-      this._newDiagramXml = fileInformations.target.result;
-      const fileName: string = this.selectedFiles[0].name;
-      this.newDiagramName = fileName.substring(0, fileName.lastIndexOf('.'));
-      this.showDiagramNameDialog = true;
+      const xml: string = fileInformations.target.result;
+      const filename: string = this.selectedFiles[0].name;
+
       this.fileInput.value = '';
+
+      this._importXmlFromFile(filename, xml);
     };
   }
 
-  // TODO: This needs to be refactored into an importService; Therefore it is not very usefuly to engenieer too much now.
+  // TODO: This needs to be refactored into an importService;
+  //       Therefore it is not very usefuly to engineer too much now.
   public async importNewDiagram(): Promise<void> {
     //  Check is name is empty; do not close dialog if it is {{{ //
     const nameIsEmpty: boolean = this._diagramNameIsEmpty();
@@ -195,6 +212,13 @@ export class ProcessDefList {
 
   public toggleSolutionExplorer(): void {
     this.showSolutionExplorer = !this.showSolutionExplorer;
+  }
+
+  private _importXmlFromFile(filename: string, xml: string): void {
+    this._newDiagramXml = xml;
+    this.newDiagramName = filename.substring(0, filename.lastIndexOf('.'));
+
+    this.showDiagramNameDialog = true;
   }
 
   private _refreshProcesslist(): void {
