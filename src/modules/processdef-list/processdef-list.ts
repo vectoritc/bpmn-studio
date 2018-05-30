@@ -14,13 +14,14 @@ import {
 
 import {
   AuthenticationStateEvent,
+  IFileInfo,
   IProcessEngineService,
   NotificationType,
 } from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
-@inject(EventAggregator, 'BpmnStudioClient', Router, 'ProcessEngineService', 'NotificationService')
+@inject(EventAggregator, 'BpmnStudioClient', 'FileContent', 'NotificationService', Router, 'ProcessEngineService')
 export class ProcessDefList {
   private _processEngineService: IProcessEngineService;
   private _bpmnStudioClient: BpmnStudioClient;
@@ -50,9 +51,10 @@ export class ProcessDefList {
 
   constructor(eventAggregator: EventAggregator,
               bpmnStudioClient: BpmnStudioClient,
+              fileInfo: IFileInfo,
+              notificationService: NotificationService,
               router: Router,
-              processEngineService: IProcessEngineService,
-              notificationService: NotificationService) {
+              processEngineService: IProcessEngineService) {
     this._processEngineService = processEngineService;
     this._eventAggregator = eventAggregator;
     this._bpmnStudioClient = bpmnStudioClient;
