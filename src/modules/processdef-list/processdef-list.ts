@@ -61,6 +61,13 @@ export class ProcessDefList {
     this._router = router;
     this._notificationService = notificationService;
 
+    if (fileInfo.content !== undefined) {
+      const filename: string = /[^\\/:*?"<>|\r\n]+$/.exec(fileInfo.path)[0];
+      const xml: string = fileInfo.content;
+
+      fileInfo.content = undefined;
+    }
+
     this._refreshProcesslist();
     this._eventAggregator.publish(environment.events.refreshProcessDefs);
 
