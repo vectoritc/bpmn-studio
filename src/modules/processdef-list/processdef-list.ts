@@ -62,6 +62,7 @@ export class ProcessDefList {
     this._notificationService = notificationService;
 
     if (fileInfo.content !== undefined) {
+      // This Regex cuts out the filename from the filepath
       const filename: string = /[^\\/:*?"<>|\r\n]+$/.exec(fileInfo.path)[0];
       const xml: string = fileInfo.content;
 
