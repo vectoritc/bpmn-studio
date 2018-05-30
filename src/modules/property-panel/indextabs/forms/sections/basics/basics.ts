@@ -86,7 +86,7 @@ export class BasicsSection implements ISection {
 
     this.isFormSelected = false;
     this.selectedForm = undefined;
-    this.selectedIndex = undefined;
+    this._selectedIndex = undefined;
 
     this._reloadForms();
   }
