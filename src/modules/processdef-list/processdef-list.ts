@@ -41,6 +41,7 @@ export class ProcessDefList {
   public fileInput: HTMLInputElement;
   public showOverwriteDialog: boolean;
   public showDiagramNameDialog: boolean;
+
   // TODO: Put this into an interface IBpmnDiagram and into the contracts folder
   public newDiagramName: string;
 
@@ -61,8 +62,10 @@ export class ProcessDefList {
     this._router = router;
     this._notificationService = notificationService;
 
-    if (fileInfo.content !== undefined) {
-      // This Regex cuts out the filename from the filepath
+    const fileHasContent: boolean = fileInfo.content !== undefined;
+
+    if (fileHasContent) {
+      // This Regex cuts out the filename from the filepath.
       const filename: string = /[^\\/:*?"<>|\r\n]+$/.exec(fileInfo.path)[0];
       const xml: string = fileInfo.content;
 
@@ -84,7 +87,8 @@ export class ProcessDefList {
     };
   }
 
-  // TODO: This needs to be refactored into an importService; Therefore it is not very usefuly to engenieer too much now.
+  // TODO: This needs to be refactored into an importService;
+  //       Therefore it is not very usefuly to engineer too much now.
   public async importNewDiagram(): Promise<void> {
     //  Check is name is empty; do not close dialog if it is {{{ //
     const nameIsEmpty: boolean = this._diagramNameIsEmpty();
