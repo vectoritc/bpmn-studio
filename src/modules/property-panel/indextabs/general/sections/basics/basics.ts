@@ -56,10 +56,11 @@ export class BasicsSection implements ISection {
   }
 
   public detached(): void {
-    if (this._validationError) {
-      this.businessObjInPanel.id = this._previousProcessRefId;
-      this._validationController.validate();
+    if (!this._validationError) {
+      return;
     }
+    this.businessObjInPanel.id = this._previousProcessRefId;
+    this._validationController.validate();
   }
 
   public isSuitableForElement(element: IShape): boolean {

@@ -22,7 +22,7 @@ export class EscalationEventSection implements ISection {
   public escalations: Array<IEscalation>;
   public selectedId: string;
   public selectedEscalation: IEscalation;
-  private escalationCodeVariable: string;
+  public escalationCodeVariable: string;
 
   private _businessObjInPanel: IEscalationElement;
   private _moddle: IBpmnModdle;
