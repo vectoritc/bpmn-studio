@@ -7,6 +7,16 @@ export class UserLogin {
 
   public username: string;
   public password: string;
+
+    /**
+   * We are using the direct reference of a container element to open or
+   * close the dropdown.
+   *
+   * This needs to be refactored.
+   *
+   * https://github.com/process-engine/bpmn-studio/issues/455
+   */
+
   public userLogin: HTMLElement;
   public dropdown: HTMLElement;
   public logoutButton: HTMLButtonElement;
