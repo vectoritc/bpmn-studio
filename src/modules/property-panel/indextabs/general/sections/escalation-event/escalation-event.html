@@ -4,7 +4,9 @@
   <div class="section-panel panel--grow">
     <div class="panel__heading">
       Escalation Event
-      <button class="add-context-button" click.delegate="addEscalation()">+</button>
+      <button class="add-context-button" click.delegate="addEscalation()">
+        <i class="fa fa-plus"></i>
+      </button>
     </div>
     <div class="panel__content">
       <table class="props-table">
@@ -25,26 +27,17 @@
           <td>
             <input type="text" class="props-input" value.bind="selectedEscalation.name" change.delegate="updateEscalationName()">
           </td>
-          <td>
-            <span class="glyphicon glyphicon-remove-circle props-table--clear-button" click.delegate="_clearDocumentation()"></span>
-          </td>
         </tr>
         <tr>
           <th>Code</th>
           <td>
             <input type="text" class="props-input" value.bind="selectedEscalation.escalationCode" change.delegate="updateEscalationCode()">
           </td>
-          <td>
-            <span class="glyphicon glyphicon-remove-circle props-table--clear-button" click.delegate="_clearDocumentation()"></span>
-          </td>
         </tr>
         <tr>
           <th>Variable</th>
           <td>
-            <input type="text" class="props-input" value.bind="escalationCodeVariable" change.delegate="updateEscalationMessage()">
-          </td>
-          <td>
-            <span class="glyphicon glyphicon-remove-circle props-table--clear-button" click.delegate="_clearDocumentation()"></span>
+            <input type="text" class="props-input" value.bind="escalationCodeVariable" change.delegate="updateEscalationCodeVariable()">
           </td>
         </tr>
       </table>

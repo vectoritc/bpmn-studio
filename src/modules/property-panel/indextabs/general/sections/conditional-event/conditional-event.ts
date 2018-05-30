@@ -10,7 +10,6 @@ export class ConditionalEventSection implements ISection {
 
   public path: string = '/sections/conditional-event/conditional-event';
   public canHandleElement: boolean = false;
-
   public conditionBody: string;
   public variableName: string;
   public variableEvent: string;
@@ -50,20 +49,5 @@ export class ConditionalEventSection implements ISection {
 
   public updateVariableEvent(): void {
     this._businessObjInPanel.eventDefinitions[0].variableEvent = this.variableEvent;
-  }
-
-  public clearCondition(): void {
-    this.conditionBody = '';
-    this.updateCondition();
-  }
-
-  public clearVariableName(): void {
-    this.variableName = '';
-    this.updateVariableName();
-  }
-
-  public clearVariableEvent(): void {
-    this.variableEvent = '';
-    this.updateVariableEvent();
   }
 }

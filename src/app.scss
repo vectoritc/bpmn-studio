@@ -5,8 +5,9 @@ body {
 }
 
 a:focus,
-button:focus {
-  outline: none;
+button:focus,
+input:focus {
+  outline: none !important;
 }
 
 a:hover {

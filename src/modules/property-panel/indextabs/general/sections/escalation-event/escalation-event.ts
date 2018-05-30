@@ -19,84 +19,37 @@ export class EscalationEventSection implements ISection {
 
   public path: string = '/sections/escalation-event/escalation-event';
   public canHandleElement: boolean = false;
-
-  private businessObjInPanel: IEscalationElement;
-  private moddle: IBpmnModdle;
-  private modeler: IBpmnModeler;
-  private generalService: GeneralService;
-
-  private escalationCodeVariable: string;
-  private isBoundaryEvent: boolean = true;
-
   public escalations: Array<IEscalation>;
   public selectedId: string;
   public selectedEscalation: IEscalation;
+  public escalationCodeVariable: string;
+
+  private _businessObjInPanel: IEscalationElement;
+  private _moddle: IBpmnModdle;
+  private _modeler: IBpmnModeler;
+  private _generalService: GeneralService;
+  private _isBoundaryEvent: boolean = true;
 
   constructor(generalService?: GeneralService) {
-    this.generalService = generalService;
+    this._generalService = generalService;
   }
 
   public async activate(model: IPageModel): Promise<void> {
-    this.businessObjInPanel = model.elementInPanel.businessObject;
+    this._businessObjInPanel = model.elementInPanel.businessObject;
 
-    this.moddle = model.modeler.get('moddle');
-    this.modeler = model.modeler;
-    this.escalations = await this.getEscalations();
+    this._moddle = model.modeler.get('moddle');
+    this._modeler = model.modeler;
+    this.escalations = await this._getEscalations();
 
-    this.init();
+    this._init();
   }
 
   public isSuitableForElement(element: IShape): boolean {
-    if (this.elementIsEscalationEvent(element)) {
-      this.isBoundaryEvent = this.elementIsBoundaryEvent(element);
+    if (this._elementIsEscalationEvent(element)) {
+      this._isBoundaryEvent = this._elementIsBoundaryEvent(element);
       return true;
     }
     return false;
-  }
-
-  private elementIsEscalationEvent(element: IShape): boolean {
-    return element !== undefined
-        && element.businessObject !== undefined
-        && element.businessObject.eventDefinitions !== undefined
-        && element.businessObject.eventDefinitions[0].$type === 'bpmn:EscalationEventDefinition';
-  }
-
-  private elementIsBoundaryEvent(element: IShape): boolean {
-    return element !== undefined
-        && element.businessObject !== undefined
-        && element.businessObject.$type === 'bpmn:BoundaryEvent';
-  }
-
-  private init(): void {
-    const eventDefinitions: Array<IModdleElement> = this.businessObjInPanel.eventDefinitions;
-    const businessObjectHasNoEscalationEvents: boolean = eventDefinitions === undefined
-                                                      || eventDefinitions === null
-                                                      || eventDefinitions[0].$type !== 'bpmn:EscalationEventDefinition';
-
-    if (businessObjectHasNoEscalationEvents) {
-      return;
-    }
-
-    const escalationElement: IEscalationElement = this.businessObjInPanel.eventDefinitions[0];
-    const elementReferencesEscalation: boolean = escalationElement.escalationRef !== undefined
-                                              && escalationElement.escalationRef !== null;
-
-    if (elementReferencesEscalation) {
-      this.selectedId = escalationElement.escalationRef.id;
-      this.updateEscalation();
-    } else {
-      this.selectedEscalation = null;
-      this.selectedId = null;
-    }
-  }
-
-  private getEscalations(): Array<IEscalation> {
-    const rootElements: Array<IModdleElement> = this.modeler._definitions.rootElements;
-    const escalations: Array<IEscalation> = rootElements.filter((element: IModdleElement) => {
-      return element.$type === 'bpmn:Escalation';
-    });
-
-    return escalations;
   }
 
   public updateEscalation(): void {
@@ -110,7 +63,7 @@ export class EscalationEventSection implements ISection {
       return escalation.id === this.selectedId;
     });
 
-    const escalationElement: IEscalationElement = this.businessObjInPanel.eventDefinitions[0];
+    const escalationElement: IEscalationElement = this._businessObjInPanel.eventDefinitions[0];
 
     this.escalationCodeVariable = escalationElement.escalationCodeVariable;
     escalationElement.escalationRef = this.selectedEscalation;
@@ -126,35 +79,24 @@ export class EscalationEventSection implements ISection {
     selectedEscalation.escalationCode = this.selectedEscalation.escalationCode;
   }
 
-  private _getSelectedEscalation(): IEscalation {
-    const rootElements: Array<IModdleElement> = this.modeler._definitions.rootElements;
-    const selectedEscalation: IEscalation = rootElements.find((element: IModdleElement) => {
-      const isSelectedEscalation: boolean = element.$type === 'bpmn:Escalation' && element.id === this.selectedId;
-
-      return isSelectedEscalation;
-    });
-
-    return selectedEscalation;
-  }
-
   public updateEscalationCodeVariable(): void {
-    const escalationElement: IEscalationElement = this.businessObjInPanel.eventDefinitions[0];
+    const escalationElement: IEscalationElement = this._businessObjInPanel.eventDefinitions[0];
     escalationElement.escalationCodeVariable = this.escalationCodeVariable;
   }
 
   public addEscalation(): void {
     const bpmnEscalationProperty: Object = {
-      id: `Escalation_${this.generalService.generateRandomId()}`,
+      id: `Escalation_${this._generalService.generateRandomId()}`,
       name: 'Escalation Name',
     };
-    const bpmnEscalation: IEscalation = this.moddle.create('bpmn:Escalation', bpmnEscalationProperty);
+    const bpmnEscalation: IEscalation = this._moddle.create('bpmn:Escalation', bpmnEscalationProperty);
 
-    this.modeler._definitions.rootElements.push(bpmnEscalation);
+    this._modeler._definitions.rootElements.push(bpmnEscalation);
 
-    this.moddle.toXML(this.modeler._definitions.rootElements, (toXMLError: Error, xmlStrUpdated: string) => {
-      this.modeler.importXML(xmlStrUpdated, async(importXMLError: Error) => {
-        await this.refreshEscalations();
-        await this.setBusinessObject();
+    this._moddle.toXML(this._modeler._definitions.rootElements, (toXMLError: Error, xmlStrUpdated: string) => {
+      this._modeler.importXML(xmlStrUpdated, async(importXMLError: Error) => {
+        await this._refreshEscalations();
+        await this._setBusinessObject();
         this.selectedId = bpmnEscalation.id;
         this.selectedEscalation = bpmnEscalation;
         this.updateEscalation();
@@ -162,25 +104,69 @@ export class EscalationEventSection implements ISection {
     });
   }
 
-  private async refreshEscalations(): Promise<void> {
-    this.escalations = await this.getEscalations();
+  private async _refreshEscalations(): Promise<void> {
+    this.escalations = await this._getEscalations();
   }
 
-  private setBusinessObject(): void {
-    const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
-    const elementInPanel: IShape = elementRegistry.get(this.businessObjInPanel.id);
-    this.businessObjInPanel = elementInPanel.businessObject;
+  private _setBusinessObject(): void {
+    const elementRegistry: IElementRegistry = this._modeler.get('elementRegistry');
+    const elementInPanel: IShape = elementRegistry.get(this._businessObjInPanel.id);
+    this._businessObjInPanel = elementInPanel.businessObject;
   }
 
-  public clearName(): void {
-    this.selectedEscalation.name = '';
+  private _elementIsEscalationEvent(element: IShape): boolean {
+    return element !== undefined
+        && element.businessObject !== undefined
+        && element.businessObject.eventDefinitions !== undefined
+        && element.businessObject.eventDefinitions[0].$type === 'bpmn:EscalationEventDefinition';
   }
 
-  public clearCode(): void {
-    this.selectedEscalation.escalationCode = '';
+  private _elementIsBoundaryEvent(element: IShape): boolean {
+    return element !== undefined
+        && element.businessObject !== undefined
+        && element.businessObject.$type === 'bpmn:BoundaryEvent';
   }
 
-  public clearVariable(): void {
-    this.escalationCodeVariable = '';
+  private _init(): void {
+    const eventDefinitions: Array<IModdleElement> = this._businessObjInPanel.eventDefinitions;
+    const businessObjectHasNoEscalationEvents: boolean = eventDefinitions === undefined
+                                                      || eventDefinitions === null
+                                                      || eventDefinitions[0].$type !== 'bpmn:EscalationEventDefinition';
+
+    if (businessObjectHasNoEscalationEvents) {
+      return;
+    }
+
+    const escalationElement: IEscalationElement = this._businessObjInPanel.eventDefinitions[0];
+    const elementReferencesEscalation: boolean = escalationElement.escalationRef !== undefined
+                                              && escalationElement.escalationRef !== null;
+
+    if (elementReferencesEscalation) {
+      this.selectedId = escalationElement.escalationRef.id;
+      this.updateEscalation();
+    } else {
+      this.selectedEscalation = null;
+      this.selectedId = null;
+    }
+  }
+
+  private _getEscalations(): Array<IEscalation> {
+    const rootElements: Array<IModdleElement> = this._modeler._definitions.rootElements;
+    const escalations: Array<IEscalation> = rootElements.filter((element: IModdleElement) => {
+      return element.$type === 'bpmn:Escalation';
+    });
+
+    return escalations;
+  }
+
+  private _getSelectedEscalation(): IEscalation {
+    const rootElements: Array<IModdleElement> = this._modeler._definitions.rootElements;
+    const selectedEscalation: IEscalation = rootElements.find((element: IModdleElement) => {
+      const isSelectedEscalation: boolean = element.$type === 'bpmn:Escalation' && element.id === this.selectedId;
+
+      return isSelectedEscalation;
+    });
+
+    return selectedEscalation;
   }
 }
