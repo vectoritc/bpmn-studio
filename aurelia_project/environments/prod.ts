@@ -41,8 +41,7 @@ export default {
       toggleXMLView: 'processdefdetail:xmlview:toggle',
     },
     bpmnIo: {
-      showProcessSolutionExplorer: 'bpmnio:processsolutionexplorer:show',
-      hideProcessSolutionExplorer: 'bpmnio:processsolutionexplorer:hide',
+      toggleProcessSolutionExplorer: 'bpmnio:processsolutionexplorer:toggle',
     },
   },
   bpmnStudioClient: {

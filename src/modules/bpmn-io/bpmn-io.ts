@@ -26,25 +26,20 @@ export class BpmnIo {
   public toggleButtonPropertyPanel: HTMLButtonElement;
   public resizeButton: HTMLButtonElement;
   public canvasModel: HTMLDivElement;
+  public propertyPanel: HTMLElement;
 
   @bindable({changeHandler: 'xmlChanged'}) public xml: string;
-  public ppDisplay: string = 'inline';
+  public propertyPanelDisplay: string = 'inline';
   public initialLoadingFinished: boolean = false;
   public showXMLView: boolean = false;
   public colorPickerLoaded: boolean = false;
-  public resizeButtonRight: number = 285;
-  public canvasRight: number = 350;
-  public ppWidth: number = 250;
+  public propertyPanelWidth: number = 250;
+  public minCanvasWidth: number = 100;
+  public minPropertyPanelWidth: number = 200;
 
   private _toggled: boolean = false;
-  private _minWidth: number = environment.propertyPanel.minWidth;
-  private _maxWidth: number = document.body.clientWidth - environment.propertyPanel.maxWidth;
-  private _lastCanvasRight: number = 350;
-  private _lastPpWidth: number = this.ppWidth;
   private _propertyPanelHiddenForSpaceReasons: boolean = false;
   private _propertyPanelHasNoSpace: boolean = false;
-  private _processSolutionExplorerWidth: number = 0;
-  private _currentWidth: number = 250;
 
   private _toggleMinimap: boolean = false;
   private _minimapToggle: any;
@@ -77,7 +72,9 @@ export class BpmnIo {
       moddleExtensions: {
         camunda: bundle.camundaModdleDescriptor,
       },
-      keyboard: { bindTo: document },
+      keyboard: {
+        bindTo: document,
+      },
     });
 
     if (this.xml !== undefined && this.xml !== null) {
@@ -141,15 +138,8 @@ export class BpmnIo {
     document.addEventListener('keydown', this._saveHotkeyEventHandler);
 
     this._subscriptions = [
-      this._eventAggregator.subscribe(environment.events.bpmnIo.showProcessSolutionExplorer, (processSolutionExplorerWidth: number) => {
-        this._processSolutionExplorerWidth = processSolutionExplorerWidth;
-
-        this._recalculatePropertyPanelWidth();
-      }),
-      this._eventAggregator.subscribe(environment.events.bpmnIo.hideProcessSolutionExplorer, () => {
-        this._processSolutionExplorerWidth = 0;
-
-        this._recalculatePropertyPanelWidth();
+      this._eventAggregator.subscribe(environment.events.bpmnIo.toggleProcessSolutionExplorer, () => {
+      this._hideOrShowPpForSpaceReasons();
       }),
     ];
   }
@@ -210,36 +200,21 @@ export class BpmnIo {
       }
 
       this.toggleButtonPropertyPanel.classList.add('tool--active');
-      this.ppDisplay = 'inline';
-      this.canvasRight = this._lastCanvasRight;
+      this.propertyPanelDisplay = 'inline';
       this._toggled = false;
     } else {
-      this._lastCanvasRight = this.canvasRight;
 
       this.toggleButtonPropertyPanel.classList.remove('tool--active');
-      this.ppDisplay = 'none';
-      this.canvasRight = 1;
+      this.propertyPanelDisplay = 'none';
       this._toggled = true;
     }
   }
 
-  private _recalculatePropertyPanelWidth(): void {
-    this._maxWidth = document.body.clientWidth - environment.propertyPanel.maxWidth - this._processSolutionExplorerWidth;
+  private _setNewPropertyPanelWidthFromMousePosition(mousePosition: number): void {
+    const mousePositionFromRight: number = document.body.clientWidth - mousePosition;
+    const newPropertyPanelWidth: number = mousePositionFromRight - sideBarRightSize;
 
-    this._currentWidth = Math.max(this._currentWidth, this._minWidth);
-    this._currentWidth = Math.min(this._currentWidth, this._maxWidth);
-
-    const propertyPanelHasEnoughSpace: boolean = this._hasPropertyPanelEnoughSpace();
-    if (propertyPanelHasEnoughSpace) {
-      this._hidePropertyPanelForSpaceReasons();
-    } else if (this._propertyPanelHiddenForSpaceReasons) {
-      this._showPropertyPanelForSpaceReasons();
-    }
-
-    this.resizeButtonRight = this._currentWidth + sideBarRightSize;
-    this.canvasRight = this._currentWidth;
-    this.ppWidth = this._currentWidth;
-    this._lastPpWidth = this._currentWidth;
+    this.propertyPanelWidth = newPropertyPanelWidth;
   }
 
   private _hidePropertyPanelForSpaceReasons(): void {
@@ -251,12 +226,6 @@ export class BpmnIo {
     }
   }
 
-  private _hasPropertyPanelEnoughSpace(): boolean {
-    const notEnoughSpaceForPropertyPanel: boolean = this._maxWidth < this._minWidth;
-
-    return notEnoughSpaceForPropertyPanel;
-  }
-
   private _showPropertyPanelForSpaceReasons(): void {
     this._propertyPanelHasNoSpace = false;
     this._propertyPanelHiddenForSpaceReasons = false;
@@ -266,10 +235,9 @@ export class BpmnIo {
   }
 
   public resize(event: any): void {
-    this._currentWidth = document.body.clientWidth - event.clientX;
-    this._currentWidth = this._currentWidth - sideBarRightSize;
+    const mousePosition: number = event.clientX;
 
-    this._recalculatePropertyPanelWidth();
+    this._setNewPropertyPanelWidthFromMousePosition(mousePosition);
   }
 
   public async toggleXMLView(): Promise<void> {
@@ -282,26 +250,22 @@ export class BpmnIo {
   }
 
   private resizeEventHandler = (event: any): void => {
-    this._maxWidth = document.body.clientWidth - environment.propertyPanel.maxWidth - this._processSolutionExplorerWidth;
+    this._hideOrShowPpForSpaceReasons();
 
-    const propertyPanelHasEnoughSpace: boolean = this._hasPropertyPanelEnoughSpace();
-    if (propertyPanelHasEnoughSpace) {
+    const mousePosition: number = event.clientX;
+
+    this._setNewPropertyPanelWidthFromMousePosition(mousePosition);
+  }
+
+  private _hideOrShowPpForSpaceReasons(): void {
+    const minModelerWidthForPropertyPanel: number = this.minCanvasWidth + this.minPropertyPanelWidth;
+    const modelerWidth: number = this.propertyPanel.parentElement.offsetWidth;
+
+    const isEnoughSpaceForPropertyPanel: boolean = modelerWidth < minModelerWidthForPropertyPanel;
+    if (isEnoughSpaceForPropertyPanel) {
       this._hidePropertyPanelForSpaceReasons();
-      return;
     } else if (this._propertyPanelHiddenForSpaceReasons) {
       this._showPropertyPanelForSpaceReasons();
-    }
-
-    this.ppWidth = this._lastPpWidth + this._processSolutionExplorerWidth;
-    if (this.ppWidth > this._maxWidth) {
-      const currentWidth: number = this._maxWidth;
-
-      this.resizeButtonRight = currentWidth + sideBarRightSize;
-      this.canvasRight = currentWidth;
-      this.ppWidth = currentWidth;
-    } else {
-      this.resizeButtonRight = this._lastPpWidth + sideBarRightSize;
-      this.canvasRight = this._lastPpWidth;
     }
   }
 

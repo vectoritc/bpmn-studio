@@ -24,6 +24,9 @@ export class ProcessSolutionPanel {
   }
 
   public async attached(): Promise<void> {
+    this._refreshProcesslist();
+    this._eventAggregator.publish(environment.events.bpmnIo.toggleProcessSolutionExplorer);
+
     this._subscriptions = [
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
         this._refreshProcesslist();
@@ -41,6 +44,7 @@ export class ProcessSolutionPanel {
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
+    this._eventAggregator.publish(environment.events.bpmnIo.toggleProcessSolutionExplorer);
   }
 
   private async _refreshProcesslist(): Promise<void> {

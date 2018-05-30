@@ -14,12 +14,13 @@
 }
 
 .properties {
+  width: 250px;
   height: 100%;
   background: rgb(220, 219, 219);
-  width: 250px;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
+  // width: 250px;
+  // display: flex;
+  // flex-direction: column;
+  // overflow-y: auto;
 }
 
 .modeler .label {
@@ -38,9 +39,11 @@
 }
 
 .resize-div {
-  position: absolute;
-  height: 100%;
-  width: 5px;
+  position: relative;
+  width: 6px;
+  height: 90%;
+  left: -3px;
+  float:left;
 }
 
 .resize-div:hover {
@@ -133,6 +136,7 @@
 
 .bpmn-io-layout__main {
   flex: 1 100%;
+  width: 0px;
 }
 
 /*
