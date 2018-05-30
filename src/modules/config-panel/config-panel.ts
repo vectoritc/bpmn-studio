@@ -40,7 +40,7 @@ export class ConfigPanel {
     environment.processengine.routes.userTasks =  `${this.config.processEngineRoute}/datastore/UserTask`;
     environment.processengine.routes.importBPMN = `${this.config.processEngineRoute}/processengine/create_bpmn_from_xml`;
     this._bpmnStudioClient.updateConfig(this.config);
-    this._notificationService.showNotification(NotificationType.SUCCESS, 'Sucessfully saved settings!');
+    this._notificationService.showNotification(NotificationType.SUCCESS, 'Successfully saved settings!');
     this._eventAggregator.publish('statusbar:processEngineRoute:update', this.config.processEngineRoute);
     this._router.navigateBack();
   }
