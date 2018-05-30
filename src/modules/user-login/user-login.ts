@@ -1,10 +1,8 @@
-import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {bindable, computedFrom, inject} from 'aurelia-framework';
+import {computedFrom, inject} from 'aurelia-framework';
 import {IAuthenticationService, IIdentity, NotificationType} from '../../contracts/index';
-import {AuthenticationStateEvent} from './../../contracts/index';
 import {NotificationService} from './../notification/notification.service';
 
-@inject('AuthenticationService', EventAggregator, 'NotificationService')
+@inject('AuthenticationService', 'NotificationService')
 export class UserLogin {
 
   public username: string;
@@ -14,32 +12,19 @@ export class UserLogin {
   public logoutButton: HTMLButtonElement;
 
   private _authenticationService: IAuthenticationService;
-  private _eventAggregator: EventAggregator;
   private _notificationService: NotificationService;
-  private _subscriptions: Array<Subscription>;
 
-  constructor(authenticationService: IAuthenticationService, eventAggregator: EventAggregator, notificationService: NotificationService) {
+  constructor(authenticationService: IAuthenticationService, notificationService: NotificationService) {
     this._authenticationService = authenticationService;
-    this._eventAggregator = eventAggregator;
     this._notificationService = notificationService;
   }
 
   public attached(): void {
     document.addEventListener('click', this.dropdownClickListener);
-    this._subscriptions = [
-      this._eventAggregator.subscribe('user-login:triggerlogout', () => {
-        if (this.isLoggedIn) {
-          this.logout();
-        }
-      }),
-    ];
   }
 
   public detached(): void {
     document.removeEventListener('click', this.dropdownClickListener);
-    for (const subscription of this._subscriptions) {
-      subscription.dispose();
-    }
   }
 
   public dropdownClickListener: EventListenerOrEventListenerObject =  (event: MouseEvent): void => {

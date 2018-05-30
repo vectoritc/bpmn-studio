@@ -1,9 +1,8 @@
-import {BpmnStudioClient, IUserTaskConfig} from '@process-engine/bpmn-studio_client';
+import {BpmnStudioClient} from '@process-engine/bpmn-studio_client';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import environment from '../../environment';
-import {AuthenticationStateEvent} from './../../contracts/index';
 import {NotificationType} from './../../contracts/index';
 import {NotificationService} from './../notification/notification.service';
 
