@@ -6,9 +6,10 @@ import environment from '../../environment';
 @inject(EventAggregator, Router)
 export class StatusBar {
 
-  public processEngineRoute: string = environment.bpmnStudioClient.baseRoute;
+  public processEngineRoute: string = '';
   public showXMLButton: boolean = false;
   public xmlIsShown: boolean = false;
+  public isEncryptedCommunication: boolean = false;
 
   private _eventAggregator: EventAggregator;
   private _router: Router;
@@ -16,6 +17,7 @@ export class StatusBar {
   constructor(eventAggregator: EventAggregator, router: Router) {
     this._eventAggregator = eventAggregator;
     this._router = router;
+    this._setProcessEngineRoute(environment.bpmnStudioClient.baseRoute);
   }
 
   public attached(): void {
@@ -29,7 +31,7 @@ export class StatusBar {
     });
 
     this._eventAggregator.subscribe(environment.events.statusBar.updateProcessEngineRoute, (newProcessEngineRoute: string) => {
-      this.processEngineRoute = newProcessEngineRoute;
+      this._setProcessEngineRoute(newProcessEngineRoute);
     });
   }
 
@@ -40,5 +42,11 @@ export class StatusBar {
 
   public navigateToSettings(): void {
     this._router.navigate('/configuration');
+  }
+
+  private _setProcessEngineRoute(processEngineRoute: string): void {
+    const [, protocol, , route]: any = /^(http(s)?:\/\/)?(.+)$/i.exec(processEngineRoute);
+    this.isRouteHttps = protocol === 'https://';
+    this.processEngineRoute = route;
   }
 }

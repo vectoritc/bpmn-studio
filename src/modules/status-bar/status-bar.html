@@ -5,7 +5,9 @@
   -->
   <div class="status-bar status-bar--system-macos">
     <div class="status-bar__left-bar">
-      <span>Connected to: ${processEngineRoute}</span>
+      <span>
+        <i class="fa baseroute__lock-icon" class.bind="isEncryptedCommunication ? 'fa-lock' : 'fa-unlock'"></i> <i class="fa fa-plug"></i> ${processEngineRoute}
+      </span>
     </div>
     <div class="status-bar__center-bar"></div>
     <div class="status-bar__right-bar">
