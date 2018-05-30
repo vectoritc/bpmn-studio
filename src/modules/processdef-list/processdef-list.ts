@@ -66,6 +66,8 @@ export class ProcessDefList {
       const xml: string = fileInfo.content;
 
       fileInfo.content = undefined;
+
+      this._importXmlFromFile(filename, xml);
     }
 
     this._refreshProcesslist();
