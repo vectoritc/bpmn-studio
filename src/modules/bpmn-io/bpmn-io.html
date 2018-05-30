@@ -14,7 +14,12 @@
           <i class="fa fa-mouse-pointer"></i>
         </div>
       </div>
-      <div class="tool-list tool-list--vertical tool-list--bottom"></div>
+      <div class="djs-palette-container tool-list tool-list--vertical" ref="paletteContainer">
+        <!-- BPMN.io palette gets re-attached here, see direct reference in view-model -->
+      </div>
+      <div class="tool-list tool-list--vertical tool-list--bottom">
+        <!-- TODO: insert settings icon here -->
+      </div>
     </div>
 
     <!--
@@ -43,6 +48,5 @@
         </div>
       </div>
     </div>
-
   </div>
 </template>

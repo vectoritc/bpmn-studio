@@ -50,6 +50,18 @@ export class BpmnIo {
   public initialLoadingFinished: boolean;
   public modeler: IBpmnModeler;
 
+  /**
+   * We are using the direct reference of a container element to place the tools of bpmn-js
+   * in the left sidebar (bpmn-io-layout__tools-left).
+   *
+   * This needs to be refactored.
+   * To get more control over certain elements in the palette it would be nice to have
+   * an aurelia-component for handling the logic behind it.
+   *
+   * https://github.com/process-engine/bpmn-studio/issues/455
+   */
+  public paletteContainer: HTMLDivElement;
+
   constructor(notificationService: NotificationService) {
     this.notificationService = notificationService;
   }
@@ -111,6 +123,12 @@ export class BpmnIo {
       document.addEventListener('mousemove', mousemoveFunction);
       document.addEventListener('mouseup', mouseUpFunction);
     });
+
+    const bpmnIoPaletteContainer: Element = document.getElementsByClassName('djs-palette')[0];
+
+    bpmnIoPaletteContainer.className += ' djs-palette-override';
+
+    this.paletteContainer.appendChild(bpmnIoPaletteContainer);
   }
 
   public detached(): void {
