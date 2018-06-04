@@ -1,9 +1,10 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
-import { EventAggregator } from 'aurelia-event-aggregator';
+
+import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 import * as $ from 'jquery';
 import 'spectrum-colorpicker/spectrum';
-import {setTimeout} from 'timers';
+
 import {ElementDistributeOptions,
         IBpmnFunction,
         IBpmnModeler,
