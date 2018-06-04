@@ -1,4 +1,5 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
+import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 import * as $ from 'jquery';
 import 'spectrum-colorpicker/spectrum';
@@ -18,7 +19,7 @@ import {NotificationService} from './../notification/notification.service';
 
 const sideBarRightSize: number = 35;
 
-@inject('NotificationService')
+@inject('NotificationService', EventAggregator)
 export class BpmnIo {
   private toggled: boolean = false;
   private toggleButtonPropertyPanel: HTMLButtonElement;
@@ -38,6 +39,7 @@ export class BpmnIo {
   private lastPpWidth: number = this.ppWidth;
   private _ppHiddenBecauseLackOfSpace: boolean = false;
   private _propertyPanelHasNoSpace: boolean = false;
+  private _eventAggregator: EventAggregator;
 
   private toggleMinimap: boolean = false;
   private minimapToggle: any;
@@ -62,8 +64,9 @@ export class BpmnIo {
    */
   public paletteContainer: HTMLDivElement;
 
-  constructor(notificationService: NotificationService) {
+  constructor(notificationService: NotificationService, eventAggregator: EventAggregator) {
     this.notificationService = notificationService;
+    this._eventAggregator = eventAggregator;
   }
 
   public created(): void {
@@ -80,6 +83,10 @@ export class BpmnIo {
         return 0;
       });
     }
+
+    this.modeler.on('commandStack.changed', () => {
+      this._eventAggregator.publish(environment.events.diagramChange);
+    }, 1000);
   }
 
   public attached(): void {
@@ -129,6 +136,16 @@ export class BpmnIo {
     bpmnIoPaletteContainer.className += ' djs-palette-override';
 
     this.paletteContainer.appendChild(bpmnIoPaletteContainer);
+  }
+
+  public canDeactivate(): boolean {
+    const save: boolean = window.confirm('Save changes to diagram?');
+
+    if (save) {
+      this.saveDiagram();
+    }
+
+    return true;
   }
 
   public detached(): void {

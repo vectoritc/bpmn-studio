@@ -41,6 +41,7 @@ export class ProcessDefDetail {
   private saveButton: HTMLButtonElement;
   private bpmnStudioClient: BpmnStudioClient;
   private router: Router;
+  private _diagramHasChanged: boolean = false;
 
   public validationController: ValidationController;
   public validationError: boolean;
@@ -104,6 +105,9 @@ export class ProcessDefDetail {
       this.eventAggregator.subscribe(environment.events.processDefDetail.toggleXMLView, () => {
         this.toggleXMLView();
       }),
+      this.eventAggregator.subscribe(environment.events.diagramChange, () => {
+        this._diagramHasChanged = true;
+      }),
     ];
 
     this.eventAggregator.publish(environment.events.navBar.showTools, this.process);
@@ -111,11 +115,18 @@ export class ProcessDefDetail {
   }
 
   public canDeactivate(): boolean {
+
+    if (!this._diagramHasChanged) {
+      return true;
+    }
+
     const save: boolean = window.confirm('Save changes to diagram?');
 
-    if (save) {
+    if (save && this._diagramHasChanged) {
       this.saveDiagram();
     }
+
+    this._diagramHasChanged = false;
 
     return true;
   }

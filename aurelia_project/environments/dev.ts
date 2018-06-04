@@ -40,6 +40,7 @@ export default {
       startProcess: 'processdefdetail:process:start',
       toggleXMLView: 'processdefdetail:xmlview:toggle',
     },
+    diagramChange: 'diagram:change',
   },
   bpmnStudioClient: {
     baseRoute: processEngineRoute,
