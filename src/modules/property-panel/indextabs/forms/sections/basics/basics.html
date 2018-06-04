@@ -40,6 +40,13 @@
           <td>
             <input type="text" class="props-input" id="formId" value.bind="selectedForm.id & validateOnChange" placeholder="ID" change.delegate="updateId()">
           </td>
+          <td>	
+            <div show.bind="isFormSelected">	
+              <div if.bind="validationError">	
+                <span class="glyphicon glyphicon-remove"></span>	
+              </div>	
+            </div>	
+          </td>
         </tr>
         <tr>
           <th>Type</th>
