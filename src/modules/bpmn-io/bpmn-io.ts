@@ -288,26 +288,35 @@ export class BpmnIo {
   }
 
   /**
-   * Handles a keydown event and saves the diagramm, if the user presses a ctrl + s key combination.
-   * If using macos, this combination will be cmd + s.
+   * Handles a key down event and saves the diagram, if the user presses a CRTL + s key combination.
    *
-   * @param event passed key event.
+   * If using macOS, this combination will be CMD + s.
+   *
+   * Saving is triggered by emitting @see environment.events.processDefDetail.saveDiagram
+   *
+   * @param event Passed key event.
+   * @return void
    */
   private _saveHotkeyEventHandler = (event: KeyboardEvent): void  => {
 
-    // On mac os the 'common control key' is the meta instead of the control key. So we need to find
+    // On macOS the 'common control key' is the meta instead of the control key. So we need to find
     // out if on a mac, the meta key instead of the control key is pressed.
     const macRegex: RegExp = /.*mac*./i;
     const currentPlattform: string = navigator.platform;
     const currentPlattformIsMac: boolean = macRegex.test(currentPlattform);
     const metaKeyIsPressed: boolean = currentPlattformIsMac ? event.metaKey : event.ctrlKey;
 
-    // If both keys, meta and s, are pressed, save the diagram.
+    /*
+     * If both keys (meta and s) are pressed, save the diagram.
+     * A diagram is saved, by throwing a saveDiagram event.
+     *
+     * @see environment.events.processDefDetail.saveDiagram
+     */
     const sKeyIsPressed: boolean = event.key === 's';
     const userWantsToSave: boolean = metaKeyIsPressed && sKeyIsPressed;
 
     if (userWantsToSave) {
-      // Prevent the browser from handling the default action for ctrl + s.
+      // Prevent the browser from handling the default action for CTRL + s.
       event.preventDefault();
       this._eventAggregator.publish(environment.events.processDefDetail.saveDiagram);
     }
