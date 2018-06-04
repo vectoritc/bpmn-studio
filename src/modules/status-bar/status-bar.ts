@@ -45,8 +45,9 @@ export class StatusBar {
   }
 
   private _setProcessEngineRoute(processEngineRoute: string): void {
-    const [, protocol, , route]: any = /^(http(s)?:\/\/)?(.+)$/i.exec(processEngineRoute);
-    this.isRouteHttps = protocol === 'https://';
+    // This Regex returns the protocol and the route from the processEngineRoute string
+    const [, protocol, route]: RegExpExecArray = /^([^\:]+:\/\/)?(.*)$/i.exec(processEngineRoute);
+    this.isEncryptedCommunication = protocol === 'https://';
     this.processEngineRoute = route;
   }
 }
