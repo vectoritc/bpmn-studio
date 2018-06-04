@@ -42,8 +42,6 @@ export class ProcessDefDetail {
   private _validationController: ValidationController;
 
   public bpmn: BpmnIo;
-  public solutionExplorerIsShown: boolean = false;
-  public xmlIsShown: boolean = false;
 
   @bindable() public uri: string;
   @bindable() public name: string;
@@ -266,10 +264,6 @@ export class ProcessDefDetail {
 
     const image: string = canvas.toDataURL(encoding); // returns a base64 datastring
     return image;
-  }
-
-  public toggleSolutionExplorer(): void {
-    this.solutionExplorerIsShown = !this.solutionExplorerIsShown;
   }
 
   private validateForm(event: ValidateEvent): void {
