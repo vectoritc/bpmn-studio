@@ -38,6 +38,8 @@ export default {
       saveDiagram: 'processdefdetail:diagram:save',
       exportDiagramAs: 'processdefdetail:diagram:exportas',
       startProcess: 'processdefdetail:process:start',
+    },
+    bpmnio: {
       toggleXMLView: 'processdefdetail:xmlview:toggle',
     },
     diagramChange: 'diagram:change',
