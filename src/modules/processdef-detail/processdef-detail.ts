@@ -46,7 +46,7 @@ export class ProcessDefDetail {
   @bindable() public uri: string;
   @bindable() public name: string;
   @bindable() public startedProcessId: string;
-  @bindable({ defaultBindingMode: bindingMode.oneWay }) public initialLoadingFinished: boolean = false;
+  @bindable({defaultBindingMode: bindingMode.oneWay}) public initialLoadingFinished: boolean = false;
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
@@ -63,45 +63,45 @@ export class ProcessDefDetail {
   public async activate(routeParameters: RouteParameters): Promise<void> {
     this._processId = routeParameters.processDefId;
     this._diagramHasChanged = false;
-    await this.refreshProcess();
+    await this._refreshProcess();
   }
 
   public attached(): void {
     this._validationController.subscribe((event: ValidateEvent) => {
-      this.validateForm(event);
+      this._validateForm(event);
     });
 
     this._subscriptions = [
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
-        this.refreshProcess();
+        this._refreshProcess();
       }),
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
-        this.refreshProcess();
+        this._refreshProcess();
       }),
       this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
-        this.saveDiagram();
+        this._saveDiagram();
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, () => {
-        this.exportBPMN();
+        this._exportBPMN();
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, () => {
-        this.exportSVG();
+        this._exportSVG();
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, () => {
-        this.exportPNG();
+        this._exportPNG();
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, () => {
-        this.exportJPEG();
+        this._exportJPEG();
       }),
       this._eventAggregator.subscribe(environment.events.processDefDetail.startProcess, () => {
-        this.startProcess();
+        this._startProcess();
       }),
       this._eventAggregator.subscribe(environment.events.diagramChange, () => {
         this._diagramHasChanged = true;
       }),
     ];
 
-    this._eventAggregator.publish(environment.events.navBar.showTools, this.process);
+    this._eventAggregator.publish(environment.events.navBar.showTools, this._process);
     this._eventAggregator.publish(environment.events.statusBar.showXMLButton);
   }
 
@@ -121,7 +121,7 @@ export class ProcessDefDetail {
         resolve(true);
       });
       document.getElementById('saveButton').addEventListener('click', () => {
-        this.saveDiagram();
+        this._saveDiagram();
         modal.classList.remove('show-modal');
         resolve(true);
       });
@@ -142,7 +142,7 @@ export class ProcessDefDetail {
     this._eventAggregator.publish(environment.events.statusBar.hideXMLButton);
   }
 
-  private refreshProcess(): Promise<IProcessDefEntity> {
+  private _refreshProcess(): Promise<IProcessDefEntity> {
     return this._processEngineService.getProcessDefById(this._processId)
       .then((result: any) => {
         if (result && !result.error) {
@@ -158,17 +158,23 @@ export class ProcessDefDetail {
     });
   }
 
-  public startProcess(): void {
-    this.validateXML();
-    this._router.navigate(`processdef/${this.process.id}/start`);
+  private _startProcess(): void {
+    this._validateXML();
+    this._router.navigate(`processdef/${this._process.id}/start`);
   }
 
-  public deleteProcess(): void {
+  /**
+   * Currently unused Method
+   * TODO: Look deeper into this if we need this method anymore and/or in this
+   * particular way.
+   */
+
+  private _deleteProcess(): void {
     const deleteForReal: boolean = confirm('Are you sure you want to delete the process definition?');
     if (!deleteForReal) {
       return;
     }
-    this._processEngineService.deleteProcessDef(this.process.id)
+    this._processEngineService.deleteProcessDef(this._process.id)
       .then(() => {
         this._process = null;
         this._router.navigate('');
@@ -178,22 +184,13 @@ export class ProcessDefDetail {
       });
   }
 
-  @computedFrom('_process')
-  public get process(): IProcessDefEntity {
-    return this._process;
-  }
+  private async _saveDiagram(): Promise<void> {
 
-  public onModdlelImported(moddle: any, xml: string): void {
-    this.bpmn.xml = xml;
-  }
-
-  public async saveDiagram(): Promise<void> {
-
-    this.validateXML();
+    this._validateXML();
 
     try {
       const xml: string = await this.bpmn.getXML();
-      const response: any = await this._processEngineService.updateProcessDef(this.process, xml);
+      const response: any = await this._processEngineService.updateProcessDef(this._process, xml);
 
       if (response.error) {
         this._notificationService.showNotification(NotificationType.ERROR, `Error while saving file: ${response.error}`);
@@ -207,7 +204,7 @@ export class ProcessDefDetail {
     }
   }
 
-  private validateXML(): void {
+  private _validateXML(): void {
     const registry: Array<IShape> = this.bpmn.modeler.get('elementRegistry');
 
     registry.forEach((element: IShape) => {
@@ -230,28 +227,28 @@ export class ProcessDefDetail {
     });
   }
 
-  public async exportBPMN(): Promise<void> {
+  private async _exportBPMN(): Promise<void> {
     const xml: string = await this.bpmn.getXML();
     const formattedXml: string = beautify(xml);
-    download(formattedXml, `${this.process.name}.bpmn`, 'application/bpmn20-xml');
+    download(formattedXml, `${this._process.name}.bpmn`, 'application/bpmn20-xml');
   }
 
-  public async exportSVG(): Promise<void> {
+  private async _exportSVG(): Promise<void> {
     const svg: string = await this.bpmn.getSVG();
-    download(svg, `${this.process.name}.svg`, 'image/svg+xml');
+    download(svg, `${this._process.name}.svg`, 'image/svg+xml');
   }
 
-  public async exportPNG(): Promise<void> {
+  private async _exportPNG(): Promise<void> {
     const svg: string = await this.bpmn.getSVG();
-    download(this.generateImageFromSVG('png', svg), `${this.process.name}.png`, 'image/png');
+    download(this._generateImageFromSVG('png', svg), `${this._process.name}.png`, 'image/png');
   }
 
-  public async exportJPEG(): Promise<void> {
+  private async _exportJPEG(): Promise<void> {
     const svg: string = await this.bpmn.getSVG();
-    download(this.generateImageFromSVG('jpeg', svg), `${this.process.name}.jpeg`, 'image/jpeg');
+    download(this._generateImageFromSVG('jpeg', svg), `${this._process.name}.jpeg`, 'image/jpeg');
   }
 
-  public generateImageFromSVG(desiredImageType: string, svg: any): string {
+  private _generateImageFromSVG(desiredImageType: string, svg: any): string {
     const encoding: string = `image/${desiredImageType}`;
     const canvas: HTMLCanvasElement = document.createElement('canvas');
     const context: CanvasRenderingContext2D = canvas.getContext('2d');
@@ -266,7 +263,7 @@ export class ProcessDefDetail {
     return image;
   }
 
-  private validateForm(event: ValidateEvent): void {
+  private _validateForm(event: ValidateEvent): void {
     if (event.type !== 'validate') {
       return;
     }
