@@ -1,4 +1,5 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
+import { EventAggregator } from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 import * as $ from 'jquery';
 import 'spectrum-colorpicker/spectrum';
@@ -15,7 +16,6 @@ import {ElementDistributeOptions,
       } from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from './../notification/notification.service';
-import { EventAggregator } from 'aurelia-event-aggregator';
 
 const sideBarRightSize: number = 35;
 
