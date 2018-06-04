@@ -1,8 +1,10 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
+
+import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 import * as $ from 'jquery';
 import 'spectrum-colorpicker/spectrum';
-import {setTimeout} from 'timers';
+
 import {ElementDistributeOptions,
         IBpmnFunction,
         IBpmnModeler,
@@ -18,8 +20,9 @@ import {NotificationService} from './../notification/notification.service';
 
 const sideBarRightSize: number = 35;
 
-@inject('NotificationService')
+@inject('NotificationService', EventAggregator)
 export class BpmnIo {
+  // TODO: Refactor Private Member Names; Ref: //github.com/process-engine/bpmn-studio/issues/463
   private toggled: boolean = false;
   private toggleButtonPropertyPanel: HTMLButtonElement;
   private resizeButton: HTMLButtonElement;
@@ -45,6 +48,8 @@ export class BpmnIo {
   private hideMinimap: HTMLElement;
   private notificationService: NotificationService;
 
+  private _eventAggregator: EventAggregator;
+
   @bindable({changeHandler: 'xmlChanged'}) public xml: string;
 
   public initialLoadingFinished: boolean;
@@ -58,12 +63,13 @@ export class BpmnIo {
    * To get more control over certain elements in the palette it would be nice to have
    * an aurelia-component for handling the logic behind it.
    *
-   * https://github.com/process-engine/bpmn-studio/issues/455
+   * TODO: https://github.com/process-engine/bpmn-studio/issues/455
    */
   public paletteContainer: HTMLDivElement;
 
-  constructor(notificationService: NotificationService) {
+  constructor(notificationService: NotificationService, eventAggregator: EventAggregator) {
     this.notificationService = notificationService;
+    this._eventAggregator = eventAggregator;
   }
 
   public created(): void {
@@ -88,6 +94,8 @@ export class BpmnIo {
     const minimapArea: any = this.canvasModel.getElementsByClassName('djs-minimap-map')[0];
     this.minimapToggle = this.canvasModel.getElementsByClassName('djs-minimap-toggle')[0];
 
+    // TODO: Refactor to CSS classes; Ref: https://github.com/process-engine/bpmn-studio/issues/462
+    //  Styling for Minimap {{{ //
     minimapArea.style.width = '350px';
     minimapArea.style.height = '200px';
     minimapViewport.style.fill = 'rgba(0, 208, 255, 0.13)';
@@ -101,6 +109,7 @@ export class BpmnIo {
     this.hideMinimap.textContent = 'Hide Minimap';
     this.minimapToggle.appendChild(this.hideMinimap);
     this.minimapToggle.addEventListener('click', this.toggleMinimapFunction);
+    //  }}} Styling for Minimap //
 
     window.addEventListener('resize', this.resizeEventHandler);
 
@@ -129,12 +138,15 @@ export class BpmnIo {
     bpmnIoPaletteContainer.className += ' djs-palette-override';
 
     this.paletteContainer.appendChild(bpmnIoPaletteContainer);
+
+    document.addEventListener('keydown', this._saveHotkeyEventHandler);
   }
 
   public detached(): void {
     this.modeler.detach();
     this.modeler.destroy();
     window.removeEventListener('resize', this.resizeEventHandler);
+    document.removeEventListener('keydown', this._saveHotkeyEventHandler);
   }
 
   public xmlChanged(newValue: string, oldValue: string): void {
@@ -275,4 +287,38 @@ export class BpmnIo {
     }
   }
 
+  /**
+   * Handles a key down event and saves the diagram, if the user presses a CRTL + s key combination.
+   *
+   * If using macOS, this combination will be CMD + s.
+   *
+   * Saving is triggered by emitting @see environment.events.processDefDetail.saveDiagram
+   *
+   * @param event Passed key event.
+   * @return void
+   */
+  private _saveHotkeyEventHandler = (event: KeyboardEvent): void  => {
+
+    // On macOS the 'common control key' is the meta instead of the control key. So we need to find
+    // out if on a mac, the meta key instead of the control key is pressed.
+    const macRegex: RegExp = /.*mac*./i;
+    const currentPlattform: string = navigator.platform;
+    const currentPlattformIsMac: boolean = macRegex.test(currentPlattform);
+    const metaKeyIsPressed: boolean = currentPlattformIsMac ? event.metaKey : event.ctrlKey;
+
+    /*
+     * If both keys (meta and s) are pressed, save the diagram.
+     * A diagram is saved, by throwing a saveDiagram event.
+     *
+     * @see environment.events.processDefDetail.saveDiagram
+     */
+    const sKeyIsPressed: boolean = event.key === 's';
+    const userWantsToSave: boolean = metaKeyIsPressed && sKeyIsPressed;
+
+    if (userWantsToSave) {
+      // Prevent the browser from handling the default action for CTRL + s.
+      event.preventDefault();
+      this._eventAggregator.publish(environment.events.processDefDetail.saveDiagram);
+    }
+  }
 }
