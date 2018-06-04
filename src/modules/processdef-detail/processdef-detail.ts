@@ -110,11 +110,21 @@ export class ProcessDefDetail {
     this.eventAggregator.publish(environment.events.statusBar.showXMLButton);
   }
 
+  public canDeactivate(): boolean {
+    const save: boolean = window.confirm('Save changes to diagram?');
+
+    if (save) {
+      this.saveDiagram();
+    }
+
+    return true;
+  }
+
   public detached(): void {
     for (const subscription of this.subscriptions) {
       subscription.dispose();
     }
-    this.saveDiagram();
+
     this.eventAggregator.publish(environment.events.navBar.hideTools);
     this.eventAggregator.publish(environment.events.statusBar.hideXMLButton);
   }
