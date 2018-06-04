@@ -22,6 +22,7 @@ const sideBarRightSize: number = 35;
 
 @inject('NotificationService', EventAggregator)
 export class BpmnIo {
+  // TODO: Refactor Private Member Names; Ref: //github.com/process-engine/bpmn-studio/issues/463
   private toggled: boolean = false;
   private toggleButtonPropertyPanel: HTMLButtonElement;
   private resizeButton: HTMLButtonElement;
@@ -62,7 +63,7 @@ export class BpmnIo {
    * To get more control over certain elements in the palette it would be nice to have
    * an aurelia-component for handling the logic behind it.
    *
-   * https://github.com/process-engine/bpmn-studio/issues/455
+   * TODO: https://github.com/process-engine/bpmn-studio/issues/455
    */
   public paletteContainer: HTMLDivElement;
 
@@ -93,6 +94,8 @@ export class BpmnIo {
     const minimapArea: any = this.canvasModel.getElementsByClassName('djs-minimap-map')[0];
     this.minimapToggle = this.canvasModel.getElementsByClassName('djs-minimap-toggle')[0];
 
+    // TODO: Refactor to CSS classes; Ref: https://github.com/process-engine/bpmn-studio/issues/462
+    //  Styling for Minimap {{{ //
     minimapArea.style.width = '350px';
     minimapArea.style.height = '200px';
     minimapViewport.style.fill = 'rgba(0, 208, 255, 0.13)';
@@ -106,6 +109,7 @@ export class BpmnIo {
     this.hideMinimap.textContent = 'Hide Minimap';
     this.minimapToggle.appendChild(this.hideMinimap);
     this.minimapToggle.addEventListener('click', this.toggleMinimapFunction);
+    //  }}} Styling for Minimap //
 
     window.addEventListener('resize', this.resizeEventHandler);
 
