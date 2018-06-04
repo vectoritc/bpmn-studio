@@ -84,9 +84,14 @@ export class BpmnIo {
       });
     }
 
+    /**
+     * Subscribe to "commandStack.changed"-event to have a simple indicator of
+     * when a diagram is changed.
+     */
+    const handlerPriority: number = 1000;
     this.modeler.on('commandStack.changed', () => {
       this._eventAggregator.publish(environment.events.diagramChange);
-    }, 1000);
+    }, handlerPriority);
   }
 
   public attached(): void {
@@ -136,16 +141,6 @@ export class BpmnIo {
     bpmnIoPaletteContainer.className += ' djs-palette-override';
 
     this.paletteContainer.appendChild(bpmnIoPaletteContainer);
-  }
-
-  public canDeactivate(): boolean {
-    const save: boolean = window.confirm('Save changes to diagram?');
-
-    if (save) {
-      this.saveDiagram();
-    }
-
-    return true;
   }
 
   public detached(): void {
