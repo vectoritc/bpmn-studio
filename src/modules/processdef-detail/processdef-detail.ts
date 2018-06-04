@@ -36,12 +36,12 @@ export class ProcessDefDetail {
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
   private _processId: string;
-  private _process: IProcessDefEntity;
   private _router: Router;
   private _diagramHasChanged: boolean = false;
   private _validationController: ValidationController;
 
-  public bpmn: BpmnIo;
+  public bpmnio: BpmnIo;
+  public process: IProcessDefEntity;
 
   @bindable() public uri: string;
   @bindable() public name: string;
@@ -101,7 +101,7 @@ export class ProcessDefDetail {
       }),
     ];
 
-    this._eventAggregator.publish(environment.events.navBar.showTools, this._process);
+    this._eventAggregator.publish(environment.events.navBar.showTools, this.process);
     this._eventAggregator.publish(environment.events.statusBar.showXMLButton);
   }
 
@@ -146,13 +146,13 @@ export class ProcessDefDetail {
     return this._processEngineService.getProcessDefById(this._processId)
       .then((result: any) => {
         if (result && !result.error) {
-          this._process = result;
+          this.process = result;
 
-          this._eventAggregator.publish(environment.events.navBar.updateProcess, this._process);
+          this._eventAggregator.publish(environment.events.navBar.updateProcess, this.process);
 
-          return this._process;
+          return this.process;
         } else {
-          this._process = null;
+          this.process = null;
           return result.error;
         }
     });
@@ -160,7 +160,7 @@ export class ProcessDefDetail {
 
   private _startProcess(): void {
     this._validateXML();
-    this._router.navigate(`processdef/${this._process.id}/start`);
+    this._router.navigate(`processdef/${this.process.id}/start`);
   }
 
   /**
@@ -174,9 +174,9 @@ export class ProcessDefDetail {
     if (!deleteForReal) {
       return;
     }
-    this._processEngineService.deleteProcessDef(this._process.id)
+    this._processEngineService.deleteProcessDef(this.process.id)
       .then(() => {
-        this._process = null;
+        this.process = null;
         this._router.navigate('');
       })
       .catch((error: Error) => {
@@ -189,8 +189,8 @@ export class ProcessDefDetail {
     this._validateXML();
 
     try {
-      const xml: string = await this.bpmn.getXML();
-      const response: any = await this._processEngineService.updateProcessDef(this._process, xml);
+      const xml: string = await this.bpmnio.getXML();
+      const response: any = await this._processEngineService.updateProcessDef(this.process, xml);
 
       if (response.error) {
         this._notificationService.showNotification(NotificationType.ERROR, `Error while saving file: ${response.error}`);
@@ -205,7 +205,7 @@ export class ProcessDefDetail {
   }
 
   private _validateXML(): void {
-    const registry: Array<IShape> = this.bpmn.modeler.get('elementRegistry');
+    const registry: Array<IShape> = this.bpmnio.modeler.get('elementRegistry');
 
     registry.forEach((element: IShape) => {
       if (element.type === 'bpmn:UserTask') {
@@ -228,24 +228,24 @@ export class ProcessDefDetail {
   }
 
   private async _exportBPMN(): Promise<void> {
-    const xml: string = await this.bpmn.getXML();
+    const xml: string = await this.bpmnio.getXML();
     const formattedXml: string = beautify(xml);
-    download(formattedXml, `${this._process.name}.bpmn`, 'application/bpmn20-xml');
+    download(formattedXml, `${this.process.name}.bpmn`, 'application/bpmn20-xml');
   }
 
   private async _exportSVG(): Promise<void> {
-    const svg: string = await this.bpmn.getSVG();
-    download(svg, `${this._process.name}.svg`, 'image/svg+xml');
+    const svg: string = await this.bpmnio.getSVG();
+    download(svg, `${this.process.name}.svg`, 'image/svg+xml');
   }
 
   private async _exportPNG(): Promise<void> {
-    const svg: string = await this.bpmn.getSVG();
-    download(this._generateImageFromSVG('png', svg), `${this._process.name}.png`, 'image/png');
+    const svg: string = await this.bpmnio.getSVG();
+    download(this._generateImageFromSVG('png', svg), `${this.process.name}.png`, 'image/png');
   }
 
   private async _exportJPEG(): Promise<void> {
-    const svg: string = await this.bpmn.getSVG();
-    download(this._generateImageFromSVG('jpeg', svg), `${this._process.name}.jpeg`, 'image/jpeg');
+    const svg: string = await this.bpmnio.getSVG();
+    download(this._generateImageFromSVG('jpeg', svg), `${this.process.name}.jpeg`, 'image/jpeg');
   }
 
   private _generateImageFromSVG(desiredImageType: string, svg: any): string {
