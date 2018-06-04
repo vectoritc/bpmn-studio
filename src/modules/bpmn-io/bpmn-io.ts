@@ -15,10 +15,11 @@ import {ElementDistributeOptions,
       } from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from './../notification/notification.service';
+import { EventAggregator } from 'aurelia-event-aggregator';
 
 const sideBarRightSize: number = 35;
 
-@inject('NotificationService')
+@inject('NotificationService', EventAggregator)
 export class BpmnIo {
   private toggled: boolean = false;
   private toggleButtonPropertyPanel: HTMLButtonElement;
@@ -45,6 +46,8 @@ export class BpmnIo {
   private hideMinimap: HTMLElement;
   private notificationService: NotificationService;
 
+  private _eventAggregator: EventAggregator;
+
   @bindable({changeHandler: 'xmlChanged'}) public xml: string;
 
   public initialLoadingFinished: boolean;
@@ -62,8 +65,9 @@ export class BpmnIo {
    */
   public paletteContainer: HTMLDivElement;
 
-  constructor(notificationService: NotificationService) {
+  constructor(notificationService: NotificationService, eventAggregator: EventAggregator) {
     this.notificationService = notificationService;
+    this._eventAggregator = eventAggregator;
   }
 
   public created(): void {
@@ -129,12 +133,15 @@ export class BpmnIo {
     bpmnIoPaletteContainer.className += ' djs-palette-override';
 
     this.paletteContainer.appendChild(bpmnIoPaletteContainer);
+
+    document.addEventListener('keydown', this._saveHotkeyEventHandler);
   }
 
   public detached(): void {
     this.modeler.detach();
     this.modeler.destroy();
     window.removeEventListener('resize', this.resizeEventHandler);
+    document.removeEventListener('keydown', this._saveHotkeyEventHandler);
   }
 
   public xmlChanged(newValue: string, oldValue: string): void {
@@ -275,4 +282,29 @@ export class BpmnIo {
     }
   }
 
+  /**
+   * Handles a keydown event and saves the diagramm, if the user presses a ctrl + s key combination.
+   * If using macos, this combination will be cmd + s.
+   *
+   * @param event passed key event.
+   */
+  private _saveHotkeyEventHandler = (event: KeyboardEvent): void  => {
+
+    // On mac os the 'common control key' is the meta instead of the control key. So we need to find
+    // out if on a mac, the meta key instead of the control key is pressed.
+    const macRegex: RegExp = /.*mac*./i;
+    const currentPlattform: string = navigator.platform;
+    const currentPlattformIsMac: boolean = macRegex.test(currentPlattform);
+    const metaKeyIsPressed: boolean = currentPlattformIsMac ? event.metaKey : event.ctrlKey;
+
+    // If both keys, meta and s, are pressed, save the diagram.
+    const sKeyIsPressed: boolean = event.key === 's';
+    const userWantsToSave: boolean = metaKeyIsPressed && sKeyIsPressed;
+
+    if (userWantsToSave) {
+      // Prevent the browser from handling the default action for ctrl + s.
+      event.preventDefault();
+      this._eventAggregator.publish(environment.events.processDefDetail.saveDiagram);
+    }
+  }
 }
