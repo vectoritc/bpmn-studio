@@ -46,3 +46,19 @@
 .none {
   color: transparent;
 }
+
+.save-modal-dialog {
+  position: relative;
+  top: 20%;
+}
+
+.show-modal {
+  display: block;
+}
+
+.custom-button {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-color: white;
+  border: 1px solid darkgray;
+}

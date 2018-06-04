@@ -114,21 +114,33 @@ export class ProcessDefDetail {
     this.eventAggregator.publish(environment.events.statusBar.showXMLButton);
   }
 
-  public canDeactivate(): boolean {
+  public canDeactivate(): Promise<boolean> {
 
-    if (!this._diagramHasChanged) {
-      return true;
-    }
+    return new Promise((resolve: Function, reject: Function): void => {
+      if (!this._diagramHasChanged) {
+        resolve(true);
+        return;
+      }
 
-    const save: boolean = window.confirm('Save changes to diagram?');
+      const modal: HTMLElement = document.getElementById('saveModal');
 
-    if (save && this._diagramHasChanged) {
-      this.saveDiagram();
-    }
+      modal.classList.add('show-modal');
 
-    this._diagramHasChanged = false;
+      document.getElementById('dontSaveButton').addEventListener('click', () => {
+        modal.classList.remove('show-modal');
+        resolve(true);
+      });
+      document.getElementById('saveButton').addEventListener('click', () => {
+        this.saveDiagram();
+        modal.classList.remove('show-modal');
+        resolve(true);
+      });
+      document.getElementById('cancelButton').addEventListener('click', () => {
+        modal.classList.remove('show-modal');
+        resolve(false);
+      });
 
-    return true;
+    });
   }
 
   public detached(): void {
