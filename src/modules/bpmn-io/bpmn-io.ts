@@ -1,5 +1,5 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
-import {EventAggregator} from 'aurelia-event-aggregator';
+import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 import * as $ from 'jquery';
 import 'spectrum-colorpicker/spectrum';
@@ -41,6 +41,7 @@ export class BpmnIo {
   private _ppHiddenBecauseLackOfSpace: boolean = false;
   private _propertyPanelHasNoSpace: boolean = false;
   private _eventAggregator: EventAggregator;
+  private _subscriptions: Array<Subscription>;
 
   private toggleMinimap: boolean = false;
   private minimapToggle: any;
@@ -147,6 +148,12 @@ export class BpmnIo {
     this.paletteContainer.appendChild(bpmnIoPaletteContainer);
 
     document.addEventListener('keydown', this._saveHotkeyEventHandler);
+
+    this._subscriptions = [
+      this._eventAggregator.subscribe(environment.events.bpmnio.toggleXMLView, () => {
+        this.toggleXMLView();
+      }),
+    ];
   }
 
   public detached(): void {
