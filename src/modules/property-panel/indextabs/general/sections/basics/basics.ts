@@ -19,13 +19,13 @@ export class BasicsSection implements ISection {
   public canHandleElement: boolean = true;
   public businessObjInPanel: IModdleElement;
   public elementDocumentation: string;
+  public validationError: boolean = false;
 
   private _modeling: IModeling;
   private _modeler: IBpmnModeler;
   private _bpmnModdle: IBpmnModdle;
   private _elementInPanel: IShape;
   private _previousProcessRefId: string;
-  private _validationError: boolean = false;
   private _validationController: ValidationController;
 
   constructor(controller?: ValidationController) {
@@ -33,7 +33,7 @@ export class BasicsSection implements ISection {
   }
 
   public activate(model: IPageModel): void {
-    if (this._validationError) {
+    if (this.validationError) {
       this.businessObjInPanel.id = this._previousProcessRefId;
       this._validationController.validate();
     }
@@ -56,7 +56,7 @@ export class BasicsSection implements ISection {
   }
 
   public detached(): void {
-    if (!this._validationError) {
+    if (!this.validationError) {
       return;
     }
     this.businessObjInPanel.id = this._previousProcessRefId;
@@ -119,13 +119,13 @@ export class BasicsSection implements ISection {
       return;
     }
 
-    this._validationError = false;
+    this.validationError = false;
     for (const result of event.results) {
       if (result.rule.property.displayName !== 'elementId') {
         continue;
       }
       if (result.valid === false) {
-        this._validationError = true;
+        this.validationError = true;
         document.getElementById(result.rule.property.displayName).style.border = '2px solid red';
       } else {
         document.getElementById(result.rule.property.displayName).style.border = '';
