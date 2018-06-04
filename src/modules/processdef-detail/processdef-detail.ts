@@ -114,7 +114,7 @@ export class ProcessDefDetail {
     for (const subscription of this.subscriptions) {
       subscription.dispose();
     }
-
+    this.saveDiagram();
     this.eventAggregator.publish(environment.events.navBar.hideTools);
     this.eventAggregator.publish(environment.events.statusBar.hideXMLButton);
   }
