@@ -1,14 +1,13 @@
 .diagram-tools-panel {
-  width: 100%;
+  display: flex;
   float: left;
+  width: 100%;
   margin-left: -6px;
   margin-bottom: 2px;
+  overflow-x: auto;
+  background-color: #f7f7f7;
   border-left: 2px solid #dcdbdb;
   border-bottom: 1px solid #eee;
-  background-color: #f7f7f7;
-  overflow-x: auto;
-
-  display: flex;
 }
 
 .tool {
