@@ -17,9 +17,9 @@
             <input type="text" id="processId" class="props-input" value.bind="businessObjInPanel.processRef.id & validateOnChange" change.delegate="validate()">
           </td>
           <td>	
-            <div if.bind="validationError">	
+            <template if.bind="validationError">	
               <span class="glyphicon glyphicon-remove"></span>	
-            </div>	
+            </template>	
           </td>
         </tr>
         <tr>
