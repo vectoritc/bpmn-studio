@@ -215,6 +215,11 @@ export class BpmnIo {
     const mousePositionFromRight: number = document.body.clientWidth - mousePosition;
     const resizedWidth: number = mousePositionFromRight - sideBarRightSize;
 
+    /*
+     * This is needed to stop the width from increasing too far
+     * The property panel would not be displayed with that width,
+     * but when increasing the browser width, the property panel then may also increase
+    */
     const newPropertyPanelWidth: number = Math.min(resizedWidth, propertyPanelMaxWidth);
 
     this.propertyPanelWidth = newPropertyPanelWidth;
