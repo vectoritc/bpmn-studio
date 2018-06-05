@@ -24,14 +24,13 @@
         <span class="fa fa-plus"></span>
       </button>
     </div>
-      <div class="panel__content">
-        <select class="form-control forms-list" value.bind="selectedForm" change.delegate="selectForm()" size="5">
-          <option repeat.for="form of forms" model.bind="form">${form.id}</option>
-        </select>
-      </div>
+    <div class="panel__content">
+      <select class="form-control forms-list" value.bind="selectedForm" change.delegate="selectForm()" size="5">
+        <option repeat.for="form of forms" model.bind="form">${form.id}</option>
+      </select>
     </div>
   </div>
-  <div class="panel panel--grow" show.bind="isFormSelected">
+  <div class="section-panel panel--grow" show.bind="isFormSelected">
     <div class="panel__heading">Form Field</div>
     <div class="panel__content">
       <table class="props-table">
@@ -75,6 +74,27 @@
             <input type="text" class="props-input" value.bind="selectedForm.defaultValue"  placeholder="Default Value" change.delegate="updateDefaultValue()">
           </td>
         </tr>
+      </table>
+    </div>
+  </div>
+  <div class="section-panel panel--grow" if.bind="selectedType === types[4]">
+    <div class="panel__heading">Values</div>
+    <div class="panel__content">
+      <table class="props-table">
+        <tr repeat.for="value of values" index.bind="$index">
+          <td class="key-value-column">
+            <input type="text" class="key-value-input" value.bind="newIds[$index]" placeholder="Id" change.delegate="changeId($index)">
+          </td>
+          <td class="key-value-column">
+            <input type="text" class="key-value-input" value.bind="newValues[$index]" placeholder="Value" change.delegate="changeValue($index)">
+          </td>
+          <td>
+            <button class="key-value-delete-button" click.delegate="removeProperty($index)">
+              <i class="fa fa-times"></i>
+            </button>
+          </td>
+        </tr>
+      </table>
     </div>
   </div>
 </template>
