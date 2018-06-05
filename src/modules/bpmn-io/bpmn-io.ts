@@ -269,6 +269,10 @@ export class BpmnIo {
     const minModelerWidthForPropertyPanel: number = this.minCanvasWidth + this.minPropertyPanelWidth;
     const modelerWidth: number = this.propertyPanel.parentElement.offsetWidth;
 
+    if (modelerWidth === 0) {
+      return;
+    }
+
     this._propertyPanelHasNoSpace = modelerWidth < minModelerWidthForPropertyPanel;
     if (this._propertyPanelHasNoSpace) {
       this._hidePropertyPanelForSpaceReasons();
