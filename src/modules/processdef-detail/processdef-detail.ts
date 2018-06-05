@@ -31,6 +31,9 @@ interface RouteParameters {
 @inject('ProcessEngineService', EventAggregator, Router, ValidationController, 'NotificationService')
 export class ProcessDefDetail {
 
+  public bpmnio: BpmnIo;
+  public process: IProcessDefEntity;
+
   private _processEngineService: IProcessEngineService;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
@@ -39,14 +42,6 @@ export class ProcessDefDetail {
   private _router: Router;
   private _diagramHasChanged: boolean = false;
   private _validationController: ValidationController;
-
-  public bpmnio: BpmnIo;
-  public process: IProcessDefEntity;
-
-  @bindable() public uri: string;
-  @bindable() public name: string;
-  @bindable() public startedProcessId: string;
-  @bindable({defaultBindingMode: bindingMode.oneWay}) public initialLoadingFinished: boolean = false;
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
