@@ -42,9 +42,9 @@
           </td>
           <td>	
             <div show.bind="isFormSelected">	
-              <div if.bind="validationError">	
+              <template if.bind="validationError">	
                 <span class="glyphicon glyphicon-remove"></span>	
-              </div>	
+              </template>	
             </div>	
           </td>
         </tr>
