@@ -32,8 +32,8 @@
         </div>
         <div class="properties" ref="propertyPanel" css="width: ${propertyPanelWidth}px; display: ${propertyPanelDisplay}; max-width: calc(100% - ${minCanvasWidth}px); min-width: ${minPropertyPanelWidth}px;">
           <div class="resize-div" ref="resizeButton"></div>
-          <property-panel id="js-properties-panel" modeler.bind="modeler" xml.bind="xml"></property-panel>
           <diagram-tools-right modeler.bind="modeler"></diagram-tools-right>
+          <property-panel id="js-properties-panel" modeler.bind="modeler" xml.bind="xml"></property-panel>
         </div>
       </div>
       <bpmn-xml-view if.bind="initialLoadingFinished" show.bind="showXMLView" xml.bind="xml"></bpmn-xml-view>
