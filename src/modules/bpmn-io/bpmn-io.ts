@@ -139,7 +139,7 @@ export class BpmnIo {
 
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.bpmnIo.toggleProcessSolutionExplorer, () => {
-      this._hideOrShowPpForSpaceReasons();
+        this._hideOrShowPpForSpaceReasons();
       }),
     ];
   }
