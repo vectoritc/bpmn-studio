@@ -1,8 +1,8 @@
 <template>
   <require from="./form-widget.css"></require>
-  <div if.bind="widget">
+  <template if.bind="widget">
     <template repeat.for="field of widget.fields">
       <compose view-model="../dynamic-ui-${getFieldControl(field)}-element/dynamic-ui-${getFieldControl(field)}-element" model.bind="field"></compose>
     </template>  
-  </div>          
+  </template>          
 </template>
