@@ -26,3 +26,18 @@
   color: black;
   box-shadow: none !important; //Overwrite Bootstrap btn-group class combination
 }
+
+.color-dropdown {
+  cursor: default;
+}
+
+.sp-replacer {
+  margin: 0;
+  overflow: hidden;
+  cursor: pointer;
+  display: inline-block;
+  border: 0;
+  background: 0;
+  color: #333;
+  vertical-align: middle;
+}
