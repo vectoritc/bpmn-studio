@@ -57,16 +57,16 @@
       </div>
     </div>
     <div class="menu-bar__menu menu-bar__menu--right">
-      <div if.bind="showTools">
+      <template if.bind="showTools">
         <button class="menu-bar__menu-center--action-button menu-bar__menu-center--back-button back-button" click.delegate="navigateBack()" title="Navigate back">
           <i class="fa fa-arrow-circle-left"></i>
         </button>
-      </div>
-      <div if.bind="showTools">
+      </template>
+      <template if.bind="showTools">
         <button class="menu-bar__menu-center--action-button" ref="saveButton" click.delegate="saveDiagram()" disabled.bind="disableSaveButton" title="Save Diagram">
           <i class="fa fa-save"></i>
         </button>
-      </div>
+      </template>
       <div class="btn-group" if.bind="showTools">
         <button class="menu-bar__menu-center--action-button dropdown-toggle" title="Export Diagram" ref="exportButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i ref="exportIcon" class="fa fa-upload"></i>

@@ -7,7 +7,7 @@
     <i class="fa fa-upload"></i>
   </button>
 
-  <div if.bind="chooseOptions">
+  <template if.bind="chooseOptions">
     <div class="modal fade in show" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -25,5 +25,5 @@
       </div>
     </div>
     <div class="modal-backdrop fade in"></div>
-  </div>
+  </template>
 </template>

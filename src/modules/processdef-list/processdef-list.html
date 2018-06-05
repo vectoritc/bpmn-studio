@@ -6,7 +6,7 @@
   <div class="process-def-list">
     <!-- Modal dialog for importing BPMN diagrams {{{ -->
     <!-- Import Dialog {{{ -->
-    <div if.bind="showDiagramNameDialog">
+    <template if.bind="showDiagramNameDialog">
       <div class="modal fade in show" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
@@ -44,10 +44,10 @@
       <!-- Modal Gray Bacground {{{ -->
       <div class="modal-backdrop fade in"></div>
       <!-- }}} Modal Gray Bacground -->
-    </div>
+    </template>
     <!-- }}} Import Dialog -->
     <!-- Overwrite Dialog {{{ -->
-    <div if.bind="showOverwriteDialog">
+    <template if.bind="showOverwriteDialog">
       <div class="modal  fade in show" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
@@ -70,7 +70,7 @@
       <!-- Modal Gray Bacground {{{ -->
       <div class="modal-backdrop fade in"></div>
       <!-- }}} Modal Gray Bacground -->
-    </div>
+    </template>
     <!-- }}} Overwrite Dialog -->
     <!-- }}} Modal dialog for importing BPMN diagrams -->
     <div class="processdef-list-container">
