@@ -211,8 +211,11 @@ export class BpmnIo {
   }
 
   private _setNewPropertyPanelWidthFromMousePosition(mousePosition: number): void {
+    const propertyPanelMaxWidth: number = this.propertyPanel.parentElement.offsetWidth - this.minCanvasWidth;
     const mousePositionFromRight: number = document.body.clientWidth - mousePosition;
-    const newPropertyPanelWidth: number = mousePositionFromRight - sideBarRightSize;
+    const resizedWidth: number = mousePositionFromRight - sideBarRightSize;
+
+    const newPropertyPanelWidth: number = Math.min(resizedWidth, propertyPanelMaxWidth);
 
     this.propertyPanelWidth = newPropertyPanelWidth;
   }
