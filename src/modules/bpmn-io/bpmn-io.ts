@@ -188,10 +188,6 @@ export class BpmnIo {
     });
   }
 
-  private getSelectedElements(): Array<IShape> {
-    return this.modeler.get('selection')._selectedElements;
-  }
-
   public togglePanel(): void {
     if (this._toggled === true) {
       if (this._propertyPanelHasNoSpace) {
@@ -208,6 +204,25 @@ export class BpmnIo {
       this.propertyPanelDisplay = 'none';
       this._toggled = true;
     }
+  }
+
+  public resize(event: any): void {
+    const mousePosition: number = event.clientX;
+
+    this._setNewPropertyPanelWidthFromMousePosition(mousePosition);
+  }
+
+  public async toggleXMLView(): Promise<void> {
+    if (!this.showXMLView) {
+      this.xml = await this.getXML();
+      this.showXMLView = true;
+    } else {
+      this.showXMLView = false;
+    }
+  }
+
+  private getSelectedElements(): Array<IShape> {
+    return this.modeler.get('selection')._selectedElements;
   }
 
   private _setNewPropertyPanelWidthFromMousePosition(mousePosition: number): void {
@@ -240,21 +255,6 @@ export class BpmnIo {
 
     this._toggled = true;
     this.togglePanel();
-  }
-
-  public resize(event: any): void {
-    const mousePosition: number = event.clientX;
-
-    this._setNewPropertyPanelWidthFromMousePosition(mousePosition);
-  }
-
-  public async toggleXMLView(): Promise<void> {
-    if (!this.showXMLView) {
-      this.xml = await this.getXML();
-      this.showXMLView = true;
-    } else {
-      this.showXMLView = false;
-    }
   }
 
   private resizeEventHandler = (event: any): void => {
