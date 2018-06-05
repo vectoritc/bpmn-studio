@@ -11,9 +11,9 @@
             <input type="text" class="props-input" id="elementId" value.bind="businessObjInPanel.id & validateOnChange" change.delegate="updateId()">
           </td>
           <td>	
-            <div if.bind="validationError">	
+            <template if.bind="validationError">	
               <span class="glyphicon glyphicon-remove"></span>	
-            </div>	
+            </template>	
           </td>
         </tr>
         <tr>
