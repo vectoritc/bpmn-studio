@@ -8,6 +8,8 @@ import {ElementDistributeOptions,
         IBpmnFunction,
         IBpmnModeler,
         IDefinition,
+        IEditorActions,
+        IKeyboard,
         IModdleElement,
         IModeling,
         IProcessDefEntity,
@@ -76,6 +78,8 @@ export class BpmnIo {
         bindTo: document,
       },
     });
+
+    this._addKeyboardListener();
 
     if (this.xml !== undefined && this.xml !== null) {
       this.modeler.importXML(this.xml, (err: Error) => {
@@ -327,6 +331,21 @@ export class BpmnIo {
       // Prevent the browser from handling the default action for CTRL + s.
       event.preventDefault();
       this._eventAggregator.publish(environment.events.processDefDetail.saveDiagram);
+    }
+  }
+
+  private _addKeyboardListener(): void {
+    const keyboard: IKeyboard = this.modeler.get('keyboard');
+    const editorActions: IEditorActions = this.modeler.get('editorActions');
+    const backSpaceKeyCode: number = 8;
+
+    keyboard.addListener(removeSelectedElements);
+
+    function removeSelectedElements(key: number, modifiers: any): boolean {
+      if (key === backSpaceKeyCode) {
+        editorActions.trigger('removeSelection');
+        return true;
+      }
     }
   }
 }
