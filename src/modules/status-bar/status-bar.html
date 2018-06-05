@@ -11,14 +11,14 @@
     </div>
     <div class="status-bar__center-bar"></div>
     <div class="status-bar__right-bar">
-      <div if.bind="showXMLButton">
+      <template if.bind="showXMLButton">
         <a class="status-bar__element" click.delegate="toggleXMLView()" if.bind="!xmlIsShown">
           <i class="fa fa-file-code-o"></i> Show XML
         </a>
         <a class="status-bar__element" click.delegate="toggleXMLView()" if.bind="xmlIsShown">
           <i class="fa fa-file-code-o"></i> Show Diagram
         </a>
-      </div>
+      </template>
       <a class="status-bar__element" click.delegate="navigateToSettings()">
         <i class="fa fa-wrench"></i> Settings
       </a>
