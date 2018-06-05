@@ -29,6 +29,9 @@ export class BasicsSection implements ISection {
   public selectedType: string;
   public types: Array<string> = ['string', 'long', 'boolean', 'date', 'enum', 'custom type'];
   public customType: string;
+  public values: Array<any> = [];
+  public newIds: Array<string> = [];
+  public newValues: Array<string> = [];
 
   private _bpmnModdle: IBpmnModdle;
   private _modeler: IBpmnModeler;
