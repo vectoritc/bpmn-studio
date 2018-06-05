@@ -13,3 +13,5 @@ export {ISeed} from './ISeed';
 export {IIds} from './IIDs';
 export * from './bpmnElements/index';
 export * from './constants';
+export {IKeyboard} from './IKeyboard';
+export {IEditorActions} from './IEditorActions';
