@@ -4,12 +4,12 @@ import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
+import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 import * as canvg from 'canvg-browser';
 import * as download from 'downloadjs';
 import * as $ from 'jquery';
 import * as beautify from 'xml-beautifier';
 
-import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 import {
   AuthenticationStateEvent,
   ElementDistributeOptions,
@@ -199,6 +199,15 @@ export class ProcessDefDetail {
     }
   }
 
+  /**
+   * In the current implementation this method only checks for UserTasks that have
+   * empty or otherwise not allowed FormData in them.
+   * If that is the case the method will continue by deleting unused/disallowed
+   * FormData to make sure the diagrams xml is furhter supported by camunda.
+   *
+   * TODO: Look further into this if this method is not better placed at the FormsSection
+   * in the Property Panel, also split this into two methods and name them right.
+   */
   private _validateXML(): void {
     const registry: Array<IShape> = this.bpmnio.modeler.get('elementRegistry');
 
