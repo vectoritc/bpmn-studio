@@ -1,11 +1,12 @@
 .diagram-tools-panel {
-  margin-bottom: 2px;
-  border-bottom: 1px solid #eee;
-  background-color: #f7f7f7;
-  border-left: 1px solid #eee;
-  margin-left: 2px;
-
   display: flex;
+  float: left;
+  width: 100%;
+  margin-left: -6px;
+  margin-bottom: 2px;
+  background-color: #f7f7f7;
+  border-left: 2px solid #dcdbdb;
+  border-bottom: 1px solid #eee;
 }
 
 .tool {

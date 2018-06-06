@@ -40,6 +40,9 @@ export default {
       startProcess: 'processdefdetail:process:start',
       toggleXMLView: 'processdefdetail:xmlview:toggle',
     },
+    processSolutionPanel: {
+      toggleProcessSolutionExplorer: 'processSolutionPanel:processsolutionexplorer:toggle',
+    },
   },
   bpmnStudioClient: {
     baseRoute: processEngineRoute,

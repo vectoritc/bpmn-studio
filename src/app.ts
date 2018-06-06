@@ -1,14 +1,10 @@
 import {Router, RouterConfiguration} from 'aurelia-router';
-import environment from './environment';
 
 export class App {
-
-  public router: Router;
-  public environment: any = environment;
-  public showSolutionExplorer: boolean = false;
+  private _router: Router;
 
   public configureRouter(config: RouterConfiguration, router: Router): void {
-    this.router = router;
+    this._router = router;
     config.title = 'BPMN-Studio';
     config.map([
       {

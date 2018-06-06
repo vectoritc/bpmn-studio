@@ -28,10 +28,10 @@
     <div class="bpmn-io-layout__main js-main">
       <div class="modeler" show.bind="!showXMLView">
         <div class="diagram">
-          <div ref="canvasModel" class="canvasModel" css="right: ${canvasRight}px;"></div>
+          <div ref="canvasModel" class="canvasModel"></div>
         </div>
-        <div class="resize-div" ref="resizeButton" css="right: ${resizeButtonRight}px;"></div>
-        <div class="properties" ref="panel" css="width: ${ppWidth}px; display: ${ppDisplay}">
+        <div class="properties" ref="propertyPanel" css="width: ${propertyPanelWidth}px; display: ${propertyPanelDisplay}; max-width: calc(100% - ${minCanvasWidth}px); min-width: ${minPropertyPanelWidth}px;">
+          <div class="resize-div" ref="resizeButton"></div>
           <diagram-tools-right modeler.bind="modeler"></diagram-tools-right>
           <property-panel id="js-properties-panel" modeler.bind="modeler" xml.bind="xml"></property-panel>
         </div>
