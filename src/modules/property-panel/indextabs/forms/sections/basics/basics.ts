@@ -269,7 +269,7 @@ export class BasicsSection implements ISection {
     });
 
     if (formElement === undefined) {
-      this._createEmptyExtensionsElement();
+      this._createEmptyFormData();
       return this._getOrCreateFormElement();
     }
 
@@ -287,7 +287,7 @@ export class BasicsSection implements ISection {
     this.businessObjInPanel.extensionElements = extensionElements;
   }
 
-  private _createEmptyExtensionsElement(): void {
+  private _createEmptyFormData(): void {
     const fields: Array<IModdleElement> = [];
     const extensionFormElement: IModdleElement = this._bpmnModdle.create('camunda:FormData', {fields: fields});
     this.businessObjInPanel.extensionElements.values.push(extensionFormElement);
