@@ -7,6 +7,7 @@ import {
   IFormElement,
   IModdleElement,
   IPageModel,
+  IProperty,
   IPropertyElement,
   ISection,
   IShape,
@@ -29,9 +30,9 @@ export class BasicsSection implements ISection {
   public selectedType: string;
   public types: Array<string> = ['string', 'long', 'boolean', 'date', 'enum', 'custom type'];
   public customType: string;
-  public values: Array<any> = [];
-  public newIds: Array<string> = [];
-  public newValues: Array<string> = [];
+  public formfieldValues: Array<IProperty> = [];
+  public newFormfieldValueIds: Array<string> = [];
+  public newFormfieldValueNames: Array<string> = [];
 
   private _bpmnModdle: IBpmnModdle;
   private _modeler: IBpmnModeler;
@@ -77,6 +78,33 @@ export class BasicsSection implements ISection {
     }
 
     return element.businessObject.$type === 'bpmn:UserTask';
+  }
+
+  public addFormfieldValue(): void {
+    const formfieldValue: Object = {
+      id: `Value_${this._generateRandomId()}`,
+      value: '',
+    };
+    const bpmnValue: IProperty = this._bpmnModdle.create('camunda:Value', formfieldValue);
+
+    this.formfieldValues.push(bpmnValue);
+    Object.assign(this._formElement.fields[this._selectedIndex].values, this.formfieldValues);
+    this._reloadFormfieldValues();
+  }
+
+  public removeFormfieldValue(index: number): void {
+    this._formElement.fields[this._selectedIndex].values.splice(index, 1);
+    this._reloadFormfieldValues();
+  }
+
+  public changeFormfieldValueId(index: number): void {
+    this.formfieldValues[index].id = this.newFormfieldValueIds[index];
+    Object.assign(this._formElement.fields[this._selectedIndex].values, this.formfieldValues);
+  }
+
+  public changeFormfieldValueName(index: number): void {
+    this.formfieldValues[index].name = this.newFormfieldValueNames[index];
+    Object.assign(this._formElement.fields[this._selectedIndex].values, this.formfieldValues);
   }
 
   public removeSelectedForm(): void {
@@ -146,6 +174,7 @@ export class BasicsSection implements ISection {
     this._selectedIndex = this._getSelectedIndex();
 
     this._setValidationRules();
+    this._reloadFormfieldValues();
   }
 
   public updateType(): void {
@@ -158,6 +187,7 @@ export class BasicsSection implements ISection {
     }
 
     this._formElement.fields[this._selectedIndex].type = type;
+    this._reloadFormfieldValues();
   }
 
   public updateLabel(): void {
@@ -211,6 +241,33 @@ export class BasicsSection implements ISection {
     this._resetIdOnSelectedOrPrevious();
 
     this.validationController.validate();
+  }
+
+  private _reloadFormfieldValues(): void {
+    const selectedFormIsEnum: boolean = this.selectedForm.type === 'enum';
+    const enumHasValues: boolean = this.selectedForm.values !== undefined
+                                && this.selectedForm.values.length !== 0;
+
+    if (!selectedFormIsEnum) {
+      return;
+    }
+
+    if (!enumHasValues) {
+      this._formElement.fields[this._selectedIndex].values = [];
+    }
+
+    this.formfieldValues = [];
+    this.newFormfieldValueIds = [];
+    this.newFormfieldValueNames = [];
+
+    for (const value of this.selectedForm.values) {
+      if (value.$type !== 'camunda:Value') {
+        continue;
+      }
+      this.newFormfieldValueIds.push(value.id);
+      this.newFormfieldValueNames.push(value.name);
+      this.formfieldValues.push(value);
+    }
   }
 
   private _reloadForms(): void {

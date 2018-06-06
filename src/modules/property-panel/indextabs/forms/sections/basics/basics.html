@@ -77,19 +77,23 @@
       </table>
     </div>
   </div>
-  <div class="section-panel panel--grow" if.bind="selectedType === types[4]">
-    <div class="panel__heading">Values</div>
+  <div class="section-panel panel--grow" if.bind="isFormSelected && selectedType === types[4]">
+    <div class="panel__heading">Values
+      <button class="add-context-button" click.delegate="addFormfieldValue()">
+        <span class="fa fa-plus"></span>
+      </button>
+    </div>
     <div class="panel__content">
-      <table class="props-table">
-        <tr repeat.for="value of values" index.bind="$index">
+      <table>
+        <tr repeat.for="value of formfieldValues" index.bind="$index">
           <td class="key-value-column">
-            <input type="text" class="key-value-input" value.bind="newIds[$index]" placeholder="Id" change.delegate="changeId($index)">
+            <input type="text" class="key-value-input" value.bind="newFormfieldValueIds[$index]" placeholder="Id" change.delegate="changeFormfieldValueId($index)">
           </td>
           <td class="key-value-column">
-            <input type="text" class="key-value-input" value.bind="newValues[$index]" placeholder="Value" change.delegate="changeValue($index)">
+            <input type="text" class="key-value-input" value.bind="newFormfieldValueNames[$index]" placeholder="Name" change.delegate="changeFormfieldValueName($index)">
           </td>
           <td>
-            <button class="key-value-delete-button" click.delegate="removeProperty($index)">
+            <button class="key-value-delete-button" click.delegate="removeFormfieldValue($index)">
               <i class="fa fa-times"></i>
             </button>
           </td>
