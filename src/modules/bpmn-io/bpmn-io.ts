@@ -104,10 +104,10 @@ export class BpmnIo {
     this._hideMinimap.className = 'hideMinimap';
     this._hideMinimap.textContent = 'Hide Minimap';
     this._minimapToggle.appendChild(this._hideMinimap);
-    this._minimapToggle.addEventListener('click', this.toggleMinimapFunction);
+    this._minimapToggle.addEventListener('click', this._toggleMinimapFunction);
     //  }}} Styling for Minimap //
 
-    window.addEventListener('resize', this.resizeEventHandler);
+    window.addEventListener('resize', this._resizeEventHandler);
 
     this.initialLoadingFinished = true;
 
@@ -152,7 +152,7 @@ export class BpmnIo {
   public detached(): void {
     this.modeler.detach();
     this.modeler.destroy();
-    window.removeEventListener('resize', this.resizeEventHandler);
+    window.removeEventListener('resize', this._resizeEventHandler);
     document.removeEventListener('keydown', this._saveHotkeyEventHandler);
 
     for (const subscription of this._subscriptions) {
@@ -262,7 +262,7 @@ export class BpmnIo {
     this.togglePanel();
   }
 
-  private resizeEventHandler = (event: any): void => {
+  private _resizeEventHandler = (event: any): void => {
     this._hideOrShowPpForSpaceReasons();
 
     const mousePosition: number = event.clientX;
@@ -286,7 +286,7 @@ export class BpmnIo {
     }
   }
 
-  private toggleMinimapFunction = (): void => {
+  private _toggleMinimapFunction = (): void => {
     if (this._toggleMinimap === false) {
       this._expandIcon.style.display = 'none';
       this._hideMinimap.style.display = 'inline';
