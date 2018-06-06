@@ -244,30 +244,45 @@ export class BasicsSection implements ISection {
   }
 
   private _reloadFormfieldValues(): void {
-    const selectedFormIsEnum: boolean = this.selectedForm.type === 'enum';
-    const enumHasValues: boolean = this.selectedForm.values !== undefined
-                                && this.selectedForm.values.length !== 0;
+    const formIsNotEnum: boolean = this.selectedForm.type !== 'enum';
+    const noValuesInEnum: boolean = this.selectedForm.values === undefined
+                                && this.selectedForm.values.length === 0;
 
-    if (!selectedFormIsEnum) {
+    if (formIsNotEnum) {
       return;
     }
 
-    if (!enumHasValues) {
-      this._formElement.fields[this._selectedIndex].values = [];
+    if (noValuesInEnum) {
+      this
+        ._formElement
+        .fields[this._selectedIndex]
+        .values = [];
     }
 
-    this.formfieldValues = [];
-    this.newFormfieldValueIds = [];
-    this.newFormfieldValueNames = [];
+    /*
+     * Prepare new form fields.
+     */
+    const formfieldValues: Array<IProperty> = [];
+    const newFormfieldValueIds: Array<string> = [];
+    const newFormfieldValueNames: Array<string> = [];
 
     for (const value of this.selectedForm.values) {
-      if (value.$type !== 'camunda:Value') {
+      const camundaValue: boolean = value.$type !== 'camunda:Value';
+      if (camundaValue) {
         continue;
       }
-      this.newFormfieldValueIds.push(value.id);
-      this.newFormfieldValueNames.push(value.name);
-      this.formfieldValues.push(value);
+
+      formfieldValues.push(value);
+      newFormfieldValueIds.push(value.id);
+      newFormfieldValueNames.push(value.name);
     }
+    
+    /*
+     * Assign new form fields values.
+     */
+    this.formfieldValues = formfieldValues;
+    this.newFormfieldValueIds = newFormfieldValueIds;
+    this.newFormfieldValueNames = newFormfieldValueNames;
   }
 
   private _reloadForms(): void {
