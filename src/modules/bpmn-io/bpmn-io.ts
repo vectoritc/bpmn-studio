@@ -141,6 +141,11 @@ export class BpmnIo {
       this._eventAggregator.subscribe(environment.events.bpmnIo.toggleProcessSolutionExplorer, () => {
         this._hideOrShowPpForSpaceReasons();
       }),
+      this._eventAggregator.subscribe(environment.events.processDefDetail.toggleXMLView, () => {
+        setTimeout(() => {
+          this._hideOrShowPpForSpaceReasons();
+        }, 0);
+      }),
     ];
   }
 
