@@ -40,8 +40,8 @@ export default {
       startProcess: 'processdefdetail:process:start',
       toggleXMLView: 'processdefdetail:xmlview:toggle',
     },
-    bpmnIo: {
-      toggleProcessSolutionExplorer: 'bpmnio:processsolutionexplorer:toggle',
+    processSolutionPanel: {
+      toggleProcessSolutionExplorer: 'processSolutionPanel:processsolutionexplorer:toggle',
     },
   },
   bpmnStudioClient: {

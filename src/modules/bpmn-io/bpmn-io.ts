@@ -138,7 +138,7 @@ export class BpmnIo {
     this._hideOrShowPpForSpaceReasons();
 
     this._subscriptions = [
-      this._eventAggregator.subscribe(environment.events.bpmnIo.toggleProcessSolutionExplorer, () => {
+      this._eventAggregator.subscribe(environment.events.processSolutionPanel.toggleProcessSolutionExplorer, () => {
         this._hideOrShowPpForSpaceReasons();
       }),
       this._eventAggregator.subscribe(environment.events.processDefDetail.toggleXMLView, () => {
