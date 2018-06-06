@@ -246,7 +246,7 @@ export class BasicsSection implements ISection {
   private _reloadFormfieldValues(): void {
     const formIsNotEnum: boolean = this.selectedForm.type !== 'enum';
     const noValuesInEnum: boolean = this.selectedForm.values === undefined
-                                && this.selectedForm.values.length === 0;
+                                 || this.selectedForm.values.length === 0;
 
     if (formIsNotEnum) {
       return;
