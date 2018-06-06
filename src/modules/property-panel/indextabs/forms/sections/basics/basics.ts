@@ -276,7 +276,7 @@ export class BasicsSection implements ISection {
       newFormfieldValueIds.push(value.id);
       newFormfieldValueNames.push(value.name);
     }
-    
+
     /*
      * Assign new form fields values.
      */
