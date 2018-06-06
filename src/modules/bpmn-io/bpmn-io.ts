@@ -130,9 +130,7 @@ export class BpmnIo {
     });
 
     const bpmnIoPaletteContainer: Element = document.getElementsByClassName('djs-palette')[0];
-
     bpmnIoPaletteContainer.className += ' djs-palette-override';
-
     this.paletteContainer.appendChild(bpmnIoPaletteContainer);
 
     document.addEventListener('keydown', this._saveHotkeyEventHandler);
