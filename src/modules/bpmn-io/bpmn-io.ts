@@ -142,7 +142,7 @@ export class BpmnIo {
         this._hideOrShowPpForSpaceReasons();
       }),
       this._eventAggregator.subscribe(environment.events.processDefDetail.toggleXMLView, () => {
-        setTimeout(() => {
+        setTimeout(() => { // This makes the function gets called after the XMLView is toggled
           this._hideOrShowPpForSpaceReasons();
         }, 0);
       }),
