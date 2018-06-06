@@ -137,6 +137,8 @@ export class BpmnIo {
 
     document.addEventListener('keydown', this._saveHotkeyEventHandler);
 
+    this._hideOrShowPpForSpaceReasons();
+
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.bpmnIo.toggleProcessSolutionExplorer, () => {
         this._hideOrShowPpForSpaceReasons();
