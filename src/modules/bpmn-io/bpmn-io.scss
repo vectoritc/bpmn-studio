@@ -107,6 +107,10 @@
   border-right: 2px solid #dcdbdb;
 }
 
+.bpmn-io-layout__tools-left::-webkit-scrollbar {
+  display: none;
+}
+
 .bpmn-io-layout__tools-right {
   border-left: 2px solid #dcdbdb;
 }
