@@ -101,9 +101,10 @@
 }
 
 .bpmn-io-layout__tools-left {
-  border-right: 2px solid #dcdbdb;
   width: 36px;
-  overflow: hidden;
+  min-width: 36px;
+  overflow-y: scroll;
+  border-right: 2px solid #dcdbdb;
 }
 
 .bpmn-io-layout__tools-right {
