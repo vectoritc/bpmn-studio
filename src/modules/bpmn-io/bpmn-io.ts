@@ -226,10 +226,6 @@ export class BpmnIo {
     }
   }
 
-  private getSelectedElements(): Array<IShape> {
-    return this.modeler.get('selection')._selectedElements;
-  }
-
   private _setNewPropertyPanelWidthFromMousePosition(mousePosition: number): void {
     const propertyPanelMaxWidth: number = this.propertyPanel.parentElement.offsetWidth - this.minCanvasWidth;
     const mousePositionFromRight: number = document.body.clientWidth - mousePosition;
