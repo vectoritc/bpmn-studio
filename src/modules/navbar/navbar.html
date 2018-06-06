@@ -20,7 +20,7 @@
       <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'Task List' || activeRouteTitle === 'Process Instance List'
                                                         ? 'menu__menu-tabbed-link--active' : ''">
         <div class="btn-group">
-          <div class="menu__menu-tabbed-link" data-toggle="dropdown">
+          <div data-toggle="dropdown">
             <a class="menu-tabbed-link">Dashboard</a>
           </div>
           <ul class="dropdown-menu menu-bar__dashboard-dropdown">
@@ -42,15 +42,15 @@
         </button>
         <table class="dropdown-menu process-details-dropdown-menu">
           <tr>
-            <th>Process Id: </th>
+            <th class="process-details-dropdown-menu__entry">Process Id: </th>
             <td>${process.id}</td>
           </tr>
           <tr>
-            <th>Process Name: </th>
+            <th class="process-details-dropdown-menu__entry">Process Name: </th>
             <td>${process.name}</td>
           </tr>
           <tr>
-            <th>Process Key: </th>
+            <th class="process-details-dropdown-menu__entry">Process Key: </th>
             <td>${process.key}</td>
           </tr>
         </table>

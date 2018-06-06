@@ -101,9 +101,15 @@
 }
 
 .bpmn-io-layout__tools-left {
-  border-right: 2px solid #dcdbdb;
   width: 36px;
-  overflow: hidden;
+  min-width: 36px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-right: 2px solid #dcdbdb;
+}
+
+.bpmn-io-layout__tools-left::-webkit-scrollbar {
+  display: none;
 }
 
 .bpmn-io-layout__tools-right {
@@ -161,11 +167,12 @@
 
   .entry,
   .djs-palette-toggle {
-    width: 30px;
+    width: 32px;
     height: 32px;
-    line-height: 24px;
+    margin-left: 1px;
     cursor: default;
     font-size: 18px;
+    line-height: 24px;
   }
 
   .entry {
