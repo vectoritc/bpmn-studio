@@ -46,15 +46,7 @@ export class CallActivitySection implements ISection {
   }
 
   public navigateToCalledProcess(): void {
-
-    this._modeler.saveXML({}, async(error: Error, xml: string) => {
-      const processId: string = this._router.currentInstruction.params.processDefId;
-      const processDef: IProcessDefEntity = this.allProcesses.data.find((process: IProcessDefEntity) => {
-        return processId === process.id;
-      });
-      await this._generalService.updateProcessDef(processDef, xml);
-      this._router.navigate(`/processdef/${this.selectedProcess.id}/detail`);
-    });
+    this._router.navigate(`/processdef/${this.selectedProcess.id}/detail`);
   }
 
   public updateCalledProcess(): void {
