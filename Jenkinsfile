@@ -76,6 +76,7 @@ pipeline {
           steps {
             unstash('post_build')
             sh('node --version')
+            sh('npm run jenkins-electron-install-app-deps')
             sh('npm run jenkins-electron-rebuild-native')
             sh('npm run jenkins-electron-build-linux')
             stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml', name: 'linux_results')
@@ -97,6 +98,7 @@ pipeline {
             // which runs linux. Some dependencies may not be installed
             // if they have a os restriction in their package.json
             sh('npm install')
+            sh('npm run jenkins-electron-install-app-deps')
             sh('npm run jenkins-electron-rebuild-native')
 
             withCredentials([
@@ -119,6 +121,7 @@ pipeline {
           steps {
             unstash('post_build')
             sh('node --version')
+            sh('npm run jenkins-electron-install-app-deps')
             sh('npm run jenkins-electron-rebuild-native')
             sh('npm run jenkins-electron-build-windows')
             stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml', name: 'windows_results')
