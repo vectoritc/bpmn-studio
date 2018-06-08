@@ -338,7 +338,7 @@ export class BpmnIo {
     const keyboard: IKeyboard = this.modeler.get('keyboard');
     const editorActions: IEditorActions = this.modeler.get('editorActions');
     const backSpaceKeyCode: number = 8;
-    const removeSelectedElements: ((key: number, modifiers: any) => boolean) = (key: number, modifiers: any): boolean => {
+    const removeSelectedElements: ((key: number, modifiers: KeyboardEvent) => boolean) = (key: number, modifiers: KeyboardEvent): boolean => {
       if (key === backSpaceKeyCode) {
         editorActions.trigger('removeSelection');
         return true;

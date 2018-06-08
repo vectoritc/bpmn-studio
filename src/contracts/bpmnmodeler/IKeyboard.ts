@@ -1,8 +1,8 @@
 export interface IKeyboard {
   addListener(keyListenerFunction: Function): void;
-  hasModifier(modifiers: any): any;
-  isCmd(modifiers: any): any;
-  isShift(modifiers: any): any;
+  hasModifier(modifiers: KeyboardEvent): boolean;
+  isCmd(modifiers: KeyboardEvent): boolean;
+  isShift(modifiers: KeyboardEvent): boolean;
   bind(node: HTMLElement): void;
   getBinding(): HTMLElement;
   unbind(): void;
