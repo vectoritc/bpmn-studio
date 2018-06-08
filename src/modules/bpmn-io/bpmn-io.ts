@@ -335,6 +335,14 @@ export class BpmnIo {
   }
 
   private _addKeyboardListener(): void {
+    const macRegex: RegExp = /.*mac*./i;
+    const currentPlattform: string = navigator.platform;
+    const currentPlattformIsNotMac: boolean = !macRegex.test(currentPlattform);
+
+    if (currentPlattformIsNotMac) {
+      return;
+    }
+
     const keyboard: IKeyboard = this.modeler.get('keyboard');
     const editorActions: IEditorActions = this.modeler.get('editorActions');
     const backSpaceKeyCode: number = 8;
