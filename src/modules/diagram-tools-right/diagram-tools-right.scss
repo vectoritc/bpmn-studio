@@ -32,6 +32,23 @@
   cursor: default;
 }
 
+.colorpicker--fill {
+  border-top: 1px solid #ccc;
+}
+
+.colorpicker--border {
+  border-bottom: 1px solid #ccc;
+}
+
+.colorpicker__eyedropper--fill {
+  margin-left: 39px;
+  margin-right: -14px;
+}
+.colorpicker__eyedropper--border {
+  margin-left: 14px;
+  margin-right: -14px;
+}
+
 .sp-replacer {
   margin: 0;
   overflow: hidden;
