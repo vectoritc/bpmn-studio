@@ -55,6 +55,7 @@ export default {
     defaultWidth: 250,
   },
   colorPickerSettings: {
+    preferredFormat: 'hex',
     clickoutFiresChange: true,
     showPalette: true,
     palette: [],
@@ -63,7 +64,6 @@ export default {
     showInput: true,
     allowEmpty: true,
     showButtons: false,
-    showPaletteOnly: true,
-    togglePaletteOnly: true,
+    containerClassName: 'colorpicker-container',
   },
 };
