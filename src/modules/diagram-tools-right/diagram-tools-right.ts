@@ -24,8 +24,8 @@ export class DiagramToolsRight {
   public colorPickerFill: HTMLInputElement;
   public colorPickerLoaded: boolean = false;
 
-  private _fillColor: string;
   private _borderColor: string;
+  public fillColor: string;
   private _notificationService: NotificationService;
 
   constructor(notificationService: NotificationService) {
@@ -62,7 +62,7 @@ export class DiagramToolsRight {
   }
 
   public setPickedColor(): void {
-    this._setColor(this._fillColor, this._borderColor);
+    this._setColor(this.fillColor, this._borderColor);
   }
 
   public updateCustomColors(): void {
@@ -70,10 +70,10 @@ export class DiagramToolsRight {
       this._activateColorPicker();
     }
 
-    [this._fillColor, this._borderColor] = this._getColors();
+    [this.fillColor, this._borderColor] = this._getColors();
 
-    $(this.colorPickerFill).spectrum('set', this._fillColor);
     $(this.colorPickerBorder).spectrum('set', this._borderColor);
+    $(this.colorPickerFill).spectrum('set', this.fillColor);
   }
 
   public distributeElementsVertically(): void {
@@ -169,9 +169,9 @@ export class DiagramToolsRight {
 
   private _updateFillColor(fillColor: spectrum.tinycolorInstance): void {
     if (fillColor) {
-      this._fillColor = fillColor.toHexString();
+      this.fillColor = fillColor.toHexString();
     } else {
-      this._fillColor = undefined;
+      this.fillColor = undefined;
     }
 
     this.setPickedColor();
