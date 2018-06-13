@@ -80,6 +80,9 @@
         </ul>
       </div>
       <div class="menu-bar__last-tool" if.bind="showTools">
+        <button class="menu-bar__menu-center--action-button" click.delegate="printDiagram()" title="Print Diagram">
+          <i class="fa fa-print"></i>
+        </button>
         <button class="menu-bar__menu-center--action-button" click.delegate="startProcess()" disabled.bind="validationError" title="Start Process">
           <i class="fa fa-play"></i>
         </button>

@@ -71,6 +71,9 @@ export class NavBar {
     }
   }
 
+  public printDiagram(): void {
+  }
+
   public exportDiagram(exportAs: string): void {
     this._eventAggregator.publish(`${environment.events.processDefDetail.exportDiagramAs}:${exportAs}`);
   }
