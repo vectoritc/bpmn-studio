@@ -80,7 +80,7 @@ export class BasicsSection implements ISection {
   }
 
   public addEnumValue(): void {
-    const enumValue: Object = {
+    const enumValue: {id: string, value: string} = {
       id: `Value_${this._generateRandomId()}`,
       value: '',
     };
