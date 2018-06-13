@@ -1,10 +1,10 @@
 import {BpmnStudioClient} from '@process-engine/bpmn-studio_client';
-import {EventAggregator} from 'aurelia-event-aggregator';
+import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import environment from '../../environment';
 import {IAuthenticationService} from './../../contracts/authentication/IAuthenticationService';
-import {NotificationType} from './../../contracts/index';
+import {AuthenticationStateEvent, NotificationType} from './../../contracts/index';
 import {NotificationService} from './../notification/notification.service';
 
 @inject(Router, 'BpmnStudioClient', 'NotificationService', EventAggregator, 'AuthenticationService')
@@ -15,8 +15,10 @@ export class ConfigPanel {
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _authenticationService: IAuthenticationService;
+  private _subscriptions: Array<Subscription>;
 
   public config: any = environment.bpmnStudioClient;
+  public isLoggedIn: boolean;
 
   constructor(router: Router,
               bpmnStudioClient: BpmnStudioClient,
@@ -29,6 +31,25 @@ export class ConfigPanel {
     this._notificationService = notificationService;
     this._eventAggregator = eventAggregator;
     this._authenticationService = authenticationService;
+  }
+
+  public attached(): void {
+    this.isLoggedIn = this._authenticationService.hasToken();
+
+    this._subscriptions = [
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
+        this.isLoggedIn = this._authenticationService.hasToken();
+      }),
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
+        this.isLoggedIn = this._authenticationService.hasToken();
+      }),
+    ];
+  }
+
+  public detached(): void {
+    for (const subscription of this._subscriptions) {
+      subscription.dispose();
+    }
   }
 
   public updateSettings(): void {
