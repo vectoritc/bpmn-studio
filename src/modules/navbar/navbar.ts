@@ -14,9 +14,6 @@ export class NavBar {
   public showTools: boolean = false;
   public disableSaveButton: boolean = false;
   public process: IProcessDefEntity;
-  public exportButton: HTMLButtonElement;
-  public exportSpinner: HTMLElement;
-  public exportIcon: HTMLElement;
 
   constructor(router: Router, eventAggregator: EventAggregator) {
     this._router = router;
