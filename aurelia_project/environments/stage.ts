@@ -35,6 +35,7 @@ export default {
       enableSaveButton: 'navbar:saveButton:enable',
     },
     processDefDetail: {
+      printDiagram: 'processdefdetail:diagram:print',
       saveDiagram: 'processdefdetail:diagram:save',
       exportDiagramAs: 'processdefdetail:diagram:exportas',
       startProcess: 'processdefdetail:process:start',
