@@ -29,9 +29,9 @@ export class BasicsSection implements ISection {
   public selectedType: string;
   public types: Array<string> = ['string', 'long', 'boolean', 'date', 'enum', 'custom type'];
   public customType: string;
-  public formfieldValues: Array<IProperty> = [];
-  public newFormfieldValueIds: Array<string> = [];
-  public newFormfieldValueNames: Array<string> = [];
+  public enumValues: Array<IEnumValue> = [];
+  public newEnumValueIds: Array<string> = [];
+  public newEnumValueNames: Array<string> = [];
 
   private _bpmnModdle: IBpmnModdle;
   private _modeler: IBpmnModeler;
@@ -79,31 +79,31 @@ export class BasicsSection implements ISection {
     return element.businessObject.$type === 'bpmn:UserTask';
   }
 
-  public addFormfieldValue(): void {
-    const formfieldValue: Object = {
+  public addEnumValue(): void {
+    const enumValue: Object = {
       id: `Value_${this._generateRandomId()}`,
       value: '',
     };
-    const bpmnValue: IProperty = this._bpmnModdle.create('camunda:Value', formfieldValue);
+    const bpmnValue: IEnumValue = this._bpmnModdle.create('camunda:Value', enumValue);
 
-    this.formfieldValues.push(bpmnValue);
-    Object.assign(this._formElement.fields[this._selectedIndex].values, this.formfieldValues);
-    this._reloadFormfieldValues();
+    this.enumValues.push(bpmnValue);
+    Object.assign(this._formElement.fields[this._selectedIndex].values, this.enumValues);
+    this._reloadEnumValues();
   }
 
-  public removeFormfieldValue(index: number): void {
+  public removeEnumValue(index: number): void {
     this._formElement.fields[this._selectedIndex].values.splice(index, 1);
-    this._reloadFormfieldValues();
+    this._reloadEnumValues();
   }
 
-  public changeFormfieldValueId(index: number): void {
-    this.formfieldValues[index].id = this.newFormfieldValueIds[index];
-    Object.assign(this._formElement.fields[this._selectedIndex].values, this.formfieldValues);
+  public changeEnumValueId(index: number): void {
+    this.enumValues[index].id = this.newEnumValueIds[index];
+    Object.assign(this._formElement.fields[this._selectedIndex].values, this.enumValues);
   }
 
-  public changeFormfieldValueName(index: number): void {
-    this.formfieldValues[index].name = this.newFormfieldValueNames[index];
-    Object.assign(this._formElement.fields[this._selectedIndex].values, this.formfieldValues);
+  public changeEnumValueName(index: number): void {
+    this.enumValues[index].name = this.newEnumValueNames[index];
+    Object.assign(this._formElement.fields[this._selectedIndex].values, this.enumValues);
   }
 
   public removeSelectedForm(): void {
@@ -173,7 +173,7 @@ export class BasicsSection implements ISection {
     this._selectedIndex = this._getSelectedIndex();
 
     this._setValidationRules();
-    this._reloadFormfieldValues();
+    this._reloadEnumValues();
   }
 
   public updateType(): void {
@@ -186,7 +186,7 @@ export class BasicsSection implements ISection {
     }
 
     this._formElement.fields[this._selectedIndex].type = type;
-    this._reloadFormfieldValues();
+    this._reloadEnumValues();
   }
 
   public updateLabel(): void {
@@ -242,7 +242,7 @@ export class BasicsSection implements ISection {
     this.validationController.validate();
   }
 
-  private _reloadFormfieldValues(): void {
+  private _reloadEnumValues(): void {
     const formIsNotEnum: boolean = this.selectedForm.type !== 'enum';
     const noValuesInEnum: boolean = this.selectedForm.values === undefined
                                  || this.selectedForm.values.length === 0;
@@ -261,9 +261,9 @@ export class BasicsSection implements ISection {
     /*
      * Prepare new form fields.
      */
-    const formfieldValues: Array<IProperty> = [];
-    const newFormfieldValueIds: Array<string> = [];
-    const newFormfieldValueNames: Array<string> = [];
+    const enumValues: Array<IEnumValue> = [];
+    const newEnumValueIds: Array<string> = [];
+    const newEnumValueNames: Array<string> = [];
 
     for (const value of this.selectedForm.values) {
       const camundaValue: boolean = value.$type !== 'camunda:Value';
@@ -271,17 +271,17 @@ export class BasicsSection implements ISection {
         continue;
       }
 
-      formfieldValues.push(value);
-      newFormfieldValueIds.push(value.id);
-      newFormfieldValueNames.push(value.name);
+      enumValues.push(value);
+      newEnumValueIds.push(value.id);
+      newEnumValueNames.push(value.name);
     }
 
     /*
      * Assign new form fields values.
      */
-    this.formfieldValues = formfieldValues;
-    this.newFormfieldValueIds = newFormfieldValueIds;
-    this.newFormfieldValueNames = newFormfieldValueNames;
+    this.enumValues = enumValues;
+    this.newEnumValueIds = newEnumValueIds;
+    this.newEnumValueNames = newEnumValueNames;
   }
 
   private _reloadForms(): void {
