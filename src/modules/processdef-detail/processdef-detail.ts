@@ -8,6 +8,7 @@ import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 import * as canvg from 'canvg-browser';
 import * as download from 'downloadjs';
 import * as $ from 'jquery';
+import * as print from 'print-js';
 import * as beautify from 'xml-beautifier';
 
 import {
@@ -249,6 +250,7 @@ export class ProcessDefDetail {
   private async _exportBPMN(): Promise<void> {
     const xml: string = await this.bpmnio.getXML();
     const formattedXml: string = beautify(xml);
+
     download(formattedXml, `${this._process.name}.bpmn`, 'application/bpmn20-xml');
   }
 
@@ -268,6 +270,10 @@ export class ProcessDefDetail {
   }
 
   public async printDiagram(): Promise<void> {
+    const svg: string = await this._bpmn.getSVG();
+    const png: string = this.generateImageFromSVG('png', svg);
+
+    print.default({printable: png, type: 'image'});
   }
 
   private _generateImageFromSVG(desiredImageType: string, svg: any): string {
