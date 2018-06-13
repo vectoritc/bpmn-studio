@@ -146,6 +146,7 @@ export class BpmnIo {
     this.paletteContainer.appendChild(bpmnIoPaletteContainer);
 
     document.addEventListener('keydown', this._saveHotkeyEventHandler);
+    document.addEventListener('keydown', this._printHotkeyEventHandler);
 
     this._hideOrShowPpForSpaceReasons();
 
@@ -167,6 +168,7 @@ export class BpmnIo {
     this.modeler.destroy();
     window.removeEventListener('resize', this._resizeEventHandler);
     document.removeEventListener('keydown', this._saveHotkeyEventHandler);
+    document.removeEventListener('keydown', this._printHotkeyEventHandler);
 
     for (const subscription of this._subscriptions) {
       subscription.dispose();
@@ -363,5 +365,39 @@ export class BpmnIo {
     };
 
     keyboard.addListener(removeSelectedElements);
+  }
+
+  /**
+   * Handles a key down event and prints the diagram, when the user presses CRTL + p.
+   *
+   * If using macOS, this combination will be CMD + p.
+   *
+   * Printing is triggered by emitting @see environment.events.processDefDetail.printDiagram
+   *
+   * @param event Passed key event.
+   * @return void
+   */
+  private _printHotkeyEventHandler = (event: KeyboardEvent): void  => {
+    // On macOS the 'common control key' is the meta instead of the control key. So on a mac we need to find
+    // out, if the meta key instead of the control key is pressed.
+    const macRegex: RegExp = /.*mac*./i;
+    const currentPlattform: string = navigator.platform;
+    const currentPlattformIsMac: boolean = macRegex.test(currentPlattform);
+    const metaKeyIsPressed: boolean = currentPlattformIsMac ? event.metaKey : event.ctrlKey;
+
+    /*
+     * If both keys (meta and p) are pressed, print the diagram.
+     * A diagram is printed, by throwing a printDiagram event.
+     *
+     * @see environment.events.processDefDetail.printDiagram
+     */
+    const pKeyIsPressed: boolean = event.key === 'p';
+    const userWantsToPrint: boolean = metaKeyIsPressed && pKeyIsPressed;
+
+    if (userWantsToPrint) {
+      // Prevent the browser from handling the default action for CMD/CTRL + p.
+      event.preventDefault();
+      this._eventAggregator.publish(environment.events.processDefDetail.printDiagram);
+    }
   }
 }
