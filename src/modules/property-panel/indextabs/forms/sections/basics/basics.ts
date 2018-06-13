@@ -15,6 +15,15 @@ import {
 import {inject} from 'aurelia-framework';
 import {ValidateEvent, ValidationController, ValidationRules} from 'aurelia-validation';
 
+enum FormfieldTypes {
+  string = 'string',
+  long = 'long',
+  boolean = 'boolean',
+  date = 'date',
+  enum = 'enum',
+  custom_type = 'custom type',
+}
+
 @inject(ValidationController)
 export class BasicsSection implements ISection {
 
@@ -27,7 +36,7 @@ export class BasicsSection implements ISection {
   public forms: Array<IForm>;
   public selectedForm: IForm;
   public selectedType: string;
-  public types: Array<string> = ['string', 'long', 'boolean', 'date', 'enum', 'custom type'];
+  public FormfieldTypes: typeof FormfieldTypes = FormfieldTypes;
   public customType: string;
   public enumValues: Array<IEnumValue> = [];
   public newEnumValueIds: Array<string> = [];
@@ -179,7 +188,7 @@ export class BasicsSection implements ISection {
   public updateType(): void {
     let type: string;
 
-    if (this.selectedType === 'custom type') {
+    if (this.selectedType === FormfieldTypes.custom_type) {
       type = this.customType;
     } else {
       type = this.selectedType;
@@ -243,7 +252,7 @@ export class BasicsSection implements ISection {
   }
 
   private _reloadEnumValues(): void {
-    const formIsNotEnum: boolean = this.selectedForm.type !== 'enum';
+    const formIsNotEnum: boolean = this.selectedForm.type !== FormfieldTypes.enum;
     const noValuesInEnum: boolean = this.selectedForm.values === undefined
                                  || this.selectedForm.values.length === 0;
 
@@ -304,7 +313,13 @@ export class BasicsSection implements ISection {
   }
 
   private _getTypeAndHandleCustomType(type: string): string {
-    const typeIsRegularType: boolean = this.types.includes(type) || type === null;
+    const typeIsRegularType: boolean = type === FormfieldTypes.string
+                                    || type === FormfieldTypes.long
+                                    || type === FormfieldTypes.boolean
+                                    || type === FormfieldTypes.date
+                                    || type === FormfieldTypes.enum
+                                    || type === FormfieldTypes.custom_type
+                                    || type === null;
 
     if (typeIsRegularType) {
       this.customType = '';
@@ -312,7 +327,7 @@ export class BasicsSection implements ISection {
     }
 
     this.customType = type;
-    return 'custom type';
+    return FormfieldTypes.custom_type;
   }
 
   private _getSelectedIndex(): number {

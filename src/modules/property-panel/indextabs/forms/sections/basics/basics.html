@@ -52,11 +52,16 @@
           <td>
             <select class="props-input" value.bind="selectedType" change.delegate="updateType()">
               <option model.bind="null">-Choose Type-</option>
-              <option repeat.for="type of types" model.bind="type">${type}</option>
+              <option model.bind="FormfieldTypes.string">${FormfieldTypes.string}</option>
+              <option model.bind="FormfieldTypes.long">${FormfieldTypes.long}</option>
+              <option model.bind="FormfieldTypes.boolean">${FormfieldTypes.boolean}</option>
+              <option model.bind="FormfieldTypes.date">${FormfieldTypes.date}</option>
+              <option model.bind="FormfieldTypes.enum">${FormfieldTypes.enum}</option>
+              <option model.bind="FormfieldTypes.custom_type">${FormfieldTypes.custom_type}</option>
             </select>
           </td>
         </tr>
-        <tr if.bind="selectedType === types[5]">
+        <tr if.bind="selectedType === FormfieldTypes.custom_type">
           <th>Custom Type</th>
           <td>
             <input type="text" class="props-input" value.bind="customType" placeholder="Custom Type" change.delegate="updateType()">
@@ -77,7 +82,7 @@
       </table>
     </div>
   </div>
-  <div class="section-panel panel--grow" if.bind="isFormSelected && selectedType === types[4]">
+  <div class="section-panel panel--grow" if.bind="isFormSelected && selectedType === FormfieldTypes.enum">
     <div class="panel__heading">Values
       <button class="add-context-button" click.delegate="addEnumValue()">
         <span class="fa fa-plus"></span>
