@@ -256,21 +256,24 @@ export class ProcessDefDetail {
 
   private async _exportSVG(): Promise<void> {
     const svg: string = await this.bpmnio.getSVG();
+
     download(svg, `${this.process.name}.svg`, 'image/svg+xml');
   }
 
   private async _exportPNG(): Promise<void> {
     const svg: string = await this.bpmnio.getSVG();
+
     download(this._generateImageFromSVG('png', svg), `${this.process.name}.png`, 'image/png');
   }
 
   private async _exportJPEG(): Promise<void> {
     const svg: string = await this.bpmnio.getSVG();
+
     download(this._generateImageFromSVG('jpeg', svg), `${this.process.name}.jpeg`, 'image/jpeg');
   }
 
   public async printDiagram(): Promise<void> {
-    const svg: string = await this._bpmn.getSVG();
+    const svg: string = await this.bpmn.getSVG();
     const png: string = this.generateImageFromSVG('png', svg);
 
     print.default({printable: png, type: 'image'});
