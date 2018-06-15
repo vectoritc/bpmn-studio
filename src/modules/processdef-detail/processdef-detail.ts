@@ -56,12 +56,14 @@ export class ProcessDefDetail {
   }
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
+    console.log('activate');
     this._processId = routeParameters.processDefId;
     this._diagramHasChanged = false;
     await this._refreshProcess();
   }
 
   public attached(): void {
+    console.log('attached');
     this._validationController.subscribe((event: ValidateEvent) => {
       this._validateForm(event);
     });
@@ -103,31 +105,30 @@ export class ProcessDefDetail {
   public async canDeactivate(): Promise<Redirect> {
 
     const _modal: Promise<boolean> = new Promise((resolve: Function, reject: Function): any => {
-
       if (!this._diagramHasChanged) {
         resolve(true);
+      } else {
+
+        const modal: HTMLElement = document.getElementById('saveModal');
+        modal.classList.add('show-modal');
+
+        // register onClick handler
+        document.getElementById('dontSaveButton').addEventListener('click', () => {
+          modal.classList.remove('show-modal');
+          this._diagramHasChanged = false;
+          resolve(true);
+        });
+        document.getElementById('saveButton').addEventListener('click', () => {
+          this._saveDiagram();
+          modal.classList.remove('show-modal');
+          this._diagramHasChanged = false;
+          resolve(true);
+        });
+        document.getElementById('cancelButton').addEventListener('click', () => {
+          modal.classList.remove('show-modal');
+          resolve(false);
+        });
       }
-
-      const modal: HTMLElement = document.getElementById('saveModal');
-      modal.classList.add('show-modal');
-
-      // register onClick handler
-      document.getElementById('dontSaveButton').addEventListener('click', () => {
-        modal.classList.remove('show-modal');
-        this._diagramHasChanged = false;
-        resolve(true);
-      });
-      document.getElementById('saveButton').addEventListener('click', () => {
-        this._saveDiagram();
-        modal.classList.remove('show-modal');
-        this._diagramHasChanged = false;
-        resolve(true);
-      });
-      document.getElementById('cancelButton').addEventListener('click', () => {
-        modal.classList.remove('show-modal');
-        resolve(false);
-        return false;
-      });
     });
 
     const result: boolean = await _modal;
