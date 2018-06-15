@@ -8,11 +8,13 @@ import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 import * as canvg from 'canvg-browser';
 import * as download from 'downloadjs';
 import * as $ from 'jquery';
+import * as print from 'print-js';
 import * as beautify from 'xml-beautifier';
 
 import {
   AuthenticationStateEvent,
   ElementDistributeOptions,
+  ICanvgOptions,
   IExtensionElement,
   IFormElement,
   IModdleElement,
@@ -93,6 +95,9 @@ export class ProcessDefDetail {
       }),
       this._eventAggregator.subscribe(environment.events.diagramChange, () => {
         this._diagramHasChanged = true;
+      }),
+      this._eventAggregator.subscribe(environment.events.processDefDetail.printDiagram, () => {
+        this._printDiagram();
       }),
     ];
 
@@ -246,22 +251,33 @@ export class ProcessDefDetail {
   private async _exportBPMN(): Promise<void> {
     const xml: string = await this.bpmnio.getXML();
     const formattedXml: string = beautify(xml);
+
     download(formattedXml, `${this.process.name}.bpmn`, 'application/bpmn20-xml');
   }
 
   private async _exportSVG(): Promise<void> {
     const svg: string = await this.bpmnio.getSVG();
+
     download(svg, `${this.process.name}.svg`, 'image/svg+xml');
   }
 
   private async _exportPNG(): Promise<void> {
     const svg: string = await this.bpmnio.getSVG();
+
     download(this._generateImageFromSVG('png', svg), `${this.process.name}.png`, 'image/png');
   }
 
   private async _exportJPEG(): Promise<void> {
     const svg: string = await this.bpmnio.getSVG();
+
     download(this._generateImageFromSVG('jpeg', svg), `${this.process.name}.jpeg`, 'image/jpeg');
+  }
+
+  public async _printDiagram(): Promise<void> {
+    const svg: string = await this.bpmnio.getSVG();
+    const png: string = this._generateImageFromSVG('png', svg);
+
+    print.default({printable: png, type: 'image'});
   }
 
   private _generateImageFromSVG(desiredImageType: string, svg: any): string {
@@ -269,7 +285,22 @@ export class ProcessDefDetail {
     const canvas: HTMLCanvasElement = document.createElement('canvas');
     const context: CanvasRenderingContext2D = canvas.getContext('2d');
 
-    canvg(canvas, svg);
+    const svgWidth: number = parseInt(svg.match(/<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/)[1]);
+    const svgHeight: number = parseInt(svg.match(/<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/)[1]);
+
+    const pixelRatio: number = window.devicePixelRatio || 1;
+
+    canvas.width = svgWidth * pixelRatio;
+    canvas.height = svgHeight * pixelRatio;
+
+    const canvgOptions: ICanvgOptions = {
+      ignoreDimensions: true,
+      scaleWidth: canvas.width,
+      scaleHeight: canvas.height,
+    };
+
+    canvg(canvas, svg, canvgOptions);
+
     // make the background white for every format
     context.globalCompositeOperation = 'destination-over';
     context.fillStyle = 'white';

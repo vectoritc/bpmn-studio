@@ -90,6 +90,7 @@
     "minimist": "^1.2.0",
     "node-http-server": "^8.1.2",
     "open": "0.0.5",
+    "print-js": "^1.0.47",
     "proxy-polyfill": "^0.1.7",
     "spectrum-colorpicker": "^1.8.0",
     "xml-beautifier": "^0.3.0"

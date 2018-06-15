@@ -308,6 +308,11 @@
             "resources": [
               "styles/*.css"
             ]
+          },
+          {
+            "name": "print-js",
+            "main": "dist/print.min.js",
+            "path": "../node_modules/print-js"
           }
         ]
       }

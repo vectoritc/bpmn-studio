@@ -14,9 +14,6 @@ export class NavBar {
   public showTools: boolean = false;
   public disableSaveButton: boolean = false;
   public process: IProcessDefEntity;
-  public exportButton: HTMLButtonElement;
-  public exportSpinner: HTMLElement;
-  public exportIcon: HTMLElement;
 
   constructor(router: Router, eventAggregator: EventAggregator) {
     this._router = router;
@@ -72,6 +69,10 @@ export class NavBar {
     if (!this.disableSaveButton) {
       this._eventAggregator.publish(environment.events.processDefDetail.saveDiagram);
     }
+  }
+
+  public printDiagram(): void {
+    this._eventAggregator.publish(environment.events.processDefDetail.printDiagram);
   }
 
   public exportDiagram(exportAs: string): void {
