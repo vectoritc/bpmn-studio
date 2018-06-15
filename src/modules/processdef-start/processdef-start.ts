@@ -74,7 +74,7 @@ export class ProcessDefStart {
         this.dynamicUiWrapper.currentConfig = message;
       }),
       this.eventAggregator.subscribe('closed-process', (message: any) => {
-        this.router.navigateToRoute('processdef-list', { page: 1 });
+        this.router.navigate(`/processdef/${this.processDefId}/detail`);
       }),
     ];
   }
