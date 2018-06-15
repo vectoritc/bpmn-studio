@@ -56,14 +56,12 @@ export class ProcessDefDetail {
   }
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
-    console.log('activate');
     this._processId = routeParameters.processDefId;
     this._diagramHasChanged = false;
     await this._refreshProcess();
   }
 
   public attached(): void {
-    console.log('attached');
     this._validationController.subscribe((event: ValidateEvent) => {
       this._validateForm(event);
     });
