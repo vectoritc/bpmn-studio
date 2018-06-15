@@ -96,7 +96,7 @@ export class ProcessDefDetail {
         this._diagramHasChanged = true;
       }),
       this._eventAggregator.subscribe(environment.events.processDefDetail.printDiagram, () => {
-        this.printDiagram();
+        this._printDiagram();
       }),
     ];
 
@@ -272,9 +272,9 @@ export class ProcessDefDetail {
     download(this._generateImageFromSVG('jpeg', svg), `${this.process.name}.jpeg`, 'image/jpeg');
   }
 
-  public async printDiagram(): Promise<void> {
-    const svg: string = await this.bpmn.getSVG();
-    const png: string = this.generateImageFromSVG('png', svg);
+  public async _printDiagram(): Promise<void> {
+    const svg: string = await this.bpmnio.getSVG();
+    const png: string = this._generateImageFromSVG('png', svg);
 
     print.default({printable: png, type: 'image'});
   }
