@@ -36,7 +36,7 @@ export class StatusBar {
   }
 
   public toggleXMLView(): void {
-    this._eventAggregator.publish(environment.events.processDefDetail.toggleXMLView);
+    this._eventAggregator.publish(environment.events.bpmnio.toggleXMLView);
     this.xmlIsShown = !this.xmlIsShown;
   }
 

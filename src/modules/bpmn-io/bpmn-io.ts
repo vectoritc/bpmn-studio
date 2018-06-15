@@ -1,5 +1,4 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
-
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 import * as $ from 'jquery';
@@ -86,6 +85,15 @@ export class BpmnIo {
         return 0;
       });
     }
+
+    /**
+     * Subscribe to "commandStack.changed"-event to have a simple indicator of
+     * when a diagram is changed.
+     */
+    const handlerPriority: number = 1000;
+    this.modeler.on('commandStack.changed', () => {
+      this._eventAggregator.publish(environment.events.diagramChange);
+    }, handlerPriority);
   }
 
   public attached(): void {
@@ -145,7 +153,8 @@ export class BpmnIo {
       this._eventAggregator.subscribe(environment.events.processSolutionPanel.toggleProcessSolutionExplorer, () => {
         this._hideOrShowPpForSpaceReasons();
       }),
-      this._eventAggregator.subscribe(environment.events.processDefDetail.toggleXMLView, () => {
+      this._eventAggregator.subscribe(environment.events.bpmnio.toggleXMLView, () => {
+        this.toggleXMLView();
         setTimeout(() => { // This makes the function gets called after the XMLView is toggled
           this._hideOrShowPpForSpaceReasons();
         }, 0);

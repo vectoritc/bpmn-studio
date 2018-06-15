@@ -3,7 +3,26 @@
   <require from="./processdef-detail.css"></require>
   <require from="spectrum-colorpicker/spectrum.css"></require>
   <div class="process-def-detail">
-  <div class="bpmnio-container">
-    <bpmn-io view-model.ref="bpmn" xml.bind="process.xml"></bpmn-io>
+    <div class="bpmnio-container">
+      <bpmn-io view-model.ref="bpmnio" xml.bind="process.xml"></bpmn-io>
+    </div>
+  </div>
+
+  <div class="modal" tabindex="-1" role="dialog" id="saveModal">
+    <div class="modal-dialog save-modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Document contains changes</h4>
+        </div>
+        <div class="modal-body">
+          Save changes to diagram?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="custom-button" data-dismiss="modal" id="dontSaveButton">Don't Save</button>
+          <button type="button" class="custom-button" data-dismiss="modal" id="saveButton">Save</button>
+          <button type="button" class="custom-button" data-dismiss="modal" id="cancelButton">Cancel</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
