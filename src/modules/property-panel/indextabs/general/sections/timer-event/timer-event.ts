@@ -1,3 +1,5 @@
+import {EventAggregator} from 'aurelia-event-aggregator';
+import {inject} from 'aurelia-framework';
 import {
   IBpmnModdle,
   IBpmnModeler,
@@ -6,6 +8,7 @@ import {
   ISection,
   IShape,
 } from '../../../../../../contracts';
+import environment from '../../../../../../environment';
 
 enum TimerType {
   Date,
@@ -13,6 +16,7 @@ enum TimerType {
   Cycle,
 }
 
+@inject(EventAggregator)
 export class TimerEventSection implements ISection {
 
   public path: string = '/sections/timer-event/timer-event';
@@ -24,6 +28,11 @@ export class TimerEventSection implements ISection {
   private _businessObjInPanel: IModdleElement;
   private _moddle: IBpmnModdle;
   private _modeler: IBpmnModeler;
+  private _eventAggregator: EventAggregator;
+
+  constructor(eventAggregator?: EventAggregator) {
+    this._eventAggregator = eventAggregator;
+  }
 
   public activate(model: IPageModel): void {
     this._businessObjInPanel = model.elementInPanel.businessObject;
@@ -52,11 +61,13 @@ export class TimerEventSection implements ISection {
 
     Object.assign(this._businessObjInPanel.eventDefinitions[0], timerTypeObject);
     this.timerElement.body = '';
+    this._publishDiagramChange();
   }
 
   public updateTimerDefinition(): void {
     const timeElement: IModdleElement = this._getTimerElement();
     timeElement.body = this.timerElement.body;
+    this._publishDiagramChange();
   }
 
   private _init(): void {
@@ -99,6 +110,10 @@ export class TimerEventSection implements ISection {
 
     const timerEventDefinition: IModdleElement = this._moddle.create('bpmn:FormalExpression', {body: ''});
     return timerEventDefinition;
+  }
+
+  private _publishDiagramChange(): void {
+    this._eventAggregator.publish(environment.events.diagramChange);
   }
 
 }
