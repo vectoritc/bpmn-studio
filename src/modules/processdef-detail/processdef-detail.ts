@@ -114,11 +114,13 @@ export class ProcessDefDetail {
       // register onClick handler
       document.getElementById('dontSaveButton').addEventListener('click', () => {
         modal.classList.remove('show-modal');
+        this._diagramHasChanged = false;
         resolve(true);
       });
       document.getElementById('saveButton').addEventListener('click', () => {
         this._saveDiagram();
         modal.classList.remove('show-modal');
+        this._diagramHasChanged = false;
         resolve(true);
       });
       document.getElementById('cancelButton').addEventListener('click', () => {
