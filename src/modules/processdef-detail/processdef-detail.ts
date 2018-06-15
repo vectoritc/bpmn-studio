@@ -251,7 +251,7 @@ export class ProcessDefDetail {
     const xml: string = await this.bpmnio.getXML();
     const formattedXml: string = beautify(xml);
 
-    download(formattedXml, `${this._process.name}.bpmn`, 'application/bpmn20-xml');
+    download(formattedXml, `${this.process.name}.bpmn`, 'application/bpmn20-xml');
   }
 
   private async _exportSVG(): Promise<void> {
