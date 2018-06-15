@@ -32,7 +32,7 @@ export class ProcessDefStart {
     this._notificationService = notificationService;
   }
 
-  private async activate(routeParameters: {processDefId: string}): Promise<void> {
+  public async activate(routeParameters: {processDefId: string}): Promise<void> {
     this._processDefId = routeParameters.processDefId;
     await this._refreshProcess();
     this._startProcess();
