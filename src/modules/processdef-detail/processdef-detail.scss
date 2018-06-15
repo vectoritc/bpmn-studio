@@ -19,8 +19,13 @@
 }
 
 .process-details-dropdown-menu {
-  width: 385px;
+  width: 400px;
   padding: 5px;
+  overflow-x: scroll;
+}
+
+.process-details-dropdown-menu__entry {
+  padding-right: 10px;
 }
 
 .red {

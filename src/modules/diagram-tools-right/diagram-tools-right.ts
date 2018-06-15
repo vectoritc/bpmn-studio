@@ -2,6 +2,7 @@ import {bindable, inject} from 'aurelia-framework';
 import environment from '../../environment';
 
 import * as spectrum from 'spectrum-colorpicker';
+import 'spectrum-colorpicker/spectrum';
 
 import {ElementDistributeOptions,
         IBpmnFunction,

@@ -44,6 +44,9 @@ export default {
       toggleXMLView: 'processdefdetail:xmlview:toggle',
     },
     diagramChange: 'diagram:change',
+    processSolutionPanel: {
+      toggleProcessSolutionExplorer: 'processSolutionPanel:processsolutionexplorer:toggle',
+    },
   },
   bpmnStudioClient: {
     baseRoute: processEngineRoute,

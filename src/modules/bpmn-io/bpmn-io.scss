@@ -14,11 +14,9 @@
 }
 
 .properties {
+  width: 250px;
   height: 100%;
   background: rgb(220, 219, 219);
-  width: 250px;
-  display: flex;
-  flex-direction: column;
   overflow-y: auto;
 }
 
@@ -38,9 +36,11 @@
 }
 
 .resize-div {
-  position: absolute;
+  position: relative;
+  width: 6px;
   height: 100%;
-  width: 5px;
+  left: -3px;
+  float:left;
 }
 
 .resize-div:hover {
@@ -101,9 +101,15 @@
 }
 
 .bpmn-io-layout__tools-left {
-  border-right: 2px solid #dcdbdb;
   width: 36px;
-  overflow: hidden;
+  min-width: 36px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-right: 2px solid #dcdbdb;
+}
+
+.bpmn-io-layout__tools-left::-webkit-scrollbar {
+  display: none;
 }
 
 .bpmn-io-layout__tools-right {
@@ -133,6 +139,7 @@
 
 .bpmn-io-layout__main {
   flex: 1 100%;
+  width: 0px;
 }
 
 /*
@@ -160,11 +167,12 @@
 
   .entry,
   .djs-palette-toggle {
-    width: 30px;
+    width: 32px;
     height: 32px;
-    line-height: 24px;
+    margin-left: 1px;
     cursor: default;
     font-size: 18px;
+    line-height: 24px;
   }
 
   .entry {

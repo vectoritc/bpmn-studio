@@ -2,12 +2,13 @@ import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 import * as $ from 'jquery';
-import 'spectrum-colorpicker/spectrum';
 
 import {ElementDistributeOptions,
         IBpmnFunction,
         IBpmnModeler,
         IDefinition,
+        IEditorActions,
+        IKeyboard,
         IModdleElement,
         IModeling,
         IProcessDefEntity,
@@ -21,38 +22,33 @@ const sideBarRightSize: number = 35;
 
 @inject('NotificationService', EventAggregator)
 export class BpmnIo {
-  // TODO: Refactor Private Member Names; Ref: //github.com/process-engine/bpmn-studio/issues/463
-  private toggled: boolean = false;
-  private toggleButtonPropertyPanel: HTMLButtonElement;
-  private resizeButton: HTMLButtonElement;
-  private canvasModel: HTMLDivElement;
-  private refresh: boolean = true;
-  private isResizeClicked: boolean = false;
-  private showXMLView: boolean = false;
+  public modeler: IBpmnModeler;
 
-  private resizeButtonRight: number = 282;
-  private canvasRight: number = 350;
-  private minWidth: number = environment.propertyPanel.minWidth;
-  private maxWidth: number = document.body.clientWidth - environment.propertyPanel.maxWidth;
-  private ppWidth: number = 250;
-  private ppDisplay: string = 'inline';
-  private lastCanvasRight: number = 350;
-  private lastPpWidth: number = this.ppWidth;
-  private _ppHiddenBecauseLackOfSpace: boolean = false;
-  private _propertyPanelHasNoSpace: boolean = false;
-  private _eventAggregator: EventAggregator;
-  private _subscriptions: Array<Subscription>;
-
-  private toggleMinimap: boolean = false;
-  private minimapToggle: any;
-  private expandIcon: HTMLElement;
-  private hideMinimap: HTMLElement;
-  private notificationService: NotificationService;
+  public toggleButtonPropertyPanel: HTMLButtonElement;
+  public resizeButton: HTMLButtonElement;
+  public canvasModel: HTMLDivElement;
+  public propertyPanel: HTMLElement;
 
   @bindable({changeHandler: 'xmlChanged'}) public xml: string;
+  public propertyPanelDisplay: string = 'inline';
+  public initialLoadingFinished: boolean = false;
+  public showXMLView: boolean = false;
+  public colorPickerLoaded: boolean = false;
+  public propertyPanelWidth: number = 250;
+  public minCanvasWidth: number = 100;
+  public minPropertyPanelWidth: number = 200;
 
-  public initialLoadingFinished: boolean;
-  public modeler: IBpmnModeler;
+  private _toggled: boolean = false;
+  private _propertyPanelHiddenForSpaceReasons: boolean = false;
+  private _propertyPanelHasNoSpace: boolean = false;
+
+  private _toggleMinimap: boolean = false;
+  private _minimapToggle: any;
+  private _expandIcon: HTMLElement;
+  private _hideMinimap: HTMLElement;
+  private _notificationService: NotificationService;
+  private _eventAggregator: EventAggregator;
+  private _subscriptions: Array<Subscription>;
 
   /**
    * We are using the direct reference of a container element to place the tools of bpmn-js
@@ -67,7 +63,7 @@ export class BpmnIo {
   public paletteContainer: HTMLDivElement;
 
   constructor(notificationService: NotificationService, eventAggregator: EventAggregator) {
-    this.notificationService = notificationService;
+    this._notificationService = notificationService;
     this._eventAggregator = eventAggregator;
   }
 
@@ -77,8 +73,12 @@ export class BpmnIo {
       moddleExtensions: {
         camunda: bundle.camundaModdleDescriptor,
       },
-      keyboard: { bindTo: document },
+      keyboard: {
+        bindTo: document,
+      },
     });
+
+    this._addKeyboardListener();
 
     if (this.xml !== undefined && this.xml !== null) {
       this.modeler.importXML(this.xml, (err: Error) => {
@@ -100,7 +100,7 @@ export class BpmnIo {
     this.modeler.attachTo(this.canvasModel);
     const minimapViewport: any = this.canvasModel.getElementsByClassName('djs-minimap-viewport')[0];
     const minimapArea: any = this.canvasModel.getElementsByClassName('djs-minimap-map')[0];
-    this.minimapToggle = this.canvasModel.getElementsByClassName('djs-minimap-toggle')[0];
+    this._minimapToggle = this.canvasModel.getElementsByClassName('djs-minimap-toggle')[0];
 
     // TODO: Refactor to CSS classes; Ref: https://github.com/process-engine/bpmn-studio/issues/462
     //  Styling for Minimap {{{ //
@@ -108,18 +108,18 @@ export class BpmnIo {
     minimapArea.style.height = '200px';
     minimapViewport.style.fill = 'rgba(0, 208, 255, 0.13)';
 
-    this.expandIcon = document.createElement('i');
-    this.expandIcon.className = 'glyphicon glyphicon-resize-full expandIcon';
-    this.minimapToggle.appendChild(this.expandIcon);
+    this._expandIcon = document.createElement('i');
+    this._expandIcon.className = 'glyphicon glyphicon-resize-full expandIcon';
+    this._minimapToggle.appendChild(this._expandIcon);
 
-    this.hideMinimap = document.createElement('p');
-    this.hideMinimap.className = 'hideMinimap';
-    this.hideMinimap.textContent = 'Hide Minimap';
-    this.minimapToggle.appendChild(this.hideMinimap);
-    this.minimapToggle.addEventListener('click', this.toggleMinimapFunction);
+    this._hideMinimap = document.createElement('p');
+    this._hideMinimap.className = 'hideMinimap';
+    this._hideMinimap.textContent = 'Hide Minimap';
+    this._minimapToggle.appendChild(this._hideMinimap);
+    this._minimapToggle.addEventListener('click', this._toggleMinimapFunction);
     //  }}} Styling for Minimap //
 
-    window.addEventListener('resize', this.resizeEventHandler);
+    window.addEventListener('resize', this._resizeEventHandler);
 
     this.initialLoadingFinished = true;
 
@@ -142,16 +142,22 @@ export class BpmnIo {
     });
 
     const bpmnIoPaletteContainer: Element = document.getElementsByClassName('djs-palette')[0];
-
     bpmnIoPaletteContainer.className += ' djs-palette-override';
-
     this.paletteContainer.appendChild(bpmnIoPaletteContainer);
 
     document.addEventListener('keydown', this._saveHotkeyEventHandler);
 
+    this._hideOrShowPpForSpaceReasons();
+
     this._subscriptions = [
+      this._eventAggregator.subscribe(environment.events.processSolutionPanel.toggleProcessSolutionExplorer, () => {
+        this._hideOrShowPpForSpaceReasons();
+      }),
       this._eventAggregator.subscribe(environment.events.bpmnio.toggleXMLView, () => {
         this.toggleXMLView();
+        setTimeout(() => { // This makes the function gets called after the XMLView is toggled
+          this._hideOrShowPpForSpaceReasons();
+        }, 0);
       }),
     ];
   }
@@ -159,8 +165,12 @@ export class BpmnIo {
   public detached(): void {
     this.modeler.detach();
     this.modeler.destroy();
-    window.removeEventListener('resize', this.resizeEventHandler);
+    window.removeEventListener('resize', this._resizeEventHandler);
     document.removeEventListener('keydown', this._saveHotkeyEventHandler);
+
+    for (const subscription of this._subscriptions) {
+      subscription.dispose();
+    }
   }
 
   public xmlChanged(newValue: string, oldValue: string): void {
@@ -196,43 +206,28 @@ export class BpmnIo {
     });
   }
 
-  private getSelectedElements(): Array<IShape> {
-    return this.modeler.get('selection')._selectedElements;
-  }
-
   public togglePanel(): void {
-    if (this.toggled === true) {
+    if (this._toggled === true) {
       if (this._propertyPanelHasNoSpace) {
-        this.notificationService.showNotification(NotificationType.ERROR, 'There is not enough space for the property panel!');
+        this._notificationService.showNotification(NotificationType.ERROR, 'There is not enough space for the property panel!');
         return;
       }
 
       this.toggleButtonPropertyPanel.classList.add('tool--active');
-      this.ppDisplay = 'inline';
-      this.canvasRight = this.lastCanvasRight;
-      this.toggled = false;
+      this.propertyPanelDisplay = 'inline';
+      this._toggled = false;
     } else {
-      this.lastCanvasRight = this.canvasRight;
 
       this.toggleButtonPropertyPanel.classList.remove('tool--active');
-      this.ppDisplay = 'none';
-      this.canvasRight = 1;
-      this.toggled = true;
+      this.propertyPanelDisplay = 'none';
+      this._toggled = true;
     }
   }
 
   public resize(event: any): void {
-    let currentWidth: number = document.body.clientWidth - event.clientX;
-    currentWidth = currentWidth - sideBarRightSize;
-    currentWidth = Math.max(currentWidth, this.minWidth);
-    currentWidth = Math.min(currentWidth, this.maxWidth);
+    const mousePosition: number = event.clientX;
 
-    const resizeDivAdjustmentPixel: number = 3;
-
-    this.resizeButtonRight = currentWidth + sideBarRightSize - resizeDivAdjustmentPixel;
-    this.canvasRight = currentWidth;
-    this.ppWidth = currentWidth;
-    this.lastPpWidth = currentWidth;
+    this._setNewPropertyPanelWidthFromMousePosition(mousePosition);
   }
 
   public async toggleXMLView(): Promise<void> {
@@ -244,60 +239,72 @@ export class BpmnIo {
     }
   }
 
-  private resizeEventHandler = (event: any): void => {
-    this.maxWidth = document.body.clientWidth - environment.propertyPanel.maxWidth;
+  private _setNewPropertyPanelWidthFromMousePosition(mousePosition: number): void {
+    const propertyPanelMaxWidth: number = this.propertyPanel.parentElement.offsetWidth - this.minCanvasWidth;
+    const mousePositionFromRight: number = document.body.clientWidth - mousePosition;
+    const resizedWidth: number = mousePositionFromRight - sideBarRightSize;
 
-    const notEnoughSpaceForPp: boolean = this.maxWidth < this.minWidth;
-    if (notEnoughSpaceForPp) {
-      if (this._propertyPanelHasNoSpace) {
-        return;
-      }
+    /*
+     * This is needed to stop the width from increasing too far
+     * The property panel would not be displayed with that width,
+     * but when increasing the browser width, the property panel then may also increase
+    */
+    const newPropertyPanelWidth: number = Math.min(resizedWidth, propertyPanelMaxWidth);
 
-      this._propertyPanelHasNoSpace = true;
+    this.propertyPanelWidth = newPropertyPanelWidth;
+  }
 
-      if (this.toggled === false) {
-        this._ppHiddenBecauseLackOfSpace = true;
-        this.togglePanel();
-      }
+  private _hidePropertyPanelForSpaceReasons(): void {
+    this._propertyPanelHasNoSpace = true;
 
-      return;
-    }
-
-    if (this._propertyPanelHasNoSpace) {
-      this._propertyPanelHasNoSpace = false;
-
-      if (this._ppHiddenBecauseLackOfSpace) {
-        this.toggled = true;
-        this._ppHiddenBecauseLackOfSpace = false;
-        this.togglePanel();
-      }
-
-      return;
-    }
-    const resizeDivAdjustmentPixel: number = 3;
-    this.ppWidth = this.lastPpWidth;
-    if (this.ppWidth > this.maxWidth) {
-      const currentWidth: number = this.maxWidth;
-
-      this.resizeButtonRight = currentWidth + sideBarRightSize - resizeDivAdjustmentPixel;
-      this.canvasRight = currentWidth;
-      this.ppWidth = currentWidth;
-    } else {
-      this.resizeButtonRight = this.lastPpWidth + sideBarRightSize - resizeDivAdjustmentPixel;
-      this.canvasRight = this.lastPpWidth;
+    if (this._toggled === false) {
+      this._propertyPanelHiddenForSpaceReasons = true;
+      this.togglePanel();
     }
   }
 
-  private toggleMinimapFunction = (): void => {
-    if (this.toggleMinimap === false) {
-      this.expandIcon.style.display = 'none';
-      this.hideMinimap.style.display = 'inline';
-      this.minimapToggle.style.height = '20px';
-      this.toggleMinimap = true;
+  private _showPropertyPanelForSpaceReasons(): void {
+    this._propertyPanelHasNoSpace = false;
+    this._propertyPanelHiddenForSpaceReasons = false;
+
+    this._toggled = true;
+    this.togglePanel();
+  }
+
+  private _resizeEventHandler = (event: any): void => {
+    this._hideOrShowPpForSpaceReasons();
+
+    const mousePosition: number = event.clientX;
+
+    this._setNewPropertyPanelWidthFromMousePosition(mousePosition);
+  }
+
+  private _hideOrShowPpForSpaceReasons(): void {
+    const minModelerWidthForPropertyPanel: number = this.minCanvasWidth + this.minPropertyPanelWidth;
+    const modelerWidth: number = this.propertyPanel.parentElement.offsetWidth;
+
+    if (modelerWidth === 0) {
+      return;
+    }
+
+    this._propertyPanelHasNoSpace = modelerWidth < minModelerWidthForPropertyPanel;
+    if (this._propertyPanelHasNoSpace) {
+      this._hidePropertyPanelForSpaceReasons();
+    } else if (this._propertyPanelHiddenForSpaceReasons) {
+      this._showPropertyPanelForSpaceReasons();
+    }
+  }
+
+  private _toggleMinimapFunction = (): void => {
+    if (this._toggleMinimap === false) {
+      this._expandIcon.style.display = 'none';
+      this._hideMinimap.style.display = 'inline';
+      this._minimapToggle.style.height = '20px';
+      this._toggleMinimap = true;
     } else {
-      this.expandIcon.style.display = 'inline-block';
-      this.hideMinimap.style.display = 'none';
-      this.toggleMinimap = false;
+      this._expandIcon.style.display = 'inline-block';
+      this._hideMinimap.style.display = 'none';
+      this._toggleMinimap = false;
     }
   }
 
@@ -334,5 +341,27 @@ export class BpmnIo {
       event.preventDefault();
       this._eventAggregator.publish(environment.events.processDefDetail.saveDiagram);
     }
+  }
+
+  private _addKeyboardListener(): void {
+    const macRegex: RegExp = /.*mac*./i;
+    const currentPlattform: string = navigator.platform;
+    const currentPlattformIsNotMac: boolean = !macRegex.test(currentPlattform);
+
+    if (currentPlattformIsNotMac) {
+      return;
+    }
+
+    const keyboard: IKeyboard = this.modeler.get('keyboard');
+    const editorActions: IEditorActions = this.modeler.get('editorActions');
+    const backSpaceKeyCode: number = 8;
+    const removeSelectedElements: ((key: number, modifiers: KeyboardEvent) => boolean) = (key: number, modifiers: KeyboardEvent): boolean => {
+      if (key === backSpaceKeyCode) {
+        editorActions.trigger('removeSelection');
+        return true;
+      }
+    };
+
+    keyboard.addListener(removeSelectedElements);
   }
 }
