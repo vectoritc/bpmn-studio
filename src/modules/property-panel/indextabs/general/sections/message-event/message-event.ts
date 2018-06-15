@@ -11,10 +11,12 @@ import {
   IShape,
 } from '../../../../../../contracts';
 
+import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
+import environment from '../../../../../../environment';
 import {GeneralService} from '../../service/general.service';
 
-@inject(GeneralService)
+@inject(GeneralService, EventAggregator)
 export class MessageEventSection implements ISection {
 
   public path: string = '/sections/message-event/message-event';
@@ -27,9 +29,11 @@ export class MessageEventSection implements ISection {
   private _moddle: IBpmnModdle;
   private _modeler: IBpmnModeler;
   private _generalService: GeneralService;
+  private _eventAggregator: EventAggregator;
 
-  constructor(generalService?: GeneralService) {
+  constructor(generalService?: GeneralService, eventAggregator?: EventAggregator) {
     this._generalService = generalService;
+    this._eventAggregator = eventAggregator;
   }
 
   public async activate(model: IPageModel): Promise<void> {
@@ -54,6 +58,7 @@ export class MessageEventSection implements ISection {
 
     const messageElement: IMessageElement = this._businessObjInPanel.eventDefinitions[0];
     messageElement.messageRef = this.selectedMessage;
+    this._publishDiagramChange();
   }
 
   public updateName(): void {
@@ -65,6 +70,7 @@ export class MessageEventSection implements ISection {
     });
 
     selectedMessage.name = this.selectedMessage.name;
+    this._publishDiagramChange();
   }
 
   public addMessage(): void {
@@ -84,6 +90,7 @@ export class MessageEventSection implements ISection {
         this.updateMessage();
       });
     });
+    this._publishDiagramChange();
   }
 
   private _elementIsMessageEvent(element: IShape): boolean {
@@ -132,5 +139,9 @@ export class MessageEventSection implements ISection {
     const elementRegistry: IElementRegistry = this._modeler.get('elementRegistry');
     const elementInPanel: IShape = elementRegistry.get(this._businessObjInPanel.id);
     this._businessObjInPanel = elementInPanel.businessObject;
+  }
+
+  private _publishDiagramChange(): void {
+    this._eventAggregator.publish(environment.events.diagramChange);
   }
 }
