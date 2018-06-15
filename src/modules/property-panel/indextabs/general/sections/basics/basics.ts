@@ -9,10 +9,12 @@ import {
   IShape,
 } from '../../../../../../contracts';
 
+import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {ValidateEvent, ValidationController, ValidationRules} from 'aurelia-validation';
+import environment from '../../../../../../environment';
 
-@inject(ValidationController)
+@inject(ValidationController, EventAggregator)
 export class BasicsSection implements ISection {
 
   public path: string = '/sections/basics/basics';
@@ -27,9 +29,11 @@ export class BasicsSection implements ISection {
   private _elementInPanel: IShape;
   private _previousProcessRefId: string;
   private _validationController: ValidationController;
+  private _eventAggregator: EventAggregator;
 
-  constructor(controller?: ValidationController) {
+  constructor(controller?: ValidationController, eventAggregator?: EventAggregator) {
     this._validationController = controller;
+    this._eventAggregator = eventAggregator;
   }
 
   public activate(model: IPageModel): void {
@@ -80,11 +84,13 @@ export class BasicsSection implements ISection {
 
     const elementInPanelDocumentation: Object = {documentation: this._elementInPanel.documentation};
     this._modeling.updateProperties(this._elementInPanel, elementInPanelDocumentation);
+    this._publishDiagramChange();
   }
 
   public updateName(): void {
     const updateProperty: Object = {name: this.businessObjInPanel.name};
     this._modeling.updateProperties(this._elementInPanel, updateProperty);
+    this._publishDiagramChange();
   }
 
   public updateId(): void {
@@ -96,6 +102,7 @@ export class BasicsSection implements ISection {
 
     const updateProperty: Object = {id: this.businessObjInPanel.id};
     this._modeling.updateProperties(this._elementInPanel, updateProperty);
+    this._publishDiagramChange();
   }
 
   private _init(): void {
@@ -173,5 +180,9 @@ export class BasicsSection implements ISection {
       .satisfies((id: string) => this._formIdIsUnique(id) && this._isProcessIdUnique(id))
         .withMessage('Id already exists.')
       .on(this.businessObjInPanel);
+  }
+
+  private _publishDiagramChange(): void {
+    this._eventAggregator.publish(environment.events.diagramChange);
   }
 }
