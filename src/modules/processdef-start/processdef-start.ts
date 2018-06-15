@@ -9,10 +9,11 @@ import {NotificationService} from './../notification/notification.service';
 
 @inject('ProcessEngineService', EventAggregator, Router, 'BpmnStudioClient', 'NotificationService')
 export class ProcessDefStart {
+  public dynamicUiWrapper: DynamicUiWrapper;
+
   private _processEngineService: IProcessEngineService;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
-  private _dynamicUiWrapper: DynamicUiWrapper;
   private _subscriptions: Array<Subscription>;
   private _processDefId: string;
   private _process: IProcessDefEntity;
@@ -44,7 +45,7 @@ export class ProcessDefStart {
         this._refreshProcess();
       }),
       this._eventAggregator.subscribe('render-dynamic-ui', (message: IUserTaskConfig) => {
-        this._dynamicUiWrapper.currentConfig = message;
+        this.dynamicUiWrapper.currentConfig = message;
       }),
       this._eventAggregator.subscribe('closed-process', (message: any) => {
         this._router.navigateBack();
