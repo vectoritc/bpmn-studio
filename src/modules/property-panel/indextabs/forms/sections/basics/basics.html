@@ -24,14 +24,13 @@
         <span class="fa fa-plus"></span>
       </button>
     </div>
-      <div class="panel__content">
-        <select class="form-control forms-list" value.bind="selectedForm" change.delegate="selectForm()" size="5">
-          <option repeat.for="form of forms" model.bind="form">${form.id}</option>
-        </select>
-      </div>
+    <div class="panel__content">
+      <select class="form-control forms-list" value.bind="selectedForm" change.delegate="selectForm()" size="5">
+        <option repeat.for="form of forms" model.bind="form">${form.id}</option>
+      </select>
     </div>
   </div>
-  <div class="panel panel--grow" show.bind="isFormSelected">
+  <div class="section-panel panel--grow" show.bind="isFormSelected">
     <div class="panel__heading">Form Field</div>
     <div class="panel__content">
       <table class="props-table">
@@ -53,11 +52,16 @@
           <td>
             <select class="props-input" value.bind="selectedType" change.delegate="updateType()">
               <option model.bind="null">-Choose Type-</option>
-              <option repeat.for="type of types" model.bind="type">${type}</option>
+              <option model.bind="FormfieldTypes.string">${FormfieldTypes.string}</option>
+              <option model.bind="FormfieldTypes.long">${FormfieldTypes.long}</option>
+              <option model.bind="FormfieldTypes.boolean">${FormfieldTypes.boolean}</option>
+              <option model.bind="FormfieldTypes.date">${FormfieldTypes.date}</option>
+              <option model.bind="FormfieldTypes.enum">${FormfieldTypes.enum}</option>
+              <option model.bind="FormfieldTypes.custom_type">${FormfieldTypes.custom_type}</option>
             </select>
           </td>
         </tr>
-        <tr if.bind="selectedType === types[5]">
+        <tr if.bind="selectedType === FormfieldTypes.custom_type">
           <th>Custom Type</th>
           <td>
             <input type="text" class="props-input" value.bind="customType" placeholder="Custom Type" change.delegate="updateType()">
@@ -75,6 +79,32 @@
             <input type="text" class="props-input" value.bind="selectedForm.defaultValue"  placeholder="Default Value" change.delegate="updateDefaultValue()">
           </td>
         </tr>
+      </table>
+    </div>
+  </div>
+  <div class="section-panel panel--grow" if.bind="isFormSelected && selectedType === FormfieldTypes.enum">
+    <div class="panel__heading">
+      <span>Values</span>
+      <button class="add-context-button" click.delegate="addEnumValue()">
+        <span class="fa fa-plus"></span>
+      </button>
+    </div>
+    <div class="panel__content">
+      <table>
+        <tr repeat.for="value of enumValues" index.bind="$index">
+          <td class="key-value-column">
+            <input type="text" class="key-value-input" value.bind="newEnumValueIds[$index]" placeholder="Id" change.delegate="changeEnumValueId($index)">
+          </td>
+          <td class="key-value-column">
+            <input type="text" class="key-value-input" value.bind="newEnumValueNames[$index]" placeholder="Name" change.delegate="changeEnumValueName($index)">
+          </td>
+          <td>
+            <button class="key-value-delete-button" click.delegate="removeEnumValue($index)">
+              <i class="fa fa-times"></i>
+            </button>
+          </td>
+        </tr>
+      </table>
     </div>
   </div>
 </template>

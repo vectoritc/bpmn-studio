@@ -19,3 +19,4 @@ export {IProcessRef} from './IProcessRef';
 export {IScriptTaskElement} from './IScriptTaskElement';
 export {ISignal} from './ISignal';
 export {ISignalElement} from './ISignalElement';
+export {IEnumValue} from './IEnumValue';
