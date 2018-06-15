@@ -284,7 +284,22 @@ export class ProcessDefDetail {
     const canvas: HTMLCanvasElement = document.createElement('canvas');
     const context: CanvasRenderingContext2D = canvas.getContext('2d');
 
-    canvg(canvas, svg);
+    const svgWidth: number = parseInt(svg.match(/<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/)[1]);
+    const svgHeight: number = parseInt(svg.match(/<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/)[1]);
+
+    const pixelRatio: number = window.devicePixelRatio || 1;
+
+    canvas.width = svgWidth * pixelRatio;
+    canvas.height = svgHeight * pixelRatio;
+
+    const canvgOptions: any = {
+      ignoreDimensions: true,
+      scaleWidth: canvas.width,
+      scaleHeight: canvas.height,
+    };
+
+    canvg(canvas, svg, canvgOptions);
+
     // make the background white for every format
     context.globalCompositeOperation = 'destination-over';
     context.fillStyle = 'white';
