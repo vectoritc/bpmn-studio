@@ -8,7 +8,7 @@
         <tr>
           <th>Version</th>
           <td>
-            <input type="text" class="props-input" value.bind="businessObjInPanel.processRef.versionTag">
+            <input type="text" class="props-input" value.bind="businessObjInPanel.processRef.versionTag" change.delegate="updateVersion()">
           </td>
         </tr>
         <tr>
@@ -16,16 +16,16 @@
           <td>
             <input type="text" id="processId" class="props-input" value.bind="businessObjInPanel.processRef.id & validateOnChange" change.delegate="validate()">
           </td>
-          <td>	
-            <template if.bind="validationError">	
-              <span class="glyphicon glyphicon-remove"></span>	
-            </template>	
+          <td>
+            <template if.bind="validationError">
+              <span class="glyphicon glyphicon-remove"></span>
+            </template>
           </td>
         </tr>
         <tr>
           <th>Name</th>
           <td>
-            <input type="text" class="props-input" value.bind="businessObjInPanel.processRef.name">
+            <input type="text" class="props-input" value.bind="businessObjInPanel.processRef.name" change.delegate="updateName()">
           </td>
         </tr>
       </table>
