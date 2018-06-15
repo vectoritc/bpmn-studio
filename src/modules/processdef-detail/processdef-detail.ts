@@ -14,6 +14,7 @@ import * as beautify from 'xml-beautifier';
 import {
   AuthenticationStateEvent,
   ElementDistributeOptions,
+  ICanvgOptions,
   IExtensionElement,
   IFormElement,
   IModdleElement,
@@ -292,7 +293,7 @@ export class ProcessDefDetail {
     canvas.width = svgWidth * pixelRatio;
     canvas.height = svgHeight * pixelRatio;
 
-    const canvgOptions: any = {
+    const canvgOptions: ICanvgOptions = {
       ignoreDimensions: true,
       scaleWidth: canvas.width,
       scaleHeight: canvas.height,
