@@ -1,7 +1,7 @@
 import {bindingMode} from 'aurelia-binding';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
-import {Router} from 'aurelia-router';
+import {Redirect, RedirectToRoute, Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
 import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
@@ -100,17 +100,18 @@ export class ProcessDefDetail {
     this._eventAggregator.publish(environment.events.statusBar.showXMLButton);
   }
 
-  public canDeactivate(): Promise<boolean> {
+  public async canDeactivate(): Promise<Redirect> {
 
-    return new Promise((resolve: Function, reject: Function): void => {
+    const _modal: Promise<boolean> = new Promise((resolve: Function, reject: Function): any => {
+
       if (!this._diagramHasChanged) {
         resolve(true);
-        return;
       }
 
       const modal: HTMLElement = document.getElementById('saveModal');
       modal.classList.add('show-modal');
 
+      // register onClick handler
       document.getElementById('dontSaveButton').addEventListener('click', () => {
         modal.classList.remove('show-modal');
         resolve(true);
@@ -123,9 +124,19 @@ export class ProcessDefDetail {
       document.getElementById('cancelButton').addEventListener('click', () => {
         modal.classList.remove('show-modal');
         resolve(false);
+        return false;
       });
-
     });
+
+    const result: boolean = await _modal;
+    if (result === false) {
+      /*
+       * As suggested in https://github.com/aurelia/router/issues/302, we use
+       * the router directly to navgiate back, which results in staying on this
+       * component-- and this is the desired behaviour.
+       */
+      return new Redirect(this._router.currentInstruction.fragment, {trigger: false, replace: false});
+    }
   }
 
   public detached(): void {
