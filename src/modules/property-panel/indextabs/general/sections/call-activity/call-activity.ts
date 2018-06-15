@@ -1,4 +1,5 @@
 import {IPagination, IProcessDefEntity} from '@process-engine/bpmn-studio_client';
+import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {
@@ -8,9 +9,10 @@ import {
   ISection,
   IShape,
 } from '../../../../../../contracts';
+import environment from '../../../../../../environment';
 import {GeneralService} from '../../service/general.service';
 
-@inject(GeneralService, Router)
+@inject(GeneralService, Router, EventAggregator)
 export class CallActivitySection implements ISection {
 
   public path: string = '/sections/call-activity/call-activity';
@@ -22,10 +24,12 @@ export class CallActivitySection implements ISection {
   private _businessObjInPanel: ICallActivityElement;
   private _generalService: GeneralService;
   private _router: Router;
+  private _eventAggregator: EventAggregator;
 
-  constructor(generalService?: GeneralService, router?: Router) {
+  constructor(generalService?: GeneralService, router?: Router, eventAggregator?: EventAggregator) {
     this._generalService = generalService;
     this._router = router;
+    this._eventAggregator = eventAggregator;
   }
 
   public async activate(model: IPageModel): Promise<void> {
@@ -51,9 +55,14 @@ export class CallActivitySection implements ISection {
 
   public updateCalledProcess(): void {
     this._businessObjInPanel.calledElement = this.selectedProcess.key;
+    this._publishDiagramChange();
   }
 
   private async _getAllProcesses(): Promise<void> {
     this.allProcesses = await this._generalService.getAllProcesses();
+  }
+
+  private _publishDiagramChange(): void {
+    this._eventAggregator.publish(environment.events.diagramChange);
   }
 }
