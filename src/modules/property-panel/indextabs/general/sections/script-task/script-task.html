@@ -8,19 +8,19 @@
         <tr>
           <th>Format</th>
           <td>
-            <input type="text" class="props-input" value.bind="businessObjInPanel.scriptFormat">
+            <input type="text" class="props-input" value.bind="businessObjInPanel.scriptFormat" change.delegate="updateFormat()">
           </td>
         </tr>
         <tr>
           <th>Script</th>
           <td>
-            <input type="text" class="props-input" value.bind="businessObjInPanel.script">
+            <input type="text" class="props-input" value.bind="businessObjInPanel.script" change.delegate="updateScript()">
           </td>
         </tr>
         <tr>
           <th>Result Variable</th>
           <td>
-            <input type="text" class="props-input" value.bind="businessObjInPanel.resultVariable">
+            <input type="text" class="props-input" value.bind="businessObjInPanel.resultVariable" change.delegate="updateResultVariable()">
           </td>
         </tr>
       </table>
