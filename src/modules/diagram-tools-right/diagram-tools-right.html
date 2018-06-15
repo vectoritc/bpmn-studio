@@ -12,13 +12,13 @@
         <li><a click.delegate="setColorPurple()"><i class="fa fa-stop purple"></i> Purple</a></li>
         <li><a click.delegate="setColorOrange()"><i class="fa fa-stop orange"></i> Orange</a></li>
         <li>
-          <a show.bind="colorPickerLoaded" click.delegate="setPickedColor()" ref="colorPickerFill" class="colorpicker--fill">
-            <i class="fa fa-stop" css="color: ${fillColor ? fillColor : 'white'};"></i> Fill color <i class="fa fa-eyedropper colorpicker__eyedropper--fill"></i>
+          <a show.bind="colorPickerLoaded" click.delegate="setPickedColor()" ref="colorPickerFill" class="fill-colorpicker">
+            <i class="fa fa-stop" css="color: ${fillColor ? fillColor : 'white'};"></i> Fill color <i class="fa fa-eyedropper fill-colorpicker__eyedropper"></i>
           </a>
         </li>
         <li>
-          <a show.bind="colorPickerLoaded" click.delegate="setPickedColor()" ref="colorPickerBorder" class="colorpicker--border">
-            <i class="fa fa-stop" css="color: ${borderColor ? borderColor : 'black'};"></i> Border color <i class="fa fa-eyedropper colorpicker__eyedropper--border"></i>
+          <a show.bind="colorPickerLoaded" click.delegate="setPickedColor()" ref="colorPickerBorder" class="border-colorpicker">
+            <i class="fa fa-stop" css="color: ${borderColor ? borderColor : 'black'};"></i> Border color <i class="fa fa-eyedropper border-colorpicker__eyedropper"></i>
           </a>
         </li>
         <li><a click.delegate="removeColor()"><i class="fa fa-stop none"></i> None</a></li>
