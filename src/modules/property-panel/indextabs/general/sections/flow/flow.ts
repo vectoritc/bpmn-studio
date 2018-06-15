@@ -7,8 +7,11 @@ import {
   IShape,
 } from '../../../../../../contracts';
 
-import {observable} from 'aurelia-framework';
+import {EventAggregator} from 'aurelia-event-aggregator';
+import {inject, observable} from 'aurelia-framework';
+import environment from '../../../../../../environment';
 
+@inject(EventAggregator)
 export class FlowSection implements ISection {
 
   public path: string = '/sections/flow/flow';
@@ -17,6 +20,11 @@ export class FlowSection implements ISection {
 
   private _businessObjInPanel: IFlowElement;
   private _moddle: IBpmnModdle;
+  private _eventAggregator: EventAggregator;
+
+  constructor(eventAggregator?: EventAggregator) {
+    this._eventAggregator = eventAggregator;
+  }
 
   public activate(model: IPageModel): void {
     this._businessObjInPanel = model.elementInPanel.businessObject;
@@ -54,6 +62,7 @@ export class FlowSection implements ISection {
     }
 
     this._businessObjInPanel.conditionExpression.body = newValue;
+    this._publishDiagramChange();
   }
 
   private _createConditionExpression(): void {
@@ -73,5 +82,9 @@ export class FlowSection implements ISection {
     } else {
       this.condition = '';
     }
+  }
+
+  private _publishDiagramChange(): void {
+    this._eventAggregator.publish(environment.events.diagramChange);
   }
 }
