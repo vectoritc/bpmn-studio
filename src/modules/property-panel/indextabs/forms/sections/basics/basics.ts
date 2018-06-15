@@ -12,8 +12,10 @@ import {
   IShape,
 } from '../../../../../../contracts';
 
+import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {ValidateEvent, ValidationController, ValidationRules} from 'aurelia-validation';
+import environment from '../../../../../../environment';
 
 enum FormfieldTypes {
   string = 'string',
@@ -24,7 +26,7 @@ enum FormfieldTypes {
   custom_type = 'custom type',
 }
 
-@inject(ValidationController)
+@inject(ValidationController, EventAggregator)
 export class BasicsSection implements ISection {
 
   public path: string = '/sections/basics/basics';
@@ -49,9 +51,11 @@ export class BasicsSection implements ISection {
   private _previousFormId: string;
   private _previousForm: IForm;
   private _activeListElementId: string;
+  private _eventAggregator: EventAggregator;
 
-  constructor(controller?: ValidationController) {
+  constructor(controller?: ValidationController, eventAggregator?: EventAggregator) {
     this.validationController = controller;
+    this._eventAggregator = eventAggregator;
   }
 
   public activate(model: IPageModel): void {
@@ -98,21 +102,25 @@ export class BasicsSection implements ISection {
     this.enumValues.push(bpmnValue);
     Object.assign(this._formElement.fields[this._selectedIndex].values, this.enumValues);
     this._reloadEnumValues();
+    this._publishDiagramChange();
   }
 
   public removeEnumValue(index: number): void {
     this._formElement.fields[this._selectedIndex].values.splice(index, 1);
     this._reloadEnumValues();
+    this._publishDiagramChange();
   }
 
   public changeEnumValueId(index: number): void {
     this.enumValues[index].id = this.newEnumValueIds[index];
     Object.assign(this._formElement.fields[this._selectedIndex].values, this.enumValues);
+    this._publishDiagramChange();
   }
 
   public changeEnumValueName(index: number): void {
     this.enumValues[index].name = this.newEnumValueNames[index];
     Object.assign(this._formElement.fields[this._selectedIndex].values, this.enumValues);
+    this._publishDiagramChange();
   }
 
   public removeSelectedForm(): void {
@@ -128,6 +136,7 @@ export class BasicsSection implements ISection {
     this._selectedIndex = undefined;
 
     this._reloadForms();
+    this._publishDiagramChange();
   }
 
   public async addForm(): Promise<void> {
@@ -149,6 +158,7 @@ export class BasicsSection implements ISection {
     this.selectedForm = bpmnForm;
 
     this.selectForm();
+    this._publishDiagramChange();
   }
 
   public updateId(): void {
@@ -165,6 +175,7 @@ export class BasicsSection implements ISection {
     }
 
     this._formElement.fields[this._selectedIndex].id = this.selectedForm.id;
+    this._publishDiagramChange();
   }
 
   public selectForm(): void {
@@ -196,14 +207,17 @@ export class BasicsSection implements ISection {
 
     this._formElement.fields[this._selectedIndex].type = type;
     this._reloadEnumValues();
+    this._publishDiagramChange();
   }
 
   public updateLabel(): void {
     this._formElement.fields[this._selectedIndex].label = this.selectedForm.label;
+    this._publishDiagramChange();
   }
 
   public updateDefaultValue(): void {
     this._formElement.fields[this._selectedIndex].defaultValue = this.selectedForm.defaultValue;
+    this._publishDiagramChange();
   }
 
   private _validateOnDetach(): void {
@@ -483,5 +497,9 @@ export class BasicsSection implements ISection {
       .satisfies((id: string) => this._formIdIsUnique(id))
       .withMessage('Id already exists.')
       .on(this.selectedForm);
+  }
+
+  private _publishDiagramChange(): void {
+    this._eventAggregator.publish(environment.events.diagramChange);
   }
 }
