@@ -160,8 +160,12 @@ export class DiagramToolsRight {
 
     const borderLocalStorageKey: spectrum.Options = { localStorageKey: 'borderColors' };
 
+    const borderDefaultColors: Array<string> = ['#E53935', '#1E88E5', '#FB8C00', '#43A047', '#8E24AA'];
+    const borderDefaultPalette: spectrum.Options = { palette: borderDefaultColors };
+
     const colorPickerBorderSettings: IColorPickerSettings = Object.assign({},
       environment.colorPickerSettings,
+      borderDefaultPalette,
       borderLocalStorageKey,
       borderMoveSetting);
 
@@ -175,8 +179,12 @@ export class DiagramToolsRight {
 
     const fillLocalStorageKey: spectrum.Options = { localStorageKey: 'fillColors' };
 
+    const fillDefaultColors: Array<string> = ['#FFCDD2', '#BBDEFB', '#FFE0B2', '#C8E6C9', '#E1BEE7'];
+    const fillDefaultPalette: spectrum.Options = { palette: fillDefaultColors };
+
     const colorPickerFillSettings: IColorPickerSettings = Object.assign({},
       environment.colorPickerSettings,
+      fillDefaultPalette,
       fillLocalStorageKey,
       fillMoveSetting);
 

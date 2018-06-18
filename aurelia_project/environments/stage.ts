@@ -59,7 +59,6 @@ export default {
     preferredFormat: 'hex',
     clickoutFiresChange: true,
     showPalette: true,
-    palette: [],
     maxSelectionSize: 8,
     showInitial: true,
     showInput: true,
