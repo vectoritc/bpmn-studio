@@ -152,6 +152,7 @@ export class DiagramToolsRight {
     window.localStorage.removeItem('borderColors');
     window.localStorage.removeItem('fillColors');
 
+    // Colorpicker bordercolor
     const borderMoveSetting: spectrum.Options = {
       move: (borderColor: spectrum.tinycolorInstance): void => {
         this._updateBorderColor(borderColor);
@@ -171,6 +172,7 @@ export class DiagramToolsRight {
 
     $(this.colorPickerBorder).spectrum(colorPickerBorderSettings);
 
+    // Colorpicker fillcolor
     const fillMoveSetting: spectrum.Options = {
       move: (fillColor: spectrum.tinycolorInstance): void => {
         this._updateFillColor(fillColor);
