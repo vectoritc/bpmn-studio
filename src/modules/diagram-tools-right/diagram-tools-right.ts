@@ -92,11 +92,11 @@ export class DiagramToolsRight {
 
     const selectedElements: Array<IShape> = this._getSelectedElements();
 
-    const isNoValidElement: boolean = selectedElements.length < 1
+    const elementIsNotValid: boolean = selectedElements.length < 1
                                     || selectedElements.length === 1
                                     && selectedElements[0].$type === 'bpmn:Collaboration';
 
-    if (isNoValidElement) {
+    if (elementIsNotValid) {
       this._notificationService.showNotification(NotificationType.ERROR, 'Error while changing the color: No valid element was selected.');
       return;
     }
@@ -184,11 +184,13 @@ export class DiagramToolsRight {
     const fillDefaultColors: Array<string> = ['#FFCDD2', '#BBDEFB', '#C8E6C9', '#E1BEE7', '#FFE0B2'];
     const fillDefaultPalette: spectrum.Options = { palette: fillDefaultColors };
 
-    const colorPickerFillSettings: IColorPickerSettings = Object.assign({},
+    const colorPickerFillSettings: IColorPickerSettings = Object.assign(
+      {},
       environment.colorPickerSettings,
       fillDefaultPalette,
       fillLocalStorageKey,
-      fillMoveSetting);
+      fillMoveSetting
+    );
 
     $(this.colorPickerFill).spectrum(colorPickerFillSettings);
 
