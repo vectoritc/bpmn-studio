@@ -422,9 +422,9 @@ export class BpmnIo {
   }
 
   /**
-   * Checks, if the current platform is a mac.
+   * Checks, if the current platform is a macOS.
    *
-   * @returns true, if the current plattform is a mac
+   * @returns true, if the current platform is macOS
    */
   private _checkIfCurrentPlatformIsMac = (): boolean => {
     const macRegex: RegExp = /.*mac*./i;
