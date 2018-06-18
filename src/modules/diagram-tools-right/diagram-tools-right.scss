@@ -38,14 +38,14 @@
  *
  * The fill-colorpicker is the upper button and therefore only has the border at the top
  */
-.fill-colorpicker {
+.fill-colorpicker--border {
   border-top: 1px solid #ccc;
 }
 
 /*
  * The border-colorpicker is the lower button and therefore only has the border at the bottom
  */
-.border-colorpicker {
+.border-colorpicker--border {
   border-bottom: 1px solid #ccc;
 }
 
