@@ -217,7 +217,7 @@ export class DiagramToolsRight {
       environment.colorPickerSettings,
       fillDefaultPalette,
       fillLocalStorageKey,
-      fillMoveSetting
+      fillMoveSetting,
     );
 
     $(this.colorPickerFill).spectrum(colorPickerFillSettings);
