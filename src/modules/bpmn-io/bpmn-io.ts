@@ -340,7 +340,7 @@ export class BpmnIo {
   private _saveHotkeyEventHandler = (event: KeyboardEvent): void  => {
     // On macOS the 'common control key' is the meta instead of the control key. So on a mac we need to find
     // out, if the meta key instead of the control key is pressed.
-    const currentPlatformIsMac: boolean = this._currentPlattformIsMac();
+    const currentPlatformIsMac: boolean = this._checkIfCurrentPlatformIsMac();
     const metaKeyIsPressed: boolean = currentPlatformIsMac ? event.metaKey : event.ctrlKey;
 
     /*
@@ -370,7 +370,7 @@ export class BpmnIo {
    * element to the backspace key, if the current platform is macOS.
    */
   private _addRemoveWithBackspaceKeyboardListener(): void {
-    const currentPlatformIsNotMac: boolean = !this._currentPlattformIsMac();
+    const currentPlatformIsNotMac: boolean = !this._checkIfCurrentPlatformIsMac();
 
     if (currentPlatformIsNotMac) {
       return;
@@ -402,7 +402,7 @@ export class BpmnIo {
   private _printHotkeyEventHandler = (event: KeyboardEvent): void  => {
     // On macOS the 'common control key' is the meta instead of the control key. So on a mac we need to find
     // out, if the meta key instead of the control key is pressed.
-    const currentPlatformIsMac: boolean = this._currentPlattformIsMac();
+    const currentPlatformIsMac: boolean = this._checkIfCurrentPlatformIsMac();
     const metaKeyIsPressed: boolean = currentPlatformIsMac ? event.metaKey : event.ctrlKey;
 
     /*
@@ -426,7 +426,7 @@ export class BpmnIo {
    *
    * @returns true, if the current plattform is a mac
    */
-  private _currentPlattformIsMac = (): boolean => {
+  private _checkIfCurrentPlatformIsMac = (): boolean => {
     const macRegex: RegExp = /.*mac*./i;
     const currentPlattform: string = navigator.platform;
     const currentPlattformIsMac: boolean = macRegex.test(currentPlattform);
