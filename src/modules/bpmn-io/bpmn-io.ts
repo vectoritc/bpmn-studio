@@ -161,6 +161,11 @@ export class BpmnIo {
         }, 0);
       }),
     ];
+
+    const previousPropertyPanelWidth: string = window.localStorage.getItem('propertyPanelWidth');
+    if (previousPropertyPanelWidth !== undefined) {
+      this.propertyPanelWidth = parseInt(previousPropertyPanelWidth);
+    }
   }
 
   public detached(): void {
@@ -173,6 +178,8 @@ export class BpmnIo {
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
+
+    window.localStorage.setItem('propertyPanelWidth', '' + this.propertyPanelWidth);
   }
 
   public xmlChanged(newValue: string, oldValue: string): void {
