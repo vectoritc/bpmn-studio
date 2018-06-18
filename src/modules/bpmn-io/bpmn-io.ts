@@ -428,9 +428,9 @@ export class BpmnIo {
    */
   private _checkIfCurrentPlatformIsMac = (): boolean => {
     const macRegex: RegExp = /.*mac*./i;
-    const currentPlattform: string = navigator.platform;
-    const currentPlattformIsMac: boolean = macRegex.test(currentPlattform);
+    const currentPlatform: string = navigator.platform;
+    const currentPlatformIsMac: boolean = macRegex.test(currentPlatform);
 
-    return currentPlattformIsMac;
+    return currentPlatformIsMac;
   }
 }
