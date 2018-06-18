@@ -32,12 +32,21 @@ export class ProcessDefStart {
     this._notificationService = notificationService;
   }
 
+  // TODO: Add a usefull comment here; what does it do? what is it good for? when is this invoked?
   public async activate(routeParameters: {processDefId: string}): Promise<void> {
     this._processDefId = routeParameters.processDefId;
     await this._refreshProcess();
+    
+    /*
+     * Start the processinstance in the connected ProcessEngine.
+     */
     this._startProcess();
 
     this._subscriptions = [
+      /*
+       * If the user this login/logout we need to refresh the process; 
+       * mainly due to a possible the change in access rights.
+       */
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
         this._refreshProcess();
       }),
@@ -47,6 +56,11 @@ export class ProcessDefStart {
       this._eventAggregator.subscribe('render-dynamic-ui', (message: IUserTaskConfig) => {
         this.dynamicUiWrapper.currentConfig = message;
       }),
+      /*
+       * The closed-process event is thrown at the end of a process run;
+       * we then use the router to navigate to the prvious view-- this could be the
+       * design view-- but any other last view will work as well.
+       */
       this._eventAggregator.subscribe('closed-process', (message: any) => {
         this._router.navigateBack();
       }),
@@ -76,5 +90,4 @@ export class ProcessDefStart {
   private _startProcess(): void {
     this._bpmnStudioClient.startProcessByKey(this.process.key);
   }
-
 }
