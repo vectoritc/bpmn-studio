@@ -11,10 +11,10 @@
     <div class="panel__content">
       <table>
         <tr repeat.for="property of properties" index.bind="$index">
-          <td class="key-value-column">
+          <td class="key-value-column-left">
             <input type="text" class="key-value-input" value.bind="newNames[$index]" placeholder="Name" change.delegate="changeName($index)">
           </td>
-          <td class="key-value-column">
+          <td class="key-value-column-right">
             <input type="text" class="key-value-input" value.bind="newValues[$index]" placeholder="Value" change.delegate="changeValue($index)">
           </td>
           <td>
