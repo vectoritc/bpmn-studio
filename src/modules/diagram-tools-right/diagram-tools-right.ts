@@ -48,16 +48,16 @@ export class DiagramToolsRight {
     this._setColor('#BBDEFB', '#1E88E5');
   }
 
-  public setColorOrange(): void {
-    this._setColor('#FFE0B2', '#FB8C00');
-  }
-
   public setColorGreen(): void {
     this._setColor('#C8E6C9', '#43A047');
   }
 
   public setColorPurple(): void {
     this._setColor('#E1BEE7', '#8E24AA');
+  }
+
+  public setColorOrange(): void {
+    this._setColor('#FFE0B2', '#FB8C00');
   }
 
   public removeColor(): void {
@@ -161,7 +161,7 @@ export class DiagramToolsRight {
 
     const borderLocalStorageKey: spectrum.Options = { localStorageKey: 'borderColors' };
 
-    const borderDefaultColors: Array<string> = ['#E53935', '#1E88E5', '#FB8C00', '#43A047', '#8E24AA'];
+    const borderDefaultColors: Array<string> = ['#E53935', '#1E88E5', '#43A047', '#8E24AA', '#FB8C00'];
     const borderDefaultPalette: spectrum.Options = { palette: borderDefaultColors };
 
     const colorPickerBorderSettings: IColorPickerSettings = Object.assign({},
@@ -181,7 +181,7 @@ export class DiagramToolsRight {
 
     const fillLocalStorageKey: spectrum.Options = { localStorageKey: 'fillColors' };
 
-    const fillDefaultColors: Array<string> = ['#FFCDD2', '#BBDEFB', '#FFE0B2', '#C8E6C9', '#E1BEE7'];
+    const fillDefaultColors: Array<string> = ['#FFCDD2', '#BBDEFB', '#C8E6C9', '#E1BEE7', '#FFE0B2'];
     const fillDefaultPalette: spectrum.Options = { palette: fillDefaultColors };
 
     const colorPickerFillSettings: IColorPickerSettings = Object.assign({},
