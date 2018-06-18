@@ -338,13 +338,10 @@ export class BpmnIo {
    * @return void
    */
   private _saveHotkeyEventHandler = (event: KeyboardEvent): void  => {
-
-    // On macOS the 'common control key' is the meta instead of the control key. So we need to find
-    // out if on a mac, the meta key instead of the control key is pressed.
-    const macRegex: RegExp = /.*mac*./i;
-    const currentPlattform: string = navigator.platform;
-    const currentPlattformIsMac: boolean = macRegex.test(currentPlattform);
-    const metaKeyIsPressed: boolean = currentPlattformIsMac ? event.metaKey : event.ctrlKey;
+    // On macOS the 'common control key' is the meta instead of the control key. So on a mac we need to find
+    // out, if the meta key instead of the control key is pressed.
+    const currentPlatformIsMac: boolean = this._currentPlattformIsMac();
+    const metaKeyIsPressed: boolean = currentPlatformIsMac ? event.metaKey : event.ctrlKey;
 
     /*
     * If both keys (meta and s) are pressed, save the diagram.
@@ -368,11 +365,9 @@ export class BpmnIo {
   }
 
   private _addKeyboardListener(): void {
-    const macRegex: RegExp = /.*mac*./i;
-    const currentPlattform: string = navigator.platform;
-    const currentPlattformIsNotMac: boolean = !macRegex.test(currentPlattform);
+    const currentPlatformIsNotMac: boolean = !this._currentPlattformIsMac();
 
-    if (currentPlattformIsNotMac) {
+    if (currentPlatformIsNotMac) {
       return;
     }
 
@@ -402,10 +397,8 @@ export class BpmnIo {
   private _printHotkeyEventHandler = (event: KeyboardEvent): void  => {
     // On macOS the 'common control key' is the meta instead of the control key. So on a mac we need to find
     // out, if the meta key instead of the control key is pressed.
-    const macRegex: RegExp = /.*mac*./i;
-    const currentPlattform: string = navigator.platform;
-    const currentPlattformIsMac: boolean = macRegex.test(currentPlattform);
-    const metaKeyIsPressed: boolean = currentPlattformIsMac ? event.metaKey : event.ctrlKey;
+    const currentPlatformIsMac: boolean = this._currentPlattformIsMac();
+    const metaKeyIsPressed: boolean = currentPlatformIsMac ? event.metaKey : event.ctrlKey;
 
     /*
      * If both keys (meta and p) are pressed, print the diagram.
@@ -421,5 +414,18 @@ export class BpmnIo {
       event.preventDefault();
       this._eventAggregator.publish(environment.events.processDefDetail.printDiagram);
     }
+  }
+
+  /**
+   * Checks, if the current platform is a mac.
+   *
+   * @returns true, if the current plattform is a mac
+   */
+  private _currentPlattformIsMac = (): boolean => {
+    const macRegex: RegExp = /.*mac*./i;
+    const currentPlattform: string = navigator.platform;
+    const currentPlattformIsMac: boolean = macRegex.test(currentPlattform);
+
+    return currentPlattformIsMac;
   }
 }
