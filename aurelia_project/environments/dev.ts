@@ -59,7 +59,6 @@ export default {
     clickoutFiresChange: true,
     showPalette: true,
     palette: [],
-    localStorageKey: 'elementColors',
     showInitial: true,
     showInput: true,
     allowEmpty: true,

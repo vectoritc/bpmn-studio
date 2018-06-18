@@ -35,6 +35,9 @@ export class DiagramToolsRight {
   public detached(): void {
     $(this.colorPickerBorder).spectrum('destroy');
     $(this.colorPickerFill).spectrum('destroy');
+
+    window.localStorage.removeItem('borderColors');
+    window.localStorage.removeItem('fillColors');
   }
 
   public setColorRed(): void {
@@ -146,13 +149,22 @@ export class DiagramToolsRight {
   }
 
   private _activateColorPicker(): void {
+    window.localStorage.removeItem('borderColors');
+    window.localStorage.removeItem('fillColors');
+
     const borderMoveSetting: spectrum.Options = {
       move: (borderColor: spectrum.tinycolorInstance): void => {
         this._updateBorderColor(borderColor);
       },
     };
 
-    const colorPickerBorderSettings: IColorPickerSettings = Object.assign({}, environment.colorPickerSettings, borderMoveSetting);
+    const borderLocalStorageKey: spectrum.Options = { localStorageKey: 'borderColors' };
+
+    const colorPickerBorderSettings: IColorPickerSettings = Object.assign({},
+      environment.colorPickerSettings,
+      borderLocalStorageKey,
+      borderMoveSetting);
+
     $(this.colorPickerBorder).spectrum(colorPickerBorderSettings);
 
     const fillMoveSetting: spectrum.Options = {
@@ -161,7 +173,13 @@ export class DiagramToolsRight {
       },
     };
 
-    const colorPickerFillSettings: IColorPickerSettings = Object.assign({}, environment.colorPickerSettings, fillMoveSetting);
+    const fillLocalStorageKey: spectrum.Options = { localStorageKey: 'fillColors' };
+
+    const colorPickerFillSettings: IColorPickerSettings = Object.assign({},
+      environment.colorPickerSettings,
+      fillLocalStorageKey,
+      fillMoveSetting);
+
     $(this.colorPickerFill).spectrum(colorPickerFillSettings);
 
     this.colorPickerLoaded = true;
