@@ -34,7 +34,7 @@ export class BpmnIo {
   public initialLoadingFinished: boolean = false;
   public showXMLView: boolean = false;
   public colorPickerLoaded: boolean = false;
-  public propertyPanelWidth: number = 250;
+  @observable public propertyPanelWidth: number;
   public minCanvasWidth: number = 100;
   public minPropertyPanelWidth: number = 200;
 
@@ -165,6 +165,8 @@ export class BpmnIo {
     const previousPropertyPanelWidth: string = window.localStorage.getItem('propertyPanelWidth');
     if (previousPropertyPanelWidth !== undefined) {
       this.propertyPanelWidth = parseInt(previousPropertyPanelWidth);
+    } else {
+      this.propertyPanelWidth = environment.propertyPanel.defaultWidth;
     }
   }
 

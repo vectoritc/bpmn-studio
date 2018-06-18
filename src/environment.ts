@@ -54,6 +54,7 @@ export default {
   propertyPanel: {
     minWidth: 190,
     maxWidth: 300,
+    defaultWidth: 250,
   },
   colorPickerSettings: {
     clickoutFiresChange: true,
