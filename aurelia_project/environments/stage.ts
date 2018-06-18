@@ -53,8 +53,6 @@ export default {
     baseRoute: processEngineRoute,
   },
   propertyPanel: {
-    minWidth: 190,
-    maxWidth: 300,
     defaultWidth: 250,
   },
   colorPickerSettings: {
