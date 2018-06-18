@@ -23,9 +23,9 @@ export class DiagramToolsRight {
   public colorPickerBorder: HTMLInputElement;
   public colorPickerFill: HTMLInputElement;
   public colorPickerLoaded: boolean = false;
-
   public fillColor: string;
   public borderColor: string;
+  
   private _notificationService: NotificationService;
 
   constructor(notificationService: NotificationService) {
