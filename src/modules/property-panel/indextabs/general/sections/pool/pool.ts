@@ -1,3 +1,4 @@
+import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {ValidateEvent, ValidationController, ValidationRules} from 'aurelia-validation';
 import {
@@ -10,8 +11,9 @@ import {
   ISection,
   IShape,
 } from '../../../../../../contracts';
+import environment from '../../../../../../environment';
 
-@inject(ValidationController)
+@inject(ValidationController, EventAggregator)
 export class PoolSection implements ISection {
 
   public path: string = '/sections/pool/pool';
@@ -23,9 +25,11 @@ export class PoolSection implements ISection {
   private _modeler: IBpmnModeler;
   private _bpmnModdle: IBpmnModdle;
   private _previousProcessRefId: string;
+  private _eventAggregator: EventAggregator;
 
-  constructor(controller?: ValidationController) {
+  constructor(controller?: ValidationController, eventAggregator?: EventAggregator) {
     this.validationController = controller;
+    this._eventAggregator = eventAggregator;
   }
 
   public activate(model: IPageModel): void {
@@ -60,6 +64,14 @@ export class PoolSection implements ISection {
 
   public validate(): void {
     this.validationController.validate();
+  }
+
+  public updateVersion(): void {
+    this._publishDiagramChange();
+  }
+
+  public updateName(): void {
+    this._publishDiagramChange();
   }
 
   private _elementIsParticipant(element: IShape): boolean {
@@ -116,5 +128,9 @@ export class PoolSection implements ISection {
     .satisfies((id: string) => this._formIdIsUnique(id) && this._isProcessIdUnique(id))
     .withMessage('Process-Id already exists.')
     .on(this.businessObjInPanel.processRef);
+  }
+
+  private _publishDiagramChange(): void {
+    this._eventAggregator.publish(environment.events.diagramChange);
   }
 }

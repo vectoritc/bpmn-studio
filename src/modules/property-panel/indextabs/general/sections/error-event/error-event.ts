@@ -11,10 +11,12 @@ import {
   IShape,
 } from '../../../../../../contracts';
 
+import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
+import environment from '../../../../../../environment';
 import {GeneralService} from '../../service/general.service';
 
-@inject(GeneralService)
+@inject(GeneralService, EventAggregator)
 export class ErrorEventSection implements ISection {
 
   public path: string = '/sections/error-event/error-event';
@@ -29,9 +31,11 @@ export class ErrorEventSection implements ISection {
   private _modeler: IBpmnModeler;
   private _generalService: GeneralService;
   private _errorMessageVariable: string;
+  private _eventAggregator: EventAggregator;
 
-  constructor(generalService?: GeneralService) {
+  constructor(generalService?: GeneralService, eventAggregator?: EventAggregator) {
     this._generalService = generalService;
+    this._eventAggregator = eventAggregator;
   }
 
   public async activate(model: IPageModel): Promise<void> {
@@ -68,21 +72,25 @@ export class ErrorEventSection implements ISection {
     if (!this.isEndEvent) {
       this._errorMessageVariable = errorElement.errorMessageVariable;
     }
+    this._publishDiagramChange();
   }
 
   public updateErrorName(): void {
     const selectedError: IError = this._getSlectedError();
     selectedError.name = this.selectedError.name;
+    this._publishDiagramChange();
   }
 
   public updateErrorCode(): void {
     const selectedError: IError = this._getSlectedError();
     selectedError.errorCode = this.selectedError.errorCode;
+    this._publishDiagramChange();
   }
 
   public updateErrorMessage(): void {
     const errorElement: IErrorElement = this._businessObjInPanel.eventDefinitions[0];
     errorElement.errorMessageVariable = this._errorMessageVariable;
+    this._publishDiagramChange();
   }
 
   public async addError(): Promise<void> {
@@ -104,6 +112,7 @@ export class ErrorEventSection implements ISection {
           this.updateError();
         });
       });
+      this._publishDiagramChange();
   }
 
   private _init(): void {
@@ -170,5 +179,9 @@ export class ErrorEventSection implements ISection {
 
   private async _refreshErrors(): Promise<void> {
     this.errors = await this._getErrors();
+  }
+
+  private _publishDiagramChange(): void {
+    this._eventAggregator.publish(environment.events.diagramChange);
   }
 }

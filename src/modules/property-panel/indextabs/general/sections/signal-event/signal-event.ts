@@ -11,10 +11,12 @@ import {
   ISignalElement,
 } from '../../../../../../contracts';
 
+import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
+import environment from '../../../../../../environment';
 import {GeneralService} from '../../service/general.service';
 
-@inject(GeneralService)
+@inject(GeneralService, EventAggregator)
 export class SignalEventSection implements ISection {
 
   public path: string = '/sections/signal-event/signal-event';
@@ -27,9 +29,11 @@ export class SignalEventSection implements ISection {
   private _moddle: IBpmnModdle;
   private _modeler: IBpmnModeler;
   private _generalService: GeneralService;
+  private _eventAggregator: EventAggregator;
 
-  constructor(generalService?: GeneralService) {
+  constructor(generalService?: GeneralService, eventAggregator?: EventAggregator) {
     this._generalService = generalService;
+    this._eventAggregator = eventAggregator;
   }
 
   public async activate(model: IPageModel): Promise<void> {
@@ -53,6 +57,7 @@ export class SignalEventSection implements ISection {
 
     const signalElement: ISignalElement = this._businessObjInPanel.eventDefinitions[0];
     signalElement.signalRef = this.selectedSignal;
+    this._publishDiagramChange();
   }
 
   public updateName(): void {
@@ -63,6 +68,7 @@ export class SignalEventSection implements ISection {
     });
 
     signal.name = this.selectedSignal.name;
+    this._publishDiagramChange();
   }
 
   public addSignal(): void {
@@ -83,6 +89,7 @@ export class SignalEventSection implements ISection {
         this.updateSignal();
       });
     });
+    this._publishDiagramChange();
   }
 
   private _elementIsSignalEvent(element: IShape): boolean {
@@ -131,5 +138,9 @@ export class SignalEventSection implements ISection {
       const elementRegistry: IElementRegistry = this._modeler.get('elementRegistry');
       const elementInPanel: IShape = elementRegistry.get(this._businessObjInPanel.id);
       this._businessObjInPanel = elementInPanel.businessObject;
+  }
+
+  private _publishDiagramChange(): void {
+    this._eventAggregator.publish(environment.events.diagramChange);
   }
 }

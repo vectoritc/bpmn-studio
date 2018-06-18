@@ -1,3 +1,6 @@
+import {EventAggregator} from 'aurelia-event-aggregator';
+import {inject} from 'aurelia-framework';
+
 import {
   IBpmnModdle,
   IExtensionElement,
@@ -8,7 +11,9 @@ import {
   ISection,
   IShape,
 } from '../../../../../../contracts';
+import environment from '../../../../../../environment';
 
+@inject(EventAggregator)
 export class BasicsSection implements ISection {
 
   public path: string = '/sections/basics/basics';
@@ -21,6 +26,11 @@ export class BasicsSection implements ISection {
   private _moddle: IBpmnModdle;
   private _selectedElement: IModdleElement;
   private _propertyElement: IPropertyElement;
+  private _eventAggregator: EventAggregator;
+
+  constructor(eventAggregator?: EventAggregator) {
+    this._eventAggregator = eventAggregator;
+  }
 
   public activate(model: IPageModel): void {
     this._businessObjInPanel = model.elementInPanel.businessObject;
@@ -51,19 +61,23 @@ export class BasicsSection implements ISection {
 
     this._propertyElement.values.push(bpmnProperty);
     this.properties.push(bpmnProperty);
+    this._publishDiagramChange();
   }
 
   public removeProperty(index: number): void {
     this._propertyElement.values.splice(index, 1);
     this._reloadProperties();
+    this._publishDiagramChange();
   }
 
   public changeName(index: number): void {
     this._propertyElement.values[index].name = this.newNames[index];
+    this._publishDiagramChange();
   }
 
   public changeValue(index: number): void {
     this._propertyElement.values[index].value = this.newValues[index];
+    this._publishDiagramChange();
   }
 
   private _init(): void {
@@ -145,6 +159,10 @@ export class BasicsSection implements ISection {
 
     const extensionPropertyElement: IPropertyElement = this._moddle.create('camunda:Properties', {values: propertyValues});
     this._businessObjInPanel.extensionElements.values.push(extensionPropertyElement);
+  }
+
+  private _publishDiagramChange(): void {
+    this._eventAggregator.publish(environment.events.diagramChange);
   }
 
 }

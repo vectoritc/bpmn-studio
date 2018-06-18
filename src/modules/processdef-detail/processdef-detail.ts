@@ -211,6 +211,7 @@ export class ProcessDefDetail {
       } else {
         this._notificationService.showNotification(NotificationType.WARNING, `Unknown error: ${JSON.stringify(response)}`);
       }
+      this._diagramHasChanged = false;
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, `Error: ${error.message}`);
     }

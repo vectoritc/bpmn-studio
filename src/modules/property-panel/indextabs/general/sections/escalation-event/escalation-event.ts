@@ -11,10 +11,12 @@ import {
   IShape,
 } from '../../../../../../contracts';
 
+import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
+import environment from '../../../../../../environment';
 import {GeneralService} from '../../service/general.service';
 
-@inject(GeneralService)
+@inject(GeneralService, EventAggregator)
 export class EscalationEventSection implements ISection {
 
   public path: string = '/sections/escalation-event/escalation-event';
@@ -29,9 +31,11 @@ export class EscalationEventSection implements ISection {
   private _modeler: IBpmnModeler;
   private _generalService: GeneralService;
   private _isBoundaryEvent: boolean = true;
+  private _eventAggregator: EventAggregator;
 
-  constructor(generalService?: GeneralService) {
+  constructor(generalService?: GeneralService, eventAggregator?: EventAggregator) {
     this._generalService = generalService;
+    this._eventAggregator = eventAggregator;
   }
 
   public async activate(model: IPageModel): Promise<void> {
@@ -67,21 +71,25 @@ export class EscalationEventSection implements ISection {
 
     this.escalationCodeVariable = escalationElement.escalationCodeVariable;
     escalationElement.escalationRef = this.selectedEscalation;
+    this._publishDiagramChange();
   }
 
   public updateEscalationName(): void {
     const selectedEscalation: IEscalation = this._getSelectedEscalation();
     selectedEscalation.name = this.selectedEscalation.name;
+    this._publishDiagramChange();
   }
 
   public updateEscalationCode(): void {
     const selectedEscalation: IEscalation = this._getSelectedEscalation();
     selectedEscalation.escalationCode = this.selectedEscalation.escalationCode;
+    this._publishDiagramChange();
   }
 
   public updateEscalationCodeVariable(): void {
     const escalationElement: IEscalationElement = this._businessObjInPanel.eventDefinitions[0];
     escalationElement.escalationCodeVariable = this.escalationCodeVariable;
+    this._publishDiagramChange();
   }
 
   public addEscalation(): void {
@@ -102,6 +110,7 @@ export class EscalationEventSection implements ISection {
         this.updateEscalation();
       });
     });
+    this._publishDiagramChange();
   }
 
   private async _refreshEscalations(): Promise<void> {
@@ -168,5 +177,9 @@ export class EscalationEventSection implements ISection {
     });
 
     return selectedEscalation;
+  }
+
+  private _publishDiagramChange(): void {
+    this._eventAggregator.publish(environment.events.diagramChange);
   }
 }
