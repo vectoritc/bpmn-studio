@@ -156,12 +156,12 @@ export class BpmnIo {
     ];
 
     const previousPropertyPanelWidth: string = window.localStorage.getItem('propertyPanelWidth');
-    
+
     /*
      * Update the property panel width;
      * if no previoud width was found, take the configured one.
      */
-    this.propertyPanelWidth = (previousPropertyPanelWidth !== undefined) ? 
+    this.propertyPanelWidth = (previousPropertyPanelWidth !== undefined) ?
                               parseInt(previousPropertyPanelWidth) :
                               environment.propertyPanel.defaultWidth;
 

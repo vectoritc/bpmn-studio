@@ -36,7 +36,7 @@ export class ProcessDefStart {
   public async activate(routeParameters: {processDefId: string}): Promise<void> {
     this._processDefId = routeParameters.processDefId;
     await this._refreshProcess();
-    
+
     /*
      * Start the processinstance in the connected ProcessEngine.
      */
@@ -44,7 +44,7 @@ export class ProcessDefStart {
 
     this._subscriptions = [
       /*
-       * If the user this login/logout we need to refresh the process; 
+       * If the user this login/logout we need to refresh the process;
        * mainly due to a possible the change in access rights.
        */
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
