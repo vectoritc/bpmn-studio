@@ -153,7 +153,7 @@ export class BpmnIo {
                               environment.propertyPanel.defaultWidth;
 
     const propertyPanelHideState: string = window.localStorage.getItem('propertyPanelHideState');
-    const wasPropertyPanelVisible: boolean = propertyPanelHideState === undefined || propertyPanelHideState === 'show';
+    const wasPropertyPanelVisible: boolean = propertyPanelHideState === null || propertyPanelHideState === 'show';
     this._toggled = wasPropertyPanelVisible;
     this.togglePanel();
   }

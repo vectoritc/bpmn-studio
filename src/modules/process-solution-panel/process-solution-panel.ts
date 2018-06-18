@@ -27,6 +27,8 @@ export class ProcessSolutionPanel {
     this._refreshProcesslist();
     this._eventAggregator.publish(environment.events.processSolutionPanel.toggleProcessSolutionExplorer);
 
+    window.localStorage.setItem('processSolutionExplorerHideState', 'show');
+
     this._subscriptions = [
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
         this._refreshProcesslist();
@@ -45,6 +47,8 @@ export class ProcessSolutionPanel {
       subscription.dispose();
     }
     this._eventAggregator.publish(environment.events.processSolutionPanel.toggleProcessSolutionExplorer);
+
+    window.localStorage.setItem('processSolutionExplorerHideState', 'hide');
   }
 
   private async _refreshProcesslist(): Promise<void> {

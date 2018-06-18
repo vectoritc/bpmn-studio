@@ -28,6 +28,10 @@ export class NavBar {
 
     document.addEventListener('click', this.dropdownClickListener);
 
+    const processSolutionExplorerHideState: string = window.localStorage.getItem('processSolutionExplorerHideState');
+    const wasprocessSolutionExplorerVisible: boolean = processSolutionExplorerHideState === 'show';
+    this.showSolutionExplorer = wasprocessSolutionExplorerVisible;
+
     this._eventAggregator.subscribe('router:navigation:complete', () => {
       this._dertermineActiveRoute();
     });
