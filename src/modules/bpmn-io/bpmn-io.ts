@@ -72,7 +72,7 @@ export class BpmnIo {
       },
     });
 
-    this._addKeyboardListener();
+    this._addRemoveWithBackspaceKeyboardListener();
 
     if (this.xml !== undefined && this.xml !== null) {
       this.modeler.importXML(this.xml, (err: Error) => {
@@ -364,7 +364,12 @@ export class BpmnIo {
     }
   }
 
-  private _addKeyboardListener(): void {
+  /**
+   * On macOS it is typically to remove elements with the backspace instead
+   * of the delete key. This Method binds the removal of a selected
+   * element to the backspace key, if the current platform is macOS.
+   */
+  private _addRemoveWithBackspaceKeyboardListener(): void {
     const currentPlatformIsNotMac: boolean = !this._currentPlattformIsMac();
 
     if (currentPlatformIsNotMac) {
