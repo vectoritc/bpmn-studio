@@ -3,16 +3,9 @@ import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 import * as $ from 'jquery';
 
-import {ElementDistributeOptions,
-        IBpmnFunction,
-        IBpmnModeler,
-        IDefinition,
+import {IBpmnModeler,
         IEditorActions,
         IKeyboard,
-        IModdleElement,
-        IModeling,
-        IProcessDefEntity,
-        IShape,
         NotificationType,
       } from '../../contracts/index';
 import environment from '../../environment';
@@ -34,7 +27,7 @@ export class BpmnIo {
   public initialLoadingFinished: boolean = false;
   public showXMLView: boolean = false;
   public colorPickerLoaded: boolean = false;
-  public propertyPanelWidth: number = 250;
+  @observable public propertyPanelWidth: number;
   public minCanvasWidth: number = 100;
   public minPropertyPanelWidth: number = 200;
 
@@ -161,6 +154,17 @@ export class BpmnIo {
         }, 0);
       }),
     ];
+
+    const previousPropertyPanelWidth: string = window.localStorage.getItem('propertyPanelWidth');
+    
+    /*
+     * Update the property panel width;
+     * if no previoud width was found, take the configured one.
+     */
+    this.propertyPanelWidth = (previousPropertyPanelWidth !== undefined) ? 
+                              parseInt(previousPropertyPanelWidth) :
+                              environment.propertyPanel.defaultWidth;
+
   }
 
   public detached(): void {
@@ -175,12 +179,18 @@ export class BpmnIo {
     }
   }
 
-  public xmlChanged(newValue: string, oldValue: string): void {
+  public xmlChanged(newValue: string): void {
     if (this.modeler !== undefined && this.modeler !== null) {
       this.modeler.importXML(newValue, (err: Error) => {
         return 0;
       });
       this.xml = newValue;
+    }
+  }
+
+  public propertyPanelWidthChanged(newValue: number): void {
+    if (newValue !== undefined) {
+      window.localStorage.setItem('propertyPanelWidth', '' + this.propertyPanelWidth);
     }
   }
 
@@ -250,7 +260,7 @@ export class BpmnIo {
      * This is needed to stop the width from increasing too far
      * The property panel would not be displayed with that width,
      * but when increasing the browser width, the property panel then may also increase
-    */
+     */
     const newPropertyPanelWidth: number = Math.min(resizedWidth, propertyPanelMaxWidth);
 
     this.propertyPanelWidth = newPropertyPanelWidth;
