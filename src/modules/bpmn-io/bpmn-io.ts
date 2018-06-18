@@ -180,16 +180,20 @@ export class BpmnIo {
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
-
-    window.localStorage.setItem('propertyPanelWidth', '' + this.propertyPanelWidth);
   }
 
-  public xmlChanged(newValue: string, oldValue: string): void {
+  public xmlChanged(newValue: string): void {
     if (this.modeler !== undefined && this.modeler !== null) {
       this.modeler.importXML(newValue, (err: Error) => {
         return 0;
       });
       this.xml = newValue;
+    }
+  }
+
+  public propertyPanelWidthChanged(newValue: number): void {
+    if (newValue !== undefined) {
+      window.localStorage.setItem('propertyPanelWidth', '' + this.propertyPanelWidth);
     }
   }
 
