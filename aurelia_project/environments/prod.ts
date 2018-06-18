@@ -60,6 +60,7 @@ export default {
     clickoutFiresChange: true,
     showPalette: true,
     palette: [],
+    maxSelectionSize: 8,
     showInitial: true,
     showInput: true,
     allowEmpty: true,
