@@ -3,16 +3,9 @@ import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 import * as $ from 'jquery';
 
-import {ElementDistributeOptions,
-        IBpmnFunction,
-        IBpmnModeler,
-        IDefinition,
+import {IBpmnModeler,
         IEditorActions,
         IKeyboard,
-        IModdleElement,
-        IModeling,
-        IProcessDefEntity,
-        IShape,
         NotificationType,
       } from '../../contracts/index';
 import environment from '../../environment';
