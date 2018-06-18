@@ -59,7 +59,11 @@ export class BpmnIo {
 
   public created(): void {
     this.modeler = new bundle.modeler({
-      additionalModules: bundle.additionalModules,
+      additionalModules: [
+        bundle.MiniMap,
+        bundle.ZoomScrollModule,
+        bundle.MoveCanvasModule,
+      ],
       moddleExtensions: {
         camunda: bundle.camundaModdleDescriptor,
       },
