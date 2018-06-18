@@ -152,6 +152,10 @@ export class BpmnIo {
                               parseInt(previousPropertyPanelWidth) :
                               environment.propertyPanel.defaultWidth;
 
+    const propertyPanelHideState: string = window.localStorage.getItem('propertyPanelHideState');
+    const wasPropertyPanelVisible: boolean = propertyPanelHideState === undefined || propertyPanelHideState === 'show';
+    this._toggled = wasPropertyPanelVisible;
+    this.togglePanel();
   }
 
   public detached(): void {
@@ -215,11 +219,13 @@ export class BpmnIo {
       this.toggleButtonPropertyPanel.classList.add('tool--active');
       this.propertyPanelDisplay = 'inline';
       this._toggled = false;
+      window.localStorage.setItem('propertyPanelHideState', 'show');
     } else {
 
       this.toggleButtonPropertyPanel.classList.remove('tool--active');
       this.propertyPanelDisplay = 'none';
       this._toggled = true;
+      window.localStorage.setItem('propertyPanelHideState', 'hide');
     }
   }
 
