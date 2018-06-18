@@ -65,4 +65,14 @@
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
+  height: 247px;
+}
+
+.sp-palette-container {
+  position: absolute;
+  bottom: 0px;
+  left: 6px;
+  z-index: 1;
+  border-right: none;
+  height: 44px;
 }
