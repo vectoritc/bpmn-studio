@@ -7,6 +7,7 @@ import 'spectrum-colorpicker/spectrum';
 import {ElementDistributeOptions,
         IBpmnFunction,
         IBpmnModeler,
+        IColorPickerColor,
         IColorPickerSettings,
         IModdleElement,
         IModeling,
@@ -25,8 +26,33 @@ export class DiagramToolsRight {
   public colorPickerLoaded: boolean = false;
   public fillColor: string;
   public borderColor: string;
-  
+
   private _notificationService: NotificationService;
+
+  private _red: IColorPickerColor = {
+    fill: '#FFCDD2',
+    border: '#E53935',
+  };
+  private _blue: IColorPickerColor = {
+    fill: '#BBDEFB',
+    border: '#1E88E5',
+  };
+  private _green: IColorPickerColor = {
+    fill: '#C8E6C9',
+    border: '#43A047',
+  };
+  private _purple: IColorPickerColor = {
+    fill: '#E1BEE7',
+    border: '#8E24AA',
+  };
+  private _orange: IColorPickerColor = {
+    fill: '#FFE0B2',
+    border: '#FB8C00',
+  };
+  private _none: IColorPickerColor = {
+    fill: null,
+    border: null,
+  };
 
   constructor(notificationService: NotificationService) {
     this._notificationService = notificationService;
@@ -41,31 +67,33 @@ export class DiagramToolsRight {
   }
 
   public setColorRed(): void {
-    this._setColor('#FFCDD2', '#E53935');
+    this._setColor(this._red);
   }
 
   public setColorBlue(): void {
-    this._setColor('#BBDEFB', '#1E88E5');
+    this._setColor(this._blue);
   }
 
   public setColorGreen(): void {
-    this._setColor('#C8E6C9', '#43A047');
+    this._setColor(this._green);
   }
 
   public setColorPurple(): void {
-    this._setColor('#E1BEE7', '#8E24AA');
+    this._setColor(this._purple);
   }
 
   public setColorOrange(): void {
-    this._setColor('#FFE0B2', '#FB8C00');
+    this._setColor(this._orange);
   }
 
   public removeColor(): void {
-    this._setColor(null, null);
+    this._setColor(this._none);
   }
 
   public setPickedColor(): void {
-    this._setColor(this.fillColor, this.borderColor);
+    const customColor: IColorPickerColor = {fill: this.fillColor, border: this.borderColor};
+
+    this._setColor(customColor);
   }
 
   public updateCustomColors(): void {
@@ -87,7 +115,7 @@ export class DiagramToolsRight {
     this._distributeElementsHorizontally();
   }
 
-  private _setColor(fillColor: string, strokeColor: string): void {
+  private _setColor(color: IColorPickerColor): void {
     const modeling: IModeling = this.modeler.get('modeling');
 
     const selectedElements: Array<IShape> = this._getSelectedElements();
@@ -102,8 +130,8 @@ export class DiagramToolsRight {
     }
 
     modeling.setColor(selectedElements, {
-      fill: fillColor,
-      stroke: strokeColor,
+      fill: color.fill,
+      stroke: color.border,
     });
   }
 
@@ -161,7 +189,7 @@ export class DiagramToolsRight {
 
     const borderLocalStorageKey: spectrum.Options = { localStorageKey: 'borderColors' };
 
-    const borderDefaultColors: Array<string> = ['#E53935', '#1E88E5', '#43A047', '#8E24AA', '#FB8C00'];
+    const borderDefaultColors: Array<string> = [this._red.border, this._blue.border, this._green.border, this._purple.border, this._orange.border];
     const borderDefaultPalette: spectrum.Options = { palette: borderDefaultColors };
 
     const colorPickerBorderSettings: IColorPickerSettings = Object.assign({},
@@ -181,7 +209,7 @@ export class DiagramToolsRight {
 
     const fillLocalStorageKey: spectrum.Options = { localStorageKey: 'fillColors' };
 
-    const fillDefaultColors: Array<string> = ['#FFCDD2', '#BBDEFB', '#C8E6C9', '#E1BEE7', '#FFE0B2'];
+    const fillDefaultColors: Array<string> = [this._red.fill, this._blue.fill, this._green.fill, this._purple.fill, this._orange.fill];
     const fillDefaultPalette: spectrum.Options = { palette: fillDefaultColors };
 
     const colorPickerFillSettings: IColorPickerSettings = Object.assign(
