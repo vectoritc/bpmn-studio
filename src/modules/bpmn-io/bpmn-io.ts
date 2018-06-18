@@ -146,7 +146,7 @@ export class BpmnIo {
 
     /*
      * Update the property panel width;
-     * if no previoud width was found, take the configured one.
+     * if no previous width was found, take the configured one.
      */
     this.propertyPanelWidth = (previousPropertyPanelWidth !== undefined) ?
                               parseInt(previousPropertyPanelWidth) :
@@ -251,8 +251,9 @@ export class BpmnIo {
 
     /*
      * This is needed to stop the width from increasing too far
-     * The property panel would not be displayed with that width,
-     * but when increasing the browser width, the property panel then may also increase
+     * the property panel would not be displayed with that width,
+     * but when increasing the browser width, the property panel
+     * then may also increase.
      */
     const newPropertyPanelWidth: number = Math.min(resizedWidth, propertyPanelMaxWidth);
 
