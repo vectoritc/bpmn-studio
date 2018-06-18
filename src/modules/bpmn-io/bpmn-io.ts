@@ -156,11 +156,15 @@ export class BpmnIo {
     ];
 
     const previousPropertyPanelWidth: string = window.localStorage.getItem('propertyPanelWidth');
-    if (previousPropertyPanelWidth !== undefined) {
-      this.propertyPanelWidth = parseInt(previousPropertyPanelWidth);
-    } else {
-      this.propertyPanelWidth = environment.propertyPanel.defaultWidth;
-    }
+    
+    /*
+     * Update the property panel width;
+     * if no previoud width was found, take the configured one.
+     */
+    this.propertyPanelWidth = (previousPropertyPanelWidth !== undefined) ? 
+                              parseInt(previousPropertyPanelWidth) :
+                              environment.propertyPanel.defaultWidth;
+
   }
 
   public detached(): void {
@@ -256,7 +260,7 @@ export class BpmnIo {
      * This is needed to stop the width from increasing too far
      * The property panel would not be displayed with that width,
      * but when increasing the browser width, the property panel then may also increase
-    */
+     */
     const newPropertyPanelWidth: number = Math.min(resizedWidth, propertyPanelMaxWidth);
 
     this.propertyPanelWidth = newPropertyPanelWidth;
