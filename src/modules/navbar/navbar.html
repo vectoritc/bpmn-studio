@@ -36,10 +36,12 @@
     </div>
     <div class="menu-bar__menu menu-bar__menu--center">
       <div class="menu__element menu__element--title btn-group" if.bind="showTools" ref="diagrammInfo">
-        <span>${process.name}</span>
-        <button class="menu-bar__menu-center--action-button dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i class="fa fa-angle-down"></i>
-        </button>
+        <div data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span>${process.name}</span>
+          <button class="menu-bar__menu-center--action-button dropdown-toggle">
+            <i class="fa fa-angle-down"></i>
+          </button>
+        </div>
         <table class="dropdown-menu process-details-dropdown-menu" ref="dropdown">
           <tr>
             <th class="process-details-dropdown-menu__entry">Process Id: </th>
