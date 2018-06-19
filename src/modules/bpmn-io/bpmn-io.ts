@@ -353,15 +353,17 @@ export class BpmnIo {
     * @see environment.events.processDefDetail.saveDiagram
     */
     const sKeyIsPressed: boolean = event.key === 's';
-    const userWantsToSave: boolean = metaKeyIsPressed && sKeyIsPressed;
+    const userDoesNotWantsToSave: boolean = !(metaKeyIsPressed && sKeyIsPressed);
 
-    if (userWantsToSave) {
-      // Prevent the browser from handling the default action for CTRL + s.
-      event.preventDefault();
+    if (userDoesNotWantsToSave) {
+      return;
+    }
 
-      if (this._diagramIsValid) {
-        this._eventAggregator.publish(environment.events.processDefDetail.saveDiagram);
-      }
+    // Prevent the browser from handling the default action for CTRL + s.
+    event.preventDefault();
+
+    if (this._diagramIsValid) {
+      this._eventAggregator.publish(environment.events.processDefDetail.saveDiagram);
     }
   }
 
