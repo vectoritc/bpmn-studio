@@ -92,6 +92,13 @@ export class NavBar {
     this._eventAggregator.publish(environment.events.processDefDetail.startProcess);
   }
 
+  public dropdownClickListener: EventListenerOrEventListenerObject =  (event: MouseEvent): void => {
+    const eventTarget: Node = event.target as Node;
+    if (this.dropdown.contains(eventTarget)) {
+      this.diagramInfo.className = 'menu__element menu__element--title btn-group open';
+    }
+  }
+
   private _isRouteActive(routeTitle: string): boolean {
     if (this._router.currentInstruction.config.title === routeTitle) {
       return true;
@@ -105,12 +112,5 @@ export class NavBar {
         this.activeRouteTitle = route.title;
       }
     });
-  }
-
-  public dropdownClickListener: EventListenerOrEventListenerObject =  (event: MouseEvent): void => {
-    const eventTarget: Node = event.target as Node;
-    if (this.dropdown.contains(eventTarget)) {
-      this.diagramInfo.className = 'menu__element menu__element--title btn-group open';
-    }
   }
 }
