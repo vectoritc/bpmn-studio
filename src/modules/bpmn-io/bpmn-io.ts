@@ -31,7 +31,7 @@ export class BpmnIo {
   public minCanvasWidth: number = 100;
   public minPropertyPanelWidth: number = 200;
 
-  private _toggled: boolean = false;
+  private _propertyPanelShouldOpen: boolean = false;
   private _propertyPanelHiddenForSpaceReasons: boolean = false;
   private _propertyPanelHasNoSpace: boolean = false;
 
@@ -154,7 +154,7 @@ export class BpmnIo {
 
     const propertyPanelHideState: string = window.localStorage.getItem('propertyPanelHideState');
     const wasPropertyPanelVisible: boolean = propertyPanelHideState === null || propertyPanelHideState === 'show';
-    this._toggled = wasPropertyPanelVisible;
+    this._propertyPanelShouldOpen = wasPropertyPanelVisible;
     this.togglePanel();
   }
 
@@ -210,7 +210,7 @@ export class BpmnIo {
   }
 
   public togglePanel(): void {
-    if (this._toggled === true) {
+    if (this._propertyPanelShouldOpen === true) {
       if (this._propertyPanelHasNoSpace) {
         this._notificationService.showNotification(NotificationType.ERROR, 'There is not enough space for the property panel!');
         return;
@@ -218,13 +218,13 @@ export class BpmnIo {
 
       this.toggleButtonPropertyPanel.classList.add('tool--active');
       this.propertyPanelDisplay = 'inline';
-      this._toggled = false;
+      this._propertyPanelShouldOpen = false;
       window.localStorage.setItem('propertyPanelHideState', 'show');
     } else {
 
       this.toggleButtonPropertyPanel.classList.remove('tool--active');
       this.propertyPanelDisplay = 'none';
-      this._toggled = true;
+      this._propertyPanelShouldOpen = true;
       window.localStorage.setItem('propertyPanelHideState', 'hide');
     }
   }
@@ -263,7 +263,7 @@ export class BpmnIo {
   private _hidePropertyPanelForSpaceReasons(): void {
     this._propertyPanelHasNoSpace = true;
 
-    if (this._toggled === false) {
+    if (this._propertyPanelShouldOpen === false) {
       this._propertyPanelHiddenForSpaceReasons = true;
       this.togglePanel();
     }
@@ -273,7 +273,7 @@ export class BpmnIo {
     this._propertyPanelHasNoSpace = false;
     this._propertyPanelHiddenForSpaceReasons = false;
 
-    this._toggled = true;
+    this._propertyPanelShouldOpen = true;
     this.togglePanel();
   }
 
