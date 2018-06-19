@@ -15,7 +15,7 @@ export class NavBar {
   public disableSaveButton: boolean = false;
   public process: IProcessDefEntity;
 
-  public diagrammInfo: HTMLElement;
+  public diagramInfo: HTMLElement;
   public dropdown: HTMLElement;
 
   constructor(router: Router, eventAggregator: EventAggregator) {
@@ -110,7 +110,7 @@ export class NavBar {
   public dropdownClickListener: EventListenerOrEventListenerObject =  (event: MouseEvent): void => {
     const eventTarget: Node = event.target as Node;
     if (this.dropdown.contains(eventTarget)) {
-      this.diagrammInfo.className = 'menu__element menu__element--title btn-group open';
+      this.diagramInfo.className = 'menu__element menu__element--title btn-group open';
     }
   }
 }
