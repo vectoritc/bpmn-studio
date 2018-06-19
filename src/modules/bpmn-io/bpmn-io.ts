@@ -353,9 +353,9 @@ export class BpmnIo {
     * @see environment.events.processDefDetail.saveDiagram
     */
     const sKeyIsPressed: boolean = event.key === 's';
-    const userDoesNotWantsToSave: boolean = !(metaKeyIsPressed && sKeyIsPressed);
+    const userDoesNotWantToSave: boolean = !(metaKeyIsPressed && sKeyIsPressed);
 
-    if (userDoesNotWantsToSave) {
+    if (userDoesNotWantToSave) {
       return;
     }
 
