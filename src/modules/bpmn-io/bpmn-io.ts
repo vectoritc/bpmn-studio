@@ -347,19 +347,21 @@ export class BpmnIo {
     const metaKeyIsPressed: boolean = currentPlattformIsMac ? event.metaKey : event.ctrlKey;
 
     /*
-     * If both keys (meta and s) are pressed, save the diagram.
-     * A diagram is saved, by throwing a saveDiagram event.
-     *
-     * @see environment.events.processDefDetail.saveDiagram
-     */
+    * If both keys (meta and s) are pressed, save the diagram.
+    * A diagram is saved, by throwing a saveDiagram event.
+    *
+    * @see environment.events.processDefDetail.saveDiagram
+    */
     const sKeyIsPressed: boolean = event.key === 's';
     const userWantsToSave: boolean = metaKeyIsPressed && sKeyIsPressed;
-    const diagramCanBeSaved: boolean = userWantsToSave && this._diagramIsValid;
 
-    if (diagramCanBeSaved) {
+    if (userWantsToSave) {
       // Prevent the browser from handling the default action for CTRL + s.
       event.preventDefault();
-      this._eventAggregator.publish(environment.events.processDefDetail.saveDiagram);
+
+      if (this._diagramIsValid) {
+        this._eventAggregator.publish(environment.events.processDefDetail.saveDiagram);
+      }
     }
   }
 
