@@ -36,9 +36,9 @@
     </div>
     <div class="menu-bar__menu menu-bar__menu--center">
       <div class="menu__element menu__element--title btn-group" if.bind="showTools" ref="diagramInfo">
-        <div data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <span>${process.name}</span>
-          <button class="menu-bar__menu-center--action-button dropdown-toggle">
+        <div class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="process-details-title">${process.name}</span>
+          <button class="menu-bar__menu-center--action-button">
             <i class="fa fa-angle-down"></i>
           </button>
         </div>
