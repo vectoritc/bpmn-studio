@@ -210,7 +210,7 @@ export class BpmnIo {
   }
 
   public togglePanel(): void {
-    if (this._propertyPanelShouldOpen === true) {
+    if (this._propertyPanelShouldOpen) {
       if (this._propertyPanelHasNoSpace) {
         this._notificationService.showNotification(NotificationType.ERROR, 'There is not enough space for the property panel!');
         return;
@@ -262,8 +262,9 @@ export class BpmnIo {
 
   private _hidePropertyPanelForSpaceReasons(): void {
     this._propertyPanelHasNoSpace = true;
+    const propertyPanelIsOpen: boolean = !this._propertyPanelShouldOpen;
 
-    if (this._propertyPanelShouldOpen === false) {
+    if (propertyPanelIsOpen) {
       this._propertyPanelHiddenForSpaceReasons = true;
       this.togglePanel();
     }
