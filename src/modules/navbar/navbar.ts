@@ -92,6 +92,12 @@ export class NavBar {
     this._eventAggregator.publish(environment.events.processDefDetail.startProcess);
   }
 
+  /**
+   * Checks if the user clicked inside of the dropdown, to prevent it from
+   * closing in that case.
+   *
+   * @param event: Mouse event
+   */
   public dropdownClickListener: EventListenerOrEventListenerObject =  (event: MouseEvent): void => {
     const eventTarget: Node = event.target as Node;
     if (this.dropdown.contains(eventTarget)) {
