@@ -100,7 +100,9 @@ export class NavBar {
    */
   public dropdownClickListener: EventListenerOrEventListenerObject =  (event: MouseEvent): void => {
     const eventTarget: Node = event.target as Node;
-    if (this.dropdown.contains(eventTarget)) {
+
+    const dropdownWasClicked: boolean = this.dropdown.contains(eventTarget);
+    if (dropdownWasClicked) {
       this.diagramInfo.className += ' open';
     }
   }
