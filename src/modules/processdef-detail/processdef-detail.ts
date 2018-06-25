@@ -1,19 +1,16 @@
-import {bindingMode} from 'aurelia-binding';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {bindable, computedFrom, inject} from 'aurelia-framework';
-import {Redirect, RedirectToRoute, Router} from 'aurelia-router';
+import {inject} from 'aurelia-framework';
+import {Redirect, Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
 import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 import * as canvg from 'canvg-browser';
 import * as download from 'downloadjs';
-import * as $ from 'jquery';
 import * as print from 'print-js';
 import * as beautify from 'xml-beautifier';
 
 import {
   AuthenticationStateEvent,
-  ElementDistributeOptions,
   ICanvgOptions,
   IExtensionElement,
   IFormElement,
