@@ -15,6 +15,9 @@ export class NavBar {
   public disableSaveButton: boolean = false;
   public process: IProcessDefEntity;
 
+  public diagramInfo: HTMLElement;
+  public dropdown: HTMLElement;
+
   constructor(router: Router, eventAggregator: EventAggregator) {
     this._router = router;
     this._eventAggregator = eventAggregator;
@@ -22,6 +25,8 @@ export class NavBar {
 
   public attached(): void {
     this._dertermineActiveRoute();
+
+    document.addEventListener('click', this.dropdownClickListener);
 
     this._eventAggregator.subscribe('router:navigation:complete', () => {
       this._dertermineActiveRoute();
@@ -47,6 +52,10 @@ export class NavBar {
     this._eventAggregator.subscribe(environment.events.navBar.enableSaveButton, () => {
       this.disableSaveButton = false;
     });
+  }
+
+  public detached(): void {
+    document.removeEventListener('click', this.dropdownClickListener);
   }
 
   public navigate(routeTitle: string): void {
@@ -81,6 +90,21 @@ export class NavBar {
 
   public startProcess(): void {
     this._eventAggregator.publish(environment.events.processDefDetail.startProcess);
+  }
+
+  /**
+   * Checks if the user clicked inside of the dropdown, to prevent it from
+   * closing in that case.
+   *
+   * @param event: Mouse event
+   */
+  public dropdownClickListener: EventListenerOrEventListenerObject =  (event: MouseEvent): void => {
+    const eventTarget: Node = event.target as Node;
+
+    const dropdownWasClicked: boolean = this.dropdown.contains(eventTarget);
+    if (dropdownWasClicked) {
+      this.diagramInfo.className += ' open';
+    }
   }
 
   private _isRouteActive(routeTitle: string): boolean {
