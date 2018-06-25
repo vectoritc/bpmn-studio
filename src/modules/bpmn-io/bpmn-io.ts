@@ -167,6 +167,9 @@ export class BpmnIo {
 
       this._eventAggregator.subscribe(environment.events.bpmnio.toggleDiffView, () => {
         this.toggleDiffView();
+        setTimeout(() => { // This makes the function gets called after the XMLView is toggled
+          this._hideOrShowPpForSpaceReasons();
+        }, 0);
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.enableSaveButton, () => {
