@@ -34,6 +34,8 @@ export class BpmnIo {
 
   @bindable({changeHandler: 'xmlChanged'}) public xml: string;
   @bindable({changeHandler: 'nameChanged'}) public name: string;
+
+  public savedXml: string;
   public propertyPanelDisplay: string = 'inline';
   public initialLoadingFinished: boolean = false;
   public showXMLView: boolean = false;
@@ -91,6 +93,8 @@ export class BpmnIo {
     this._addRemoveWithBackspaceKeyboardListener();
 
     if (this.xml !== undefined && this.xml !== null) {
+      this.savedXml = this.xml;
+
       this.modeler.importXML(this.xml, (err: Error) => {
         return 0;
       });
@@ -108,9 +112,13 @@ export class BpmnIo {
     this._diagramPrintService = new DiagramPrintService(this._svg);
     this._diagramExportService = new DiagramExportService();
 
+    this.modeler.on('diagram.changed', async() => {
+      this.savedXml = await this.getXML();
+    });
   }
 
   public attached(): void {
+    this.savedXml = this.xml;
     this.modeler.attachTo(this.canvasModel);
 
     window.addEventListener('resize', this._resizeEventHandler);
@@ -186,6 +194,10 @@ export class BpmnIo {
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.printDiagram}`, async() => {
         const svgContent: string = await this.getSVG();
         this._diagramPrintService.printDiagram(svgContent);
+      }),
+
+      this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
+        this.savedXml = this.xml;
       }),
     ];
 
