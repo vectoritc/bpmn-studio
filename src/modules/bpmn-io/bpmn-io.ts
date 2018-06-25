@@ -157,6 +157,7 @@ export class BpmnIo {
       this._eventAggregator.subscribe(environment.events.processSolutionPanel.toggleProcessSolutionExplorer, () => {
         this._hideOrShowPpForSpaceReasons();
       }),
+
       this._eventAggregator.subscribe(environment.events.bpmnio.toggleXMLView, () => {
         this.toggleXMLView();
         setTimeout(() => { // This makes the function gets called after the XMLView is toggled
