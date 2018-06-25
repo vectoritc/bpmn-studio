@@ -334,9 +334,7 @@ export class BpmnIo {
     // Prevent the browser from handling the default action for CTRL + s.
     event.preventDefault();
 
-    if (this._diagramIsValid) {
-      this._eventAggregator.publish(environment.events.processDefDetail.saveDiagram);
-    }
+    this._eventAggregator.publish(environment.events.processDefDetail.saveDiagram);
   }
 
   /**
