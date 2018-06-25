@@ -10,26 +10,10 @@
           <td>
             <input type="text" class="props-input" id="elementId" value.bind="businessObjInPanel.id & validateOnChange" change.delegate="updateId()">
           </td>
-          <td>
-            <span class="glyphicon glyphicon-remove-circle props-table--clear-button" click.delegate="clearId()"></span>
-          </td>
-          <td>
-            <div class="id-tooltip-error" if.bind="validationError">
-              <div class="tooltip">
-                <span class="glyphicon glyphicon-remove"></span>
-                <span class="tooltiptext">
-                  <div repeat.for="error of validationController.errors">
-                    ${error}
-                  </div>
-                </span>
-              </div>
-            </div>
-            <div class="id-tooltip-ok" if.bind="!validationError">
-              <div class="tooltip">
-                <span class="glyphicon glyphicon-ok"></span>
-                <span class="tooltiptext">This Id is fine!</span>
-              </div>
-            </div>
+          <td>	
+            <template if.bind="validationError">	
+              <span class="glyphicon glyphicon-remove"></span>	
+            </template>	
           </td>
         </tr>
         <tr>
@@ -37,17 +21,11 @@
           <td>
             <input type="text" class="props-input" value.bind="businessObjInPanel.name" change.delegate="updateName()">
           </td>
-          <td>
-            <span class="glyphicon glyphicon-remove-circle props-table--clear-button" click.delegate="clearName()"></span>
-          </td>
         </tr>
         <tr>
           <th>Docs</th>
           <td>
             <input type="text" class="props-input" value.bind="elementDocumentation" change.delegate="updateDocumentation()">
-          </td>
-          <td>
-            <span class="glyphicon glyphicon-remove-circle props-table--clear-button" click.delegate="clearDocumentation()"></span>
           </td>
         </tr>
       </table>

@@ -11,14 +11,16 @@
     <div class="panel__content">
       <table>
         <tr repeat.for="property of properties" index.bind="$index">
-          <td class="key-value-column">
+          <td class="key-value-column-left">
             <input type="text" class="key-value-input" value.bind="newNames[$index]" placeholder="Name" change.delegate="changeName($index)">
           </td>
-          <td class="key-value-column">
+          <td class="key-value-column-right">
             <input type="text" class="key-value-input" value.bind="newValues[$index]" placeholder="Value" change.delegate="changeValue($index)">
           </td>
           <td>
-            <button class="extensions-remove" click.delegate="removeProperty($index)">x</button>
+            <button class="key-value-delete-button" click.delegate="removeProperty($index)">
+              <i class="fa fa-times"></i>
+            </button>
           </td>
         </tr>
       </table>

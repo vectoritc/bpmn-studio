@@ -1,12 +1,12 @@
 <template>
   <require from="./property-panel.css"></require>
   <div class="property-panel">
-    <div repeat.for="indextab of indextabs">
+    <template repeat.for="indextab of indextabs">
       <compose view-model=".${indextab.path}"
         view=".${indextab.path}.html"
         model.bind="{modeler: modeler, elementInPanel: elementInPanel}"
         if.bind="indextab.canHandleElement"
         containerless></compose>
-    </div>
+    </template>
   </div>
 </template>

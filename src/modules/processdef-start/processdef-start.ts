@@ -9,32 +9,66 @@ import {NotificationService} from './../notification/notification.service';
 
 @inject('ProcessEngineService', EventAggregator, Router, 'BpmnStudioClient', 'NotificationService')
 export class ProcessDefStart {
-  public solutionExplorerIsShown: boolean = false;
+  public dynamicUiWrapper: DynamicUiWrapper;
 
-  private processEngineService: IProcessEngineService;
-  private notificationService: NotificationService;
-  private eventAggregator: EventAggregator;
-  private dynamicUiWrapper: DynamicUiWrapper;
-  private subscriptions: Array<Subscription>;
-  private processDefId: string;
+  private _processEngineService: IProcessEngineService;
+  private _notificationService: NotificationService;
+  private _eventAggregator: EventAggregator;
+  private _subscriptions: Array<Subscription>;
+  private _processDefId: string;
   private _process: IProcessDefEntity;
-  private router: Router;
-  private bpmnStudioClient: BpmnStudioClient;
+  private _router: Router;
+  private _bpmnStudioClient: BpmnStudioClient;
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
               router: Router,
               bpmnStudioClient: BpmnStudioClient,
               notificationService: NotificationService) {
-    this.processEngineService = processEngineService;
-    this.eventAggregator = eventAggregator;
-    this.router = router;
-    this.bpmnStudioClient = bpmnStudioClient;
-    this.notificationService = notificationService;
+    this._processEngineService = processEngineService;
+    this._eventAggregator = eventAggregator;
+    this._router = router;
+    this._bpmnStudioClient = bpmnStudioClient;
+    this._notificationService = notificationService;
+  }
+
+  // TODO: Add a usefull comment here; what does it do? what is it good for? when is this invoked?
+  public async activate(routeParameters: {processDefId: string}): Promise<void> {
+    this._processDefId = routeParameters.processDefId;
+    await this._refreshProcess();
+
+    /*
+     * Start the processinstance in the connected ProcessEngine.
+     */
+    this._startProcess();
+
+    this._subscriptions = [
+      /*
+       * If the user this login/logout we need to refresh the process;
+       * mainly due to a possible the change in access rights.
+       */
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
+        this._refreshProcess();
+      }),
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
+        this._refreshProcess();
+      }),
+      this._eventAggregator.subscribe('render-dynamic-ui', (message: IUserTaskConfig) => {
+        this.dynamicUiWrapper.currentConfig = message;
+      }),
+      /*
+       * The closed-process event is thrown at the end of a process run;
+       * we then use the router to navigate to the prvious view-- this could be the
+       * design view-- but any other last view will work as well.
+       */
+      this._eventAggregator.subscribe('closed-process', (message: any) => {
+        this._router.navigateBack();
+      }),
+    ];
   }
 
   public detached(): void {
-    for (const subscription of this.subscriptions) {
+    for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
   }
@@ -44,48 +78,16 @@ export class ProcessDefStart {
     return this._process;
   }
 
-  public startProcess(): void {
-    this.bpmnStudioClient.startProcessByKey(this.process.key);
-  }
-
-  // TODO: Delete this! It shouldn't be here.
-  public toggleSolutionExplorer(): void {
-    this.solutionExplorerIsShown = !this.solutionExplorerIsShown;
-  }
-
-  // TODO: Delete this! It shouldn't be here.
-  public goBack(): void {
-    this.router.navigateBack();
-  }
-
-  private async activate(routeParameters: {processDefId: string}): Promise<void> {
-    this.processDefId = routeParameters.processDefId;
-    await this.refreshProcess();
-    this.startProcess();
-
-    this.subscriptions = [
-      this.eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
-        this.refreshProcess();
-      }),
-      this.eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
-        this.refreshProcess();
-      }),
-      this.eventAggregator.subscribe('render-dynamic-ui', (message: IUserTaskConfig) => {
-        this.dynamicUiWrapper.currentConfig = message;
-      }),
-      this.eventAggregator.subscribe('closed-process', (message: any) => {
-        this.router.navigateToRoute('processdef-list', { page: 1 });
-      }),
-    ];
-  }
-
-  private async refreshProcess(): Promise<void> {
+  private async _refreshProcess(): Promise<void> {
     try {
-      this._process = await this.processEngineService.getProcessDefById(this.processDefId);
+      this._process = await this._processEngineService.getProcessDefById(this._processDefId);
     } catch (error) {
-      this.notificationService.showNotification(NotificationType.ERROR, `Failed to refresh process: ${error.message}`);
+      this._notificationService.showNotification(NotificationType.ERROR, `Failed to refresh process: ${error.message}`);
       throw error;
     }
   }
 
+  private _startProcess(): void {
+    this._bpmnStudioClient.startProcessByKey(this.process.key);
+  }
 }

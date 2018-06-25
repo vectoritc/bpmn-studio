@@ -20,7 +20,7 @@
       <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'Task List' || activeRouteTitle === 'Process Instance List'
                                                         ? 'menu__menu-tabbed-link--active' : ''">
         <div class="btn-group">
-          <div class="menu__menu-tabbed-link" data-toggle="dropdown">
+          <div data-toggle="dropdown">
             <a class="menu-tabbed-link">Dashboard</a>
           </div>
           <ul class="dropdown-menu menu-bar__dashboard-dropdown">
@@ -42,35 +42,35 @@
         </button>
         <table class="dropdown-menu process-details-dropdown-menu">
           <tr>
-            <th>Process Id: </th>
+            <th class="process-details-dropdown-menu__entry">Process Id: </th>
             <td>${process.id}</td>
           </tr>
           <tr>
-            <th>Process Name: </th>
+            <th class="process-details-dropdown-menu__entry">Process Name: </th>
             <td>${process.name}</td>
           </tr>
           <tr>
-            <th>Process Key: </th>
+            <th class="process-details-dropdown-menu__entry">Process Key: </th>
             <td>${process.key}</td>
           </tr>
         </table>
       </div>
     </div>
     <div class="menu-bar__menu menu-bar__menu--right">
-      <div if.bind="showTools">
+      <template if.bind="showTools">
         <button class="menu-bar__menu-center--action-button menu-bar__menu-center--back-button back-button" click.delegate="navigateBack()" title="Navigate back">
           <i class="fa fa-arrow-circle-left"></i>
         </button>
-      </div>
-      <div if.bind="showTools">
-        <button class="menu-bar__menu-center--action-button" ref="saveButton" click.delegate="saveDiagram()" disabled.bind="disableSaveButton" title="Save Diagram">
+      </template>
+      <template if.bind="showTools">
+        <button class="menu-bar__menu-center--action-button" click.delegate="saveDiagram()" disabled.bind="disableSaveButton" title="Save Diagram">
           <i class="fa fa-save"></i>
         </button>
-      </div>
+      </template>
       <div class="btn-group" if.bind="showTools">
-        <button class="menu-bar__menu-center--action-button dropdown-toggle" title="Export Diagram" ref="exportButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i ref="exportIcon" class="fa fa-upload"></i>
-          <i ref="exportSpinner" class="glyphicon glyphicon-repeat fa-spin hidden"></i>
+        <button class="menu-bar__menu-center--action-button dropdown-toggle" title="Export Diagram" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fa fa-upload"></i>
+          <i class="glyphicon glyphicon-repeat fa-spin hidden"></i>
         </button>
         <ul class="dropdown-menu">
           <li><a href="#" click.delegate="exportDiagram('BPMN')">as BPMN</a></li>
@@ -79,8 +79,13 @@
           <li><a href="#" click.delegate="exportDiagram('JPEG')">as JPEG</a></li>
         </ul>
       </div>
+      <template if.bind="showTools">
+        <button class="menu-bar__menu-center--action-button" click.delegate="printDiagram()" title="Print Diagram">
+          <i class="fa fa-print"></i>
+        </button>
+      </template>
       <div class="menu-bar__last-tool" if.bind="showTools">
-        <button class="menu-bar__menu-center--action-button" ref="startButton" click.delegate="startProcess()" disabled.bind="validationError" title="Start Process">
+        <button class="menu-bar__menu-center--action-button" click.delegate="startProcess()" disabled.bind="validationError" title="Start Process">
           <i class="fa fa-play"></i>
         </button>
       </div>

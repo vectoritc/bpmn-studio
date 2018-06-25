@@ -7,16 +7,17 @@
   height: 100%;
 }
 
-.diagramm {
+.diagram {
   height: 100%;
   padding-right: 0;
   flex: 1;
 }
 
 .properties {
+  width: 250px;
   height: 100%;
   background: rgb(220, 219, 219);
-  width: 250px;
+  overflow-y: auto;
 }
 
 .modeler .label {
@@ -35,9 +36,11 @@
 }
 
 .resize-div {
-  position: absolute;
-  height: 90%;
-  width: 5px;
+  position: relative;
+  width: 6px;
+  height: 100%;
+  left: -3px;
+  float:left;
 }
 
 .resize-div:hover {
@@ -65,22 +68,6 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-evenly;
-}
-
-.tool-list--stretch .tool {
-  flex: 1;
-}
-
-.tool-list--bottom {
-  position: absolute;
-  bottom: 26px;
-}
-
-.tool {
-  display: block;
-  text-align: center;
-  padding: 5px;
-  opacity: 0.5;
 }
 
 .tool__right {
@@ -114,8 +101,15 @@
 }
 
 .bpmn-io-layout__tools-left {
-  border-right: 2px solid #dcdbdb;
   width: 36px;
+  min-width: 36px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-right: 2px solid #dcdbdb;
+}
+
+.bpmn-io-layout__tools-left::-webkit-scrollbar {
+  display: none;
 }
 
 .bpmn-io-layout__tools-right {
@@ -145,6 +139,7 @@
 
 .bpmn-io-layout__main {
   flex: 1 100%;
+  width: 0px;
 }
 
 /*
@@ -160,4 +155,42 @@
 .menu-bar__menu-right--tool {
   border: none;
   background-color: inherit;
+}
+
+.djs-palette-override {
+  position: relative !important;
+  left: auto !important;
+  top: 4px !important;
+  width: 36px !important;
+  background: transparent !important;
+  border: none !important;
+
+  .entry,
+  .djs-palette-toggle {
+    width: 32px;
+    height: 32px;
+    margin-left: 1px;
+    cursor: default;
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  .entry {
+    opacity: 0.5;
+  }
+
+  .highlighted-entry,
+  .entry:hover {
+    color: #000 !important;
+    opacity: 1;
+  }
+
+  .djs-palette-toggle {
+    display: none !important;
+  }
+
+  .djs-palette-entries .separator {
+    margin: 5px 0;
+    padding: 0;
+  }
 }

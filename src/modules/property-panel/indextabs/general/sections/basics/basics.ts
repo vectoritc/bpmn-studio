@@ -9,44 +9,48 @@ import {
   IShape,
 } from '../../../../../../contracts';
 
+import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {ValidateEvent, ValidationController, ValidationRules} from 'aurelia-validation';
+import environment from '../../../../../../environment';
 
-@inject(ValidationController)
+@inject(ValidationController, EventAggregator)
 export class BasicsSection implements ISection {
 
   public path: string = '/sections/basics/basics';
   public canHandleElement: boolean = true;
-  private modeling: IModeling;
-  private modeler: IBpmnModeler;
-  private bpmnModdle: IBpmnModdle;
-  private elementInPanel: IShape;
-  private previousProcessRefId: string;
-  private validationError: boolean = false;
-  private validationController: ValidationController;
-
   public businessObjInPanel: IModdleElement;
   public elementDocumentation: string;
+  public validationError: boolean = false;
 
-  constructor(controller?: ValidationController) {
-    this.validationController = controller;
+  private _modeling: IModeling;
+  private _modeler: IBpmnModeler;
+  private _bpmnModdle: IBpmnModdle;
+  private _elementInPanel: IShape;
+  private _previousProcessRefId: string;
+  private _validationController: ValidationController;
+  private _eventAggregator: EventAggregator;
+
+  constructor(controller?: ValidationController, eventAggregator?: EventAggregator) {
+    this._validationController = controller;
+    this._eventAggregator = eventAggregator;
   }
 
   public activate(model: IPageModel): void {
     if (this.validationError) {
-      this.businessObjInPanel.id = this.previousProcessRefId;
-      this.validationController.validate();
+      this.businessObjInPanel.id = this._previousProcessRefId;
+      this._validationController.validate();
     }
 
-    this.elementInPanel = model.elementInPanel;
+    this._elementInPanel = model.elementInPanel;
     this.businessObjInPanel = model.elementInPanel.businessObject;
-    this.previousProcessRefId = model.elementInPanel.businessObject.id;
+    this._previousProcessRefId = model.elementInPanel.businessObject.id;
 
-    this.modeling = model.modeler.get('modeling');
-    this.bpmnModdle = model.modeler.get('moddle');
-    this.modeler = model.modeler;
+    this._modeling = model.modeler.get('modeling');
+    this._bpmnModdle = model.modeler.get('moddle');
+    this._modeler = model.modeler;
 
-    this.validationController.subscribe((event: ValidateEvent) => {
+    this._validationController.subscribe((event: ValidateEvent) => {
       this._validateFormId(event);
     });
 
@@ -56,10 +60,11 @@ export class BasicsSection implements ISection {
   }
 
   public detached(): void {
-    if (this.validationError) {
-      this.businessObjInPanel.id = this.previousProcessRefId;
-      this.validationController.validate();
+    if (!this.validationError) {
+      return;
     }
+    this.businessObjInPanel.id = this._previousProcessRefId;
+    this._validationController.validate();
   }
 
   public isSuitableForElement(element: IShape): boolean {
@@ -68,6 +73,36 @@ export class BasicsSection implements ISection {
     }
 
     return true;
+  }
+
+  public updateDocumentation(): void {
+    this._elementInPanel.documentation = [];
+
+    const documentationPropertyObject: Object = {text: this.elementDocumentation};
+    const documentation: IModdleElement = this._bpmnModdle.create('bpmn:Documentation', documentationPropertyObject);
+    this._elementInPanel.documentation.push(documentation);
+
+    const elementInPanelDocumentation: Object = {documentation: this._elementInPanel.documentation};
+    this._modeling.updateProperties(this._elementInPanel, elementInPanelDocumentation);
+    this._publishDiagramChange();
+  }
+
+  public updateName(): void {
+    const updateProperty: Object = {name: this.businessObjInPanel.name};
+    this._modeling.updateProperties(this._elementInPanel, updateProperty);
+    this._publishDiagramChange();
+  }
+
+  public updateId(): void {
+    this._validationController.validate();
+
+    if (this._validationController.errors.length > 0) {
+      return;
+    }
+
+    const updateProperty: Object = {id: this.businessObjInPanel.id};
+    this._modeling.updateProperties(this._elementInPanel, updateProperty);
+    this._publishDiagramChange();
   }
 
   private _init(): void {
@@ -84,49 +119,6 @@ export class BasicsSection implements ISection {
     } else {
       this.elementDocumentation = '';
     }
-  }
-
-  public updateDocumentation(): void {
-    this.elementInPanel.documentation = [];
-
-    const documentationPropertyObject: Object = {text: this.elementDocumentation};
-    const documentation: IModdleElement = this.bpmnModdle.create('bpmn:Documentation', documentationPropertyObject);
-    this.elementInPanel.documentation.push(documentation);
-
-    const elementInPanelDocumentation: Object = {documentation: this.elementInPanel.documentation};
-    this.modeling.updateProperties(this.elementInPanel, elementInPanelDocumentation);
-  }
-
-  public clearId(): void {
-    this.businessObjInPanel.id = '';
-    this.validationController.validate();
-    this.updateId();
-  }
-
-  public clearName(): void {
-    this.businessObjInPanel.name = '';
-    this.updateName();
-  }
-
-  public clearDocumentation(): void {
-    this.elementDocumentation = '';
-    this.updateDocumentation();
-  }
-
-  public updateName(): void {
-    const updateProperty: Object = {name: this.businessObjInPanel.name};
-    this.modeling.updateProperties(this.elementInPanel, updateProperty);
-  }
-
-  public updateId(): void {
-    this.validationController.validate();
-
-    if (this.validationController.errors.length > 0) {
-      return;
-    }
-
-    const updateProperty: Object = {id: this.businessObjInPanel.id};
-    this.modeling.updateProperties(this.elementInPanel, updateProperty);
   }
 
   private _validateFormId(event: ValidateEvent): void {
@@ -149,7 +141,7 @@ export class BasicsSection implements ISection {
   }
 
   private _formIdIsUnique(id: string): boolean {
-    const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
+    const elementRegistry: IElementRegistry = this._modeler.get('elementRegistry');
 
     const elementsWithSameId: Array<IShape> = elementRegistry.filter((element: IShape) => {
       const elementIsBusinessObjectInPanel: boolean = element.businessObject === this.businessObjInPanel;
@@ -171,7 +163,7 @@ export class BasicsSection implements ISection {
   }
 
   private _isProcessIdUnique(id: string): boolean {
-    const elementIds: Array<string> = this.modeler._definitions.rootElements.map((rootElement: IModdleElement) => {
+    const elementIds: Array<string> = this._modeler._definitions.rootElements.map((rootElement: IModdleElement) => {
       return rootElement.id;
     });
 
@@ -188,5 +180,9 @@ export class BasicsSection implements ISection {
       .satisfies((id: string) => this._formIdIsUnique(id) && this._isProcessIdUnique(id))
         .withMessage('Id already exists.')
       .on(this.businessObjInPanel);
+  }
+
+  private _publishDiagramChange(): void {
+    this._eventAggregator.publish(environment.events.diagramChange);
   }
 }

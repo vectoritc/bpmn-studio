@@ -3,6 +3,7 @@
   background-color: #f7f7f7;
   display: flex;
   border-bottom: 2px solid #dcdbdb;
+  user-select: none;
 }
 
 .bpmn-studio-navbar--macos {
@@ -50,6 +51,7 @@ button {
 .menu__menu-tabbed-link {
   display: flex;
   align-items: stretch;
+  margin: 0 8px;
 }
 
 .menu__menu-tabbed-link--active {
@@ -65,7 +67,6 @@ button {
   display: block;
   line-height: 40px;
   color: #a5a5a5;
-  padding: 0 15px;
 }
 
 .menu-tabbed-link:hover {
@@ -111,12 +112,17 @@ button {
 
 .menu-bar__menu-center--action-button:disabled {
   opacity: 0.2;
-  cursor: not-allowed;
+  cursor: default;
+}
+
+.process-details-dropdown-menu {
+  user-select: text;
 }
 
 .menu__element {
-  color: #5c5c5c;
   margin: 0 10px;
+  color: #5c5c5c;
+  white-space: nowrap;
 }
 
 .menu__element--title {

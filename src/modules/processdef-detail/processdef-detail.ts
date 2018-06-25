@@ -1,16 +1,20 @@
-import {BpmnStudioClient} from '@process-engine/bpmn-studio_client';
-import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 import {bindingMode} from 'aurelia-binding';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
-import {Router} from 'aurelia-router';
+import {Redirect, RedirectToRoute, Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
+
+import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 import * as canvg from 'canvg-browser';
 import * as download from 'downloadjs';
+import * as $ from 'jquery';
+import * as print from 'print-js';
 import * as beautify from 'xml-beautifier';
+
 import {
   AuthenticationStateEvent,
   ElementDistributeOptions,
+  ICanvgOptions,
   IExtensionElement,
   IFormElement,
   IModdleElement,
@@ -26,170 +30,204 @@ interface RouteParameters {
   processDefId: string;
 }
 
-@inject('ProcessEngineService', EventAggregator, 'BpmnStudioClient', Router, ValidationController, 'NotificationService')
+@inject('ProcessEngineService', EventAggregator, Router, ValidationController, 'NotificationService')
 export class ProcessDefDetail {
 
-  private processEngineService: IProcessEngineService;
-  private notificationService: NotificationService;
-  private eventAggregator: EventAggregator;
-  private subscriptions: Array<Subscription>;
-  private processId: string;
-  private _process: IProcessDefEntity;
-  private bpmn: BpmnIo;
-  private startButtonDropdown: HTMLDivElement;
-  private startButton: HTMLButtonElement;
-  private saveButton: HTMLButtonElement;
-  private bpmnStudioClient: BpmnStudioClient;
-  private router: Router;
+  public bpmnio: BpmnIo;
+  public process: IProcessDefEntity;
 
-  public validationController: ValidationController;
-  public validationError: boolean;
-  public solutionExplorerIsShown: boolean = false;
-  public xmlIsShown: boolean = false;
-
-  @bindable() public uri: string;
-  @bindable() public name: string;
-  @bindable() public startedProcessId: string;
-  @bindable({ defaultBindingMode: bindingMode.oneWay }) public initialLoadingFinished: boolean = false;
+  private _processEngineService: IProcessEngineService;
+  private _notificationService: NotificationService;
+  private _eventAggregator: EventAggregator;
+  private _subscriptions: Array<Subscription>;
+  private _processId: string;
+  private _router: Router;
+  private _diagramHasChanged: boolean = false;
+  private _validationController: ValidationController;
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
-              bpmnStudioClient: BpmnStudioClient,
               router: Router,
               validationController: ValidationController,
               notificationService: NotificationService) {
-    this.processEngineService = processEngineService;
-    this.eventAggregator = eventAggregator;
-    this.bpmnStudioClient = bpmnStudioClient;
-    this.router = router;
-    this.validationController = validationController;
-    this.notificationService = notificationService;
+    this._processEngineService = processEngineService;
+    this._eventAggregator = eventAggregator;
+    this._router = router;
+    this._validationController = validationController;
+    this._notificationService = notificationService;
   }
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
-    this.processId = routeParameters.processDefId;
-    await this.refreshProcess();
+    this._processId = routeParameters.processDefId;
+    this._diagramHasChanged = false;
+    await this._refreshProcess();
   }
 
   public attached(): void {
-    this.validationController.subscribe((event: ValidateEvent) => {
-      this.validateForm(event);
+    this._validationController.subscribe((event: ValidateEvent) => {
+      this._validateForm(event);
     });
 
-    this.subscriptions = [
-      this.eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
-        this.refreshProcess();
+    this._subscriptions = [
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
+        this._refreshProcess();
       }),
-      this.eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
-        this.refreshProcess();
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
+        this._refreshProcess();
       }),
-      this.eventAggregator.subscribe(environment.events.processDefDetail.saveDiagramm, () => {
-        this.saveDiagram();
+      this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
+        this._saveDiagram();
       }),
-      this.eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, () => {
-        this.exportBPMN();
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, () => {
+        this._exportBPMN();
       }),
-      this.eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, () => {
-        this.exportSVG();
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, () => {
+        this._exportSVG();
       }),
-      this.eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, () => {
-        this.exportPNG();
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, () => {
+        this._exportPNG();
       }),
-      this.eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, () => {
-        this.exportJPEG();
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, () => {
+        this._exportJPEG();
       }),
-      this.eventAggregator.subscribe(environment.events.processDefDetail.startProcess, () => {
-        this.startProcess();
+      this._eventAggregator.subscribe(environment.events.processDefDetail.startProcess, () => {
+        this._startProcess();
       }),
-      this.eventAggregator.subscribe(environment.events.processDefDetail.toggleXMLView, () => {
-        this.toggleXMLView();
+      this._eventAggregator.subscribe(environment.events.diagramChange, () => {
+        this._diagramHasChanged = true;
+      }),
+      this._eventAggregator.subscribe(environment.events.processDefDetail.printDiagram, () => {
+        this._printDiagram();
       }),
     ];
 
-    this.eventAggregator.publish(environment.events.navBar.showTools, this.process);
-    this.eventAggregator.publish(environment.events.statusBar.showXMLButton);
+    this._eventAggregator.publish(environment.events.navBar.showTools, this.process);
+    this._eventAggregator.publish(environment.events.statusBar.showXMLButton);
+  }
+
+  public async canDeactivate(): Promise<Redirect> {
+
+    const _modal: Promise<boolean> = new Promise((resolve: Function, reject: Function): any => {
+      if (!this._diagramHasChanged) {
+        resolve(true);
+      } else {
+
+        const modal: HTMLElement = document.getElementById('saveModal');
+        modal.classList.add('show-modal');
+
+        // register onClick handler
+        document.getElementById('dontSaveButton').addEventListener('click', () => {
+          modal.classList.remove('show-modal');
+          this._diagramHasChanged = false;
+          resolve(true);
+        });
+        document.getElementById('saveButton').addEventListener('click', () => {
+          this._saveDiagram();
+          modal.classList.remove('show-modal');
+          this._diagramHasChanged = false;
+          resolve(true);
+        });
+        document.getElementById('cancelButton').addEventListener('click', () => {
+          modal.classList.remove('show-modal');
+          resolve(false);
+        });
+      }
+    });
+
+    const result: boolean = await _modal;
+    if (result === false) {
+      /*
+       * As suggested in https://github.com/aurelia/router/issues/302, we use
+       * the router directly to navgiate back, which results in staying on this
+       * component-- and this is the desired behaviour.
+       */
+      return new Redirect(this._router.currentInstruction.fragment, {trigger: false, replace: false});
+    }
   }
 
   public detached(): void {
-    for (const subscription of this.subscriptions) {
+    for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
 
-    this.eventAggregator.publish(environment.events.navBar.hideTools);
-    this.eventAggregator.publish(environment.events.statusBar.hideXMLButton);
+    this._eventAggregator.publish(environment.events.navBar.hideTools);
+    this._eventAggregator.publish(environment.events.statusBar.hideXMLButton);
   }
 
-  private refreshProcess(): Promise<IProcessDefEntity> {
-    return this.processEngineService.getProcessDefById(this.processId)
+  private _refreshProcess(): Promise<IProcessDefEntity> {
+    return this._processEngineService.getProcessDefById(this._processId)
       .then((result: any) => {
         if (result && !result.error) {
-          this._process = result;
+          this.process = result;
 
-          this.eventAggregator.publish(environment.events.navBar.updateProcess, this._process);
+          this._eventAggregator.publish(environment.events.navBar.updateProcess, this.process);
 
-          return this._process;
+          return this.process;
         } else {
-          this._process = null;
+          this.process = null;
           return result.error;
         }
     });
   }
 
-  public startProcess(): void {
-    this.validateXML();
-    this.router.navigate(`processdef/${this.process.id}/start`);
+  private _startProcess(): void {
+    this._validateXML();
+    this._router.navigate(`processdef/${this.process.id}/start`);
   }
 
-  public closeProcessStartDropdown(): void {
-    this.startButton.removeAttribute('disabled');
-  }
+  /**
+   * Currently unused Method
+   * TODO: Look deeper into this if we need this method anymore and/or in this
+   * particular way.
+   */
 
-  public deleteProcess(): void {
+  private _deleteProcess(): void {
     const deleteForReal: boolean = confirm('Are you sure you want to delete the process definition?');
     if (!deleteForReal) {
       return;
     }
-    this.processEngineService.deleteProcessDef(this.process.id)
+    this._processEngineService.deleteProcessDef(this.process.id)
       .then(() => {
-        this._process = null;
-        this.router.navigate('');
+        this.process = null;
+        this._router.navigate('');
       })
       .catch((error: Error) => {
-        this.notificationService.showNotification(NotificationType.ERROR, error.message);
+        this._notificationService.showNotification(NotificationType.ERROR, error.message);
       });
   }
 
-  @computedFrom('_process')
-  public get process(): IProcessDefEntity {
-    return this._process;
-  }
+  private async _saveDiagram(): Promise<void> {
 
-  public onModdlelImported(moddle: any, xml: string): void {
-    this.bpmn.xml = xml;
-  }
-
-  public async saveDiagram(): Promise<void> {
-
-    this.validateXML();
+    this._validateXML();
 
     try {
-      const xml: string = await this.bpmn.getXML();
-      const response: any = await this.processEngineService.updateProcessDef(this.process, xml);
+      const xml: string = await this.bpmnio.getXML();
+      const response: any = await this._processEngineService.updateProcessDef(this.process, xml);
 
       if (response.error) {
-        this.notificationService.showNotification(NotificationType.ERROR, `Error while saving file: ${response.error}`);
+        this._notificationService.showNotification(NotificationType.ERROR, `Error while saving file: ${response.error}`);
       } else if (response.result) {
-        this.notificationService.showNotification(NotificationType.SUCCESS, 'File saved.');
+        this._notificationService.showNotification(NotificationType.SUCCESS, 'File saved.');
       } else {
-        this.notificationService.showNotification(NotificationType.WARNING, `Unknown error: ${JSON.stringify(response)}`);
+        this._notificationService.showNotification(NotificationType.WARNING, `Unknown error: ${JSON.stringify(response)}`);
       }
+      this._diagramHasChanged = false;
     } catch (error) {
-      this.notificationService.showNotification(NotificationType.ERROR, `Error: ${error.message}`);
+      this._notificationService.showNotification(NotificationType.ERROR, `Error: ${error.message}`);
     }
   }
 
-  private validateXML(): void {
-    const registry: Array<IShape> = this.bpmn.modeler.get('elementRegistry');
+  /**
+   * In the current implementation this method only checks for UserTasks that have
+   * empty or otherwise not allowed FormData in them.
+   * If that is the case the method will continue by deleting unused/disallowed
+   * FormData to make sure the diagrams xml is furhter supported by camunda.
+   *
+   * TODO: Look further into this if this method is not better placed at the FormsSection
+   * in the Property Panel, also split this into two methods and name them right.
+   */
+  private _validateXML(): void {
+    const registry: Array<IShape> = this.bpmnio.modeler.get('elementRegistry');
 
     registry.forEach((element: IShape) => {
       if (element.type === 'bpmn:UserTask') {
@@ -211,33 +249,59 @@ export class ProcessDefDetail {
     });
   }
 
-  public async exportBPMN(): Promise<void> {
-    const xml: string = await this.bpmn.getXML();
+  private async _exportBPMN(): Promise<void> {
+    const xml: string = await this.bpmnio.getXML();
     const formattedXml: string = beautify(xml);
+
     download(formattedXml, `${this.process.name}.bpmn`, 'application/bpmn20-xml');
   }
 
-  public async exportSVG(): Promise<void> {
-    const svg: string = await this.bpmn.getSVG();
+  private async _exportSVG(): Promise<void> {
+    const svg: string = await this.bpmnio.getSVG();
+
     download(svg, `${this.process.name}.svg`, 'image/svg+xml');
   }
 
-  public async exportPNG(): Promise<void> {
-    const svg: string = await this.bpmn.getSVG();
-    download(this.generateImageFromSVG('png', svg), `${this.process.name}.png`, 'image/png');
+  private async _exportPNG(): Promise<void> {
+    const svg: string = await this.bpmnio.getSVG();
+
+    download(this._generateImageFromSVG('png', svg), `${this.process.name}.png`, 'image/png');
   }
 
-  public async exportJPEG(): Promise<void> {
-    const svg: string = await this.bpmn.getSVG();
-    download(this.generateImageFromSVG('jpeg', svg), `${this.process.name}.jpeg`, 'image/jpeg');
+  private async _exportJPEG(): Promise<void> {
+    const svg: string = await this.bpmnio.getSVG();
+
+    download(this._generateImageFromSVG('jpeg', svg), `${this.process.name}.jpeg`, 'image/jpeg');
   }
 
-  public generateImageFromSVG(desiredImageType: string, svg: any): string {
+  public async _printDiagram(): Promise<void> {
+    const svg: string = await this.bpmnio.getSVG();
+    const png: string = this._generateImageFromSVG('png', svg);
+
+    print.default({printable: png, type: 'image'});
+  }
+
+  private _generateImageFromSVG(desiredImageType: string, svg: any): string {
     const encoding: string = `image/${desiredImageType}`;
     const canvas: HTMLCanvasElement = document.createElement('canvas');
     const context: CanvasRenderingContext2D = canvas.getContext('2d');
 
-    canvg(canvas, svg);
+    const svgWidth: number = parseInt(svg.match(/<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/)[1]);
+    const svgHeight: number = parseInt(svg.match(/<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/)[1]);
+
+    const pixelRatio: number = window.devicePixelRatio || 1;
+
+    canvas.width = svgWidth * pixelRatio;
+    canvas.height = svgHeight * pixelRatio;
+
+    const canvgOptions: ICanvgOptions = {
+      ignoreDimensions: true,
+      scaleWidth: canvas.width,
+      scaleHeight: canvas.height,
+    };
+
+    canvg(canvas, svg, canvgOptions);
+
     // make the background white for every format
     context.globalCompositeOperation = 'destination-over';
     context.fillStyle = 'white';
@@ -247,30 +311,16 @@ export class ProcessDefDetail {
     return image;
   }
 
-  public toggleXMLView(): void {
-    if (this.xmlIsShown) {
-      this.xmlIsShown = false;
-    } else {
-      this.xmlIsShown = true;
-    }
-
-    this.bpmn.toggleXMLView();
-  }
-
-  public toggleSolutionExplorer(): void {
-    this.solutionExplorerIsShown = !this.solutionExplorerIsShown;
-  }
-
-  private validateForm(event: ValidateEvent): void {
+  private _validateForm(event: ValidateEvent): void {
     if (event.type !== 'validate') {
       return;
     }
 
-    this.eventAggregator.publish(environment.events.navBar.enableSaveButton);
+    this._eventAggregator.publish(environment.events.navBar.enableSaveButton);
 
     for (const result of event.results) {
       if (result.valid === false) {
-        this.eventAggregator.publish(environment.events.navBar.disableSaveButton);
+        this._eventAggregator.publish(environment.events.navBar.disableSaveButton);
         return;
       }
     }

@@ -35,18 +35,24 @@ export default {
       enableSaveButton: 'navbar:saveButton:enable',
     },
     processDefDetail: {
-      saveDiagramm: 'processdefdetail:diagram:save',
+      printDiagram: 'processdefdetail:diagram:print',
+      saveDiagram: 'processdefdetail:diagram:save',
       exportDiagramAs: 'processdefdetail:diagram:exportas',
       startProcess: 'processdefdetail:process:start',
+    },
+    bpmnio: {
       toggleXMLView: 'processdefdetail:xmlview:toggle',
+    },
+    diagramChange: 'diagram:change',
+    processSolutionPanel: {
+      toggleProcessSolutionExplorer: 'processSolutionPanel:processsolutionexplorer:toggle',
     },
   },
   bpmnStudioClient: {
     baseRoute: processEngineRoute,
   },
   propertyPanel: {
-    minWidth: 190,
-    maxWidth: 300,
+    defaultWidth: 250,
   },
   colorPickerSettings: {
     clickoutFiresChange: true,

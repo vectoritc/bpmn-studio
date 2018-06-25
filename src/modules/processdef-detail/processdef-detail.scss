@@ -19,8 +19,13 @@
 }
 
 .process-details-dropdown-menu {
-  width: 385px;
+  width: 400px;
   padding: 5px;
+  overflow-x: scroll;
+}
+
+.process-details-dropdown-menu__entry {
+  padding-right: 10px;
 }
 
 .red {
@@ -45,4 +50,26 @@
 
 .none {
   color: transparent;
+}
+
+.save-modal-dialog {
+  position: relative;
+  top: 20%;
+  width: 400px;
+}
+
+.save-modal-header {
+  text-align: center
+}
+
+.show-modal {
+  display: block;
+}
+
+.custom-button {
+  margin: 10px 0;
+  padding: 5px 10px;
+  background-color: white;
+  border: 1px solid darkgray;
+  border-radius: 4px;
 }

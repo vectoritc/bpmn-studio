@@ -1,80 +1,76 @@
-import {bindable, computedFrom, inject} from 'aurelia-framework';
-import {IAuthenticationService, IIdentity} from '../../contracts/index';
+import {computedFrom, inject} from 'aurelia-framework';
+import {IAuthenticationService, IIdentity, NotificationType} from '../../contracts/index';
+import {NotificationService} from './../notification/notification.service';
 
-@inject('AuthenticationService')
+@inject('AuthenticationService', 'NotificationService')
 export class UserLogin {
 
-  private authenticationService: IAuthenticationService;
-  private dropdown: HTMLLIElement;
-  private windowClickListener: (event: MouseEvent) => void;
-  @bindable()
-  private username: string;
-  @bindable()
-  private password: string;
-  @bindable()
-  private loginError: string;
+  public username: string;
+  public password: string;
 
-  constructor(authenticationService: IAuthenticationService) {
-    this.authenticationService = authenticationService;
-    this.windowClickListener = (event: MouseEvent): void => {
-      const node: Node = event.target as Node;
-      if (this.dropdown.contains(node)) {
-        return;
-      }
-      this.closeDropdown();
-    };
+    /**
+   * We are using the direct reference of a container element to open or
+   * close the dropdown.
+   *
+   * This needs to be refactored.
+   *
+   * https://github.com/process-engine/bpmn-studio/issues/455
+   */
+
+  public userLogin: HTMLElement;
+  public dropdown: HTMLElement;
+  public logoutButton: HTMLButtonElement;
+
+  private _authenticationService: IAuthenticationService;
+  private _notificationService: NotificationService;
+
+  constructor(authenticationService: IAuthenticationService, notificationService: NotificationService) {
+    this._authenticationService = authenticationService;
+    this._notificationService = notificationService;
   }
 
-  public get hasValidInput(): boolean {
-    const validUsername: boolean = this.username !== null && this.username !== undefined && this.username !== '';
-    const validPassword: boolean = this.password !== null && this.password !== undefined && this.password !== '';
-    return validUsername && validPassword;
+  public attached(): void {
+    document.addEventListener('click', this.dropdownClickListener);
+  }
+
+  public detached(): void {
+    document.removeEventListener('click', this.dropdownClickListener);
+  }
+
+  public dropdownClickListener: EventListenerOrEventListenerObject =  (event: MouseEvent): void => {
+    const eventTarget: Node = event.target as Node;
+    if (this.dropdown.contains(eventTarget) && event.target !== this.logoutButton) {
+      this.userLogin.className = 'user-login open';
+    }
   }
 
   public async login(): Promise<void> {
     try {
-      await this.authenticationService.login(this.username, this.password);
-      this.closeDropdown();
-      this.username = null;
-      this.password = null;
-      this.loginError = null;
+      await this._authenticationService.login(this.username, this.password);
+      this.username = undefined;
+      this.password = undefined;
+      this._closeDropdown();
     } catch (error) {
-      this.loginError = error.message;
+      this._notificationService.showNotification(NotificationType.ERROR, error.message);
     }
   }
 
   public logout(): void {
-    this.authenticationService.logout();
-    this.closeDropdown();
+    this._authenticationService.logout();
+    this._closeDropdown();
   }
 
-  public toggleDropdown(): void {
-    if (this.dropdown.classList.contains('open')) {
-      this.closeDropdown();
-    } else {
-      this.openDropdown();
-    }
-  }
-
-  public openDropdown(): void {
-    this.dropdown.classList.add('open');
-    setTimeout(() => {
-      window.addEventListener('click', this.windowClickListener);
-    });
-  }
-
-  public closeDropdown(): void {
-    this.dropdown.classList.remove('open');
-    window.removeEventListener('click', this.windowClickListener);
-  }
-
-  @computedFrom('authenticationService.tokenRepository.token')
+  @computedFrom('_authenticationService.tokenRepository.token')
   public get isLoggedIn(): boolean {
-    return this.authenticationService.hasToken();
+    return this._authenticationService.hasToken();
   }
 
   @computedFrom('isLoggedIn')
   public get identity(): IIdentity {
-    return this.authenticationService.getIdentity();
+    return this._authenticationService.getIdentity();
+  }
+
+  private _closeDropdown(): void {
+    this.userLogin.className = 'user-login';
   }
 }

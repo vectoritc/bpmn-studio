@@ -76,7 +76,9 @@ pipeline {
           steps {
             unstash('post_build')
             sh('node --version')
-            sh('npm run electron-build-linux')
+            sh('npm run jenkins-electron-install-app-deps')
+            sh('npm run jenkins-electron-rebuild-native')
+            sh('npm run jenkins-electron-build-linux')
             stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml', name: 'linux_results')
           }
           post {
@@ -96,11 +98,13 @@ pipeline {
             // which runs linux. Some dependencies may not be installed
             // if they have a os restriction in their package.json
             sh('npm install')
+            sh('npm run jenkins-electron-install-app-deps')
+            sh('npm run jenkins-electron-rebuild-native')
 
             withCredentials([
               string(credentialsId: 'apple-mac-developer-certifikate', variable: 'CSC_LINK'),
             ]) {
-              sh('npm run electron-build-macos')
+              sh('npm run jenkins-electron-build-macos')
             }
             stash(includes: 'dist/*.*, dist/mac/*', excludes: 'electron-builder-effective-config.yaml', name: 'macos_results')
           }
@@ -117,7 +121,9 @@ pipeline {
           steps {
             unstash('post_build')
             sh('node --version')
-            sh('npm run electron-build-windows')
+            sh('npm run jenkins-electron-install-app-deps')
+            sh('npm run jenkins-electron-rebuild-native')
+            sh('npm run jenkins-electron-build-windows')
             stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml', name: 'windows_results')
           }
           post {

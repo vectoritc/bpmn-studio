@@ -1,6 +1,7 @@
 export {IBpmnModeler} from './IBpmnModeler';
 export {IBpmnModelerConstructor} from './IBpmnModelerConstructor';
 export {ICanvas} from './ICanvas';
+export {ICanvgOptions} from './ICanvgOptions';
 export {IDependencyHook} from './IDependencyHook';
 export {IShape} from './IShape';
 export {IEvent} from './IEvent';
@@ -13,3 +14,5 @@ export {ISeed} from './ISeed';
 export {IIds} from './IIDs';
 export * from './bpmnElements/index';
 export * from './constants';
+export {IKeyboard} from './IKeyboard';
+export {IEditorActions} from './IEditorActions';

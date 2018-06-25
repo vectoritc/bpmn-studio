@@ -4,7 +4,9 @@
   <div class="panel panel--grow">
     <div class="panel__heading">
       Message Event
-      <button class="add-context-button" click.delegate="addMessage()">+</button>
+      <button class="add-context-button" click.delegate="addMessage()">
+        <i class="fa fa-plus"></i>
+      </button>
     </div>
     <div class="panel__content">
       <table class="props-table">
@@ -24,9 +26,6 @@
           <th>Name</th>
           <td>
             <input type="text" class="props-input" value.bind="selectedMessage.name" change.delegate="updateName()">
-          </td>
-          <td>
-            <span class="glyphicon glyphicon-remove-circle props-table--clear-button" click.delegate="clearName()"></span>
           </td>
         </tr>
       </table>

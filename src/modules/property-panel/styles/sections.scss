@@ -43,7 +43,6 @@
   padding: 5px 0;
 }
 
-
 .probs-table--details {
   margin-top: 20px;
 }
@@ -75,8 +74,8 @@
 }
 
 .remove-context-button:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
+  opacity: 0.2;
+  cursor: default;
 }
 
 .remove-context-button {

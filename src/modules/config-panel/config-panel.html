@@ -7,6 +7,7 @@
     <div class="config-panel__panel panel panel-default">
       <label for="processEngineRoute">Base Route</label>
       <input value.bind="config.processEngineRoute" type="text" class="form-control" id="processEngineRoute">
+      <p if.bind="isLoggedIn">The login session is bound to the current ProcessEngine. Changing the backend route will log you out.</p>
     </div>
     <button click.delegate="updateSettings()" class="btn btn-success">Save</button>
     <button click.delegate="cancelUpdate()" class="btn btn-danger">Cancel</button>

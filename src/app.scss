@@ -2,11 +2,13 @@ html,
 body {
   height: 100%;
   font-size: 14px;
+  overflow: hidden; // As soon as our styling is clean this can be removed
 }
 
 a:focus,
-button:focus {
-  outline: none;
+button:focus,
+input:focus {
+  outline: none !important;
 }
 
 a:hover {
