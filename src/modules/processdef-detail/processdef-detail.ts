@@ -19,6 +19,7 @@ import {
   IShape,
   NotificationType,
 } from '../../contracts/index';
+
 import environment from '../../environment';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
 import {NotificationService} from './../notification/notification.service';
@@ -41,6 +42,7 @@ export class ProcessDefDetail {
   private _router: Router;
   private _diagramHasChanged: boolean = false;
   private _validationController: ValidationController;
+  // TODO: Explain when this is set and by whom.
   private _diagramIsInvalid: boolean = false;
 
   constructor(processEngineService: IProcessEngineService,
@@ -48,6 +50,7 @@ export class ProcessDefDetail {
               router: Router,
               validationController: ValidationController,
               notificationService: NotificationService) {
+
     this._processEngineService = processEngineService;
     this._eventAggregator = eventAggregator;
     this._router = router;
@@ -117,29 +120,43 @@ export class ProcessDefDetail {
         modal.classList.add('show-modal');
 
         // register onClick handler
-        document.getElementById('dontSaveButton').addEventListener('click', () => {
-          modal.classList.remove('show-modal');
-          this._diagramHasChanged = false;
-          resolve(true);
-        });
-        document.getElementById('saveButton').addEventListener('click', () => {
+        document
+          .getElementById('dontSaveButton')
+          .addEventListener('click', () => {
 
-          this._saveDiagram().catch((error: Error) => {
-            this._notificationService.showNotification(NotificationType.ERROR, `Error while saving the Diagram: ${error.message}`);
+            modal.classList.remove('show-modal');
+
+            this._diagramHasChanged = false;
+            resolve(true);
           });
 
-          modal.classList.remove('show-modal');
-          this._diagramHasChanged = false;
-          resolve(true);
-        });
-        document.getElementById('cancelButton').addEventListener('click', () => {
-          modal.classList.remove('show-modal');
-          resolve(false);
-        });
-      }
+        document
+          .getElementById('saveButton')
+          .addEventListener('click', () => {
+
+            this
+              ._saveDiagram()
+              .catch((error: Error) => {
+                this._notificationService.showNotification(NotificationType.ERROR, `Error while saving the Diagram: ${error.message}`);
+              });
+
+            modal.classList.remove('show-modal');
+
+            this._diagramHasChanged = false;
+            resolve(true);
+          });
+
+        document
+          .getElementById('cancelButton')
+          .addEventListener('click', () => {
+            modal.classList.remove('show-modal');
+            resolve(false);
+          });
+        }
     });
 
     const result: boolean = await _modal;
+    // TODO: Extract Business Rule
     if (result === false) {
       /*
        * As suggested in https://github.com/aurelia/router/issues/302, we use
@@ -160,14 +177,18 @@ export class ProcessDefDetail {
   }
 
   private _refreshProcess(): Promise<IProcessDefEntity> {
-    return this._processEngineService.getProcessDefById(this._processId)
+    return this
+      ._processEngineService
+      .getProcessDefById(this._processId)
       .then((result: any) => {
+        // TODO: Extract Business Rule
         if (result && !result.error) {
           this.process = result;
 
           this._eventAggregator.publish(environment.events.navBar.updateProcess, this.process);
 
           return this.process;
+
         } else {
           this.process = null;
           return result.error;
@@ -181,17 +202,20 @@ export class ProcessDefDetail {
   }
 
   /**
-   * Currently unused Method
+   * Currently unused Method.
+   *
    * TODO: Look deeper into this if we need this method anymore and/or in this
    * particular way.
    */
-
   private _deleteProcess(): void {
     const deleteForReal: boolean = confirm('Are you sure you want to delete the process definition?');
     if (!deleteForReal) {
       return;
     }
-    this._processEngineService.deleteProcessDef(this.process.id)
+
+    this
+      ._processEngineService
+      .deleteProcessDef(this.process.id)
       .then(() => {
         this.process = null;
         this._router.navigate('');
@@ -201,14 +225,17 @@ export class ProcessDefDetail {
       });
   }
 
+  // TODO: Add Documentation.
   private async _saveDiagram(): Promise<void> {
 
+    // TODO: This needs to be refactored; _validateXML() does not seem to work properly.
     this._validateXML();
 
     if (this._diagramIsInvalid) {
       throw Error('The Diagram is invalid');
     }
 
+    // TODO: Explain what this is doing -> Refactor.
     try {
       const xml: string = await this.bpmnio.getXML();
       const response: any = await this._processEngineService.updateProcessDef(this.process, xml);
@@ -218,6 +245,7 @@ export class ProcessDefDetail {
       } else if (response.result) {
         this._notificationService.showNotification(NotificationType.SUCCESS, 'File saved.');
       } else {
+        // TODO: Not gonna buy this. What can a user do with this message? Improve, too technical.
         this._notificationService.showNotification(NotificationType.WARNING, `Unknown error: ${JSON.stringify(response)}`);
       }
       this._diagramHasChanged = false;
@@ -229,7 +257,8 @@ export class ProcessDefDetail {
   /**
    * In the current implementation this method only checks for UserTasks that have
    * empty or otherwise not allowed FormData in them.
-   * If that is the case the method will continue by deleting unused/disallowed
+   *
+   * If that is the case the method will continue by deleting unused/not allowed
    * FormData to make sure the diagrams xml is furhter supported by camunda.
    *
    * TODO: Look further into this if this method is not better placed at the FormsSection
