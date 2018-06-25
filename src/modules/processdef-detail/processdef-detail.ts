@@ -44,6 +44,7 @@ export class ProcessDefDetail {
   private _router: Router;
   private _diagramHasChanged: boolean = false;
   private _validationController: ValidationController;
+  private _diagramIsNotValid: boolean = false;
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
@@ -200,6 +201,10 @@ export class ProcessDefDetail {
 
     this._validateXML();
 
+    if (this._diagramIsNotValid) {
+      return Promise.reject('Diagram is not valid');
+    }
+
     try {
       const xml: string = await this.bpmnio.getXML();
       const response: any = await this._processEngineService.updateProcessDef(this.process, xml);
@@ -316,14 +321,16 @@ export class ProcessDefDetail {
       return;
     }
 
-    this._eventAggregator.publish(environment.events.navBar.enableSaveButton);
-
     for (const result of event.results) {
       if (result.valid === false) {
         this._eventAggregator.publish(environment.events.navBar.disableSaveButton);
+        this._diagramIsNotValid = true;
         return;
       }
     }
+
+    this._eventAggregator.publish(environment.events.navBar.enableSaveButton);
+    this._diagramIsNotValid = false;
   }
 
 }
