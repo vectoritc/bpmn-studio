@@ -1,0 +1,28 @@
+.diff-view {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background: white;
+  bottom: 0;
+}
+
+.left-diff-view {
+  width: 50%;
+  height: 100%;
+}
+
+.left-diff-view__canvasModel {
+  width: 100%;
+  height: 100%;
+  border-right: 5px dashed #ccc;
+}
+
+.right-diff-view {
+  width: 50%;
+  height: 100%;
+}
+
+.right-diff-view__canvasModel {
+  width: 100%;
+  height: 100%;
+}
