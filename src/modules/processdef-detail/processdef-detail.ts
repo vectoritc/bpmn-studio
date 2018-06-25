@@ -105,7 +105,7 @@ export class ProcessDefDetail {
 
     this._eventAggregator.publish(environment.events.navBar.showTools, this.process);
     this._eventAggregator.publish(environment.events.navBar.showStartButton);
-    this._eventAggregator.publish(environment.events.statusBar.showXMLButton);
+    this._eventAggregator.publish(environment.events.statusBar.showDiagramViewButtons);
   }
 
   /**
@@ -210,7 +210,7 @@ export class ProcessDefDetail {
 
     this._eventAggregator.publish(environment.events.navBar.hideTools);
     this._eventAggregator.publish(environment.events.navBar.hideStartButton);
-    this._eventAggregator.publish(environment.events.statusBar.hideXMLButton);
+    this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
   }
 
   private _refreshProcess(): Promise<IProcessDefEntity> {

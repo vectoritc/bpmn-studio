@@ -11,7 +11,7 @@
     </div>
     <div class="status-bar__center-bar"></div>
     <div class="status-bar__right-bar">
-      <template if.bind="showXMLButton">
+      <template if.bind="showDiagramViewButtons">
         <a class="status-bar__element" click.delegate="toggleXMLView()" if.bind="!xmlIsShown">
           <i class="fas fa-file-code"></i> Show XML
         </a>

@@ -7,7 +7,7 @@ import environment from '../../environment';
 export class StatusBar {
 
   public processEngineRoute: string = '';
-  public showXMLButton: boolean = false;
+  public showDiagramViewButtons: boolean = false;
   public xmlIsShown: boolean = false;
   public isEncryptedCommunication: boolean = false;
 
@@ -21,13 +21,12 @@ export class StatusBar {
   }
 
   public attached(): void {
-    this._eventAggregator.subscribe(environment.events.statusBar.showXMLButton, () => {
-      this.showXMLButton = true;
+    this._eventAggregator.subscribe(environment.events.statusBar.showDiagramViewButtons, () => {
+      this.showDiagramViewButtons = true;
     });
 
-    this._eventAggregator.subscribe(environment.events.statusBar.hideXMLButton, () => {
-      this.showXMLButton = false;
-      this.xmlIsShown = false;
+    this._eventAggregator.subscribe(environment.events.statusBar.hideDiagramViewButtons, () => {
+      this.showDiagramViewButtons = false;
     });
 
     this._eventAggregator.subscribe(environment.events.statusBar.updateProcessEngineRoute, (newProcessEngineRoute: string) => {

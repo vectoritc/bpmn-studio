@@ -151,6 +151,10 @@ export class BpmnIo {
           this._hideOrShowPpForSpaceReasons();
         }, 0);
       }),
+
+      this._eventAggregator.subscribe(environment.events.bpmnio.toggleDiffView, () => {
+      }),
+
       this._eventAggregator.subscribe(environment.events.navBar.enableSaveButton, () => {
         this._diagramIsValid = true;
       }),
@@ -214,6 +218,7 @@ export class BpmnIo {
       this.modeler.importXML(newValue, (err: Error) => {
         return 0;
       });
+
       this.xml = newValue;
     }
   }

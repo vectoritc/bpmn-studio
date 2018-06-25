@@ -45,7 +45,7 @@ export class DiagramDetail {
 
   public attached(): void {
     this._eventAggregator.publish(environment.events.navBar.showTools, this.diagram);
-    this._eventAggregator.publish(environment.events.statusBar.showXMLButton);
+    this._eventAggregator.publish(environment.events.statusBar.showDiagramViewButtons);
 
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
@@ -103,7 +103,7 @@ export class DiagramDetail {
     }
 
     this._eventAggregator.publish(environment.events.navBar.hideTools);
-    this._eventAggregator.publish(environment.events.statusBar.hideXMLButton);
+    this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
   }
 
   private async _saveDiagram(): Promise<void> {
