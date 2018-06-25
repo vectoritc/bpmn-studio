@@ -74,7 +74,10 @@ export class ProcessDefDetail {
         this._refreshProcess();
       }),
       this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
-        this._saveDiagram();
+        this._saveDiagram()
+          .catch((error: Error) => {
+            this._notificationService.showNotification(NotificationType.ERROR, `Error while saving the diagram: ${error.message}`);
+          });
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, () => {
         this._exportBPMN();
@@ -120,7 +123,11 @@ export class ProcessDefDetail {
           resolve(true);
         });
         document.getElementById('saveButton').addEventListener('click', () => {
-          this._saveDiagram();
+
+          this._saveDiagram().catch((error: Error) => {
+            this._notificationService.showNotification(NotificationType.ERROR, `Error while saving the Diagram: ${error.message}`);
+          });
+
           modal.classList.remove('show-modal');
           this._diagramHasChanged = false;
           resolve(true);
@@ -199,7 +206,7 @@ export class ProcessDefDetail {
     this._validateXML();
 
     if (this._diagramIsInvalid) {
-      return;
+      throw Error('The Diagram is invalid');
     }
 
     try {
