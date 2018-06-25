@@ -4,7 +4,9 @@ import {bindable, inject, observable} from 'aurelia-framework';
 import {diff} from 'bpmn-js-differ';
 import * as $ from 'jquery';
 
-import {IBpmnModeler,
+import {IBpmnModdle,
+        IBpmnModeler,
+        IDefinition,
         IDiagramExportService,
         IDiagramPrintService,
         IEditorActions,
