@@ -1,6 +1,7 @@
 import {IConditionExpression} from './IConditionExpression';
 import {IDocumentation} from './IDocumentation';
 import {IExtensionElement} from './IExtensionElement';
+import {IProcessRef} from './IProcessRef';
 
 export interface IModdleElement {
   id: string;
@@ -19,6 +20,7 @@ export interface IModdleElement {
   laneSets?: Array<IModdleElement>;
   lanes?: Array<IModdleElement>;
   participants?: Array<IModdleElement>;
+  processRef?: IProcessRef;
   default?: IModdleElement;
   timeDuration?: IModdleElement;
   timeCycle?: IModdleElement;
