@@ -72,7 +72,7 @@ export class BpmnIo {
       },
     });
 
-    this._addKeyboardListener();
+    this._addRemoveWithBackspaceKeyboardListener();
 
     if (this.xml !== undefined && this.xml !== null) {
       this.modeler.importXML(this.xml, (err: Error) => {
@@ -338,13 +338,10 @@ export class BpmnIo {
    * @return void
    */
   private _saveHotkeyEventHandler = (event: KeyboardEvent): void  => {
-
-    // On macOS the 'common control key' is the meta instead of the control key. So we need to find
-    // out if on a mac, the meta key instead of the control key is pressed.
-    const macRegex: RegExp = /.*mac*./i;
-    const currentPlattform: string = navigator.platform;
-    const currentPlattformIsMac: boolean = macRegex.test(currentPlattform);
-    const metaKeyIsPressed: boolean = currentPlattformIsMac ? event.metaKey : event.ctrlKey;
+    // On macOS the 'common control key' is the meta instead of the control key. So on a mac we need to find
+    // out, if the meta key instead of the control key is pressed.
+    const currentPlatformIsMac: boolean = this._checkIfCurrentPlatformIsMac();
+    const metaKeyIsPressed: boolean = currentPlatformIsMac ? event.metaKey : event.ctrlKey;
 
     /*
     * If both keys (meta and s) are pressed, save the diagram.
@@ -367,12 +364,15 @@ export class BpmnIo {
     }
   }
 
-  private _addKeyboardListener(): void {
-    const macRegex: RegExp = /.*mac*./i;
-    const currentPlattform: string = navigator.platform;
-    const currentPlattformIsNotMac: boolean = !macRegex.test(currentPlattform);
+  /**
+   * On macOS it is typically to remove elements with the backspace instead
+   * of the delete key. This Method binds the removal of a selected
+   * element to the backspace key, if the current platform is macOS.
+   */
+  private _addRemoveWithBackspaceKeyboardListener(): void {
+    const currentPlatformIsNotMac: boolean = !this._checkIfCurrentPlatformIsMac();
 
-    if (currentPlattformIsNotMac) {
+    if (currentPlatformIsNotMac) {
       return;
     }
 
@@ -402,10 +402,8 @@ export class BpmnIo {
   private _printHotkeyEventHandler = (event: KeyboardEvent): void  => {
     // On macOS the 'common control key' is the meta instead of the control key. So on a mac we need to find
     // out, if the meta key instead of the control key is pressed.
-    const macRegex: RegExp = /.*mac*./i;
-    const currentPlattform: string = navigator.platform;
-    const currentPlattformIsMac: boolean = macRegex.test(currentPlattform);
-    const metaKeyIsPressed: boolean = currentPlattformIsMac ? event.metaKey : event.ctrlKey;
+    const currentPlatformIsMac: boolean = this._checkIfCurrentPlatformIsMac();
+    const metaKeyIsPressed: boolean = currentPlatformIsMac ? event.metaKey : event.ctrlKey;
 
     /*
      * If both keys (meta and p) are pressed, print the diagram.
@@ -421,5 +419,18 @@ export class BpmnIo {
       event.preventDefault();
       this._eventAggregator.publish(environment.events.processDefDetail.printDiagram);
     }
+  }
+
+  /**
+   * Checks, if the current platform is a macOS.
+   *
+   * @returns true, if the current platform is macOS
+   */
+  private _checkIfCurrentPlatformIsMac = (): boolean => {
+    const macRegex: RegExp = /.*mac*./i;
+    const currentPlatform: string = navigator.platform;
+    const currentPlatformIsMac: boolean = macRegex.test(currentPlatform);
+
+    return currentPlatformIsMac;
   }
 }
