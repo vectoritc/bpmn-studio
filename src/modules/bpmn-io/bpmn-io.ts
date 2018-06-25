@@ -35,10 +35,6 @@ export class BpmnIo {
   private _propertyPanelHiddenForSpaceReasons: boolean = false;
   private _propertyPanelHasNoSpace: boolean = false;
 
-  private _toggleMinimap: boolean = false;
-  private _minimapToggle: any;
-  private _expandIcon: HTMLElement;
-  private _hideMinimap: HTMLElement;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
@@ -63,7 +59,11 @@ export class BpmnIo {
 
   public created(): void {
     this.modeler = new bundle.modeler({
-      additionalModules: bundle.additionalModules,
+      additionalModules: [
+        bundle.MiniMap,
+        bundle.ZoomScrollModule,
+        bundle.MoveCanvasModule,
+      ],
       moddleExtensions: {
         camunda: bundle.camundaModdleDescriptor,
       },
@@ -92,26 +92,6 @@ export class BpmnIo {
 
   public attached(): void {
     this.modeler.attachTo(this.canvasModel);
-    const minimapViewport: any = this.canvasModel.getElementsByClassName('djs-minimap-viewport')[0];
-    const minimapArea: any = this.canvasModel.getElementsByClassName('djs-minimap-map')[0];
-    this._minimapToggle = this.canvasModel.getElementsByClassName('djs-minimap-toggle')[0];
-
-    // TODO: Refactor to CSS classes; Ref: https://github.com/process-engine/bpmn-studio/issues/462
-    //  Styling for Minimap {{{ //
-    minimapArea.style.width = '350px';
-    minimapArea.style.height = '200px';
-    minimapViewport.style.fill = 'rgba(0, 208, 255, 0.13)';
-
-    this._expandIcon = document.createElement('i');
-    this._expandIcon.className = 'glyphicon glyphicon-resize-full expandIcon';
-    this._minimapToggle.appendChild(this._expandIcon);
-
-    this._hideMinimap = document.createElement('p');
-    this._hideMinimap.className = 'hideMinimap';
-    this._hideMinimap.textContent = 'Hide Minimap';
-    this._minimapToggle.appendChild(this._hideMinimap);
-    this._minimapToggle.addEventListener('click', this._toggleMinimapFunction);
-    //  }}} Styling for Minimap //
 
     window.addEventListener('resize', this._resizeEventHandler);
 
@@ -311,19 +291,6 @@ export class BpmnIo {
       this._hidePropertyPanelForSpaceReasons();
     } else if (this._propertyPanelHiddenForSpaceReasons) {
       this._showPropertyPanelForSpaceReasons();
-    }
-  }
-
-  private _toggleMinimapFunction = (): void => {
-    if (this._toggleMinimap === false) {
-      this._expandIcon.style.display = 'none';
-      this._hideMinimap.style.display = 'inline';
-      this._minimapToggle.style.height = '20px';
-      this._toggleMinimap = true;
-    } else {
-      this._expandIcon.style.display = 'inline-block';
-      this._hideMinimap.style.display = 'none';
-      this._toggleMinimap = false;
     }
   }
 
