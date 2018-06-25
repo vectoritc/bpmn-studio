@@ -26,3 +26,35 @@
   width: 100%;
   height: 100%;
 }
+
+/*
+ * Make added elements green
+ */
+.added:not(.djs-connection) .djs-visual > :nth-child(1) {
+  stroke: #43A047 !important;
+  fill: #C8E6C9 !important;
+}
+
+/*
+ * Make deleted elements red
+ */
+.deleted:not(.djs-connection) .djs-visual > :nth-child(1) {
+  stroke: #E53935 !important;
+  fill: #FFCDD2 !important;
+}
+
+/*
+ * Make changed elements orange
+ */
+ .changed:not(.djs-connection) .djs-visual > :nth-child(1) {
+  stroke: #FB8C00 !important;
+  fill: #FFE0B2 !important;
+}
+
+/*
+ * Make layout changed elements purple
+ */
+ .layout-changed:not(.djs-connection) .djs-visual > :nth-child(1) {
+  stroke: #8E24AA !important;
+  fill: #E1BEE7 !important;
+}
