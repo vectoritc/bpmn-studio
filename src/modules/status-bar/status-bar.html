@@ -18,6 +18,12 @@
         <a class="status-bar__element" click.delegate="toggleXMLView()" if.bind="xmlIsShown">
           <i class="fas fa-file-code"></i> Show Diagram
         </a>
+        <a class="status-bar__element" click.delegate="toggleDiffView()" if.bind="!diffIsShown">
+          <i class="fa fa-file-code-o"></i> Show Diff
+        </a>
+        <a class="status-bar__element" click.delegate="toggleDiffView()" if.bind="diffIsShown">
+          <i class="fa fa-file-code-o"></i> Show Diagram
+        </a>
       </template>
       <a class="status-bar__element" click.delegate="navigateToSettings()">
         <i class="fas fa-wrench"></i> Settings

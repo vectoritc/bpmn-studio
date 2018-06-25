@@ -8,6 +8,7 @@ export class StatusBar {
 
   public processEngineRoute: string = '';
   public showDiagramViewButtons: boolean = false;
+  public diffIsShown: boolean = false;
   public xmlIsShown: boolean = false;
   public isEncryptedCommunication: boolean = false;
 
@@ -37,6 +38,11 @@ export class StatusBar {
   public toggleXMLView(): void {
     this._eventAggregator.publish(environment.events.bpmnio.toggleXMLView);
     this.xmlIsShown = !this.xmlIsShown;
+  }
+
+  public toggleDiffView(): void {
+    this._eventAggregator.publish(environment.events.bpmnio.toggleDiffView);
+    this.diffIsShown = !this.diffIsShown;
   }
 
   public navigateToSettings(): void {

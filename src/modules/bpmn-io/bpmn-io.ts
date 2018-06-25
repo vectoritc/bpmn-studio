@@ -35,6 +35,7 @@ export class BpmnIo {
   public propertyPanelDisplay: string = 'inline';
   public initialLoadingFinished: boolean = false;
   public showXMLView: boolean = false;
+  public showDiffView: boolean = false;
   public colorPickerLoaded: boolean = false;
   @observable public propertyPanelWidth: number;
   public minCanvasWidth: number = 100;
@@ -153,6 +154,7 @@ export class BpmnIo {
       }),
 
       this._eventAggregator.subscribe(environment.events.bpmnio.toggleDiffView, () => {
+        this.toggleDiffView();
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.enableSaveButton, () => {
@@ -263,37 +265,11 @@ export class BpmnIo {
 
   public async toggleXMLView(): Promise<void> {
     if (!this.showXMLView) {
-      this.xml = await this.getXML();
+      this._updateXmlChanges();
       this.showXMLView = true;
     } else {
       this.showXMLView = false;
     }
-  }
-
-  public async getXML(): Promise<string> {
-    const returnPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void => {
-      this.modeler.saveXML({}, (error: Error, result: string) => {
-        if (error) {
-          reject(error);
-        }
-        resolve(result);
-      });
-    });
-    return returnPromise;
-  }
-
-  private async getSVG(): Promise<string> {
-    const returnPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void => {
-      this.modeler.saveSVG({}, (error: Error, result: string) => {
-        if (error) {
-          reject(error);
-        }
-
-        resolve(result);
-      });
-    });
-
-    return returnPromise;
   }
 
   private _setNewPropertyPanelWidthFromMousePosition(mousePosition: number): void {
