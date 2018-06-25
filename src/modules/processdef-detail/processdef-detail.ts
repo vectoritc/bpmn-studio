@@ -44,7 +44,7 @@ export class ProcessDefDetail {
   private _router: Router;
   private _diagramHasChanged: boolean = false;
   private _validationController: ValidationController;
-  private _diagramIsNotValid: boolean = false;
+  private _diagramIsInvalid: boolean = false;
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
@@ -201,8 +201,8 @@ export class ProcessDefDetail {
 
     this._validateXML();
 
-    if (this._diagramIsNotValid) {
-      return Promise.reject('Diagram is not valid');
+    if (this._diagramIsInvalid) {
+      return;
     }
 
     try {
@@ -324,13 +324,13 @@ export class ProcessDefDetail {
     for (const result of event.results) {
       if (result.valid === false) {
         this._eventAggregator.publish(environment.events.navBar.disableSaveButton);
-        this._diagramIsNotValid = true;
+        this._diagramIsInvalid = true;
         return;
       }
     }
 
     this._eventAggregator.publish(environment.events.navBar.enableSaveButton);
-    this._diagramIsNotValid = false;
+    this._diagramIsInvalid = false;
   }
 
 }
