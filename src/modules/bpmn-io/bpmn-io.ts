@@ -42,6 +42,7 @@ export class BpmnIo {
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
+  private _diagramIsValid: boolean = true;
 
   /**
    * We are using the direct reference of a container element to place the tools of bpmn-js
@@ -152,6 +153,12 @@ export class BpmnIo {
         setTimeout(() => { // This makes the function gets called after the XMLView is toggled
           this._hideOrShowPpForSpaceReasons();
         }, 0);
+      }),
+      this._eventAggregator.subscribe(environment.events.navBar.enableSaveButton, () => {
+        this._diagramIsValid = true;
+      }),
+      this._eventAggregator.subscribe(environment.events.navBar.disableSaveButton, () => {
+        this._diagramIsValid = false;
       }),
     ];
 
@@ -340,17 +347,22 @@ export class BpmnIo {
     const metaKeyIsPressed: boolean = currentPlattformIsMac ? event.metaKey : event.ctrlKey;
 
     /*
-     * If both keys (meta and s) are pressed, save the diagram.
-     * A diagram is saved, by throwing a saveDiagram event.
-     *
-     * @see environment.events.processDefDetail.saveDiagram
-     */
+    * If both keys (meta and s) are pressed, save the diagram.
+    * A diagram is saved, by throwing a saveDiagram event.
+    *
+    * @see environment.events.processDefDetail.saveDiagram
+    */
     const sKeyIsPressed: boolean = event.key === 's';
-    const userWantsToSave: boolean = metaKeyIsPressed && sKeyIsPressed;
+    const userDoesNotWantToSave: boolean = !(metaKeyIsPressed && sKeyIsPressed);
 
-    if (userWantsToSave) {
-      // Prevent the browser from handling the default action for CTRL + s.
-      event.preventDefault();
+    if (userDoesNotWantToSave) {
+      return;
+    }
+
+    // Prevent the browser from handling the default action for CTRL + s.
+    event.preventDefault();
+
+    if (this._diagramIsValid) {
       this._eventAggregator.publish(environment.events.processDefDetail.saveDiagram);
     }
   }
