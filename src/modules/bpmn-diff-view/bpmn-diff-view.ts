@@ -13,7 +13,7 @@ export class BpmnDiffView {
 
   @bindable() public xml: string;
   @bindable() public savedxml: string;
-  @bindable() public changes: Object;
+  @bindable() public changes: any;
   public leftCanvasModel: HTMLElement;
   public rightCanvasModel: HTMLElement;
 
