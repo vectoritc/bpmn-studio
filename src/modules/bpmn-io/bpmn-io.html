@@ -10,7 +10,7 @@
       DIAGRAM TOOLS
     -->
     <div class="bpmn-io-layout__tools-left">
-      <div show.bind="!showXMLView" class="tool-list tool-list--vertical">
+      <div show.bind="!showXMLView && !showDiffView" class="tool-list tool-list--vertical">
         <div class="tool">
           <i class="fas fa-mouse-pointer"></i>
         </div>
@@ -42,7 +42,7 @@
     </div>
 
     <div class="bpmn-io-layout__tools-right">
-      <div show.bind="!showXMLView" class="tool-list tool-list--vertical">
+      <div show.bind="!showXMLView && !showDiffView" class="tool-list tool-list--vertical">
         <div ref="toggleButtonPropertyPanel" class="tool__right tool--active">
           <button class="menu-bar__menu-left--tool" click.delegate="togglePanel()">
             <i class="fas fa-sliders-h"></i>

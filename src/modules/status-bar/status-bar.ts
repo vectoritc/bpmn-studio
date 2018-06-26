@@ -36,11 +36,19 @@ export class StatusBar {
   }
 
   public toggleXMLView(): void {
+    if (this.diffIsShown) {
+      this.toggleDiffView();
+    }
+
     this._eventAggregator.publish(environment.events.bpmnio.toggleXMLView);
     this.xmlIsShown = !this.xmlIsShown;
   }
 
   public toggleDiffView(): void {
+    if (this.xmlIsShown) {
+      this.toggleXMLView();
+    }
+
     this._eventAggregator.publish(environment.events.bpmnio.toggleDiffView);
     this.diffIsShown = !this.diffIsShown;
   }
