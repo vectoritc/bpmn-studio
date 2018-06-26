@@ -5,7 +5,7 @@
     <div class="menu-bar__menu menu-bar__menu--left">
       <div class="menu__menu-tabbed-link">
         <button class="menu-tabbed-link action-button" class.bind="showSolutionExplorer ? 'solution-explorer--active' : ''" click.delegate="toggleSolutionExplorer()">
-          <i class="fa fa-folder"></i>
+          <i class="fas fa-folder"></i>
         </button>
       </div>
       <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'Process Definition List' ? 'menu__menu-tabbed-link--active' : ''">
@@ -39,7 +39,7 @@
         <div class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <span class="process-details-title">${process.name}</span>
           <button class="menu-bar__menu-center--action-button">
-            <i class="fa fa-angle-down"></i>
+            <i class="fas fa-angle-down"></i>
           </button>
         </div>
         <table class="dropdown-menu process-details-dropdown-menu" ref="dropdown">
@@ -61,17 +61,17 @@
     <div class="menu-bar__menu menu-bar__menu--right">
       <template if.bind="showTools">
         <button class="menu-bar__menu-center--action-button menu-bar__menu-center--back-button back-button" click.delegate="navigateBack()" title="Navigate back">
-          <i class="fa fa-arrow-circle-left"></i>
+          <i class="fas fa-arrow-circle-left"></i>
         </button>
       </template>
       <template if.bind="showTools">
         <button class="menu-bar__menu-center--action-button" click.delegate="saveDiagram()" disabled.bind="disableSaveButton" title="Save Diagram">
-          <i class="fa fa-save"></i>
+          <i class="fas fa-save"></i>
         </button>
       </template>
       <div class="btn-group" if.bind="showTools">
         <button class="menu-bar__menu-center--action-button dropdown-toggle" title="Export Diagram" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i class="fa fa-upload"></i>
+          <i class="fas fa-upload"></i>
           <i class="glyphicon glyphicon-repeat fa-spin hidden"></i>
         </button>
         <ul class="dropdown-menu">
@@ -83,12 +83,12 @@
       </div>
       <template if.bind="showTools">
         <button class="menu-bar__menu-center--action-button" click.delegate="printDiagram()" title="Print Diagram">
-          <i class="fa fa-print"></i>
+          <i class="fas fa-print"></i>
         </button>
       </template>
       <div class="menu-bar__last-tool" if.bind="showTools">
         <button class="menu-bar__menu-center--action-button" click.delegate="startProcess()" disabled.bind="validationError" title="Start Process">
-          <i class="fa fa-play"></i>
+          <i class="fas fa-play"></i>
         </button>
       </div>
       <user-login></user-login>

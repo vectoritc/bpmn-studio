@@ -6,21 +6,21 @@
   <div class="status-bar status-bar--system-macos">
     <div class="status-bar__left-bar">
       <span class="status-bar__element">
-        <i class="fa baseroute__lock-icon" class.bind="isEncryptedCommunication ? 'fa-lock' : 'fa-unlock'"></i> ${processEngineRoute}
+        <i class="fas baseroute__lock-icon" class.bind="isEncryptedCommunication ? 'fa-lock' : 'fa-unlock'"></i> ${processEngineRoute}
       </span>
     </div>
     <div class="status-bar__center-bar"></div>
     <div class="status-bar__right-bar">
       <template if.bind="showXMLButton">
         <a class="status-bar__element" click.delegate="toggleXMLView()" if.bind="!xmlIsShown">
-          <i class="fa fa-file-code-o"></i> Show XML
+          <i class="fas fa-file-code"></i> Show XML
         </a>
         <a class="status-bar__element" click.delegate="toggleXMLView()" if.bind="xmlIsShown">
-          <i class="fa fa-file-code-o"></i> Show Diagram
+          <i class="fas fa-file-code"></i> Show Diagram
         </a>
       </template>
       <a class="status-bar__element" click.delegate="navigateToSettings()">
-        <i class="fa fa-wrench"></i> Settings
+        <i class="fas fa-wrench"></i> Settings
       </a>
     </div>
   </div>
