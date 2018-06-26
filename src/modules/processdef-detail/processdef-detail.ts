@@ -109,6 +109,19 @@ export class ProcessDefDetail {
     this._eventAggregator.publish(environment.events.statusBar.showXMLButton);
   }
 
+  /**
+   * We implement canDeactivate() for the Aurelia Router, because we want to
+   * prevent the user from leaving the editor, if there are changes, that need
+   * to be saved.
+   *
+   * Basically, the Router will look for an implementation and execute this
+   * method. The Aurelia Router is not working properly at this moment, so we
+   * use a workaround to achieve this:
+   *
+   * We return a Promise with a redirection to the previous view!
+   * This will preserve the state and works as expected.
+   *
+   */
   public async canDeactivate(): Promise<Redirect> {
 
     const _modal: Promise<boolean> = new Promise((resolve: Function, reject: Function): any => {
@@ -119,7 +132,7 @@ export class ProcessDefDetail {
         const modal: HTMLElement = document.getElementById('saveModal');
         modal.classList.add('show-modal');
 
-        // register onClick handler
+        //  register onClick handler {{{ //
         document
           .getElementById('dontSaveButton')
           .addEventListener('click', () => {
@@ -137,7 +150,7 @@ export class ProcessDefDetail {
             this
               ._saveDiagram()
               .catch((error: Error) => {
-                this._notificationService.showNotification(NotificationType.ERROR, `Error while saving the Diagram: ${error.message}`);
+                this._notificationService.showNotification(NotificationType.ERROR, `Unable to save the diagram: ${error.message}`);
               });
 
             modal.classList.remove('show-modal');
@@ -153,6 +166,7 @@ export class ProcessDefDetail {
             resolve(false);
           });
         }
+        //  }}} register onClick handler //
     });
 
     const result: boolean = await _modal;
@@ -185,7 +199,9 @@ export class ProcessDefDetail {
         if (result && !result.error) {
           this.process = result;
 
-          this._eventAggregator.publish(environment.events.navBar.updateProcess, this.process);
+          this
+            ._eventAggregator
+            .publish(environment.events.navBar.updateProcess, this.process);
 
           return this.process;
 
@@ -206,23 +222,24 @@ export class ProcessDefDetail {
    *
    * TODO: Look deeper into this if we need this method anymore and/or in this
    * particular way.
+   *
+   * TODO: Use this again.
    */
   private _deleteProcess(): void {
-    const deleteForReal: boolean = confirm('Are you sure you want to delete the process definition?');
-    if (!deleteForReal) {
-      return;
-    }
+    const userIsSureOfDeletion: boolean = confirm('Are you sure you want to delete the process definition?');
 
-    this
-      ._processEngineService
-      .deleteProcessDef(this.process.id)
-      .then(() => {
-        this.process = null;
-        this._router.navigate('');
-      })
-      .catch((error: Error) => {
-        this._notificationService.showNotification(NotificationType.ERROR, error.message);
-      });
+    if (userIsSureOfDeletion) {
+      this
+        ._processEngineService
+        .deleteProcessDef(this.process.id)
+        .then(() => {
+          this.process = null;
+          this._router.navigate('');
+        })
+        .catch((error: Error) => {
+          this._notificationService.showNotification(NotificationType.ERROR, error.message);
+        });
+    }
   }
 
   // TODO: Add Documentation.
@@ -232,26 +249,50 @@ export class ProcessDefDetail {
     this._validateXML();
 
     if (this._diagramIsInvalid) {
-      throw Error('The Diagram is invalid');
+      this
+        ._notificationService
+        .showNotification(
+          NotificationType.Warning,
+          'Unable to save the diagram, because it is not valid. This could have something to do with your latest changes. Try to undo them.'
+        );
     }
 
+
+    //  Save the diagram to the ProcessEngine {{{ //
     // TODO: Explain what this is doing -> Refactor.
+    let response: any;
+
     try {
       const xml: string = await this.bpmnio.getXML();
-      const response: any = await this._processEngineService.updateProcessDef(this.process, xml);
-
-      if (response.error) {
-        this._notificationService.showNotification(NotificationType.ERROR, `Error while saving file: ${response.error}`);
-      } else if (response.result) {
-        this._notificationService.showNotification(NotificationType.SUCCESS, 'File saved.');
-      } else {
-        // TODO: Not gonna buy this. What can a user do with this message? Improve, too technical.
-        this._notificationService.showNotification(NotificationType.WARNING, `Unknown error: ${JSON.stringify(response)}`);
-      }
-      this._diagramHasChanged = false;
+      response = await this._processEngineService.updateProcessDef(this.process, xml);
     } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, `Error: ${error.message}`);
+      this._notificationService.showNotification(NotificationType.ERROR, `Somethig happend: ${error.message}`);
     }
+    //  }}} Save the diagram to the ProcessEngine //
+
+    // Treat possible errors {{{ //
+    if (response.error) {
+      this
+        ._notificationService
+        .showNotification(NotificationType.ERROR, `Unable to save the file: ${response.error}`);
+
+    } else if (response.result) {
+      this
+        ._notificationService
+        .showNotification(NotificationType.SUCCESS, 'File saved.');
+
+    } else {
+      // TODO: Not gonna buy this. Is this needed at all?
+      this
+        ._notificationService
+        .showNotification(
+          NotificationType.WARNING,
+          `Something is very wrong: ${JSON.stringify(response)}. Please contact the BPMN-Studio team, they can help.`
+        );
+    }
+    //  }}}  Treat possible errors //
+
+    this._diagramHasChanged = false;
   }
 
   /**
@@ -312,6 +353,13 @@ export class ProcessDefDetail {
     download(this._generateImageFromSVG('jpeg', svg), `${this.process.name}.jpeg`, 'image/jpeg');
   }
 
+  /**
+   * This heavily relies on the resolution of the screen.
+   *
+   * The result should be a pretty diagram for a printer;
+   * the generated image will be obtain from the BPMN.io canvas,
+   * that is dependent on the screen size.
+   */
   public async _printDiagram(): Promise<void> {
     const svg: string = await this.bpmnio.getSVG();
     const png: string = this._generateImageFromSVG('png', svg);
@@ -345,17 +393,22 @@ export class ProcessDefDetail {
     context.fillStyle = 'white';
     context.fillRect(0, 0, canvas.width, canvas.height);
 
-    const image: string = canvas.toDataURL(encoding); // returns a base64 datastring
+    // get image as base64 datastring
+    const image: string = canvas.toDataURL(encoding);
     return image;
   }
 
   private _validateForm(event: ValidateEvent): void {
-    if (event.type !== 'validate') {
+    const eventIsValidateEvent: boolean = event.type !== 'validate';
+
+    if (eventIsValidateEvent) {
       return;
     }
 
     for (const result of event.results) {
-      if (result.valid === false) {
+      const resultIsNotValid: boolean = result.valid === false;
+
+      if (resultIsNotValid) {
         this._eventAggregator.publish(environment.events.navBar.disableSaveButton);
         this._diagramIsInvalid = true;
         return;
@@ -365,5 +418,4 @@ export class ProcessDefDetail {
     this._eventAggregator.publish(environment.events.navBar.enableSaveButton);
     this._diagramIsInvalid = false;
   }
-
 }
