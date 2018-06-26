@@ -132,6 +132,7 @@ export class ProcessDefDetail {
         modal.classList.add('show-modal');
 
         //  register onClick handler {{{ //
+        /* Do not save and leave */
         document
           .getElementById('dontSaveButton')
           .addEventListener('click', () => {
@@ -142,6 +143,7 @@ export class ProcessDefDetail {
             resolve(true);
           });
 
+        /* Save and leave */
         document
           .getElementById('saveButton')
           .addEventListener('click', () => {
@@ -158,6 +160,7 @@ export class ProcessDefDetail {
             resolve(true);
           });
 
+        /* Stay, do not save */
         document
           .getElementById('cancelButton')
           .addEventListener('click', () => {
