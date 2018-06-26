@@ -10,16 +10,19 @@ import {IModeling,
 export class BpmnDiffView {
   private _leftViewer: IBpmnModeler;
   private _rightViewer: IBpmnModeler;
+  private _lowerViewer: IBpmnModeler;
 
   @bindable() public xml: string;
   @bindable() public savedxml: string;
   @bindable() public changes: any;
   public leftCanvasModel: HTMLElement;
   public rightCanvasModel: HTMLElement;
+  public lowerCanvasModel: HTMLElement;
 
   public attached(): void {
     this._leftViewer.attachTo(this.leftCanvasModel);
     this._rightViewer.attachTo(this.rightCanvasModel);
+    this._lowerViewer.attachTo(this.lowerCanvasModel);
   }
 
   public created(): void {
@@ -38,18 +41,31 @@ export class BpmnDiffView {
         bundle.MoveCanvasModule,
       ],
     });
+
+    this._lowerViewer = new bundle.viewer({
+      additionalModules:
+      [
+        bundle.ZoomScrollModule,
+        bundle.MoveCanvasModule,
+      ],
+    });
   }
 
   public changesChanged(): void {
-    const addedElements: any = this.changes._added;
-    const deletedElements: any = this.changes._removed;
-    const changedElements: any = this.changes._changed;
-    const layoutChangedElements: any = this.changes._layoutChanged;
+    if (this.xml !== undefined && this.xml !== null) {
+      this._lowerViewer.importXML(this.xml, (err: Error) => {
+        return 0;
+      });
+    }
+    // const addedElements: any = this.changes._added;
+    // const deletedElements: any = this.changes._removed;
+    // const changedElements: any = this.changes._changed;
+    // const layoutChangedElements: any = this.changes._layoutChanged;
 
-    this._markDeletedElements(deletedElements);
-    this._markChangedElements(changedElements);
-    this._markLayoutChangedElements(layoutChangedElements);
-    this._markAddedElements(addedElements);
+    // this._markDeletedElements(deletedElements);
+    // this._markChangedElements(changedElements);
+    // this._markLayoutChangedElements(layoutChangedElements);
+    // this._markAddedElements(addedElements);
   }
 
   private _markAddedElements(addedElements: any): void {
