@@ -115,8 +115,7 @@ export class ProcessDefDetail {
    * to be saved.
    *
    * Basically, the Router will look for an implementation and execute this
-   * method. The Aurelia Router is not working properly at this moment, so we
-   * use a workaround to achieve this:
+   * method. The Aurelia Router is not working properly at this moment, so we use a workaround to achieve this:
    *
    * We return a Promise with a redirection to the previous view!
    * This will preserve the state and works as expected.
@@ -252,7 +251,7 @@ export class ProcessDefDetail {
       this
         ._notificationService
         .showNotification(
-          NotificationType.Warning,
+          NotificationType.WARNING,
           'Unable to save the diagram, because it is not valid. This could have something to do with your latest changes. Try to undo them.'
         );
     }
