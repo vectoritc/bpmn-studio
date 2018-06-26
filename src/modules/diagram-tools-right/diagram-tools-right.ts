@@ -125,8 +125,8 @@ export class DiagramToolsRight {
                                     && selectedElements[0].$type === 'bpmn:Collaboration';
 
     if (elementIsNotValid) {
-      const NotificationMessage: string = 'Unable to apply color. Please select an element and use the color picker again.';
-      this._notificationService.showNotification(NotificationType.INFO, NotificationMessage);
+      const notificationMessage: string = 'Unable to apply color. Please select an element and use the color picker again.';
+      this._notificationService.showNotification(NotificationType.INFO, notificationMessage);
 
       return;
     }
