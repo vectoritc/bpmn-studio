@@ -55,15 +55,14 @@ export default {
     defaultWidth: 250,
   },
   colorPickerSettings: {
+    preferredFormat: 'hex',
     clickoutFiresChange: true,
     showPalette: true,
-    palette: [],
-    localStorageKey: 'elementColors',
+    maxSelectionSize: 8,
     showInitial: true,
     showInput: true,
     allowEmpty: true,
     showButtons: false,
-    showPaletteOnly: true,
-    togglePaletteOnly: true,
+    containerClassName: 'colorpicker-container',
   },
 };

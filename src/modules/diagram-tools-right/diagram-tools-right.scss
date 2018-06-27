@@ -32,6 +32,33 @@
   cursor: default;
 }
 
+/*
+ * The border is used to seperate the two buttons for the colorpickers from the
+ * other buttons
+ *
+ * The fill-colorpicker is the upper button and therefore only has the border at the top
+ */
+.fill-colorpicker--border {
+  border-top: 1px solid #ccc;
+}
+
+/*
+ * The border-colorpicker is the lower button and therefore only has the border at the bottom
+ */
+.border-colorpicker--border {
+  border-bottom: 1px solid #ccc;
+}
+
+.fill-colorpicker__eyedropper {
+  margin-left: 39px;
+  margin-right: -14px;
+}
+
+.border-colorpicker__eyedropper {
+  margin-left: 14px;
+  margin-right: -14px;
+}
+
 .sp-replacer {
   margin: 0;
   overflow: hidden;
@@ -41,4 +68,20 @@
   background: 0;
   color: #333;
   vertical-align: middle;
+}
+
+.sp-container {
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  height: 247px;
+}
+
+.sp-palette-container {
+  position: absolute;
+  bottom: 0px;
+  left: 6px;
+  z-index: 1;
+  border-right: none;
+  height: 44px;
 }
