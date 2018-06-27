@@ -33,6 +33,7 @@ export class ProcessDefDetail {
 
   public bpmnio: BpmnIo;
   public process: IProcessDefEntity;
+  public startButtonPressed: boolean = false;
 
   private _processEngineService: IProcessEngineService;
   private _notificationService: NotificationService;
@@ -76,12 +77,20 @@ export class ProcessDefDetail {
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
         this._refreshProcess();
       }),
+
+      //  Button Subscriptions {{{ //
       this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
         this._saveDiagram()
           .catch((error: Error) => {
-            this._notificationService.showNotification(NotificationType.ERROR, `Error while saving the diagram: ${error.message}`);
+            this
+              ._notificationService
+              .showNotification(
+                NotificationType.ERROR,
+                `Error while saving the diagram: ${error.message}`
+              );
           });
       }),
+      //  Export Subscriptions {{{ //
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, () => {
         this._exportBPMN();
       }),
@@ -94,15 +103,23 @@ export class ProcessDefDetail {
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, () => {
         this._exportJPEG();
       }),
+      //  }}} Export Subscriptions //
+
+      //  Start Button Subscription {{{ //
       this._eventAggregator.subscribe(environment.events.processDefDetail.startProcess, () => {
         this._startProcess();
       }),
+      //  }}} Start Button Subscription //
+      //  }}} Button Subscriptions //
+
+      //  General Event Subscritions {{{ //
       this._eventAggregator.subscribe(environment.events.diagramChange, () => {
         this._diagramHasChanged = true;
       }),
       this._eventAggregator.subscribe(environment.events.processDefDetail.printDiagram, () => {
         this._printDiagram();
       }),
+      //  }}} General Event Subscritions //
     ];
 
     this._eventAggregator.publish(environment.events.navBar.showTools, this.process);
@@ -124,28 +141,39 @@ export class ProcessDefDetail {
   public async canDeactivate(): Promise<Redirect> {
 
     const _modal: Promise<boolean> = new Promise((resolve: Function, reject: Function): any => {
+
       if (!this._diagramHasChanged) {
         resolve(true);
+
       } else {
 
-        const modal: HTMLElement = document.getElementById('saveModal');
+        const modal: HTMLElement = this.startButtonPressed
+          ? document.getElementById('saveModalProcessStart')
+          : document.getElementById('saveModalLeaveView');
+
         modal.classList.add('show-modal');
 
         //  register onClick handler {{{ //
         /* Do not save and leave */
+        const dontSaveButtonId: string = 'dontSaveButtonLeaveView';
         document
-          .getElementById('dontSaveButton')
+          .getElementById(dontSaveButtonId)
           .addEventListener('click', () => {
 
             modal.classList.remove('show-modal');
 
             this._diagramHasChanged = false;
+
             resolve(true);
           });
 
         /* Save and leave */
+        const saveButtonId: string = this.startButtonPressed
+          ? 'saveButtonProcessStart'
+          : 'saveButtonLeaveView';
+
         document
-          .getElementById('saveButton')
+          .getElementById(saveButtonId)
           .addEventListener('click', () => {
 
             this
@@ -157,14 +185,23 @@ export class ProcessDefDetail {
             modal.classList.remove('show-modal');
 
             this._diagramHasChanged = false;
+            this.startButtonPressed = false;
+
             resolve(true);
           });
 
         /* Stay, do not save */
+        const cancelButtonId: string = this.startButtonPressed
+          ? 'cancelButtonProcessStart'
+          : 'cancelButtonLeaveView';
+
         document
-          .getElementById('cancelButton')
+          .getElementById(cancelButtonId)
           .addEventListener('click', () => {
             modal.classList.remove('show-modal');
+
+            this.startButtonPressed = false;
+
             resolve(false);
           });
         }
@@ -172,6 +209,7 @@ export class ProcessDefDetail {
     });
 
     const result: boolean = await _modal;
+
     // TODO: Extract Business Rule
     if (result === false) {
       /*
@@ -214,8 +252,26 @@ export class ProcessDefDetail {
     });
   }
 
+  /**
+   * This sets the startButtonPressed flag to control the modal view of the save dialog.
+   *
+   * If the process is not valid, it will not start it.
+   */
   private _startProcess(): void {
     this._validateXML();
+
+    if (this._diagramIsInvalid) {
+      this
+        ._notificationService
+        .showNotification(
+          NotificationType.WARNING,
+          'Unable to start the process, because it is not valid. This could have something to do with your latest changes. Try to undo them.'
+        );
+      return;
+    }
+
+    this.startButtonPressed = true;
+
     this._router.navigate(`processdef/${this.process.id}/start`);
   }
 
@@ -258,7 +314,6 @@ export class ProcessDefDetail {
           'Unable to save the diagram, because it is not valid. This could have something to do with your latest changes. Try to undo them.'
         );
     }
-
 
     //  Save the diagram to the ProcessEngine {{{ //
     // TODO: Explain what this is doing -> Refactor.
