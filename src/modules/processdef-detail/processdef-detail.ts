@@ -447,7 +447,19 @@ export class ProcessDefDetail {
     const svgWidth: number = parseInt(svg.match(/<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/)[1]);
     const svgHeight: number = parseInt(svg.match(/<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/)[1]);
 
-    const pixelRatio: number = window.devicePixelRatio || 1;
+    // For a print, we use 300 dpi
+    const targetDPI: number = 300;
+
+    /*
+     * TODO: Figure out, how to optain the format of the print before printing.
+     * In the current implementation, I assume that we print to a DIN A4 Paper,
+     * which has a diagonal size of 14,33 inch.
+     *
+     * There may be some problems if we try to print to a larger paper format
+     * such as DIN A3 or even DIN A0.
+    */
+    const dinA4DiagonalSize: number = 14.33;
+    const pixelRatio: number = this._getPixelRatioForDPI(svgWidth, svgHeight, targetDPI, dinA4DiagonalSize);
 
     canvas.width = svgWidth * pixelRatio;
     canvas.height = svgHeight * pixelRatio;
@@ -468,6 +480,28 @@ export class ProcessDefDetail {
     // get image as base64 datastring
     const image: string = canvas.toDataURL(encoding);
     return image;
+  }
+
+  /**
+   * Calculate the pixel ratio for the given DPI.
+   *
+   * @param svgWidth With of the diagrams canvas element
+   * @param svgHeight Height of the diagrams canvas element
+   * @param outputDPI DPI of the output
+   * @param diagonalSize Diagonal Size of the printed document
+   */
+  private _getPixelRatioForDPI(svgWidth: number, svgHeight: number, outputDPI: number, diagonalSize: number): number {
+
+    // tslint:disable:no-magic-numbers
+    const svgWidthSquared: number = Math.pow(svgWidth, 2);
+    const svgHeightSquared: number = Math.pow(svgHeight, 2);
+
+    const diagonalResolution: number = Math.sqrt(svgWidthSquared + svgHeightSquared);
+
+    const originalDPI: number = diagonalResolution / diagonalSize;
+    const pixelRatio: number = outputDPI / originalDPI;
+
+    return pixelRatio;
   }
   //  }}} Exporting Functions - Probably an ExportService is a better idea //
 
