@@ -87,7 +87,7 @@ export class ProcessDefDetail {
               ._notificationService
               .showNotification(
                 NotificationType.ERROR,
-                `Error while saving the diagram: ${error.message}`
+                `Error while saving the diagram: ${error.message}`,
               );
           });
       }),
@@ -266,7 +266,7 @@ export class ProcessDefDetail {
         ._notificationService
         .showNotification(
           NotificationType.WARNING,
-          'Unable to start the process, because it is not valid. This could have something to do with your latest changes. Try to undo them.'
+          'Unable to start the process, because it is not valid. This could have something to do with your latest changes. Try to undo them.',
         );
       return;
     }
@@ -312,7 +312,7 @@ export class ProcessDefDetail {
         ._notificationService
         .showNotification(
           NotificationType.WARNING,
-          'Unable to save the diagram, because it is not valid. This could have something to do with your latest changes. Try to undo them.'
+          'Unable to save the diagram, because it is not valid. This could have something to do with your latest changes. Try to undo them.',
         );
     }
 
@@ -345,7 +345,7 @@ export class ProcessDefDetail {
         ._notificationService
         .showNotification(
           NotificationType.WARNING,
-          `Something is very wrong: ${JSON.stringify(response)}. Please contact the BPMN-Studio team, they can help.`
+          `Something is very wrong: ${JSON.stringify(response)}. Please contact the BPMN-Studio team, they can help.`,
         );
     }
     //  }}}  Treat possible errors //
