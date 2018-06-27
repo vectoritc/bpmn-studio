@@ -31,7 +31,7 @@ export class BpmnIo {
   public minCanvasWidth: number = 100;
   public minPropertyPanelWidth: number = 200;
 
-  private _toggled: boolean = false;
+  private _propertyPanelShouldOpen: boolean = false;
   private _propertyPanelHiddenForSpaceReasons: boolean = false;
   private _propertyPanelHasNoSpace: boolean = false;
 
@@ -146,12 +146,16 @@ export class BpmnIo {
 
     /*
      * Update the property panel width;
-     * if no previoud width was found, take the configured one.
+     * if no previous width was found, take the configured one.
      */
     this.propertyPanelWidth = (previousPropertyPanelWidth !== undefined) ?
                               parseInt(previousPropertyPanelWidth) :
                               environment.propertyPanel.defaultWidth;
 
+    const propertyPanelHideState: string = window.localStorage.getItem('propertyPanelHideState');
+    const wasPropertyPanelVisible: boolean = propertyPanelHideState === null || propertyPanelHideState === 'show';
+    this._propertyPanelShouldOpen = wasPropertyPanelVisible;
+    this.togglePanel();
   }
 
   public detached(): void {
@@ -206,7 +210,7 @@ export class BpmnIo {
   }
 
   public togglePanel(): void {
-    if (this._toggled === true) {
+    if (this._propertyPanelShouldOpen) {
       if (this._propertyPanelHasNoSpace) {
         this._notificationService.showNotification(NotificationType.ERROR, 'There is not enough space for the property panel!');
         return;
@@ -214,12 +218,14 @@ export class BpmnIo {
 
       this.toggleButtonPropertyPanel.classList.add('tool--active');
       this.propertyPanelDisplay = 'inline';
-      this._toggled = false;
+      this._propertyPanelShouldOpen = false;
+      window.localStorage.setItem('propertyPanelHideState', 'show');
     } else {
 
       this.toggleButtonPropertyPanel.classList.remove('tool--active');
       this.propertyPanelDisplay = 'none';
-      this._toggled = true;
+      this._propertyPanelShouldOpen = true;
+      window.localStorage.setItem('propertyPanelHideState', 'hide');
     }
   }
 
@@ -245,8 +251,9 @@ export class BpmnIo {
 
     /*
      * This is needed to stop the width from increasing too far
-     * The property panel would not be displayed with that width,
-     * but when increasing the browser width, the property panel then may also increase
+     * the property panel would not be displayed with that width,
+     * but when increasing the browser width, the property panel
+     * then may also increase.
      */
     const newPropertyPanelWidth: number = Math.min(resizedWidth, propertyPanelMaxWidth);
 
@@ -255,8 +262,9 @@ export class BpmnIo {
 
   private _hidePropertyPanelForSpaceReasons(): void {
     this._propertyPanelHasNoSpace = true;
+    const propertyPanelIsOpen: boolean = !this._propertyPanelShouldOpen;
 
-    if (this._toggled === false) {
+    if (propertyPanelIsOpen) {
       this._propertyPanelHiddenForSpaceReasons = true;
       this.togglePanel();
     }
@@ -266,7 +274,7 @@ export class BpmnIo {
     this._propertyPanelHasNoSpace = false;
     this._propertyPanelHiddenForSpaceReasons = false;
 
-    this._toggled = true;
+    this._propertyPanelShouldOpen = true;
     this.togglePanel();
   }
 
