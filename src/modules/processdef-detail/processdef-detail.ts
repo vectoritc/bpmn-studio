@@ -33,7 +33,6 @@ export class ProcessDefDetail {
 
   public bpmnio: BpmnIo;
   public process: IProcessDefEntity;
-  public startButtonPressed: boolean = false;
 
   private _processEngineService: IProcessEngineService;
   private _notificationService: NotificationService;
@@ -45,6 +44,8 @@ export class ProcessDefDetail {
   private _validationController: ValidationController;
   // TODO: Explain when this is set and by whom.
   private _diagramIsInvalid: boolean = false;
+  // Used to control the modal view; shows the modal view for pressing the play button.
+  private _startButtonPressed: boolean = false;
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
@@ -147,7 +148,7 @@ export class ProcessDefDetail {
 
       } else {
 
-        const modal: HTMLElement = this.startButtonPressed
+        const modal: HTMLElement = this._startButtonPressed
           ? document.getElementById('saveModalProcessStart')
           : document.getElementById('saveModalLeaveView');
 
@@ -168,7 +169,7 @@ export class ProcessDefDetail {
           });
 
         /* Save and leave */
-        const saveButtonId: string = this.startButtonPressed
+        const saveButtonId: string = this._startButtonPressed
           ? 'saveButtonProcessStart'
           : 'saveButtonLeaveView';
 
@@ -185,13 +186,13 @@ export class ProcessDefDetail {
             modal.classList.remove('show-modal');
 
             this._diagramHasChanged = false;
-            this.startButtonPressed = false;
+            this._startButtonPressed = false;
 
             resolve(true);
           });
 
         /* Stay, do not save */
-        const cancelButtonId: string = this.startButtonPressed
+        const cancelButtonId: string = this._startButtonPressed
           ? 'cancelButtonProcessStart'
           : 'cancelButtonLeaveView';
 
@@ -200,7 +201,7 @@ export class ProcessDefDetail {
           .addEventListener('click', () => {
             modal.classList.remove('show-modal');
 
-            this.startButtonPressed = false;
+            this._startButtonPressed = false;
 
             resolve(false);
           });
@@ -253,7 +254,7 @@ export class ProcessDefDetail {
   }
 
   /**
-   * This sets the startButtonPressed flag to control the modal view of the save dialog.
+   * This sets the _startButtonPressed flag to control the modal view of the save dialog.
    *
    * If the process is not valid, it will not start it.
    */
@@ -270,7 +271,7 @@ export class ProcessDefDetail {
       return;
     }
 
-    this.startButtonPressed = true;
+    this._startButtonPressed = true;
 
     this._router.navigate(`processdef/${this.process.id}/start`);
   }
