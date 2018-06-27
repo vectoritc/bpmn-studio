@@ -6,11 +6,11 @@
         <i class="fas fa-eye-dropper"></i>
       </a>
       <ul class="dropdown-menu pull-left color-dropdown">
-        <li><a click.delegate="setColorRed()"><i class="fa fa-stop red"></i> Red</a></li>
-        <li><a click.delegate="setColorBlue()"><i class="fa fa-stop blue"></i> Blue</a></li>
-        <li><a click.delegate="setColorGreen()"><i class="fa fa-stop green"></i> Green</a></li>
-        <li><a click.delegate="setColorPurple()"><i class="fa fa-stop purple"></i> Purple</a></li>
-        <li><a click.delegate="setColorOrange()"><i class="fa fa-stop orange"></i> Orange</a></li>
+        <li><a click.delegate="setColorRed()"><i class="fas fa-stop red"></i> Red</a></li>
+        <li><a click.delegate="setColorBlue()"><i class="fas fa-stop blue"></i> Blue</a></li>
+        <li><a click.delegate="setColorGreen()"><i class="fas fa-stop green"></i> Green</a></li>
+        <li><a click.delegate="setColorPurple()"><i class="fas fa-stop purple"></i> Purple</a></li>
+        <li><a click.delegate="setColorOrange()"><i class="fas fa-stop orange"></i> Orange</a></li>
         <li>
           <a show.bind="colorPickerLoaded" click.delegate="setPickedColor()" ref="colorPickerFill" class="fill-colorpicker--border">
             <i class="fa fa-stop" css="color: ${fillColor ? fillColor : 'white'};"></i> Fill color <i class="fa fa-eyedropper fill-colorpicker__eyedropper"></i>
@@ -21,7 +21,7 @@
             <i class="fa fa-stop" css="color: ${borderColor ? borderColor : 'black'};"></i> Border color <i class="fa fa-eyedropper border-colorpicker__eyedropper"></i>
           </a>
         </li>
-        <li><a click.delegate="removeColor()"><i class="fa fa-stop none"></i> None</a></li>
+        <li><a click.delegate="removeColor()"><i class="fas fa-stop none"></i> None</a></li>
       </ul>
     </div>
     <a class="tool" title="Distribute Elements Vertically" click.delegate="distributeElementsVertically()">
