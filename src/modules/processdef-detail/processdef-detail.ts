@@ -473,13 +473,17 @@ export class ProcessDefDetail {
       const resultIsNotValid: boolean = result.valid === false;
 
       if (resultIsNotValid) {
-        this._eventAggregator.publish(environment.events.navBar.disableSaveButton);
         this._diagramIsInvalid = true;
+        this._eventAggregator
+          .publish(environment.events.navBar.disableSaveButton);
+
         return;
       }
     }
 
-    this._eventAggregator.publish(environment.events.navBar.enableSaveButton);
+    this._eventAggregator
+      .publish(environment.events.navBar.enableSaveButton);
+
     this._diagramIsInvalid = false;
   }
 }
