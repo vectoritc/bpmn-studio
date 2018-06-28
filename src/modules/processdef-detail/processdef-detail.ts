@@ -67,11 +67,14 @@ export class ProcessDefDetail {
   }
 
   public attached(): void {
-    this._validationController.subscribe((event: ValidateEvent) => {
-      this._validateForm(event);
-    });
-
     this._subscriptions = [
+      //  Aurelia Event Subscriptions {{{ //
+      // Aurelia will expose the ValidateEvent, we use this to check the BPMN in the modeler.
+      this._validationController.subscribe((event: ValidateEvent) => {
+        this._handleFormValidateEvents(event);
+      }),
+      //  }}} Aurelia Event Subscriptions //
+
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
         this._refreshProcess();
       }),
@@ -456,7 +459,10 @@ export class ProcessDefDetail {
     return image;
   }
 
-  private _validateForm(event: ValidateEvent): void {
+  /**
+   *
+   */
+  private _handleFormValidateEvents(event: ValidateEvent): void {
     const eventIsValidateEvent: boolean = event.type !== 'validate';
 
     if (eventIsValidateEvent) {
