@@ -436,7 +436,30 @@ export class ProcessDefDetail {
     const svg: string = await this.bpmnio.getSVG();
     const png: string = this._generateImageFromSVG('png', svg);
 
-    print.default({printable: png, type: 'image'});
+    const svgContentRegex: RegExp = /<svg.*?>(.*)<\/svg>/i;
+    const viewBoxRegex: RegExp = /<svg .*? (viewBox\=\"(.*?)\")/i;
+
+    const svgContentMatch: RegExpMatchArray = svg.match(svgContentRegex);
+    const viewBoxContentMatch: RegExpMatchArray = svg.match(viewBoxRegex);
+
+    /*
+     * TODO: Improve the regex.
+     *
+     * It should be possible to use only one regex with different groupings.
+     */
+    // tslint:disable-next-line:no-magic-numbers
+    const svgContent: string = svgContentMatch[1];
+
+    // tslint:disable-next-line:no-magic-numbers
+    const viewBoxContent: string = viewBoxContentMatch[2];
+
+    const svgElement: string = `<svg width="100%" height="100%" viewBox="${viewBoxContent}" preserveAspectRatio="xMinYMin">${svgContent}</svg>`;
+
+    const printWindow: Window = window.open();
+    printWindow.document.body.innerHTML = svgElement;
+
+    printWindow.print();
+    printWindow.close();
   }
 
   private _generateImageFromSVG(desiredImageType: string, svg: any): string {
@@ -447,19 +470,7 @@ export class ProcessDefDetail {
     const svgWidth: number = parseInt(svg.match(/<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/)[1]);
     const svgHeight: number = parseInt(svg.match(/<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/)[1]);
 
-    // For a print, we use 300 dpi
-    const targetDPI: number = 300;
-
-    /*
-     * TODO: Figure out, how to optain the format of the print before printing.
-     * In the current implementation, I assume that we print to a DIN A4 Paper,
-     * which has a diagonal size of 14,33 inch.
-     *
-     * There may be some problems if we try to print to a larger paper format
-     * such as DIN A3 or even DIN A0.
-    */
-    const dinA4DiagonalSize: number = 14.33;
-    const pixelRatio: number = this._getPixelRatioForDPI(svgWidth, svgHeight, targetDPI, dinA4DiagonalSize);
+    const pixelRatio: number = 4;
 
     canvas.width = svgWidth * pixelRatio;
     canvas.height = svgHeight * pixelRatio;
