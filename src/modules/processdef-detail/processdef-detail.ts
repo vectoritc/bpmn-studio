@@ -218,7 +218,7 @@ export class ProcessDefDetail {
     if (result === false) {
       /*
        * As suggested in https://github.com/aurelia/router/issues/302, we use
-       * the router directly to navgiate back, which results in staying on this
+       * the router directly to navigate back, which results in staying on this
        * component-- and this is the desired behaviour.
        */
       return new Redirect(this._router.currentInstruction.fragment, {trigger: false, replace: false});
@@ -304,10 +304,19 @@ export class ProcessDefDetail {
     }
   }
 
-  // TODO: Add Documentation.
+  /**
+   * This method will save the diagram by using the ProcessEngineService.
+   *
+   * The user will be notified, about the outcome of the operation. Errors will be
+   * reported reasonably and a success message will be emitted.
+   *
+   * Saving is not possible, if _diagramIsInvalid has been set tu true.
+   *
+   * The source of the XML is the bmpn.io-modeler. It is used to extract the BPMN
+   * while saving; a validation is not executed here.
+   */
   private async _saveDiagram(): Promise<void> {
 
-    // TODO: This needs to be refactored; _dropInvalidFormData() does not seem to work properly.
     this._dropInvalidFormData();
 
     if (this._diagramIsInvalid) {
@@ -361,7 +370,7 @@ export class ProcessDefDetail {
    * empty or otherwise not allowed FormData in them.
    *
    * If that is the case the method will continue by deleting unused/not allowed
-   * FormData to make sure the diagrams xml is furhter supported by camunda.
+   * FormData to make sure the diagrams XML is further supported by Camunda.
    *
    * TODO: Look further into this if this method is not better placed at the FormsSection
    * in the Property Panel, also split this into two methods and name them right.
@@ -389,6 +398,7 @@ export class ProcessDefDetail {
     });
   }
 
+  //  Exporting Functions - Probably an ExportService is a better idea {{{ //
   private async _exportBPMN(): Promise<void> {
     const xml: string = await this.bpmnio.getXML();
     const formattedXml: string = beautify(xml);
@@ -458,9 +468,22 @@ export class ProcessDefDetail {
     const image: string = canvas.toDataURL(encoding);
     return image;
   }
+  //  }}} Exporting Functions - Probably an ExportService is a better idea //
 
   /**
+   * This handler will set the diagram state to invalid, if the ValidateEvent arrives.
+   * Currently only form fields in the Property Panel are validated. This will cause
+   * the following behaviour:
    *
+   * The user inserts an invalid string (e.g. he uses a already used Id for an element);
+   * The Aurelia validators will trigger; the validation event will arrive here;
+   * if there are errors present, we will disable the save button and the save functionality
+   * by setting the _diagramIsInvalid flag to true.
+   *
+   * Events fired here:
+   *
+   * 1. disableSaveButton
+   * 2. enableSaveButton
    */
   private _handleFormValidateEvents(event: ValidateEvent): void {
     const eventIsValidateEvent: boolean = event.type !== 'validate';
