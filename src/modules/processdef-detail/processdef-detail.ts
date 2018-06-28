@@ -262,7 +262,7 @@ export class ProcessDefDetail {
    * If the process is not valid, it will not start it.
    */
   private _startProcess(): void {
-    this._validateXML();
+    this._dropInvalidFormData();
 
     if (this._diagramIsInvalid) {
       this
@@ -307,8 +307,8 @@ export class ProcessDefDetail {
   // TODO: Add Documentation.
   private async _saveDiagram(): Promise<void> {
 
-    // TODO: This needs to be refactored; _validateXML() does not seem to work properly.
-    this._validateXML();
+    // TODO: This needs to be refactored; _dropInvalidFormData() does not seem to work properly.
+    this._dropInvalidFormData();
 
     if (this._diagramIsInvalid) {
       this
@@ -366,7 +366,7 @@ export class ProcessDefDetail {
    * TODO: Look further into this if this method is not better placed at the FormsSection
    * in the Property Panel, also split this into two methods and name them right.
    */
-  private _validateXML(): void {
+  private _dropInvalidFormData(): void {
     const registry: Array<IShape> = this.bpmnio.modeler.get('elementRegistry');
 
     registry.forEach((element: IShape) => {
