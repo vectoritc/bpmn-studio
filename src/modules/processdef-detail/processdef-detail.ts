@@ -453,15 +453,15 @@ export class ProcessDefDetail {
     const targetDPI: number = 300;
 
     /*
-     * TODO: Figure out, how to optain the format of the print before printing.
+     * TODO: Figure out, how to obtain the format of the print before printing.
      * In the current implementation, I assume that we print to a DIN A4 Paper,
      * which has a diagonal size of 14,33 inch.
      *
      * There may be some problems if we try to print to a larger paper format
      * such as DIN A3 or even DIN A0.
     */
-    const dinA4DiagonalSize: number = 14.33;
-    const pixelRatio: number = this._getPixelRatioForDPI(svgWidth, svgHeight, targetDPI, dinA4DiagonalSize);
+    const dinA4DiagonalSizeInch: number = 14.17;
+    const pixelRatio: number = this._calculatePixelRatioForDPI(svgWidth, svgHeight, targetDPI, dinA4DiagonalSizeInch);
 
     canvas.width = svgWidth * pixelRatio;
     canvas.height = svgHeight * pixelRatio;
@@ -486,13 +486,16 @@ export class ProcessDefDetail {
 
   /**
    * Calculate the pixel ratio for the given DPI.
+   * The Pixel Ratio is the factor which is needed, to extend the
+   * the width and height of a canvas to match a rendered resolution
+   * with the targeting DPI.
    *
-   * @param svgWidth With of the diagrams canvas element
-   * @param svgHeight Height of the diagrams canvas element
-   * @param outputDPI DPI of the output
-   * @param diagonalSize Diagonal Size of the printed document
+   * @param svgWidth With of the diagrams canvas element.
+   * @param svgHeight Height of the diagrams canvas element.
+   * @param targetDPI DPI of the output.
+   * @param diagonalSize Diagonal Size of the printed document.
    */
-  private _getPixelRatioForDPI(svgWidth: number, svgHeight: number, outputDPI: number, diagonalSize: number): number {
+  private _calculatePixelRatioForDPI(svgWidth: number, svgHeight: number, targetDPI: number, diagonalSize: number): number {
 
     // tslint:disable:no-magic-numbers
     const svgWidthSquared: number = Math.pow(svgWidth, 2);
@@ -501,7 +504,7 @@ export class ProcessDefDetail {
     const diagonalResolution: number = Math.sqrt(svgWidthSquared + svgHeightSquared);
 
     const originalDPI: number = diagonalResolution / diagonalSize;
-    const pixelRatio: number = outputDPI / originalDPI;
+    const pixelRatio: number = targetDPI / originalDPI;
 
     return pixelRatio;
   }
