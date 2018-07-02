@@ -451,12 +451,9 @@ export class ProcessDefDetail {
     const targetDPI: number = 300;
 
     /*
-     * TODO: Figure out, how to obtain the format of the print before printing.
-     * In the current implementation, I assume that we print to a DIN A4 Paper,
-     * which has a diagonal size of 14,33 inch.
-     *
-     * There may be some problems if we try to print to a larger paper format
-     * such as DIN A3 or even DIN A0.
+     * TODO: Figure out, how to obtain the desired format of the print before
+     * printing. In the current implementation, I assume that we print to a
+     * DIN A4 Paper, which has a diagonal size of 14.17 inches.
     */
     const dinA4DiagonalSizeInch: number = 14.17;
     const pixelRatio: number = this._calculatePixelRatioForDPI(svgWidth, svgHeight, targetDPI, dinA4DiagonalSizeInch);
