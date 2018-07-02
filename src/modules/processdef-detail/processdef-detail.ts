@@ -24,8 +24,6 @@ import environment from '../../environment';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
 import {NotificationService} from './../notification/notification.service';
 
-import * as print from 'print-js';
-
 interface RouteParameters {
   processDefId: string;
 }
