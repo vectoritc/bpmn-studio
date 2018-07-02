@@ -326,6 +326,7 @@ export class ProcessDefDetail {
           NotificationType.WARNING,
           'Unable to save the diagram, because it is not valid. This could have something to do with your latest changes. Try to undo them.',
         );
+      return;
     }
 
     //  Save the diagram to the ProcessEngine {{{ //
