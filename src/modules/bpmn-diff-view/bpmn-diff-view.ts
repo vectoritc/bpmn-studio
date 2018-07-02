@@ -70,20 +70,19 @@ export class BpmnDiffView {
 
   private _markAddedElements(addedElements: any): void {
     for (const elementId in addedElements) {
-      this._addColorMarker(elementId, this._rightViewer, 'added');
+      this._addColorMarker(elementId, this._lowerViewer, 'added');
     }
   }
 
   private _markDeletedElements(deletedElemnts: any): void {
     for (const elementId in deletedElemnts) {
-      this._addColorMarker(elementId, this._leftViewer, 'deleted');
+      this._addColorMarker(elementId, this._lowerViewer, 'deleted');
     }
   }
 
   private _markLayoutChangedElements(layoutChangedElements: any): void {
     for (const elementId in layoutChangedElements) {
-      this._addColorMarker(elementId, this._leftViewer, 'layout-changed');
-      this._addColorMarker(elementId, this._rightViewer, 'layout-changed');
+      this._addColorMarker(elementId, this._lowerViewer, 'layout-changed');
     }
   }
 
@@ -93,8 +92,7 @@ export class BpmnDiffView {
         continue;
       }
 
-      this._addColorMarker(elementId, this._leftViewer, 'changed');
-      this._addColorMarker(elementId, this._rightViewer, 'changed');
+      this._addColorMarker(elementId, this._lowerViewer, 'changed');
     }
   }
 
