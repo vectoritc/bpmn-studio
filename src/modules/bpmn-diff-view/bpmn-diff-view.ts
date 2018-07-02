@@ -35,6 +35,33 @@ export class BpmnDiffView {
     this._lowerViewer.attachTo(this.lowerCanvasModel);
 
     this._eventAggregator.subscribe(environment.events.diffView.changeDiffMode, (mode: DiffMode) => {
+      const addedElements: any = this.changes._added;
+      const deletedElements: any = this.changes._removed;
+      const changedElements: any = this.changes._changed;
+      const layoutChangedElements: any = this.changes._layoutChanged;
+
+      if (mode === DiffMode.PreviousToCurrent) {
+        if (this.xml === undefined || this.xml === null) {
+          return;
+        }
+
+        this._lowerViewer.importXML(this.xml, () => {
+          this._markAddedElements(addedElements);
+          this._markChangedElements(changedElements);
+          this._markLayoutChangedElements(layoutChangedElements);
+        });
+
+      } else if (mode === DiffMode.CurrentToPrevious) {
+        if (this.savedxml === undefined || this.savedxml === null) {
+          return;
+        }
+
+        this._lowerViewer.importXML(this.savedxml, () => {
+          this._markDeletedElements(deletedElements);
+          this._markChangedElements(changedElements);
+          this._markLayoutChangedElements(layoutChangedElements);
+        });
+      }
     });
   }
 
