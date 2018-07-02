@@ -48,7 +48,6 @@
 }
 
 .status-bar__element {
-  display: block;
   padding: 2px 10px;
   color: white;
   white-space: nowrap;
@@ -61,4 +60,8 @@
 
 .baseroute__lock-icon {
   font-size: 14px;
+}
+
+.center-bar__diff-view-buttons {
+  float: left;
 }

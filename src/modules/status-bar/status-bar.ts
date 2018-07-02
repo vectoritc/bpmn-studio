@@ -1,6 +1,8 @@
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
+
+import {DiffMode} from '../../contracts/index';
 import environment from '../../environment';
 
 @inject(EventAggregator, Router)
@@ -11,6 +13,7 @@ export class StatusBar {
   public diffIsShown: boolean = false;
   public xmlIsShown: boolean = false;
   public isEncryptedCommunication: boolean = false;
+  public DiffMode: typeof DiffMode = DiffMode;
 
   private _eventAggregator: EventAggregator;
   private _router: Router;
@@ -42,6 +45,10 @@ export class StatusBar {
 
     this._eventAggregator.publish(environment.events.bpmnio.toggleXMLView);
     this.xmlIsShown = !this.xmlIsShown;
+  }
+
+  public changeDiffMode(mode: DiffMode): void {
+    this._eventAggregator.publish(environment.events.diffView.changeDiffMode, mode);
   }
 
   public toggleDiffView(): void {

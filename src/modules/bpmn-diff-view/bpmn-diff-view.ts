@@ -1,16 +1,22 @@
+import {inject} from 'aurelia-dependency-injection';
+import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindable} from 'aurelia-framework';
-import { IBpmnModeler } from '../../contracts';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 
-import {IModeling,
+import {DiffMode,
+  IBpmnModeler,
+  IModeling,
   IShape,
   NotificationType} from '../../contracts/index';
+import environment from '../../environment';
 
+@inject(EventAggregator)
 export class BpmnDiffView {
   private _leftViewer: IBpmnModeler;
   private _rightViewer: IBpmnModeler;
   private _lowerViewer: IBpmnModeler;
+  private _eventAggregator: EventAggregator;
 
   @bindable() public xml: string;
   @bindable() public savedxml: string;
@@ -19,10 +25,17 @@ export class BpmnDiffView {
   public rightCanvasModel: HTMLElement;
   public lowerCanvasModel: HTMLElement;
 
+  constructor(eventAggregator: EventAggregator) {
+    this._eventAggregator  = eventAggregator;
+  }
+
   public attached(): void {
     this._leftViewer.attachTo(this.leftCanvasModel);
     this._rightViewer.attachTo(this.rightCanvasModel);
     this._lowerViewer.attachTo(this.lowerCanvasModel);
+
+    this._eventAggregator.subscribe(environment.events.diffView.changeDiffMode, (mode: DiffMode) => {
+    });
   }
 
   public created(): void {
