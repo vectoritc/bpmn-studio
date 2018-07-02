@@ -47,6 +47,9 @@ export default {
       toggleXMLView: 'processdefdetail:xmlview:toggle',
       toggleDiffView: 'processdefdetail:diffview:toggle',
     },
+    diffView: {
+      changeDiffMode: 'diffview:diffmode:change',
+    },
     diagramChange: 'diagram:change',
     processSolutionPanel: {
       toggleProcessSolutionExplorer: 'processSolutionPanel:processsolutionexplorer:toggle',
