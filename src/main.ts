@@ -5,12 +5,16 @@ import {IFileInfo} from './contracts/processengine/index';
 import {NotificationService} from './modules/notification/notification.service';
 import {TokenRepository} from './modules/token-repository/token.repository';
 
+import {SolutionExplorerFileSystemRepository} from 'solutionexplorer.repository.filesystem';
+
 import environment from './environment';
 
 export function configure(aurelia: Aurelia): void {
 
   const tokenRepository: TokenRepository = new TokenRepository();
   aurelia.container.registerInstance('TokenRepository', tokenRepository);
+
+  const fileSystemrepository: SolutionExplorerFileSystemRepository = new SolutionExplorerFileSystemRepository();
 
   if (navigator.cookieEnabled === false) {
     const url: string = location.href;
@@ -44,6 +48,7 @@ export function configure(aurelia: Aurelia): void {
     .feature('modules/notification')
     .feature('modules/authentication')
     .feature('modules/bpmn-studio_client', tokenRepository)
+    .feature('modules/solutionexplorer-service', fileSystemrepository)
     .feature('resources')
     .plugin('aurelia-bootstrap')
     .plugin('aurelia-validation');
