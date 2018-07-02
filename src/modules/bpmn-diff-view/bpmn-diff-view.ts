@@ -21,6 +21,7 @@ export class BpmnDiffView {
   public leftCanvasModel: HTMLElement;
   public rightCanvasModel: HTMLElement;
   public lowerCanvasModel: HTMLElement;
+  public diffModeTitle: string = 'Bitte einen Diff Modus auswählen.';
 
   constructor(eventAggregator: EventAggregator) {
     this._eventAggregator  = eventAggregator;
@@ -128,6 +129,7 @@ export class BpmnDiffView {
         this._markAddedElements(addedElements);
         this._markChangedElements(changedElements);
         this._markLayoutChangedElements(layoutChangedElements);
+        this.diffModeTitle = 'Vorher -> Nachher';
       });
 
     } else if (this._currentDiffMode === DiffMode.CurrentToPrevious) {
@@ -139,7 +141,10 @@ export class BpmnDiffView {
         this._markDeletedElements(deletedElements);
         this._markChangedElements(changedElements);
         this._markLayoutChangedElements(layoutChangedElements);
+        this.diffModeTitle = 'Nachher -> Vorher';
       });
+    } else {
+      this.diffModeTitle = 'Bitte einen Diff Modus auswählen.';
     }
   }
 }
