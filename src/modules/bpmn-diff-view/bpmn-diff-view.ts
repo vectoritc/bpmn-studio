@@ -80,6 +80,10 @@ export class BpmnDiffView {
     }
   }
 
+  public changesChanged(): void {
+    this._updateDiffView();
+  }
+
   private _markAddedElements(addedElements: any): void {
     for (const elementId in addedElements) {
       this._addColorMarker(elementId, this._lowerViewer, 'added');
