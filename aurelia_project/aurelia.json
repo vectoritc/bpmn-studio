@@ -307,6 +307,37 @@
             "name": "print-js",
             "main": "dist/print.min.js",
             "path": "../node_modules/print-js"
+          },
+          {
+            "name": "@essential-projects/errors_ts",
+            "main": "index.js",
+            "path": "../node_modules/@essential-projects/errors_ts/dist/amd"
+          },
+          {
+            "name": "fs",
+            "path": "../aurelia_project/native/fs"
+          },
+          {
+            "name": "os",
+            "path": "../aurelia_project/native/os"
+          },
+          {
+            "name": "path",
+            "path": "../aurelia_project/native/path"
+          },
+          {
+            "name": "util",
+            "path": "../aurelia_project/native/util"
+          },
+          {
+            "name": "solutionexplorer.repository.filesystem",
+            "main": "SolutionExplorerFileSystemRepository.js",
+            "path": "../node_modules/solutionexplorer.repository.filesystem/dist"
+          },
+          {
+            "name": "solutionexplorer.service",
+            "path": "../node_modules/solutionexplorer.service/dist",
+            "main": "index.js"
           }
         ]
       }
