@@ -1,7 +1,6 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
-import * as $ from 'jquery';
 
 import {IBpmnModeler,
         IEditorActions,
@@ -334,9 +333,7 @@ export class BpmnIo {
     // Prevent the browser from handling the default action for CTRL + s.
     event.preventDefault();
 
-    if (this._diagramIsValid) {
-      this._eventAggregator.publish(environment.events.processDefDetail.saveDiagram);
-    }
+    this._eventAggregator.publish(environment.events.processDefDetail.saveDiagram);
   }
 
   /**
