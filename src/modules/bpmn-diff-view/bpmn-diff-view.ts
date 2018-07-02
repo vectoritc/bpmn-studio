@@ -91,23 +91,6 @@ export class BpmnDiffView {
     });
   }
 
-  public changesChanged(): void {
-    if (this.xml !== undefined && this.xml !== null) {
-      this._lowerViewer.importXML(this.xml, (err: Error) => {
-        return 0;
-      });
-    }
-    // const addedElements: any = this.changes._added;
-    // const deletedElements: any = this.changes._removed;
-    // const changedElements: any = this.changes._changed;
-    // const layoutChangedElements: any = this.changes._layoutChanged;
-
-    // this._markDeletedElements(deletedElements);
-    // this._markChangedElements(changedElements);
-    // this._markLayoutChangedElements(layoutChangedElements);
-    // this._markAddedElements(addedElements);
-  }
-
   private _markAddedElements(addedElements: any): void {
     for (const elementId in addedElements) {
       this._addColorMarker(elementId, this._lowerViewer, 'added');
