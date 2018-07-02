@@ -4,11 +4,7 @@ import {bindable} from 'aurelia-framework';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 
-import {DiffMode,
-  IBpmnModeler,
-  IModeling,
-  IShape,
-  NotificationType} from '../../contracts/index';
+import {DiffMode, IBpmnModeler} from '../../contracts/index';
 import environment from '../../environment';
 
 @inject(EventAggregator)
