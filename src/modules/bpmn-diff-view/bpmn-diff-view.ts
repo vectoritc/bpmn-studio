@@ -13,6 +13,7 @@ export class BpmnDiffView {
   private _rightViewer: IBpmnModeler;
   private _lowerViewer: IBpmnModeler;
   private _eventAggregator: EventAggregator;
+  private _currentDiffMode: DiffMode;
 
   @bindable() public xml: string;
   @bindable() public savedxml: string;
@@ -30,34 +31,9 @@ export class BpmnDiffView {
     this._rightViewer.attachTo(this.rightCanvasModel);
     this._lowerViewer.attachTo(this.lowerCanvasModel);
 
-    this._eventAggregator.subscribe(environment.events.diffView.changeDiffMode, (mode: DiffMode) => {
-      const addedElements: any = this.changes._added;
-      const deletedElements: any = this.changes._removed;
-      const changedElements: any = this.changes._changed;
-      const layoutChangedElements: any = this.changes._layoutChanged;
-
-      if (mode === DiffMode.PreviousToCurrent) {
-        if (this.xml === undefined || this.xml === null) {
-          return;
-        }
-
-        this._lowerViewer.importXML(this.xml, () => {
-          this._markAddedElements(addedElements);
-          this._markChangedElements(changedElements);
-          this._markLayoutChangedElements(layoutChangedElements);
-        });
-
-      } else if (mode === DiffMode.CurrentToPrevious) {
-        if (this.savedxml === undefined || this.savedxml === null) {
-          return;
-        }
-
-        this._lowerViewer.importXML(this.savedxml, () => {
-          this._markDeletedElements(deletedElements);
-          this._markChangedElements(changedElements);
-          this._markLayoutChangedElements(layoutChangedElements);
-        });
-      }
+    this._eventAggregator.subscribe(environment.events.diffView.changeDiffMode, (diffMode: DiffMode) => {
+      this._currentDiffMode = diffMode;
+      this._updateDiffView();
     });
   }
 
@@ -137,4 +113,33 @@ export class BpmnDiffView {
     canvas.addMarker(elementId, markerType);
   }
 
+  private _updateDiffView(): void {
+    const addedElements: any = this.changes._added;
+    const deletedElements: any = this.changes._removed;
+    const changedElements: any = this.changes._changed;
+    const layoutChangedElements: any = this.changes._layoutChanged;
+
+    if (this._currentDiffMode === DiffMode.PreviousToCurrent) {
+      if (this.xml === undefined || this.xml === null) {
+        return;
+      }
+
+      this._lowerViewer.importXML(this.xml, () => {
+        this._markAddedElements(addedElements);
+        this._markChangedElements(changedElements);
+        this._markLayoutChangedElements(layoutChangedElements);
+      });
+
+    } else if (this._currentDiffMode === DiffMode.CurrentToPrevious) {
+      if (this.savedxml === undefined || this.savedxml === null) {
+        return;
+      }
+
+      this._lowerViewer.importXML(this.savedxml, () => {
+        this._markDeletedElements(deletedElements);
+        this._markChangedElements(changedElements);
+        this._markLayoutChangedElements(layoutChangedElements);
+      });
+    }
+  }
 }
