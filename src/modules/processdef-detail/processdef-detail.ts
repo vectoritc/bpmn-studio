@@ -310,7 +310,7 @@ export class ProcessDefDetail {
    * The user will be notified, about the outcome of the operation. Errors will be
    * reported reasonably and a success message will be emitted.
    *
-   * Saving is not possible, if _diagramIsInvalid has been set tu true.
+   * Saving is not possible, if _diagramIsInvalid has been set to true.
    *
    * The source of the XML is the bmpn.io-modeler. It is used to extract the BPMN
    * while saving; a validation is not executed here.
