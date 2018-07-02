@@ -18,10 +18,10 @@
     <div class="panel__heading">
       Form Fields
       <button class="remove-context-button" disabled.bind="!isFormSelected" click.delegate="removeSelectedForm()">
-        <span class="fa fa-trash"></span>
+        <i class="fas fa-trash"></i>
       </button>
       <button class="add-context-button" click.delegate="addForm()">
-        <span class="fa fa-plus"></span>
+        <i class="fas fa-plus"></i>
       </button>
     </div>
     <div class="panel__content">
@@ -42,7 +42,7 @@
           <td>	
             <div show.bind="isFormSelected">	
               <template if.bind="validationError">	
-                <span class="glyphicon glyphicon-remove"></span>	
+                <i class="fas fa-times validation_error"></i>	
               </template>	
             </div>	
           </td>
@@ -86,7 +86,7 @@
     <div class="panel__heading">
       <span>Values</span>
       <button class="add-context-button" click.delegate="addEnumValue()">
-        <span class="fa fa-plus"></span>
+        <i class="fas fa-plus"></i>
       </button>
     </div>
     <div class="panel__content">
@@ -100,7 +100,7 @@
           </td>
           <td>
             <button class="key-value-delete-button" click.delegate="removeEnumValue($index)">
-              <i class="fa fa-times"></i>
+              <i class="fas fa-times"></i>
             </button>
           </td>
         </tr>
