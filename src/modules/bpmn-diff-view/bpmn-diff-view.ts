@@ -87,6 +87,22 @@ export class BpmnDiffView {
     });
   }
 
+  public xmlChanged(): void {
+    if (this.xml !== undefined && this.xml !== null) {
+      this._rightViewer.importXML(this.xml, (err: Error) => {
+        return 0;
+      });
+    }
+  }
+
+  public savedxmlChanged(): void {
+    if (this.savedxml !== undefined && this.savedxml !== null) {
+      this._leftViewer.importXML(this.savedxml, (err: Error) => {
+        return 0;
+      });
+    }
+  }
+
   private _markAddedElements(addedElements: any): void {
     for (const elementId in addedElements) {
       this._addColorMarker(elementId, this._lowerViewer, 'added');
@@ -121,19 +137,4 @@ export class BpmnDiffView {
     canvas.addMarker(elementId, markerType);
   }
 
-  public xmlChanged(): void {
-    if (this.xml !== undefined && this.xml !== null) {
-      this._rightViewer.importXML(this.xml, (err: Error) => {
-        return 0;
-      });
-    }
-  }
-
-  public savedxmlChanged(): void {
-    if (this.savedxml !== undefined && this.savedxml !== null) {
-      this._leftViewer.importXML(this.savedxml, (err: Error) => {
-        return 0;
-      });
-    }
-  }
 }
