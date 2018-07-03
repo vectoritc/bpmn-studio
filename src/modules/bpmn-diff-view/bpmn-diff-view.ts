@@ -92,9 +92,30 @@ export class BpmnDiffView {
   }
 
   private _markChangedElements(changedElements: object): void {
-    const elementsToColor: Array<IShape> = this._getElementsToColor(changedElements);
+    const changedElementsWithChanges: object = this._removeElementsWithoutChanges(changedElements);
+
+    const elementsToColor: Array<IShape> = this._getElementsToColor(changedElementsWithChanges);
 
     this._colorElements(elementsToColor, defaultBpmnColors.orange);
+  }
+
+  /*
+  * This function removes all elements without any changes from the changedElement object
+  * and returns an object without these elements.
+  *
+  *  This is needed because the diff function always adds the start event
+  *  to the changed Elements even though it has no changes.
+  */
+  private _removeElementsWithoutChanges(changedElements: object): object {
+    for (const elementId in changedElements) {
+      const currentElementHasNoChanges: boolean = Object.keys(changedElements[elementId].attrs).length === 0;
+
+      if (currentElementHasNoChanges) {
+        delete changedElements[elementId];
+      }
+    }
+
+    return changedElements;
   }
 
   private _updateDiffView(): void {
