@@ -198,7 +198,7 @@ export class BpmnDiffView {
     });
   }
 
-  private _getElementsToColor(elements: object): Array <IShape> {
+  private _getElementsToColor(elements: object): Array<IShape> {
     const elementsToColor: Array<IShape> = [];
 
     for (const elementId in elements) {
@@ -210,7 +210,7 @@ export class BpmnDiffView {
     return elementsToColor;
   }
 
-  private _colorElements(elementsToColor: Array <IShape > , color: IColorPickerColor): void {
+  private _colorElements(elementsToColor: Array<IShape>, color: IColorPickerColor): void {
     const noElementsToColorize: boolean = elementsToColor.length === 0;
 
     if (noElementsToColorize) {
