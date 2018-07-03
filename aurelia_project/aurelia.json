@@ -318,10 +318,6 @@
             "path": "../aurelia_project/native/fs"
           },
           {
-            "name": "os",
-            "path": "../aurelia_project/native/os"
-          },
-          {
             "name": "path",
             "path": "../aurelia_project/native/path"
           },
@@ -330,13 +326,18 @@
             "path": "../aurelia_project/native/util"
           },
           {
-            "name": "solutionexplorer.repository.filesystem",
-            "main": "SolutionExplorerFileSystemRepository.js",
-            "path": "../node_modules/solutionexplorer.repository.filesystem/dist"
+            "name": "@process-engine/solutionexplorer.repository.filesystem",
+            "main": "index.js",
+            "path": "../node_modules/@process-engine/solutionexplorer.repository.filesystem/dist/amd"
           },
           {
-            "name": "solutionexplorer.service",
-            "path": "../node_modules/solutionexplorer.service/dist",
+            "name": "@process-engine/solutionexplorer.repository.processengine",
+            "main": "index.js",
+            "path": "../node_modules/@process-engine/solutionexplorer.repository.processengine/dist/amd"
+          },
+          {
+            "name": "@process-engine/solutionexplorer.service",
+            "path": "../node_modules/@process-engine/solutionexplorer.service/dist/amd",
             "main": "index.js"
           }
         ]
