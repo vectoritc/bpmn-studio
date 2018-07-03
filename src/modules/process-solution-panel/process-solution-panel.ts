@@ -6,38 +6,37 @@ import {
   IPagination,
   IProcessDefEntity,
 } from '@process-engine/bpmn-studio_client';
+import {ISolution} from '@process-engine/solutionexplorer.contracts';
+import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {ISolutionExplorerService} from 'solutionexplorer.service.contracts';
 import {AuthenticationStateEvent} from '../../contracts/index';
 import environment from '../../environment';
 
-@inject('BpmnStudioClient', EventAggregator, 'SolutionExplorerService')
+@inject(EventAggregator, 'SolutionExplorerServiceProcessEngine', 'SolutionExplorerServiceFileSystem')
 export class ProcessSolutionPanel {
-  private _bpmnStudioClient: BpmnStudioClient;
   private _subscriptions: Array<Subscription>;
   private _eventAggregator: EventAggregator;
-  private _solutionExplorerService: ISolutionExplorerService;
+  private _solutionExplorerServiceProcessEngine: ISolutionExplorerService;
+  private _solutionExplorerServiceFileSystem: ISolutionExplorerService;
 
   public processes: IPagination<IProcessDefEntity>;
+  public processengineSolutionString: string;
+  public openedProcessEngineSolution: ISolution;
+  public openedFileSystemSolution: ISolution;
 
-  constructor(bpmnStudioClient: BpmnStudioClient, eventAggregator: EventAggregator, solutionExplorerService: ISolutionExplorerService) {
-    this._bpmnStudioClient = bpmnStudioClient;
+  constructor(eventAggregator: EventAggregator,
+              solutionExplorerServiceProcessEngine: ISolutionExplorerService,
+              solutionExplorerServiceFileSystem: ISolutionExplorerService) {
+
     this._eventAggregator = eventAggregator;
-    this._solutionExplorerService = solutionExplorerService;
-    this._refreshProcesslist();
-
-    const i: IIdentity = {
-      id: 'test',
-      name: 'test',
-      roles: ['test'],
-    };
-
-    this._solutionExplorerService.openSolution('.', i);
-    this._solutionExplorerService.loadSolution();
+    this._solutionExplorerServiceProcessEngine = solutionExplorerServiceProcessEngine;
+    this._solutionExplorerServiceFileSystem = solutionExplorerServiceFileSystem;
   }
 
   public async attached(): Promise<void> {
-    this._refreshProcesslist();
+    this.processengineSolutionString = environment.bpmnStudioClient.baseRoute;
+    await this.openProcessEngineSolution();
+
     this._eventAggregator.publish(environment.events.processSolutionPanel.toggleProcessSolutionExplorer);
 
     window.localStorage.setItem('processSolutionExplorerHideState', 'show');
@@ -53,6 +52,12 @@ export class ProcessSolutionPanel {
         this._refreshProcesslist();
       }),
     ];
+
+    const solutionInput: HTMLElement = document.getElementById('solutionInput');
+    const solutionInputButton: HTMLElement = document.getElementById('solutionInputButton');
+    solutionInputButton.addEventListener('click', (event: any) => {
+      solutionInput.click();
+    });
   }
 
   public detached(): void {
@@ -64,7 +69,30 @@ export class ProcessSolutionPanel {
     window.localStorage.setItem('processSolutionExplorerHideState', 'hide');
   }
 
+  public async openProcessEngineSolution(): Promise<void> {
+
+    const i: IIdentity = {
+      id: 'test',
+      name: 'test',
+      roles: ['test'],
+    };
+
+    await this._solutionExplorerServiceProcessEngine.openSolution(this.processengineSolutionString, i);
+    this.openedProcessEngineSolution = await this._solutionExplorerServiceProcessEngine.loadSolution();
+  }
+
+  public async filechange(event: any): Promise<void> {
+    const i: IIdentity = {
+      id: 'test',
+      name: 'test',
+      roles: ['test'],
+    };
+
+    await this._solutionExplorerServiceFileSystem.openSolution(event.target.files[0].path, i);
+    this.openedFileSystemSolution = await this._solutionExplorerServiceFileSystem.loadSolution();
+  }
+
   private async _refreshProcesslist(): Promise<void> {
-    this.processes = await this._bpmnStudioClient.getProcessDefList();
+    this.openedProcessEngineSolution = await this._solutionExplorerServiceProcessEngine.loadSolution();
   }
 }

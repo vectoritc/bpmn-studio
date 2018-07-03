@@ -1,9 +1,20 @@
 <template>
   <require from="./process-solution-panel.css"></require>
   <div class="process-explorer__solution-explorer">
-    <div class="process-explorer__heading">Process Solution Explorer</div>
-    <div repeat.for="process of processes.data" class="process-explorer__structure-item">
-      <a href="#/processdef/${process.id}/detail">${process.name}</a>
+    <div class="process-explorer__heading">FileSystem Solution Explorer</div>
+    <div class="solution-input-group">
+      <button class="open-solution-button" id="solutionInputButton">Open Solution</button>
+      <input class="solution-input" type="file" change.delegate="filechange($event)" id="solutionInput" webkitdirectory>
+    </div>
+    <div repeat.for="diagram of openedFileSystemSolution.diagrams" class="process-explorer__structure-item">
+      <a href="#/processdef/${diagram.id}/detail">${diagram.name}</a>
+    </div>
+
+    <div class="process-explorer__heading">PE Solution Explorer</div>
+    <input value.bind="processengineSolutionString" type="text">
+    <button click.delegate="openProcessEngineSolution()">Open</button>
+    <div repeat.for="diagram of openedProcessEngineSolution.diagrams" class="process-explorer__structure-item">
+      <a href="#/processdef/${diagram.id}/detail"><i class="fa fa-caret-right"></i> ${diagram.name}</a>
     </div>
   </div>
 </template>
