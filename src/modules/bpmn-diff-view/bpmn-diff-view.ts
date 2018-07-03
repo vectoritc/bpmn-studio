@@ -47,19 +47,11 @@ export class BpmnDiffView {
   }
 
   public xmlChanged(): void {
-    if (this.xml !== undefined && this.xml !== null) {
-      this._rightViewer.importXML(this.xml, (err: Error) => {
-        return 0;
-      });
-    }
+    this._importXml(this.xml, this._rightViewer);
   }
 
   public savedxmlChanged(): void {
-    if (this.savedxml !== undefined && this.savedxml !== null) {
-      this._leftViewer.importXML(this.savedxml, (err: Error) => {
-        return 0;
-      });
-    }
+    this._importXml(this.savedxml, this._leftViewer);
   }
 
   public changesChanged(): void {
@@ -100,7 +92,7 @@ export class BpmnDiffView {
     canvas.addMarker(elementId, markerType);
   }
 
-  private _updateDiffView(): void {
+  private async _updateDiffView(): Promise<void> {
     const addedElements: any = this.changes._added;
     const deletedElements: any = this.changes._removed;
     const changedElements: any = this.changes._changed;
@@ -111,27 +103,44 @@ export class BpmnDiffView {
         return;
       }
 
-      this._lowerViewer.importXML(this.xml, () => {
-        this._markAddedElements(addedElements);
-        this._markChangedElements(changedElements);
-        this._markLayoutChangedElements(layoutChangedElements);
-        this.diffModeTitle = 'Vorher -> Nachher';
-      });
+      await this._importXml(this.xml, this._lowerViewer);
+      this._markAddedElements(addedElements);
+      this._markChangedElements(changedElements);
+      this._markLayoutChangedElements(layoutChangedElements);
+      this.diffModeTitle = 'Vorher -> Nachher';
 
     } else if (this._currentDiffMode === DiffMode.CurrentToPrevious) {
       if (this.savedxml === undefined || this.savedxml === null) {
         return;
       }
 
-      this._lowerViewer.importXML(this.savedxml, () => {
-        this._markDeletedElements(deletedElements);
-        this._markChangedElements(changedElements);
-        this._markLayoutChangedElements(layoutChangedElements);
-        this.diffModeTitle = 'Nachher -> Vorher';
-      });
+      await this._importXml(this.savedxml, this._lowerViewer);
+      this._markDeletedElements(deletedElements);
+      this._markChangedElements(changedElements);
+      this._markLayoutChangedElements(layoutChangedElements);
+      this.diffModeTitle = 'Nachher -> Vorher';
     } else {
       this.diffModeTitle = 'Bitte einen Diff Modus auswählen.';
     }
+  }
+
+  private _importXml(xml: string, viewer: IBpmnModeler): Promise <void> {
+    const xmlIsNotLoaded: boolean = xml === undefined || xml === null;
+
+    if (xmlIsNotLoaded) {
+      return;
+    }
+
+    return new Promise((resolve: Function, reject: Function): void => {
+      viewer.importXML(xml, (importXmlError: Error) => {
+        if (importXmlError) {
+          reject(importXmlError);
+          return;
+        }
+
+        resolve();
+      });
+    });
   }
 
   private _createNewViewer(): IBpmnModeler {
