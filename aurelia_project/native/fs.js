@@ -1,1 +1,3 @@
-define('fs', function() { return window.nodeRequire('fs'); });
+if (window.nodeRequire) {
+  define('fs', function() { return window.nodeRequire('fs'); });
+}
