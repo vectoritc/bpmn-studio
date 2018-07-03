@@ -97,44 +97,42 @@ export class BpmnDiffView {
     this._colorElements(elementsToColor, defaultBpmnColors.orange);
   }
 
-  private async _updateDiffView(): Promise<void> {
-    const addedElements: object = this.changes._added;
-    const deletedElements: object = this.changes._removed;
-    const changedElements: object = this.changes._changed;
-    const layoutChangedElements: object = this.changes._layoutChanged;
-
+  private _updateDiffView(): void {
     if (this._currentDiffMode === DiffMode.PreviousToCurrent) {
-      if (this.xml === undefined || this.xml === null) {
-        return;
-      }
-
-      await this._importXml(this.xml, this._diffModeler);
-      this._markAddedElements(addedElements);
-      this._markChangedElements(changedElements);
-      this._markLayoutChangedElements(layoutChangedElements);
-
-      const coloredXml: string = await this._getXmlFromModdeler();
-      await this._importXml(coloredXml, this._lowerViewer);
-
-      this.diffModeTitle = 'Vorher -> Nachher';
-
+      this._updateLowerDiff(this.xml);
+      this.diffModeTitle = 'Vorher vs. Nachher';
     } else if (this._currentDiffMode === DiffMode.CurrentToPrevious) {
-      if (this.savedxml === undefined || this.savedxml === null) {
-        return;
-      }
-
-      await this._importXml(this.savedxml, this._diffModeler);
-      this._markDeletedElements(deletedElements);
-      this._markChangedElements(changedElements);
-      this._markLayoutChangedElements(layoutChangedElements);
-
-      const coloredXml: string = await this._getXmlFromModdeler();
-      await this._importXml(coloredXml, this._lowerViewer);
-
-      this.diffModeTitle = 'Nachher -> Vorher';
+      this._updateLowerDiff(this.savedxml);
+      this.diffModeTitle = 'Nachher vs. Vorher';
     } else {
       this.diffModeTitle = 'Bitte einen Diff Modus auswählen.';
     }
+  }
+
+  private async _updateLowerDiff(xml: string): Promise<void> {
+    const xmlIsNotLoaded: boolean = xml === undefined || xml === null;
+
+    if (xmlIsNotLoaded) {
+      return;
+    }
+
+    const addedElements: object = this.changes._added;
+    const removedElements: object = this.changes._removed;
+    const changedElements: object = this.changes._changed;
+    const layoutChangedElements: object = this.changes._layoutChanged;
+
+    const diffModeIsPreviousToCurrent: boolean = this._currentDiffMode === DiffMode.PreviousToCurrent;
+
+    await this._importXml(xml, this._diffModeler);
+    this._markChangedElements(changedElements);
+    this._markLayoutChangedElements(layoutChangedElements);
+
+    diffModeIsPreviousToCurrent ?
+      this._markAddedElements(addedElements) :
+      this._markDeletedElements(removedElements);
+
+    const coloredXml: string = await this._getXmlFromModdeler();
+    await this._importXml(coloredXml, this._lowerViewer);
   }
 
   private _importXml(xml: string, viewer: IBpmnModeler): Promise <void> {
