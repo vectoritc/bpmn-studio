@@ -41,29 +41,9 @@ export class BpmnDiffView {
   }
 
   public created(): void {
-    this._leftViewer = new bundle.viewer({
-      additionalModules:
-      [
-        bundle.ZoomScrollModule,
-        bundle.MoveCanvasModule,
-      ],
-    });
-
-    this._rightViewer = new bundle.viewer({
-      additionalModules:
-      [
-        bundle.ZoomScrollModule,
-        bundle.MoveCanvasModule,
-      ],
-    });
-
-    this._lowerViewer = new bundle.viewer({
-      additionalModules:
-      [
-        bundle.ZoomScrollModule,
-        bundle.MoveCanvasModule,
-      ],
-    });
+    this._leftViewer = this._createNewViewer();
+    this._rightViewer = this._createNewViewer();
+    this._lowerViewer = this._createNewViewer();
   }
 
   public xmlChanged(): void {
@@ -152,5 +132,15 @@ export class BpmnDiffView {
     } else {
       this.diffModeTitle = 'Bitte einen Diff Modus auswählen.';
     }
+  }
+
+  private _createNewViewer(): IBpmnModeler {
+    return new bundle.viewer({
+      additionalModules:
+      [
+        bundle.ZoomScrollModule,
+        bundle.MoveCanvasModule,
+      ],
+    });
   }
 }
