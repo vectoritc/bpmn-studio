@@ -6,6 +6,7 @@ import {NotificationService} from './modules/notification/notification.service';
 import {TokenRepository} from './modules/token-repository/token.repository';
 
 import environment from './environment';
+import {oidcConfig} from './open-id-connect-configuration';
 
 export function configure(aurelia: Aurelia): void {
 
@@ -46,7 +47,8 @@ export function configure(aurelia: Aurelia): void {
     .feature('modules/bpmn-studio_client', tokenRepository)
     .feature('resources')
     .plugin('aurelia-bootstrap')
-    .plugin('aurelia-validation');
+    .plugin('aurelia-validation')
+    .plugin('aurelia-open-id-connect', () => oidcConfig);
 
   if (environment.debug) {
     aurelia.use.developmentLogging();

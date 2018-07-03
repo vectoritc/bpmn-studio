@@ -1,11 +1,12 @@
 <template>
   <require from="./user-login.css"></require>
   <div class="user-login" ref="userLogin">
-    <a class="dropdown-toggle user-login-dropdown__toggle" data-toggle="dropdown">
-      <span>${identity ? identity.name : 'Guest'} </span>
-      <i class="fa fa-caret-down"></i>
-    </a>
-    <div ref="dropdown" class="dropdown-menu dropdown-menu-right user-login-dropdown">
+    <button show.bind="!isLoggedIn" click.delegate="login()">login</button>
+    <div show.bind="isLoggedIn">
+      <span>${user.profile.name}</span>
+      <button click.delegate="logout()">logout</button>
+    </div>
+    <!-- <div ref="dropdown" class="dropdown-menu dropdown-menu-right user-login-dropdown">
       <div class="user-login-dropdown__content clearfix">
         <form if.bind="!isLoggedIn" submit.delegate="login()" role="form">
           <div class="form-group">
@@ -20,6 +21,6 @@
         </form>
         <button ref="logoutButton" if.bind="isLoggedIn" class="btn custom-button pull-right" click.delegate="logout()">Logout</button>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>

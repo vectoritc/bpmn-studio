@@ -1,6 +1,7 @@
 import {ITokenRepository} from '@process-engine/bpmn-studio_client';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
+import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {
   AuthenticationStateEvent,
   IAuthenticationRepository,
@@ -18,11 +19,16 @@ export class AuthenticationService implements IAuthenticationService {
   private eventAggregator: EventAggregator;
   private authenticationRepository: IAuthenticationRepository;
   private tokenRepository: ITokenRepository;
+  private openIdConnect: OpenIdConnect;
 
-  constructor(eventAggregator: EventAggregator, authenticationRepository: IAuthenticationRepository, tokenRepository: ITokenRepository) {
+  constructor(eventAggregator: EventAggregator,
+              authenticationRepository: IAuthenticationRepository,
+              tokenRepository: ITokenRepository,
+              openIdConnect: OpenIdConnect) {
     this.eventAggregator = eventAggregator;
     this.authenticationRepository = authenticationRepository;
     this.tokenRepository = tokenRepository;
+    this.openIdConnect = openIdConnect;
   }
 
   public async initialize(): Promise<void> {

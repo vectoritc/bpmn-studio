@@ -1,11 +1,25 @@
+import { autoinject } from 'aurelia-framework';
+import { OpenIdConnect, OpenIdConnectRoles } from 'aurelia-open-id-connect';
 import {Router, RouterConfiguration} from 'aurelia-router';
+import { User } from 'oidc-client';
 
+@autoinject()
 export class App {
   private _router: Router;
+  private _openIdConnect: OpenIdConnect;
+  private _user: User;
+
+  constructor(openIdConnect: OpenIdConnect) {
+    this._openIdConnect = openIdConnect;
+    this._openIdConnect.observeUser((user: User) => this._user = user);
+  }
 
   public configureRouter(config: RouterConfiguration, router: Router): void {
     this._router = router;
+
+    config.options.pushState = true;
     config.title = 'BPMN-Studio';
+
     config.map([
       {
         route: ['', 'processdef', 'processdef/:page'],
@@ -59,5 +73,7 @@ export class App {
         moduleId: 'modules/waiting-room/waiting-room',
       },
     ]);
+
+    this._openIdConnect.configure(config);
   }
 }

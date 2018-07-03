@@ -1,55 +1,47 @@
 import {computedFrom, inject} from 'aurelia-framework';
+import { OpenIdConnect } from 'aurelia-open-id-connect';
+import { User } from 'oidc-client';
+
 import {IAuthenticationService, IIdentity, NotificationType} from '../../contracts/index';
 import {NotificationService} from './../notification/notification.service';
 
-@inject('AuthenticationService', 'NotificationService')
+@inject('NewAuthenticationService', 'NotificationService', OpenIdConnect)
 export class UserLogin {
-
-  public username: string;
-  public password: string;
-
-    /**
-   * We are using the direct reference of a container element to open or
-   * close the dropdown.
-   *
-   * This needs to be refactored.
-   *
-   * https://github.com/process-engine/bpmn-studio/issues/455
-   */
-
-  public userLogin: HTMLElement;
-  public dropdown: HTMLElement;
-  public logoutButton: HTMLButtonElement;
 
   private _authenticationService: IAuthenticationService;
   private _notificationService: NotificationService;
+  private _openIdConnect: OpenIdConnect;
 
-  constructor(authenticationService: IAuthenticationService, notificationService: NotificationService) {
+  @computedFrom('user')
+  public get isLoggedIn(): boolean {
+    return this.user !== null && this.user !== undefined;
+  }
+
+  public user: User | null = null;
+
+  constructor(authenticationService: IAuthenticationService,
+              notificationService: NotificationService,
+              openIdConnect: OpenIdConnect) {
     this._authenticationService = authenticationService;
     this._notificationService = notificationService;
+    this._openIdConnect = openIdConnect;
   }
 
-  public attached(): void {
-    document.addEventListener('click', this.dropdownClickListener);
-  }
+  public async attached(): Promise<void> {
+    this._openIdConnect.addOrRemoveHandler('addUserUnloaded', () => {
+      this.user = null;
+    });
 
-  public detached(): void {
-    document.removeEventListener('click', this.dropdownClickListener);
-  }
-
-  public dropdownClickListener: EventListenerOrEventListenerObject =  (event: MouseEvent): void => {
-    const eventTarget: Node = event.target as Node;
-    if (this.dropdown.contains(eventTarget) && event.target !== this.logoutButton) {
-      this.userLogin.className = 'user-login open';
-    }
+    this._openIdConnect.addOrRemoveHandler('addUserLoaded', async() => {
+      this.user = await this._openIdConnect.getUser();
+    });
+    this._openIdConnect.observeUser((user: User) => this.user = user);
+    this.user = await this._openIdConnect.getUser();
   }
 
   public async login(): Promise<void> {
     try {
-      await this._authenticationService.login(this.username, this.password);
-      this.username = undefined;
-      this.password = undefined;
-      this._closeDropdown();
+      await this._authenticationService.login();
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, error.message);
     }
@@ -57,20 +49,5 @@ export class UserLogin {
 
   public logout(): void {
     this._authenticationService.logout();
-    this._closeDropdown();
-  }
-
-  @computedFrom('_authenticationService.tokenRepository.token')
-  public get isLoggedIn(): boolean {
-    return this._authenticationService.hasToken();
-  }
-
-  @computedFrom('isLoggedIn')
-  public get identity(): IIdentity {
-    return this._authenticationService.getIdentity();
-  }
-
-  private _closeDropdown(): void {
-    this.userLogin.className = 'user-login';
   }
 }
