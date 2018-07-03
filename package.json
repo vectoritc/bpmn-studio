@@ -70,7 +70,8 @@
     "index.html",
     "bin",
     "bootstrap",
-    "resources"
+    "resources",
+    "@fortawesome"
   ],
   "bin": "./bin/bpmn-studio.js",
   "repository": {
