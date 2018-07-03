@@ -4,7 +4,13 @@ import {bindable} from 'aurelia-framework';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 
-import {defaultBpmnColors, DiffMode, IBpmnModeler, IColorPickerColor, IElementRegistry, IModeling, IShape} from '../../contracts/index';
+import {defaultBpmnColors,
+  DiffMode,
+  IBpmnModeler,
+  IColorPickerColor,
+  IElementRegistry,
+  IModeling,
+  IShape} from '../../contracts/index';
 import environment from '../../environment';
 
 @inject(EventAggregator)
