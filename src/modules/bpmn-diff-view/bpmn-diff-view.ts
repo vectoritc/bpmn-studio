@@ -26,6 +26,8 @@ export class BpmnDiffView {
   private _elementRegistry: IElementRegistry;
 
   private _currentDiffMode: DiffMode;
+  private _changing: boolean;
+  private _syncIndex: number = 0;
 
   @bindable() public xml: string;
   @bindable() public savedxml: string;
@@ -59,6 +61,8 @@ export class BpmnDiffView {
 
     this._modeling = this._diffModeler.get('modeling');
     this._elementRegistry = this._diffModeler.get('elementRegistry');
+
+    this._syncViewers(this._leftViewer, this._rightViewer, this._lowerViewer);
   }
 
   public xmlChanged(): void {
@@ -83,6 +87,44 @@ export class BpmnDiffView {
     const elementsToColor: Array<IShape> = this._getElementsToColor(deletedElements);
 
     this._colorElements(elementsToColor, defaultBpmnColors.red);
+  }
+
+  private _syncViewers(firstViewer: IBpmnModeler, secondViewer: IBpmnModeler, thirdViewer: IBpmnModeler): void {
+    this._syncViewbox(firstViewer, secondViewer, thirdViewer);
+    this._syncViewbox(secondViewer, thirdViewer, firstViewer);
+    this._syncViewbox(thirdViewer, firstViewer, secondViewer);
+  }
+
+  private _syncViewbox(firstViewer: IBpmnModeler, secondViewer: IBpmnModeler, thirdViewer: IBpmnModeler): void {
+    firstViewer.on('canvas.viewbox.changed', this._update(secondViewer, thirdViewer));
+  }
+
+  private _update(firstViewer: IBpmnModeler, secondViewer: IBpmnModeler): Function {
+    return (e: any): void => {
+      this._syncIndex++;
+
+      /*
+      * This check is needed to prevent an infinite loop of synchronizations caused by changing each other.
+      *
+      * For example:
+      * When the lower view gets changed, the right and the left view will get adjusted.
+      * After the left view got adjusted, the right and the lower view will get adjusted,...
+      */
+      if (this._changing) {
+        // tslint:disable-next-line:no-magic-numbers
+        const allViewersSynchronized: boolean = this._syncIndex === 3;
+        if (allViewersSynchronized) {
+          this._syncIndex = 0;
+          this._changing = false;
+        }
+
+        return;
+      }
+
+      this._changing = true;
+      firstViewer.get('canvas').viewbox(e.viewbox);
+      secondViewer.get('canvas').viewbox(e.viewbox);
+    };
   }
 
   private _markLayoutChangedElements(layoutChangedElements: object): void {
