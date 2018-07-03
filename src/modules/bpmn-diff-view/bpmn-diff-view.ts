@@ -79,7 +79,7 @@ export class BpmnDiffView {
     this._colorElements(elementsToColor, defaultBpmnColors.green);
   }
 
-  private _markDeletedElements(deletedElements: object): void {
+  private _markRemovedElements(deletedElements: object): void {
     const elementsToColor: Array<IShape> = this._getElementsToColor(deletedElements);
 
     this._colorElements(elementsToColor, defaultBpmnColors.red);
@@ -129,7 +129,7 @@ export class BpmnDiffView {
 
     diffModeIsPreviousToCurrent ?
       this._markAddedElements(addedElements) :
-      this._markDeletedElements(removedElements);
+      this._markRemovedElements(removedElements);
 
     const coloredXml: string = await this._getXmlFromModdeler();
     await this._importXml(coloredXml, this._lowerViewer);
