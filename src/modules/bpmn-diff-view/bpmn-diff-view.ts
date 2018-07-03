@@ -8,6 +8,7 @@ import {defaultBpmnColors,
   DiffMode,
   IBpmnModeler,
   IColorPickerColor,
+  IDiffChanges,
   IElementRegistry,
   IModeling,
   IShape} from '../../contracts/index';
@@ -28,7 +29,7 @@ export class BpmnDiffView {
 
   @bindable() public xml: string;
   @bindable() public savedxml: string;
-  @bindable() public changes: any;
+  @bindable() public changes: IDiffChanges;
   public leftCanvasModel: HTMLElement;
   public rightCanvasModel: HTMLElement;
   public lowerCanvasModel: HTMLElement;
@@ -72,35 +73,35 @@ export class BpmnDiffView {
     this._updateDiffView();
   }
 
-  private _markAddedElements(addedElements: any): void {
+  private _markAddedElements(addedElements: object): void {
     const elementsToColor: Array<IShape> = this._getElementsToColor(addedElements);
 
     this._colorElements(elementsToColor, defaultBpmnColors.green);
   }
 
-  private _markDeletedElements(deletedElements: any): void {
+  private _markDeletedElements(deletedElements: object): void {
     const elementsToColor: Array<IShape> = this._getElementsToColor(deletedElements);
 
     this._colorElements(elementsToColor, defaultBpmnColors.red);
   }
 
-  private _markLayoutChangedElements(layoutChangedElements: any): void {
+  private _markLayoutChangedElements(layoutChangedElements: object): void {
     const elementsToColor: Array<IShape> = this._getElementsToColor(layoutChangedElements);
 
     this._colorElements(elementsToColor, defaultBpmnColors.purple);
   }
 
-  private _markChangedElements(changedElements: any): void {
+  private _markChangedElements(changedElements: object): void {
     const elementsToColor: Array<IShape> = this._getElementsToColor(changedElements);
 
     this._colorElements(elementsToColor, defaultBpmnColors.orange);
   }
 
   private async _updateDiffView(): Promise<void> {
-    const addedElements: any = this.changes._added;
-    const deletedElements: any = this.changes._removed;
-    const changedElements: any = this.changes._changed;
-    const layoutChangedElements: any = this.changes._layoutChanged;
+    const addedElements: object = this.changes._added;
+    const deletedElements: object = this.changes._removed;
+    const changedElements: object = this.changes._changed;
+    const layoutChangedElements: object = this.changes._layoutChanged;
 
     if (this._currentDiffMode === DiffMode.PreviousToCurrent) {
       if (this.xml === undefined || this.xml === null) {
