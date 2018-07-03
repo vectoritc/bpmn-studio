@@ -5,7 +5,9 @@ import {IFileInfo} from './contracts/processengine/index';
 import {NotificationService} from './modules/notification/notification.service';
 import {TokenRepository} from './modules/token-repository/token.repository';
 
-import {SolutionExplorerFileSystemRepository} from 'solutionexplorer.repository.filesystem';
+import {SolutionExplorerFileSystemRepository} from '@process-engine/solutionexplorer.repository.filesystem';
+import {SolutionExplorerProcessEngineRepository} from '@process-engine/solutionexplorer.repository.processengine';
+import {SolutionExplorerService} from '@process-engine/solutionexplorer.service';
 
 import environment from './environment';
 
@@ -13,8 +15,6 @@ export function configure(aurelia: Aurelia): void {
 
   const tokenRepository: TokenRepository = new TokenRepository();
   aurelia.container.registerInstance('TokenRepository', tokenRepository);
-
-  const fileSystemrepository: SolutionExplorerFileSystemRepository = new SolutionExplorerFileSystemRepository();
 
   if (navigator.cookieEnabled === false) {
     const url: string = location.href;
@@ -27,7 +27,15 @@ export function configure(aurelia: Aurelia): void {
     const fileInfo: IFileInfo = ipcRenderer.sendSync('get_opened_file');
     aurelia.container.registerInstance('FileContent', fileInfo);
     localStorage.setItem('processEngineRoute', `http://${newHost}`);
+
+    // Register SolutionExplorerFileSystemService
+    const fileSystemrepository: SolutionExplorerFileSystemRepository = new SolutionExplorerFileSystemRepository();
+    const filesystemSolutionexplorerService: SolutionExplorerService = new SolutionExplorerService(fileSystemrepository);
+    aurelia.container.registerInstance('SolutionExplorerServiceFileSystem', filesystemSolutionexplorerService);
   }
+  const processengineRepository: SolutionExplorerProcessEngineRepository = new SolutionExplorerProcessEngineRepository();
+  const solutionexplorerService: SolutionExplorerService = new SolutionExplorerService(processengineRepository);
+  aurelia.container.registerInstance('SolutionExplorerServiceProcessEngine', solutionexplorerService);
 
   if (window.localStorage.getItem('processEngineRoute')) {
     const processEngineRoute: string = window.localStorage.getItem('processEngineRoute');
@@ -48,7 +56,6 @@ export function configure(aurelia: Aurelia): void {
     .feature('modules/notification')
     .feature('modules/authentication')
     .feature('modules/bpmn-studio_client', tokenRepository)
-    .feature('modules/solutionexplorer-service', fileSystemrepository)
     .feature('resources')
     .plugin('aurelia-bootstrap')
     .plugin('aurelia-validation');
@@ -66,6 +73,7 @@ export function configure(aurelia: Aurelia): void {
 
     // check if the processengine started successfull
     if ((<any> window).nodeRequire) {
+
       const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
       // subscribe to processengine status
       ipcRenderer.send('add_internal_processengine_status_listener');
