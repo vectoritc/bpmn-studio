@@ -9,10 +9,12 @@ import environment from '../../environment';
 
 @inject(EventAggregator)
 export class BpmnDiffView {
+  private _eventAggregator: EventAggregator;
+
   private _leftViewer: IBpmnModeler;
   private _rightViewer: IBpmnModeler;
   private _lowerViewer: IBpmnModeler;
-  private _eventAggregator: EventAggregator;
+
   private _currentDiffMode: DiffMode;
 
   @bindable() public xml: string;
