@@ -23,6 +23,8 @@ export class ProcessSolutionPanel {
   public processengineSolutionString: string;
   public openedProcessEngineSolution: ISolution;
   public openedFileSystemSolution: ISolution;
+  public fileSystemIndexCardIsActive: boolean = true;
+  public processEngineIndexCardIsActive: boolean = false;
 
   constructor(eventAggregator: EventAggregator,
               solutionExplorerServiceProcessEngine: ISolutionExplorerService,
@@ -90,6 +92,16 @@ export class ProcessSolutionPanel {
 
     await this._solutionExplorerServiceFileSystem.openSolution(event.target.files[0].path, i);
     this.openedFileSystemSolution = await this._solutionExplorerServiceFileSystem.loadSolution();
+  }
+
+  public openFileSystemIndexCard(): void {
+    this.fileSystemIndexCardIsActive = true;
+    this.processEngineIndexCardIsActive = false;
+  }
+
+  public openProcessEngineIndexCard(): void {
+    this.fileSystemIndexCardIsActive = false;
+    this.processEngineIndexCardIsActive = true;
   }
 
   private async _refreshProcesslist(): Promise<void> {

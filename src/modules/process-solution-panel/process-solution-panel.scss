@@ -33,3 +33,17 @@
   visibility: hidden;
   height: 0;
 }
+
+.solution-explorer-index-cards {
+  display: flex;
+  border-bottom: 2px solid #dcdbdb;
+}
+
+.index-card {
+  padding: 8px 12px;
+  color: darkgray;
+}
+
+.index-card--active {
+  color: #5e5e5e;
+}
