@@ -33,6 +33,7 @@ export class DiagramExportService {
   public async exportJPEG(process: IProcessDefEntity): Promise<void> {
     const svg: string = await this.getSVG();
     const imageURL: string = await this._generateImageFromSVG('jpeg', svg);
+
     download(imageURL, `${process.name}.jpeg`, 'image/jpeg');
   }
 
