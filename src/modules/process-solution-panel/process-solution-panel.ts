@@ -102,6 +102,13 @@ export class ProcessSolutionPanel {
     this.openedFileSystemSolutions.push(solution);
   }
 
+  public closeFileSystemSolution(solutionToClose: ISolution): void {
+    const index: number = this.openedFileSystemSolutions.findIndex((solution: ISolution) => {
+      return solution.uri === solutionToClose.uri;
+    });
+    this.openedFileSystemSolutions.splice(index);
+  }
+
   public openFileSystemIndexCard(): void {
     this.fileSystemIndexCardIsActive = true;
     this.processEngineIndexCardIsActive = false;
