@@ -24,7 +24,6 @@ export class BasicsSection implements ISection {
 
   private _businessObjInPanel: IModdleElement;
   private _moddle: IBpmnModdle;
-  private _selectedElement: IModdleElement;
   private _propertyElement: IPropertyElement;
   private _eventAggregator: EventAggregator;
 
@@ -82,7 +81,6 @@ export class BasicsSection implements ISection {
 
   private _init(): void {
     this._propertyElement = this._getPropertyElement();
-    this._selectedElement = this._businessObjInPanel;
     this._reloadProperties();
   }
 
@@ -152,13 +150,6 @@ export class BasicsSection implements ISection {
 
     const extensionElements: IModdleElement = this._moddle.create('bpmn:ExtensionElements', {values: extensionValues});
     this._businessObjInPanel.extensionElements = extensionElements;
-  }
-
-  private _createEmptyPropertyElement(): void {
-    const propertyValues: Array<IProperty> = [];
-
-    const extensionPropertyElement: IPropertyElement = this._moddle.create('camunda:Properties', {values: propertyValues});
-    this._businessObjInPanel.extensionElements.values.push(extensionPropertyElement);
   }
 
   private _publishDiagramChange(): void {
