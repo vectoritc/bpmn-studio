@@ -22,7 +22,7 @@ export class ProcessSolutionPanel {
   public processes: IPagination<IProcessDefEntity>;
   public processengineSolutionString: string;
   public openedProcessEngineSolution: ISolution;
-  public openedFileSystemSolution: ISolution;
+  public openedFileSystemSolutions: Array<ISolution> = [];
   public fileSystemIndexCardIsActive: boolean = true;
   public processEngineIndexCardIsActive: boolean = false;
 
@@ -83,7 +83,7 @@ export class ProcessSolutionPanel {
     this.openedProcessEngineSolution = await this._solutionExplorerServiceProcessEngine.loadSolution();
   }
 
-  public async filechange(event: any): Promise<void> {
+  public async onSolutionInputChange(event: any): Promise<void> {
     const i: IIdentity = {
       id: 'test',
       name: 'test',
@@ -91,7 +91,9 @@ export class ProcessSolutionPanel {
     };
 
     await this._solutionExplorerServiceFileSystem.openSolution(event.target.files[0].path, i);
-    this.openedFileSystemSolution = await this._solutionExplorerServiceFileSystem.loadSolution();
+    const solution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
+
+    this.openedFileSystemSolutions.push(solution);
   }
 
   public openFileSystemIndexCard(): void {

@@ -26,12 +26,18 @@
 }
 
 .solution-input-group {
+  margin-top: 20px;
   text-align: center;
 }
 
 .solution-input {
   visibility: hidden;
   height: 0;
+}
+
+.solution-headline {
+  word-wrap: break-word;
+  color: darkgray;
 }
 
 .solution-explorer-index-cards {

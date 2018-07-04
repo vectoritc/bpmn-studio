@@ -13,12 +13,15 @@
 
     <div class="solution-explorer__filesystem" if.bind="fileSystemIndexCardIsActive">
       <div class="process-explorer__heading">FileSystem Solution Explorer</div>
-      <div class="solution-input-group">
-        <button class="open-solution-button" id="solutionInputButton">Open Solution</button>
-        <input class="solution-input" type="file" change.delegate="filechange($event)" id="solutionInput" webkitdirectory>
+      <div repeat.for="solution of openedFileSystemSolutions">
+        <div class="solution-headline" if.bind="openedFileSystemSolutions">${solution.name}</div>
+        <div repeat.for="diagram of solution.diagrams" class="process-explorer__structure-item">
+          <a route-href="route: diagram-detail; params.bind: {diagramName: diagram.name}"><i class="fa fa-caret-right"></i> ${diagram.name}</a>
+        </div>
       </div>
-      <div repeat.for="diagram of openedFileSystemSolution.diagrams" class="process-explorer__structure-item">
-        <a route-href="route: diagram-detail; params.bind: {diagramName: diagram.name}"><i class="fa fa-caret-right"></i> ${diagram.name}</a>
+      <div class="solution-input-group">
+        <button class="open-solution-button" id="solutionInputButton" if.bind="!openedFileSystemSolution">Open a Solution</button>
+        <input class="solution-input" type="file" change.delegate="onSolutionInputChange($event)" id="solutionInput" webkitdirectory>
       </div>
     </div>
 
