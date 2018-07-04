@@ -9,6 +9,7 @@ import {SolutionExplorerFileSystemRepository} from '@process-engine/solutionexpl
 import {SolutionExplorerProcessEngineRepository} from '@process-engine/solutionexplorer.repository.processengine';
 import {SolutionExplorerService} from '@process-engine/solutionexplorer.service';
 
+import { IIdentity } from '@essential-projects/core_contracts';
 import environment from './environment';
 
 export function configure(aurelia: Aurelia): void {
@@ -48,6 +49,17 @@ export function configure(aurelia: Aurelia): void {
     environment.processengine.routes.userTasks =  `${processEngineRoute}/datastore/UserTask`;
     environment.processengine.routes.importBPMN = `${processEngineRoute}/processengine/create_bpmn_from_xml`;
   }
+
+  /**
+   * Register Fake Identity for SolutionExplorer
+   * TODO: Get real identity when IAM is finished
+  */
+  const fakeIdentity: IIdentity = {
+    name: 'fakeIdentity',
+    id: 'fakeIdentity',
+    roles: [],
+  };
+  aurelia.container.registerInstance('Identity', fakeIdentity);
 
   aurelia.use
     .standardConfiguration()
