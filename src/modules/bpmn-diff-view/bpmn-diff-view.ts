@@ -206,8 +206,6 @@ export class BpmnDiffView {
           return;
         }
 
-        viewer.get('canvas').zoom('fit-viewport');
-
         resolve();
       });
     });
