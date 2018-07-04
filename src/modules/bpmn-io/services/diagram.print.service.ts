@@ -1,14 +1,18 @@
 import {IBpmnModeler} from '../../../contracts';
+import {NotificationType} from '../../../contracts/notification/constants';
 import {IPrintService} from '../../../contracts/printing/IPrintService';
+import {NotificationService} from '../../notification/notification.service';
 
 import * as print from 'print-js';
 
 export class DiagramPrintService implements IPrintService {
 
   private _modeler: IBpmnModeler;
+  private _notificationService: NotificationService;
 
-  constructor(modeler: IBpmnModeler) {
+  constructor(modeler: IBpmnModeler, notificationService: NotificationService) {
     this._modeler = modeler;
+    this._notificationService = notificationService;
   }
 
   /**
@@ -17,14 +21,20 @@ export class DiagramPrintService implements IPrintService {
    */
   public async printDiagram(): Promise<void> {
     const svg: string = await this._getSVG();
-    const png: string = await this._generateImageFromSVG('png', svg);
 
-    const printOptions: {printable: string, type?: string} = {
-      printable: png,
-      type: 'image',
-    };
+    try {
+      const png: string = await this._generateImageFromSVG('png', svg);
 
-    print.default(printOptions);
+      const printOptions: {printable: string, type?: string} = {
+        printable: png,
+        type: 'image',
+      };
+
+      print.default(printOptions);
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR,
+        `An error occurred while processing the image for printing.`);
+    }
   }
 
   private _getSVG(): Promise<string> {
