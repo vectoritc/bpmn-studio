@@ -29,8 +29,6 @@ export class BpmnDiffView {
   private _elementRegistry: IElementRegistry;
 
   private _currentDiffMode: DiffMode;
-  private _changing: boolean;
-  private _syncIndex: number = 0;
 
   @bindable() public xml: string;
   @bindable() public savedxml: string;
