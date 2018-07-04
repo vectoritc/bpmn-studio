@@ -24,7 +24,6 @@ export class BasicsSection implements ISection {
 
   private _businessObjInPanel: IModdleElement;
   private _moddle: IBpmnModdle;
-  private _selectedElement: IModdleElement;
   private _propertyElement: IPropertyElement;
   private _eventAggregator: EventAggregator;
 
@@ -35,7 +34,7 @@ export class BasicsSection implements ISection {
   public activate(model: IPageModel): void {
     this._businessObjInPanel = model.elementInPanel.businessObject;
     this._moddle = model.modeler.get('moddle');
-    this._init();
+    this._reloadProperties();
   }
 
   public isSuitableForElement(element: IShape): boolean {
@@ -59,6 +58,18 @@ export class BasicsSection implements ISection {
     this.newNames.push('');
     this.newValues.push('');
 
+    const businessObjectHasNoExtensionElements: boolean = this._businessObjInPanel.extensionElements === undefined
+                                                       || this._businessObjInPanel.extensionElements === null;
+    if (businessObjectHasNoExtensionElements) {
+      this._createExtensionElement();
+    }
+
+    this._propertyElement = this._getPropertyElement();
+
+    if (this._propertyElement.values === undefined) {
+      this._propertyElement.values = [];
+    }
+
     this._propertyElement.values.push(bpmnProperty);
     this.properties.push(bpmnProperty);
     this._publishDiagramChange();
@@ -80,28 +91,37 @@ export class BasicsSection implements ISection {
     this._publishDiagramChange();
   }
 
-  private _init(): void {
-    this._propertyElement = this._getPropertyElement();
-    this._selectedElement = this._businessObjInPanel;
-    this._reloadProperties();
-  }
-
   private _reloadProperties(): void {
     this.properties = [];
     this.newNames = [];
     this.newValues = [];
 
-    const elementHasNoProperties: boolean = this._propertyElement === undefined
-                                         || this._propertyElement === null
-                                         || this._propertyElement.values === undefined
-                                         || this._propertyElement.values === null
-                                         || this._propertyElement.values.length === 0;
+    const businessObjectHasNoExtensionElements: boolean = this._businessObjInPanel.extensionElements === undefined
+                                                       || this._businessObjInPanel.extensionElements === null;
 
-    if (elementHasNoProperties) {
+    if (businessObjectHasNoExtensionElements) {
       return;
     }
 
-    const properties: Array<IProperty> = this._propertyElement.values;
+    const extensionsPropertyElement: IPropertyElement  =
+      this._businessObjInPanel.extensionElements.values
+        .find((extensionValue: IExtensionElement) => {
+          const extensionIsPropertyElement: boolean = extensionValue.$type === 'camunda:Properties'
+                                                   && extensionValue.values !== undefined
+                                                   && extensionValue.values !== null
+                                                   && extensionValue.values.length !== 0;
+
+          return extensionIsPropertyElement;
+        });
+
+    const extensionElementHasNoPropertyElement: boolean = extensionsPropertyElement === undefined
+                                                       || extensionsPropertyElement === null;
+
+    if (extensionElementHasNoPropertyElement) {
+      return;
+    }
+
+    const properties: Array<IProperty> = extensionsPropertyElement.values;
     for (const property of properties) {
       if (property.$type !== 'camunda:Property') {
         continue;
@@ -113,26 +133,11 @@ export class BasicsSection implements ISection {
   }
 
   private _getPropertyElement(): IPropertyElement {
-    const hasBusinessObjExtensionElements: boolean = this._businessObjInPanel.extensionElements === undefined
-                                                  || this._businessObjInPanel.extensionElements === null;
-
-    if (hasBusinessObjExtensionElements) {
-      this._createExtensionElement();
-    }
-
     const propertyElement: IPropertyElement  = this._businessObjInPanel.extensionElements.values.find((extensionValue: IExtensionElement) => {
-      const extensionIsPropertyElement: boolean = extensionValue.$type === 'camunda:Properties'
-                                               && extensionValue.values !== undefined
-                                               && extensionValue.values !== null;
+      const extensionIsPropertyElement: boolean = extensionValue.$type === 'camunda:Properties';
 
       return extensionIsPropertyElement;
     });
-
-    if (propertyElement === undefined) {
-      this._createEmptyPropertyElement();
-
-      return this._getPropertyElement();
-    }
 
     return propertyElement;
   }
@@ -152,13 +157,6 @@ export class BasicsSection implements ISection {
 
     const extensionElements: IModdleElement = this._moddle.create('bpmn:ExtensionElements', {values: extensionValues});
     this._businessObjInPanel.extensionElements = extensionElements;
-  }
-
-  private _createEmptyPropertyElement(): void {
-    const propertyValues: Array<IProperty> = [];
-
-    const extensionPropertyElement: IPropertyElement = this._moddle.create('camunda:Properties', {values: propertyValues});
-    this._businessObjInPanel.extensionElements.values.push(extensionPropertyElement);
   }
 
   private _publishDiagramChange(): void {
