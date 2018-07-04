@@ -1,7 +1,7 @@
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
 import {RouteConfig, Router} from 'aurelia-router';
-import {IProcessDefEntity} from '../../contracts';
+import {IEventFunction, IProcessDefEntity} from '../../contracts';
 import environment from '../../environment';
 
 @inject(Router, EventAggregator)
@@ -110,7 +110,7 @@ export class NavBar {
    *
    * @param event: Mouse event
    */
-  public dropdownClickListener: EventListenerOrEventListenerObject =  (event: MouseEvent): void => {
+  public dropdownClickListener: IEventFunction =  (event: MouseEvent): void => {
     const eventTarget: Node = event.target as Node;
 
     const hasNavbarNoPreviousDropdown: boolean = this.dropdown === undefined || this.dropdown === null;

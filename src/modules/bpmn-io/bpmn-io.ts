@@ -9,6 +9,7 @@ import {IBpmnModdle,
         IDiagramExportService,
         IDiagramPrintService,
         IEditorActions,
+        IEventFunction,
         IKeyboard,
         IProcessDefEntity,
         NotificationType,
@@ -129,12 +130,12 @@ export class BpmnIo {
       const windowEvent: Event = e || window.event;
       windowEvent.cancelBubble = true;
 
-      const mousemoveFunction: EventListenerOrEventListenerObject =  (event: Event): void => {
+      const mousemoveFunction: IEventFunction = (event: Event): void => {
         this.resize(event);
         document.getSelection().empty();
       };
 
-      const mouseUpFunction: EventListenerOrEventListenerObject =  (event: Event): void => {
+      const mouseUpFunction: IEventFunction = (): void => {
         document.removeEventListener('mousemove', mousemoveFunction);
         document.removeEventListener('mouseup', mouseUpFunction);
       };
