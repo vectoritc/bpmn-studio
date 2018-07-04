@@ -96,10 +96,10 @@ export class BpmnDiffView {
   }
 
   private _syncViewbox(firstViewer: IBpmnModeler, secondViewer: IBpmnModeler, thirdViewer: IBpmnModeler): void {
-    firstViewer.on('canvas.viewbox.changed', this._update(secondViewer, thirdViewer));
+    firstViewer.on('canvas.viewbox.changed', this._updateViewers(secondViewer, thirdViewer));
   }
 
-  private _update(firstViewer: IBpmnModeler, secondViewer: IBpmnModeler): Function {
+  private _updateViewers(firstViewer: IBpmnModeler, secondViewer: IBpmnModeler): Function {
     return (e: any): void => {
       this._syncIndex++;
 
