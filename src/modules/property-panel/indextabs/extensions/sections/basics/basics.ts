@@ -58,6 +58,18 @@ export class BasicsSection implements ISection {
     this.newNames.push('');
     this.newValues.push('');
 
+    const businessObjectHasNoExtensionElements: boolean = this._businessObjInPanel.extensionElements === undefined
+                                                       || this._businessObjInPanel.extensionElements === null;
+    if (businessObjectHasNoExtensionElements) {
+      this._createExtensionElement();
+    }
+
+    this._propertyElement = this._getPropertyElement();
+
+    if (this._propertyElement.values === undefined) {
+      this._propertyElement.values = [];
+    }
+
     this._propertyElement.values.push(bpmnProperty);
     this.properties.push(bpmnProperty);
     this._publishDiagramChange();
@@ -84,17 +96,32 @@ export class BasicsSection implements ISection {
     this.newNames = [];
     this.newValues = [];
 
-    const elementHasNoProperties: boolean = this._propertyElement === undefined
-                                         || this._propertyElement === null
-                                         || this._propertyElement.values === undefined
-                                         || this._propertyElement.values === null
-                                         || this._propertyElement.values.length === 0;
+    const businessObjectHasNoExtensionElements: boolean = this._businessObjInPanel.extensionElements === undefined
+                                                       || this._businessObjInPanel.extensionElements === null;
 
-    if (elementHasNoProperties) {
+    if (businessObjectHasNoExtensionElements) {
       return;
     }
 
-    const properties: Array<IProperty> = this._propertyElement.values;
+    const extensionsPropertyElement: IPropertyElement  =
+      this._businessObjInPanel.extensionElements.values
+        .find((extensionValue: IExtensionElement) => {
+          const extensionIsPropertyElement: boolean = extensionValue.$type === 'camunda:Properties'
+                                                   && extensionValue.values !== undefined
+                                                   && extensionValue.values !== null
+                                                   && extensionValue.values.length !== 0;
+
+          return extensionIsPropertyElement;
+        });
+
+    const extensionElementHasNoPropertyElement: boolean = extensionsPropertyElement === undefined
+                                                       || extensionsPropertyElement === null;
+
+    if (extensionElementHasNoPropertyElement) {
+      return;
+    }
+
+    const properties: Array<IProperty> = extensionsPropertyElement.values;
     for (const property of properties) {
       if (property.$type !== 'camunda:Property') {
         continue;
@@ -106,26 +133,11 @@ export class BasicsSection implements ISection {
   }
 
   private _getPropertyElement(): IPropertyElement {
-    const hasBusinessObjExtensionElements: boolean = this._businessObjInPanel.extensionElements === undefined
-                                                  || this._businessObjInPanel.extensionElements === null;
-
-    if (hasBusinessObjExtensionElements) {
-      this._createExtensionElement();
-    }
-
     const propertyElement: IPropertyElement  = this._businessObjInPanel.extensionElements.values.find((extensionValue: IExtensionElement) => {
-      const extensionIsPropertyElement: boolean = extensionValue.$type === 'camunda:Properties'
-                                               && extensionValue.values !== undefined
-                                               && extensionValue.values !== null;
+      const extensionIsPropertyElement: boolean = extensionValue.$type === 'camunda:Properties';
 
       return extensionIsPropertyElement;
     });
-
-    if (propertyElement === undefined) {
-      this._createEmptyPropertyElement();
-
-      return this._getPropertyElement();
-    }
 
     return propertyElement;
   }
