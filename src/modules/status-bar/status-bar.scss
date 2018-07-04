@@ -48,8 +48,11 @@
 }
 
 .status-bar__element {
+  display: inline-block;
+  min-width: 50px;
   padding: 2px 10px;
   color: white;
+  text-align: center;
   white-space: nowrap;
 }
 
