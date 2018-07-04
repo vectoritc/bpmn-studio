@@ -11,7 +11,7 @@
       </div>
     </div>
 
-    <div class="solution-explorer__filesystem" if.bind="fileSystemIndexCardIsActive && enableFileSystemSolutions">
+    <div class="solution-explorer__filesystem" show.bind="fileSystemIndexCardIsActive && enableFileSystemSolutions">
       <div class="process-explorer__heading">FileSystem Solution Explorer</div>
       <div repeat.for="solution of openedFileSystemSolutions">
         <div class="solution-headline" if.bind="openedFileSystemSolutions">

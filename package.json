@@ -86,7 +86,7 @@
     "@process-engine/solutionexplorer.repository.contracts": "0.0.1",
     "@process-engine/solutionexplorer.repository.filesystem": "0.0.1",
     "@process-engine/solutionexplorer.repository.processengine": "0.0.1",
-    "@process-engine/solutionexplorer.service": "0.0.1",
+    "@process-engine/solutionexplorer.service": "0.0.2",
     "@process-engine/solutionexplorer.service.contracts": "0.0.1",
     "aurelia-validation": "^1.1.2",
     "electron-is-dev": "^0.3.0",
