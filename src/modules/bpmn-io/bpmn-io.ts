@@ -41,8 +41,12 @@ export class BpmnIo {
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
   private _diagramIsValid: boolean = true;
+<<<<<<< HEAD
   private _exportService: DiagramExportService;
   private _printService: DiagramPrintService;
+=======
+  private _diagramExportService: DiagramExportService;
+>>>>>>> eb6b90b... :lipstick: Renbame exportService to diagramExportService
 
   /**
    * We are using the direct reference of a container element to place the tools of bpmn-js
@@ -93,8 +97,12 @@ export class BpmnIo {
       this._eventAggregator.publish(environment.events.diagramChange);
     }, handlerPriority);
 
+<<<<<<< HEAD
     this._exportService = new DiagramExportService(this.modeler);
     this._printService = new DiagramPrintService(this.modeler);
+=======
+    this._diagramExportService = new DiagramExportService(this.modeler);
+>>>>>>> eb6b90b... :lipstick: Renbame exportService to diagramExportService
   }
 
   public attached(): void {
@@ -148,16 +156,16 @@ export class BpmnIo {
         this._diagramIsValid = false;
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, (process: IProcessDefEntity) => {
-        this._exportService.exportBPMN(process);
+        this._diagramExportService.exportBPMN(process);
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, (process: IProcessDefEntity) => {
-        this._exportService.exportSVG(process);
+        this._diagramExportService.exportSVG(process);
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, (process: IProcessDefEntity) => {
-        this._exportService.exportPNG(process);
+        this._diagramExportService.exportPNG(process);
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, (process: IProcessDefEntity) => {
-        this._exportService.exportJPEG(process);
+        this._diagramExportService.exportJPEG(process);
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.printDiagram}`, () => {
         this._printService.printDiagram();
@@ -235,7 +243,7 @@ export class BpmnIo {
 
   public async toggleXMLView(): Promise<void> {
     if (!this.showXMLView) {
-      this.xml = await this._exportService.getXML();
+      this.xml = await this._diagramExportService.getXML();
       this.showXMLView = true;
     } else {
       this.showXMLView = false;
@@ -243,7 +251,7 @@ export class BpmnIo {
   }
 
   public getXML(): Promise<string> {
-    return this._exportService.getXML();
+    return this._diagramExportService.getXML();
   }
 
   private _setNewPropertyPanelWidthFromMousePosition(mousePosition: number): void {

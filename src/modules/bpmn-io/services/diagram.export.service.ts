@@ -25,14 +25,15 @@ export class DiagramExportService {
 
   public async exportPNG(process: IProcessDefEntity): Promise<void> {
     const svg: string = await this.getSVG();
+    const imageURL: string = await this._generateImageFromSVG('png', svg);
 
-    download(this._generateImageFromSVG('png', svg), `${process.name}.png`, 'image/png');
+    download(imageURL, `${process.name}.png`, 'image/png');
   }
 
   public async exportJPEG(process: IProcessDefEntity): Promise<void> {
     const svg: string = await this.getSVG();
-
-    download(this._generateImageFromSVG('jpeg', svg), `${process.name}.jpeg`, 'image/jpeg');
+    const imageURL: string = await this._generateImageFromSVG('jpeg', svg);
+    download(imageURL, `${process.name}.jpeg`, 'image/jpeg');
   }
 
   public getXML(): Promise<string> {
@@ -81,18 +82,17 @@ export class DiagramExportService {
     canvas.width = svgWidth * pixelRatio;
     canvas.height = svgHeight * pixelRatio;
 
-    // make the background white for every format
-    context.globalCompositeOperation = 'destination-over';
+    // Make the background white for every format
     context.fillStyle = 'white';
     context.fillRect(0, 0, canvas.width, canvas.height);
 
-    // get image as base64 datastring
+    // Draw the image to the canvas
     const imageDataURL: string = await this._drawSVGToCanvas(svg, canvas, context, encoding);
 
     return imageDataURL;
   }
 
-      /**
+  /**
    * Calculate the pixel ratio for the given DPI.
    * The Pixel Ratio is the factor which is needed, to extend the
    * the width and height of a canvas to match a rendered resolution
@@ -117,7 +117,7 @@ export class DiagramExportService {
     return pixelRatio;
   }
 
-    /**
+  /**
    * Draws a given SVG image to a Canvas and converts it to an image.
    *
    * @param svgContent SVG Content that should be drawn to the image.
@@ -134,7 +134,7 @@ export class DiagramExportService {
 
     const imageElement: HTMLImageElement = document.createElement('img');
 
-    /*
+   /*
     * This makes sure, that the base64 encoded SVG does not contain any
     * escaped html characters (such as &lt; instead of <).
     *
@@ -161,7 +161,7 @@ export class DiagramExportService {
       };
 
       imageElement.onerror = (errorEvent: ErrorEvent): void => {
-        /*
+       /*
         * TODO: Find out if we can reject the promise with a more specify
         * error here.
         */
