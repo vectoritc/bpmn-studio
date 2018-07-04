@@ -3,6 +3,7 @@ import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 
 import {IBpmnModeler,
+        IDiagramExportService,
         IEditorActions,
         IKeyboard,
         IProcessDefEntity,
@@ -40,7 +41,8 @@ export class BpmnIo {
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
   private _diagramIsValid: boolean = true;
-  private _diagramExportService: DiagramExportService;
+  private _diagramPrintService: DiagramPrintService;
+  private _diagramExportService: IDiagramExportService;
 
   /**
    * We are using the direct reference of a container element to place the tools of bpmn-js

@@ -1,10 +1,10 @@
 import * as download from 'downloadjs';
 import * as beautify from 'xml-beautifier';
-import {IBpmnModeler, IProcessDefEntity} from '../../../contracts';
+import {IBpmnModeler, IDiagramExportService, IProcessDefEntity} from '../../../contracts';
 import {NotificationType} from '../../../contracts/notification/constants';
 import {NotificationService} from '../../notification/notification.service';
 
-export class DiagramExportService {
+export class DiagramExportService implements IDiagramExportService {
 
   private _modeler: IBpmnModeler;
   private _notificationService: NotificationService;
