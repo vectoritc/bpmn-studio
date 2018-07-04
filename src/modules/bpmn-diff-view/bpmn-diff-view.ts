@@ -53,6 +53,9 @@ export class BpmnDiffView {
         this._currentDiffMode = diffMode;
         this._updateDiffView();
       }),
+      this._eventAggregator.subscribe(environment.events.diffView.toggleChangeList, () => {
+        console.log(this.changes);
+      }),
     ];
   }
 

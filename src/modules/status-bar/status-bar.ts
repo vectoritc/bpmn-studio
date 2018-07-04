@@ -51,6 +51,10 @@ export class StatusBar {
     this._eventAggregator.publish(environment.events.diffView.changeDiffMode, mode);
   }
 
+  public toggleChangeList(): void {
+    this._eventAggregator.publish(environment.events.diffView.toggleChangeList);
+  }
+
   public toggleDiffView(): void {
     if (this.xmlIsShown) {
       this.toggleXMLView();
