@@ -5,10 +5,12 @@ import {bindable, inject, observable} from 'aurelia-framework';
 import {IBpmnModeler,
         IEditorActions,
         IKeyboard,
+        IProcessDefEntity,
         NotificationType,
       } from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from './../notification/notification.service';
+import {DiagramExportService} from './services/index';
 
 const sideBarRightSize: number = 35;
 
@@ -38,6 +40,7 @@ export class BpmnIo {
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
   private _diagramIsValid: boolean = true;
+  private _exportService: DiagramExportService;
 
   /**
    * We are using the direct reference of a container element to place the tools of bpmn-js
@@ -87,6 +90,8 @@ export class BpmnIo {
     this.modeler.on('commandStack.changed', () => {
       this._eventAggregator.publish(environment.events.diagramChange);
     }, handlerPriority);
+
+    this._exportService = new DiagramExportService(this.modeler);
   }
 
   public attached(): void {
@@ -139,6 +144,18 @@ export class BpmnIo {
       this._eventAggregator.subscribe(environment.events.navBar.disableSaveButton, () => {
         this._diagramIsValid = false;
       }),
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, (process: IProcessDefEntity) => {
+        this._exportService.exportBPMN(process);
+      }),
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, (process: IProcessDefEntity) => {
+        this._exportService.exportSVG(process);
+      }),
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, (process: IProcessDefEntity) => {
+        this._exportService.exportPNG(process);
+      }),
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, (process: IProcessDefEntity) => {
+        this._exportService.exportJPEG(process);
+      }),
     ];
 
     const previousPropertyPanelWidth: string = window.localStorage.getItem('propertyPanelWidth');
@@ -184,30 +201,6 @@ export class BpmnIo {
     }
   }
 
-  public getXML(): Promise<string> {
-    return new Promise((resolve: Function, reject: Function): void => {
-      this.modeler.saveXML({}, (err: Error, result: string) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result);
-        }
-      });
-    });
-  }
-
-  public getSVG(): Promise<string> {
-    return new Promise((resolve: Function, reject: Function): void => {
-      this.modeler.saveSVG({}, (err: Error, result: string) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result);
-        }
-      });
-    });
-  }
-
   public togglePanel(): void {
     if (this._propertyPanelShouldOpen) {
       if (this._propertyPanelHasNoSpace) {
@@ -236,11 +229,15 @@ export class BpmnIo {
 
   public async toggleXMLView(): Promise<void> {
     if (!this.showXMLView) {
-      this.xml = await this.getXML();
+      this.xml = await this._exportService.getXML();
       this.showXMLView = true;
     } else {
       this.showXMLView = false;
     }
+  }
+
+  public getXML(): Promise<string> {
+    return this._exportService.getXML();
   }
 
   private _setNewPropertyPanelWidthFromMousePosition(mousePosition: number): void {
