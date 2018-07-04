@@ -34,7 +34,7 @@ export class BasicsSection implements ISection {
   public activate(model: IPageModel): void {
     this._businessObjInPanel = model.elementInPanel.businessObject;
     this._moddle = model.modeler.get('moddle');
-    this._init();
+    this._reloadProperties();
   }
 
   public isSuitableForElement(element: IShape): boolean {
@@ -77,11 +77,6 @@ export class BasicsSection implements ISection {
   public changeValue(index: number): void {
     this._propertyElement.values[index].value = this.newValues[index];
     this._publishDiagramChange();
-  }
-
-  private _init(): void {
-    this._propertyElement = this._getPropertyElement();
-    this._reloadProperties();
   }
 
   private _reloadProperties(): void {
