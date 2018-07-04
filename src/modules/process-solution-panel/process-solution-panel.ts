@@ -12,10 +12,11 @@ import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {AuthenticationStateEvent} from '../../contracts/index';
 import environment from '../../environment';
 
-@inject(EventAggregator, 'SolutionExplorerServiceProcessEngine', 'SolutionExplorerServiceFileSystem')
+@inject(EventAggregator, 'SolutionExplorerServiceProcessEngine', 'SolutionExplorerServiceFileSystem', 'Identity')
 export class ProcessSolutionPanel {
   private _subscriptions: Array<Subscription>;
   private _eventAggregator: EventAggregator;
+  private _identity: IIdentity;
   private _solutionExplorerServiceProcessEngine: ISolutionExplorerService;
   private _solutionExplorerServiceFileSystem: ISolutionExplorerService;
 
@@ -79,24 +80,13 @@ export class ProcessSolutionPanel {
 
   public async openProcessEngineSolution(): Promise<void> {
 
-    const i: IIdentity = {
-      id: 'test',
-      name: 'test',
-      roles: ['test'],
-    };
-
-    await this._solutionExplorerServiceProcessEngine.openSolution(this.processengineSolutionString, i);
+    await this._solutionExplorerServiceProcessEngine.openSolution(this.processengineSolutionString, this._identity);
     this.openedProcessEngineSolution = await this._solutionExplorerServiceProcessEngine.loadSolution();
   }
 
   public async onSolutionInputChange(event: any): Promise<void> {
-    const i: IIdentity = {
-      id: 'test',
-      name: 'test',
-      roles: ['test'],
-    };
 
-    await this._solutionExplorerServiceFileSystem.openSolution(event.target.files[0].path, i);
+    await this._solutionExplorerServiceFileSystem.openSolution(event.target.files[0].path, this._identity);
     const solution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
 
     this.openedFileSystemSolutions.push(solution);
