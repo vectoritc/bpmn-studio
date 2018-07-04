@@ -10,6 +10,7 @@ import {IBpmnModeler,
       } from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from './../notification/notification.service';
+import {DiagramPrintService} from './services/diagram.print.service';
 import {DiagramExportService} from './services/index';
 
 const sideBarRightSize: number = 35;
@@ -41,6 +42,7 @@ export class BpmnIo {
   private _subscriptions: Array<Subscription>;
   private _diagramIsValid: boolean = true;
   private _exportService: DiagramExportService;
+  private _printService: DiagramPrintService;
 
   /**
    * We are using the direct reference of a container element to place the tools of bpmn-js
@@ -92,6 +94,7 @@ export class BpmnIo {
     }, handlerPriority);
 
     this._exportService = new DiagramExportService(this.modeler);
+    this._printService = new DiagramPrintService(this.modeler);
   }
 
   public attached(): void {
@@ -155,6 +158,9 @@ export class BpmnIo {
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, (process: IProcessDefEntity) => {
         this._exportService.exportJPEG(process);
+      }),
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.printDiagram}`, () => {
+        this._printService.printDiagram();
       }),
     ];
 
@@ -386,7 +392,7 @@ export class BpmnIo {
     if (userWantsToPrint) {
       // Prevent the browser from handling the default action for CMD/CTRL + p.
       event.preventDefault();
-      this._eventAggregator.publish(environment.events.processDefDetail.printDiagram);
+      this._printService.printDiagram();
     }
   }
 
