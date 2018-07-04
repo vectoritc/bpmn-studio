@@ -110,10 +110,10 @@ export class BpmnDiffView {
     };
 
     const checkForMousemovement: IEventFunction = (): void => {
-      changingCanvasContainer.onmousemove = adjustViewboxes;
+      window.onmousemove = adjustViewboxes;
     };
     const stopCheckingForMousemovement: IEventFunction = (): void => {
-      changingCanvasContainer.onmousemove = null;
+      window.onmousemove = null;
     };
 
     changingCanvasContainer.onwheel = adjustViewboxes;
