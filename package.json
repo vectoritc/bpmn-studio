@@ -121,7 +121,6 @@
     "bluebird": "^3.5.1",
     "bootstrap": "^3.3.7",
     "browser-sync": "^2.13.0",
-    "canvg-browser": "^1.0.0",
     "connect-history-api-fallback": "^1.2.0",
     "debounce": "^1.0.2",
     "debug": "^3.1.0",

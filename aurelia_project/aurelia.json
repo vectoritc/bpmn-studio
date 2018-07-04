@@ -248,12 +248,6 @@
             ]
           },
           {
-            "name": "canvg-browser",
-            "path": "../node_modules/canvg-browser",
-            "main": "index.js",
-            "exports": "canvg"
-          },
-          {
             "name": "rgbcolor",
             "path": "../node_modules/rgbcolor",
             "main": "index.js"

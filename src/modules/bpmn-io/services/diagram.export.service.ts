@@ -1,7 +1,6 @@
-import * as canvg from 'canvg-browser';
 import * as download from 'downloadjs';
 import * as beautify from 'xml-beautifier';
-import {IBpmnModeler, ICanvgOptions, IProcessDefEntity} from '../../../contracts';
+import {IBpmnModeler, IProcessDefEntity} from '../../../contracts';
 
 export class DiagramExportService {
 
@@ -81,14 +80,6 @@ export class DiagramExportService {
 
     canvas.width = svgWidth * pixelRatio;
     canvas.height = svgHeight * pixelRatio;
-
-    const canvgOptions: ICanvgOptions = {
-      ignoreDimensions: true,
-      scaleWidth: canvas.width,
-      scaleHeight: canvas.height,
-    };
-
-    canvg(canvas, svg, canvgOptions);
 
     // make the background white for every format
     context.globalCompositeOperation = 'destination-over';

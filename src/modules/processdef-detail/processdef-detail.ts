@@ -8,7 +8,6 @@ import * as print from 'print-js';
 
 import {
   AuthenticationStateEvent,
-  ICanvgOptions,
   IExtensionElement,
   IFormElement,
   IModdleElement,
