@@ -7,9 +7,12 @@ import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {defaultBpmnColors,
   DiffMode,
   IBpmnModeler,
+  ICanvas,
   IColorPickerColor,
   IDiffChanges,
   IElementRegistry,
+  IEventBus,
+  IEventFunction,
   IModeling,
   IShape} from '../../contracts/index';
 import environment from '../../environment';
@@ -62,7 +65,7 @@ export class BpmnDiffView {
     this._modeling = this._diffModeler.get('modeling');
     this._elementRegistry = this._diffModeler.get('elementRegistry');
 
-    this._syncViewers(this._leftViewer, this._rightViewer, this._lowerViewer);
+    this._startSynchronizingViewers();
   }
 
   public xmlChanged(): void {
@@ -89,42 +92,35 @@ export class BpmnDiffView {
     this._colorElements(elementsToColor, defaultBpmnColors.red);
   }
 
-  private _syncViewers(firstViewer: IBpmnModeler, secondViewer: IBpmnModeler, thirdViewer: IBpmnModeler): void {
-    this._syncViewbox(firstViewer, secondViewer, thirdViewer);
-    this._syncViewbox(secondViewer, thirdViewer, firstViewer);
-    this._syncViewbox(thirdViewer, firstViewer, secondViewer);
+  private _startSynchronizingViewers(): void {
+    const lowerCanvas: ICanvas = this._lowerViewer.get('canvas');
+    const leftCanvas: any = this._leftViewer.get('canvas');
+    const rightCanvas: any = this._rightViewer.get('canvas');
+
+    this.setEventFunctions(lowerCanvas, leftCanvas, rightCanvas);
+    this.setEventFunctions(leftCanvas, rightCanvas, lowerCanvas);
+    this.setEventFunctions(rightCanvas, lowerCanvas, leftCanvas);
   }
 
-  private _syncViewbox(firstViewer: IBpmnModeler, secondViewer: IBpmnModeler, thirdViewer: IBpmnModeler): void {
-    firstViewer.on('canvas.viewbox.changed', this._updateViewers(secondViewer, thirdViewer));
-  }
+  private setEventFunctions(changingCanvas: ICanvas, firstCanvas: ICanvas, secondCanvas: ICanvas): void {
+    const changingCanvasContainer: HTMLElement = changingCanvas._container;
 
-  private _updateViewers(firstViewer: IBpmnModeler, secondViewer: IBpmnModeler): Function {
-    return (e: any): void => {
-      this._syncIndex++;
-
-      /*
-      * This check is needed to prevent an infinite loop of synchronizations caused by changing each other.
-      *
-      * For example:
-      * When the lower view gets changed, the right and the left view will get adjusted.
-      * After the left view got adjusted, the right and the lower view will get adjusted,...
-      */
-      if (this._changing) {
-        // tslint:disable-next-line:no-magic-numbers
-        const allViewersSynchronized: boolean = this._syncIndex === 3;
-        if (allViewersSynchronized) {
-          this._syncIndex = 0;
-          this._changing = false;
-        }
-
-        return;
-      }
-
-      this._changing = true;
-      firstViewer.get('canvas').viewbox(e.viewbox);
-      secondViewer.get('canvas').viewbox(e.viewbox);
+    const adjustViewboxes: IEventFunction = (): void => {
+      const changedViewbox: string = changingCanvas.viewbox();
+      firstCanvas.viewbox(changedViewbox);
+      secondCanvas.viewbox(changedViewbox);
     };
+
+    const checkForMousemovement: IEventFunction = (): void => {
+      changingCanvasContainer.onmousemove = adjustViewboxes;
+    };
+    const stopCheckingForMousemovement: IEventFunction = (): void => {
+      changingCanvasContainer.onmousemove = null;
+    };
+
+    changingCanvasContainer.onwheel = adjustViewboxes;
+    changingCanvasContainer.onmousedown = checkForMousemovement;
+    changingCanvasContainer.onmouseup = stopCheckingForMousemovement;
   }
 
   private _markLayoutChangedElements(layoutChangedElements: object): void {
