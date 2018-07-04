@@ -4,10 +4,7 @@ import {Redirect, Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
 import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
-import * as canvg from 'canvg-browser';
-import * as download from 'downloadjs';
 import * as print from 'print-js';
-import * as beautify from 'xml-beautifier';
 
 import {
   AuthenticationStateEvent,
@@ -94,20 +91,6 @@ export class ProcessDefDetail {
               );
           });
       }),
-      //  Export Subscriptions {{{ //
-      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, () => {
-        this._exportBPMN();
-      }),
-      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, () => {
-        this._exportSVG();
-      }),
-      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, () => {
-        this._exportPNG();
-      }),
-      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, () => {
-        this._exportJPEG();
-      }),
-      //  }}} Export Subscriptions //
 
       //  Start Button Subscription {{{ //
       this._eventAggregator.subscribe(environment.events.processDefDetail.startProcess, () => {
@@ -120,9 +103,9 @@ export class ProcessDefDetail {
       this._eventAggregator.subscribe(environment.events.diagramChange, () => {
         this._diagramHasChanged = true;
       }),
-      this._eventAggregator.subscribe(environment.events.processDefDetail.printDiagram, () => {
-        this._printDiagram();
-      }),
+      // this._eventAggregator.subscribe(environment.events.processDefDetail.printDiagram, () => {
+      //   this._printDiagram();
+      // }),
       //  }}} General Event Subscritions //
     ];
 
@@ -399,32 +382,6 @@ export class ProcessDefDetail {
     });
   }
 
-  //  Exporting Functions - Probably an ExportService is a better idea {{{ //
-  private async _exportBPMN(): Promise<void> {
-    const xml: string = await this.bpmnio.getXML();
-    const formattedXml: string = beautify(xml);
-
-    download(formattedXml, `${this.process.name}.bpmn`, 'application/bpmn20-xml');
-  }
-
-  private async _exportSVG(): Promise<void> {
-    const svg: string = await this.bpmnio.getSVG();
-
-    download(svg, `${this.process.name}.svg`, 'image/svg+xml');
-  }
-
-  private async _exportPNG(): Promise<void> {
-    const svg: string = await this.bpmnio.getSVG();
-
-    download(this._generateImageFromSVG('png', svg), `${this.process.name}.png`, 'image/png');
-  }
-
-  private async _exportJPEG(): Promise<void> {
-    const svg: string = await this.bpmnio.getSVG();
-
-    download(this._generateImageFromSVG('jpeg', svg), `${this.process.name}.jpeg`, 'image/jpeg');
-  }
-
   /**
    * This heavily relies on the resolution of the screen.
    *
@@ -432,78 +389,12 @@ export class ProcessDefDetail {
    * the generated image will be obtain from the BPMN.io canvas,
    * that is dependent on the screen size.
    */
-  public async _printDiagram(): Promise<void> {
-    const svg: string = await this.bpmnio.getSVG();
-    const png: string = this._generateImageFromSVG('png', svg);
+  // public async _printDiagram(): Promise<void> {
+  //   const svg: string = await this.bpmnio.getSVG();
+  //   const png: string = this._generateImageFromSVG('png', svg);
 
-    print.default({printable: png, type: 'image'});
-  }
-
-  private _generateImageFromSVG(desiredImageType: string, svg: any): string {
-    const encoding: string = `image/${desiredImageType}`;
-    const canvas: HTMLCanvasElement = document.createElement('canvas');
-    const context: CanvasRenderingContext2D = canvas.getContext('2d');
-
-    const svgWidth: number = parseInt(svg.match(/<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/)[1]);
-    const svgHeight: number = parseInt(svg.match(/<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/)[1]);
-
-    // For a print, we use 300 dpi
-    const targetDPI: number = 300;
-
-    /*
-     * TODO: Figure out, how to obtain the desired format of the print before
-     * printing. In the current implementation, I assume that we print to a
-     * DIN A4 Paper, which has a diagonal size of 14.17 inches.
-    */
-    const dinA4DiagonalSizeInch: number = 14.17;
-    const pixelRatio: number = this._calculatePixelRatioForDPI(svgWidth, svgHeight, targetDPI, dinA4DiagonalSizeInch);
-
-    canvas.width = svgWidth * pixelRatio;
-    canvas.height = svgHeight * pixelRatio;
-
-    const canvgOptions: ICanvgOptions = {
-      ignoreDimensions: true,
-      scaleWidth: canvas.width,
-      scaleHeight: canvas.height,
-    };
-
-    canvg(canvas, svg, canvgOptions);
-
-    // make the background white for every format
-    context.globalCompositeOperation = 'destination-over';
-    context.fillStyle = 'white';
-    context.fillRect(0, 0, canvas.width, canvas.height);
-
-    // get image as base64 datastring
-    const image: string = canvas.toDataURL(encoding);
-    return image;
-  }
-
-  /**
-   * Calculate the pixel ratio for the given DPI.
-   * The Pixel Ratio is the factor which is needed, to extend the
-   * the width and height of a canvas to match a rendered resolution
-   * with the targeting DPI.
-   *
-   * @param svgWidth With of the diagrams canvas element.
-   * @param svgHeight Height of the diagrams canvas element.
-   * @param targetDPI DPI of the output.
-   * @param diagonalSize Diagonal Size of the printed document.
-   */
-  private _calculatePixelRatioForDPI(svgWidth: number, svgHeight: number, targetDPI: number, diagonalSize: number): number {
-
-    // tslint:disable:no-magic-numbers
-    const svgWidthSquared: number = Math.pow(svgWidth, 2);
-    const svgHeightSquared: number = Math.pow(svgHeight, 2);
-
-    const diagonalResolution: number = Math.sqrt(svgWidthSquared + svgHeightSquared);
-
-    const originalDPI: number = diagonalResolution / diagonalSize;
-    const pixelRatio: number = targetDPI / originalDPI;
-
-    return pixelRatio;
-  }
-  //  }}} Exporting Functions - Probably an ExportService is a better idea //
+  //   print.default({printable: png, type: 'image'});
+  // }
 
   /**
    * This handler will set the diagram state to invalid, if the ValidateEvent arrives.
