@@ -54,6 +54,7 @@ export class BpmnDiffView {
         this._updateDiffView();
       }),
       this._eventAggregator.subscribe(environment.events.diffView.toggleChangeList, () => {
+        // tslint:disable-next-line
         console.log(this.changes);
       }),
     ];
