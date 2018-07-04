@@ -1,4 +1,4 @@
-import {inject} from 'aurelia-framework';
+import {inject, observable} from 'aurelia-framework';
 
 import {IIdentity} from '@essential-projects/core_contracts';
 import {
@@ -24,6 +24,7 @@ export class ProcessSolutionPanel {
   public processengineSolutionString: string;
   public openedProcessEngineSolution: ISolution;
   public openedFileSystemSolutions: Array<ISolution> = [];
+  public shownFileSystemSolution: Array<boolean> = [];
   public enableFileSystemSolutions: boolean = false;
   public fileSystemIndexCardIsActive: boolean = false;
   public processEngineIndexCardIsActive: boolean = true;
@@ -89,6 +90,7 @@ export class ProcessSolutionPanel {
     await this._solutionExplorerServiceFileSystem.openSolution(event.target.files[0].path, this._identity);
     const solution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
 
+    this.shownFileSystemSolution.push(true);
     this.openedFileSystemSolutions.push(solution);
   }
 
@@ -97,6 +99,19 @@ export class ProcessSolutionPanel {
       return solution.uri === solutionToClose.uri;
     });
     this.openedFileSystemSolutions.splice(index);
+    this.shownFileSystemSolution.splice(index);
+  }
+
+  public toggelVisibility(index: number): void {
+    this.shownFileSystemSolution[index] = !this.shownFileSystemSolution[index];
+  }
+
+  public getVisibility(solutionToCheck: ISolution): boolean {
+    const index: number = this.openedFileSystemSolutions.findIndex((solution: ISolution) => {
+      return solution.uri === solutionToCheck.uri;
+    });
+
+    return this.shownFileSystemSolution[index];
   }
 
   public openFileSystemIndexCard(): void {
