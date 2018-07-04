@@ -1,11 +1,10 @@
-import {IBpmnModeler} from '../../../contracts';
+import {IBpmnModeler, IDiagramPrintService} from '../../../contracts';
 import {NotificationType} from '../../../contracts/notification/constants';
-import {IPrintService} from '../../../contracts/printing/IPrintService';
 import {NotificationService} from '../../notification/notification.service';
 
 import * as print from 'print-js';
 
-export class DiagramPrintService implements IPrintService {
+export class DiagramPrintService implements IDiagramPrintService {
 
   private _modeler: IBpmnModeler;
   private _notificationService: NotificationService;

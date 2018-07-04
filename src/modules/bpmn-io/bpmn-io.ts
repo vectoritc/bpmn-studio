@@ -4,6 +4,7 @@ import {bindable, inject, observable} from 'aurelia-framework';
 
 import {IBpmnModeler,
         IDiagramExportService,
+        IDiagramPrintService,
         IEditorActions,
         IKeyboard,
         IProcessDefEntity,
@@ -41,7 +42,7 @@ export class BpmnIo {
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
   private _diagramIsValid: boolean = true;
-  private _diagramPrintService: DiagramPrintService;
+  private _diagramPrintService: IDiagramPrintService;
   private _diagramExportService: IDiagramExportService;
 
   /**
