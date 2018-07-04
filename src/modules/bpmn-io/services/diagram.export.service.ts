@@ -1,13 +1,17 @@
 import * as download from 'downloadjs';
 import * as beautify from 'xml-beautifier';
 import {IBpmnModeler, IProcessDefEntity} from '../../../contracts';
+import {NotificationType} from '../../../contracts/notification/constants';
+import {NotificationService} from '../../notification/notification.service';
 
 export class DiagramExportService {
 
   private _modeler: IBpmnModeler;
+  private _notificationService: NotificationService;
 
-  constructor(modeler: IBpmnModeler) {
+  constructor(modeler: IBpmnModeler, notificationService: NotificationService) {
     this._modeler = modeler;
+    this._notificationService = notificationService;
   }
 
   public async exportBPMN(process: IProcessDefEntity): Promise<void> {
@@ -25,16 +29,25 @@ export class DiagramExportService {
 
   public async exportPNG(process: IProcessDefEntity): Promise<void> {
     const svg: string = await this.getSVG();
-    const imageURL: string = await this._generateImageFromSVG('png', svg);
 
-    download(imageURL, `${process.name}.png`, 'image/png');
+    try {
+      const imageURL: string = await this._generateImageFromSVG('png', svg);
+      download(imageURL, `${process.name}.png`, 'image/png');
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR,
+        `An error occurred while processing the image for exporting.`);
+    }
   }
 
   public async exportJPEG(process: IProcessDefEntity): Promise<void> {
     const svg: string = await this.getSVG();
-    const imageURL: string = await this._generateImageFromSVG('jpeg', svg);
-
-    download(imageURL, `${process.name}.jpeg`, 'image/jpeg');
+    try {
+      const imageURL: string = await this._generateImageFromSVG('png', svg);
+      download(imageURL, `${process.name}.jpeg`, 'image/jpeg');
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR,
+        `An error occurred while processing the image for exporting.`);
+    }
   }
 
   public getXML(): Promise<string> {
