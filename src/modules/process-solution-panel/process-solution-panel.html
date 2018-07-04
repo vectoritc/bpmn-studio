@@ -24,8 +24,6 @@
 
     <div class="solution-explorer__process-engine" if.bind="processEngineIndexCardIsActive">
       <div class="process-explorer__heading">PE Solution Explorer</div>
-      <input value.bind="processengineSolutionString" type="text">
-      <button click.delegate="openProcessEngineSolution()">Open</button>
       <div repeat.for="diagram of openedProcessEngineSolution.diagrams" class="process-explorer__structure-item">
         <a href="#/processdef/${diagram.id}/detail"><i class="fa fa-caret-right"></i> ${diagram.name}</a>
       </div>

@@ -105,6 +105,11 @@ export class ProcessSolutionPanel {
   }
 
   private async _refreshProcesslist(): Promise<void> {
+    if (this.processengineSolutionString !== environment.bpmnStudioClient.baseRoute) {
+      this.processengineSolutionString = environment.bpmnStudioClient.baseRoute;
+      await this.openProcessEngineSolution();
+    }
+
     this.openedProcessEngineSolution = await this._solutionExplorerServiceProcessEngine.loadSolution();
   }
 }
