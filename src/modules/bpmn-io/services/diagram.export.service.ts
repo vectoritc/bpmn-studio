@@ -60,7 +60,7 @@ export class DiagramExportService {
     });
   }
 
-  private _generateImageFromSVG(desiredImageType: string, svg: any): string {
+  private async _generateImageFromSVG(desiredImageType: string, svg: string): Promise<string> {
     const encoding: string = `image/${desiredImageType}`;
     const canvas: HTMLCanvasElement = document.createElement('canvas');
     const context: CanvasRenderingContext2D = canvas.getContext('2d');
@@ -96,8 +96,9 @@ export class DiagramExportService {
     context.fillRect(0, 0, canvas.width, canvas.height);
 
     // get image as base64 datastring
-    const image: string = canvas.toDataURL(encoding);
-    return image;
+    const imageDataURL: string = await this._drawSVGToCanvas(svg, canvas, context, encoding);
+
+    return imageDataURL;
   }
 
       /**
@@ -123,6 +124,61 @@ export class DiagramExportService {
     const pixelRatio: number = targetDPI / originalDPI;
 
     return pixelRatio;
+  }
+
+    /**
+   * Draws a given SVG image to a Canvas and converts it to an image.
+   *
+   * @param svgContent SVG Content that should be drawn to the image.
+   * @param canvas Canvas, in which the SVG image should be drawn.
+   * @param context Context of the Canvas.
+   * @param encoding Encoding of the output image.
+   * @returns The URL which points to the rendered image.
+   */
+  private async _drawSVGToCanvas(
+    svgContent: string,
+    canvas: HTMLCanvasElement,
+    context: CanvasRenderingContext2D,
+    encoding: string): Promise<string> {
+
+    const imageElement: HTMLImageElement = document.createElement('img');
+
+    /*
+    * This makes sure, that the base64 encoded SVG does not contain any
+    * escaped html characters (such as &lt; instead of <).
+    *
+    * TODO: The unescape Method is marked as deprecated.
+    * See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/unescape
+    *
+    * The problem is, that the replacement method decodeURI does not work in this case
+    * (it behaves kinda different in some situations).
+    * Event the MDN use the unescape method to solve this kind of problem:
+    * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/btoa#Unicode_strings
+    *
+    * There is an npm packet that implements the original unescape function.
+    * Maybe we can use this to make sure that this won't cause any
+    * problems in the future.
+    */
+    const encodedSVG: string = btoa(unescape(encodeURIComponent(svgContent)));
+    imageElement.setAttribute('src', `data:image/svg+xml;base64, ${encodedSVG}`);
+
+    const loadImagePromise: Promise<string> = new Promise((resolve: Function, reject: Function): void => {
+      imageElement.onload = (): void => {
+        context.drawImage(imageElement, 0, 0, canvas.width, canvas.height);
+        const encodedImageURL: string = canvas.toDataURL(encoding);
+        resolve(encodedImageURL);
+      };
+
+      imageElement.onerror = (errorEvent: ErrorEvent): void => {
+        /*
+        * TODO: Find out if we can reject the promise with a more specify
+        * error here.
+        */
+        reject(errorEvent);
+      };
+    });
+
+    return loadImagePromise;
   }
 
 }
