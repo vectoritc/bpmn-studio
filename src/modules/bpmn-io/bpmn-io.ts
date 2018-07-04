@@ -10,8 +10,7 @@ import {IBpmnModeler,
       } from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from './../notification/notification.service';
-import {DiagramPrintService} from './services/diagram.print.service';
-import {DiagramExportService} from './services/index';
+import {DiagramExportService, DiagramPrintService} from './services/index';
 
 const sideBarRightSize: number = 35;
 

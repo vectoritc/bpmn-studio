@@ -1,7 +1,8 @@
-import {IBpmnModeler, IProcessDefEntity} from '../../../contracts';
+import {IBpmnModeler} from '../../../contracts';
 import {IPrintService} from '../../../contracts/printing/IPrintService';
 
 import * as print from 'print-js';
+
 export class DiagramPrintService implements IPrintService {
 
   private _modeler: IBpmnModeler;
@@ -37,6 +38,7 @@ export class DiagramPrintService implements IPrintService {
       });
     });
   }
+
   private async _generateImageFromSVG(desiredImageType: string, svg: string): Promise<string> {
     const encoding: string = `image/${desiredImageType}`;
     const canvas: HTMLCanvasElement = document.createElement('canvas');

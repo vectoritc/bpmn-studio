@@ -102,9 +102,6 @@ export class ProcessDefDetail {
       this._eventAggregator.subscribe(environment.events.diagramChange, () => {
         this._diagramHasChanged = true;
       }),
-      // this._eventAggregator.subscribe(environment.events.processDefDetail.printDiagram, () => {
-      //   this._printDiagram();
-      // }),
       //  }}} General Event Subscritions //
     ];
 
@@ -380,20 +377,6 @@ export class ProcessDefDetail {
       }
     });
   }
-
-  /**
-   * This heavily relies on the resolution of the screen.
-   *
-   * The result should be a pretty diagram for a printer;
-   * the generated image will be obtain from the BPMN.io canvas,
-   * that is dependent on the screen size.
-   */
-  // public async _printDiagram(): Promise<void> {
-  //   const svg: string = await this.bpmnio.getSVG();
-  //   const png: string = this._generateImageFromSVG('png', svg);
-
-  //   print.default({printable: png, type: 'image'});
-  // }
 
   /**
    * This handler will set the diagram state to invalid, if the ValidateEvent arrives.
