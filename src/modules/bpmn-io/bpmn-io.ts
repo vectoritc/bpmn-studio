@@ -41,12 +41,7 @@ export class BpmnIo {
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
   private _diagramIsValid: boolean = true;
-<<<<<<< HEAD
-  private _exportService: DiagramExportService;
-  private _printService: DiagramPrintService;
-=======
   private _diagramExportService: DiagramExportService;
->>>>>>> eb6b90b... :lipstick: Renbame exportService to diagramExportService
 
   /**
    * We are using the direct reference of a container element to place the tools of bpmn-js
@@ -97,12 +92,8 @@ export class BpmnIo {
       this._eventAggregator.publish(environment.events.diagramChange);
     }, handlerPriority);
 
-<<<<<<< HEAD
     this._exportService = new DiagramExportService(this.modeler);
     this._printService = new DiagramPrintService(this.modeler);
-=======
-    this._diagramExportService = new DiagramExportService(this.modeler);
->>>>>>> eb6b90b... :lipstick: Renbame exportService to diagramExportService
   }
 
   public attached(): void {
