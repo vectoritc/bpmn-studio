@@ -91,8 +91,8 @@ export class BpmnIo {
       this._eventAggregator.publish(environment.events.diagramChange);
     }, handlerPriority);
 
-    this._exportService = new DiagramExportService(this.modeler);
-    this._printService = new DiagramPrintService(this.modeler);
+    this._diagramPrintService = new DiagramPrintService(this.modeler, this._notificationService);
+    this._diagramExportService = new DiagramExportService(this.modeler, this._notificationService);
   }
 
   public attached(): void {
