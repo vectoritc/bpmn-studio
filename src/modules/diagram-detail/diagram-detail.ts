@@ -1,5 +1,6 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
+import {Redirect, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
@@ -20,11 +21,13 @@ export class DiagramDetail {
   private _solutionExplorerService: ISolutionExplorerService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
+  private _router: Router;
   private _diagramHasChanged: boolean;
 
-  constructor(solutionExplorerService: ISolutionExplorerService, eventAggregator: EventAggregator) {
+  constructor(solutionExplorerService: ISolutionExplorerService, eventAggregator: EventAggregator, router: Router) {
     this._solutionExplorerService = solutionExplorerService;
     this._eventAggregator = eventAggregator;
+    this._router = router;
   }
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
@@ -41,7 +44,50 @@ export class DiagramDetail {
       this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
         this._saveDiagram();
       }),
+      this._eventAggregator.subscribe(environment.events.diagramChange, () => {
+        this._diagramHasChanged = true;
+      }),
     ];
+  }
+
+  public async canDeactivate(): Promise<Redirect> {
+
+    const _modal: Promise<boolean> = new Promise((resolve: Function, reject: Function): any => {
+      if (!this._diagramHasChanged) {
+        resolve(true);
+      } else {
+
+        const modal: HTMLElement = document.getElementById('saveModal');
+        modal.classList.add('show-modal');
+
+        // register onClick handler
+        document.getElementById('dontSaveButton').addEventListener('click', () => {
+          modal.classList.remove('show-modal');
+          this._diagramHasChanged = false;
+          resolve(true);
+        });
+        document.getElementById('saveButton').addEventListener('click', () => {
+          this._saveDiagram();
+          modal.classList.remove('show-modal');
+          this._diagramHasChanged = false;
+          resolve(true);
+        });
+        document.getElementById('cancelButton').addEventListener('click', () => {
+          modal.classList.remove('show-modal');
+          resolve(false);
+        });
+      }
+    });
+
+    const result: boolean = await _modal;
+    if (result === false) {
+      /*
+       * As suggested in https://github.com/aurelia/router/issues/302, we use
+       * the router directly to navgiate back, which results in staying on this
+       * component-- and this is the desired behaviour.
+       */
+      return new Redirect(this._router.currentInstruction.fragment, {trigger: false, replace: false});
+    }
   }
 
   public detached(): void {
