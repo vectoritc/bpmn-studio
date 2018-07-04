@@ -23,8 +23,9 @@ export class ProcessSolutionPanel {
   public processengineSolutionString: string;
   public openedProcessEngineSolution: ISolution;
   public openedFileSystemSolutions: Array<ISolution> = [];
-  public fileSystemIndexCardIsActive: boolean = true;
-  public processEngineIndexCardIsActive: boolean = false;
+  public enableFileSystemSolutions: boolean = false;
+  public fileSystemIndexCardIsActive: boolean = false;
+  public processEngineIndexCardIsActive: boolean = true;
 
   constructor(eventAggregator: EventAggregator,
               solutionExplorerServiceProcessEngine: ISolutionExplorerService,
@@ -36,6 +37,11 @@ export class ProcessSolutionPanel {
   }
 
   public async attached(): Promise<void> {
+    // Check if BPMN-Studio run on electron
+    if ((<any> window).nodeRequire) {
+      this.enableFileSystemSolutions = true;
+    }
+
     this.processengineSolutionString = environment.bpmnStudioClient.baseRoute;
     await this.openProcessEngineSolution();
 
