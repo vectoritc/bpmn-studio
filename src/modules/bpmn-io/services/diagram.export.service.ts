@@ -163,7 +163,7 @@ export class DiagramExportService {
 
       imageElement.onerror = (errorEvent: ErrorEvent): void => {
        /*
-        * TODO: Find out if we can reject the promise with a more specify
+        * TODO: Find out if we can reject the promise with a more specific
         * error here.
         */
         reject(errorEvent);
