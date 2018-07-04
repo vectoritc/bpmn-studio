@@ -4,7 +4,12 @@ import {Redirect, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
+import * as canvg from 'canvg-browser';
+import * as download from 'downloadjs';
+import * as print from 'print-js';
+import * as beautify from 'xml-beautifier';
 
+import {ICanvgOptions} from '../../contracts';
 import environment from '../../environment';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
 
@@ -46,6 +51,21 @@ export class DiagramDetail {
       }),
       this._eventAggregator.subscribe(environment.events.diagramChange, () => {
         this._diagramHasChanged = true;
+      }),
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, () => {
+        this._exportBPMN();
+      }),
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, () => {
+        this._exportSVG();
+      }),
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, () => {
+        this._exportPNG();
+      }),
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, () => {
+        this._exportJPEG();
+      }),
+      this._eventAggregator.subscribe(environment.events.processDefDetail.printDiagram, () => {
+        this._printDiagram();
       }),
     ];
   }
@@ -102,5 +122,67 @@ export class DiagramDetail {
   private async _saveDiagram(): Promise<void> {
     this.diagram.xml = await this.bpmnio.getXML();
     this._solutionExplorerService.saveDiagram(this.diagram);
+  }
+
+  private async _exportBPMN(): Promise<void> {
+    const xml: string = await this.bpmnio.getXML();
+    const formattedXml: string = beautify(xml);
+
+    download(formattedXml, `${this.diagram.name}.bpmn`, 'application/bpmn20-xml');
+  }
+
+  private async _exportSVG(): Promise<void> {
+    const svg: string = await this.bpmnio.getSVG();
+
+    download(svg, `${this.diagram.name}.svg`, 'image/svg+xml');
+  }
+
+  private async _exportPNG(): Promise<void> {
+    const svg: string = await this.bpmnio.getSVG();
+
+    download(this._generateImageFromSVG('png', svg), `${this.diagram.name}.png`, 'image/png');
+  }
+
+  private async _exportJPEG(): Promise<void> {
+    const svg: string = await this.bpmnio.getSVG();
+
+    download(this._generateImageFromSVG('jpeg', svg), `${this.diagram.name}.jpeg`, 'image/jpeg');
+  }
+
+  public async _printDiagram(): Promise<void> {
+    const svg: string = await this.bpmnio.getSVG();
+    const png: string = this._generateImageFromSVG('png', svg);
+
+    print.default({printable: png, type: 'image'});
+  }
+
+  private _generateImageFromSVG(desiredImageType: string, svg: any): string {
+    const encoding: string = `image/${desiredImageType}`;
+    const canvas: HTMLCanvasElement = document.createElement('canvas');
+    const context: CanvasRenderingContext2D = canvas.getContext('2d');
+
+    const svgWidth: number = parseInt(svg.match(/<svg[^>]*width\s*=\s*\"?(\d+)\"?[^>]*>/)[1]);
+    const svgHeight: number = parseInt(svg.match(/<svg[^>]*height\s*=\s*\"?(\d+)\"?[^>]*>/)[1]);
+
+    const pixelRatio: number = window.devicePixelRatio || 1;
+
+    canvas.width = svgWidth * pixelRatio;
+    canvas.height = svgHeight * pixelRatio;
+
+    const canvgOptions: ICanvgOptions = {
+      ignoreDimensions: true,
+      scaleWidth: canvas.width,
+      scaleHeight: canvas.height,
+    };
+
+    canvg(canvas, svg, canvgOptions);
+
+    // make the background white for every format
+    context.globalCompositeOperation = 'destination-over';
+    context.fillStyle = 'white';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    const image: string = canvas.toDataURL(encoding); // returns a base64 datastring
+    return image;
   }
 }
