@@ -21,7 +21,7 @@
 
 .lower-diff-view {
   position: relative;
-  height: calc(66% - 2px);
+  height: 67%;
 }
 
 .left-diff-view__canvasModel {
@@ -44,8 +44,10 @@
 
 .diff-canvas-title {
   position: absolute;
-  bottom: 0px;
+  bottom: 4px;
+  left: 10px;
   font-size: 20px;
+  background: white;
 }
 
 .diff-legend {
