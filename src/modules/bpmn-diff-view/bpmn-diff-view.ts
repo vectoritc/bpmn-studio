@@ -1,5 +1,5 @@
 import {inject} from 'aurelia-dependency-injection';
-import {EventAggregator} from 'aurelia-event-aggregator';
+import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable} from 'aurelia-framework';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
@@ -27,6 +27,7 @@ export class BpmnDiffView {
   private _diffModeler: IBpmnModeler;
   private _modeling: IModeling;
   private _elementRegistry: IElementRegistry;
+  private _subscriptions: Array<Subscription>;
 
   private _currentDiffMode: DiffMode;
 
@@ -47,10 +48,12 @@ export class BpmnDiffView {
     this._rightViewer.attachTo(this.rightCanvasModel);
     this._lowerViewer.attachTo(this.lowerCanvasModel);
 
-    this._eventAggregator.subscribe(environment.events.diffView.changeDiffMode, (diffMode: DiffMode) => {
-      this._currentDiffMode = diffMode;
-      this._updateDiffView();
-    });
+    this._subscriptions = [
+      this._eventAggregator.subscribe(environment.events.diffView.changeDiffMode, (diffMode: DiffMode) => {
+        this._currentDiffMode = diffMode;
+        this._updateDiffView();
+      }),
+    ];
   }
 
   public created(): void {
@@ -64,6 +67,12 @@ export class BpmnDiffView {
     this._elementRegistry = this._diffModeler.get('elementRegistry');
 
     this._startSynchronizingViewers();
+  }
+
+  public detached(): void {
+    for (const subscription of this._subscriptions) {
+      subscription.dispose();
+    }
   }
 
   public xmlChanged(): void {
