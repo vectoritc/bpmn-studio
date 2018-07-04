@@ -49,6 +49,7 @@ export default {
     },
     diffView: {
       changeDiffMode: 'diffview:diffmode:change',
+      toggleChangeList: 'diffview:changelist:toggle',
     },
     diagramChange: 'diagram:change',
     processSolutionPanel: {
