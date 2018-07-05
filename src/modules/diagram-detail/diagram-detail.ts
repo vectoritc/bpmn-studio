@@ -130,9 +130,11 @@ export class DiagramDetail {
     this.diagram.xml = await this.bpmnio.getXML();
     this._solutionExplorerService.saveDiagram(this.diagram);
     this._diagramHasChanged = false;
-    this._notificationService.showNotification(NotificationType.SUCCESS, `File saved!`);
+    this._notificationService
+        .showNotification(NotificationType.SUCCESS, `File saved!`);
     } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, `Unable to save the file: ${error}`);
+      this._notificationService
+          .showNotification(NotificationType.ERROR, `Unable to save the file: ${error}`);
     }
   }
 

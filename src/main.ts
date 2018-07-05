@@ -27,6 +27,10 @@ export function configure(aurelia: Aurelia): void {
     const newHost: string = ipcRenderer.sendSync('get_host');
     const fileInfo: IFileInfo = ipcRenderer.sendSync('get_opened_file');
     aurelia.container.registerInstance('FileContent', fileInfo);
+    /**
+     * Currently the internal PE is always connected via http.
+     * This will be subject to change.
+     */
     localStorage.setItem('processEngineRoute', `http://${newHost}`);
 
     // Register SolutionExplorerFileSystemService
@@ -51,8 +55,8 @@ export function configure(aurelia: Aurelia): void {
   }
 
   /**
-   * Register Fake Identity for SolutionExplorer
-   * TODO: Get real identity when IAM is finished
+   * Register Fake Identity for SolutionExplorer.
+   * TODO: Get real identity when IAM is finished.
   */
   const fakeIdentity: IIdentity = {
     name: 'fakeIdentity',
