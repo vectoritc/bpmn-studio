@@ -1,5 +1,4 @@
 import {
-  IBpmnModeler,
   IDiagramPrintService,
 } from '../../../contracts';
 
