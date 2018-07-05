@@ -1,6 +1,4 @@
-import {
-  IDiagramPrintService,
-} from '../../../contracts';
+import {IDiagramPrintService} from '../../../contracts';
 
 import * as print from 'print-js';
 
@@ -16,7 +14,7 @@ export class DiagramPrintService implements IDiagramPrintService {
    * Prepares the current diagram for printing and opens the system's print
    * dialogue.
    */
-  public async printDiagram(svg?: string): Promise<void> {
+  public async printDiagram(svg: string): Promise<void> {
     const svgToPrint: string = svg || this._svg;
     const png: string = await this._generateImageFromSVG('png', svgToPrint);
 

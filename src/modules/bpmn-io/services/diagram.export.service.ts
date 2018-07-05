@@ -1,11 +1,6 @@
-import * as download from 'downloadjs';
 import * as beautify from 'xml-beautifier';
 
-import {
-  IBpmnModeler,
-  IDiagramExportService,
-  IProcessDefEntity,
-} from '../../../contracts';
+import {IDiagramExportService} from '../../../contracts';
 
 export class DiagramExportService implements IDiagramExportService {
 

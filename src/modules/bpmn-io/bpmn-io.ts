@@ -1,11 +1,6 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-
-import {
-  bindable,
-  inject,
-  observable,
-} from 'aurelia-framework';
+import {bindable, inject, observable} from 'aurelia-framework';
 
 import {IBpmnModeler,
         IDiagramExportService,
@@ -15,12 +10,10 @@ import {IBpmnModeler,
         IProcessDefEntity,
         NotificationType,
       } from '../../contracts/index';
+
 import environment from '../../environment';
 import {NotificationService} from './../notification/notification.service';
-import {
-  DiagramExportService,
-  DiagramPrintService,
-} from './services/index';
+import {DiagramExportService, DiagramPrintService} from './services/index';
 
 import * as download from 'downloadjs';
 
@@ -444,7 +437,9 @@ export class BpmnIo {
       event.preventDefault();
 
       // TODO: Handle the promise properly
-      this._diagramPrintService.printDiagram();
+      this.getSVG().then((svg: string): void => {
+        this._diagramPrintService.printDiagram(svg);
+      });
     }
   }
 
