@@ -2,58 +2,31 @@ import {
   IBpmnModeler,
   IDiagramPrintService,
 } from '../../../contracts';
-import {NotificationType} from '../../../contracts/notification/constants';
-import {NotificationService} from '../../notification/notification.service';
 
 import * as print from 'print-js';
 
 export class DiagramPrintService implements IDiagramPrintService {
 
-  private _modeler: IBpmnModeler;
-  private _notificationService: NotificationService;
+  private _svg: string;
 
-  constructor(modeler: IBpmnModeler, notificationService: NotificationService) {
-    this._modeler = modeler;
-    this._notificationService = notificationService;
+  constructor(svg: string) {
+    this._svg = svg;
   }
 
   /**
    * Prepares the current diagram for printing and opens the system's print
    * dialogue.
    */
-  public async printDiagram(): Promise<void> {
-    const svg: string = await this._getSVG();
+  public async printDiagram(svg?: string): Promise<void> {
+    const svgToPrint: string = svg || this._svg;
+    const png: string = await this._generateImageFromSVG('png', svgToPrint);
 
-    try {
-      const png: string = await this._generateImageFromSVG('png', svg);
-
-      const printOptions: {printable: string, type?: string} = {
+    const printOptions: {printable: string, type?: string} = {
         printable: png,
         type: 'image',
-      };
+    };
 
-      print.default(printOptions);
-    } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR,
-        `An error occurred while processing the image for printing.`);
-    }
-  }
-
-  /**
-   * Returns an SVG of the current Process from the Modeler.
-   *
-   * @returns The current process model as a svg string.
-   */
-  private _getSVG(): Promise<string> {
-    return new Promise((resolve: Function, reject: Function): void => {
-      this._modeler.saveSVG({}, (err: Error, result: string) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result);
-        }
-      });
-    });
+    print.default(printOptions);
   }
 
   /**

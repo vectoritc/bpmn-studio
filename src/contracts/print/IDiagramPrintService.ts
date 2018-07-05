@@ -1,3 +1,3 @@
 export interface IDiagramPrintService {
-  printDiagram(): Promise<void>;
+  printDiagram(svgContent?: string): Promise<void>;
 }

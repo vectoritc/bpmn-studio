@@ -17,6 +17,8 @@ import {
   DiagramPrintService,
 } from './services/index';
 
+import * as download from 'downloadjs';
+
 const sideBarRightSize: number = 35;
 
 @inject('NotificationService', EventAggregator)
@@ -48,6 +50,8 @@ export class BpmnIo {
   private _diagramIsValid: boolean = true;
   private _diagramPrintService: IDiagramPrintService;
   private _diagramExportService: IDiagramExportService;
+
+  private _svg: string;
 
   /**
    * We are using the direct reference of a container element to place the tools of bpmn-js
@@ -98,8 +102,9 @@ export class BpmnIo {
       this._eventAggregator.publish(environment.events.diagramChange);
     }, handlerPriority);
 
-    this._diagramPrintService = new DiagramPrintService(this.modeler, this._notificationService);
-    this._diagramExportService = new DiagramExportService(this.modeler, this._notificationService);
+    this._diagramPrintService = new DiagramPrintService(this._svg);
+    this._diagramExportService = new DiagramExportService();
+
   }
 
   public attached(): void {
@@ -152,20 +157,27 @@ export class BpmnIo {
       this._eventAggregator.subscribe(environment.events.navBar.disableSaveButton, () => {
         this._diagramIsValid = false;
       }),
-      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, (process: IProcessDefEntity) => {
-        this._diagramExportService.exportBPMN(process);
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, async(process: IProcessDefEntity) => {
+        const xml: string = await this._diagramExportService.exportBPMN(this.xml);
+        download(xml, this.name, 'application/bpmn20-xml');
       }),
-      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, (process: IProcessDefEntity) => {
-        this._diagramExportService.exportSVG(process);
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, async(process: IProcessDefEntity) => {
+        const svg: string = await this.getSVG();
+        download(svg, this.name, 'image/svg+xml');
       }),
-      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, (process: IProcessDefEntity) => {
-        this._diagramExportService.exportPNG(process);
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, async(process: IProcessDefEntity) => {
+        const svg: string = await this.getSVG();
+        const png: string = await this._diagramExportService.exportPNG(svg);
+        download(png, this.name, 'image/png');
       }),
-      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, (process: IProcessDefEntity) => {
-        this._diagramExportService.exportJPEG(process);
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, async(process: IProcessDefEntity) => {
+        const svg: string = await this.getSVG();
+        const jpeg: string = await this._diagramExportService.exportPNG(svg);
+        download(jpeg, this.name, 'image/jpeg');
       }),
-      this._eventAggregator.subscribe(`${environment.events.processDefDetail.printDiagram}`, () => {
-        this._printService.printDiagram();
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.printDiagram}`, async() => {
+        const svgContent: string = await this.getSVG();
+        this._diagramPrintService.printDiagram(svgContent);
       }),
     ];
 
@@ -246,15 +258,37 @@ export class BpmnIo {
 
   public async toggleXMLView(): Promise<void> {
     if (!this.showXMLView) {
-      this.xml = await this._diagramExportService.getXML();
+      this.xml = await this.getXML();
       this.showXMLView = true;
     } else {
       this.showXMLView = false;
     }
   }
 
-  public getXML(): Promise<string> {
-    return this._diagramExportService.getXML();
+  public async getXML(): Promise<string> {
+    const returnPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void => {
+      this.modeler.saveXML({}, (error: Error, result: string) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(result);
+      });
+    });
+    return returnPromise;
+  }
+
+  private async getSVG(): Promise<string> {
+    const returnPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void => {
+      this.modeler.saveSVG({}, (error: Error, result: string) => {
+        if (error) {
+          reject(error);
+        }
+
+        resolve(result);
+      });
+    });
+
+    return returnPromise;
   }
 
   private _setNewPropertyPanelWidthFromMousePosition(mousePosition: number): void {

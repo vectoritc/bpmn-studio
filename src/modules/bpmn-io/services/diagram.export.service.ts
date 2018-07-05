@@ -5,102 +5,47 @@ import {
   IDiagramExportService,
   IProcessDefEntity,
 } from '../../../contracts';
-import {NotificationType} from '../../../contracts/notification/constants';
-import {NotificationService} from '../../notification/notification.service';
 
 export class DiagramExportService implements IDiagramExportService {
-
-  private _modeler: IBpmnModeler;
-  private _notificationService: NotificationService;
-
-  constructor(modeler: IBpmnModeler, notificationService: NotificationService) {
-    this._modeler = modeler;
-    this._notificationService = notificationService;
-  }
 
   /**
    * Exports the current diagram as a *.bpmn xml file.
    */
-  public async exportBPMN(process: IProcessDefEntity): Promise<void> {
-    const xml: string = await this.getXML();
+  public async exportBPMN(xml: string): Promise<string> {
     const formattedXml: string = beautify(xml);
-
-    download(formattedXml, `${process.name}.bpmn`, 'application/bpmn20-xml');
+    return formattedXml;
   }
 
   /**
    * Exports the current Diagram as a SVG file and prompts the user to save
    * the exported file.
    */
-  public async exportSVG(process: IProcessDefEntity): Promise<void> {
-    const svg: string = await this.getSVG();
-
-    download(svg, `${process.name}.svg`, 'image/svg+xml');
+  public async exportSVG(svg: string): Promise<string> {
+    const svgToExport: string =  svg;
+    return svgToExport;
   }
 
   /**
    * Exports the current Diagram as a PNG image and prompts the user to save
    * the exported file.
    */
-  public async exportPNG(process: IProcessDefEntity): Promise<void> {
-    const svg: string = await this.getSVG();
+  public async exportPNG(svg: string): Promise<string> {
+    const svgToConvert: string = svg;
 
-    try {
-      const imageURL: string = await this._generateImageFromSVG('png', svg);
-      download(imageURL, `${process.name}.png`, 'image/png');
-    } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR,
-        `An error occurred while processing the image for exporting.`);
-    }
+    const imageURL: string = await this._generateImageFromSVG('png', svgToConvert);
+    return imageURL;
   }
 
   /**
    * Exports the current Diagram as a JPEG image and prompts the user to save
    * the exported file.
    */
-  public async exportJPEG(process: IProcessDefEntity): Promise<void> {
-    const svg: string = await this.getSVG();
-    try {
-      const imageURL: string = await this._generateImageFromSVG('png', svg);
-      download(imageURL, `${process.name}.jpeg`, 'image/jpeg');
-    } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR,
-        `An error occurred while processing the image for exporting.`);
-    }
-  }
+  public async exportJPEG(svg: string): Promise<string> {
 
-  /**
-   * Returns the current process model as a bpmn - xml.
-   *
-   * @returns The current process model as a bpmn - xml string.
-   */
-  public getXML(): Promise<string> {
-    return new Promise((resolve: Function, reject: Function): void => {
-      this._modeler.saveXML({}, (err: Error, result: string) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result);
-        }
-      });
-    });
-  }
+    const svgToConvert: string = svg;
 
-  /**
-   * Returns the current process model as a svg.
-   *
-   * @returns The current process model as a svg string.
-   */
-  public getSVG(): Promise<string> {
-    return new Promise((resolve: Function, reject: Function): void => {
-      this._modeler.saveSVG({}, (err: Error, result: string) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result);
-        }
-      });
-    });
+    const imageURL: string = await this._generateImageFromSVG('jpeg', svgToConvert);
+    return imageURL;
   }
 
   /**
