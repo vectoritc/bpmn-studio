@@ -165,11 +165,15 @@ export class BpmnIo {
         }, 0);
       }),
 
+      this._eventAggregator.subscribe(environment.events.navBar.enableSaveButton, () => {
+        this._diagramIsValid = true;
+      }),
+      this._eventAggregator.subscribe(environment.events.navBar.disableSaveButton, () => {
+        this._diagramIsValid = false;
+      }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, async() => {
-        const xml: string = await this.getXML();
-        const bpmn: string = await this._diagramExportService.exportBPMN(xml);
-
-        download(bpmn, `${this.name}.bpmn`, 'application/bpmn20-xml');
+        const xml: string = await this._diagramExportService.exportBPMN(this.xml);
+        download(xml, `${this.name}.bpmn`, 'application/bpmn20-xml');
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, async() => {
         const svg: string = await this.getSVG();
