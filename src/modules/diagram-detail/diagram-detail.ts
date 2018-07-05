@@ -122,6 +122,7 @@ export class DiagramDetail {
   private async _saveDiagram(): Promise<void> {
     this.diagram.xml = await this.bpmnio.getXML();
     this._solutionExplorerService.saveDiagram(this.diagram);
+    this._diagramHasChanged = false;
   }
 
   private async _exportBPMN(): Promise<void> {
