@@ -27,7 +27,6 @@ export class ProcessSolutionPanel {
   private _identity: IIdentity;
   private _solutionExplorerServiceProcessEngine: ISolutionExplorerService;
   private _solutionExplorerServiceFileSystem: ISolutionExplorerService;
-  private _initialRequestSuccesfull: boolean = false;
 
   constructor(eventAggregator: EventAggregator,
               solutionExplorerServiceProcessEngine: ISolutionExplorerService,
@@ -47,6 +46,13 @@ export class ProcessSolutionPanel {
     this._refreshProcesslist();
     this._eventAggregator.publish(environment.events.processSolutionPanel.toggleProcessSolutionExplorer);
 
+    /**
+     * Set Interval to get the deployed processes of the currently connected Process Engine.
+     */
+    window.setInterval(async() => {
+      this._refreshProcesslist();
+    }, environment.processengine.poolingInterval);
+
     window.localStorage.setItem('processSolutionExplorerHideState', 'show');
 
     this._subscriptions = [
@@ -57,14 +63,6 @@ export class ProcessSolutionPanel {
         this._refreshProcesslist();
       }),
     ];
-
-    /**
-     * Set Intervat to get the deployed processes of the currently connected Process Engine.
-     */
-    window.setInterval(async() => {
-      this._refreshProcesslist();
-
-    }, environment.processengine.poolingInterval);
 
     const solutionInput: HTMLElement = document.getElementById('solutionInput');
     const solutionInputButton: HTMLElement = document.getElementById('solutionInputButton');
@@ -82,17 +80,14 @@ export class ProcessSolutionPanel {
     window.localStorage.setItem('processSolutionExplorerHideState', 'hide');
   }
 
-  public async openProcessEngineSolution(): Promise<void> {
-
-    await this._solutionExplorerServiceProcessEngine.openSolution(this.processengineSolutionString, this._identity);
-    this.openedProcessEngineSolution = await this._solutionExplorerServiceProcessEngine.loadSolution();
-  }
-
+  /**
+   * Handles the file input for the FileSystem Solutions.
+   * @param event A event that holds the files that were "uploaded" by the user.
+   * Currently there is no type for this kind of event.
+   */
   public async onSolutionInputChange(event: any): Promise<void> {
-
     await this._solutionExplorerServiceFileSystem.openSolution(event.target.files[0].path, this._identity);
     const solution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
-
     this.openedFileSystemSolutions.push(solution);
   }
 
@@ -115,7 +110,7 @@ export class ProcessSolutionPanel {
 
   private async _refreshProcesslist(): Promise<void> {
     this.processengineSolutionString = environment.bpmnStudioClient.baseRoute;
-    await this.openProcessEngineSolution();
+    await this._solutionExplorerServiceProcessEngine.openSolution(this.processengineSolutionString, this._identity);
 
     this.openedProcessEngineSolution = await this._solutionExplorerServiceProcessEngine.loadSolution();
   }
