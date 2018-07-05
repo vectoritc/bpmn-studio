@@ -4,7 +4,6 @@ import {Redirect, Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
 import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
-import * as print from 'print-js';
 
 import {
   AuthenticationStateEvent,
@@ -15,7 +14,6 @@ import {
   IShape,
   NotificationType,
 } from '../../contracts/index';
-
 import environment from '../../environment';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
 import {NotificationService} from './../notification/notification.service';
@@ -106,6 +104,7 @@ export class ProcessDefDetail {
     ];
 
     this._eventAggregator.publish(environment.events.navBar.showTools, this.process);
+    this._eventAggregator.publish(environment.events.navBar.showStartButton);
     this._eventAggregator.publish(environment.events.statusBar.showXMLButton);
   }
 
@@ -210,6 +209,7 @@ export class ProcessDefDetail {
     }
 
     this._eventAggregator.publish(environment.events.navBar.hideTools);
+    this._eventAggregator.publish(environment.events.navBar.hideStartButton);
     this._eventAggregator.publish(environment.events.statusBar.hideXMLButton);
   }
 
