@@ -316,7 +316,7 @@ export class ProcessDefDetail {
       const xml: string = await this.bpmnio.getXML();
       response = await this._processEngineService.updateProcessDef(this.process, xml);
     } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, `Somethig happend: ${error.message}`);
+      this._notificationService.showNotification(NotificationType.ERROR, `An error occured: ${error.message}`);
     }
     //  }}} Save the diagram to the ProcessEngine //
 

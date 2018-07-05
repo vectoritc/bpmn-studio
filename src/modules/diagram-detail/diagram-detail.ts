@@ -9,28 +9,34 @@ import * as download from 'downloadjs';
 import * as print from 'print-js';
 import * as beautify from 'xml-beautifier';
 
-import {ICanvgOptions} from '../../contracts';
+import {ICanvgOptions, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
+import {NotificationService} from '../notification/notification.service';
 
 interface RouteParameters {
   diagramName: string;
 }
 
-@inject('SolutionExplorerServiceFileSystem', EventAggregator)
+@inject('SolutionExplorerServiceFileSystem', 'NotificationService', EventAggregator, Router)
 export class DiagramDetail {
 
   public diagram: IDiagram;
   public bpmnio: BpmnIo;
 
   private _solutionExplorerService: ISolutionExplorerService;
+  private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
   private _router: Router;
   private _diagramHasChanged: boolean;
 
-  constructor(solutionExplorerService: ISolutionExplorerService, eventAggregator: EventAggregator, router: Router) {
+  constructor(solutionExplorerService: ISolutionExplorerService,
+              notificationService: NotificationService,
+              eventAggregator: EventAggregator,
+              router: Router) {
     this._solutionExplorerService = solutionExplorerService;
+    this._notificationService = notificationService;
     this._eventAggregator = eventAggregator;
     this._router = router;
   }
@@ -120,9 +126,14 @@ export class DiagramDetail {
   }
 
   private async _saveDiagram(): Promise<void> {
+    try {
     this.diagram.xml = await this.bpmnio.getXML();
     this._solutionExplorerService.saveDiagram(this.diagram);
     this._diagramHasChanged = false;
+    this._notificationService.showNotification(NotificationType.SUCCESS, `File saved!`);
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR, `Unable to save the file: ${error}`);
+    }
   }
 
   private async _exportBPMN(): Promise<void> {
