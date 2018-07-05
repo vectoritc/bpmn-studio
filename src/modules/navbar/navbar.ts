@@ -89,7 +89,7 @@ export class NavBar {
   }
 
   public exportDiagram(exportAs: string): void {
-    this._eventAggregator.publish(`${environment.events.processDefDetail.exportDiagramAs}:${exportAs}`);
+    this._eventAggregator.publish(`${environment.events.processDefDetail.exportDiagramAs}:${exportAs}`, this.process);
   }
 
   public startProcess(): void {
