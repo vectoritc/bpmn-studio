@@ -18,6 +18,7 @@ export class ProcessSolutionPanel {
   public processengineSolutionString: string;
   public openedProcessEngineSolution: ISolution;
   public openedFileSystemSolutions: Array<ISolution> = [];
+  public solutionInput: HTMLInputElement;
   public enableFileSystemSolutions: boolean = false;
   public fileSystemIndexCardIsActive: boolean = false;
   public processEngineIndexCardIsActive: boolean = true;
@@ -64,10 +65,9 @@ export class ProcessSolutionPanel {
       }),
     ];
 
-    const solutionInput: HTMLElement = document.getElementById('solutionInput');
     const solutionInputButton: HTMLElement = document.getElementById('solutionInputButton');
     solutionInputButton.addEventListener('click', (event: any) => {
-      solutionInput.click();
+      this.solutionInput.click();
     });
   }
 
@@ -89,6 +89,8 @@ export class ProcessSolutionPanel {
     await this._solutionExplorerServiceFileSystem.openSolution(event.target.files[0].path, this._identity);
     const solution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
     this.openedFileSystemSolutions.push(solution);
+    this.solutionInput.value = '';
+
   }
 
   public closeFileSystemSolution(solutionToClose: ISolution): void {
@@ -96,7 +98,6 @@ export class ProcessSolutionPanel {
       return solution.uri === solutionToClose.uri;
     });
     this.openedFileSystemSolutions.splice(index, 1);
-    console.log(this.openedFileSystemSolutions);
   }
 
   public openFileSystemIndexCard(): void {

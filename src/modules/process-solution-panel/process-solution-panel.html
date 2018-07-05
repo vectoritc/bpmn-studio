@@ -25,7 +25,7 @@
       </div>
       <div class="solution-input-group">
         <button class="open-solution-button" id="solutionInputButton" if.bind="!openedFileSystemSolution">Open a Solution</button>
-        <input class="solution-input" type="file" change.delegate="onSolutionInputChange($event)" id="solutionInput" webkitdirectory>
+        <input class="solution-input" ref="solutionInput" type="file" change.delegate="onSolutionInputChange($event)" id="solutionInput" webkitdirectory>
       </div>
     </div>
 
