@@ -1,14 +1,11 @@
-import {inject, observable} from 'aurelia-framework';
+import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
+import {inject} from 'aurelia-framework';
 
 import {IIdentity} from '@essential-projects/core_contracts';
-import {
-  BpmnStudioClient,
-  IPagination,
-  IProcessDefEntity,
-} from '@process-engine/bpmn-studio_client';
+import {IPagination, IProcessDefEntity} from '@process-engine/bpmn-studio_client';
 import {ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
-import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
+
 import {AuthenticationStateEvent} from '../../contracts/index';
 import environment from '../../environment';
 
