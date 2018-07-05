@@ -172,30 +172,19 @@ export class BpmnIo {
         this._diagramIsValid = false;
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, async() => {
-        const xml: string = await this._diagramExportService.exportBPMN(this.xml);
-        download(xml, `${this.name}.bpmn`, 'application/bpmn20-xml');
+        await this._exportBpmnHandler();
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, async() => {
-        const svg: string = await this.getSVG();
-
-        download(svg, `${this.name}.svg`, 'image/svg+xml');
+        await this._exportSvgHandler();
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, async() => {
-        const svg: string = await this.getSVG();
-        const png: string = await this._diagramExportService.exportPNG(svg);
-
-        download(png, `${this.name}.png`, 'image/png');
+        await this._exportPngHandler();
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, async() => {
-        const svg: string = await this.getSVG();
-        const jpeg: string = await this._diagramExportService.exportPNG(svg);
-
-        download(jpeg, `${this.name}.jpeg`, 'image/jpeg');
+        await this._exportJpegHandler();
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.printDiagram}`, async() => {
-        const svgContent: string = await this.getSVG();
-
-        this._diagramPrintService.printDiagram(svgContent);
+        await this._printHandler();
       }),
 
       this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, async() => {
@@ -378,6 +367,66 @@ export class BpmnIo {
       this._hidePropertyPanelForSpaceReasons();
     } else if (this._propertyPanelHiddenForSpaceReasons) {
       this._showPropertyPanelForSpaceReasons();
+    }
+  }
+
+  /**
+   * Handles an incoming exportDiagramAsBPMN message.
+   */
+  private async _exportBpmnHandler(): Promise<void> {
+    try {
+      const bpmnToExport: string = await this._diagramExportService.exportBPMN();
+      download(bpmnToExport, `${this.name}.bpmn`, 'application/bpmn20-xml');
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR, `An error while trying to export the diagram occurred.`);
+    }
+  }
+
+  /**
+   * Handles an incoming exportDiagramAsSVG message.
+   */
+  private async _exportSvgHandler(): Promise<void> {
+    try {
+      // Maybe we could use the diagramExportService here.
+      const svgToExport: string = await this.getSVG();
+      download(svgToExport, `${this.name}.svg`, 'image/svg+xml');
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR, `An error while trying to export the diagram occurred.`);
+    }
+  }
+
+  /**
+   * Handles an incoming exportDiagramAsPNG message.
+   */
+  private async _exportPngHandler(): Promise<void> {
+    try {
+      const currentProcessAsSvg: string = await this.getSVG();
+      const pngToExport: string = await this._diagramExportService.exportPNG(currentProcessAsSvg);
+      download(pngToExport, `${this.name}.png`, 'image/png');
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR, `An error while trying to export the diagram occurred.`);
+    }
+  }
+
+  private async _exportJpegHandler(): Promise<void> {
+    try {
+      const currentProcessAsSvg: string = await this.getSVG();
+      const jpegToExport: string = await this._diagramExportService.exportJPEG(currentProcessAsSvg);
+      download(jpegToExport, `${this.name}.jpeg`, 'image/jpeg');
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR, `An error while trying to export the diagram occurred.`);
+    }
+  }
+
+  /**
+   * Handles an incoming printDiagram message.
+   */
+  private async _printHandler(): Promise<void> {
+    try {
+      const svgToPrint: string = await this.getSVG();
+      this._diagramPrintService.printDiagram(svgToPrint);
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR, `An error while trying to print the diagram occurred.`);
     }
   }
 
