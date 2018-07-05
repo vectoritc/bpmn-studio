@@ -1,6 +1,11 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {bindable, inject, observable} from 'aurelia-framework';
+
+import {
+  bindable,
+  inject,
+  observable,
+} from 'aurelia-framework';
 
 import {IBpmnModeler,
         IDiagramExportService,
