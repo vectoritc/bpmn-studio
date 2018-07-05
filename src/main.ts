@@ -1,16 +1,15 @@
 import {Aurelia} from 'aurelia-framework';
 
-import {NotificationType} from './contracts/index';
-import {IFileInfo} from './contracts/processengine/index';
-import {NotificationService} from './modules/notification/notification.service';
-import {TokenRepository} from './modules/token-repository/token.repository';
-
+import {IIdentity} from '@essential-projects/core_contracts';
 import {SolutionExplorerFileSystemRepository} from '@process-engine/solutionexplorer.repository.filesystem';
 import {SolutionExplorerProcessEngineRepository} from '@process-engine/solutionexplorer.repository.processengine';
 import {SolutionExplorerService} from '@process-engine/solutionexplorer.service';
 
-import { IIdentity } from '@essential-projects/core_contracts';
+import {NotificationType} from './contracts/index';
+import {IFileInfo} from './contracts/processengine/index';
 import environment from './environment';
+import {NotificationService} from './modules/notification/notification.service';
+import {TokenRepository} from './modules/token-repository/token.repository';
 
 export function configure(aurelia: Aurelia): void {
 
