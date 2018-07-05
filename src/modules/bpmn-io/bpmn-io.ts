@@ -52,10 +52,10 @@ export class BpmnIo {
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
+  private _diagramIsValid: boolean = true;
+
   private _diagramPrintService: IDiagramPrintService;
   private _diagramExportService: IDiagramExportService;
-
-  private _svg: string;
 
   /**
    * We are using the direct reference of a container element to place the tools of bpmn-js
@@ -101,7 +101,7 @@ export class BpmnIo {
       this._eventAggregator.publish(environment.events.diagramChange);
     }, handlerPriority);
 
-    this._diagramPrintService = new DiagramPrintService();
+    this._diagramPrintService = new DiagramPrintService(this.xml);
     this._diagramExportService = new DiagramExportService();
   }
 
@@ -289,6 +289,7 @@ export class BpmnIo {
         if (error) {
           reject(error);
         }
+
         resolve(result);
       });
     });

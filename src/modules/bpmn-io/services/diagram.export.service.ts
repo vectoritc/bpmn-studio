@@ -99,6 +99,24 @@ export class DiagramExportService implements IDiagramExportService {
   }
 
   /**
+   * Updates the current XML content.
+   *
+   * @param newXML new XML content
+   */
+  public updateXML(newXML: string): void {
+    this._xml = newXML;
+  }
+
+  /**
+   * Updates the current SVG content.
+   *
+   * @param newSVG new SVG content
+   */
+  public updateSVG(newSVG: string): void {
+    this._svg = newSVG;
+  }
+
+  /**
    * Converts the given xml into an image. The returning value is a DataURL that
    * points to the created image.
    *

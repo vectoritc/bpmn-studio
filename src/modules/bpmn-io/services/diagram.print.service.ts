@@ -37,6 +37,10 @@ export class DiagramPrintService implements IDiagramPrintService {
     print.default(printOptions);
   }
 
+  public updateSVG(newSVG: string): void {
+    this._svg = newSVG;
+  }
+
   /**
    * Converts the given xml into an image. The returning value is a DataURL that
    * points to the created image.

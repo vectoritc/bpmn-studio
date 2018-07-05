@@ -3,4 +3,6 @@ export interface IDiagramExportService {
   exportSVG(svg?: string): Promise<string>;
   exportPNG(svg?: string): Promise<string>;
   exportJPEG(svg?: string): Promise<string>;
+  updateXML(newXML: string): void;
+  updateSVG(newSVG: string): void;
 }
