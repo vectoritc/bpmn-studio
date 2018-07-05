@@ -95,7 +95,8 @@ export class ProcessSolutionPanel {
     const index: number = this.openedFileSystemSolutions.findIndex((solution: ISolution) => {
       return solution.uri === solutionToClose.uri;
     });
-    this.openedFileSystemSolutions.splice(index);
+    this.openedFileSystemSolutions.splice(index, 1);
+    console.log(this.openedFileSystemSolutions);
   }
 
   public openFileSystemIndexCard(): void {
