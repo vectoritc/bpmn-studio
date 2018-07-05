@@ -1,5 +1,6 @@
 import * as download from 'downloadjs';
 import * as beautify from 'xml-beautifier';
+
 import {
   IBpmnModeler,
   IDiagramExportService,
@@ -106,9 +107,10 @@ export class DiagramExportService implements IDiagramExportService {
    */
   private _calculatePixelRatioForDPI(svgWidth: number, svgHeight: number, targetDPI: number, diagonalSize: number): number {
 
-    // tslint:disable:no-magic-numbers
-    const svgWidthSquared: number = Math.pow(svgWidth, 2);
-    const svgHeightSquared: number = Math.pow(svgHeight, 2);
+    const square: Function = (num: number): number => num * num;
+
+    const svgWidthSquared: number = square(svgWidth);
+    const svgHeightSquared: number = square(svgHeight);
 
     const diagonalResolution: number = Math.sqrt(svgWidthSquared + svgHeightSquared);
 
