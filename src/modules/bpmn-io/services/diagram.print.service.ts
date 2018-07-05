@@ -1,4 +1,7 @@
-import {IBpmnModeler, IDiagramPrintService} from '../../../contracts';
+import {
+  IBpmnModeler,
+  IDiagramPrintService,
+} from '../../../contracts';
 import {NotificationType} from '../../../contracts/notification/constants';
 import {NotificationService} from '../../notification/notification.service';
 
