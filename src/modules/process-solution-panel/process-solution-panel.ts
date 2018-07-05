@@ -14,20 +14,20 @@ import environment from '../../environment';
 
 @inject(EventAggregator, 'SolutionExplorerServiceProcessEngine', 'SolutionExplorerServiceFileSystem', 'Identity')
 export class ProcessSolutionPanel {
+  public processes: IPagination<IProcessDefEntity>;
+  public processengineSolutionString: string;
+  public openedProcessEngineSolution: ISolution;
+  public openedFileSystemSolutions: Array<ISolution> = [];
+  public enableFileSystemSolutions: boolean = false;
+  public fileSystemIndexCardIsActive: boolean = false;
+  public processEngineIndexCardIsActive: boolean = true;
+
   private _subscriptions: Array<Subscription>;
   private _eventAggregator: EventAggregator;
   private _identity: IIdentity;
   private _solutionExplorerServiceProcessEngine: ISolutionExplorerService;
   private _solutionExplorerServiceFileSystem: ISolutionExplorerService;
-
-  public processes: IPagination<IProcessDefEntity>;
-  public processengineSolutionString: string;
-  public openedProcessEngineSolution: ISolution;
-  public openedFileSystemSolutions: Array<ISolution> = [];
-  public shownFileSystemSolution: Array<boolean> = [];
-  public enableFileSystemSolutions: boolean = false;
-  public fileSystemIndexCardIsActive: boolean = false;
-  public processEngineIndexCardIsActive: boolean = true;
+  private _initialRequestSuccesfull: boolean = false;
 
   constructor(eventAggregator: EventAggregator,
               solutionExplorerServiceProcessEngine: ISolutionExplorerService,
@@ -39,14 +39,12 @@ export class ProcessSolutionPanel {
   }
 
   public async attached(): Promise<void> {
-    // Check if BPMN-Studio run on electron
+    // Check if BPMN-Studio runs in electron
     if ((<any> window).nodeRequire) {
       this.enableFileSystemSolutions = true;
     }
 
-    this.processengineSolutionString = environment.bpmnStudioClient.baseRoute;
-    await this.openProcessEngineSolution();
-
+    this._refreshProcesslist();
     this._eventAggregator.publish(environment.events.processSolutionPanel.toggleProcessSolutionExplorer);
 
     window.localStorage.setItem('processSolutionExplorerHideState', 'show');
@@ -58,10 +56,15 @@ export class ProcessSolutionPanel {
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
         this._refreshProcesslist();
       }),
-      this._eventAggregator.subscribe(environment.events.refreshProcessDefs, () => {
-        this._refreshProcesslist();
-      }),
     ];
+
+    /**
+     * Set Intervat to get the deployed processes of the currently connected Process Engine.
+     */
+    window.setInterval(async() => {
+      this._refreshProcesslist();
+
+    }, environment.processengine.poolingInterval);
 
     const solutionInput: HTMLElement = document.getElementById('solutionInput');
     const solutionInputButton: HTMLElement = document.getElementById('solutionInputButton');
@@ -90,7 +93,6 @@ export class ProcessSolutionPanel {
     await this._solutionExplorerServiceFileSystem.openSolution(event.target.files[0].path, this._identity);
     const solution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
 
-    this.shownFileSystemSolution.push(true);
     this.openedFileSystemSolutions.push(solution);
   }
 
@@ -99,19 +101,6 @@ export class ProcessSolutionPanel {
       return solution.uri === solutionToClose.uri;
     });
     this.openedFileSystemSolutions.splice(index);
-    this.shownFileSystemSolution.splice(index);
-  }
-
-  public toggelVisibility(index: number): void {
-    this.shownFileSystemSolution[index] = !this.shownFileSystemSolution[index];
-  }
-
-  public getVisibility(solutionToCheck: ISolution): boolean {
-    const index: number = this.openedFileSystemSolutions.findIndex((solution: ISolution) => {
-      return solution.uri === solutionToCheck.uri;
-    });
-
-    return this.shownFileSystemSolution[index];
   }
 
   public openFileSystemIndexCard(): void {
@@ -125,10 +114,8 @@ export class ProcessSolutionPanel {
   }
 
   private async _refreshProcesslist(): Promise<void> {
-    if (this.processengineSolutionString !== environment.bpmnStudioClient.baseRoute) {
-      this.processengineSolutionString = environment.bpmnStudioClient.baseRoute;
-      await this.openProcessEngineSolution();
-    }
+    this.processengineSolutionString = environment.bpmnStudioClient.baseRoute;
+    await this.openProcessEngineSolution();
 
     this.openedProcessEngineSolution = await this._solutionExplorerServiceProcessEngine.loadSolution();
   }
