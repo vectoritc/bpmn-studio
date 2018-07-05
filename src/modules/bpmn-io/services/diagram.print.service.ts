@@ -18,7 +18,7 @@ export class DiagramPrintService implements IDiagramPrintService {
   }
 
   /**
-   * Prepare the current diagram for printing and opens the system's print
+   * Prepares the current diagram for printing and opens the system's print
    * dialogue.
    */
   public async printDiagram(): Promise<void> {
@@ -39,6 +39,11 @@ export class DiagramPrintService implements IDiagramPrintService {
     }
   }
 
+  /**
+   * Returns an SVG of the current Process from the Modeler.
+   *
+   * @returns The current process model as a svg string.
+   */
   private _getSVG(): Promise<string> {
     return new Promise((resolve: Function, reject: Function): void => {
       this._modeler.saveSVG({}, (err: Error, result: string) => {
@@ -51,6 +56,14 @@ export class DiagramPrintService implements IDiagramPrintService {
     });
   }
 
+  /**
+   * Converts the given xml into an image. The returning value is a DataURL that
+   * points to the created image.
+   *
+   * @param desiredImageType Output type of the image.
+   * @param svg SVG that should be converted into an image with the desired format.
+   * @returns A DataURL that points to the created image.
+   */
   private async _generateImageFromSVG(desiredImageType: string, svg: string): Promise<string> {
     const encoding: string = `image/${desiredImageType}`;
     const canvas: HTMLCanvasElement = document.createElement('canvas');
@@ -152,10 +165,6 @@ export class DiagramPrintService implements IDiagramPrintService {
       };
 
       imageElement.onerror = (errorEvent: ErrorEvent): void => {
-       /*
-        * TODO: Find out if we can reject the promise with a more specific
-        * error here.
-        */
         reject(errorEvent);
       };
     });

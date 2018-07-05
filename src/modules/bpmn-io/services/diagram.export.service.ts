@@ -18,6 +18,9 @@ export class DiagramExportService implements IDiagramExportService {
     this._notificationService = notificationService;
   }
 
+  /**
+   * Exports the current diagram as a *.bpmn xml file.
+   */
   public async exportBPMN(process: IProcessDefEntity): Promise<void> {
     const xml: string = await this.getXML();
     const formattedXml: string = beautify(xml);
@@ -25,12 +28,20 @@ export class DiagramExportService implements IDiagramExportService {
     download(formattedXml, `${process.name}.bpmn`, 'application/bpmn20-xml');
   }
 
+  /**
+   * Exports the current Diagram as a SVG file and prompts the user to save
+   * the exported file.
+   */
   public async exportSVG(process: IProcessDefEntity): Promise<void> {
     const svg: string = await this.getSVG();
 
     download(svg, `${process.name}.svg`, 'image/svg+xml');
   }
 
+  /**
+   * Exports the current Diagram as a PNG image and prompts the user to save
+   * the exported file.
+   */
   public async exportPNG(process: IProcessDefEntity): Promise<void> {
     const svg: string = await this.getSVG();
 
@@ -43,6 +54,10 @@ export class DiagramExportService implements IDiagramExportService {
     }
   }
 
+  /**
+   * Exports the current Diagram as a JPEG image and prompts the user to save
+   * the exported file.
+   */
   public async exportJPEG(process: IProcessDefEntity): Promise<void> {
     const svg: string = await this.getSVG();
     try {
@@ -54,6 +69,11 @@ export class DiagramExportService implements IDiagramExportService {
     }
   }
 
+  /**
+   * Returns the current process model as a bpmn - xml.
+   *
+   * @returns The current process model as a bpmn - xml string.
+   */
   public getXML(): Promise<string> {
     return new Promise((resolve: Function, reject: Function): void => {
       this._modeler.saveXML({}, (err: Error, result: string) => {
@@ -66,6 +86,11 @@ export class DiagramExportService implements IDiagramExportService {
     });
   }
 
+  /**
+   * Returns the current process model as a svg.
+   *
+   * @returns The current process model as a svg string.
+   */
   public getSVG(): Promise<string> {
     return new Promise((resolve: Function, reject: Function): void => {
       this._modeler.saveSVG({}, (err: Error, result: string) => {
@@ -78,6 +103,14 @@ export class DiagramExportService implements IDiagramExportService {
     });
   }
 
+  /**
+   * Converts the given xml into an image. The returning value is a DataURL that
+   * points to the created image.
+   *
+   * @param desiredImageType Output type of the image.
+   * @param svg SVG that should be converted into an image with the desired format.
+   * @returns A DataURL that points to the created image.
+   */
   private async _generateImageFromSVG(desiredImageType: string, svg: string): Promise<string> {
     const encoding: string = `image/${desiredImageType}`;
     const canvas: HTMLCanvasElement = document.createElement('canvas');
@@ -120,6 +153,8 @@ export class DiagramExportService implements IDiagramExportService {
    * @param svgHeight Height of the diagrams canvas element.
    * @param targetDPI DPI of the output.
    * @param diagonalSize Diagonal Size of the printed document.
+   * @returns The needed pixel ratio for the current dimensions to achieve the
+   * desired DPI.
    */
   private _calculatePixelRatioForDPI(svgWidth: number, svgHeight: number, targetDPI: number, diagonalSize: number): number {
 
