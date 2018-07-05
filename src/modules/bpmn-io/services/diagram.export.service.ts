@@ -4,11 +4,32 @@ import {IDiagramExportService} from '../../../contracts';
 
 export class DiagramExportService implements IDiagramExportService {
 
+  private _xml: string;
+  private _svg: string;
+
+  constructor(xml?: string, svg?: string) {
+    this._xml = xml;
+    this._svg = svg;
+  }
+
   /**
    * Exports the current diagram as a *.bpmn xml file.
    */
-  public async exportBPMN(xml: string): Promise<string> {
-    const formattedXml: string = beautify(xml);
+  public async exportBPMN(xml?: string): Promise<string> {
+
+    const xmlToFormat: string = ((): string => {
+      if (xml !== undefined && xml !== null) {
+        return xml;
+      }
+
+      if (this._xml !== undefined && this._xml !== null) {
+        return this._xml;
+      }
+
+      Promise.reject(`No XML defined in the exporter`);
+    })();
+
+    const formattedXml: string = beautify(xmlToFormat);
     return formattedXml;
   }
 
@@ -16,12 +37,23 @@ export class DiagramExportService implements IDiagramExportService {
    * Exports the current Diagram as a SVG file and prompts the user to save
    * the exported file.
    *
-   * TODO: This method is currently completely pointless. In a new PR, this
-   * will have the ability, to either return the svg delivered in the parameter
-   * or from the instance.
+   * TODO: Discuss the purpose of this method.
    */
-  public async exportSVG(svg: string): Promise<string> {
-    return svg;
+  public async exportSVG(svg?: string): Promise<string> {
+
+    const svgToReturn: string = ((): string => {
+      if (svg !== undefined && svg !== null) {
+        return svg;
+      }
+
+      if (this._svg !== undefined && this._svg !== null) {
+        return this._svg;
+      }
+
+      Promise.reject(`No SVG defined in the exporter`);
+    })();
+
+    return svgToReturn;
   }
 
   /**
@@ -29,7 +61,17 @@ export class DiagramExportService implements IDiagramExportService {
    * the exported file.
    */
   public async exportPNG(svg: string): Promise<string> {
-    const svgToConvert: string = svg;
+    const svgToConvert: string = ((): string => {
+      if (svg !== undefined && svg !== null) {
+        return svg;
+      }
+
+      if (this._svg !== undefined && this._svg !== null) {
+        return this._svg;
+      }
+
+      Promise.reject(`No SVG defined in the exporter`);
+    })();
 
     const imageURL: string = await this._generateImageFromSVG('png', svgToConvert);
     return imageURL;
@@ -40,8 +82,17 @@ export class DiagramExportService implements IDiagramExportService {
    * the exported file.
    */
   public async exportJPEG(svg: string): Promise<string> {
+    const svgToConvert: string = ((): string => {
+      if (svg !== undefined && svg !== null) {
+        return svg;
+      }
 
-    const svgToConvert: string = svg;
+      if (this._svg !== undefined && this._svg !== null) {
+        return this._svg;
+      }
+
+      Promise.reject(`No SVG defined in the exporter`);
+    })();
 
     const imageURL: string = await this._generateImageFromSVG('jpeg', svgToConvert);
     return imageURL;

@@ -101,7 +101,7 @@ export class BpmnIo {
       this._eventAggregator.publish(environment.events.diagramChange);
     }, handlerPriority);
 
-    this._diagramPrintService = new DiagramPrintService(this._svg);
+    this._diagramPrintService = new DiagramPrintService();
     this._diagramExportService = new DiagramExportService();
   }
 
