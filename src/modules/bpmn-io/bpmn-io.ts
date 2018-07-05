@@ -442,7 +442,9 @@ export class BpmnIo {
     if (userWantsToPrint) {
       // Prevent the browser from handling the default action for CMD/CTRL + p.
       event.preventDefault();
-      this._printService.printDiagram();
+
+      // TODO: Handle the promise properly
+      this._diagramPrintService.printDiagram();
     }
   }
 
