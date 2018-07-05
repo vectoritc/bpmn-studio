@@ -6,7 +6,7 @@ export class DiagramPrintService implements IDiagramPrintService {
 
   private _svg: string;
 
-  constructor(svg: string) {
+  constructor(svg?: string) {
     this._svg = svg;
   }
 
@@ -15,7 +15,18 @@ export class DiagramPrintService implements IDiagramPrintService {
    * dialogue.
    */
   public async printDiagram(svg: string): Promise<void> {
-    const svgToPrint: string = svg || this._svg;
+    const svgToPrint: string = ((): string => {
+      if (svg !== undefined && svg !== null) {
+        return svg;
+      }
+
+      if (this._svg !== undefined && this._svg !== null) {
+        return this._svg;
+      }
+
+      Promise.reject('No SVG for printing defined');
+    })();
+
     const png: string = await this._generateImageFromSVG('png', svgToPrint);
 
     const printOptions: {printable: string, type?: string} = {
