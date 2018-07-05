@@ -1,15 +1,16 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
+import {Router} from 'aurelia-router';
 
 import {IIdentity} from '@essential-projects/core_contracts';
 import {IPagination, IProcessDefEntity} from '@process-engine/bpmn-studio_client';
-import {ISolution} from '@process-engine/solutionexplorer.contracts';
+import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
 import {AuthenticationStateEvent} from '../../contracts/index';
 import environment from '../../environment';
 
-@inject(EventAggregator, 'SolutionExplorerServiceProcessEngine', 'SolutionExplorerServiceFileSystem', 'Identity')
+@inject(EventAggregator, Router, 'SolutionExplorerServiceProcessEngine', 'SolutionExplorerServiceFileSystem', 'Identity')
 export class ProcessSolutionPanel {
   public processes: IPagination<IProcessDefEntity>;
   public processengineSolutionString: string;
@@ -22,15 +23,18 @@ export class ProcessSolutionPanel {
 
   private _subscriptions: Array<Subscription>;
   private _eventAggregator: EventAggregator;
+  private _router: Router;
   private _identity: IIdentity;
   private _solutionExplorerServiceProcessEngine: ISolutionExplorerService;
   private _solutionExplorerServiceFileSystem: ISolutionExplorerService;
 
   constructor(eventAggregator: EventAggregator,
+              router: Router,
               solutionExplorerServiceProcessEngine: ISolutionExplorerService,
               solutionExplorerServiceFileSystem: ISolutionExplorerService) {
 
     this._eventAggregator = eventAggregator;
+    this._router = router;
     this._solutionExplorerServiceProcessEngine = solutionExplorerServiceProcessEngine;
     this._solutionExplorerServiceFileSystem = solutionExplorerServiceFileSystem;
   }
@@ -105,6 +109,11 @@ export class ProcessSolutionPanel {
   public openProcessEngineIndexCard(): void {
     this.fileSystemIndexCardIsActive = false;
     this.processEngineIndexCardIsActive = true;
+  }
+
+  public async navigateToDiagramDetail(solution: ISolution, diagram: IDiagram): Promise<void> {
+    await this._solutionExplorerServiceFileSystem.openSolution(solution.uri, this._identity);
+    this._router.navigateToRoute('diagram-detail', {diagramName: diagram.name});
   }
 
   private async _refreshProcesslist(): Promise<void> {
