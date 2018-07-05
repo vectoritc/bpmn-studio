@@ -101,8 +101,9 @@ export class BpmnIo {
       this._eventAggregator.publish(environment.events.diagramChange);
     }, handlerPriority);
 
-    this._diagramPrintService = new DiagramPrintService(this.xml);
-    this._diagramExportService = new DiagramExportService();
+    this._diagramPrintService = new DiagramPrintService();
+    this._diagramExportService = new DiagramExportService(this.xml);
+
   }
 
   public async attached(): Promise<void> {
@@ -217,6 +218,17 @@ export class BpmnIo {
 
     for (const subscription of this._subscriptions) {
       subscription.dispose();
+    }
+  }
+
+  public xmlChanged(newValue: string): void {
+    if (this.modeler !== undefined && this.modeler !== null) {
+      this.modeler.importXML(newValue, (err: Error) => {
+        return 0;
+      });
+
+      this.xml = newValue;
+      this._diagramExportService.updateXML(newValue);
     }
   }
 
