@@ -85,12 +85,12 @@
           <i class="fas fa-print"></i>
         </button>
       </template>
-      <div class="menu-bar__last-tool" if.bind="showTools">
+      <template if.bind="showStartButton">
         <button class="menu-bar__menu-center--action-button" click.delegate="startProcess()" disabled.bind="validationError" title="Start Process">
           <i class="fas fa-play"></i>
         </button>
-      </div>
-      <user-login></user-login>
+      </template>
+      <user-login class="menu-bar__user-login"></user-login>
     </div>
   </div>
 </template>
