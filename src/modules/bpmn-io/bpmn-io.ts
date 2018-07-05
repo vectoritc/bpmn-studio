@@ -29,6 +29,7 @@ export class BpmnIo {
   public propertyPanel: HTMLElement;
 
   @bindable({changeHandler: 'xmlChanged'}) public xml: string;
+  @bindable({changeHandler: 'nameChanged'}) public name: string;
   public propertyPanelDisplay: string = 'inline';
   public initialLoadingFinished: boolean = false;
   public showXMLView: boolean = false;
@@ -202,6 +203,12 @@ export class BpmnIo {
         return 0;
       });
       this.xml = newValue;
+    }
+  }
+
+  public nameChanged(newValue: string): void {
+    if (this.modeler !== undefined && this.modeler !== null) {
+      this.name = newValue;
     }
   }
 
