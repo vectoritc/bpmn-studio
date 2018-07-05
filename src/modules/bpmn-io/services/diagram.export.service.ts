@@ -19,10 +19,13 @@ export class DiagramExportService implements IDiagramExportService {
   /**
    * Exports the current Diagram as a SVG file and prompts the user to save
    * the exported file.
+   *
+   * TODO: This method is currently completely pointless. In a new PR, this
+   * will have the ability, to either return the svg delivered in the parameter
+   * or from the instance.
    */
   public async exportSVG(svg: string): Promise<string> {
-    const svgToExport: string =  svg;
-    return svgToExport;
+    return svg;
   }
 
   /**
