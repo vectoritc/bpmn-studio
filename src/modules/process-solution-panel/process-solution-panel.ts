@@ -70,6 +70,11 @@ export class ProcessSolutionPanel {
     solutionInputButton.addEventListener('click', () => {
       this.solutionInput.click();
     });
+
+    const firstSolutionInoutButton: HTMLElement = document.getElementById('openFirstSolutionButton');
+    firstSolutionInoutButton.addEventListener('click', () => {
+      this.solutionInput.click();
+    });
   }
 
   public detached(): void {
