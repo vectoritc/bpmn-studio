@@ -255,8 +255,8 @@ export class BpmnDiffView {
     const diffModeIsPreviousToCurrent: boolean = this._currentDiffMode === DiffMode.PreviousToCurrent;
 
     await this._importXml(xml, this._diffModeler);
-    this._markChangedElements(changedElements);
     this._markLayoutChangedElements(layoutChangedElements);
+    this._markChangedElements(changedElements);
 
     diffModeIsPreviousToCurrent ?
       this._markAddedElements(addedElements) :
