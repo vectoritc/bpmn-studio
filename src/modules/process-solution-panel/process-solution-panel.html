@@ -3,7 +3,7 @@
   <div class="process-explorer__solution-explorer">
 
     <div class="solution-explorer-index-cards">
-      <div class="index-card" class.bind="fileSystemIndexCardIsActive ? 'index-card--active' : ''" click.delegate="openFileSystemIndexCard()" if.bind="enableFileSystemSolutions">
+      <div class="index-card" class.bind="fileSystemIndexCardIsActive ? 'index-card--active' : ''" click.delegate="openFileSystemIndexCard()">
         <i class="fa fa-folder"></i>
       </div>
       <div class="index-card" class.bind="processEngineIndexCardIsActive ? 'index-card--active' : ''" click.delegate="openProcessEngineIndexCard()">
@@ -11,8 +11,14 @@
       </div>
     </div>
 
-    <div class="solution-explorer__filesystem" show.bind="fileSystemIndexCardIsActive && enableFileSystemSolutions">
-      <div class="process-explorer__heading">Solution Explorer</div>
+    <div class="solution-explorer__filesystem" show.bind="fileSystemIndexCardIsActive ">
+      <div class="solution-input-group">
+        <div class="process-explorer__heading">Solution Explorer
+          <button class="open-solution-button" id="solutionInputButton" if.bind="!openedFileSystemSolution"><i class="fas fa-plus"></i></button>
+        </div>
+
+        <input class="solution-input" ref="solutionInput" type="file" change.delegate="onSolutionInputChange($event)" id="solutionInput" webkitdirectory>
+      </div>
       <div repeat.for="solution of openedFileSystemSolutions">
         <div class="solution-headline">
           <i class="fa fa-folder-open" click.delegate="toggelVisibility($index)"></i>
@@ -23,10 +29,7 @@
           <a click.delegate="navigateToDiagramDetail(solution, diagram)">${diagram.name}</a>
         </div>
       </div>
-      <div class="solution-input-group">
-        <button class="open-solution-button" id="solutionInputButton" if.bind="!openedFileSystemSolution">Open a Solution</button>
-        <input class="solution-input" ref="solutionInput" type="file" change.delegate="onSolutionInputChange($event)" id="solutionInput" webkitdirectory>
-      </div>
+
     </div>
 
     <div class="solution-explorer__process-engine" if.bind="processEngineIndexCardIsActive">
