@@ -67,7 +67,7 @@ export class ProcessSolutionPanel {
     ];
 
     const solutionInputButton: HTMLElement = document.getElementById('solutionInputButton');
-    solutionInputButton.addEventListener('click', (event: any) => {
+    solutionInputButton.addEventListener('click', () => {
       this.solutionInput.click();
     });
   }
@@ -91,7 +91,6 @@ export class ProcessSolutionPanel {
     const solution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
     this.openedFileSystemSolutions.push(solution);
     this.solutionInput.value = '';
-
   }
 
   public closeFileSystemSolution(solutionToClose: ISolution): void {

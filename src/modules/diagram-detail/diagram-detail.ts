@@ -4,9 +4,6 @@ import {Redirect, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
-import * as download from 'downloadjs';
-import * as print from 'print-js';
-import * as beautify from 'xml-beautifier';
 
 import {NotificationType} from '../../contracts/index';
 import environment from '../../environment';
@@ -111,11 +108,11 @@ export class DiagramDetail {
 
   private async _saveDiagram(): Promise<void> {
     try {
-    this.diagram.xml = await this.bpmnio.getXML();
-    this._solutionExplorerService.saveDiagram(this.diagram);
-    this._diagramHasChanged = false;
-    this._notificationService
-        .showNotification(NotificationType.SUCCESS, `File saved!`);
+      this.diagram.xml = await this.bpmnio.getXML();
+      this._solutionExplorerService.saveDiagram(this.diagram);
+      this._diagramHasChanged = false;
+      this._notificationService
+          .showNotification(NotificationType.SUCCESS, `File saved!`);
     } catch (error) {
       this._notificationService
           .showNotification(NotificationType.ERROR, `Unable to save the file: ${error}`);
