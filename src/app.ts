@@ -1,5 +1,5 @@
 import { autoinject } from 'aurelia-framework';
-import { OpenIdConnect, OpenIdConnectRoles } from 'aurelia-open-id-connect';
+import { OpenIdConnect } from 'aurelia-open-id-connect';
 import {Router, RouterConfiguration} from 'aurelia-router';
 import { User } from 'oidc-client';
 

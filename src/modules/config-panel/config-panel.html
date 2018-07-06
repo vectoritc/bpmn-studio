@@ -4,10 +4,20 @@
     <div class="config-panel__title">
       <h1>Settings</h1>
     </div>
+    <div class="config-panel__subtitle">
+      <h3>Process Engine</h3>
+    </div>
     <div class="config-panel__panel panel panel-default">
       <label for="processEngineRoute">Base Route</label>
-      <input value.bind="config.processEngineRoute" type="text" class="form-control" id="processEngineRoute">
-      <p if.bind="isLoggedIn">The login session is bound to the current ProcessEngine. Changing the backend route will log you out.</p>
+      <input value.bind="config.bpmnStudioClient.baseRoute" type="text" class="form-control" id="processEngineRoute">
+      <p if.bind="isLoggedInToProcessEngine">The login session is bound to the current ProcessEngine. Changing the backend route will log you out.</p>
+    </div>
+    <div class="config-panel__subtitle">
+      <h3>OpenID Connect</h3>
+    </div>
+    <div class="config-panel__panel panel panel-default">
+      <label for="authority">Authority</label>
+      <input value.bind="config.openIdConnect.authority" type="text" class="form-control" id="authority">
     </div>
     <button click.delegate="updateSettings()" class="btn btn-success">Save</button>
     <button click.delegate="cancelUpdate()" class="btn btn-danger">Cancel</button>

@@ -12,7 +12,7 @@ export default {
     pageLimit: 10,
   },
   openIdConnect: {
-    authority: 'http://localhost:5000',
+    authority: 'http://localhost:5001',
   },
   processengine: {
     poolingInterval: 5000,
