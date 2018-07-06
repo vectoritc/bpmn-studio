@@ -1,7 +1,6 @@
 export {IBpmnModeler} from './IBpmnModeler';
 export {IBpmnModelerConstructor} from './IBpmnModelerConstructor';
 export {ICanvas} from './ICanvas';
-export {ICanvgOptions} from './ICanvgOptions';
 export {IDependencyHook} from './IDependencyHook';
 export {IShape} from './IShape';
 export {IEvent} from './IEvent';

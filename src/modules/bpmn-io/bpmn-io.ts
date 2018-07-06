@@ -1,15 +1,21 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
-import * as $ from 'jquery';
 
 import {IBpmnModeler,
+        IDiagramExportService,
+        IDiagramPrintService,
         IEditorActions,
         IKeyboard,
+        IProcessDefEntity,
         NotificationType,
       } from '../../contracts/index';
+
 import environment from '../../environment';
 import {NotificationService} from './../notification/notification.service';
+import {DiagramExportService, DiagramPrintService} from './services/index';
+
+import * as download from 'downloadjs';
 
 const sideBarRightSize: number = 35;
 
@@ -23,6 +29,7 @@ export class BpmnIo {
   public propertyPanel: HTMLElement;
 
   @bindable({changeHandler: 'xmlChanged'}) public xml: string;
+  @bindable({changeHandler: 'nameChanged'}) public name: string;
   public propertyPanelDisplay: string = 'inline';
   public initialLoadingFinished: boolean = false;
   public showXMLView: boolean = false;
@@ -39,6 +46,10 @@ export class BpmnIo {
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
   private _diagramIsValid: boolean = true;
+  private _diagramPrintService: IDiagramPrintService;
+  private _diagramExportService: IDiagramExportService;
+
+  private _svg: string;
 
   /**
    * We are using the direct reference of a container element to place the tools of bpmn-js
@@ -88,6 +99,10 @@ export class BpmnIo {
     this.modeler.on('commandStack.changed', () => {
       this._eventAggregator.publish(environment.events.diagramChange);
     }, handlerPriority);
+
+    this._diagramPrintService = new DiagramPrintService(this._svg);
+    this._diagramExportService = new DiagramExportService();
+
   }
 
   public attached(): void {
@@ -140,6 +155,28 @@ export class BpmnIo {
       this._eventAggregator.subscribe(environment.events.navBar.disableSaveButton, () => {
         this._diagramIsValid = false;
       }),
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, async(process: IProcessDefEntity) => {
+        const xml: string = await this._diagramExportService.exportBPMN(this.xml);
+        download(xml, `${this.name}.bpmn`, 'application/bpmn20-xml');
+      }),
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, async(process: IProcessDefEntity) => {
+        const svg: string = await this.getSVG();
+        download(svg, `${this.name}.svg`, 'image/svg+xml');
+      }),
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, async(process: IProcessDefEntity) => {
+        const svg: string = await this.getSVG();
+        const png: string = await this._diagramExportService.exportPNG(svg);
+        download(png, `${this.name}.png`, 'image/png');
+      }),
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, async(process: IProcessDefEntity) => {
+        const svg: string = await this.getSVG();
+        const jpeg: string = await this._diagramExportService.exportPNG(svg);
+        download(jpeg, `${this.name}.jpeg`, 'image/jpeg');
+      }),
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.printDiagram}`, async() => {
+        const svgContent: string = await this.getSVG();
+        this._diagramPrintService.printDiagram(svgContent);
+      }),
     ];
 
     const previousPropertyPanelWidth: string = window.localStorage.getItem('propertyPanelWidth');
@@ -179,34 +216,16 @@ export class BpmnIo {
     }
   }
 
+  public nameChanged(newValue: string): void {
+    if (this.modeler !== undefined && this.modeler !== null) {
+      this.name = newValue;
+    }
+  }
+
   public propertyPanelWidthChanged(newValue: number): void {
     if (newValue !== undefined) {
       window.localStorage.setItem('propertyPanelWidth', '' + this.propertyPanelWidth);
     }
-  }
-
-  public getXML(): Promise<string> {
-    return new Promise((resolve: Function, reject: Function): void => {
-      this.modeler.saveXML({}, (err: Error, result: string) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result);
-        }
-      });
-    });
-  }
-
-  public getSVG(): Promise<string> {
-    return new Promise((resolve: Function, reject: Function): void => {
-      this.modeler.saveSVG({}, (err: Error, result: string) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result);
-        }
-      });
-    });
   }
 
   public togglePanel(): void {
@@ -242,6 +261,32 @@ export class BpmnIo {
     } else {
       this.showXMLView = false;
     }
+  }
+
+  public async getXML(): Promise<string> {
+    const returnPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void => {
+      this.modeler.saveXML({}, (error: Error, result: string) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(result);
+      });
+    });
+    return returnPromise;
+  }
+
+  private async getSVG(): Promise<string> {
+    const returnPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void => {
+      this.modeler.saveSVG({}, (error: Error, result: string) => {
+        if (error) {
+          reject(error);
+        }
+
+        resolve(result);
+      });
+    });
+
+    return returnPromise;
   }
 
   private _setNewPropertyPanelWidthFromMousePosition(mousePosition: number): void {
@@ -334,9 +379,7 @@ export class BpmnIo {
     // Prevent the browser from handling the default action for CTRL + s.
     event.preventDefault();
 
-    if (this._diagramIsValid) {
-      this._eventAggregator.publish(environment.events.processDefDetail.saveDiagram);
-    }
+    this._eventAggregator.publish(environment.events.processDefDetail.saveDiagram);
   }
 
   /**
@@ -392,7 +435,11 @@ export class BpmnIo {
     if (userWantsToPrint) {
       // Prevent the browser from handling the default action for CMD/CTRL + p.
       event.preventDefault();
-      this._eventAggregator.publish(environment.events.processDefDetail.printDiagram);
+
+      // TODO: Handle the promise properly
+      this.getSVG().then((svg: string): void => {
+        this._diagramPrintService.printDiagram(svg);
+      });
     }
   }
 

@@ -70,7 +70,8 @@
     "index.html",
     "bin",
     "bootstrap",
-    "resources"
+    "resources",
+    "@fortawesome"
   ],
   "bin": "./bin/bpmn-studio.js",
   "repository": {
@@ -100,6 +101,7 @@
   "devDependencies": {
     "@essential-projects/core_contracts": "^2.0.0",
     "@essential-projects/event_aggregator": "^2.0.0",
+    "@fortawesome/fontawesome-free": "^5.1.0",
     "@process-engine/bpmn-js-custom-bundle": "^2.0.0",
     "@process-engine/bpmn-studio_client": "^3.0.0",
     "@process-engine/process_engine_contracts": "^7.0.0",
@@ -120,7 +122,6 @@
     "bluebird": "^3.5.1",
     "bootstrap": "^3.3.7",
     "browser-sync": "^2.13.0",
-    "canvg-browser": "^1.0.0",
     "connect-history-api-fallback": "^1.2.0",
     "debounce": "^1.0.2",
     "debug": "^3.1.0",
@@ -132,7 +133,6 @@
     "eventemitter2": "^4.1.2",
     "faye": "^1.2.4",
     "fetch-ponyfill": "^4.1.0",
-    "font-awesome": "^4.7.0",
     "gulp": "github:gulpjs/gulp#4.0",
     "gulp-changed-in-place": "^2.0.3",
     "gulp-notify": "^2.2.0",

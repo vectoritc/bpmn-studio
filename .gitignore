@@ -26,5 +26,6 @@ node_modules
 # Compiled files
 scripts
 dist
+@fortawesome
 
 process-engine_local_db

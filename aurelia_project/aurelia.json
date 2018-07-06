@@ -191,11 +191,11 @@
             "exports": "Faye"
           },
           {
-            "name": "font-awesome",
-            "path": "../node_modules/font-awesome",
-            "main": "css/font-awesome.min.css",
+            "name": "@fortawesome/fontawesome-free",
+            "path": "../node_modules/@fortawesome/fontawesome-free",
+            "main": "css/all.css",
             "resources": [
-              "css/font-awesome.min.css"
+              "css/all.css"
             ]
           },
           {
@@ -257,12 +257,6 @@
             "deps": [
               "jquery"
             ]
-          },
-          {
-            "name": "canvg-browser",
-            "path": "../node_modules/canvg-browser",
-            "main": "index.js",
-            "exports": "canvg"
           },
           {
             "name": "rgbcolor",
@@ -333,7 +327,12 @@
       "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff": "bootstrap/fonts",
       "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf": "bootstrap/fonts",
       "src/resources/images/default-avatar.png": "src/resources/images",
-      "node_modules/font-awesome/fonts/fontawesome-webfont.woff2": "fonts"
+      "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf": "@fortawesome/fontawesome-free/webfonts",
+      "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff": "@fortawesome/fontawesome-free/webfonts",
+      "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2": "@fortawesome/fontawesome-free/webfonts",
+      "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.ttf": "@fortawesome/fontawesome-free/webfonts",
+      "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff": "@fortawesome/fontawesome-free/webfonts",
+      "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2": "@fortawesome/fontawesome-free/webfonts"
     }
   }
 }
