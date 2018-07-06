@@ -108,6 +108,10 @@ export class ProcessDefDetail {
     this._eventAggregator.publish(environment.events.statusBar.showDiagramViewButtons);
   }
 
+  public determineActivationStrategy(): string {
+    return 'replace';
+  }
+
   /**
    * We implement canDeactivate() for the Aurelia Router, because we want to
    * prevent the user from leaving the editor, if there are changes, that need
