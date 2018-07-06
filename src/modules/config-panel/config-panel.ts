@@ -2,10 +2,10 @@ import {BpmnStudioClient} from '@process-engine/bpmn-studio_client';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
+import {IAuthenticationService} from '../../contracts/authentication/IAuthenticationService';
+import {AuthenticationStateEvent, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
-import {IAuthenticationService} from './../../contracts/authentication/IAuthenticationService';
-import {AuthenticationStateEvent, NotificationType} from './../../contracts/index';
-import {NotificationService} from './../notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 
 @inject(Router, 'BpmnStudioClient', 'NotificationService', EventAggregator, 'AuthenticationService')
 export class ConfigPanel {
