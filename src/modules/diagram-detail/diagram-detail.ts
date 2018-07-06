@@ -59,7 +59,7 @@ export class DiagramDetail {
 
   public async canDeactivate(): Promise<Redirect> {
 
-    const _modal: Promise<boolean> = new Promise((resolve: Function, reject: Function): any => {
+    const _modal: Promise<boolean> = new Promise((resolve: Function, reject: Function): boolean | void => {
       if (!this._diagramHasChanged) {
         resolve(true);
       } else {
