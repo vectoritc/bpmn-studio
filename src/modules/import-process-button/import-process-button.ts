@@ -3,7 +3,7 @@ import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 import {bindable, inject} from 'aurelia-framework';
 import {IChooseDialogOption, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
-import {NotificationService} from './../notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 
 @inject('NotificationService')
 export class ImportProcessButton {

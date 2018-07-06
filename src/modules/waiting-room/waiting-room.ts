@@ -1,8 +1,8 @@
 import {BpmnStudioClient, IUserTaskConfig} from '@process-engine/bpmn-studio_client';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import {NotificationType} from './../../contracts/index';
-import {NotificationService} from './../notification/notification.service';
+import {NotificationType} from '../../contracts/index';
+import {NotificationService} from '../notification/notification.service';
 
 @inject(Router, 'BpmnStudioClient', 'NotificationService')
 export class WaitingRoom {

@@ -1,6 +1,6 @@
 import {computedFrom, inject} from 'aurelia-framework';
 import {IAuthenticationService, IEventFunction, IIdentity, NotificationType} from '../../contracts/index';
-import {NotificationService} from './../notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 
 @inject('AuthenticationService', 'NotificationService')
 export class UserLogin {
