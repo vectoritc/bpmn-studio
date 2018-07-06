@@ -64,22 +64,22 @@ export class DiagramDetail {
         resolve(true);
       } else {
 
-        const modal: HTMLElement = document.getElementById('saveModal');
+        const modal: HTMLElement = document.getElementById('saveModalLeaveView');
         modal.classList.add('show-modal');
 
         // register onClick handler
-        document.getElementById('dontSaveButton').addEventListener('click', () => {
+        document.getElementById('dontSaveButtonLeaveView').addEventListener('click', () => {
           modal.classList.remove('show-modal');
           this._diagramHasChanged = false;
           resolve(true);
         });
-        document.getElementById('saveButton').addEventListener('click', () => {
+        document.getElementById('saveButtonLeaveView').addEventListener('click', () => {
           this._saveDiagram();
           modal.classList.remove('show-modal');
           this._diagramHasChanged = false;
           resolve(true);
         });
-        document.getElementById('cancelButton').addEventListener('click', () => {
+        document.getElementById('cancelButtonLeaveView').addEventListener('click', () => {
           modal.classList.remove('show-modal');
           resolve(false);
         });
