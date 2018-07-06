@@ -9,7 +9,9 @@ import {defaultBpmnColors,
   IBpmnModeler,
   ICanvas,
   IColorPickerColor,
+  IDiffChangeListData,
   IDiffChanges,
+  IElementChange,
   IElementRegistry,
   IEventBus,
   IEventFunction,
@@ -38,6 +40,14 @@ export class BpmnDiffView {
   public rightCanvasModel: HTMLElement;
   public lowerCanvasModel: HTMLElement;
   public diffModeTitle: string = 'Bitte einen Diff Modus auswählen.';
+  public showChangeList: boolean;
+  public noChangesExisting: boolean;
+  public changeListData: IDiffChangeListData = {
+    removed: [],
+    changed: [],
+    added: [],
+    layoutChanged: [],
+  };
 
   constructor(eventAggregator: EventAggregator) {
     this._eventAggregator  = eventAggregator;
@@ -54,10 +64,60 @@ export class BpmnDiffView {
         this._updateDiffView();
       }),
       this._eventAggregator.subscribe(environment.events.diffView.toggleChangeList, () => {
-        // tslint:disable-next-line
-        console.log(this.changes);
+        this.showChangeList = !this.showChangeList;
       }),
     ];
+  }
+
+  private _prepareChangesForChangeList(): void {
+    this.changeListData.removed = [];
+    this.changeListData.changed = [];
+    this.changeListData.added = [];
+    this.changeListData.layoutChanged = [];
+
+    const removedElementIds: Array<string> = Object.keys(this.changes._removed);
+    const changedEementIds: Array<string> = Object.keys(this.changes._changed);
+    const addedElementIds: Array<string> = Object.keys(this.changes._added);
+    const layoutChangedElementIds: Array<string> = Object.keys(this.changes._layoutChanged);
+
+    this.noChangesExisting = removedElementIds.length === 0 &&
+                              changedEementIds.length === 0 &&
+                              addedElementIds.length === 0 &&
+                              layoutChangedElementIds.length === 0;
+
+    if (this.noChangesExisting) {
+      return;
+    }
+
+    for (const removedElementId of removedElementIds) {
+      const removedElement: IElementChange = this.changes._removed[removedElementId];
+
+      this.changeListData.removed.push(removedElement);
+    }
+
+    for (const changedElementId of changedEementIds) {
+      const changedElement: IElementChange = this.changes._changed[changedElementId];
+      const elementHasNoChanges: boolean = Object.keys(changedElement.attrs).length === 0;
+
+      if (elementHasNoChanges) {
+        continue;
+      }
+
+      this.changeListData.changed.push(changedElement);
+    }
+
+    for (const addedElementId of addedElementIds) {
+      const addedElement: IElementChange = this.changes._added[addedElementId];
+
+      this.changeListData.added.push(addedElement);
+    }
+
+    for (const layoutChangedElementId of layoutChangedElementIds) {
+      const layoutChangedElement: IElementChange = this.changes._layoutChanged[layoutChangedElementId];
+
+      this.changeListData.layoutChanged.push(layoutChangedElement);
+    }
+
   }
 
   public created(): void {
@@ -89,6 +149,7 @@ export class BpmnDiffView {
 
   public changesChanged(): void {
     this._updateDiffView();
+    this._prepareChangesForChangeList();
   }
 
   private _markAddedElements(addedElements: object): void {
