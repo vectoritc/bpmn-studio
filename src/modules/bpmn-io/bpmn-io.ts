@@ -276,6 +276,15 @@ export class BpmnIo {
     }
   }
 
+  public toggleDiffView(): void {
+    if (!this.showDiffView) {
+      this._updateXmlChanges();
+      this.showDiffView = true;
+    } else {
+      this.showDiffView = false;
+    }
+  }
+
   public resize(event: any): void {
     const mousePosition: number = event.clientX;
 
@@ -289,6 +298,18 @@ export class BpmnIo {
     } else {
       this.showXMLView = false;
     }
+  }
+
+  public async getXML(): Promise<string> {
+    const returnPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void => {
+      this.modeler.saveXML({}, (error: Error, result: string) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(result);
+      });
+    });
+    return returnPromise;
   }
 
   private async _updateXmlChanges(): Promise<void> {
@@ -479,5 +500,19 @@ export class BpmnIo {
     const currentPlatformIsMac: boolean = macRegex.test(currentPlatform);
 
     return currentPlatformIsMac;
+  }
+
+  private async getSVG(): Promise<string> {
+    const returnPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void => {
+      this.modeler.saveSVG({}, (error: Error, result: string) => {
+        if (error) {
+          reject(error);
+        }
+
+        resolve(result);
+      });
+    });
+
+    return returnPromise;
   }
 }
