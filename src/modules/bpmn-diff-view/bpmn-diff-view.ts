@@ -32,8 +32,6 @@ export class BpmnDiffView {
   private _modeling: IModeling;
   private _elementRegistry: IElementRegistry;
   private _subscriptions: Array<Subscription>;
-
-  private _currentDiffMode: DiffMode;
   private _elementNameService: ElementNameService;
 
   @bindable() public xml: string;
@@ -42,6 +40,7 @@ export class BpmnDiffView {
   public leftCanvasModel: HTMLElement;
   public rightCanvasModel: HTMLElement;
   public lowerCanvasModel: HTMLElement;
+  public currentDiffMode: DiffMode;
   public diffModeTitle: string = 'Bitte einen Diff Modus auswählen.';
   public showChangeList: boolean;
   public noChangesExisting: boolean;
@@ -64,7 +63,7 @@ export class BpmnDiffView {
 
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.diffView.changeDiffMode, (diffMode: DiffMode) => {
-        this._currentDiffMode = diffMode;
+        this.currentDiffMode = diffMode;
         this._updateDiffView();
       }),
       this._eventAggregator.subscribe(environment.events.diffView.toggleChangeList, () => {
@@ -264,10 +263,10 @@ export class BpmnDiffView {
   }
 
   private _updateDiffView(): void {
-    if (this._currentDiffMode === DiffMode.PreviousToCurrent) {
+    if (this.currentDiffMode === DiffMode.PreviousToCurrent) {
       this._updateLowerDiff(this.xml);
       this.diffModeTitle = 'Vorher vs. Nachher';
-    } else if (this._currentDiffMode === DiffMode.CurrentToPrevious) {
+    } else if (this.currentDiffMode === DiffMode.CurrentToPrevious) {
       this._updateLowerDiff(this.savedxml);
       this.diffModeTitle = 'Nachher vs. Vorher';
     } else {
@@ -287,7 +286,7 @@ export class BpmnDiffView {
     const changedElements: object = this.changes._changed;
     const layoutChangedElements: object = this.changes._layoutChanged;
 
-    const diffModeIsPreviousToCurrent: boolean = this._currentDiffMode === DiffMode.PreviousToCurrent;
+    const diffModeIsPreviousToCurrent: boolean = this.currentDiffMode === DiffMode.PreviousToCurrent;
 
     await this._importXml(xml, this._diffModeler);
     this._markLayoutChangedElements(layoutChangedElements);
