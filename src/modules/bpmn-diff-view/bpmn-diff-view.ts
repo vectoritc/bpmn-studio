@@ -61,6 +61,8 @@ export class BpmnDiffView {
     this._rightViewer.attachTo(this.rightCanvasModel);
     this._lowerViewer.attachTo(this.lowerCanvasModel);
 
+    this._syncAllViewer();
+
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.diffView.changeDiffMode, (diffMode: DiffMode) => {
         this.currentDiffMode = diffMode;
@@ -102,6 +104,16 @@ export class BpmnDiffView {
   public changesChanged(): void {
     this._updateDiffView();
     this._prepareChangesForChangeList();
+  }
+
+  private _syncAllViewer(): void {
+    const lowerCanvas: ICanvas = this._lowerViewer.get('canvas');
+    const leftCanvas: ICanvas = this._leftViewer.get('canvas');
+    const rightCanvas: ICanvas = this._rightViewer.get('canvas');
+
+    const changedViewbox: string = lowerCanvas.viewbox();
+    leftCanvas.viewbox(changedViewbox);
+    rightCanvas.viewbox(changedViewbox);
   }
 
   private _getChangeListEntriesFromChanges(elementChanges: object): Array<IChangeListEntry> {
