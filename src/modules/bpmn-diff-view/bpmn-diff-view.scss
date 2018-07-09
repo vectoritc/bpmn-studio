@@ -53,9 +53,9 @@
 }
 
 .diff-button-hint {
-  position: absolute;
+  position: fixed;
   width: 230px;
-  bottom: 4px;
+  bottom: 22px;
   left: calc(50% - 115px);
   display: inline-flex;
 }
