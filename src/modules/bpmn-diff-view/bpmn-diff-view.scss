@@ -87,6 +87,7 @@
 
 .change-list-table {
   width: 100%;
+  margin-left: 10px;
 }
 
 .change-list-table__entry {
@@ -108,4 +109,8 @@
 
 .label-purple {
   background-color: #8E24AA;
+}
+
+.diff-change-type {
+  width: 150px;
 }
