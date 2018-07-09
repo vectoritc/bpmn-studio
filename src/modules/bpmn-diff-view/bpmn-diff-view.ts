@@ -8,6 +8,7 @@ import {defaultBpmnColors,
   DiffMode,
   IBpmnModeler,
   ICanvas,
+  IChangeListEntry,
   IColorPickerColor,
   IDiffChangeListData,
   IDiffChanges,
@@ -18,6 +19,7 @@ import {defaultBpmnColors,
   IModeling,
   IShape} from '../../contracts/index';
 import environment from '../../environment';
+import {ElementNameService} from '../elementname/elementname.service';
 
 @inject(EventAggregator)
 export class BpmnDiffView {
@@ -32,6 +34,7 @@ export class BpmnDiffView {
   private _subscriptions: Array<Subscription>;
 
   private _currentDiffMode: DiffMode;
+  private _elementNameService: ElementNameService;
 
   @bindable() public xml: string;
   @bindable() public savedxml: string;
@@ -51,6 +54,7 @@ export class BpmnDiffView {
 
   constructor(eventAggregator: EventAggregator) {
     this._eventAggregator  = eventAggregator;
+    this._elementNameService = new ElementNameService();
   }
 
   public attached(): void {
@@ -90,34 +94,65 @@ export class BpmnDiffView {
     }
 
     for (const removedElementId of removedElementIds) {
-      const removedElement: IElementChange = this.changes._removed[removedElementId];
+      const elementChange: IElementChange = this.changes._removed[removedElementId];
 
-      this.changeListData.removed.push(removedElement);
+      const elementName: string = this._elementNameService.getHumanReadableName(elementChange.name);
+      const elementType: string = this._elementNameService.getHumanReadableType(elementChange.$type);
+
+      const changeListEntry: IChangeListEntry = {
+        name: elementName,
+        type: elementType,
+      };
+
+      this.changeListData.removed.push(changeListEntry);
     }
 
     for (const changedElementId of changedEementIds) {
-      const changedElement: IElementChange = this.changes._changed[changedElementId];
-      const elementHasNoChanges: boolean = Object.keys(changedElement.attrs).length === 0;
+      const elementChange: IElementChange = this.changes._changed[changedElementId];
+      const elementHasNoChanges: boolean = Object.keys(elementChange.attrs).length === 0;
 
       if (elementHasNoChanges) {
         continue;
       }
 
-      this.changeListData.changed.push(changedElement);
+      const elementName: string = this._elementNameService.getHumanReadableName(elementChange.model.name);
+      const elementType: string = this._elementNameService.getHumanReadableType(elementChange.model.$type);
+
+      const changeListEntry: IChangeListEntry = {
+        name: elementName,
+        type: elementType,
+      };
+
+      this.changeListData.changed.push(changeListEntry);
     }
 
     for (const addedElementId of addedElementIds) {
-      const addedElement: IElementChange = this.changes._added[addedElementId];
+      const elementChange: IElementChange = this.changes._added[addedElementId];
 
-      this.changeListData.added.push(addedElement);
+      const elementName: string = this._elementNameService.getHumanReadableName(elementChange.name);
+      const elementType: string = this._elementNameService.getHumanReadableType(elementChange.$type);
+
+      const changeListEntry: IChangeListEntry = {
+        name: elementName,
+        type: elementType,
+      };
+
+      this.changeListData.added.push(changeListEntry);
     }
 
     for (const layoutChangedElementId of layoutChangedElementIds) {
-      const layoutChangedElement: IElementChange = this.changes._layoutChanged[layoutChangedElementId];
+      const elementChange: IElementChange = this.changes._layoutChanged[layoutChangedElementId];
 
-      this.changeListData.layoutChanged.push(layoutChangedElement);
+      const elementName: string = this._elementNameService.getHumanReadableName(elementChange.name);
+      const elementType: string = this._elementNameService.getHumanReadableType(elementChange.$type);
+
+      const changeListEntry: IChangeListEntry = {
+        name: elementName,
+        type: elementType,
+      };
+
+      this.changeListData.layoutChanged.push(changeListEntry);
     }
-
   }
 
   public created(): void {

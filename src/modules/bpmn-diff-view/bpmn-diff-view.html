@@ -22,20 +22,24 @@
       <div class="diff-change-list" if.bind="showChangeList">
         <table class="change-list-table">
           <tr repeat.for="removedElement of changeListData.removed">
-            <td class="change-list-table__entry"><span class="label label-red">Removed</span></td>
-            <td class="change-list-table__entry">${removedElement.id}</td>
+            <td class="change-list-table__entry diff-change-type"><span class="label label-red">Removed</span></td>
+            <td class="change-list-table__entry">${removedElement.type}</td>
+            <td class="change-list-table__entry">${removedElement.name}</td>
           </tr>
           <tr repeat.for="changedElement of changeListData.changed">
-            <td class="change-list-table__entry"><span class="label label-orange">Changed</span></td>
-            <td class="change-list-table__entry">${changedElement.model.id}</td>
+            <td class="change-list-table__entry diff-change-type"><span class="label label-orange">Changed</span></td>
+            <td class="change-list-table__entry">${changedElement.type}</td>
+            <td class="change-list-table__entry">${changedElement.name}</td>
           </tr>
           <tr repeat.for="addedElement of changeListData.added">
-            <td class="change-list-table__entry"><span class="label label-green">Added</span></td>
-            <td class="change-list-table__entry">${addedElement.id}</td>
+            <td class="change-list-table__entry diff-change-type"><span class="label label-green">Added</span></td>
+            <td class="change-list-table__entry">${addedElement.type}</td>
+            <td class="change-list-table__entry">${addedElement.name}</td>
           </tr>
           <tr repeat.for="layoutChangedElement of changeListData.layoutChanged">
-            <td class="change-list-table__entry"><span class="label label-purple">Layout Changed</span></td>
-            <td class="change-list-table__entry">${layoutChangedElement.id}</td>
+            <td class="change-list-table__entry diff-change-type"><span class="label label-purple">Layout Changed</span></td>
+            <td class="change-list-table__entry">${layoutChangedElement.type}</td>
+            <td class="change-list-table__entry">${layoutChangedElement.name}</td>
           </tr>
        </table>
       </div>

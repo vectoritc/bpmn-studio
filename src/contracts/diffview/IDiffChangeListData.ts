@@ -1,8 +1,8 @@
-import {IElementChange} from './IElementChange';
+import {IChangeListEntry} from './IChangeListEntry';
 
 export interface IDiffChangeListData {
-  added: Array<IElementChange>;
-  changed: Array<IElementChange>;
-  layoutChanged: Array<IElementChange>;
-  removed: Array<IElementChange>;
+  added: Array<IChangeListEntry>;
+  changed: Array<IChangeListEntry>;
+  layoutChanged: Array<IChangeListEntry>;
+  removed: Array<IChangeListEntry>;
 }
