@@ -2,6 +2,7 @@ import {IDocumentation} from './bpmnElements/IDocumentation';
 import {IModdleElement} from './index';
 
 export interface IShape {
+  name?: string;
   attrs?: object;
   businessObject: IModdleElement;
   id: string;
