@@ -31,6 +31,8 @@ export class StatusBar {
 
     this._eventAggregator.subscribe(environment.events.statusBar.hideDiagramViewButtons, () => {
       this.showDiagramViewButtons = false;
+      this.xmlIsShown = false;
+      this.diffIsShown = false;
     });
 
     this._eventAggregator.subscribe(environment.events.statusBar.updateProcessEngineRoute, (newProcessEngineRoute: string) => {
