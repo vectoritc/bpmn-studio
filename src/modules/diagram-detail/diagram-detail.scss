@@ -1,8 +1,4 @@
-.faint {
-  opacity: 0.5;
-}
-
-.process-def-detail {
+.diagram-detail {
   display: flex;
   align-items: stretch;
   height: 100%;
@@ -14,19 +10,9 @@
   padding-bottom: 22px;
 }
 
-.hidden {
-  display: none;
-}
-
-.process-details-dropdown-menu {
-  width: 400px;
-  padding: 5px;
-  overflow-x: scroll;
-}
-
-.process-details-dropdown-menu__entry {
-  padding-right: 10px;
-}
+/*
+ * Save Modal Dialog
+*/
 
 .save-modal-dialog {
   position: relative;

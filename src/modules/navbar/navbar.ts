@@ -11,12 +11,12 @@ export class NavBar {
 
   @bindable() public showSolutionExplorer: boolean;
   public activeRouteTitle: string;
-  public showTools: boolean = false;
-  public disableSaveButton: boolean = false;
   public process: IProcessDefEntity;
-
   public diagramInfo: HTMLElement;
   public dropdown: HTMLElement;
+  public showTools: boolean = false;
+  public showStartButton: boolean = false;
+  public disableSaveButton: boolean = false;
 
   constructor(router: Router, eventAggregator: EventAggregator) {
     this._router = router;
@@ -55,6 +55,14 @@ export class NavBar {
 
     this._eventAggregator.subscribe(environment.events.navBar.enableSaveButton, () => {
       this.disableSaveButton = false;
+    });
+
+    this._eventAggregator.subscribe(environment.events.navBar.showStartButton, () => {
+      this.showStartButton = true;
+    });
+
+    this._eventAggregator.subscribe(environment.events.navBar.hideStartButton, () => {
+      this.showStartButton = false;
     });
   }
 
