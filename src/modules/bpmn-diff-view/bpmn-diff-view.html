@@ -28,25 +28,28 @@
         <span class="no-change-message" if.bind="noChangesExisting">${noChangesReason}</span>
         <table class="change-list-table">
           <tr repeat.for="removedElement of changeListData.removed">
-            <td>
-                <span class="label label-red">Removed</span> - ${removedElement.type}
-                <span if.bind="removedElement.name !== ''">mit dem Namen ${removedElement.name}
+            <td class="change-list-table__entry">
+              <span class="label label-red">Removed</span> - ${removedElement.type}
+              <span if.bind="removedElement.name !== ''">mit dem Namen ${removedElement.name}
             </td>
           </tr>
           <tr repeat.for="changedElement of changeListData.changed">
-            <td class="change-list-table__entry diff-change-type"><span class="label label-orange">Changed</span></td>
-            <td class="change-list-table__entry">${changedElement.type}</td>
-            <td class="change-list-table__entry">${changedElement.name}</td>
+            <td class="change-list-table__entry">
+              <span class="label label-orange">Change</span> - ${changedElement.type}
+              <span if.bind="changedElement.name !== ''">mit dem Namen ${changedElement.name}
+            </td>
           </tr>
           <tr repeat.for="addedElement of changeListData.added">
-            <td class="change-list-table__entry diff-change-type"><span class="label label-green">Added</span></td>
-            <td class="change-list-table__entry">${addedElement.type}</td>
-            <td class="change-list-table__entry">${addedElement.name}</td>
+            <td class="change-list-table__entry">
+              <span class="label label-green">Added</span> - ${addedElement.type}
+              <span if.bind="addedElement.name !== ''">mit dem Namen ${addedElement.name}
+            </td>
           </tr>
           <tr repeat.for="layoutChangedElement of changeListData.layoutChanged">
-            <td class="change-list-table__entry diff-change-type"><span class="label label-purple">Layout Changed</span></td>
-            <td class="change-list-table__entry">${layoutChangedElement.type}</td>
-            <td class="change-list-table__entry">${layoutChangedElement.name}</td>
+            <td class="change-list-table__entry">
+              <span class="label label-purple">Layout Changed</span> - ${layoutChangedElement.type}
+              <span if.bind="layoutChangedElement.name !== ''">mit dem Namen ${layoutChangedElement.name}
+            </td>
           </tr>
        </table>
       </div>
