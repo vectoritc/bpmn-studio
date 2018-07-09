@@ -13,6 +13,7 @@ export class StatusBar {
   public diffIsShown: boolean = false;
   public currentDiffMode: DiffMode;
   public xmlIsShown: boolean = false;
+  public showChangeList: boolean = false;
   public isEncryptedCommunication: boolean = false;
 
   public DiffMode: typeof DiffMode = DiffMode;
@@ -35,6 +36,7 @@ export class StatusBar {
       this.showDiagramViewButtons = false;
       this.xmlIsShown = false;
       this.diffIsShown = false;
+      this.showChangeList = false;
       this.currentDiffMode = undefined;
     });
 
@@ -58,6 +60,7 @@ export class StatusBar {
   }
 
   public toggleChangeList(): void {
+    this.showChangeList = !this.showChangeList;
     this._eventAggregator.publish(environment.events.diffView.toggleChangeList);
   }
 
