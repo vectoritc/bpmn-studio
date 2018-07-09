@@ -157,12 +157,16 @@ export class BpmnDiffView {
                               this.changeListData.added.length +
                               this.changeListData.layoutChanged.length;
 
-    this.noChangesExisting = this.changeListData.removed.length === 0 &&
-                              this.changeListData.changed.length === 0 &&
-                              this.changeListData.added.length === 0 &&
-                              this.changeListData.layoutChanged.length === 0;
+    this.noChangesExisting = this.totalChangeAmount === 0;
 
     if (this.noChangesExisting) {
+      this._setNoChangesReason();
+    } else {
+      this.noChangesReason = '';
+    }
+  }
+
+  private _setNoChangesReason(): void {
       const diagramsAreSame: boolean = this.savedxml === this.xml;
 
       if (diagramsAreSame) {
@@ -170,9 +174,6 @@ export class BpmnDiffView {
       } else {
         this.noChangesReason = 'Die Diagramme konnten nicht verglichen werden.';
       }
-    } else {
-      this.noChangesReason = '';
-    }
   }
 
   private _createChangeListEntry(elementName: string, elementType: string): IChangeListEntry {
