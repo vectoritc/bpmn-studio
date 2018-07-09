@@ -62,7 +62,7 @@ export class BpmnDiffView {
     this._rightViewer.attachTo(this.rightCanvasModel);
     this._lowerViewer.attachTo(this.lowerCanvasModel);
 
-    this._syncAllViewer();
+    this._syncAllViewers();
 
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.diffView.changeDiffMode, (diffMode: DiffMode) => {
@@ -107,7 +107,7 @@ export class BpmnDiffView {
     this._prepareChangesForChangeList();
   }
 
-  private _syncAllViewer(): void {
+  private _syncAllViewers(): void {
     const lowerCanvas: ICanvas = this._lowerViewer.get('canvas');
     const leftCanvas: ICanvas = this._leftViewer.get('canvas');
     const rightCanvas: ICanvas = this._rightViewer.get('canvas');
