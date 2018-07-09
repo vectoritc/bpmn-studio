@@ -245,12 +245,12 @@ export class BpmnDiffView {
   }
 
   private _updateDiffView(): void {
-    if (this.currentDiffMode === DiffMode.PreviousToCurrent) {
+    if (this.currentDiffMode === DiffMode.CurrentToPrevious) {
       this._updateLowerDiff(this.xml);
-      this.diffModeTitle = 'Vorher vs. Nachher';
-    } else if (this.currentDiffMode === DiffMode.CurrentToPrevious) {
-      this._updateLowerDiff(this.savedxml);
       this.diffModeTitle = 'Nachher vs. Vorher';
+    } else if (this.currentDiffMode === DiffMode.PreviousToCurrent) {
+      this._updateLowerDiff(this.savedxml);
+      this.diffModeTitle = 'Vorher vs. Nachher';
     } else {
       this.diffModeTitle = '';
     }
@@ -268,13 +268,13 @@ export class BpmnDiffView {
     const changedElements: object = this.changes._changed;
     const layoutChangedElements: object = this.changes._layoutChanged;
 
-    const diffModeIsPreviousToCurrent: boolean = this.currentDiffMode === DiffMode.PreviousToCurrent;
+    const diffModeIsCurrentToPrevious: boolean = this.currentDiffMode === DiffMode.CurrentToPrevious;
 
     await this._importXml(xml, this._diffModeler);
     this._markLayoutChangedElements(layoutChangedElements);
     this._markChangedElements(changedElements);
 
-    diffModeIsPreviousToCurrent ?
+    diffModeIsCurrentToPrevious ?
       this._markAddedElements(addedElements) :
       this._markRemovedElements(removedElements);
 
