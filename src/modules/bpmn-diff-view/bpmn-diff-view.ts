@@ -41,7 +41,7 @@ export class BpmnDiffView {
   public rightCanvasModel: HTMLElement;
   public lowerCanvasModel: HTMLElement;
   public currentDiffMode: DiffMode;
-  public diffModeTitle: string = 'Bitte einen Diff Modus auswählen.';
+  public diffModeTitle: string = '';
   public showChangeList: boolean;
   public noChangesExisting: boolean;
   public changeListData: IDiffChangeListData = {
@@ -247,7 +247,7 @@ export class BpmnDiffView {
       this._updateLowerDiff(this.savedxml);
       this.diffModeTitle = 'Nachher vs. Vorher';
     } else {
-      this.diffModeTitle = 'Bitte einen Diff Modus auswählen.';
+      this.diffModeTitle = '';
     }
   }
 
