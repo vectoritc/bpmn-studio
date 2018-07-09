@@ -168,12 +168,12 @@ export class BpmnDiffView {
     const leftCanvas: any = this._leftViewer.get('canvas');
     const rightCanvas: any = this._rightViewer.get('canvas');
 
-    this.setEventFunctions(lowerCanvas, leftCanvas, rightCanvas);
-    this.setEventFunctions(leftCanvas, rightCanvas, lowerCanvas);
-    this.setEventFunctions(rightCanvas, lowerCanvas, leftCanvas);
+    this._setEventFunctions(lowerCanvas, leftCanvas, rightCanvas);
+    this._setEventFunctions(leftCanvas, rightCanvas, lowerCanvas);
+    this._setEventFunctions(rightCanvas, lowerCanvas, leftCanvas);
   }
 
-  private setEventFunctions(changingCanvas: ICanvas, firstCanvas: ICanvas, secondCanvas: ICanvas): void {
+  private _setEventFunctions(changingCanvas: ICanvas, firstCanvas: ICanvas, secondCanvas: ICanvas): void {
     const changingCanvasContainer: HTMLElement = changingCanvas._container;
 
     const adjustViewboxes: IEventFunction = (): void => {
