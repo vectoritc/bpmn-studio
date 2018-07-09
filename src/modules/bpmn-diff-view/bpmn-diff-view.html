@@ -25,6 +25,7 @@
         <i class="fas fa-arrow-down fa-3x"></i>
       </span>
       <div class="diff-change-list" if.bind="showChangeList">
+        <span class="no-change-message" if.bind="noChangesExisting">Die beiden Diagramme sind identisch.</span>
         <table class="change-list-table">
           <tr repeat.for="removedElement of changeListData.removed">
             <td class="change-list-table__entry diff-change-type"><span class="label label-red">Removed</span></td>

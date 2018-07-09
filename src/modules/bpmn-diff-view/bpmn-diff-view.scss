@@ -91,6 +91,7 @@
 }
 
 .diff-change-list {
+  position: relative;
   z-index: 1;
   width: 50%;
   height: 99%;
@@ -98,6 +99,16 @@
   overflow: auto;
   border-left: 4px dashed #ccc;
   background: white;
+}
+
+.no-change-message {
+  position: absolute;
+  width: 362px;
+  height: 26px;
+  left: calc(50% - 181px);
+  top: calc(50% - 10px);
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .change-list-table {

@@ -43,7 +43,7 @@ export class BpmnDiffView {
   public currentDiffMode: DiffMode;
   public diffModeTitle: string = '';
   public showChangeList: boolean;
-  public noChangesExisting: boolean;
+  public noChangesExisting: boolean = true;
   public changeListData: IDiffChangeListData = {
     removed: [],
     changed: [],
@@ -149,6 +149,11 @@ export class BpmnDiffView {
     this.changeListData.changed = this._getChangeListEntriesFromChanges(changedElement);
     this.changeListData.added = this._getChangeListEntriesFromChanges(this.changes._added);
     this.changeListData.layoutChanged = this._getChangeListEntriesFromChanges(this.changes._layoutChanged);
+
+    this.noChangesExisting = this.changeListData.removed.length === 0 &&
+                              this.changeListData.changed.length === 0 &&
+                              this.changeListData.added.length === 0 &&
+                              this.changeListData.layoutChanged.length === 0;
   }
 
   private _createChangeListEntry(elementName: string, elementType: string): IChangeListEntry {
