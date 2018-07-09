@@ -44,6 +44,7 @@ export class BpmnDiffView {
   public diffModeTitle: string = '';
   public showChangeList: boolean;
   public noChangesExisting: boolean = true;
+  public noChangesReason: string;
   public changeListData: IDiffChangeListData = {
     removed: [],
     changed: [],
@@ -154,6 +155,18 @@ export class BpmnDiffView {
                               this.changeListData.changed.length === 0 &&
                               this.changeListData.added.length === 0 &&
                               this.changeListData.layoutChanged.length === 0;
+
+    if (this.noChangesExisting) {
+      const diagramsAreSame: boolean = this.savedxml === this.xml;
+
+      if (diagramsAreSame) {
+        this.noChangesReason = 'Die beiden Diagramme sind identisch.';
+      } else {
+        this.noChangesReason = 'Die Diagramme konnten nicht verglichen werden.';
+      }
+    } else {
+      this.noChangesReason = '';
+    }
   }
 
   private _createChangeListEntry(elementName: string, elementType: string): IChangeListEntry {

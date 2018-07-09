@@ -103,26 +103,20 @@
 
 .no-change-message {
   position: absolute;
-  width: 362px;
-  height: 26px;
-  left: calc(50% - 181px);
-  top: calc(50% - 10px);
+  margin-left: 10px;
+  margin-top: 10px;
   font-size: 20px;
   font-weight: bold;
 }
 
 .change-list-table {
   width: 100%;
-  margin-left: 10px;
+  margin: 10px;
 }
 
 .change-list-table__entry {
   width: 33%;
   height: 35px;
-}
-
-.diff-change-type {
-  width: 150px;
 }
 
 .label-red {
