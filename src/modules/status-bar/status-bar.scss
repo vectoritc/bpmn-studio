@@ -56,6 +56,11 @@
   white-space: nowrap;
 }
 
+.status-bar__element--active {
+  background-color: #445a65;
+  text-decoration: none;
+}
+
 .status-bar__element:hover {
   background-color: #445a65;
   text-decoration: none;

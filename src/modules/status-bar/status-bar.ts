@@ -11,8 +11,10 @@ export class StatusBar {
   public processEngineRoute: string = '';
   public showDiagramViewButtons: boolean = false;
   public diffIsShown: boolean = false;
+  public currentDiffMode: DiffMode;
   public xmlIsShown: boolean = false;
   public isEncryptedCommunication: boolean = false;
+
   public DiffMode: typeof DiffMode = DiffMode;
 
   private _eventAggregator: EventAggregator;
@@ -33,6 +35,7 @@ export class StatusBar {
       this.showDiagramViewButtons = false;
       this.xmlIsShown = false;
       this.diffIsShown = false;
+      this.currentDiffMode = undefined;
     });
 
     this._eventAggregator.subscribe(environment.events.statusBar.updateProcessEngineRoute, (newProcessEngineRoute: string) => {
@@ -50,6 +53,7 @@ export class StatusBar {
   }
 
   public changeDiffMode(mode: DiffMode): void {
+    this.currentDiffMode = mode;
     this._eventAggregator.publish(environment.events.diffView.changeDiffMode, mode);
   }
 
