@@ -170,9 +170,9 @@ export class BpmnDiffView {
       const diagramsAreSame: boolean = this.savedxml === this.xml;
 
       if (diagramsAreSame) {
-        this.noChangesReason = 'Die beiden Diagramme sind identisch.';
+        this.noChangesReason = 'The two diagrams are identical.';
       } else {
-        this.noChangesReason = 'Die Diagramme konnten nicht verglichen werden.';
+        this.noChangesReason = 'The two diagrams are incomparable.';
       }
   }
 
@@ -265,12 +265,12 @@ export class BpmnDiffView {
   }
 
   private _updateDiffView(): void {
-    if (this.currentDiffMode === DiffMode.CurrentToPrevious) {
+    if (this.currentDiffMode === DiffMode.AfterVsBefore) {
       this._updateLowerDiff(this.xml);
-      this.diffModeTitle = 'Nachher vs. Vorher';
-    } else if (this.currentDiffMode === DiffMode.PreviousToCurrent) {
+      this.diffModeTitle = 'After vs. Before';
+    } else if (this.currentDiffMode === DiffMode.BeforeVsAfter) {
       this._updateLowerDiff(this.savedxml);
-      this.diffModeTitle = 'Vorher vs. Nachher';
+      this.diffModeTitle = 'Before vs. After';
     } else {
       this.diffModeTitle = '';
     }
@@ -283,22 +283,22 @@ export class BpmnDiffView {
       return;
     }
 
-    const addedElements: object = this.changes._added;
+    const addedElements: Object = this.changes._added;
     const removedElements: object = this.changes._removed;
     const changedElements: object = this.changes._changed;
     const layoutChangedElements: object = this.changes._layoutChanged;
 
-    const diffModeIsCurrentToPrevious: boolean = this.currentDiffMode === DiffMode.CurrentToPrevious;
+    const diffModeIsAfterVsBefore: boolean = this.currentDiffMode === DiffMode.AfterVsBefore;
 
     await this._importXml(xml, this._diffModeler);
     this._markLayoutChangedElements(layoutChangedElements);
     this._markChangedElements(changedElements);
 
-    diffModeIsCurrentToPrevious ?
+    diffModeIsAfterVsBefore ?
       this._markAddedElements(addedElements) :
       this._markRemovedElements(removedElements);
 
-    const coloredXml: string = await this._getXmlFromModdeler();
+    const coloredXml: string = await this._getXmlFromModeler();
     await this._importXml(coloredXml, this._lowerViewer);
   }
 
@@ -321,7 +321,7 @@ export class BpmnDiffView {
     });
   }
 
-  private _getXmlFromModdeler(): Promise<string> {
+  private _getXmlFromModeler(): Promise<string> {
     return new Promise((resolve: Function, reject: Function): void =>  {
       this._diffModeler.saveXML({}, async(saveXmlError: Error, xml: string) => {
         if (saveXmlError) {

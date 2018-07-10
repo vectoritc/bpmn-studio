@@ -1,4 +1,4 @@
 export enum DiffMode {
-  PreviousToCurrent,
-  CurrentToPrevious,
+  BeforeVsAfter,
+  AfterVsBefore,
 }

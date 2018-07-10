@@ -3,25 +3,25 @@
   <div class="diff-view">
     <div class="left-diff-view">
       <div ref="leftCanvasModel" class="left-diff-view__canvasModel"></div>
-      <span class="diff-canvas-title">Vorher</span>
+      <span class="diff-canvas-title">Before</span>
     </div>
     <div class="right-diff-view">
       <div ref="rightCanvasModel" class="right-diff-view__canvasModel"></div>
-      <span class="diff-canvas-title">Nachher</span>
+      <span class="diff-canvas-title">After</span>
     </div>
     <div class="lower-diff-view">
       <div ref="lowerCanvasModel" class="lower-diff-view__canvasModel"></div>
       <div class="diff-legend">
-        <span class="diff-legend-entry diff-legend-entry-first">Legende:</span>
-        <span class="diff-legend-entry"><i class="fas fa-stop green"></i> Hinzugefügt</span>
-        <span class="diff-legend-entry"><i class="fas fa-stop red"></i>  Entfernt</span>
-        <span class="diff-legend-entry"><i class="fas fa-stop orange"></i> Geändert</span>
-        <span class="diff-legend-entry diff-legend-entry-last"><i class="fas fa-stop purple"></i> Layout geändert</span>
+        <span class="diff-legend-entry diff-legend-entry-first">Legend:</span>
+        <span class="diff-legend-entry"><i class="fas fa-stop green"></i> Added</span>
+        <span class="diff-legend-entry"><i class="fas fa-stop red"></i>  Removed</span>
+        <span class="diff-legend-entry"><i class="fas fa-stop orange"></i> Changed</span>
+        <span class="diff-legend-entry diff-legend-entry-last"><i class="fas fa-stop purple"></i> Layout Changed</span>
       </div>
       <span class="diff-canvas-title">${diffModeTitle}</span>
       <span class="diff-button-hint" if.bind="currentDiffMode === undefined">
         <i class="fas fa-arrow-down fa-3x"></i>
-        <span class="diff-button-hint__text">Diff Modus auswählen</span>
+        <span class="diff-button-hint__text">Select diff mode</span>
         <i class="fas fa-arrow-down fa-3x"></i>
       </span>
       <div class="diff-change-list" if.bind="showChangeList">
@@ -31,35 +31,35 @@
             <tr repeat.for="removedElement of changeListData.removed">
               <td class="change-list-table__entry">
                 <span class="label label-red">Removed</span> - ${removedElement.type}
-                <span if.bind="removedElement.name !== ''">mit dem Namen ${removedElement.name}
+                <span if.bind="removedElement.name !== ''">with the name ${removedElement.name}
               </td>
             </tr>
             <tr repeat.for="changedElement of changeListData.changed">
               <td class="change-list-table__entry">
                 <span class="label label-orange">Change</span> - ${changedElement.type}
-                <span if.bind="changedElement.name !== ''">mit dem Namen ${changedElement.name}
+                <span if.bind="changedElement.name !== ''">with the name ${changedElement.name}
               </td>
             </tr>
             <tr repeat.for="addedElement of changeListData.added">
               <td class="change-list-table__entry">
                 <span class="label label-green">Added</span> - ${addedElement.type}
-                <span if.bind="addedElement.name !== ''">mit dem Namen ${addedElement.name}
+                <span if.bind="addedElement.name !== ''">with the name ${addedElement.name}
               </td>
             </tr>
             <tr repeat.for="layoutChangedElement of changeListData.layoutChanged">
               <td class="change-list-table__entry">
                 <span class="label label-purple">Layout Changed</span> - ${layoutChangedElement.type}
-                <span if.bind="layoutChangedElement.name !== ''">mit dem Namen ${layoutChangedElement.name}
+                <span if.bind="layoutChangedElement.name !== ''">with the name ${layoutChangedElement.name}
               </td>
             </tr>
          </table>
         </div>
        <span class="diff-summary" if.bind="!noChangesExisting">
-         ${totalChangeAmount} Änderungen insgesamt:
-         <span class="diff-summary__change-type" if.bind="changeListData.removed.length !== 0">${changeListData.removed.length} Entfernt;</span>
-         <span class="diff-summary__change-type" if.bind="changeListData.changed.length !== 0">${changeListData.changed.length} Geändert;</span>
-         <span class="diff-summary__change-type" if.bind="changeListData.added.length !== 0">${changeListData.added.length} Hinzugefügt;</span>
-         <span class="diff-summary__change-type" if.bind="changeListData.layoutChanged.length !== 0">${changeListData.layoutChanged.length} Layout verändert;</span>
+         ${totalChangeAmount} Total Differences:
+         <span class="diff-summary__change-type" if.bind="changeListData.removed.length !== 0">${changeListData.removed.length} Removed;</span>
+         <span class="diff-summary__change-type" if.bind="changeListData.changed.length !== 0">${changeListData.changed.length} Changed;</span>
+         <span class="diff-summary__change-type" if.bind="changeListData.added.length !== 0">${changeListData.added.length} Added;</span>
+         <span class="diff-summary__change-type" if.bind="changeListData.layoutChanged.length !== 0">${changeListData.layoutChanged.length} Layout Changed;</span>
       </div>
     </div>
   </div>

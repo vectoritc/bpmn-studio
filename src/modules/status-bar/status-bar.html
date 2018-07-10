@@ -11,14 +11,14 @@
     </div>
     <div class="status-bar__center-bar">
       <div class="center-bar__diff-view-buttons" if.bind="diffIsShown">
-        <a class="status-bar__element" class.bind="currentDiffMode === DiffMode.PreviousToCurrent ? 'status-bar__element--active' : ''" click.delegate="changeDiffMode(DiffMode.PreviousToCurrent)">
-          Vorher vs. Nachher <i class="fa fa-arrow-right"></i>
+        <a class="status-bar__element" class.bind="currentDiffMode === DiffMode.BeforeVsAfter ? 'status-bar__element--active' : ''" click.delegate="changeDiffMode(DiffMode.BeforeVsAfter)">
+          Before vs. After <i class="fa fa-arrow-right"></i>
         </a>
         <a class="status-bar__element" class.bind="showChangeList ? 'status-bar__element--active' : ''" click.delegate="toggleChangeList()">
           <i class="fas fa-bars"></i>
         </a>
-        <a class="status-bar__element" class.bind="currentDiffMode === DiffMode.CurrentToPrevious ? 'status-bar__element--active' : ''" click.delegate="changeDiffMode(DiffMode.CurrentToPrevious)">
-          <i class="fa fa-arrow-left"></i> Nachher vs. Vorher
+        <a class="status-bar__element" class.bind="currentDiffMode === DiffMode.AfterVsBefore ? 'status-bar__element--active' : ''" click.delegate="changeDiffMode(DiffMode.AfterVsBefore)">
+          <i class="fa fa-arrow-left"></i> After vs. Before
         </a>
       </div>
     </div>
