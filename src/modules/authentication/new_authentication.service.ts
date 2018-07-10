@@ -1,17 +1,39 @@
-import { autoinject } from 'aurelia-framework';
+import { inject } from 'aurelia-framework';
 import { OpenIdConnect } from 'aurelia-open-id-connect';
 import { User } from 'oidc-client';
 
 import {IAuthenticationService, IIdentity} from '../../contracts/index';
 
-@autoinject()
+@inject(OpenIdConnect, 'TokenRepository')
 export class NewAuthenticationService implements IAuthenticationService {
 
   private _openIdConnect: OpenIdConnect;
+  private _tokenRepository: ITokenRepository;
   private _user: User;
 
-  constructor(openIdConnect: OpenIdConnect) {
+  constructor(openIdConnect: OpenIdConnect, tokenRepository: ITokenRepository) {
     this._openIdConnect = openIdConnect;
+
+    this._openIdConnect.observeUser((user: User) => {
+      this._user = user;
+      console.log('user loaded', user);
+      if (!user) {
+        return;
+      }
+      // this._tokenRepository.setToken(user.id_token);
+      // this._tokenRepository.setIdentity(user);
+
+    });
+
+    this.initialize();
+    this._tokenRepository = tokenRepository;
+  }
+
+  public async initialize(): Promise<void> {
+    this._user = await this._openIdConnect.getUser();
+
+    // this._tokenRepository.setToken(this._user.id_token);
+    // this._tokenRepository.setIdentity(this._user);
   }
 
   public login(): Promise<IIdentity> {
@@ -21,6 +43,9 @@ export class NewAuthenticationService implements IAuthenticationService {
       this._openIdConnect.addOrRemoveHandler('addUserLoaded', async() => {
         const user: User = await this._openIdConnect.getUser();
         this._user = user;
+        console.log('user loaded', user);
+        // this._tokenRepository.setToken(user.id_token);
+        // this._tokenRepository.setIdentity(user);
         resolve(user);
       });
 

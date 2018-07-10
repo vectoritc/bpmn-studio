@@ -318,7 +318,36 @@
             "name": "print-js",
             "main": "dist/print.min.js",
             "path": "../node_modules/print-js"
+          },
+          {
+            "name": "@process-engine/management_api_contracts",
+            "path": "../node_modules/@process-engine/management_api_contracts/dist/amd",
+            "main": "index.js"
+          },
+          {
+            "name": "@process-engine/management_api_client",
+            "path": "../node_modules/@process-engine/management_api_client/dist/amd",
+            "main": "index.js"
+          },
+          {
+            "name": "@essential-projects/http",
+            "path": "../node_modules/@essential-projects/http/dist/amd",
+            "main": "index.js",
+            "deps":[
+              "popsicle"
+            ]
+          },
+          {
+            "name": "@essential-projects/errors_ts",
+            "path": "../node_modules/@essential-projects/errors_ts/dist/amd",
+            "main": "index.js"
+          },
+          {
+            "name": "popsicle",
+            "path": "../node_modules/popsicle/dist",
+            "main": "common.js"
           }
+
         ]
       }
     ],

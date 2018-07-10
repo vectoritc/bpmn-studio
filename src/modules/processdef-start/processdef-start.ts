@@ -1,13 +1,17 @@
-import {BpmnStudioClient, IUserTaskConfig} from '@process-engine/bpmn-studio_client';
+import {HttpClient} from '@essential-projects/http';
+import {IUserTaskConfig} from '@process-engine/bpmn-studio_client';
+import {ExternalAccessor, ManagementApiClientService} from '@process-engine/management_api_client';
+import {IManagementApiService} from '@process-engine/management_api_contracts';
 import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import {AuthenticationStateEvent, IProcessEngineService, NotificationType} from '../../contracts/index';
+import {AuthenticationStateEvent, IAuthenticationService, IProcessEngineService, NotificationType} from '../../contracts/index';
 import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
+import environment from './../../environment';
 import {NotificationService} from './../notification/notification.service';
 
-@inject('ProcessEngineService', EventAggregator, Router, 'BpmnStudioClient', 'NotificationService')
+@inject('ProcessEngineService', EventAggregator, Router, 'BpmnStudioClient', 'NotificationService', 'NewAuthenticationService')
 export class ProcessDefStart {
   public dynamicUiWrapper: DynamicUiWrapper;
 
@@ -18,23 +22,37 @@ export class ProcessDefStart {
   private _processDefId: string;
   private _process: IProcessDefEntity;
   private _router: Router;
-  private _bpmnStudioClient: BpmnStudioClient;
+  private _managementApiClient: IManagementApiService;
+  private _authenticationService: IAuthenticationService;
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
               router: Router,
-              bpmnStudioClient: BpmnStudioClient,
-              notificationService: NotificationService) {
+              notificationService: NotificationService,
+              authenticationService: IAuthenticationService) {
     this._processEngineService = processEngineService;
     this._eventAggregator = eventAggregator;
     this._router = router;
-    this._bpmnStudioClient = bpmnStudioClient;
     this._notificationService = notificationService;
+    this._authenticationService = authenticationService;
+  }
+
+  private _initializeManagementApiClient(): void {
+
+    const httpConfig: any = {
+      url: environment.bpmnStudioClient.baseRoute,
+    };
+    const httpClient: HttpClient = new HttpClient();
+    httpClient.config = httpConfig;
+    const externalAccessor: ExternalAccessor = new ExternalAccessor(httpClient);
+    this._managementApiClient = new ManagementApiClientService(externalAccessor);
   }
 
   // TODO: Add a usefull comment here; what does it do? what is it good for? when is this invoked?
   public async activate(routeParameters: {processDefId: string}): Promise<void> {
     this._processDefId = routeParameters.processDefId;
+
+    this._initializeManagementApiClient();
     await this._refreshProcess();
 
     /*
@@ -88,6 +106,10 @@ export class ProcessDefStart {
   }
 
   private _startProcess(): void {
-    this._bpmnStudioClient.startProcessByKey(this.process.key);
+    const token: string = this._authenticationService.getToken();
+    const context: IManagementContext = {
+      identity: token,
+    };
+    this._managementApiClient.startProcessInstance(context, this.process.key, undefined, {}, undefined, undefined);
   }
 }
