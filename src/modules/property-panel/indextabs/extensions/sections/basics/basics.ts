@@ -160,7 +160,6 @@ export class BasicsSection implements ISection {
 
     const extensionElements: IModdleElement = this._moddle.create('bpmn:ExtensionElements', {values: extensionValues});
     this._businessObjInPanel.extensionElements = extensionElements;
-    console.log(this._businessObjInPanel);
   }
 
   private _publishDiagramChange(): void {
