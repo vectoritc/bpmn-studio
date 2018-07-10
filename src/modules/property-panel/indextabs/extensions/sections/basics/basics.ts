@@ -100,8 +100,10 @@ export class BasicsSection implements ISection {
                                                        || this._businessObjInPanel.extensionElements === null;
 
     if (businessObjectHasNoExtensionElements) {
-      return;
+      this._createExtensionElement();
     }
+
+    this._propertyElement = this._getPropertyElement();
 
     const extensionsPropertyElement: IPropertyElement  =
       this._businessObjInPanel.extensionElements.values
@@ -133,6 +135,7 @@ export class BasicsSection implements ISection {
   }
 
   private _getPropertyElement(): IPropertyElement {
+
     const propertyElement: IPropertyElement  = this._businessObjInPanel.extensionElements.values.find((extensionValue: IExtensionElement) => {
       const extensionIsPropertyElement: boolean = extensionValue.$type === 'camunda:Properties';
 
