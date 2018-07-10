@@ -60,7 +60,7 @@ export class DiagramExportService implements IDiagramExportService {
    * Exports the current Diagram as a PNG image and prompts the user to save
    * the exported file.
    */
-  public async exportPNG(svg: string): Promise<string> {
+  public async exportPNG(svg?: string): Promise<string> {
     const svgToConvert: string = ((): string => {
       if (svg !== undefined && svg !== null) {
         return svg;
@@ -81,7 +81,7 @@ export class DiagramExportService implements IDiagramExportService {
    * Exports the current Diagram as a JPEG image and prompts the user to save
    * the exported file.
    */
-  public async exportJPEG(svg: string): Promise<string> {
+  public async exportJPEG(svg?: string): Promise<string> {
     const svgToConvert: string = ((): string => {
       if (svg !== undefined && svg !== null) {
         return svg;
