@@ -34,6 +34,7 @@ export class BasicsSection implements ISection {
   public activate(model: IPageModel): void {
     this._businessObjInPanel = model.elementInPanel.businessObject;
     this._moddle = model.modeler.get('moddle');
+    this._propertyElement = this._getPropertyElement();
     this._reloadProperties();
   }
 
