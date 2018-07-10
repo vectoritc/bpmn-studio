@@ -120,6 +120,7 @@
 .change-list-table-wrapper {
   height: calc(100% - 18px);
   overflow: auto;
+  border-bottom: 2px dashed #ccc;
 }
 
 .diff-summary {
