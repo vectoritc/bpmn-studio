@@ -7,7 +7,7 @@ import {IPagination, IProcessDefEntity} from '@process-engine/bpmn-studio_client
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
-import {AuthenticationStateEvent} from '../../contracts/index';
+import {AuthenticationStateEvent, IFileInfo} from '../../contracts/index';
 import environment from '../../environment';
 
 @inject(EventAggregator, Router, 'SolutionExplorerServiceProcessEngine', 'SolutionExplorerServiceFileSystem', 'Identity')
@@ -27,6 +27,7 @@ export class ProcessSolutionPanel {
   private _identity: IIdentity;
   private _solutionExplorerServiceProcessEngine: ISolutionExplorerService;
   private _solutionExplorerServiceFileSystem: ISolutionExplorerService;
+  private _bpmnSuffixLength: number = 5;
 
   constructor(eventAggregator: EventAggregator,
               router: Router,
@@ -40,9 +41,46 @@ export class ProcessSolutionPanel {
   }
 
   public async attached(): Promise<void> {
-    // Check if BPMN-Studio runs in electron
+    /**
+     * Check if BPMN-Studio runs in electron.
+     */
     if ((<any> window).nodeRequire) {
+
+      // Show the FileSystemSolutionExplorer.
       this.enableFileSystemSolutions = true;
+
+      const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
+
+      // Register handler for double-click event fired from "elecrin.js".
+      ipcRenderer.on('double-click-on-file', async(event: any, pathToFile: string) => {
+        const solutionPath: string = pathToFile.substr(0, pathToFile.lastIndexOf('/'));
+
+        await this._solutionExplorerServiceFileSystem.openSolution(solutionPath, this._identity);
+        const solution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
+        const diagramName: string = pathToFile.substring(pathToFile.lastIndexOf('/') + 1, pathToFile.length - this._bpmnSuffixLength);
+
+        const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.loadDiagram(diagramName);
+
+        this.navigateToDiagramDetail(solution, diagram);
+      });
+
+      // Send event to signal the component is ready to handle the event.
+      ipcRenderer.send('waiting-for-double-file-click');
+
+      // Check if there was a double click before BPMN-Studio was loaded.
+      const fileInfo: IFileInfo = ipcRenderer.sendSync('get_opened_file');
+
+      if (fileInfo.path) {
+        const solutionPath: string = fileInfo.path.substr(0, fileInfo.path.lastIndexOf('/'));
+
+        await this._solutionExplorerServiceFileSystem.openSolution(solutionPath, this._identity);
+        const solution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
+        const diagramName: string = fileInfo.path.substring(fileInfo.path.lastIndexOf('/') + 1, fileInfo.path.length - this._bpmnSuffixLength);
+
+        const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.loadDiagram(diagramName);
+
+        this.navigateToDiagramDetail(solution, diagram);
+      }
     }
 
     this._refreshProcesslist();
