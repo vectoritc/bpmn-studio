@@ -26,33 +26,40 @@
       </span>
       <div class="diff-change-list" if.bind="showChangeList">
         <span class="no-change-message" if.bind="noChangesExisting">${noChangesReason}</span>
-        <table class="change-list-table">
-          <tr repeat.for="removedElement of changeListData.removed">
-            <td class="change-list-table__entry">
-              <span class="label label-red">Removed</span> - ${removedElement.type}
-              <span if.bind="removedElement.name !== ''">mit dem Namen ${removedElement.name}
-            </td>
-          </tr>
-          <tr repeat.for="changedElement of changeListData.changed">
-            <td class="change-list-table__entry">
-              <span class="label label-orange">Change</span> - ${changedElement.type}
-              <span if.bind="changedElement.name !== ''">mit dem Namen ${changedElement.name}
-            </td>
-          </tr>
-          <tr repeat.for="addedElement of changeListData.added">
-            <td class="change-list-table__entry">
-              <span class="label label-green">Added</span> - ${addedElement.type}
-              <span if.bind="addedElement.name !== ''">mit dem Namen ${addedElement.name}
-            </td>
-          </tr>
-          <tr repeat.for="layoutChangedElement of changeListData.layoutChanged">
-            <td class="change-list-table__entry">
-              <span class="label label-purple">Layout Changed</span> - ${layoutChangedElement.type}
-              <span if.bind="layoutChangedElement.name !== ''">mit dem Namen ${layoutChangedElement.name}
-            </td>
-          </tr>
-       </table>
-       <span class="diff-summary">${totalChangeAmount} Änderungen insgesammt: ${changeListData.removed.length} Entfernt; ${changeListData.changed.length} Geändert; ${changeListData.added.length} Hinzugefügt; ${changeListData.layoutChanged.length} Layouts verändert;</span>
+        <div class="change-list-table-wrapper">
+          <table class="change-list-table">
+            <tr repeat.for="removedElement of changeListData.removed">
+              <td class="change-list-table__entry">
+                <span class="label label-red">Removed</span> - ${removedElement.type}
+                <span if.bind="removedElement.name !== ''">mit dem Namen ${removedElement.name}
+              </td>
+            </tr>
+            <tr repeat.for="changedElement of changeListData.changed">
+              <td class="change-list-table__entry">
+                <span class="label label-orange">Change</span> - ${changedElement.type}
+                <span if.bind="changedElement.name !== ''">mit dem Namen ${changedElement.name}
+              </td>
+            </tr>
+            <tr repeat.for="addedElement of changeListData.added">
+              <td class="change-list-table__entry">
+                <span class="label label-green">Added</span> - ${addedElement.type}
+                <span if.bind="addedElement.name !== ''">mit dem Namen ${addedElement.name}
+              </td>
+            </tr>
+            <tr repeat.for="layoutChangedElement of changeListData.layoutChanged">
+              <td class="change-list-table__entry">
+                <span class="label label-purple">Layout Changed</span> - ${layoutChangedElement.type}
+                <span if.bind="layoutChangedElement.name !== ''">mit dem Namen ${layoutChangedElement.name}
+              </td>
+            </tr>
+         </table>
+        </div>
+       <span class="diff-summary" if.bind="!noChangesExisting">
+         ${totalChangeAmount} Änderungen insgesamt:
+         <span class="diff-summary__change-type" if.bind="changeListData.removed.length !== 0">${changeListData.removed.length} Entfernt;</span>
+         <span class="diff-summary__change-type" if.bind="changeListData.changed.length !== 0">${changeListData.changed.length} Geändert;</span>
+         <span class="diff-summary__change-type" if.bind="changeListData.added.length !== 0">${changeListData.added.length} Hinzugefügt;</span>
+         <span class="diff-summary__change-type" if.bind="changeListData.layoutChanged.length !== 0">${changeListData.layoutChanged.length} Layout verändert;</span>
       </div>
     </div>
   </div>
