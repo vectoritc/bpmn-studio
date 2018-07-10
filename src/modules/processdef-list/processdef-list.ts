@@ -21,7 +21,7 @@ import {
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
-@inject(EventAggregator, 'BpmnStudioClient', 'FileContent', 'NotificationService', Router, 'ProcessEngineService')
+@inject(EventAggregator, 'BpmnStudioClient', 'NotificationService', Router, 'ProcessEngineService')
 export class ProcessDefList {
   private _processEngineService: IProcessEngineService;
   private _bpmnStudioClient: BpmnStudioClient;
@@ -52,7 +52,6 @@ export class ProcessDefList {
 
   constructor(eventAggregator: EventAggregator,
               bpmnStudioClient: BpmnStudioClient,
-              fileInfo: IFileInfo,
               notificationService: NotificationService,
               router: Router,
               processEngineService: IProcessEngineService) {
@@ -62,29 +61,8 @@ export class ProcessDefList {
     this._router = router;
     this._notificationService = notificationService;
 
-    const fileHasContent: boolean = fileInfo.content !== undefined;
-
-    if (fileHasContent) {
-      // This Regex cuts out the filename from the filepath.
-      const filename: string = /[^\\/:*?"<>|\r\n]+$/.exec(fileInfo.path)[0];
-      const xml: string = fileInfo.content;
-
-      fileInfo.content = undefined;
-
-      this._importXmlFromFile(filename, xml);
-    }
-
     this._refreshProcesslist();
     this._eventAggregator.publish(environment.events.refreshProcessDefs);
-
-    this._fileReader.onload = async(fileInformations: any): Promise<void> => {
-      const xml: string = fileInformations.target.result;
-      const filename: string = this.selectedFiles[0].name;
-
-      this.fileInput.value = '';
-
-      this._importXmlFromFile(filename, xml);
-    };
   }
 
   // TODO: This needs to be refactored into an importService;
