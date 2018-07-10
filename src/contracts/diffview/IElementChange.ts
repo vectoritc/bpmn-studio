@@ -1,8 +1,8 @@
-import {IShape} from '../index';
+import {IModdleElement, IShape} from '../index';
 
 export interface IElementChange {
   $type: string;
   model: IShape;
-  attrs: object;
+  attrs: IModdleElement;
   name?: string;
 }

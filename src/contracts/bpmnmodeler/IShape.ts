@@ -3,7 +3,7 @@ import {IModdleElement} from './index';
 
 export interface IShape {
   name?: string;
-  attrs?: object;
+  attrs?: IModdleElement;
   businessObject: IModdleElement;
   id: string;
   type: string;
