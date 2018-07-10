@@ -27,6 +27,7 @@ export class ProcessSolutionPanel {
   private _identity: IIdentity;
   private _solutionExplorerServiceProcessEngine: ISolutionExplorerService;
   private _solutionExplorerServiceFileSystem: ISolutionExplorerService;
+  private _fileReader: FileReader = new FileReader();
   private _bpmnSuffixLength: number = 5;
 
   constructor(eventAggregator: EventAggregator,
@@ -53,12 +54,13 @@ export class ProcessSolutionPanel {
 
       // Register handler for double-click event fired from "elecrin.js".
       ipcRenderer.on('double-click-on-file', async(event: any, pathToFile: string) => {
+
         const solutionPath: string = pathToFile.substr(0, pathToFile.lastIndexOf('/'));
 
         await this._solutionExplorerServiceFileSystem.openSolution(solutionPath, this._identity);
         const solution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
-        const diagramName: string = pathToFile.substring(pathToFile.lastIndexOf('/') + 1, pathToFile.length - this._bpmnSuffixLength);
 
+        const diagramName: string = pathToFile.substring(pathToFile.lastIndexOf('/') + 1, pathToFile.length - this._bpmnSuffixLength);
         const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.loadDiagram(diagramName);
 
         this.navigateToDiagramDetail(solution, diagram);
