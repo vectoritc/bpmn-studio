@@ -34,7 +34,6 @@ export class BasicsSection implements ISection {
   public activate(model: IPageModel): void {
     this._businessObjInPanel = model.elementInPanel.businessObject;
     this._moddle = model.modeler.get('moddle');
-    this._propertyElement = this._getPropertyElement();
     this._reloadProperties();
   }
 
@@ -101,8 +100,10 @@ export class BasicsSection implements ISection {
                                                        || this._businessObjInPanel.extensionElements === null;
 
     if (businessObjectHasNoExtensionElements) {
-      return;
+      this._createExtensionElement();
     }
+
+    this._propertyElement = this._getPropertyElement();
 
     const extensionsPropertyElement: IPropertyElement  =
       this._businessObjInPanel.extensionElements.values
@@ -134,6 +135,7 @@ export class BasicsSection implements ISection {
   }
 
   private _getPropertyElement(): IPropertyElement {
+
     const propertyElement: IPropertyElement  = this._businessObjInPanel.extensionElements.values.find((extensionValue: IExtensionElement) => {
       const extensionIsPropertyElement: boolean = extensionValue.$type === 'camunda:Properties';
 
@@ -158,6 +160,7 @@ export class BasicsSection implements ISection {
 
     const extensionElements: IModdleElement = this._moddle.create('bpmn:ExtensionElements', {values: extensionValues});
     this._businessObjInPanel.extensionElements = extensionElements;
+    console.log(this._businessObjInPanel);
   }
 
   private _publishDiagramChange(): void {
