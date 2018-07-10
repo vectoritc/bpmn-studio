@@ -23,16 +23,6 @@ import {ElementNameService} from '../elementname/elementname.service';
 
 @inject(EventAggregator)
 export class BpmnDiffView {
-  private _eventAggregator: EventAggregator;
-
-  private _leftViewer: IBpmnModeler;
-  private _rightViewer: IBpmnModeler;
-  private _lowerViewer: IBpmnModeler;
-  private _diffModeler: IBpmnModeler;
-  private _modeling: IModeling;
-  private _elementRegistry: IElementRegistry;
-  private _subscriptions: Array<Subscription>;
-  private _elementNameService: ElementNameService;
 
   @bindable() public xml: string;
   @bindable() public savedxml: string;
@@ -52,6 +42,16 @@ export class BpmnDiffView {
     added: [],
     layoutChanged: [],
   };
+
+  private _eventAggregator: EventAggregator;
+  private _leftViewer: IBpmnModeler;
+  private _rightViewer: IBpmnModeler;
+  private _lowerViewer: IBpmnModeler;
+  private _diffModeler: IBpmnModeler;
+  private _modeling: IModeling;
+  private _elementRegistry: IElementRegistry;
+  private _subscriptions: Array<Subscription>;
+  private _elementNameService: ElementNameService;
 
   constructor(eventAggregator: EventAggregator) {
     this._eventAggregator  = eventAggregator;
