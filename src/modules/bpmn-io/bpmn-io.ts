@@ -112,10 +112,6 @@ export class BpmnIo {
 
     this._diagramPrintService = new DiagramPrintService(this._svg);
     this._diagramExportService = new DiagramExportService();
-
-    this.modeler.on('diagram.changed', async() => {
-      this.savedXml = await this.getXML();
-    });
   }
 
   public attached(): void {
