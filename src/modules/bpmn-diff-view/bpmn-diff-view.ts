@@ -312,7 +312,7 @@ export class BpmnDiffView {
   }
 
   private _importXml(xml: string, viewer: IBpmnModeler): Promise <void> {
-    const xmlIsNotLoaded: boolean = xml === undefined || xml === null;
+    const xmlIsNotLoaded: boolean = (xml === undefined || xml === null);
 
     if (xmlIsNotLoaded) {
       return;
