@@ -332,10 +332,7 @@
           {
             "name": "@essential-projects/http",
             "path": "../node_modules/@essential-projects/http/dist/amd",
-            "main": "index.js",
-            "deps":[
-              "popsicle"
-            ]
+            "main": "index.js"
           },
           {
             "name": "@essential-projects/errors_ts",
@@ -343,11 +340,10 @@
             "main": "index.js"
           },
           {
-            "name": "popsicle",
-            "path": "../node_modules/popsicle/dist",
-            "main": "common.js"
+            "name": "cross-fetch",
+            "path": "../node_modules/cross-fetch/dist",
+            "main": "cross-fetch.js"
           }
-
         ]
       }
     ],

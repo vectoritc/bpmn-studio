@@ -81,6 +81,7 @@
   "license": "MIT",
   "dependencies": {
     "@process-engine/skeleton-electron": "^4.0.0",
+    "@essential-projects/http": "feature~support_fetch_api",
     "aurelia-open-id-connect": "^1.0.3",
     "aurelia-validation": "^1.1.2",
     "electron-is-dev": "^0.3.0",
@@ -106,8 +107,7 @@
     "@process-engine/bpmn-studio_client": "^3.0.0",
     "@process-engine/process_engine_contracts": "^7.0.0",
     "@process-engine/management_api_contracts": "^0.1.1",
-    "@process-engine/management_api_client": "^0.1.1",
-    "@essential-projects/http": "^2.0.1",
+    "@process-engine/management_api_client": "^0.1.2",
     "@types/jasmine": "^2.2.0",
     "@types/node": "^6.0.45",
     "@types/spectrum": "^1.5.29",
