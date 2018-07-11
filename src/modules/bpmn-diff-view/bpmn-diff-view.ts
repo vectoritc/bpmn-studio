@@ -21,7 +21,7 @@ import {defaultBpmnColors,
   NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {ElementNameService} from '../elementname/elementname.service';
-import { NotificationService } from '../notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 
 @inject('NotificationService', EventAggregator)
 export class BpmnDiffView {
@@ -158,9 +158,9 @@ export class BpmnDiffView {
     this.changeListData.layoutChanged = this._getChangeListEntriesFromChanges(this.changes._layoutChanged);
 
     this.totalAmountOfChange = this.changeListData.removed.length +
-                              this.changeListData.changed.length +
-                              this.changeListData.added.length +
-                              this.changeListData.layoutChanged.length;
+                                this.changeListData.changed.length +
+                                this.changeListData.added.length +
+                                this.changeListData.layoutChanged.length;
 
     this.noChangesExisting = this.totalAmountOfChange === 0;
 
@@ -172,9 +172,9 @@ export class BpmnDiffView {
   }
 
   private _setNoChangesReason(): void {
-      const diagramsAreSame: boolean = this.savedxml === this.xml;
+      const diagramIsUnchanged: boolean = this.savedxml === this.xml;
 
-      if (diagramsAreSame) {
+      if (diagramIsUnchanged) {
         this.noChangesReason = 'The two diagrams are identical.';
       } else {
         this.noChangesReason = 'The two diagrams are incomparable.';
@@ -290,6 +290,7 @@ export class BpmnDiffView {
     if (xmlIsNotLoaded) {
       const notificationMessage: string = 'The xml could not be loaded. Please try to reopen the Diff View or reload the Detail View.';
       this._notificationService.showNotification(NotificationType.ERROR, notificationMessage);
+
       return;
     }
 
@@ -301,6 +302,8 @@ export class BpmnDiffView {
     const diffModeIsAfterVsBefore: boolean = this.currentDiffMode === DiffMode.AfterVsBefore;
 
     await this._importXml(xml, this._diffModeler);
+    this._clearColors();
+
     this._markLayoutChangedElements(layoutChangedElements);
     this._markChangedElements(changedElements);
 
@@ -314,38 +317,45 @@ export class BpmnDiffView {
     await this._importXml(coloredXml, this._lowerViewer);
   }
 
-  private _importXml(xml: string, viewer: IBpmnModeler): Promise <void> {
+  private async _importXml(xml: string, viewer: IBpmnModeler): Promise <void> {
     const xmlIsNotLoaded: boolean = (xml === undefined || xml === null);
 
     if (xmlIsNotLoaded) {
       const notificationMessage: string = 'The xml could not be loaded. Please try to reopen the Diff View or reload the Detail View.';
       this._notificationService.showNotification(NotificationType.ERROR, notificationMessage);
+
       return;
     }
 
-    return new Promise((resolve: Function, reject: Function): void => {
+    const xmlImportPromise: Promise<void> = new Promise((resolve: Function, reject: Function): void => {
       viewer.importXML(xml, (importXmlError: Error) => {
         if (importXmlError) {
           reject(importXmlError);
+
           return;
         }
 
         resolve();
       });
     });
+
+    return xmlImportPromise;
   }
 
-  private _getXmlFromModeler(): Promise<string> {
-    return new Promise((resolve: Function, reject: Function): void =>  {
+  private async _getXmlFromModeler(): Promise<string> {
+    const saveXmlPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void =>  {
       this._diffModeler.saveXML({}, async(saveXmlError: Error, xml: string) => {
         if (saveXmlError) {
           reject(saveXmlError);
+
           return;
         }
 
         resolve(xml);
       });
     });
+
+    return saveXmlPromise;
   }
 
   private _createNewViewer(): IBpmnModeler {
@@ -368,6 +378,19 @@ export class BpmnDiffView {
     }
 
     return elementsToColor;
+  }
+
+  private _clearColors(): void {
+    const elementsToColor: Array<IShape> = this._elementRegistry.filter((element: IShape): boolean => {
+      const elementHasFillColor: boolean = element.businessObject.di.fill !== undefined;
+      const elementHasBorderColor: boolean = element.businessObject.di.stroke !== undefined;
+
+      const elementHasColor: boolean = elementHasFillColor || elementHasBorderColor;
+
+      return elementHasColor;
+    });
+
+    this._colorElements(elementsToColor, defaultBpmnColors.none);
   }
 
   private _colorElements(elementsToColor: Array<IShape>, color: IColorPickerColor): void {

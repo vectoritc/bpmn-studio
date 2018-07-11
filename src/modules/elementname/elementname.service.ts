@@ -1,4 +1,5 @@
 export class ElementNameService {
+
   public getHumanReadableType(elementType: string): string {
 
     const elementTypeWithoutBPMN: string = elementType.replace('bpmn:', '');
