@@ -37,6 +37,8 @@ export default {
     navBar: {
       showTools: 'navbar:tools:show',
       hideTools: 'navbar:tools:hide',
+      showStartButton: 'navbar:startButton:show',
+      hideStartButton: 'navbar:startButton:hide',
       updateProcess: 'navbar:process:update',
       disableSaveButton: 'navbar:saveButton:disable',
       enableSaveButton: 'navbar:saveButton:enable',

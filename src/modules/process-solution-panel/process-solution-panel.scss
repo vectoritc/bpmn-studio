@@ -1,6 +1,5 @@
 .process-explorer__solution-explorer {
   background-color: #f7f7f7;
-  padding: 2px;
   width: 220px;
   border-right: 2px solid #dcdbdb;
   height: 100%;
@@ -23,4 +22,49 @@
 .process-explorer__structure-item a {
   color: #5c5c5c;
   display: block;
+  padding-left: 10px;
+}
+
+.solution-input-group {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.open-solution-button {
+  background: inherit;
+  border: none;
+  margin-left: 50px;
+}
+
+.solution-input {
+  visibility: hidden;
+  height: 0;
+}
+
+.solution-close {
+  padding-left: 10px;
+}
+
+.solution-close:hover {
+  color: #5c5c5c;
+}
+
+.solution-headline {
+  padding-left: 10px;
+  word-wrap: break-word;
+  color: darkgray;
+}
+
+.solution-explorer-index-cards {
+  display: flex;
+  border-bottom: 2px solid #dcdbdb;
+}
+
+.index-card {
+  padding: 8px 12px;
+  color: darkgray;
+}
+
+.index-card--active {
+  color: #5e5e5e;
 }

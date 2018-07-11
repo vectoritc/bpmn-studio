@@ -1,12 +1,14 @@
 import {Aurelia} from 'aurelia-framework';
 
+import {IIdentity} from '@essential-projects/core_contracts';
+import {SolutionExplorerFileSystemRepository} from '@process-engine/solutionexplorer.repository.filesystem';
+import {SolutionExplorerProcessEngineRepository} from '@process-engine/solutionexplorer.repository.processengine';
+import {SolutionExplorerService} from '@process-engine/solutionexplorer.service';
+
 import {NotificationType} from './contracts/index';
 import {IFileInfo} from './contracts/processengine/index';
 import {NotificationService} from './modules/notification/notification.service';
 import {TokenRepository} from './modules/token-repository/token.repository';
-
-import environment from './environment';
-import {oidcConfig} from './open-id-connect-configuration';
 
 export function configure(aurelia: Aurelia): void {
 
@@ -23,8 +25,20 @@ export function configure(aurelia: Aurelia): void {
     const newHost: string = ipcRenderer.sendSync('get_host');
     const fileInfo: IFileInfo = ipcRenderer.sendSync('get_opened_file');
     aurelia.container.registerInstance('FileContent', fileInfo);
+    /**
+     * Currently the internal PE is always connected via http.
+     * This will be subject to change.
+     */
     localStorage.setItem('processEngineRoute', `http://${newHost}`);
+
+    // Register SolutionExplorerFileSystemService
+    const fileSystemrepository: SolutionExplorerFileSystemRepository = new SolutionExplorerFileSystemRepository();
+    const filesystemSolutionexplorerService: SolutionExplorerService = new SolutionExplorerService(fileSystemrepository);
+    aurelia.container.registerInstance('SolutionExplorerServiceFileSystem', filesystemSolutionexplorerService);
   }
+  const processengineRepository: SolutionExplorerProcessEngineRepository = new SolutionExplorerProcessEngineRepository();
+  const solutionexplorerService: SolutionExplorerService = new SolutionExplorerService(processengineRepository);
+  aurelia.container.registerInstance('SolutionExplorerServiceProcessEngine', solutionexplorerService);
 
   if (window.localStorage.getItem('processEngineRoute')) {
     const processEngineRoute: string = window.localStorage.getItem('processEngineRoute');
@@ -37,6 +51,17 @@ export function configure(aurelia: Aurelia): void {
     environment.processengine.routes.userTasks =  `${processEngineRoute}/datastore/UserTask`;
     environment.processengine.routes.importBPMN = `${processEngineRoute}/processengine/create_bpmn_from_xml`;
   }
+
+  /**
+   * Register Fake Identity for SolutionExplorer.
+   * TODO: Get real identity when IAM is finished.
+  */
+  const fakeIdentity: IIdentity = {
+    name: 'fakeIdentity',
+    id: 'fakeIdentity',
+    roles: [],
+  };
+  aurelia.container.registerInstance('Identity', fakeIdentity);
 
   aurelia.use
     .standardConfiguration()
@@ -63,6 +88,7 @@ export function configure(aurelia: Aurelia): void {
 
     // check if the processengine started successfull
     if ((<any> window).nodeRequire) {
+
       const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
       // subscribe to processengine status
       ipcRenderer.send('add_internal_processengine_status_listener');

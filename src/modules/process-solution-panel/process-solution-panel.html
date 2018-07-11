@@ -1,9 +1,41 @@
 <template>
   <require from="./process-solution-panel.css"></require>
   <div class="process-explorer__solution-explorer">
-    <div class="process-explorer__heading">Process Solution Explorer</div>
-    <div repeat.for="process of processes.data" class="process-explorer__structure-item">
-      <a href="#/processdef/${process.id}/detail">${process.name}</a>
+
+    <div class="solution-explorer-index-cards">
+      <div class="index-card" class.bind="fileSystemIndexCardIsActive ? 'index-card--active' : ''" click.delegate="openFileSystemIndexCard()" if.bind="enableFileSystemSolutions">
+        <i class="fa fa-folder"></i>
+      </div>
+      <div class="index-card" class.bind="processEngineIndexCardIsActive ? 'index-card--active' : ''" click.delegate="openProcessEngineIndexCard()">
+        <i class="fa fa-server"></i>
+      </div>
+    </div>
+
+    <div class="solution-explorer__filesystem" show.bind="fileSystemIndexCardIsActive && enableFileSystemSolutions">
+      <div class="process-explorer__heading">Solution Explorer
+        <button class="open-solution-button" id="solutionInputButton"><i class="fas fa-plus"></i></button>
+      </div>
+      <div repeat.for="solution of openedFileSystemSolutions">
+        <div class="solution-headline">
+          <i class="fa fa-folder-open" click.delegate="toggelVisibility($index)"></i>
+          ${solution.name}
+          <i class="fas fa-times solution-close" click.delegate="closeFileSystemSolution(solution)"></i>
+        </div>
+        <div repeat.for="diagram of solution.diagrams" class="process-explorer__structure-item">
+          <a click.delegate="navigateToDiagramDetail(solution, diagram)">${diagram.name}</a>
+        </div>
+      </div>
+      <div class="solution-input-group">
+        <button id="openFirstSolutionButton" if.bind="openedFileSystemSolutions.length === 0">Open a Solution</button>
+        <input class="solution-input" ref="solutionInput" type="file" change.delegate="onSolutionInputChange($event)" id="solutionInput" webkitdirectory>
+      </div>
+    </div>
+
+    <div class="solution-explorer__process-engine" if.bind="processEngineIndexCardIsActive">
+      <div class="process-explorer__heading">Solution Explorer</div>
+      <div repeat.for="diagram of openedProcessEngineSolution.diagrams" class="process-explorer__structure-item">
+        <a href="#/processdef/${diagram.id}/detail">${diagram.name}</a>
+      </div>
     </div>
   </div>
 </template>

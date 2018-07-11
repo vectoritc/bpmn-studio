@@ -5,7 +5,7 @@
     <div class="menu-bar__menu menu-bar__menu--left">
       <div class="menu__menu-tabbed-link">
         <button class="menu-tabbed-link action-button" class.bind="showSolutionExplorer ? 'solution-explorer--active' : ''" click.delegate="toggleSolutionExplorer()">
-          <i class="fas fa-folder"></i>
+          <i class="fas fa-project-diagram"></i>
         </button>
       </div>
       <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'Process Definition List' ? 'menu__menu-tabbed-link--active' : ''">
@@ -85,12 +85,12 @@
           <i class="fas fa-print"></i>
         </button>
       </template>
-      <div class="menu-bar__last-tool" if.bind="showTools">
+      <template if.bind="showStartButton">
         <button class="menu-bar__menu-center--action-button" click.delegate="startProcess()" disabled.bind="validationError" title="Start Process">
           <i class="fas fa-play"></i>
         </button>
-      </div>
-      <user-login></user-login>
+      </template>
+      <user-login class="menu-bar__user-login"></user-login>
     </div>
   </div>
 </template>

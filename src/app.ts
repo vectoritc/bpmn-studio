@@ -55,6 +55,12 @@ export class App {
         moduleId: 'modules/processdef-detail/processdef-detail',
       },
       {
+        route: ['diagram/:diagramName'],
+        title: 'Diagram Detail',
+        name: 'diagram-detail',
+        moduleId: 'modules/diagram-detail/diagram-detail',
+      },
+      {
         route: 'processdef/:processDefId/start',
         title: 'ProcessDef Start',
         name: 'processdef-start',

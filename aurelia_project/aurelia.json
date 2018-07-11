@@ -259,16 +259,6 @@
             ]
           },
           {
-            "name": "rgbcolor",
-            "path": "../node_modules/rgbcolor",
-            "main": "index.js"
-          },
-          {
-            "name": "stackblur",
-            "path": "../node_modules/stackblur",
-            "main": "index.js"
-          },
-          {
             "name": "xmldom",
             "path": "../node_modules/xmldom",
             "main": "dom-parser.js"
@@ -320,6 +310,38 @@
             "path": "../node_modules/print-js"
           },
           {
+            "name": "@essential-projects/errors_ts",
+            "main": "index.js",
+            "path": "../node_modules/@essential-projects/errors_ts/dist/amd"
+          },
+          {
+            "name": "fs",
+            "path": "../aurelia_project/native/fs"
+          },
+          {
+            "name": "path",
+            "path": "../aurelia_project/native/path"
+          },
+          {
+            "name": "util",
+            "path": "../aurelia_project/native/util"
+          },
+          {
+            "name": "@process-engine/solutionexplorer.repository.filesystem",
+            "main": "index.js",
+            "path": "../node_modules/@process-engine/solutionexplorer.repository.filesystem/dist/amd"
+          },
+          {
+            "name": "@process-engine/solutionexplorer.repository.processengine",
+            "main": "index.js",
+            "path": "../node_modules/@process-engine/solutionexplorer.repository.processengine/dist/amd"
+          },
+          {
+            "name": "@process-engine/solutionexplorer.service",
+            "path": "../node_modules/@process-engine/solutionexplorer.service/dist/amd",
+            "main": "index.js"
+          },
+          {
             "name": "@process-engine/management_api_contracts",
             "path": "../node_modules/@process-engine/management_api_contracts/dist/amd",
             "main": "index.js"
@@ -332,11 +354,6 @@
           {
             "name": "@essential-projects/http",
             "path": "../node_modules/@essential-projects/http/dist/amd",
-            "main": "index.js"
-          },
-          {
-            "name": "@essential-projects/errors_ts",
-            "path": "../node_modules/@essential-projects/errors_ts/dist/amd",
             "main": "index.js"
           },
           {
