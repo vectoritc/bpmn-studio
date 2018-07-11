@@ -14,6 +14,10 @@ export class DiagramExportService implements IDiagramExportService {
 
   /**
    * Exports the current diagram as a *.bpmn xml file.
+   *
+   * @param [xml] The xml file that should be exported as a bpmn xml file.
+   * @returns the bpmn xml files content.
+   * @throws Error If no xml was defined. Neither in the instance nor as a parameter.
    */
   public async exportBPMN(xml?: string): Promise<string> {
 
@@ -35,6 +39,9 @@ export class DiagramExportService implements IDiagramExportService {
    * Exports the current Diagram as a SVG file and prompts the user to save
    * the exported file.
    *
+   * @param [svg] the svg file that should be exported
+   * @returns the content of the exported svg
+   * @throws Error if no svg was defined, neither in the instance nor as a parameter
    * TODO: Discuss the purpose of this method.
    */
   public async exportSVG(svg?: string): Promise<string> {
@@ -54,6 +61,11 @@ export class DiagramExportService implements IDiagramExportService {
   /**
    * Exports the current Diagram as a PNG image and prompts the user to save
    * the exported file.
+   *
+   * @param [svg] a svg that should be converted and exported as a png.
+   * @returns a data url to the rendered image
+   * @throws Error if no svg, which should be converted, was defined. Neither in
+   * the instance nor as a parameter.
    */
   public async exportPNG(svg?: string): Promise<string> {
     let svgToConvert: string;
@@ -73,6 +85,11 @@ export class DiagramExportService implements IDiagramExportService {
   /**
    * Exports the current Diagram as a JPEG image and prompts the user to save
    * the exported file.
+   *
+   * @param [svg] a svg that should be converted and exported as a jpeg.
+   * @returns a data url to the rendered image
+   * @throws Error if no svg, which should be converted, was defined. Neither in
+   * the instance nor as a parameter.
    */
   public async exportJPEG(svg?: string): Promise<string> {
     let svgToConvert: string;

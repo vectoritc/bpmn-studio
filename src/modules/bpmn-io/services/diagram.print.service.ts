@@ -13,6 +13,9 @@ export class DiagramPrintService implements IDiagramPrintService {
   /**
    * Prepares the current diagram for printing and opens the system's print
    * dialogue.
+   *
+   * @param [svg] SVG content that should be printed
+   * @throws Error if no source SVG was defined.
    */
   public async printDiagram(svg: string): Promise<void> {
     let svgToPrint: string;
