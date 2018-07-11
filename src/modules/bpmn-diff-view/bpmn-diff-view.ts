@@ -35,7 +35,7 @@ export class BpmnDiffView {
   public showChangeList: boolean;
   public noChangesExisting: boolean = true;
   public noChangesReason: string;
-  public totalChangeAmount: number;
+  public totalAmountOfChange: number;
   public changeListData: IDiffChangeListData = {
     removed: [],
     changed: [],
@@ -153,12 +153,12 @@ export class BpmnDiffView {
     this.changeListData.added = this._getChangeListEntriesFromChanges(this.changes._added);
     this.changeListData.layoutChanged = this._getChangeListEntriesFromChanges(this.changes._layoutChanged);
 
-    this.totalChangeAmount = this.changeListData.removed.length +
+    this.totalAmountOfChange = this.changeListData.removed.length +
                               this.changeListData.changed.length +
                               this.changeListData.added.length +
                               this.changeListData.layoutChanged.length;
 
-    this.noChangesExisting = this.totalChangeAmount === 0;
+    this.noChangesExisting = this.totalAmountOfChange === 0;
 
     if (this.noChangesExisting) {
       this._setNoChangesReason();

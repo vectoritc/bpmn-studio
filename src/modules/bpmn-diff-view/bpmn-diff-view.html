@@ -55,7 +55,7 @@
          </table>
         </div>
        <span class="diff-summary" if.bind="!noChangesExisting">
-         ${totalChangeAmount} Total Differences:
+         ${totalAmountOfChange} Total Differences:
          <span class="diff-summary__change-type" if.bind="changeListData.removed.length !== 0">${changeListData.removed.length} Removed;</span>
          <span class="diff-summary__change-type" if.bind="changeListData.changed.length !== 0">${changeListData.changed.length} Changed;</span>
          <span class="diff-summary__change-type" if.bind="changeListData.added.length !== 0">${changeListData.added.length} Added;</span>
