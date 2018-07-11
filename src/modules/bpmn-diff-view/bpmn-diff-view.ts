@@ -25,7 +25,7 @@ import {ElementNameService} from '../elementname/elementname.service';
 export class BpmnDiffView {
 
   @bindable() public xml: string;
-  @bindable() public savedxml: string;
+  @bindable({ changeHandler: 'savedXmlChanged' }) public savedxml: string;
   @bindable() public changes: IDiffChanges;
   public leftCanvasModel: HTMLElement;
   public rightCanvasModel: HTMLElement;
@@ -99,7 +99,7 @@ export class BpmnDiffView {
     this._importXml(this.xml, this._rightViewer);
   }
 
-  public savedxmlChanged(): void {
+  public savedXmlChanged(): void {
     this._importXml(this.savedxml, this._leftViewer);
   }
 
