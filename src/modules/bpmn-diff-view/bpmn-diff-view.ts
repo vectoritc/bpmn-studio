@@ -17,11 +17,13 @@ import {defaultBpmnColors,
   IEventBus,
   IEventFunction,
   IModeling,
-  IShape} from '../../contracts/index';
+  IShape,
+  NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {ElementNameService} from '../elementname/elementname.service';
+import { NotificationService } from '../notification/notification.service';
 
-@inject(EventAggregator)
+@inject('NotificationService', EventAggregator)
 export class BpmnDiffView {
 
   @bindable() public xml: string;
@@ -43,6 +45,7 @@ export class BpmnDiffView {
     layoutChanged: [],
   };
 
+  private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _leftViewer: IBpmnModeler;
   private _rightViewer: IBpmnModeler;
@@ -53,9 +56,9 @@ export class BpmnDiffView {
   private _subscriptions: Array<Subscription>;
   private _elementNameService: ElementNameService;
 
-  constructor(eventAggregator: EventAggregator) {
-    this._eventAggregator  = eventAggregator;
-    this._elementNameService = new ElementNameService();
+  constructor(notificationService: NotificationService, eventAggregator: EventAggregator) {
+    this._notificationService = notificationService;
+    this._eventAggregator = eventAggregator;
   }
 
   public created(): void {
@@ -281,9 +284,11 @@ export class BpmnDiffView {
   }
 
   private async _updateLowerDiff(xml: string): Promise<void> {
-    const xmlIsNotLoaded: boolean = xml === undefined || xml === null;
+    const xmlIsNotLoaded: boolean = (xml === undefined || xml === null);
 
     if (xmlIsNotLoaded) {
+      const notificationMessage: string = 'The xml could not be loaded. Please try to reopen the Diff View or reload the Detail View.';
+      this._notificationService.showNotification(NotificationType.ERROR, notificationMessage);
       return;
     }
 
