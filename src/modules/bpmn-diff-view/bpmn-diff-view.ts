@@ -303,9 +303,11 @@ export class BpmnDiffView {
     this._markLayoutChangedElements(layoutChangedElements);
     this._markChangedElements(changedElements);
 
-    diffModeIsAfterVsBefore ?
-      this._markAddedElements(addedElements) :
+    if (diffModeIsAfterVsBefore) {
+      this._markAddedElements(addedElements);
+    } else {
       this._markRemovedElements(removedElements);
+    }
 
     const coloredXml: string = await this._getXmlFromModeler();
     await this._importXml(coloredXml, this._lowerViewer);
