@@ -8,7 +8,7 @@ export class ElementNameService {
   }
 
   public getHumanReadableName(elementName: string): string {
-    const elementNameIsEmpty: boolean = elementName === undefined || elementName === '';
+    const elementNameIsEmpty: boolean = (elementName === undefined || elementName === '');
 
     if (elementNameIsEmpty) {
       return '';
