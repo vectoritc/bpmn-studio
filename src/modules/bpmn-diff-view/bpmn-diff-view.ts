@@ -220,7 +220,7 @@ export class BpmnDiffView {
       secondCanvas.viewbox(changedViewbox);
     };
 
-    const checkForMouseMovement: IEventFunction = (): void => {
+    const startCheckingForMouseMovement: IEventFunction = (): void => {
       window.onmousemove = adjustViewboxes;
     };
     const stopCheckingForMousemovement: IEventFunction = (): void => {
@@ -228,7 +228,7 @@ export class BpmnDiffView {
     };
 
     changingCanvasContainer.onwheel = adjustViewboxes;
-    changingCanvasContainer.onmousedown = checkForMouseMovement;
+    changingCanvasContainer.onmousedown = startCheckingForMouseMovement;
     changingCanvasContainer.onmouseup = stopCheckingForMousemovement;
   }
 
