@@ -1,3 +1,8 @@
 export interface IEventFunction {
-  (this: GlobalEventHandlers, event: Event): void;
+  /*
+  * A Function thats been called when an event is called.
+  *
+  * @param event The event that called the function.
+  */
+  (event?: Event): void;
 }
