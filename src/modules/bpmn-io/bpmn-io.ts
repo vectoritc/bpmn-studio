@@ -106,6 +106,7 @@ export class BpmnIo {
      * when a diagram is changed.
      */
     const handlerPriority: number = 1000;
+
     this.modeler.on('commandStack.changed', () => {
       this._eventAggregator.publish(environment.events.diagramChange);
     }, handlerPriority);
