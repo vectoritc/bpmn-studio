@@ -14,6 +14,6 @@ export class ElementNameService {
       return '';
     }
 
-    return '"' + elementName + '"';
+    return `"${elementName}"`;
   }
 }
