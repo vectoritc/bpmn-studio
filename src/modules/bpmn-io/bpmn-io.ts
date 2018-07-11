@@ -197,8 +197,8 @@ export class BpmnIo {
         this._diagramPrintService.printDiagram(svgContent);
       }),
 
-      this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
-        this.savedXml = this.xml;
+      this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, async() => {
+        this.savedXml = await this.getXML();
       }),
     ];
 
