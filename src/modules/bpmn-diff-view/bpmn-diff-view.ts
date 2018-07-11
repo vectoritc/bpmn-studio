@@ -58,6 +58,19 @@ export class BpmnDiffView {
     this._elementNameService = new ElementNameService();
   }
 
+  public created(): void {
+    this._leftViewer = this._createNewViewer();
+    this._rightViewer = this._createNewViewer();
+    this._lowerViewer = this._createNewViewer();
+
+    this._diffModeler = new bundle.modeler();
+
+    this._modeling = this._diffModeler.get('modeling');
+    this._elementRegistry = this._diffModeler.get('elementRegistry');
+
+    this._startSynchronizingViewers();
+  }
+
   public attached(): void {
     this._leftViewer.attachTo(this.leftCanvasModel);
     this._rightViewer.attachTo(this.rightCanvasModel);
@@ -74,19 +87,6 @@ export class BpmnDiffView {
         this.showChangeList = !this.showChangeList;
       }),
     ];
-  }
-
-  public created(): void {
-    this._leftViewer = this._createNewViewer();
-    this._rightViewer = this._createNewViewer();
-    this._lowerViewer = this._createNewViewer();
-
-    this._diffModeler = new bundle.modeler();
-
-    this._modeling = this._diffModeler.get('modeling');
-    this._elementRegistry = this._diffModeler.get('elementRegistry');
-
-    this._startSynchronizingViewers();
   }
 
   public detached(): void {
