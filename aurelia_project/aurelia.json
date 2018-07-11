@@ -329,6 +329,11 @@
             "name": "@process-engine/solutionexplorer.service",
             "path": "../node_modules/@process-engine/solutionexplorer.service/dist/amd",
             "main": "index.js"
+          },
+          {
+            "name": "bpmn-js-differ",
+            "main": "dist/index.cjs.js",
+            "path": "../node_modules/bpmn-js-differ"
           }
         ]
       }

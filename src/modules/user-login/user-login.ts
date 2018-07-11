@@ -1,6 +1,6 @@
 import {computedFrom, inject} from 'aurelia-framework';
-import {IAuthenticationService, IIdentity, NotificationType} from '../../contracts/index';
-import {NotificationService} from './../notification/notification.service';
+import {IAuthenticationService, IEventFunction, IIdentity, NotificationType} from '../../contracts/index';
+import {NotificationService} from '../notification/notification.service';
 
 @inject('AuthenticationService', 'NotificationService')
 export class UserLogin {
@@ -37,7 +37,7 @@ export class UserLogin {
     document.removeEventListener('click', this.dropdownClickListener);
   }
 
-  public dropdownClickListener: EventListenerOrEventListenerObject =  (event: MouseEvent): void => {
+  public dropdownClickListener: IEventFunction =  (event: MouseEvent): void => {
     const eventTarget: Node = event.target as Node;
     if (this.dropdown.contains(eventTarget) && event.target !== this.logoutButton) {
       this.userLogin.className = 'user-login open';

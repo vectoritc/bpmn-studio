@@ -9,3 +9,4 @@ export * from './notification/index';
 export * from './colorpicker/index';
 export * from './print/index';
 export * from './export/index';
+export * from './diffview/index';

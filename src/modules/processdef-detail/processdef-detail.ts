@@ -16,7 +16,7 @@ import {
 } from '../../contracts/index';
 import environment from '../../environment';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
-import {NotificationService} from './../notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 
 interface RouteParameters {
   processDefId: string;
@@ -105,7 +105,11 @@ export class ProcessDefDetail {
 
     this._eventAggregator.publish(environment.events.navBar.showTools, this.process);
     this._eventAggregator.publish(environment.events.navBar.showStartButton);
-    this._eventAggregator.publish(environment.events.statusBar.showXMLButton);
+    this._eventAggregator.publish(environment.events.statusBar.showDiagramViewButtons);
+  }
+
+  public determineActivationStrategy(): string {
+    return 'replace';
   }
 
   /**
@@ -210,7 +214,7 @@ export class ProcessDefDetail {
 
     this._eventAggregator.publish(environment.events.navBar.hideTools);
     this._eventAggregator.publish(environment.events.navBar.hideStartButton);
-    this._eventAggregator.publish(environment.events.statusBar.hideXMLButton);
+    this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
   }
 
   private _refreshProcess(): Promise<IProcessDefEntity> {

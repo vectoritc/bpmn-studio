@@ -3,7 +3,7 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {IFileInfo, IPagination, IProcessEngineRepository, IProcessEngineService, IProcessEntity, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
-import {NotificationService} from './../notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 
 @inject('ProcessEngineRepository', 'NotificationService', EventAggregator)
 export class ProcessEngineService implements IProcessEngineService {

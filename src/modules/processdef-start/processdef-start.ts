@@ -5,7 +5,7 @@ import {computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {AuthenticationStateEvent, IProcessEngineService, NotificationType} from '../../contracts/index';
 import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
-import {NotificationService} from './../notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 
 @inject('ProcessEngineService', EventAggregator, Router, 'BpmnStudioClient', 'NotificationService')
 export class ProcessDefStart {

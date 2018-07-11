@@ -1,11 +1,15 @@
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
+import {diff} from 'bpmn-js-differ';
 
-import {IBpmnModeler,
+import {IBpmnModdle,
+        IBpmnModeler,
+        IDefinition,
         IDiagramExportService,
         IDiagramPrintService,
         IEditorActions,
+        IEventFunction,
         IKeyboard,
         IProcessDefEntity,
         NotificationType,
@@ -30,9 +34,13 @@ export class BpmnIo {
 
   @bindable({changeHandler: 'xmlChanged'}) public xml: string;
   @bindable({changeHandler: 'nameChanged'}) public name: string;
+
+  public savedXml: string;
   public propertyPanelDisplay: string = 'inline';
   public initialLoadingFinished: boolean = false;
   public showXMLView: boolean = false;
+  public showDiffView: boolean = false;
+  public xmlChanges: Object;
   public colorPickerLoaded: boolean = false;
   @observable public propertyPanelWidth: number;
   public minCanvasWidth: number = 100;
@@ -86,6 +94,8 @@ export class BpmnIo {
     this._addRemoveWithBackspaceKeyboardListener();
 
     if (this.xml !== undefined && this.xml !== null) {
+      this.savedXml = this.xml;
+
       this.modeler.importXML(this.xml, (err: Error) => {
         return 0;
       });
@@ -102,10 +112,10 @@ export class BpmnIo {
 
     this._diagramPrintService = new DiagramPrintService(this._svg);
     this._diagramExportService = new DiagramExportService();
-
   }
 
   public attached(): void {
+    this.savedXml = this.xml;
     this.modeler.attachTo(this.canvasModel);
 
     window.addEventListener('resize', this._resizeEventHandler);
@@ -116,12 +126,12 @@ export class BpmnIo {
       const windowEvent: Event = e || window.event;
       windowEvent.cancelBubble = true;
 
-      const mousemoveFunction: EventListenerOrEventListenerObject =  (event: Event): void => {
+      const mousemoveFunction: IEventFunction = (event: Event): void => {
         this.resize(event);
         document.getSelection().empty();
       };
 
-      const mouseUpFunction: EventListenerOrEventListenerObject =  (event: Event): void => {
+      const mouseUpFunction: IEventFunction = (): void => {
         document.removeEventListener('mousemove', mousemoveFunction);
         document.removeEventListener('mouseup', mouseUpFunction);
       };
@@ -143,12 +153,21 @@ export class BpmnIo {
       this._eventAggregator.subscribe(environment.events.processSolutionPanel.toggleProcessSolutionExplorer, () => {
         this._hideOrShowPpForSpaceReasons();
       }),
+
       this._eventAggregator.subscribe(environment.events.bpmnio.toggleXMLView, () => {
         this.toggleXMLView();
         setTimeout(() => { // This makes the function gets called after the XMLView is toggled
           this._hideOrShowPpForSpaceReasons();
         }, 0);
       }),
+
+      this._eventAggregator.subscribe(environment.events.bpmnio.toggleDiffView, () => {
+        this.toggleDiffView();
+        setTimeout(() => { // This makes the function gets called after the XMLView is toggled
+          this._hideOrShowPpForSpaceReasons();
+        }, 0);
+      }),
+
       this._eventAggregator.subscribe(environment.events.navBar.enableSaveButton, () => {
         this._diagramIsValid = true;
       }),
@@ -176,6 +195,10 @@ export class BpmnIo {
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.printDiagram}`, async() => {
         const svgContent: string = await this.getSVG();
         this._diagramPrintService.printDiagram(svgContent);
+      }),
+
+      this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, async() => {
+        this.savedXml = await this.getXML();
       }),
     ];
 
@@ -212,6 +235,7 @@ export class BpmnIo {
       this.modeler.importXML(newValue, (err: Error) => {
         return 0;
       });
+
       this.xml = newValue;
     }
   }
@@ -248,6 +272,15 @@ export class BpmnIo {
     }
   }
 
+  public toggleDiffView(): void {
+    if (!this.showDiffView) {
+      this._updateXmlChanges();
+      this.showDiffView = true;
+    } else {
+      this.showDiffView = false;
+    }
+  }
+
   public resize(event: any): void {
     const mousePosition: number = event.clientX;
 
@@ -256,7 +289,7 @@ export class BpmnIo {
 
   public async toggleXMLView(): Promise<void> {
     if (!this.showXMLView) {
-      this.xml = await this.getXML();
+      this._updateXmlChanges();
       this.showXMLView = true;
     } else {
       this.showXMLView = false;
@@ -275,18 +308,27 @@ export class BpmnIo {
     return returnPromise;
   }
 
-  private async getSVG(): Promise<string> {
-    const returnPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void => {
-      this.modeler.saveSVG({}, (error: Error, result: string) => {
+  private async _updateXmlChanges(): Promise<void> {
+    this.xml = await this.getXML();
+
+    const previousDefinitions: IDefinition = await this._getDefintionsFromXml(this.savedXml);
+    const newDefinitions: IDefinition = await this._getDefintionsFromXml(this.xml);
+
+    this.xmlChanges = diff(previousDefinitions, newDefinitions);
+  }
+
+  private async _getDefintionsFromXml(xml: string): Promise<any> {
+    return new Promise((resolve: Function, reject: Function): void => {
+      const moddle: IBpmnModdle =  this.modeler.get('moddle');
+
+      moddle.fromXML(xml, (error: Error, definitions: IDefinition) => {
         if (error) {
           reject(error);
         }
 
-        resolve(result);
+        resolve(definitions);
       });
     });
-
-    return returnPromise;
   }
 
   private _setNewPropertyPanelWidthFromMousePosition(mousePosition: number): void {
@@ -454,5 +496,19 @@ export class BpmnIo {
     const currentPlatformIsMac: boolean = macRegex.test(currentPlatform);
 
     return currentPlatformIsMac;
+  }
+
+  private async getSVG(): Promise<string> {
+    const returnPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void => {
+      this.modeler.saveSVG({}, (error: Error, result: string) => {
+        if (error) {
+          reject(error);
+        }
+
+        resolve(result);
+      });
+    });
+
+    return returnPromise;
   }
 }

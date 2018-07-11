@@ -89,6 +89,7 @@
     "@process-engine/solutionexplorer.service": "0.0.2",
     "@process-engine/solutionexplorer.service.contracts": "0.0.1",
     "aurelia-validation": "^1.1.2",
+    "bpmn-js-differ": "^1.2.0",
     "electron-is-dev": "^0.3.0",
     "electron-notifications": "^1.0.0",
     "electron-updater": "^2.19.1",
