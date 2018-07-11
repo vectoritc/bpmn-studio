@@ -59,6 +59,7 @@ export class BpmnDiffView {
   constructor(notificationService: NotificationService, eventAggregator: EventAggregator) {
     this._notificationService = notificationService;
     this._eventAggregator = eventAggregator;
+    this._elementNameService = new ElementNameService();
   }
 
   public created(): void {
