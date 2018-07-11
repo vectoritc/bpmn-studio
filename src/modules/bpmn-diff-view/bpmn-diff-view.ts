@@ -125,13 +125,10 @@ export class BpmnDiffView {
     for (const elementId of elementIds) {
       const elementChange: IElementChange = elementChanges[elementId];
 
-      let changeListEntry: IChangeListEntry;
       const isTypeInModel: boolean = elementChange.$type === undefined;
-      if (isTypeInModel) {
-        changeListEntry = this._createChangeListEntry(elementChange.model.name, elementChange.model.$type);
-      } else {
-        changeListEntry = this._createChangeListEntry(elementChange.name, elementChange.$type);
-      }
+      const changeListEntry: IChangeListEntry = isTypeInModel ?
+         this._createChangeListEntry(elementChange.model.name, elementChange.model.$type) :
+         this._createChangeListEntry(elementChange.name, elementChange.$type);
 
       changeListEntries.push(changeListEntry);
     }
