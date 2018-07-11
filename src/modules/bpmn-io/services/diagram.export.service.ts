@@ -17,17 +17,15 @@ export class DiagramExportService implements IDiagramExportService {
    */
   public async exportBPMN(xml?: string): Promise<string> {
 
-    const xmlToFormat: string = ((): string => {
-      if (xml !== undefined && xml !== null) {
-        return xml;
-      }
+    let xmlToFormat: string;
 
-      if (this._xml !== undefined && this._xml !== null) {
-        return this._xml;
-      }
-
-      Promise.reject(`No XML defined in the exporter`);
-    })();
+    if (xml !== undefined && xml !== null) {
+      xmlToFormat = xml;
+    } else if (this._xml !== undefined && this._xml !== null) {
+      xmlToFormat = this._xml;
+    } else {
+      throw new Error(`No XML defined in the exporter`);
+    }
 
     const formattedXml: string = beautify(xmlToFormat);
     return formattedXml;
@@ -40,18 +38,15 @@ export class DiagramExportService implements IDiagramExportService {
    * TODO: Discuss the purpose of this method.
    */
   public async exportSVG(svg?: string): Promise<string> {
+    let svgToReturn: string;
 
-    const svgToReturn: string = ((): string => {
-      if (svg !== undefined && svg !== null) {
-        return svg;
-      }
-
-      if (this._svg !== undefined && this._svg !== null) {
-        return this._svg;
-      }
-
-      Promise.reject(`No SVG defined in the exporter`);
-    })();
+    if (svg !== undefined && svg !== null) {
+      svgToReturn = svg;
+    } else if (this._svg !== undefined && this._svg !== null) {
+      svgToReturn = this._svg;
+    } else {
+      throw new Error('No SVG defined in the exporter');
+    }
 
     return svgToReturn;
   }
@@ -61,17 +56,15 @@ export class DiagramExportService implements IDiagramExportService {
    * the exported file.
    */
   public async exportPNG(svg?: string): Promise<string> {
-    const svgToConvert: string = ((): string => {
-      if (svg !== undefined && svg !== null) {
-        return svg;
-      }
+    let svgToConvert: string;
 
-      if (this._svg !== undefined && this._svg !== null) {
-        return this._svg;
-      }
-
-      Promise.reject(`No SVG defined in the exporter`);
-    })();
+    if (svg !== undefined && svg !== null) {
+      svgToConvert = svg;
+    } else if (this._svg !== undefined && this._svg !== null) {
+      svgToConvert = this._svg;
+    } else {
+      throw new Error('No SVG defined in the exporter');
+    }
 
     const imageURL: string = await this._generateImageFromSVG('png', svgToConvert);
     return imageURL;
@@ -82,17 +75,15 @@ export class DiagramExportService implements IDiagramExportService {
    * the exported file.
    */
   public async exportJPEG(svg?: string): Promise<string> {
-    const svgToConvert: string = ((): string => {
-      if (svg !== undefined && svg !== null) {
-        return svg;
-      }
+    let svgToConvert: string;
 
-      if (this._svg !== undefined && this._svg !== null) {
-        return this._svg;
-      }
-
-      Promise.reject(`No SVG defined in the exporter`);
-    })();
+    if (svg !== undefined && svg !== null) {
+      svgToConvert = svg;
+    } else if (this._svg !== undefined && this._svg !== null) {
+      svgToConvert = this._svg;
+    } else {
+      throw new Error('No SVG defined in the exporter');
+    }
 
     const imageURL: string = await this._generateImageFromSVG('jpeg', svgToConvert);
     return imageURL;

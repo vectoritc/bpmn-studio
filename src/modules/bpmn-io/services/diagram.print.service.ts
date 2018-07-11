@@ -15,17 +15,15 @@ export class DiagramPrintService implements IDiagramPrintService {
    * dialogue.
    */
   public async printDiagram(svg: string): Promise<void> {
-    const svgToPrint: string = ((): string => {
-      if (svg !== undefined && svg !== null) {
-        return svg;
-      }
+    let svgToPrint: string;
 
-      if (this._svg !== undefined && this._svg !== null) {
-        return this._svg;
-      }
-
-      Promise.reject('No SVG for printing defined');
-    })();
+    if (svg !== undefined && svg !== null) {
+      svgToPrint = svg;
+    } else if (this._svg !== undefined && this._svg !== null) {
+      svgToPrint = this._svg;
+    } else {
+      return Promise.reject('No SVG for printing defined');
+    }
 
     const png: string = await this._generateImageFromSVG('png', svgToPrint);
 
