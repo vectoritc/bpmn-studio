@@ -139,6 +139,10 @@ export class BpmnDiffView {
     return changeListEntries;
   }
 
+  /*
+  * This function converts the object from the bpmn-differ into an object with arrays
+  * to make it loopable in the html.
+  */
   private _prepareChangesForChangeList(): void {
     this.changeListData.removed = [];
     this.changeListData.changed = [];
@@ -251,6 +255,9 @@ export class BpmnDiffView {
   *
   *  This is needed because the diff function always adds the start event
   *  to the changed Elements even though it has no changes.
+  *
+  * @param changedElement The _changed object of the object that gets returned by the bpmn-differ.
+  * @returns The same object without the elements that did not get chnaged.
   */
   private _removeElementsWithoutChanges(changedElements: object): object {
     for (const elementId in changedElements) {
