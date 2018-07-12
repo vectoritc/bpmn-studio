@@ -53,15 +53,9 @@ export class ProcessSolutionPanel {
 
       // Register handler for double-click event fired from "elecrin.js".
       ipcRenderer.on('double-click-on-file', async(event: any, pathToFile: string) => {
+        const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(pathToFile, this._identity);
 
-        const solutionPath: string = pathToFile.substr(0, pathToFile.lastIndexOf('/'));
-        await this._solutionExplorerServiceFileSystem.openSolution(solutionPath, this._identity);
-        const solution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
-
-        const diagramName: string = path.basename(pathToFile, '.bpmn');
-        const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.loadDiagram(diagramName);
-
-        this.navigateToDiagramDetail(solution, diagram);
+        this.navigateToDiagramDetail(diagram);
       });
 
       // Send event to signal the component is ready to handle the event.
@@ -71,15 +65,9 @@ export class ProcessSolutionPanel {
       const fileInfo: IFileInfo = ipcRenderer.sendSync('get_opened_file');
 
       if (fileInfo.path) {
-        const solutionPath: string = fileInfo.path.substr(0, fileInfo.path.lastIndexOf('/'));
+        const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(fileInfo.path, this._identity);
 
-        await this._solutionExplorerServiceFileSystem.openSolution(solutionPath, this._identity);
-        const solution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
-        const diagramName: string = fileInfo.path.substring(fileInfo.path.lastIndexOf('/') + 1, fileInfo.path.length - this._bpmnSuffixLength);
-
-        const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.loadDiagram(diagramName);
-
-        this.navigateToDiagramDetail(solution, diagram);
+        this.navigateToDiagramDetail(diagram);
       }
     }
 
@@ -153,10 +141,9 @@ export class ProcessSolutionPanel {
     this.processEngineIndexCardIsActive = true;
   }
 
-  public async navigateToDiagramDetail(solution: ISolution, diagram: IDiagram): Promise<void> {
-    await this._solutionExplorerServiceFileSystem.openSolution(solution.uri, this._identity);
+  public async navigateToDiagramDetail(diagram: IDiagram): Promise<void> {
     this._eventAggregator.publish(environment.events.navBar.updateProcess, diagram);
-    this._router.navigateToRoute('diagram-detail', {diagramName: diagram.name});
+    this._router.navigateToRoute('diagram-detail', {diagramUri: diagram.uri});
   }
 
   private async _refreshProcesslist(): Promise<void> {
