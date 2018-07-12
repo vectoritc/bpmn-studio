@@ -10,5 +10,6 @@ export * from './export/index';
 export * from './file-input-event/index';
 export * from './notification/index';
 export * from './print/index';
-export * from './propertypanel/index';
-export * from './form-fields/index';
+export * from './diffview/index';
+export * from './exportRepository/index';
+export * from './exportService/index';
