@@ -10,6 +10,9 @@ import {IFileInfo} from './contracts/processengine/index';
 import {NotificationService} from './modules/notification/notification.service';
 import {TokenRepository} from './modules/token-repository/token.repository';
 
+import environment from './environment';
+import {oidcConfig} from './open-id-connect-configuration';
+
 export function configure(aurelia: Aurelia): void {
 
   const tokenRepository: TokenRepository = new TokenRepository();

@@ -1,4 +1,3 @@
-import {HttpClient} from '@essential-projects/http';
 import {IUserTaskConfig} from '@process-engine/bpmn-studio_client';
 import {ExternalAccessor, ManagementApiClientService} from '@process-engine/management_api_client';
 import {IManagementApiService} from '@process-engine/management_api_contracts';
@@ -11,7 +10,7 @@ import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
 import environment from './../../environment';
 import {NotificationService} from './../notification/notification.service';
 
-@inject('ProcessEngineService', EventAggregator, Router, 'BpmnStudioClient', 'NotificationService', 'NewAuthenticationService')
+@inject('ProcessEngineService', EventAggregator, Router, 'NotificationService', 'NewAuthenticationService')
 export class ProcessDefStart {
   public dynamicUiWrapper: DynamicUiWrapper;
 
@@ -39,11 +38,32 @@ export class ProcessDefStart {
 
   private _initializeManagementApiClient(): void {
 
-    const httpConfig: any = {
-      url: environment.bpmnStudioClient.baseRoute,
+    const token: string = this._authenticationService.getToken();
+    const context: IManagementContext = {
+      identity: token,
     };
-    const httpClient: HttpClient = new HttpClient();
-    httpClient.config = httpConfig;
+
+    const httpClient: any = {
+      post: async(url: string, payload: any, headers: any): Promise<any> => {
+
+        const request: Request = new Request(`${environment.bpmnStudioClient.baseRoute}/${url}`, {
+          method: 'POST',
+          mode: 'cors',
+          referrer: 'no-referrer',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            ...headers,
+          },
+        });
+        const response: Response = await fetch(request);
+        return {
+          result: response.json(),
+          status: response.status,
+        };
+      },
+    };
     const externalAccessor: ExternalAccessor = new ExternalAccessor(httpClient);
     this._managementApiClient = new ManagementApiClientService(externalAccessor);
   }

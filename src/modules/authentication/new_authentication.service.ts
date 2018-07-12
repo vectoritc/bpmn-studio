@@ -75,7 +75,7 @@ export class NewAuthenticationService implements IAuthenticationService {
   }
 
   public getToken(): string {
-    return this._user.id_token;
+    return this._user.access_token;
   }
   public hasToken(): boolean {
     const hasToken: boolean =

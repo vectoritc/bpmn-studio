@@ -352,14 +352,14 @@
             "main": "index.js"
           },
           {
-            "name": "@essential-projects/http",
-            "path": "../node_modules/@essential-projects/http/dist/amd",
+            "name": "@process-engine/management_api_contracts",
+            "path": "../node_modules/@process-engine/management_api_contracts/dist/amd",
             "main": "index.js"
           },
           {
-            "name": "cross-fetch",
-            "path": "../node_modules/cross-fetch/dist",
-            "main": "cross-fetch.js"
+            "name": "@process-engine/management_api_client",
+            "path": "../node_modules/@process-engine/management_api_client/dist/amd",
+            "main": "index.js"
           }
         ]
       }
