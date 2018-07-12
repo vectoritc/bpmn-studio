@@ -8,11 +8,48 @@
   user-select: none;
 }
 
+.single-diagrams {
+  margin-bottom: 20px;
+}
+
+.filesystem-solutions {
+  border-top: 2px solid #dcdbdb;
+}
+
+.control-buttons {
+  float: right;
+}
+
+.control-buttons button {
+  border: none;
+  background: transparent;
+  padding: 0 2px;
+}
+
+.control-buttons button:hover {
+  color: #5e5e5e;
+}
+
+.single-diagram-input {
+  visibility: hidden;
+  height: 0;
+}
+
+.single-diagram-close {
+  float: right;
+  position: relative;
+  top: 3px;
+  color: darkgray;
+}
+
+.single-diagram-close:hover {
+  color: #5e5e5e;
+}
+
 .process-explorer__heading {
   color: #a5a5a5;
   font-weight: 400;
-  padding-left: 10px;
-  padding-top: 10px;
+  padding: 8px;
   margin-bottom: 10px;
 }
 
@@ -23,7 +60,6 @@
 
 .process-explorer__structure-item a {
   color: #5c5c5c;
-  display: block;
   padding-left: 10px;
 }
 
@@ -34,7 +70,6 @@
 
 .open-solution-button {
   float: right;
-  margin-right: 10px;
   margin-top: 2px;
   cursor: pointer;
 }
@@ -46,6 +81,9 @@
 
 .solution-close {
   padding-left: 10px;
+  color: darkgray;
+  position: relative;
+  top: 1px;
 }
 
 .solution-close:hover {
