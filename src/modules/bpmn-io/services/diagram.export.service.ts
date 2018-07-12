@@ -10,7 +10,7 @@ export class DiagramExportService implements IDiagramExportService {
    * This is necessary to keep track of the order, in which the async export
    * methods should be executed.
    */
-  private _queuedExportMethods: Array<Function> = [];
+  private _enqueuedExports: Array<Function> = [];
 
   /**
    * Represents the current state of the services instance.
@@ -33,7 +33,7 @@ export class DiagramExportService implements IDiagramExportService {
     /*
      * Wait, until all queued functions are executed
      */
-    for (const currentExporter of this._queuedExportMethods) {
+    for (const currentExporter of this._enqueuedExports) {
       await currentExporter();
     }
 
@@ -46,7 +46,7 @@ export class DiagramExportService implements IDiagramExportService {
     /*
      * After exporting, we can reset the queued promises.
      */
-    this._queuedExportMethods = [];
+    this._enqueuedExports = [];
 
   }
 
@@ -82,7 +82,7 @@ export class DiagramExportService implements IDiagramExportService {
       throw new Error('No XML file to export loaded');
     }
 
-    this._queuedExportMethods.push(this._bpmnExporter);
+    this._enqueuedExports.push(this._bpmnExporter);
     this._currentMimeType = 'application/bpmn20-xml';
     return this;
   }
@@ -93,7 +93,7 @@ export class DiagramExportService implements IDiagramExportService {
       throw new Error('No SVG file to export loaded');
     }
 
-    // this._queuedExportMethods.push(this._svgExporter);
+    // this._enqueuedExports.push(this._svgExporter);
     this._currentMimeType = 'image/svg+xml';
     return this;
   }
@@ -104,7 +104,7 @@ export class DiagramExportService implements IDiagramExportService {
       throw new Error('No SVG file to convert and exporting defined.');
     }
 
-    this._queuedExportMethods.push(this._pngExporter);
+    this._enqueuedExports.push(this._pngExporter);
     this._currentMimeType = 'image/png';
     return this;
   }
@@ -115,7 +115,7 @@ export class DiagramExportService implements IDiagramExportService {
       throw new Error('No SVG file to convert and exporting defined.');
     }
 
-    this._queuedExportMethods.push(this._jpegExporter);
+    this._enqueuedExports.push(this._jpegExporter);
     this._currentMimeType = 'image/jpeg';
     return this;
   }
