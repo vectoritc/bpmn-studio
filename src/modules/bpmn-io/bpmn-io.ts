@@ -171,27 +171,44 @@ export class BpmnIo {
         this._diagramIsValid = false;
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, async() => {
-        await this._diagramExportService
-          .loadXML(this.xml)
-          .asBpmn()
-          .export(this.name);
+        try {
+          await this._diagramExportService
+            .loadXML(this.xml)
+            .asBpmn()
+            .export(this.name);
+        } catch (error) {
+          this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
+        }
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, async() => {
-        await this._diagramExportService
-          .loadSVG(await this.getSVG())
-          .export(this.name);
+        try {
+          await this._diagramExportService
+            .loadSVG(await this.getSVG())
+            .export(this.name);
+        } catch (error) {
+          this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
+        }
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, async() => {
-        await this._diagramExportService
-          .loadSVG(await this.getSVG())
-          .asPNG()
-          .export(this.name);
+        try {
+          await this._diagramExportService
+            .loadSVG(await this.getSVG())
+            .asPNG()
+            .export(this.name);
+        } catch (error) {
+          this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
+        }
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, async() => {
-        await this._diagramExportService
+        try {
+          await this._diagramExportService
           .loadSVG(await this.getSVG())
           .asJPEG()
           .export(this.name);
+        } catch (error) {
+          this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
+        }
+
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.printDiagram}`, async() => {
         await this._printHandler();
