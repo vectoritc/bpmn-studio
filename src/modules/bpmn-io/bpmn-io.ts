@@ -172,39 +172,43 @@ export class BpmnIo {
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, async() => {
         try {
+          const exportName: string = `${this.name}.bpmn`;
           await this._diagramExportService
             .loadXML(this.xml)
             .asBpmn()
-            .export(this.name);
+            .export(exportName);
         } catch (error) {
           this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
         }
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, async() => {
         try {
+          const exportName: string = `${this.name}.svg`;
           await this._diagramExportService
             .loadSVG(await this.getSVG())
-            .export(this.name);
+            .export(exportName);
         } catch (error) {
           this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
         }
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, async() => {
         try {
+          const exportName: string = `${this.name}.png`;
           await this._diagramExportService
             .loadSVG(await this.getSVG())
             .asPNG()
-            .export(this.name);
+            .export(exportName);
         } catch (error) {
           this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
         }
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, async() => {
         try {
+          const exportName: string = `${this.name}.jpeg`;
           await this._diagramExportService
           .loadSVG(await this.getSVG())
           .asJPEG()
-          .export(this.name);
+          .export(exportName);
         } catch (error) {
           this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
         }
