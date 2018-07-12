@@ -18,8 +18,6 @@ import environment from '../../environment';
 import {NotificationService} from './../notification/notification.service';
 import {DiagramExportService, DiagramPrintService} from './services/index';
 
-import * as download from 'downloadjs';
-
 const sideBarRightSize: number = 35;
 
 @inject('NotificationService', EventAggregator)
@@ -54,8 +52,8 @@ export class BpmnIo {
   private _subscriptions: Array<Subscription>;
   private _diagramIsValid: boolean = true;
 
-  private _diagramPrintService: IDiagramPrintService;
   private _diagramExportService: IDiagramExportService;
+  private _diagramPrintService: IDiagramPrintService;
 
   /**
    * We are using the direct reference of a container element to place the tools of bpmn-js
@@ -173,16 +171,27 @@ export class BpmnIo {
         this._diagramIsValid = false;
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, async() => {
-        await this._exportBpmnHandler();
+        await this._diagramExportService
+          .loadXML(this.xml)
+          .asBpmn()
+          .export(this.name);
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, async() => {
-        await this._exportSvgHandler();
+        await this._diagramExportService
+          .loadSVG(await this.getSVG())
+          .export(this.name);
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, async() => {
-        await this._exportPngHandler();
+        await this._diagramExportService
+          .loadSVG(await this.getSVG())
+          .asPNG()
+          .export(this.name);
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, async() => {
-        await this._exportJpegHandler();
+        await this._diagramExportService
+          .loadSVG(await this.getSVG())
+          .asJPEG()
+          .export(this.name);
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.printDiagram}`, async() => {
         await this._printHandler();
@@ -228,7 +237,6 @@ export class BpmnIo {
       });
 
       this.xml = newValue;
-      this._diagramExportService.updateXML(newValue);
     }
   }
 
@@ -379,54 +387,6 @@ export class BpmnIo {
       this._hidePropertyPanelForSpaceReasons();
     } else if (this._propertyPanelHiddenForSpaceReasons) {
       this._showPropertyPanelForSpaceReasons();
-    }
-  }
-
-  /**
-   * Handles an incoming exportDiagramAsBPMN message.
-   */
-  private async _exportBpmnHandler(): Promise<void> {
-    try {
-      const bpmnToExport: string = await this._diagramExportService.exportBPMN();
-      download(bpmnToExport, `${this.name}.bpmn`, 'application/bpmn20-xml');
-    } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, `An error while trying to export the diagram occurred.`);
-    }
-  }
-
-  /**
-   * Handles an incoming exportDiagramAsSVG message.
-   */
-  private async _exportSvgHandler(): Promise<void> {
-    try {
-      // Maybe we could use the diagramExportService here.
-      const svgToExport: string = await this.getSVG();
-      download(svgToExport, `${this.name}.svg`, 'image/svg+xml');
-    } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, `An error while trying to export the diagram occurred.`);
-    }
-  }
-
-  /**
-   * Handles an incoming exportDiagramAsPNG message.
-   */
-  private async _exportPngHandler(): Promise<void> {
-    try {
-      const currentProcessAsSvg: string = await this.getSVG();
-      const pngToExport: string = await this._diagramExportService.exportPNG(currentProcessAsSvg);
-      download(pngToExport, `${this.name}.png`, 'image/png');
-    } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, `An error while trying to export the diagram occurred.`);
-    }
-  }
-
-  private async _exportJpegHandler(): Promise<void> {
-    try {
-      const currentProcessAsSvg: string = await this.getSVG();
-      const jpegToExport: string = await this._diagramExportService.exportJPEG(currentProcessAsSvg);
-      download(jpegToExport, `${this.name}.jpeg`, 'image/jpeg');
-    } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, `An error while trying to export the diagram occurred.`);
     }
   }
 
