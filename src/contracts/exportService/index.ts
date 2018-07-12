@@ -1,1 +1,1 @@
-export {IDiagramExportService} from './IDiagramExportService';
+export * from './IDiagramExportService';

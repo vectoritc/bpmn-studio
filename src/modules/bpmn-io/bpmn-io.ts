@@ -186,6 +186,7 @@ export class BpmnIo {
           const exportName: string = `${this.name}.svg`;
           await this._diagramExportService
             .loadSVG(await this.getSVG())
+            .asSVG()
             .export(exportName);
         } catch (error) {
           this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');

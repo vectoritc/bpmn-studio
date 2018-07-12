@@ -1,4 +1,4 @@
-export interface IDiagramExportService {
+export interface IExporter {
   /**
    * Exports the current diagram as the last defined format.
    *
@@ -6,46 +6,48 @@ export interface IDiagramExportService {
    * @returns the exported diagram.
    */
   export(filename: string): Promise<void>;
+}
 
+export interface IDiagramExportService {
   /**
    * Load a new XML into the service.
    *
    * @param xmlContent Content of the xml, that should be loaded.
    */
-  loadXML(xmlContent: string): IDiagramExportService;
+  loadXML(xmlContent: string): IExportXML;
 
   /**
    * Load a new SVG into the service.
    *
    * @param svgContent Content of the new SVG, that should be loaded.
    */
-  loadSVG(svgContent: string): IDiagramExportService;
+  loadSVG(svgContent: string): IExportSVG;
+}
 
-  /**
-   * Creates a BPMN XML from the current loaded xml.
-   *
-   * @returns a reference to the services instance.
-   */
-  asBpmn(): IDiagramExportService;
+export interface IExportXML {
+    /**
+     * Creates a BPMN XML from the current loaded xml.
+     *
+     * @returns a reference to the services instance.
+     */
+    asBpmn(): IExporter;
+}
 
-  /**
-   * Creates a SVG from the current loaded svg.
-   *
-   * @returns a reference to the services instance.
-   */
-  asSVG(): IDiagramExportService;
+export interface IExportSVG {
+
+  asSVG(): IExporter;
 
   /**
    * Creates a PNG from the current loaded svg.
    *
    * @returns a reference to the services instance.
    */
-  asPNG(): IDiagramExportService;
+  asPNG(): IExporter;
 
   /**
    * Creates a JPEG from the current loaded svg.
    *
    * @returns a reference to the services instance
    */
-  asJPEG(): IDiagramExportService;
+  asJPEG(): IExporter;
 }

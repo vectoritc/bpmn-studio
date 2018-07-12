@@ -1,9 +1,9 @@
-import {IDiagramExportRepositoryContracts, IDiagramExportService} from '../../../contracts/index';
+import {IDiagramExportRepositoryContracts, IDiagramExportService, IExporter, IExportSVG, IExportXML} from '../../../contracts/index';
 import {DiagramExportRepository} from '../repositories/DiagramExportRepository';
 
 import * as beautify from 'xml-beautifier';
 
-export class DiagramExportService implements IDiagramExportService {
+export class DiagramExportService implements IDiagramExportService, IExporter, IExportSVG, IExportXML {
 
   /**
    * Contains the queued function which are appended by chained calls.
@@ -58,7 +58,7 @@ export class DiagramExportService implements IDiagramExportService {
    *
    * @param xmlContent updated xml file.
    */
-  public loadXML(xmlContent: string): IDiagramExportService {
+  public loadXML(xmlContent: string): IExportXML {
     this._currentState = xmlContent;
     return this;
   }
@@ -71,12 +71,12 @@ export class DiagramExportService implements IDiagramExportService {
    *
    * @param svgContent updated svg file.
    */
-  public loadSVG(svgContent: string): IDiagramExportService {
+  public loadSVG(svgContent: string): IExportSVG {
     this._currentState = svgContent;
     return this;
   }
 
-  public asBpmn(): IDiagramExportService {
+  public asBpmn(): IExporter {
     const currentStateIsNotSet: boolean = (this._currentState === undefined || this._currentState === null);
     if (currentStateIsNotSet) {
       throw new Error('No XML file to export loaded');
@@ -87,7 +87,7 @@ export class DiagramExportService implements IDiagramExportService {
     return this;
   }
 
-  public asSVG(): IDiagramExportService {
+  public asSVG(): IExporter {
     const currentStateIsNotSet: boolean = (this._currentState === undefined || this._currentState === null);
     if (currentStateIsNotSet) {
       throw new Error('No SVG file to export loaded');
@@ -98,7 +98,7 @@ export class DiagramExportService implements IDiagramExportService {
     return this;
   }
 
-  public asPNG(): IDiagramExportService {
+  public asPNG(): IExporter {
     const currentStateIsNotSet: boolean = (this._currentState === undefined || this._currentState === null);
     if (currentStateIsNotSet) {
       throw new Error('No SVG file to convert and exporting defined.');
@@ -109,7 +109,7 @@ export class DiagramExportService implements IDiagramExportService {
     return this;
   }
 
-  public asJPEG(): IDiagramExportService {
+  public asJPEG(): IExporter {
     const currentStateIsNotSet: boolean = (this._currentState === undefined || this._currentState === null);
     if (currentStateIsNotSet) {
       throw new Error('No SVG file to convert and exporting defined.');
