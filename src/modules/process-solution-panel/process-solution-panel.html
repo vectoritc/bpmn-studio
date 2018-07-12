@@ -11,7 +11,17 @@
       </div>
     </div>
 
+
+
     <div class="solution-explorer__filesystem" show.bind="fileSystemIndexCardIsActive && enableFileSystemSolutions">
+      <div class="process-explorer__heading">Opened Diagrams
+        <button class="open-solution-button" id="solutionInputButton"><i class="fas fa-plus"></i></button>
+      </div>
+      <template repeat.for="diagram of openedSingleDiagrams">
+          <a click.delegate="navigateToSingleDiagramDetail(diagram)">${diagram.name}</a>
+      </template>
+
+
       <div class="process-explorer__heading">Solution Explorer
         <i class="fas fa-plus open-solution-button" id="solutionInputButton"></i>
       </div>
@@ -22,7 +32,7 @@
           <i class="fas fa-times solution-close" click.delegate="closeFileSystemSolution(solution)"></i>
         </div>
         <div repeat.for="diagram of solution.diagrams" class="process-explorer__structure-item">
-          <a click.delegate="navigateToDiagramDetail(solution, diagram)">${diagram.name}</a>
+          <a click.delegate="navigateToDiagramDetail(diagram)">${diagram.name}</a>
         </div>
       </div>
       <div class="solution-input-group">
