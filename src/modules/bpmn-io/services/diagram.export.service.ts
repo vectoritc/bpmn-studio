@@ -1,127 +1,157 @@
-import * as beautify from 'xml-beautifier';
+import {IDiagramExportRepositoryContracts, IDiagramExportService} from '../../../contracts/index';
+import {DiagramExportRepository} from '../repositories/DiagramExportRepository';
 
-import {IDiagramExportService} from '../../../contracts';
+import * as beautify from 'xml-beautifier';
 
 export class DiagramExportService implements IDiagramExportService {
 
-  private _xml: string;
-  private _svg: string;
-
-  constructor(xml?: string, svg?: string) {
-    this._xml = xml;
-    this._svg = svg;
-  }
+  /**
+   * Contains the queued function which are appended by chained calls.
+   * This is necessary to keep track of the order, in which the async export
+   * methods should be executed.
+   */
+  private _queuedExportMethods: Array<Function> = [];
 
   /**
-   * Exports the current diagram as a *.bpmn xml file.
-   *
-   * @param [xml] The xml file that should be exported as a bpmn xml file.
-   * @returns the bpmn xml files content.
-   * @throws Error If no xml was defined. Neither in the instance nor as a parameter.
+   * Represents the current state of the services instance.
    */
-  public async exportBPMN(xml?: string): Promise<string> {
+  private _currentState: string;
 
-    let xmlToFormat: string;
+  /**
+   * Saves the current mime type.
+   */
+  private _currentMimeType: string;
 
-    if (xml !== undefined && xml !== null) {
-      xmlToFormat = xml;
-    } else if (this._xml !== undefined && this._xml !== null) {
-      xmlToFormat = this._xml;
-    } else {
-      throw new Error(`No XML defined in the exporter`);
+  private _exportDiagramRepository: IDiagramExportRepositoryContracts;
+
+  constructor(initialState?: string) {
+    this._currentState = initialState;
+    this._exportDiagramRepository = new DiagramExportRepository();
+  }
+
+  public async export(filename: string): Promise<void> {
+    /*
+     * Wait, until all queued functions are executed
+     */
+    for (const currentExporter of this._queuedExportMethods) {
+      await currentExporter();
     }
 
-    const formattedXml: string = beautify(xmlToFormat);
-    return formattedXml;
+    /*
+     * If all exporters are finished, save the diagram to disk using the
+     * defined export repository.
+     */
+    this._exportDiagramRepository.exportDiagram(this._currentState, filename, this._currentMimeType);
+
+    /*
+     * After exporting, we can reset the queued promises.
+     */
+    this._queuedExportMethods = [];
+
   }
 
   /**
-   * Exports the current Diagram as a SVG file and prompts the user to save
-   * the exported file.
+   * Updates the current state to the given xml.
    *
-   * @param [svg] the svg file that should be exported
-   * @returns the content of the exported svg
-   * @throws Error if no svg was defined, neither in the instance nor as a parameter
+   * TODO: Maybe we can do some kind of validation here to make sure, that the
+   * user who use this service really pass a valid xml here.
+   *
+   * @param xmlContent updated xml file.
+   */
+  public loadXML(xmlContent: string): IDiagramExportService {
+    this._currentState = xmlContent;
+    return this;
+  }
+
+  /**
+   * Updates the current state to the given svg.
+   *
+   * TODO: Maybe we can do some kind of validation here to make sure, that the
+   * user who use this service really pass a valid svg here.
+   *
+   * @param svgContent updated svg file.
+   */
+  public loadSVG(svgContent: string): IDiagramExportService {
+    this._currentState = svgContent;
+    return this;
+  }
+
+  public asBpmn(): IDiagramExportService {
+    const currentStateIsNotSet: boolean = (this._currentState === undefined || this._currentState === null);
+    if (currentStateIsNotSet) {
+      throw new Error('No XML file to export loaded');
+    }
+
+    this._queuedExportMethods.push(this._bpmnExporter);
+    this._currentMimeType = 'application/bpmn20-xml';
+    return this;
+  }
+
+  public asSVG(): IDiagramExportService {
+    const currentStateIsNotSet: boolean = (this._currentState === undefined || this._currentState === null);
+    if (currentStateIsNotSet) {
+      throw new Error('No SVG file to export loaded');
+    }
+
+    // this._queuedExportMethods.push(this._svgExporter);
+    this._currentMimeType = 'image/svg+xml';
+    return this;
+  }
+
+  public asPNG(): IDiagramExportService {
+    const currentStateIsNotSet: boolean = (this._currentState === undefined || this._currentState === null);
+    if (currentStateIsNotSet) {
+      throw new Error('No SVG file to convert and exporting defined.');
+    }
+
+    this._queuedExportMethods.push(this._pngExporter);
+    this._currentMimeType = 'image/png';
+    return this;
+  }
+
+  public asJPEG(): IDiagramExportService {
+    const currentStateIsNotSet: boolean = (this._currentState === undefined || this._currentState === null);
+    if (currentStateIsNotSet) {
+      throw new Error('No SVG file to convert and exporting defined.');
+    }
+
+    this._queuedExportMethods.push(this._jpegExporter);
+    this._currentMimeType = 'image/jpeg';
+    return this;
+  }
+
+  /**
+   * Formats the current loaded xml.
+   */
+  private _bpmnExporter = async(): Promise<void> => {
+    const formattedXml: string = beautify(this._currentState);
+    this._currentState = formattedXml;
+  }
+
+  /**
+   * Prepares the current loaded SVG for exporting.
+   *
    * TODO: Discuss the purpose of this method.
    */
-  public async exportSVG(svg?: string): Promise<string> {
-    let svgToReturn: string;
-
-    if (svg !== undefined && svg !== null) {
-      svgToReturn = svg;
-    } else if (this._svg !== undefined && this._svg !== null) {
-      svgToReturn = this._svg;
-    } else {
-      throw new Error('No SVG defined in the exporter');
+  /*private _svgExporter = async(): Promise<void> => {
+    const svgNotDefined: boolean = (this._currentState === undefined || this._currentState# === null);
+    if (svgNotDefined) {
+      throw new Error('No SVG for exporting defined');
     }
+  }*/
 
-    return svgToReturn;
+  /**
+   * Exports the current diagram as a PNG image.
+   */
+  private _pngExporter = async(): Promise<void> => {
+    this._currentState =  await this._generateImageFromSVG('png', this._currentState);
   }
 
   /**
-   * Exports the current Diagram as a PNG image and prompts the user to save
-   * the exported file.
-   *
-   * @param [svg] a svg that should be converted and exported as a png.
-   * @returns a data url to the rendered image
-   * @throws Error if no svg, which should be converted, was defined. Neither in
-   * the instance nor as a parameter.
+   * Exports the current diagram as a jpeg image.
    */
-  public async exportPNG(svg?: string): Promise<string> {
-    let svgToConvert: string;
-
-    if (svg !== undefined && svg !== null) {
-      svgToConvert = svg;
-    } else if (this._svg !== undefined && this._svg !== null) {
-      svgToConvert = this._svg;
-    } else {
-      throw new Error('No SVG defined in the exporter');
-    }
-
-    const imageURL: string = await this._generateImageFromSVG('png', svgToConvert);
-    return imageURL;
-  }
-
-  /**
-   * Exports the current Diagram as a JPEG image and prompts the user to save
-   * the exported file.
-   *
-   * @param [svg] a svg that should be converted and exported as a jpeg.
-   * @returns a data url to the rendered image
-   * @throws Error if no svg, which should be converted, was defined. Neither in
-   * the instance nor as a parameter.
-   */
-  public async exportJPEG(svg?: string): Promise<string> {
-    let svgToConvert: string;
-
-    if (svg !== undefined && svg !== null) {
-      svgToConvert = svg;
-    } else if (this._svg !== undefined && this._svg !== null) {
-      svgToConvert = this._svg;
-    } else {
-      throw new Error('No SVG defined in the exporter');
-    }
-
-    const imageURL: string = await this._generateImageFromSVG('jpeg', svgToConvert);
-    return imageURL;
-  }
-
-  /**
-   * Updates the current XML content.
-   *
-   * @param newXML new XML content
-   */
-  public updateXML(newXML: string): void {
-    this._xml = newXML;
-  }
-
-  /**
-   * Updates the current SVG content.
-   *
-   * @param newSVG new SVG content
-   */
-  public updateSVG(newSVG: string): void {
-    this._svg = newSVG;
+  private _jpegExporter = async(): Promise<void> => {
+    this._currentState = await this._generateImageFromSVG('png', this._currentState);
   }
 
   /**
