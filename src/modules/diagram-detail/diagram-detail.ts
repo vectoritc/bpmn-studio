@@ -39,6 +39,10 @@ export class DiagramDetail {
     this._router = router;
   }
 
+  public determineActivationStrategy(): string {
+    return 'replace';
+  }
+
   public async activate(routeParameters: RouteParameters): Promise<void> {
     this.diagram = await this._solutionExplorerService.openSingleDiagram(routeParameters.diagramUri, this._identity);
 
