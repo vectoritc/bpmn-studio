@@ -56,18 +56,12 @@
             <div class="modal-body process-def-detail_modal-body">
               This Process has more then one defined StartEvent. In order to start
               the process, you have to select an initial StartEvent.
-              <br>
-              <div class="btn btn-secondary dropdown-toggle process-def-detail_modal-button" data-toggle="dropdown" change.delegate="toggleDropdownIcon()">
-                <div class = "process-def-detail_dropdown-button-content" id="startEventSelection">
-                  Select initial StartEvent
-                </div>
-                <div class="process-def-detail_dropdown-button-arrow">
-                  <span class="fa fa-angle-down" ref="dropdownArrow" />
-                </div>
+              <div class="process-def-detail_dropdown-menu">
+                <select value.bind="selectedStartEvent" ref="dropdownMenu">
+                  <option value="">Select StartEvent</option>
+                  <option repeat.for="startEvent of processesStartEvents" value.bind="startEvent.id">${startEvent.id}</option>
+                </select>
               </div>
-              <ul class="dropdown-menu process-details-dropdown-menu process-def-detail_modal-dropdown-menu">
-                <li repeat.for="startEvent of processesStartEvents" class="dropdown-item process-details-dropdown-menu__entry process-def-detail_modal-dropdown-menu__entry" click.delegate="setStartEvent(startEvent)">${startEvent.id}</li>
-              </ul>
             </div>
             <div class="modal-footer process-def-detail_modal-footer">
                 <button type="button" class="custom-button" data-dismiss="modal" id="cancelStartEventSelection">Cancel</button>

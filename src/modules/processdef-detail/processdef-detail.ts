@@ -54,8 +54,7 @@ export class ProcessDefDetail {
   private dropdownIsCollapsed: boolean = true;
 
   public processesStartEvents: Array<Event> = [];
-  private _selectedStartEvent: Event;
-  private _dropdownCollapsed: boolean = true;
+  public dropdownMenu: HTMLSelectElement;
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
@@ -307,13 +306,6 @@ export class ProcessDefDetail {
     this._eventAggregator.publish(environment.events.statusBar.hideXMLButton);
   }
 
-  public setStartEvent(startEvent: Event): void {
-    this._selectedStartEvent = startEvent;
-    const dropdownButton: HTMLAnchorElement = document.getElementById('startEventSelection') as HTMLAnchorElement;
-    dropdownButton.innerHTML = startEvent.key;
-
-  }
-
   private _refreshProcess(): Promise<IProcessDefEntity> {
     return this
       ._processEngineService
@@ -362,25 +354,11 @@ export class ProcessDefDetail {
 
       startProcessButton.addEventListener('click', () => {
         this.showModal = false;
-        resolve(this._selectedStartEvent.id);
+        resolve(this.dropdownMenu.value);
       });
     });
 
     return returnPromise;
-  }
-
-  public toggleDropdownIcon(): void {
-    console.log('fired');
-    console.log(this.dropdownArrow);
-    if (this._dropdownCollapsed) {
-      this.dropdownArrow.classList.remove('fa-angle-down');
-      this.dropdownArrow.classList.add('fa-angle-up');
-      this._dropdownCollapsed = false;
-    } else {
-      this.dropdownArrow.classList.remove('fa-angle-up');
-      this.dropdownArrow.classList.add('fa-angle-down');
-      this._dropdownCollapsed = true;
-    }
   }
 
   /**

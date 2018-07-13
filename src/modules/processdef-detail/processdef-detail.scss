@@ -50,6 +50,10 @@
   border-radius: 4px;
 }
 
+.process-def-detail_dropdown-menu {
+  margin-top: 15px;
+}
+
 .process-def-detail_modal-dialog-content {
   height: 250px;
 }
@@ -72,36 +76,4 @@
   height: 55px;
   padding-top: 0px;
   padding-bottom: 0px;
-}
-
-.process-def-detail_modal-button {
-  border: 1px solid black;
-  text-align: left;
-
-  margin-top: 20px;
-
-  width: 200px;
-  left: 50%;
-}
-
-.process-def-detail_dropdown-button-content {
-  float: left;
-  width: 150px;
-  text-overflow: ellipsis;
-}
-
-.process-def-detail_dropdown-button-arrow {
-  float: right;
-}
-
-.process-def-detail_modal-dropdown-menu {
-  position: absolute;
-  left: auto;
-  top: 106px;
-
-  width: 200px;
-}
-
-.process-def-detail_modal-dropdown-menu__entry:hover {
-  background-color: lightgray;
 }
