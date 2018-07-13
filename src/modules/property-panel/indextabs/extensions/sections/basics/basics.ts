@@ -100,7 +100,7 @@ export class BasicsSection implements ISection {
                                                        || this._businessObjInPanel.extensionElements === null;
 
     if (businessObjectHasNoExtensionElements) {
-      this._createExtensionElement();
+      return;
     }
 
     this._propertyElement = this._getPropertyElement();
