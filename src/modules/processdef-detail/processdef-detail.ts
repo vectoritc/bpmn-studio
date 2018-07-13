@@ -50,8 +50,12 @@ export class ProcessDefDetail {
   private _managementApiClient: IManagementApiService;
   private _authenticationService: IAuthenticationService;
 
+  public dropdownArrow: HTMLElement;
+  private dropdownIsCollapsed: boolean = true;
+
   public processesStartEvents: Array<Event> = [];
   private _selectedStartEvent: Event;
+  private _dropdownCollapsed: boolean = true;
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
@@ -183,7 +187,7 @@ export class ProcessDefDetail {
       console.error(error);
 
       /*
-       * TODO: hese are currently mock StartEvents which are used for debugging.
+       * TODO: these are currently mock StartEvents which are used for debugging.
        * Please remove them!!!!!
       */
       const event1: Event = new Event();
@@ -307,6 +311,7 @@ export class ProcessDefDetail {
     this._selectedStartEvent = startEvent;
     const dropdownButton: HTMLAnchorElement = document.getElementById('startEventSelection') as HTMLAnchorElement;
     dropdownButton.innerHTML = startEvent.key;
+
   }
 
   private _refreshProcess(): Promise<IProcessDefEntity> {
@@ -362,6 +367,20 @@ export class ProcessDefDetail {
     });
 
     return returnPromise;
+  }
+
+  public toggleDropdownIcon(): void {
+    console.log('fired');
+    console.log(this.dropdownArrow);
+    if (this._dropdownCollapsed) {
+      this.dropdownArrow.classList.remove('fa-angle-down');
+      this.dropdownArrow.classList.add('fa-angle-up');
+      this._dropdownCollapsed = false;
+    } else {
+      this.dropdownArrow.classList.remove('fa-angle-up');
+      this.dropdownArrow.classList.add('fa-angle-down');
+      this._dropdownCollapsed = true;
+    }
   }
 
   /**

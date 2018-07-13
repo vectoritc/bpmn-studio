@@ -49,7 +49,7 @@
   <div show.bind="showModal">
       <div class="modal fade in show" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
-          <div class="modal-content">
+          <div class="modal-content process-def-detail_modal-dialog-content">
             <div class="modal-header process-def-detail_modal-header">
               <h3 class="process-def-detail_modal-dialog__headline">Select initial StartEvent</h3>
             </div>
@@ -57,12 +57,19 @@
               This Process has more then one defined StartEvent. In order to start
               the process, you have to select an initial StartEvent.
               <br>
-              <a class="btn btn-secondary dropdown-toggle process-def-detail_modal-button" data-toggle="dropdown" id="startEventSelection"> Select start event</a>
+              <div class="btn btn-secondary dropdown-toggle process-def-detail_modal-button" data-toggle="dropdown" change.delegate="toggleDropdownIcon()">
+                <div class = "process-def-detail_dropdown-button-content" id="startEventSelection">
+                  Select initial StartEvent
+                </div>
+                <div class="process-def-detail_dropdown-button-arrow">
+                  <span class="fa fa-angle-down" ref="dropdownArrow" />
+                </div>
+              </div>
               <ul class="dropdown-menu process-details-dropdown-menu process-def-detail_modal-dropdown-menu">
                 <li repeat.for="startEvent of processesStartEvents" class="dropdown-item process-details-dropdown-menu__entry process-def-detail_modal-dropdown-menu__entry" click.delegate="setStartEvent(startEvent)">${startEvent.id}</li>
               </ul>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer process-def-detail_modal-footer">
                 <button type="button" class="custom-button" data-dismiss="modal" id="cancelStartEventSelection">Cancel</button>
                 <button type="button" class="custom-button" data-dismiss="modal" id="startProcessWithSelectedStartEvent">Start Process</button>
             </div>
