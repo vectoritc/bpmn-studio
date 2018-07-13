@@ -41,6 +41,7 @@ export class ProcessDefDetail {
   private _diagramIsInvalid: boolean = false;
   // Used to control the modal view; shows the modal view for pressing the play button.
   private _startButtonPressed: boolean = false;
+  private _managementApiClient: IManagementApiService;
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
@@ -53,6 +54,38 @@ export class ProcessDefDetail {
     this._router = router;
     this._validationController = validationController;
     this._notificationService = notificationService;
+  }
+
+  private _initializeManagementApiClient(): void {
+
+    const token: string = this._authenticationService.getToken();
+    const context: IManagementContext = {
+      identity: token,
+    };
+
+    const httpClient: any = {
+      post: async(url: string, payload: any, headers: any): Promise<any> => {
+
+        const request: Request = new Request(`${environment.bpmnStudioClient.baseRoute}/${url}`, {
+          method: 'POST',
+          mode: 'cors',
+          referrer: 'no-referrer',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            ...headers,
+          },
+        });
+        const response: Response = await fetch(request);
+        return {
+          result: response.json(),
+          status: response.status,
+        };
+      },
+    };
+    const externalAccessor: ExternalAccessor = new ExternalAccessor(httpClient);
+    this._managementApiClient = new ManagementApiClientService(externalAccessor);
   }
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
