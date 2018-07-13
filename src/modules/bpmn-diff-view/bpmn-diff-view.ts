@@ -177,8 +177,10 @@ export class BpmnDiffView {
     * This Regex removes all newlines and spaces to make sure that both xml
     * are not formatted.
     */
-    const unformattedXml: string = this.xml.replace(/\r?\n|\r|\s/g, '');
-    const unformattedSaveXml: string = this.savedxml.replace(/\r?\n|\r|\s/g, '');
+    const whitespaceAndNewLineRegex: RegExp = /\r?\n|\r|\s/g;
+
+    const unformattedXml: string = this.xml.replace(whitespaceAndNewLineRegex, '');
+    const unformattedSaveXml: string = this.savedxml.replace(whitespaceAndNewLineRegex, '');
 
     const diagramIsUnchanged: boolean = unformattedSaveXml === unformattedXml;
 
