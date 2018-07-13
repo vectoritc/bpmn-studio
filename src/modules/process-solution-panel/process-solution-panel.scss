@@ -35,16 +35,7 @@
   visibility: hidden;
 }
 
-.single-diagram-close {
-  position: relative;
-  top: 3px;
-  float: right;
-  color: darkgray;
-}
 
-.single-diagram-close:hover {
-  color: #5e5e5e;
-}
 
 .process-explorer__heading {
   padding: 8px;
@@ -61,6 +52,26 @@
 .process-explorer__structure-item a {
   padding-left: 10px;
   color: #5c5c5c;
+}
+
+.single-diagram-group {
+  display: flex;
+  padding: 5px 10px;
+}
+
+.single-diagram-link {
+  width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.single-diagram-close {
+  float: right;
+  color: darkgray;
+}
+
+.single-diagram-close:hover {
+  color: #5e5e5e;
 }
 
 .solution-input-group {

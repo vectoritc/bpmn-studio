@@ -30,9 +30,9 @@
           </div>
         </div>
         <input class="single-diagram-input" ref="singleDiagramInput" type="file" change.delegate="onSingleDiagramInputChange($event)" id="singleFileInput">
-        <div repeat.for="diagram of openedSingleDiagrams" class="process-explorer__structure-item">
-          <a click.delegate="navigateToDiagramDetail(diagram)">${diagram.name}</a>
-          <i class="fas fa-times single-diagram-close" click.delegate="closeSingleDiagram(diagram)"></i>
+        <div class="single-diagram-group" repeat.for="diagram of openedSingleDiagrams">
+          <div class="single-diagram-link" click.delegate="navigateToDiagramDetail(diagram)">${diagram.name}</div>
+          <div class="single-diagram-close"><i class="fas fa-times" click.delegate="closeSingleDiagram(diagram)"></i></div>
         </div>
       </div>
       <!--Solutions-->
