@@ -371,6 +371,15 @@ export class ProcessDefDetail {
    */
   private async _startProcess(): Promise<void> {
 
+    /*
+     * This is only temporary until the gathering of the StartEvents via the
+     * ManagementAPI works flawless.
+     */
+    try {
+      await this._updateProcessStartEvents();
+    } catch (error) {
+      console.error(error);
+    }
     const modalResult: string = await this.showModalDialogAndAwaitAnswer();
 
     if (modalResult === '') {
