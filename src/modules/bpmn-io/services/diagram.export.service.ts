@@ -60,6 +60,7 @@ export class DiagramExportService implements IDiagramExportService, IExporter, I
    */
   public loadXML(xmlContent: string): IExportXML {
     this._currentState = xmlContent;
+
     return this;
   }
 
@@ -84,6 +85,7 @@ export class DiagramExportService implements IDiagramExportService, IExporter, I
 
     this._enqueuedExports.push(this._bpmnExporter);
     this._currentMimeType = 'application/bpmn20-xml';
+
     return this;
   }
 
@@ -95,6 +97,7 @@ export class DiagramExportService implements IDiagramExportService, IExporter, I
 
     // this._enqueuedExports.push(this._svgExporter);
     this._currentMimeType = 'image/svg+xml';
+
     return this;
   }
 
@@ -106,6 +109,7 @@ export class DiagramExportService implements IDiagramExportService, IExporter, I
 
     this._enqueuedExports.push(this._pngExporter);
     this._currentMimeType = 'image/png';
+
     return this;
   }
 
@@ -117,6 +121,7 @@ export class DiagramExportService implements IDiagramExportService, IExporter, I
 
     this._enqueuedExports.push(this._jpegExporter);
     this._currentMimeType = 'image/jpeg';
+
     return this;
   }
 
