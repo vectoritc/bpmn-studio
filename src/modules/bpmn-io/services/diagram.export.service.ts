@@ -271,10 +271,6 @@ export class DiagramExportService implements IDiagramExportService, IExporter, I
       };
 
       imageElement.onerror = (errorEvent: ErrorEvent): void => {
-       /*
-        * TODO: Find out if we can reject the promise with a more specific
-        * error here.
-        */
         reject(errorEvent);
       };
     });
