@@ -7,10 +7,11 @@ import {IPagination, IProcessDefEntity} from '@process-engine/bpmn-studio_client
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
-import {AuthenticationStateEvent, IFileInfo} from '../../contracts/index';
+import {AuthenticationStateEvent, IFileInfo, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
+import {NotificationService} from '../notification/notification.service';
 
-@inject(EventAggregator, Router, 'SolutionExplorerServiceProcessEngine', 'SolutionExplorerServiceFileSystem', 'Identity')
+@inject(EventAggregator, Router, 'SolutionExplorerServiceProcessEngine', 'SolutionExplorerServiceFileSystem', 'NotificationService', 'Identity')
 export class ProcessSolutionPanel {
   public processes: IPagination<IProcessDefEntity>;
   public processengineSolutionString: string;
@@ -28,6 +29,7 @@ export class ProcessSolutionPanel {
   private _subscriptions: Array<Subscription>;
   private _eventAggregator: EventAggregator;
   private _router: Router;
+  private _notificationService: NotificationService;
   private _identity: IIdentity;
   private _solutionExplorerServiceProcessEngine: ISolutionExplorerService;
   private _solutionExplorerServiceFileSystem: ISolutionExplorerService;
@@ -35,12 +37,14 @@ export class ProcessSolutionPanel {
   constructor(eventAggregator: EventAggregator,
               router: Router,
               solutionExplorerServiceProcessEngine: ISolutionExplorerService,
-              solutionExplorerServiceFileSystem: ISolutionExplorerService) {
+              solutionExplorerServiceFileSystem: ISolutionExplorerService,
+              notificationService: NotificationService) {
 
     this._eventAggregator = eventAggregator;
     this._router = router;
     this._solutionExplorerServiceProcessEngine = solutionExplorerServiceProcessEngine;
     this._solutionExplorerServiceFileSystem = solutionExplorerServiceFileSystem;
+    this._notificationService = notificationService;
   }
 
   public async attached(): Promise<void> {
@@ -115,14 +119,21 @@ export class ProcessSolutionPanel {
    */
   public async onSolutionInputChange(event: any): Promise<void> {
     await this._solutionExplorerServiceFileSystem.openSolution(event.target.files[0].path, this._identity);
-    const solution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
+    const newSolution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
 
-    const solutionIsAlreadyOpen: boolean = this.openedFileSystemSolutions.includes(solution);
+    let solutionIsAlreadyOpen: boolean = false;
+    this.openedFileSystemSolutions.forEach((solution: ISolution) => {
+      if (solution.uri === newSolution.uri) {
+        solutionIsAlreadyOpen = true;
+      }
+    });
+
     if (solutionIsAlreadyOpen) {
+      this._notificationService.showNotification(NotificationType.INFO, 'Solution is already open');
       return;
     }
 
-    this.openedFileSystemSolutions.push(solution);
+    this.openedFileSystemSolutions.push(newSolution);
     this.solutionInput.value = '';
   }
 
@@ -133,14 +144,21 @@ export class ProcessSolutionPanel {
    */
   public async onSingleDiagramInputChange(event: any): Promise<void> {
     const pathToDiagram: string = event.target.files[0].path;
-    const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(pathToDiagram, this._identity);
+    const newDiagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(pathToDiagram, this._identity);
 
-    const diagramIsAlreadyOpen: boolean = this.openedSingleDiagrams.includes(diagram);
+    let diagramIsAlreadyOpen: boolean = false;
+    this.openedSingleDiagrams.forEach((diagram: IDiagram) => {
+      if (diagram.uri === newDiagram.uri) {
+        diagramIsAlreadyOpen = true;
+      }
+    });
+
     if (diagramIsAlreadyOpen) {
+      this._notificationService.showNotification(NotificationType.INFO, 'Diagram is already open');
       return;
     }
 
-    this.openedSingleDiagrams.push(diagram);
+    this.openedSingleDiagrams.push(newDiagram);
     this.singleDiagramInput.value = '';
   }
 
