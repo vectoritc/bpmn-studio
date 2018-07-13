@@ -21,9 +21,9 @@
 }
 
 .control-buttons button {
-  border: none;
-  background: transparent;
   padding: 0 2px;
+  background: transparent;
+  border: none;
 }
 
 .control-buttons button:hover {
@@ -31,14 +31,14 @@
 }
 
 .single-diagram-input {
-  visibility: hidden;
   height: 0;
+  visibility: hidden;
 }
 
 .single-diagram-close {
-  float: right;
   position: relative;
   top: 3px;
+  float: right;
   color: darkgray;
 }
 
@@ -80,10 +80,10 @@
 }
 
 .solution-close {
-  padding-left: 10px;
-  color: darkgray;
   position: relative;
   top: 1px;
+  padding-left: 10px;
+  color: darkgray;
 }
 
 .solution-close:hover {
