@@ -172,9 +172,12 @@ export class BpmnDiffView {
   }
 
   private _setNoChangesReason(): void {
-      const diagramIsUnchanged: boolean = this.savedxml === this.xml;
+    const unformattedXml: string = this.xml.replace(/\r?\n|\r|\s/g, '');
+    const unformattedSaveXml: string = this.savedxml.replace(/\r?\n|\r|\s/g, '');
 
-      if (diagramIsUnchanged) {
+    const diagramIsUnchanged: boolean = unformattedSaveXml === unformattedXml;
+
+    if (diagramIsUnchanged) {
         this.noChangesReason = 'The two diagrams are identical.';
       } else {
         this.noChangesReason = 'The two diagrams are incomparable.';
