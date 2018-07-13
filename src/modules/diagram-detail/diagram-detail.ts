@@ -4,6 +4,7 @@ import {Redirect, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
+import {IIdentity} from '../../../node_modules/@process-engine/bpmn-studio_client';
 
 import {NotificationType} from '../../contracts/index';
 import environment from '../../environment';
@@ -11,7 +12,7 @@ import {BpmnIo} from '../bpmn-io/bpmn-io';
 import {NotificationService} from '../notification/notification.service';
 
 interface RouteParameters {
-  diagramName: string;
+  diagramUri: string;
 }
 
 @inject('SolutionExplorerServiceFileSystem', 'NotificationService', EventAggregator, Router)
@@ -26,6 +27,7 @@ export class DiagramDetail {
   private _subscriptions: Array<Subscription>;
   private _router: Router;
   private _diagramHasChanged: boolean;
+  private _identity: IIdentity;
 
   constructor(solutionExplorerService: ISolutionExplorerService,
               notificationService: NotificationService,
@@ -37,8 +39,12 @@ export class DiagramDetail {
     this._router = router;
   }
 
+  public determineActivationStrategy(): string {
+    return 'replace';
+  }
+
   public async activate(routeParameters: RouteParameters): Promise<void> {
-    this.diagram = await this._solutionExplorerService.loadDiagram(routeParameters.diagramName);
+    this.diagram = await this._solutionExplorerService.openSingleDiagram(routeParameters.diagramUri, this._identity);
 
     this._diagramHasChanged = false;
   }
@@ -109,7 +115,7 @@ export class DiagramDetail {
   private async _saveDiagram(): Promise<void> {
     try {
       this.diagram.xml = await this.bpmnio.getXML();
-      this._solutionExplorerService.saveDiagram(this.diagram);
+      this._solutionExplorerService.saveSingleDiagram(this.diagram, this._identity);
       this._diagramHasChanged = false;
       this._notificationService
           .showNotification(NotificationType.SUCCESS, `File saved!`);

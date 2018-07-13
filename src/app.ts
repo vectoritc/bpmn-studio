@@ -41,7 +41,7 @@ export class App {
         moduleId: 'modules/processdef-detail/processdef-detail',
       },
       {
-        route: ['diagram/:diagramName'],
+        route: ['diagram/detail'],
         title: 'Diagram Detail',
         name: 'diagram-detail',
         moduleId: 'modules/diagram-detail/diagram-detail',
