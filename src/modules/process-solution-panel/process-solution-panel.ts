@@ -142,6 +142,7 @@ export class ProcessSolutionPanel {
     const index: number = this.openedSingleDiagrams.findIndex((diagram: IDiagram) => {
       return diagram.uri === diagramToClose.uri;
     });
+
     this.openedSingleDiagrams.splice(index, 1);
   }
 

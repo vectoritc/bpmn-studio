@@ -3,7 +3,7 @@
   <div class="process-explorer__solution-explorer">
 
     <div class="solution-explorer-index-cards">
-      <div class="index-card" class.bind="fileSystemIndexCardIsActive ? 'index-card--active' : ''" click.delegate="openFileSystemIndexCard()" >
+      <div class="index-card" class.bind="fileSystemIndexCardIsActive ? 'index-card--active' : ''" click.delegate="openFileSystemIndexCard()" if.bind="enableFileSystemSolutions">
         <i class="fa fa-folder"></i>
       </div>
       <div class="index-card" class.bind="processEngineIndexCardIsActive ? 'index-card--active' : ''" click.delegate="openProcessEngineIndexCard()">
@@ -12,7 +12,7 @@
     </div>
 
     <!--FileSystem-->
-    <div class="solution-explorer__filesystem" show.bind="fileSystemIndexCardIsActive">
+    <div class="solution-explorer__filesystem" show.bind="fileSystemIndexCardIsActive && enableFileSystemSolutions">
       <!--Single Diagrams-->
       <div class="single-diagrams">
         <div class="process-explorer__heading">
