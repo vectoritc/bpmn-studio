@@ -4,8 +4,8 @@ import {Redirect, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
+import {IIdentity} from '../../../node_modules/@process-engine/bpmn-studio_client';
 
-import { IIdentity } from '../../../node_modules/@process-engine/bpmn-studio_client';
 import {NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
