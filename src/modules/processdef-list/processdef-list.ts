@@ -36,7 +36,6 @@ export class ProcessDefList {
   private _getProcessesIntervalId: number;
   private _newDiagramXml: string;
 
-  @bindable()
   public selectedFiles: FileList;
   public fileInput: HTMLInputElement;
   public showOverwriteDialog: boolean;
@@ -62,6 +61,16 @@ export class ProcessDefList {
     this._notificationService = notificationService;
 
     this._refreshProcesslist();
+
+    this._fileReader.onload = async(fileInformations: any): Promise<void> => {
+      const xml: string = fileInformations.target.result;
+      const filename: string = this.selectedFiles[0].name;
+
+      this.fileInput.value = '';
+
+      this._importXmlFromFile(filename, xml);
+    };
+
     this._eventAggregator.publish(environment.events.refreshProcessDefs);
   }
 
