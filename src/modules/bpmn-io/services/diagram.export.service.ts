@@ -74,6 +74,7 @@ export class DiagramExportService implements IDiagramExportService, IExporter, I
    */
   public loadSVG(svgContent: string): IExportSVG {
     this._currentState = svgContent;
+
     return this;
   }
 
