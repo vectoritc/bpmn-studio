@@ -172,9 +172,19 @@ export class BpmnDiffView {
   }
 
   private _setNoChangesReason(): void {
-      const diagramIsUnchanged: boolean = this.savedxml === this.xml;
 
-      if (diagramIsUnchanged) {
+    /*
+    * This Regex removes all newlines and spaces to make sure that both xml
+    * are not formatted.
+    */
+    const whitespaceAndNewLineRegex: RegExp = /\r?\n|\r|\s/g;
+
+    const unformattedXml: string = this.xml.replace(whitespaceAndNewLineRegex, '');
+    const unformattedSaveXml: string = this.savedxml.replace(whitespaceAndNewLineRegex, '');
+
+    const diagramIsUnchanged: boolean = unformattedSaveXml === unformattedXml;
+
+    if (diagramIsUnchanged) {
         this.noChangesReason = 'The two diagrams are identical.';
       } else {
         this.noChangesReason = 'The two diagrams are incomparable.';
