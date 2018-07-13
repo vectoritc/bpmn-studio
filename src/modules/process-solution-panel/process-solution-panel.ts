@@ -116,6 +116,12 @@ export class ProcessSolutionPanel {
   public async onSolutionInputChange(event: any): Promise<void> {
     await this._solutionExplorerServiceFileSystem.openSolution(event.target.files[0].path, this._identity);
     const solution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
+
+    const solutionIsAlreadyOpen: boolean = this.openedFileSystemSolutions.includes(solution);
+    if (solutionIsAlreadyOpen) {
+      return;
+    }
+
     this.openedFileSystemSolutions.push(solution);
     this.solutionInput.value = '';
   }
@@ -128,7 +134,14 @@ export class ProcessSolutionPanel {
   public async onSingleDiagramInputChange(event: any): Promise<void> {
     const pathToDiagram: string = event.target.files[0].path;
     const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(pathToDiagram, this._identity);
+
+    const diagramIsAlreadyOpen: boolean = this.openedSingleDiagrams.includes(diagram);
+    if (diagramIsAlreadyOpen) {
+      return;
+    }
+
     this.openedSingleDiagrams.push(diagram);
+    this.singleDiagramInput.value = '';
   }
 
   public closeFileSystemSolution(solutionToClose: ISolution): void {
