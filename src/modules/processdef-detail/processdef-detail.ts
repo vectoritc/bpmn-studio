@@ -27,6 +27,7 @@ export class ProcessDefDetail {
 
   public bpmnio: BpmnIo;
   public process: IProcessDefEntity;
+  public showModal: boolean = false;
 
   private _processEngineService: IProcessEngineService;
   private _notificationService: NotificationService;
@@ -213,6 +214,10 @@ export class ProcessDefDetail {
     this._eventAggregator.publish(environment.events.statusBar.hideXMLButton);
   }
 
+  public setStartEvent(startEvent: string): void {
+    console.log(startEvent);
+  }
+
   private _refreshProcess(): Promise<IProcessDefEntity> {
     return this
       ._processEngineService
@@ -241,7 +246,9 @@ export class ProcessDefDetail {
    * If the process is not valid, it will not start it.
    */
   private _startProcess(): void {
-    this._dropInvalidFormData();
+    console.log('start');
+    this.showModal = true;
+    /*this._dropInvalidFormData();
 
     if (this._diagramIsInvalid) {
       this
@@ -255,7 +262,7 @@ export class ProcessDefDetail {
 
     this._startButtonPressed = true;
 
-    this._router.navigate(`processdef/${this.process.id}/start`);
+    this._router.navigate(`processdef/${this.process.id}/start`);*/
   }
 
   /**

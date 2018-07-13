@@ -46,5 +46,29 @@
     </div>
   </div>
   <!-- }}} Sace Modal for Process Start -->
-
+  <template if.bind="showModal">
+      <div class="modal fade in show" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header process-def-detail_modal-header">
+              <h3 class="process-def-detail_modal-dialog__headline">Select initial StartEvent</h3>
+            </div>
+            <div class="modal-body process-def-detail_modal-body">
+              This Process has more then one defined StartEvent. In order to start
+              the process, you have to select an initial StartEvent.
+              <br>
+              <a class="btn btn-secondary dropdown-toggle process-def-detail_modal-button" data-toggle="dropdown"> Select start event</a>
+              <ul class="dropdown-menu process-details-dropdown-menu process-def-detail_modal-dropdown-menu">
+                <li class="dropdown-item process-details-dropdown-menu__entry process-def-detail_modal-dropdown-menu__entry" click.delegate="setStartEvent('Test1')">Test1</li>
+                <li class="dropdown-item process-details-dropdown-menu__entry process-def-detail_modal-dropdown-menu__entry" click.delegate="setStartEvent('Test2')">Test2</li>
+              </ul>
+            </div>
+            <div class="modal-footer">
+              Footer
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-backdrop fade in"></div>
+    </template>
 </template>

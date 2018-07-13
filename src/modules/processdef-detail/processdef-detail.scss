@@ -49,3 +49,35 @@
   border: 1px solid darkgray;
   border-radius: 4px;
 }
+
+.process-def-detail_modal-dialog__headline {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  font-size: 25px;
+}
+
+.process-def-detail_modal-header {
+  height: 60px;
+}
+
+.process-def-detail_modal-body {
+  height: 200px;
+}
+
+.process-def-detail_modal-button {
+  border: 1px solid black;
+  text-align: left;
+
+  width: 400px;
+  left: 50%;
+}
+
+.process-def-detail_modal-dropdown-menu {
+  position: absolute;
+  left: auto;
+  top: 86px;
+}
+
+.process-def-detail_modal-dropdown-menu__entry:hover {
+  background-color: lightgray;
+}
