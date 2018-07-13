@@ -172,6 +172,11 @@ export class BpmnDiffView {
   }
 
   private _setNoChangesReason(): void {
+
+    /*
+    * This Regex removes all newlines and spaces to make sure that both xml
+    * are not formatted.
+    */
     const unformattedXml: string = this.xml.replace(/\r?\n|\r|\s/g, '');
     const unformattedSaveXml: string = this.savedxml.replace(/\r?\n|\r|\s/g, '');
 
