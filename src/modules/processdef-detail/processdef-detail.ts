@@ -7,6 +7,7 @@ import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 
 import {
   AuthenticationStateEvent,
+  IEvent,
   IExtensionElement,
   IFormElement,
   IModdleElement,
@@ -41,6 +42,9 @@ export class ProcessDefDetail {
   private _diagramIsInvalid: boolean = false;
   // Used to control the modal view; shows the modal view for pressing the play button.
   private _startButtonPressed: boolean = false;
+
+  public processesStartEvents: Array<IEvent>;
+  private _selectedStartEvent: IEvent;
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
@@ -214,7 +218,8 @@ export class ProcessDefDetail {
     this._eventAggregator.publish(environment.events.statusBar.hideXMLButton);
   }
 
-  public setStartEvent(startEvent: string): void {
+  public setStartEvent(startEvent: IEvent): void {
+    this._selectedStartEvent = startEvent;
     console.log(startEvent);
   }
 
@@ -240,15 +245,40 @@ export class ProcessDefDetail {
     });
   }
 
+  public async showModalDialogAndAwaitAnswer(): Promise<string> {
+    this.showModal = true;
+    const returnPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void => {
+      const cancelButton: HTMLElement = document.getElementById('cancelStartEventSelection');
+      const startProcessButton: HTMLElement = document.getElementById('startProcessWithSelectedStartEvent');
+
+      cancelButton.addEventListener('click', () => {
+        this.showModal = false;
+        resolve('');
+      });
+
+      startProcessButton.addEventListener('click', () => {
+        this.showModal = false;
+        resolve(this._selectedStartEvent);
+      });
+    });
+
+    return returnPromise;
+  }
+
   /**
    * This sets the _startButtonPressed flag to control the modal view of the save dialog.
    *
    * If the process is not valid, it will not start it.
    */
-  private _startProcess(): void {
-    console.log('start');
-    this.showModal = true;
-    /*this._dropInvalidFormData();
+  private async _startProcess(): Promise<void> {
+
+    const modalResult: string = await this.showModalDialogAndAwaitAnswer();
+
+    if (modalResult === '') {
+      return;
+    }
+
+    this._dropInvalidFormData();
 
     if (this._diagramIsInvalid) {
       this
@@ -262,7 +292,7 @@ export class ProcessDefDetail {
 
     this._startButtonPressed = true;
 
-    this._router.navigate(`processdef/${this.process.id}/start`);*/
+    this._router.navigate(`processdef/${this.process.id}/start`);
   }
 
   /**

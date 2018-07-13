@@ -68,6 +68,8 @@
   border: 1px solid black;
   text-align: left;
 
+  margin-top: 10px;
+
   width: 400px;
   left: 50%;
 }
@@ -75,7 +77,7 @@
 .process-def-detail_modal-dropdown-menu {
   position: absolute;
   left: auto;
-  top: 86px;
+  top: 96px;
 }
 
 .process-def-detail_modal-dropdown-menu__entry:hover {

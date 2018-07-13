@@ -46,7 +46,7 @@
     </div>
   </div>
   <!-- }}} Sace Modal for Process Start -->
-  <template if.bind="showModal">
+  <div show.bind="showModal">
       <div class="modal fade in show" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
@@ -59,16 +59,16 @@
               <br>
               <a class="btn btn-secondary dropdown-toggle process-def-detail_modal-button" data-toggle="dropdown"> Select start event</a>
               <ul class="dropdown-menu process-details-dropdown-menu process-def-detail_modal-dropdown-menu">
-                <li class="dropdown-item process-details-dropdown-menu__entry process-def-detail_modal-dropdown-menu__entry" click.delegate="setStartEvent('Test1')">Test1</li>
-                <li class="dropdown-item process-details-dropdown-menu__entry process-def-detail_modal-dropdown-menu__entry" click.delegate="setStartEvent('Test2')">Test2</li>
+                <li repeat.for="startEvent of processesStartEvents" class="dropdown-item process-details-dropdown-menu__entry process-def-detail_modal-dropdown-menu__entry" click.delegate="setStartEvent(startEvent)">Test1</li>
               </ul>
             </div>
             <div class="modal-footer">
-              Footer
+                <button type="button" class="custom-button" data-dismiss="modal" id="cancelStartEventSelection">Cancel</button>
+                <button type="button" class="custom-button" data-dismiss="modal" id="startProcessWithSelectedStartEvent">Start Process</button>
             </div>
           </div>
         </div>
       </div>
       <div class="modal-backdrop fade in"></div>
-    </template>
+    </div>
 </template>
