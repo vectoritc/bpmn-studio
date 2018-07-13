@@ -3,10 +3,15 @@ import {inject} from 'aurelia-framework';
 import {Redirect, Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
+import {Event, EventList, IManagementApiService, ManagementContext} from '@process-engine/management_api_contracts';
+
 import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
+
+import {ExternalAccessor, ManagementApiClientService} from '@process-engine/management_api_client';
 
 import {
   AuthenticationStateEvent,
+  IAuthenticationService,
   IEvent,
   IExtensionElement,
   IFormElement,
@@ -23,7 +28,7 @@ interface RouteParameters {
   processDefId: string;
 }
 
-@inject('ProcessEngineService', EventAggregator, Router, ValidationController, 'NotificationService')
+@inject('ProcessEngineService', EventAggregator, Router, ValidationController, 'NotificationService', 'NewAuthenticationService')
 export class ProcessDefDetail {
 
   public bpmnio: BpmnIo;
@@ -43,27 +48,30 @@ export class ProcessDefDetail {
   // Used to control the modal view; shows the modal view for pressing the play button.
   private _startButtonPressed: boolean = false;
   private _managementApiClient: IManagementApiService;
+  private _authenticationService: IAuthenticationService;
 
-  public processesStartEvents: Array<IEvent>;
-  private _selectedStartEvent: IEvent;
+  public processesStartEvents: Array<Event>;
+  private _selectedStartEvent: Event;
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
               router: Router,
               validationController: ValidationController,
-              notificationService: NotificationService) {
+              notificationService: NotificationService,
+              authenticationService: IAuthenticationService) {
 
     this._processEngineService = processEngineService;
     this._eventAggregator = eventAggregator;
     this._router = router;
     this._validationController = validationController;
     this._notificationService = notificationService;
+    this._authenticationService = authenticationService;
   }
 
   private _initializeManagementApiClient(): void {
 
     const token: string = this._authenticationService.getToken();
-    const context: IManagementContext = {
+    const context: ManagementContext = {
       identity: token,
     };
 
@@ -279,6 +287,16 @@ export class ProcessDefDetail {
   }
 
   public async showModalDialogAndAwaitAnswer(): Promise<string> {
+
+    const token: string = this._authenticationService.getToken();
+    const context: ManagementContext = {
+      identity: token,
+    };
+    this._managementApiClient.startProcessInstance(context, this.process.key, undefined, {}, undefined, undefined);
+
+    const startEventResponse: EventList = await this._managementApiClient.getEventsForProcessModel(context, this.process.key);
+    this.processesStartEvents = startEventResponse.events;
+
     this.showModal = true;
     const returnPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void => {
       const cancelButton: HTMLElement = document.getElementById('cancelStartEventSelection');
@@ -291,7 +309,7 @@ export class ProcessDefDetail {
 
       startProcessButton.addEventListener('click', () => {
         this.showModal = false;
-        resolve(this._selectedStartEvent);
+        resolve(this._selectedStartEvent.id);
       });
     });
 
@@ -324,6 +342,12 @@ export class ProcessDefDetail {
     }
 
     this._startButtonPressed = true;
+
+    const token: string = this._authenticationService.getToken();
+    const context: ManagementContext = {
+      identity: token,
+    };
+    this._managementApiClient.startProcessInstance(context, this.process.key, modalResult, {}, undefined, undefined);
 
     this._router.navigate(`processdef/${this.process.id}/start`);
   }
