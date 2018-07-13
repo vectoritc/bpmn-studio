@@ -97,19 +97,6 @@ export class ProcessSolutionPanel {
         this._refreshProcesslist();
       }),
     ];
-
-    this.openSolutionButton.addEventListener('click', () => {
-      this.solutionInput.click();
-    });
-
-    const firstSolutionInputButton: HTMLElement = document.getElementById('openFirstSolutionButton');
-    firstSolutionInputButton.addEventListener('click', () => {
-      this.solutionInput.click();
-    });
-
-    this.openSingleDiagramButton.addEventListener('click', () => {
-      this.singleDiagramInput.click();
-    });
   }
 
   public detached(): void {

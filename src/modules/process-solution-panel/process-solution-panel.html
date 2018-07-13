@@ -18,10 +18,10 @@
         <div class="process-explorer__heading">
           Opened Diagrams
           <div class="control-buttons">
-            <button ref="openSingleDiagramButton" class="control-buttons__open-single-file" title="Open a diagram">
+            <button ref="openSingleDiagramButton" class="control-buttons__open-single-file" click.delegate="singleDiagramInput.click()" title="Open a diagram">
               <i class="fas fa-file-medical"></i>
             </button>
-            <button ref="openSolutionButton" class="control-buttons__open-solution" title="Open a solution">
+            <button ref="openSolutionButton" class="control-buttons__open-solution" click.delegate="solutionInput.click()" title="Open a solution">
               <i class="fas fa-folder-open"></i>
             </button>
             <button click.delegate="refreshSolutions()" class="control-buttons__refresh-explorer" title="Refresh explorer">
@@ -50,7 +50,7 @@
         </div>
       </div>
       <div class="solution-input-group">
-        <button id="openFirstSolutionButton" if.bind="openedFileSystemSolutions.length === 0">Open a Solution</button>
+        <button id="openFirstSolutionButton" if.bind="openedFileSystemSolutions.length === 0" click.delegate="solutionInput.click()">Open a Solution</button>
         <input class="solution-input" ref="solutionInput" type="file" change.delegate="onSolutionInputChange($event)" id="solutionInput" webkitdirectory>
       </div>
     </div>
