@@ -57,9 +57,9 @@
               This Process has more then one defined StartEvent. In order to start
               the process, you have to select an initial StartEvent.
               <br>
-              <a class="btn btn-secondary dropdown-toggle process-def-detail_modal-button" data-toggle="dropdown"> Select start event</a>
+              <a class="btn btn-secondary dropdown-toggle process-def-detail_modal-button" data-toggle="dropdown" id="startEventSelection"> Select start event</a>
               <ul class="dropdown-menu process-details-dropdown-menu process-def-detail_modal-dropdown-menu">
-                <li repeat.for="startEvent of processesStartEvents" class="dropdown-item process-details-dropdown-menu__entry process-def-detail_modal-dropdown-menu__entry" click.delegate="setStartEvent(startEvent)">Test1</li>
+                <li repeat.for="startEvent of processesStartEvents" class="dropdown-item process-details-dropdown-menu__entry process-def-detail_modal-dropdown-menu__entry" click.delegate="setStartEvent(startEvent)">${startEvent.id}</li>
               </ul>
             </div>
             <div class="modal-footer">
