@@ -160,6 +160,12 @@ export class BasicsSection implements ISection {
     this._businessObjInPanel.extensionElements = extensionElements;
   }
 
+  private _createEmptyPropertyElement(): void {
+    const propertyValues: Array<IProperty> = [];
+    const extensionPropertyElement: IPropertyElement = this._moddle.create('camunda:Properties', {values: propertyValues});
+    this._businessObjInPanel.extensionElements.values.push(extensionPropertyElement);
+  }
+
   private _publishDiagramChange(): void {
     this._eventAggregator.publish(environment.events.diagramChange);
   }
