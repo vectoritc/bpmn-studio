@@ -93,14 +93,6 @@ export class BpmnIo {
 
     this._addRemoveWithBackspaceKeyboardListener();
 
-    if (this.xml !== undefined && this.xml !== null) {
-      this.savedXml = this.xml;
-
-      this.modeler.importXML(this.xml, (err: Error) => {
-        return 0;
-      });
-    }
-
     /**
      * Subscribe to "commandStack.changed"-event to have a simple indicator of
      * when a diagram is changed.
@@ -115,8 +107,14 @@ export class BpmnIo {
     this._diagramExportService = new DiagramExportService();
   }
 
-  public attached(): void {
-    this.savedXml = this.xml;
+  public async attached(): Promise<void> {
+    const xmlIsEmpty: boolean = this.xml !== undefined && this.xml !== null;
+    if (xmlIsEmpty) {
+      this.modeler.importXML(this.xml, async(err: Error) => {
+        this.savedXml = await this.getXML();
+      });
+    }
+
     this.modeler.attachTo(this.canvasModel);
 
     window.addEventListener('resize', this._resizeEventHandler);
@@ -232,9 +230,10 @@ export class BpmnIo {
   }
 
   public xmlChanged(newValue: string): void {
-    if (this.modeler !== undefined && this.modeler !== null) {
+    const xmlIsEmpty: boolean = this.modeler !== undefined && this.modeler !== null;
+    if (xmlIsEmpty) {
       this.modeler.importXML(newValue, (err: Error) => {
-        return 0;
+        return;
       });
 
       this.xml = newValue;
@@ -289,12 +288,7 @@ export class BpmnIo {
   }
 
   public async toggleXMLView(): Promise<void> {
-    if (!this.showXMLView) {
-      this._updateXmlChanges();
-      this.showXMLView = true;
-    } else {
-      this.showXMLView = false;
-    }
+    this.showXMLView = !this.showXMLView;
   }
 
   public async getXML(): Promise<string> {
