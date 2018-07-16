@@ -66,7 +66,9 @@ export class BasicsSection implements ISection {
 
     this._propertyElement = this._getPropertyElement();
 
-    if (this._propertyElement === undefined) {
+    const propertyElementIsUndefinded: boolean = this._propertyElement === undefined;
+
+    if (propertyElementIsUndefinded) {
       this._createEmptyPropertyElement();
       this._propertyElement = this._getPropertyElement();
     }
@@ -166,6 +168,7 @@ export class BasicsSection implements ISection {
   private _createEmptyPropertyElement(): void {
     const propertyValues: Array<IProperty> = [];
     const extensionPropertyElement: IPropertyElement = this._moddle.create('camunda:Properties', {values: propertyValues});
+
     this._businessObjInPanel.extensionElements.values.push(extensionPropertyElement);
   }
 
