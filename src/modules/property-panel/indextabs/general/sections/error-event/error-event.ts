@@ -1,7 +1,6 @@
 import {
   IBpmnModdle,
   IBpmnModeler,
-  IDefinition,
   IElementRegistry,
   IError,
   IErrorElement,
