@@ -25,12 +25,12 @@ export class ErrorEventSection implements ISection {
   public selectedId: string;
   public selectedError: IError;
   public isEndEvent: boolean = false;
+  public errorMessageVariable: string;
 
   private _businessObjInPanel: IErrorElement;
   private _moddle: IBpmnModdle;
   private _modeler: IBpmnModeler;
   private _generalService: GeneralService;
-  private _errorMessageVariable: string;
   private _eventAggregator: EventAggregator;
 
   constructor(generalService?: GeneralService, eventAggregator?: EventAggregator) {
@@ -70,7 +70,7 @@ export class ErrorEventSection implements ISection {
 
     errorElement.errorRef = this.selectedError;
     if (!this.isEndEvent) {
-      this._errorMessageVariable = errorElement.errorMessageVariable;
+      this.errorMessageVariable = errorElement.errorMessageVariable;
     }
     this._publishDiagramChange();
   }
@@ -89,7 +89,7 @@ export class ErrorEventSection implements ISection {
 
   public updateErrorMessage(): void {
     const errorElement: IErrorElement = this._businessObjInPanel.eventDefinitions[0];
-    errorElement.errorMessageVariable = this._errorMessageVariable;
+    errorElement.errorMessageVariable = this.errorMessageVariable;
     this._publishDiagramChange();
   }
 
