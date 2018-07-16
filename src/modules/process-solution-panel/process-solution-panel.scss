@@ -64,7 +64,10 @@
 
 .process-explorer__structure-item {
   padding: 2px 10px;
+  overflow: hidden;
   cursor: pointer;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .process-explorer__structure-item a {
@@ -103,6 +106,7 @@
   width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .solution-diagram-group__link:hover {
@@ -117,8 +121,10 @@
 
 .single-diagram-group__link {
   width: 180px;
+  margin-right: 5px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .single-diagram-group__link:hover {
