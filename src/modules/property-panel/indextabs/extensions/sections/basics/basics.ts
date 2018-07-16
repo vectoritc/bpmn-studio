@@ -104,6 +104,8 @@ export class BasicsSection implements ISection {
       return;
     }
 
+    this._propertyElement = this._getPropertyElement();
+
     const extensionsPropertyElement: IPropertyElement  =
       this._businessObjInPanel.extensionElements.values
         .find((extensionValue: IExtensionElement) => {
