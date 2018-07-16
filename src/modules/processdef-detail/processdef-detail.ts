@@ -3,7 +3,7 @@ import {inject} from 'aurelia-framework';
 import {Redirect, Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
-import {Event, EventList, IManagementApiService, ManagementContext} from '@process-engine/management_api_contracts';
+import {Event, EventList, IManagementApiService, ManagementContext, ProcessModelExecution} from '@process-engine/management_api_contracts';
 
 import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 
@@ -73,7 +73,7 @@ export class ProcessDefDetail {
 
   private _initializeManagementApiClient(): void {
 
-    const token: string = this._authenticationService.getToken();
+    const token: string = this._authenticationService.getAccessToken();
     const context: ManagementContext = {
       identity: token,
     };
@@ -178,27 +178,6 @@ export class ProcessDefDetail {
     this._eventAggregator.publish(environment.events.statusBar.showXMLButton);
 
     this._initializeManagementApiClient();
-
-    try {
-      await this._updateProcessStartEvents();
-    } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, `Error while obtaining the StartEvents which belongs to the Process.`);
-      console.error(error);
-
-      /*
-       * TODO: these are currently mock StartEvents which are used for debugging.
-       * Please remove them!!!!!
-      */
-      const event1: Event = new Event();
-      event1.key = 'StartEvent1';
-      event1.id = 'StartEvent1';
-      this.processesStartEvents.push(event1);
-
-      const event2: Event = new Event();
-      event2.key = 'StartEvent2';
-      event2.id = 'StartEvent2';
-      this.processesStartEvents.push(event2);
-    }
   }
 
   /**
@@ -339,6 +318,8 @@ export class ProcessDefDetail {
   public async showModalDialogAndAwaitAnswer(): Promise<string> {
     this.showModal = true;
 
+    await this._initializeModalDialog();
+
     /*
      * Create a promise which displays the modal and resolves, if the user
      * clicks on the buttons.
@@ -359,6 +340,30 @@ export class ProcessDefDetail {
     });
 
     return returnPromise;
+  }
+
+  private async _initializeModalDialog(): Promise<void> {
+
+    try {
+      await this._updateProcessStartEvents();
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR, `Error while obtaining the StartEvents which belongs to the Process.`);
+      console.error(error);
+
+      /*
+       * TODO: these are currently mock StartEvents which are used for debugging.
+       * Please remove them!!!!!
+      */
+      const event1: Event = new Event();
+      event1.key = 'StartEvent1';
+      event1.id = 'StartEvent1';
+      this.processesStartEvents.push(event1);
+
+      const event2: Event = new Event();
+      event2.key = 'StartEvent2';
+      event2.id = 'StartEvent2';
+      this.processesStartEvents.push(event2);
+    }
   }
 
   /**
@@ -399,11 +404,14 @@ export class ProcessDefDetail {
 
     this._startButtonPressed = true;
 
-    const token: string = this._authenticationService.getToken();
+    const token: string = this._authenticationService.getAccessToken();
     const context: ManagementContext = {
       identity: token,
     };
-    this._managementApiClient.startProcessInstance(context, this.process.key, modalResult, {}, undefined, undefined);
+    const startRequestPayload: ProcessModelExecution.ProcessStartRequestPayload = {
+      inputValues: {},
+    };
+    this._managementApiClient.startProcessInstance(context, this.process.key, modalResult, startRequestPayload, undefined, undefined);
 
     this._router.navigate(`processdef/${this.process.id}/start`);
   }
@@ -412,7 +420,7 @@ export class ProcessDefDetail {
    * Updates the StartEvents of the current Process.
    */
   private async _updateProcessStartEvents(): Promise<void> {
-    const token: string = this._authenticationService.getToken();
+    const token: string = this._authenticationService.getAccessToken();
     const context: ManagementContext = {
       identity: token,
     };

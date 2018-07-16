@@ -18,7 +18,8 @@ export class ConfigPanel {
   private _eventAggregator: EventAggregator;
   private _authenticationService: IAuthenticationService;
   private _subscriptions: Array<Subscription>;
-  private _openIdConnect: OpenIdConnect;
+  // We use any here, because we need to call private members (see below)
+  private _openIdConnect: OpenIdConnect | any;
 
   public config: any = environment;
   public isLoggedInToProcessEngine: boolean;

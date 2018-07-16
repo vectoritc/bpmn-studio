@@ -4,14 +4,13 @@ import { User } from 'oidc-client';
 
 import {IAuthenticationService, IIdentity} from '../../contracts/index';
 
-@inject(OpenIdConnect, 'TokenRepository')
+@inject(OpenIdConnect)
 export class NewAuthenticationService implements IAuthenticationService {
 
   private _openIdConnect: OpenIdConnect;
-  private _tokenRepository: ITokenRepository;
   private _user: User;
 
-  constructor(openIdConnect: OpenIdConnect, tokenRepository: ITokenRepository) {
+  constructor(openIdConnect: OpenIdConnect) {
     this._openIdConnect = openIdConnect;
 
     this._openIdConnect.observeUser((user: User) => {
@@ -20,20 +19,13 @@ export class NewAuthenticationService implements IAuthenticationService {
       if (!user) {
         return;
       }
-      // this._tokenRepository.setToken(user.id_token);
-      // this._tokenRepository.setIdentity(user);
-
     });
 
     this.initialize();
-    this._tokenRepository = tokenRepository;
   }
 
   public async initialize(): Promise<void> {
     this._user = await this._openIdConnect.getUser();
-
-    // this._tokenRepository.setToken(this._user.id_token);
-    // this._tokenRepository.setIdentity(this._user);
   }
 
   public login(): Promise<IIdentity> {
@@ -44,8 +36,6 @@ export class NewAuthenticationService implements IAuthenticationService {
         const user: User = await this._openIdConnect.getUser();
         this._user = user;
         console.log('user loaded', user);
-        // this._tokenRepository.setToken(user.id_token);
-        // this._tokenRepository.setIdentity(user);
         resolve(user);
       });
 
@@ -74,9 +64,14 @@ export class NewAuthenticationService implements IAuthenticationService {
     });
   }
 
-  public getToken(): string {
+  public getAccessToken(): string {
     return this._user.access_token;
   }
+
+  public getIdentityToken(): string {
+    return this._user.id_token;
+  }
+
   public hasToken(): boolean {
     const hasToken: boolean =
       this._user !== undefined

@@ -50,7 +50,11 @@ export class AuthenticationService implements IAuthenticationService {
     this.tokenRepository.setIdentity(identity);
   }
 
-  public getToken(): string {
+  public getIdentityToken(): string {
+    return this.tokenRepository.getToken();
+  }
+
+  public getAccessToken(): string {
     return this.tokenRepository.getToken();
   }
 

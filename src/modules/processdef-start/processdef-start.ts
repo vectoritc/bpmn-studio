@@ -1,6 +1,6 @@
 import {IUserTaskConfig} from '@process-engine/bpmn-studio_client';
 import {ExternalAccessor, ManagementApiClientService} from '@process-engine/management_api_client';
-import {IManagementApiService} from '@process-engine/management_api_contracts';
+import {IManagementApiService, ManagementContext, ProcessModelExecution} from '@process-engine/management_api_contracts';
 import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {computedFrom, inject} from 'aurelia-framework';
@@ -38,8 +38,8 @@ export class ProcessDefStart {
 
   private _initializeManagementApiClient(): void {
 
-    const token: string = this._authenticationService.getToken();
-    const context: IManagementContext = {
+    const token: string = this._authenticationService.getAccessToken();
+    const context: ManagementContext = {
       identity: token,
     };
 
@@ -126,10 +126,13 @@ export class ProcessDefStart {
   }
 
   private _startProcess(): void {
-    const token: string = this._authenticationService.getToken();
-    const context: IManagementContext = {
+    const token: string = this._authenticationService.getAccessToken();
+    const context: ManagementContext = {
       identity: token,
     };
-    this._managementApiClient.startProcessInstance(context, this.process.key, undefined, {}, undefined, undefined);
+    const startRequestPayload: ProcessModelExecution.ProcessStartRequestPayload = {
+      inputValues: {},
+    };
+    this._managementApiClient.startProcessInstance(context, this.process.key, undefined, startRequestPayload, undefined, undefined);
   }
 }
