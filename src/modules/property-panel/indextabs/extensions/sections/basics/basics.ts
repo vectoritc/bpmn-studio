@@ -18,7 +18,7 @@ export class BasicsSection implements ISection {
 
   public path: string = '/sections/basics/basics';
   public canHandleElement: boolean = false;
-  public properties: Array<any> = [];
+  public properties: Array<IProperty> = [];
   public newNames: Array<string> = [];
   public newValues: Array<string> = [];
 
