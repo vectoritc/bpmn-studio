@@ -95,6 +95,25 @@ export class ProcessDefDetail {
           status: response.status,
         };
       },
+      get: async(url: string, payload: any, headers: any): Promise<any> => {
+
+        const request: Request = new Request(`${environment.bpmnStudioClient.baseRoute}/${url}`, {
+          method: 'GET',
+          mode: 'cors',
+          referrer: 'no-referrer',
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            ...headers,
+          },
+        });
+        const response: Response = await fetch(request);
+        return {
+          result: response.json(),
+          status: response.status,
+        };
+      },
     };
     const externalAccessor: ExternalAccessor = new ExternalAccessor(httpClient);
     this._managementApiClient = new ManagementApiClientService(externalAccessor);
@@ -152,6 +171,8 @@ export class ProcessDefDetail {
     this._eventAggregator.publish(environment.events.navBar.showTools, this.process);
     this._eventAggregator.publish(environment.events.navBar.showStartButton);
     this._eventAggregator.publish(environment.events.statusBar.showXMLButton);
+
+    this._initializeManagementApiClient();
   }
 
   /**
@@ -292,7 +313,6 @@ export class ProcessDefDetail {
     const context: ManagementContext = {
       identity: token,
     };
-    this._managementApiClient.startProcessInstance(context, this.process.key, undefined, {}, undefined, undefined);
 
     const startEventResponse: EventList = await this._managementApiClient.getEventsForProcessModel(context, this.process.key);
     this.processesStartEvents = startEventResponse.events;

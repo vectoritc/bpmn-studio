@@ -78,7 +78,7 @@ export class ProcessDefStart {
     /*
      * Start the processinstance in the connected ProcessEngine.
      */
-    this._startProcess();
+    // this._startProcess();
 
     this._subscriptions = [
       /*
