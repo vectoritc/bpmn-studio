@@ -93,14 +93,6 @@ export class BpmnIo {
 
     this._addRemoveWithBackspaceKeyboardListener();
 
-    if (this.xml !== undefined && this.xml !== null) {
-      this.savedXml = this.xml;
-
-      this.modeler.importXML(this.xml, (err: Error) => {
-        return 0;
-      });
-    }
-
     /**
      * Subscribe to "commandStack.changed"-event to have a simple indicator of
      * when a diagram is changed.
