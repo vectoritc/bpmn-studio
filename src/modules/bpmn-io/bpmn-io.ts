@@ -108,7 +108,8 @@ export class BpmnIo {
   }
 
   public async attached(): Promise<void> {
-    if (this.xml !== undefined && this.xml !== null) {
+    const xmlIsEmpty: boolean = this.xml !== undefined && this.xml !== null;
+    if (xmlIsEmpty) {
       this.modeler.importXML(this.xml, async(err: Error) => {
         this.savedXml = await this.getXML();
 
@@ -231,7 +232,8 @@ export class BpmnIo {
   }
 
   public xmlChanged(newValue: string): void {
-    if (this.modeler !== undefined && this.modeler !== null) {
+    const xmlIsEmpty: boolean = this.modeler !== undefined && this.modeler !== null;
+    if (xmlIsEmpty) {
       this.modeler.importXML(newValue, (err: Error) => {
         return 0;
       });
