@@ -66,8 +66,9 @@ export class BasicsSection implements ISection {
 
     this._propertyElement = this._getPropertyElement();
 
-    if (this._propertyElement.values === undefined) {
-      this._propertyElement.values = [];
+    if (this._propertyElement === undefined) {
+      this._createEmptyPropertyElement();
+      this._propertyElement = this._getPropertyElement();
     }
 
     this._propertyElement.values.push(bpmnProperty);
