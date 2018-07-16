@@ -107,8 +107,15 @@ export class BpmnIo {
     this._diagramExportService = new DiagramExportService();
   }
 
-  public attached(): void {
-    this.savedXml = this.xml;
+  public async attached(): Promise<void> {
+    if (this.xml !== undefined && this.xml !== null) {
+      this.modeler.importXML(this.xml, async(err: Error) => {
+        this.savedXml = await this.getXML();
+
+        return 0;
+      });
+    }
+
     this.modeler.attachTo(this.canvasModel);
 
     window.addEventListener('resize', this._resizeEventHandler);
