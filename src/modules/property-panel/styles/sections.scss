@@ -65,12 +65,14 @@
 }
 
 .add-context-button {
-  color: black;
   float: right;
-  border-radius: 2px;
-  background-color: whitesmoke;
-  border: 1px solid darkgray;
   padding: 2px 7px;
+  background-color: transparent;
+  border: none;
+}
+
+.add-context-button:hover {
+  color: black;
 }
 
 .remove-context-button:disabled {
@@ -79,12 +81,14 @@
 }
 
 .remove-context-button {
-  color: black;
   float: right;
-  margin-left: 5px;
-  border-radius: 2px;
-  opacity: 1;
-  background-color: whitesmoke;
-  border: 1px solid darkgray;
   padding: 2px 7px;
+  margin-left: 5px;
+  opacity: 1;
+  background-color: transparent;
+  border: none;
+}
+
+.remove-context-button:not(:disabled):hover {
+  color: black;
 }

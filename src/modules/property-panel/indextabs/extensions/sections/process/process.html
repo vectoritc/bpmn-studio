@@ -18,7 +18,9 @@
             <input type="text" class="key-value-input" value.bind="newValues[$index]" placeholder="Value" change.delegate="changeValue($index)">
           </td>
           <td>
-            <button class="extensions-remove" click.delegate="removeProperty($index)">x</button>
+            <button class="key-value-delete-button" click.delegate="removeProperty($index)">
+              <i class="fas fa-times"></i>
+            </button>
           </td>
         </tr>
       </table>
