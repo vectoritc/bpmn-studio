@@ -66,9 +66,9 @@ export class BasicsSection implements ISection {
 
     this._propertyElement = this._getPropertyElement();
 
-    const propertyElementIsUndefinded: boolean = this._propertyElement === undefined;
+    const propertyElementIsUndefined: boolean = this._propertyElement === undefined;
 
-    if (propertyElementIsUndefinded) {
+    if (propertyElementIsUndefined) {
       this._createEmptyPropertyElement();
       this._propertyElement = this._getPropertyElement();
     }
