@@ -3,10 +3,10 @@
   <div class="process-explorer__solution-explorer">
 
     <div class="solution-explorer-index-cards">
-      <div class="index-card" class.bind="fileSystemIndexCardIsActive ? 'index-card--active' : ''" click.delegate="openFileSystemIndexCard()" if.bind="enableFileSystemSolutions">
+      <div class="index-card" title="Show filesystem view" class.bind="fileSystemIndexCardIsActive ? 'index-card--active' : ''" click.delegate="openFileSystemIndexCard()" if.bind="enableFileSystemSolutions">
         <i class="fa fa-folder"></i>
       </div>
-      <div class="index-card" class.bind="processEngineIndexCardIsActive ? 'index-card--active' : ''" click.delegate="openProcessEngineIndexCard()">
+      <div class="index-card" title="Show database view" class.bind="processEngineIndexCardIsActive ? 'index-card--active' : ''" click.delegate="openProcessEngineIndexCard()">
         <i class="fa fa-server"></i>
       </div>
     </div>
@@ -14,38 +14,43 @@
     <!--FileSystem-->
     <div class="solution-explorer__filesystem" show.bind="fileSystemIndexCardIsActive && enableFileSystemSolutions">
       <!--Single Diagrams-->
-      <div class="single-diagrams">
-        <div class="process-explorer__heading">
-          Opened Diagrams
-          <div class="control-buttons">
-            <button ref="openSingleDiagramButton" class="control-buttons__open-single-file" click.delegate="singleDiagramInput.click()" title="Open a diagram">
-              <i class="fas fa-file-medical"></i>
-            </button>
-            <button ref="openSolutionButton" class="control-buttons__open-solution" click.delegate="solutionInput.click()" title="Open a solution">
-              <i class="fas fa-folder-open"></i>
-            </button>
-            <button click.delegate="refreshSolutions()" class="control-buttons__refresh-explorer" title="Refresh explorer">
-              <i class="fas fa-sync"></i>
-            </button>
-          </div>
+      <div class="process-explorer__heading">
+        Solution Explorer
+        <div class="control-buttons">
+          <button ref="openSingleDiagramButton" class="control-buttons__open-single-file" click.delegate="singleDiagramInput.click()" title="Open a diagram">
+            <i class="fas fa-file-medical"></i>
+          </button>
+          <button ref="openSolutionButton" class="control-buttons__open-solution" click.delegate="solutionInput.click()" title="Open a solution">
+            <i class="fas fa-folder-open"></i>
+          </button>
+          <button click.delegate="refreshSolutions()" class="control-buttons__refresh-explorer" title="Refresh explorer">
+            <i class="fas fa-sync"></i>
+          </button>
         </div>
-        <input class="single-diagram-input" ref="singleDiagramInput" type="file" change.delegate="onSingleDiagramInputChange($event)" id="singleFileInput">
+      </div>
+      <input class="single-diagram-input" ref="singleDiagramInput" type="file" change.delegate="onSingleDiagramInputChange($event)" id="singleFileInput">
+      <div class="single-diagrams" if.bind="openedSingleDiagrams.length > 0">
+        <div class="process-explorer__heading">Opened Diagrams</div>
         <div class="single-diagram-group" repeat.for="diagram of openedSingleDiagrams">
-          <div class="single-diagram-link" click.delegate="navigateToDiagramDetail(diagram)">${diagram.name}</div>
-          <div class="single-diagram-close"><i class="fas fa-times" click.delegate="closeSingleDiagram(diagram)"></i></div>
+          <div class="single-diagram-group__link" click.delegate="navigateToDiagramDetail(diagram)">${diagram.name}</div>
+          <div class="single-diagram-group__close" title="Close diagram"><i class="fas fa-times" click.delegate="closeSingleDiagram(diagram)"></i></div>
         </div>
       </div>
       <!--Solutions-->
-      <div class="filesystem-solutions" if.bind="openedFileSystemSolutions.length > 0">
+      <div class.bind="openedSingleDiagrams.length > 0 ? 'filesystem-solutions' : ''" if.bind="openedFileSystemSolutions.length > 0">
         <div class="process-explorer__heading">Opened Solutions</div>
         <div repeat.for="solution of openedFileSystemSolutions">
-          <div class="solution-headline">
-            <i class="fa fa-folder-open"></i>
-            ${solution.name}
-            <i class="fas fa-times solution-close" click.delegate="closeFileSystemSolution(solution)"></i>
+          <div class="solution-group">
+            <div class="solution-headline">
+              <i class="fa fa-folder-open"></i>
+              ${solution.name}
+            </div>
+            <div class="solution-group__close" title="Close solution" click.delegate="closeFileSystemSolution(solution)">
+              <i class="fas fa-times solution-close"></i>
+            </div>
           </div>
-          <div repeat.for="diagram of solution.diagrams" class="process-explorer__structure-item">
-            <a click.delegate="navigateToDiagramDetail(diagram)">${diagram.name}</a>
+          <div repeat.for="diagram of solution.diagrams" class="solution-diagram-group">
+            <div class="solution-diagram-group__link" click.delegate="navigateToDiagramDetail(diagram)">${diagram.name}</div>
           </div>
         </div>
       </div>

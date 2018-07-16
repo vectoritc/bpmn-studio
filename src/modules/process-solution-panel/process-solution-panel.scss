@@ -8,6 +8,26 @@
   user-select: none;
 }
 
+.solution-explorer-index-cards {
+  display: flex;
+  border-bottom: 2px solid #dcdbdb;
+}
+
+.index-card {
+  padding: 8px 12px;
+  cursor: pointer;
+  color: darkgray;
+}
+
+.index-card:hover {
+  color: #5e5e5e;
+}
+
+.index-card--active {
+  color: #5e5e5e;
+}
+
+
 .single-diagrams {
   margin-bottom: 20px;
 }
@@ -35,7 +55,10 @@
   visibility: hidden;
 }
 
-
+.solution-input {
+  height: 0;
+  visibility: hidden;
+}
 
 .process-explorer__heading {
   padding: 8px;
@@ -46,7 +69,10 @@
 
 .process-explorer__structure-item {
   padding: 2px 10px;
+  overflow: hidden;
   cursor: pointer;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .process-explorer__structure-item a {
@@ -54,69 +80,79 @@
   color: #5c5c5c;
 }
 
+.solution-group {
+  display: flex;
+  padding: 5px 10px;
+}
+
+.solution-headline {
+  width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: darkgray;
+}
+
+.solution-group__close {
+  float: right;
+  color: darkgray;
+}
+
+.solution-group__close:hover {
+  cursor: pointer;
+  color: #5e5e5e;
+}
+
+.solution-diagram-group {
+  display: flex;
+  padding: 5px 30px;
+}
+
+.solution-diagram-group__link {
+  width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.solution-diagram-group__link:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 .single-diagram-group {
   display: flex;
   padding: 5px 10px;
 }
 
-.single-diagram-link {
+.single-diagram-group__link {
   width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.single-diagram-close {
+.single-diagram-group__link:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.single-diagram-group__close {
   float: right;
   color: darkgray;
 }
 
-.single-diagram-close:hover {
+.single-diagram-group__close:hover {
+  cursor: pointer;
   color: #5e5e5e;
 }
 
 .solution-input-group {
-  text-align: center;
   margin: 20px 0;
+  text-align: center;
 }
 
 .open-solution-button {
   float: right;
   margin-top: 2px;
   cursor: pointer;
-}
-
-.solution-input {
-  visibility: hidden;
-  height: 0;
-}
-
-.solution-close {
-  position: relative;
-  top: 1px;
-  padding-left: 10px;
-  color: darkgray;
-}
-
-.solution-close:hover {
-  color: #5c5c5c;
-}
-
-.solution-headline {
-  padding-left: 10px;
-  word-wrap: break-word;
-  color: darkgray;
-}
-
-.solution-explorer-index-cards {
-  display: flex;
-  border-bottom: 2px solid #dcdbdb;
-}
-
-.index-card {
-  padding: 8px 12px;
-  color: darkgray;
-}
-
-.index-card--active {
-  color: #5e5e5e;
 }
