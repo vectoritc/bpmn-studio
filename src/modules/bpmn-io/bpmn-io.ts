@@ -112,8 +112,6 @@ export class BpmnIo {
     if (xmlIsEmpty) {
       this.modeler.importXML(this.xml, async(err: Error) => {
         this.savedXml = await this.getXML();
-
-        return 0;
       });
     }
 
@@ -235,7 +233,7 @@ export class BpmnIo {
     const xmlIsEmpty: boolean = this.modeler !== undefined && this.modeler !== null;
     if (xmlIsEmpty) {
       this.modeler.importXML(newValue, (err: Error) => {
-        return 0;
+        return;
       });
 
       this.xml = newValue;
