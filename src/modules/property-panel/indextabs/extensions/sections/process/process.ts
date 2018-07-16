@@ -5,7 +5,6 @@ import {
   IPageModel,
   IProperty,
   IPropertyElement,
-  ISection,
   IShape,
 } from '../../../../../../contracts';
 
