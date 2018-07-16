@@ -166,10 +166,16 @@ export class BasicsSection implements ISection {
   }
 
   private _createEmptyPropertyElement(): void {
-    const propertyValues: Array<IProperty> = [];
-    const extensionPropertyElement: IPropertyElement = this._moddle.create('camunda:Properties', {values: propertyValues});
+    const addPropertyElement: ((element: IPropertyElement) => number) = (element: IPropertyElement): number =>
+      this._businessObjInPanel.extensionElements.values
+      .push(element);
 
-    this._businessObjInPanel.extensionElements.values.push(extensionPropertyElement);
+    const emptyProperties: Array<IProperty> = [];
+
+    const createExtensionProperty: (() => IPropertyElement) = (): IPropertyElement => this._moddle
+      .create('camunda:Properties', {values: emptyProperties});
+
+    addPropertyElement(createExtensionProperty());
   }
 
   private _publishDiagramChange(): void {
