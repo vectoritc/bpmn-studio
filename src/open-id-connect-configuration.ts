@@ -20,7 +20,7 @@ export const oidcConfig: OpenIdConnectConfiguration = {
     post_logout_redirect_uri: `${environment.appHost}/signout-oidc`,
     redirect_uri: `${environment.appHost}/signin-oidc`,
     response_type: 'id_token token',
-    scope: 'openid profile test_resource funzt',
+    scope: 'openid profile test_resource',
     silentRequestTimeout: 10000,
     silent_redirect_uri: `${environment.appHost}/signin-oidc`,
     userStore: new WebStorageStateStore({

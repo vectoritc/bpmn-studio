@@ -50,8 +50,11 @@ export class ProcessDefDetail {
   private _managementApiClient: IManagementApiService;
   private _authenticationService: IAuthenticationService;
 
-  public processesStartEvents: Array<Event>;
-  private _selectedStartEvent: Event;
+  public dropdownArrow: HTMLElement;
+  private dropdownIsCollapsed: boolean = true;
+
+  public processesStartEvents: Array<Event> = [];
+  public dropdownMenu: HTMLSelectElement;
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
@@ -95,6 +98,7 @@ export class ProcessDefDetail {
           status: response.status,
         };
       },
+
       get: async(url: string, payload: any, headers: any): Promise<any> => {
 
         const request: Request = new Request(`${environment.bpmnStudioClient.baseRoute}/${url}`, {
@@ -166,6 +170,7 @@ export class ProcessDefDetail {
         this._diagramHasChanged = true;
       }),
       //  }}} General Event Subscritions //
+
     ];
 
     this._eventAggregator.publish(environment.events.navBar.showTools, this.process);
@@ -173,6 +178,27 @@ export class ProcessDefDetail {
     this._eventAggregator.publish(environment.events.statusBar.showXMLButton);
 
     this._initializeManagementApiClient();
+
+    try {
+      await this._updateProcessStartEvents();
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR, `Error while obtaining the StartEvents which belongs to the Process.`);
+      console.error(error);
+
+      /*
+       * TODO: these are currently mock StartEvents which are used for debugging.
+       * Please remove them!!!!!
+      */
+      const event1: Event = new Event();
+      event1.key = 'StartEvent1';
+      event1.id = 'StartEvent1';
+      this.processesStartEvents.push(event1);
+
+      const event2: Event = new Event();
+      event2.key = 'StartEvent2';
+      event2.id = 'StartEvent2';
+      this.processesStartEvents.push(event2);
+    }
   }
 
   /**
@@ -280,11 +306,6 @@ export class ProcessDefDetail {
     this._eventAggregator.publish(environment.events.statusBar.hideXMLButton);
   }
 
-  public setStartEvent(startEvent: IEvent): void {
-    this._selectedStartEvent = startEvent;
-    console.log(startEvent);
-  }
-
   private _refreshProcess(): Promise<IProcessDefEntity> {
     return this
       ._processEngineService
@@ -307,17 +328,21 @@ export class ProcessDefDetail {
     });
   }
 
+  /**
+   * Opens a modal dialog to ask the user, which StartEvent he want's to
+   * use to start the process.
+   *
+   * @returns A promise which resolves, if the user confirms his answer. The
+   * promise is either resolved with the id of the selected StartEvent or with an
+   * empty string, if the user dismissed this modal dialog.
+   */
   public async showModalDialogAndAwaitAnswer(): Promise<string> {
-
-    const token: string = this._authenticationService.getToken();
-    const context: ManagementContext = {
-      identity: token,
-    };
-
-    const startEventResponse: EventList = await this._managementApiClient.getEventsForProcessModel(context, this.process.key);
-    this.processesStartEvents = startEventResponse.events;
-
     this.showModal = true;
+
+    /*
+     * Create a promise which displays the modal and resolves, if the user
+     * clicks on the buttons.
+     */
     const returnPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void => {
       const cancelButton: HTMLElement = document.getElementById('cancelStartEventSelection');
       const startProcessButton: HTMLElement = document.getElementById('startProcessWithSelectedStartEvent');
@@ -329,7 +354,7 @@ export class ProcessDefDetail {
 
       startProcessButton.addEventListener('click', () => {
         this.showModal = false;
-        resolve(this._selectedStartEvent.id);
+        resolve(this.dropdownMenu.value);
       });
     });
 
@@ -343,11 +368,22 @@ export class ProcessDefDetail {
    */
   private async _startProcess(): Promise<void> {
 
+    /*
+     * This is only temporary until the gathering of the StartEvents via the
+     * ManagementAPI works flawless.
+     */
+    try {
+      await this._updateProcessStartEvents();
+    } catch (error) {
+      console.error(error);
+    }
     const modalResult: string = await this.showModalDialogAndAwaitAnswer();
 
     if (modalResult === '') {
       return;
     }
+
+    console.log(`Start Process with StartEvent: ${modalResult}`);
 
     this._dropInvalidFormData();
 
@@ -370,6 +406,19 @@ export class ProcessDefDetail {
     this._managementApiClient.startProcessInstance(context, this.process.key, modalResult, {}, undefined, undefined);
 
     this._router.navigate(`processdef/${this.process.id}/start`);
+  }
+
+  /**
+   * Updates the StartEvents of the current Process.
+   */
+  private async _updateProcessStartEvents(): Promise<void> {
+    const token: string = this._authenticationService.getToken();
+    const context: ManagementContext = {
+      identity: token,
+    };
+
+    const startEventResponse: EventList = await this._managementApiClient.getEventsForProcessModel(context, this.process.key);
+    this.processesStartEvents = startEventResponse.events;
   }
 
   /**
