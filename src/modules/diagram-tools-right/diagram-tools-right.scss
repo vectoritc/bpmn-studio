@@ -11,8 +11,8 @@
 
 .tool {
   display: block;
-  margin: 0 5px;
   padding: 5px;
+  margin: 0 5px;
   background: inherit;
   border: none;
   color: darkgray;
@@ -63,11 +63,11 @@
   display: inline-block;
   margin: 0;
   overflow: hidden;
+  cursor: pointer;
   background: 0;
   border: 0;
   color: #333;
   vertical-align: middle;
-  cursor: pointer;
 }
 
 .sp-container {

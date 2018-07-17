@@ -70,9 +70,9 @@ button {
 }
 
 .menu-tabbed-link:hover {
+  cursor: default;
   color: #5e5e5e;
   text-decoration: none;
-  cursor: default;
 }
 
 .menu-tabbed-link--disabled:hover {
@@ -92,12 +92,12 @@ button {
 .menu-bar__dashboard-dropdown {
   top: 40px;
   padding: 0;
+  cursor: pointer;
   background-color: #f7f7f7;
   border-top: none;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
   box-shadow: none;
-  cursor: pointer;
 }
 
 .menu-bar__menu-center--action-button {
