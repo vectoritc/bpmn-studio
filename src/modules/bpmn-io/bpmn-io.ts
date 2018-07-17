@@ -125,7 +125,7 @@ export class BpmnIo {
       const windowEvent: Event = e || window.event;
       windowEvent.cancelBubble = true;
 
-      const mousemoveFunction: IEventFunction = (event: Event): void => {
+      const mousemoveFunction: IEventFunction = (event: MouseEvent): void => {
         this.resize(event);
         document.getSelection().empty();
       };
@@ -281,7 +281,7 @@ export class BpmnIo {
     }
   }
 
-  public resize(event: any): void {
+  public resize(event: MouseEvent): void {
     const mousePosition: number = event.clientX;
 
     this._setNewPropertyPanelWidthFromMousePosition(mousePosition);
@@ -364,7 +364,7 @@ export class BpmnIo {
     this.togglePanel();
   }
 
-  private _resizeEventHandler = (event: any): void => {
+  private _resizeEventHandler = (event: MouseEvent): void => {
     this._hideOrShowPpForSpaceReasons();
 
     const mousePosition: number = event.clientX;
