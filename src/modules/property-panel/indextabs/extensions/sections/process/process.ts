@@ -3,8 +3,8 @@ import {
   IExtensionElement,
   IModdleElement,
   IPageModel,
+  IPropertiesElement,
   IProperty,
-  IPropertyElement,
   IShape,
 } from '../../../../../../contracts';
 
@@ -19,7 +19,7 @@ export class ProcessSection {
   private selectedElement: IModdleElement;
   private newNames: Array<string> = [];
   private newValues: Array<string> = [];
-  private propertyElement: IPropertyElement;
+  private propertyElement: IPropertiesElement;
 
   public activate(model: IPageModel): void {
     this.businessObjInPanel = model.elementInPanel.businessObject;
@@ -93,7 +93,7 @@ export class ProcessSection {
     }
   }
 
-  private _getPropertyElement(): IPropertyElement {
+  private _getPropertyElement(): IPropertiesElement {
 
     const hasNoBusinessObjExtensionElements: boolean = this.businessObjInPanel.processRef.extensionElements === undefined
                                                   || this.businessObjInPanel.processRef.extensionElements === null;
@@ -102,7 +102,7 @@ export class ProcessSection {
       this._createExtensionElement();
     }
 
-    const propertyElement: IPropertyElement = this.businessObjInPanel
+    const propertyElement: IPropertiesElement = this.businessObjInPanel
                                                   .processRef
                                                   .extensionElements
                                                   .values
@@ -126,7 +126,7 @@ export class ProcessSection {
 
   private _createExtensionElement(): void {
     const propertyValues: Array<IProperty> = [];
-    const propertyElement: IPropertyElement = this.moddle.create('camunda:Properties', {values: propertyValues});
+    const propertyElement: IPropertiesElement = this.moddle.create('camunda:Properties', {values: propertyValues});
 
     const bpmnExecutionListenerProperties: Object = {
       class: '',
@@ -148,7 +148,7 @@ export class ProcessSection {
   private _createEmptyPropertyElement(): void {
     const propertyValues: Array<IProperty> = [];
 
-    const extensionPropertyElement: IPropertyElement = this.moddle.create('camunda:Properties', {values: propertyValues});
+    const extensionPropertyElement: IPropertiesElement = this.moddle.create('camunda:Properties', {values: propertyValues});
 
     // Append to the extension elements of the process reference.
     this.businessObjInPanel
