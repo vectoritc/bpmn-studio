@@ -1,8 +1,7 @@
 import {IProcessDefEntity, IUserTaskEntity} from '@process-engine/process_engine_contracts';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
-import {IFileInfo, IPagination, IProcessEngineRepository, IProcessEngineService, IProcessEntity, NotificationType} from '../../contracts/index';
-import environment from '../../environment';
+import {IPagination, IProcessEngineRepository, IProcessEngineService, IProcessEntity, NotificationType} from '../../contracts/index';
 import {NotificationService} from '../notification/notification.service';
 
 @inject('ProcessEngineRepository', 'NotificationService', EventAggregator)

@@ -14,7 +14,7 @@ export {IMessageElement} from './IMessageElement';
 export {IModdleElement} from './IModdleElement';
 export {IPoolElement} from './IPoolElement';
 export {IProperty} from './IProperty';
-export {IPropertyElement} from './IPropertyElement';
+export {IPropertiesElement} from './IPropertiesElement';
 export {IProcessRef} from './IProcessRef';
 export {IScriptTaskElement} from './IScriptTaskElement';
 export {ISignal} from './ISignal';

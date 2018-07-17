@@ -1,5 +1,4 @@
-import {IModdleElement} from './index';
-import {IShape} from './IShape';
+import {IModdleElement, IShape} from './index';
 
 export interface IModeling {
   updateProperties(element: IShape, properties: any): void;
