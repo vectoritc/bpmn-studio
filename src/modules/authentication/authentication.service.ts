@@ -1,14 +1,12 @@
 import {ITokenRepository} from '@process-engine/bpmn-studio_client';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
-import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {
   AuthenticationStateEvent,
   IAuthenticationRepository,
   IAuthenticationService,
   IIdentity,
   ILoginResult,
-  ILogoutResult,
 } from '../../contracts/index';
 
 const LOCAL_STORAGE_TOKEN_KEY: string = 'process-engine-token';
@@ -19,16 +17,13 @@ export class AuthenticationService implements IAuthenticationService {
   private eventAggregator: EventAggregator;
   private authenticationRepository: IAuthenticationRepository;
   private tokenRepository: ITokenRepository;
-  private openIdConnect: OpenIdConnect;
 
   constructor(eventAggregator: EventAggregator,
               authenticationRepository: IAuthenticationRepository,
-              tokenRepository: ITokenRepository,
-              openIdConnect: OpenIdConnect) {
+              tokenRepository: ITokenRepository) {
     this.eventAggregator = eventAggregator;
     this.authenticationRepository = authenticationRepository;
     this.tokenRepository = tokenRepository;
-    this.openIdConnect = openIdConnect;
   }
 
   public async initialize(): Promise<void> {
@@ -50,19 +45,15 @@ export class AuthenticationService implements IAuthenticationService {
     this.tokenRepository.setIdentity(identity);
   }
 
-  public getIdentityToken(): string {
-    return this.tokenRepository.getToken();
-  }
-
   public getAccessToken(): string {
     return this.tokenRepository.getToken();
   }
 
   public getIdentity(): Promise<IIdentity> {
-    return Promise.resolve(this.tokenRepository.getIdentity());
+    return Promise.resolve(this.tokenRepository.getIdentity() as IIdentity);
   }
 
-  public async login(username: string, password: string): Promise<IIdentity> {
+  public async login(username: string, password: string): Promise<any> {
     const result: ILoginResult = await this.authenticationRepository.login(username, password);
     this.tokenRepository.setToken(result.token);
     this.tokenRepository.setIdentity(result.identity);

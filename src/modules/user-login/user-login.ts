@@ -1,20 +1,24 @@
+import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, bindingMode, computedFrom, inject} from 'aurelia-framework';
-import { OpenIdConnect } from 'aurelia-open-id-connect';
 import { User } from 'oidc-client';
 
-import {IAuthenticationService, IIdentity, NotificationType} from '../../contracts/index';
+import {AuthenticationStateEvent, IAuthenticationService, IIdentity, NotificationType} from '../../contracts/index';
 import {NotificationService} from './../notification/notification.service';
 
-@inject('NewAuthenticationService', 'NotificationService', OpenIdConnect)
+@inject('NewAuthenticationService', EventAggregator, 'NotificationService')
 export class UserLogin {
 
   private _authenticationService: IAuthenticationService;
+  private _eventAggregator: EventAggregator;
   private _notificationService: NotificationService;
-  private _openIdConnect: OpenIdConnect;
+  private _subscriptions: Array<Subscription>;
 
-  @computedFrom('user')
+  @bindable({ defaultBindingMode: bindingMode.oneWay })
+  public identity: IIdentity = null;
+
+  @computedFrom('identity')
   public get isLoggedIn(): boolean {
-    return this.user !== null && this.user !== undefined;
+    return this.identity !== null && this.identity !== undefined;
   }
 
   @computedFrom('identity')
@@ -29,33 +33,30 @@ export class UserLogin {
     return fullName;
   }
 
-  @bindable({ defaultBindingMode: bindingMode.oneWay })
-  public user: User | null = null;
-  @bindable({ defaultBindingMode: bindingMode.oneWay })
-  public identity: IIdentity = null;
-
   constructor(authenticationService: IAuthenticationService,
-              notificationService: NotificationService,
-              openIdConnect: OpenIdConnect) {
+              eventAggregator: EventAggregator,
+              notificationService: NotificationService) {
     this._authenticationService = authenticationService;
+    this._eventAggregator = eventAggregator;
     this._notificationService = notificationService;
-    this._openIdConnect = openIdConnect;
   }
 
   public async attached(): Promise<void> {
-    this._openIdConnect.addOrRemoveHandler('addUserUnloaded', () => {
-      this.user = null;
-    });
-
-    this._openIdConnect.addOrRemoveHandler('addUserLoaded', async() => {
-      this.user = await this._openIdConnect.getUser();
-    });
-    this._openIdConnect.observeUser((user: User) => this.user = user);
-    this.user = await this._openIdConnect.getUser();
+    this._subscriptions = [
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
+        this.identity = null;
+      }),
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, (identity: IIdentity) => {
+        this.identity = identity;
+      }),
+    ];
+    this.identity = await this._authenticationService.getIdentity();
   }
 
-  public async userChanged(): Promise<void> {
-    this.identity = await this._authenticationService.getIdentity();
+  public detached(): void {
+    for (const subscription of this._subscriptions) {
+      subscription.dispose();
+    }
   }
 
   public async login(): Promise<void> {
@@ -66,7 +67,7 @@ export class UserLogin {
     }
   }
 
-  public logout(): void {
-    this._authenticationService.logout();
+  public logout(): Promise<void> {
+    return this._authenticationService.logout();
   }
 }

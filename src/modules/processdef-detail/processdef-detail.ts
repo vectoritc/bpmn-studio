@@ -343,10 +343,7 @@ export class ProcessDefDetail {
 
     this._startButtonPressed = true;
 
-    const token: string = this._authenticationService.getAccessToken();
-    const context: ManagementContext = {
-      identity: token,
-    };
+    const context: ManagementContext = this._getManagementContext();
     const startRequestPayload: ProcessModelExecution.ProcessStartRequestPayload = {
       inputValues: {},
     };
@@ -361,15 +358,19 @@ export class ProcessDefDetail {
     this._router.navigate(`processdef/${this.process.id}/start`);
   }
 
+  private _getManagementContext(): ManagementContext {
+    const accessToken: string = this._authenticationService.getAccessToken();
+    const context: ManagementContext = {
+      identity: accessToken,
+    };
+    return context;
+  }
+
   /**
    * Updates the StartEvents of the current Process.
    */
   private async _updateProcessStartEvents(): Promise<void> {
-    const token: string = this._authenticationService.getAccessToken();
-    const context: ManagementContext = {
-      identity: token,
-    };
-
+    const context: ManagementContext = this._getManagementContext();
     const startEventResponse: EventList = await this._managementApiClient.getEventsForProcessModel(context, this.process.key);
     this.processesStartEvents = startEventResponse.events;
   }

@@ -1,16 +1,15 @@
 import {ExternalAccessor, ManagementApiClientService} from '@process-engine/management_api_client';
-import {Container, FrameworkConfiguration} from 'aurelia-framework';
-import {IAuthenticationService} from '../../contracts/index';
+import {FrameworkConfiguration} from 'aurelia-framework';
 import environment from '../../environment';
 
 export async function configure(config: FrameworkConfiguration): Promise<void> {
 
-  const clientService: ManagementApiClientService = createManagementApiClient(config.container);
+  const clientService: ManagementApiClientService = createManagementApiClient();
 
   config.container.registerInstance('ManagementApiClientService', clientService);
 }
 
-function createManagementApiClient(container: Container): ManagementApiClientService {
+function createManagementApiClient(): ManagementApiClientService {
 
   const httpClient: any = {
     post: async(url: string, payload: any, headers: any): Promise<any> => {

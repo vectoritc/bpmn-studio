@@ -10,8 +10,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "moduleResolution": "node",
-    "lib": ["esnext", "dom"],
-    "strict": false
+    "lib": ["esnext", "dom"]
   },
   "exclude": [
     "node_modules",

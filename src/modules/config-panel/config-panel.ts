@@ -76,7 +76,7 @@ export class ConfigPanel {
 
     oidcConfig.userManagerSettings.authority = this.config.openIdConnect.authority;
 
-    // These dirty way to update the settings is the only way during runtime
+    // This dirty way to update the settings is the only way during runtime
     this._openIdConnect.configuration.userManagerSettings.authority = this.config.openIdConnect.authority;
     this._openIdConnect.userManager._settings._authority = this.config.openIdConnect.authority;
 

@@ -1,28 +1,23 @@
+import {EventAggregator} from 'aurelia-event-aggregator';
 import { inject } from 'aurelia-framework';
 import { OpenIdConnect } from 'aurelia-open-id-connect';
 import { User } from 'oidc-client';
 
-import { access } from 'fs';
-import {IAuthenticationService, IIdentity} from '../../contracts/index';
+import {AuthenticationStateEvent, IAuthenticationService, IIdentity} from '../../contracts/index';
 import environment from './../../environment';
 
-@inject(OpenIdConnect)
+const UNAUTHORIZED_STATUS_CODE: number = 401;
+
+@inject(EventAggregator, OpenIdConnect)
 export class NewAuthenticationService implements IAuthenticationService {
 
+  private _eventAggregator: EventAggregator;
   private _openIdConnect: OpenIdConnect;
   private _user: User;
 
-  constructor(openIdConnect: OpenIdConnect) {
+  constructor(eventAggregator: EventAggregator, openIdConnect: OpenIdConnect) {
+    this._eventAggregator = eventAggregator;
     this._openIdConnect = openIdConnect;
-
-    this._openIdConnect.observeUser((user: User) => {
-      this._user = user;
-      console.log('user loaded', user);
-      if (!user) {
-        return;
-      }
-    });
-
     this.initialize();
   }
 
@@ -30,23 +25,10 @@ export class NewAuthenticationService implements IAuthenticationService {
     this._user = await this._openIdConnect.getUser();
   }
 
-  public login(): Promise<IIdentity> {
-
-    return new Promise((resolve: Function, reject: Function): void => {
-
-      this._openIdConnect.addOrRemoveHandler('addUserLoaded', async() => {
-        const user: User = await this._openIdConnect.getUser();
-        this._user = user;
-        console.log('user loaded', user);
-        resolve(user);
-      });
-
-      try {
-        this._openIdConnect.login();
-      } catch (error) {
-        reject(error);
-      }
-    });
+  public async login(): Promise<void> {
+    await this._openIdConnect.login();
+    const identity: IIdentity = await this.getIdentity();
+    this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
   }
 
   public logout(): Promise<void> {
@@ -54,6 +36,8 @@ export class NewAuthenticationService implements IAuthenticationService {
     return new Promise((resolve: Function, reject: Function): void => {
 
       this._openIdConnect.addOrRemoveHandler('addUserUnloaded', () => {
+
+        this._eventAggregator.publish(AuthenticationStateEvent.LOGOUT);
         resolve();
       });
 
@@ -102,7 +86,10 @@ export class NewAuthenticationService implements IAuthenticationService {
     });
     const response: Response = await fetch(request);
 
+    if (response.status === UNAUTHORIZED_STATUS_CODE) {
+      return null;
+    }
+
     return response.json();
   }
-
 }
