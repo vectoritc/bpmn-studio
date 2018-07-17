@@ -128,6 +128,7 @@ export class ProcessSolutionPanel {
 
     if (solutionIsAlreadyOpen) {
       this._notificationService.showNotification(NotificationType.INFO, 'Solution is already open');
+
       return;
     }
 
@@ -151,6 +152,7 @@ export class ProcessSolutionPanel {
 
     if (diagramIsAlreadyOpen) {
       this._notificationService.showNotification(NotificationType.INFO, 'Diagram is already open');
+
       return;
     }
 
