@@ -15,7 +15,7 @@ export class DynamicUiService implements IDynamicUiService {
     this._bpmnStudioClient.on('renderUserTask', (userTaskConfig: IUserTaskConfig) => {
       this._eventAggregator.publish('render-dynamic-ui', userTaskConfig);
     });
-    this._bpmnStudioClient.on('processEnd', (message: any) => {
+    this._bpmnStudioClient.on('processEnd', (message: string) => {
       this._eventAggregator.publish('closed-process', message);
     });
   }

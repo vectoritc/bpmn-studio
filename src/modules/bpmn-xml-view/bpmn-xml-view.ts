@@ -9,7 +9,7 @@ const highlightEngine: {
   highlightBlock: (element: HTMLElement) => void;
   // tslint:disable-next-line:prefer-method-signature
   lineNumbersBlock: (element: HTMLElement) => void;
-} = hljs as any;
+} = hljs as hljs;
 
 export class BpmnXmlView {
 
