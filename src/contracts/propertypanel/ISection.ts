@@ -1,6 +1,4 @@
-
-import {IShape} from '../bpmnmodeler/index';
-import {IPageModel} from './IPageModel';
+import {IPageModel, IShape} from '../index';
 
 export interface ISection {
   path: string;
