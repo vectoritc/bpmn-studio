@@ -100,3 +100,19 @@
 .remove-context-button:not(:disabled):focus {
   color: black;
 }
+
+
+.key-value-delete-button {
+  border: none;
+  background: transparent;
+  padding-top: 2px;
+  color: darkgray;
+}
+
+.key-value-delete-button:hover {
+  color: black;
+}
+
+.key-value-delete-button:focus {
+  color: black;
+}
