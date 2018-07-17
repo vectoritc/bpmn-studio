@@ -50,7 +50,7 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
     return throwOnErrorResponse<IProcessDefEntity>(response);
   }
 
-  public async getIdentity(): Promise<any> {
+  public async getIdentity(): Promise<IIdentity> {
     const url: string = `${environment.processengine.routes.iam}/getidentity`;
     const response: Response = await this._http.fetch(url, { method: 'get' });
 
@@ -64,7 +64,7 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
     return throwOnErrorResponse<void>(response);
   }
 
-  public async updateProcessDefViaDataStore(processDef: any): Promise<IProcessDefEntity> {
+  public async updateProcessDefViaDataStore(processDef: IProcessDefEntity): Promise<IProcessDefEntity> {
     const options: RequestInit = {
       method: 'put',
       headers: new Headers({
@@ -75,10 +75,10 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
     const url: string = `${environment.processengine.routes.processes}/${processDef.id}`;
     const response: Response = await this._http.fetch(url, options);
 
-    return throwOnErrorResponse<any>(response);
+    return throwOnErrorResponse<IProcessDefEntity>(response);
   }
 
-  public async createProcessfromXML(xml: string, name?: string): Promise<any> {
+  public async createProcessfromXML(xml: string, name?: string): Promise<IProcessDefEntity> {
     const options: RequestInit = {
       method: 'post',
       headers: new Headers({
@@ -97,17 +97,17 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
       this.navigateToProcessDefDetail(responseBody.id);
     }
 
-    return throwOnErrorResponse<IErrorResponse>(responseBody);
+    return throwOnErrorResponse<IProcessDefEntity>(responseBody);
   }
 
   private navigateToProcessDefDetail(processDefId: string): void {
     this._router.navigate(`processdef/${processDefId}/detail`);
   }
 
-  public async updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<any> {
+  public async updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<Response | IErrorResponse> {
 
     let updateError: Error;
-    let result: any;
+    let result: Response | IErrorResponse;
     try {
       const options: RequestInit = {
         method: 'post',
@@ -121,7 +121,7 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
       const url: string = `${environment.processengine.routes.processes}/${processDef.id}/updateBpmn`;
       const response: Response = await this._http.fetch(url, options);
 
-      result = await throwOnErrorResponse<any>(response);
+      result = await throwOnErrorResponse<IErrorResponse>(response);
     } catch (error) {
       updateError = error;
     }

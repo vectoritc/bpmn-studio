@@ -17,7 +17,7 @@ export class GeneralRepository {
     return this._bpmnStudioClient.getProcessDefList();
   }
 
-  public updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<any> {
+  public updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<Response> {
     const options: RequestInit = {
       method: 'post',
       headers: new Headers({

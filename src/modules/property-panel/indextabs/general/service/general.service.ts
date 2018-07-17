@@ -26,7 +26,7 @@ export class GeneralService {
     return this._generalRepository.getAllProcesses();
   }
 
-  public updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<any> {
+  public updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<Response> {
     return this._generalRepository.updateProcessDef(processDef, xml);
   }
 

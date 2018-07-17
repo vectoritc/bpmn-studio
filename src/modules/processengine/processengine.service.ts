@@ -1,6 +1,6 @@
 import {IProcessDefEntity, IUserTaskEntity} from '@process-engine/process_engine_contracts';
 import {inject} from 'aurelia-framework';
-import {IPagination, IProcessEngineRepository, IProcessEngineService, IProcessEntity} from '../../contracts/index';
+import {IErrorResponse, IIdentity, IPagination, IProcessEngineRepository, IProcessEngineService, IProcessEntity} from '../../contracts/index';
 
 @inject('ProcessEngineRepository')
 export class ProcessEngineService implements IProcessEngineService {
@@ -19,15 +19,15 @@ export class ProcessEngineService implements IProcessEngineService {
     return this._repository.getProcessDefById(processDefId);
   }
 
-  public updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<any> {
+  public updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<Response | IErrorResponse> {
     return this._repository.updateProcessDef(processDef, xml);
   }
 
-  public createProcessfromXML(xml: string, name?: string): Promise<any> {
+  public createProcessfromXML(xml: string, name?: string): Promise<IProcessDefEntity> {
     return this._repository.createProcessfromXML(xml, name);
   }
 
-  public getIdentity(): Promise<any> {
+  public getIdentity(): Promise<IIdentity> {
     return this._repository.getIdentity();
   }
 
