@@ -289,6 +289,10 @@ export class BpmnIo {
 
   public async toggleXMLView(): Promise<void> {
     this.showXMLView = !this.showXMLView;
+
+    if (this.showXMLView) {
+      this._updateXmlChanges();
+    }
   }
 
   public async getXML(): Promise<string> {
