@@ -88,7 +88,7 @@
             <th class="process-buttons-table-entry"></th>
           </tr>
           <tr repeat.for="process of processes" id="processDef">
-            <td class="process-name-table-entry">${process.name}</td>
+            <td class="process-name-table-entry" title="${process.name}">${process.name}</td>
             <td class="process-buttons-table-entry">
               <button click.delegate="startProcess(process.id)" class="btn btn-success">Start</button>
               <button click.delegate="showDetails(process.id)" class="btn btn-primary" id="processDefDetailsButton">Details</button>
