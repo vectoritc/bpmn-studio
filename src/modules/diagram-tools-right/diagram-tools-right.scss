@@ -11,12 +11,12 @@
 
 .tool {
   display: block;
-  text-align: center;
-  padding: 5px;
   margin: 0 5px;
-  border: none;
+  padding: 5px;
   background: inherit;
+  border: none;
   color: darkgray;
+  text-align: center;
 }
 
 .tool:hover {
@@ -60,21 +60,21 @@
 }
 
 .sp-replacer {
+  display: inline-block;
   margin: 0;
   overflow: hidden;
-  cursor: pointer;
-  display: inline-block;
-  border: 0;
   background: 0;
+  border: 0;
   color: #333;
   vertical-align: middle;
+  cursor: pointer;
 }
 
 .sp-container {
+  height: 247px;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
-  height: 247px;
 }
 
 .sp-palette-container {
@@ -82,6 +82,6 @@
   bottom: 0px;
   left: 6px;
   z-index: 1;
-  border-right: none;
   height: 44px;
+  border-right: none;
 }

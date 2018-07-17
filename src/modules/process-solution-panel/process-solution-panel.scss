@@ -1,8 +1,8 @@
 .process-explorer__solution-explorer {
-  background-color: #f7f7f7;
   width: 220px;
-  border-right: 2px solid #dcdbdb;
   height: 100%;
+  background-color: #f7f7f7;
+  border-right: 2px solid #dcdbdb;
   overflow-y: auto;
   overflow-x: hidden;
   user-select: none;
@@ -15,8 +15,8 @@
 
 .index-card {
   padding: 8px 12px;
-  cursor: pointer;
   color: darkgray;
+  cursor: pointer;
 }
 
 .index-card:hover {
@@ -71,9 +71,9 @@
 .process-explorer__structure-item {
   padding: 2px 10px;
   overflow: hidden;
-  cursor: pointer;
   text-overflow: ellipsis;
   white-space: nowrap;
+  cursor: pointer;
 }
 
 .process-explorer__structure-item a {
@@ -101,8 +101,8 @@
 }
 
 .solution-group__close:hover {
-  cursor: pointer;
   color: #5e5e5e;
+  cursor: pointer;
 }
 
 .solution-diagram-group {
@@ -118,8 +118,8 @@
 }
 
 .solution-diagram-group__link:hover {
-  cursor: pointer;
   text-decoration: underline;
+  cursor: pointer;
 }
 
 .single-diagram-group {
@@ -135,8 +135,8 @@
 }
 
 .single-diagram-group__link:hover {
-  cursor: pointer;
   text-decoration: underline;
+  cursor: pointer;  
 }
 
 .single-diagram-group__close {

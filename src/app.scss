@@ -1,8 +1,8 @@
 html,
 body {
   height: 100%;
-  font-size: 14px;
   overflow: hidden; // As soon as our styling is clean this can be removed
+  font-size: 14px;
 }
 
 a:focus,
@@ -17,10 +17,10 @@ a:hover {
 
 .settings-glyphicon {
   top: 12px;
+  margin-right: 5px;
+  padding: 0 !important;
   font-size: 2em;
   color: grey;
-  padding: 0 !important;
-  margin-right: 5px;
 }
 
 .navbar {
@@ -29,16 +29,16 @@ a:hover {
 
 .bpmn-studio-layout {
   display: flex;
+  height: 100%;
   flex-direction: column;
   align-items: stretch;
-  height: 100%
 }
 
 .bpmn-studio-layout__content {
   display: flex;
+  height: 100%;
   flex: 1;
   align-items: stretch;
-  height: 100%;
 }
 
 .router-view {

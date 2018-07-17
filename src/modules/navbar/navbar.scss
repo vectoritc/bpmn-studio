@@ -1,7 +1,7 @@
 .bpmn-studio-navbar {
+  display: flex;  
   height: 42px;
   background-color: #f7f7f7;
-  display: flex;
   border-bottom: 2px solid #dcdbdb;
   user-select: none;
 }
@@ -50,8 +50,8 @@ button {
 
 .menu__menu-tabbed-link {
   display: flex;
-  align-items: stretch;
   margin: 0 8px;
+  align-items: stretch;
 }
 
 .menu__menu-tabbed-link--active {
@@ -70,8 +70,8 @@ button {
 }
 
 .menu-tabbed-link:hover {
-  text-decoration: none;
   color: #5e5e5e;
+  text-decoration: none;
   cursor: default;
 }
 
@@ -85,25 +85,25 @@ button {
 }
 
 .action-button {
-  border: none;
   background: inherit;
+  border: none;
 }
 
 .menu-bar__dashboard-dropdown {
+  top: 40px;
+  padding: 0;
   background-color: #f7f7f7;
   border-top: none;
-  top: 40px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
   box-shadow: none;
-  padding: 0;
   cursor: pointer;
 }
 
 .menu-bar__menu-center--action-button {
-  border: none;
-  background-color: inherit;
   opacity: 0.5;
+  background-color: inherit;
+  border: none;
 }
 
 .menu-bar__menu-center--action-button:hover {
