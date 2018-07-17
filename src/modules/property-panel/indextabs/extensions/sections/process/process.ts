@@ -18,7 +18,7 @@ export class ProcessSection {
 
   private _businessObjInPanel: IModdleElement;
   private _moddle: IBpmnModdle;
-  private _propertyElement: IPropertiesElement;
+  private _propertiesElement: IPropertiesElement;
 
   public activate(model: IPageModel): void {
     this._businessObjInPanel = model.elementInPanel.businessObject;
@@ -46,25 +46,25 @@ export class ProcessSection {
     this.newNames.push('');
     this.newValues.push('');
 
-    this._propertyElement.values.push(bpmnProperty);
+    this._propertiesElement.values.push(bpmnProperty);
     this.properties.push(bpmnProperty);
   }
 
   public removeProperty(index: number): void {
-    this._propertyElement.values.splice(index, 1);
+    this._propertiesElement.values.splice(index, 1);
     this._reloadProperties();
   }
 
   public changeName(index: number): void {
-    this._propertyElement.values[index].name = this.newNames[index];
+    this._propertiesElement.values[index].name = this.newNames[index];
   }
 
   public changeValue(index: number): void {
-    this._propertyElement.values[index].value = this.newValues[index];
+    this._propertiesElement.values[index].value = this.newValues[index];
   }
 
   private _init(): void {
-    this._propertyElement = this._getPropertiesElement();
+    this._propertiesElement = this._getPropertiesElement();
     this._reloadProperties();
   }
 
@@ -73,14 +73,14 @@ export class ProcessSection {
     this.newNames = [];
     this.newValues = [];
 
-    const elementHasNoProperties: boolean = !Array.isArray(this._propertyElement.values)
-                                          || this._propertyElement.values.length === 0;
+    const elementHasNoProperties: boolean = !Array.isArray(this._propertiesElement.values)
+                                          || this._propertiesElement.values.length === 0;
 
     if (elementHasNoProperties) {
       return;
     }
 
-    const properties: Array<IProperty> = this._propertyElement.values;
+    const properties: Array<IProperty> = this._propertiesElement.values;
     for (const property of properties) {
       if (property.$type !== 'camunda:Property') {
         continue;
