@@ -58,6 +58,12 @@
   margin-bottom: 4px;
 }
 
+.process-name-table-entry {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .process-buttons-table-entry {
   width: 150px;
 }
