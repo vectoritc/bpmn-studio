@@ -75,6 +75,10 @@
   color: black;
 }
 
+.add-context-button:focus {
+  color: black;
+}
+
 .remove-context-button:disabled {
   opacity: 0.2;
   cursor: default;
