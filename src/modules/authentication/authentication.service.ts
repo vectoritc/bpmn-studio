@@ -14,14 +14,15 @@ const LOCAL_STORAGE_TOKEN_KEY: string = 'process-engine-token';
 @inject(EventAggregator, 'AuthenticationRepository', 'TokenRepository')
 export class AuthenticationService implements IAuthenticationService {
 
+  public tokenRepository: ITokenRepository;
+
   private _eventAggregator: EventAggregator;
   private _authenticationRepository: IAuthenticationRepository;
-  private _tokenRepository: ITokenRepository;
 
   constructor(eventAggregator: EventAggregator, authenticationRepository: IAuthenticationRepository, tokenRepository: ITokenRepository) {
     this._eventAggregator = eventAggregator;
     this._authenticationRepository = authenticationRepository;
-    this._tokenRepository = tokenRepository;
+    this.tokenRepository = tokenRepository;
   }
 
   public async initialize(): Promise<void> {
@@ -39,22 +40,22 @@ export class AuthenticationService implements IAuthenticationService {
       window.localStorage.removeItem(LOCAL_STORAGE_TOKEN_KEY);
       return;
     }
-    this._tokenRepository.setToken(savedToken);
-    this._tokenRepository.setIdentity(identity);
+    this.tokenRepository.setToken(savedToken);
+    this.tokenRepository.setIdentity(identity);
   }
 
   public getToken(): string {
-    return this._tokenRepository.getToken();
+    return this.tokenRepository.getToken();
   }
 
   public getIdentity(): IIdentity {
-    return this._tokenRepository.getIdentity();
+    return this.tokenRepository.getIdentity();
   }
 
   public async login(username: string, password: string): Promise<IIdentity> {
     const result: ILoginResult = await this._authenticationRepository.login(username, password);
-    this._tokenRepository.setToken(result.token);
-    this._tokenRepository.setIdentity(result.identity);
+    this.tokenRepository.setToken(result.token);
+    this.tokenRepository.setIdentity(result.identity);
     this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, result.identity);
     window.localStorage.setItem(LOCAL_STORAGE_TOKEN_KEY, result.token);
     return result.identity;
@@ -62,15 +63,15 @@ export class AuthenticationService implements IAuthenticationService {
 
   public async logout(): Promise<void> {
     const result: any = await this._authenticationRepository.logout();
-    this._tokenRepository.setToken(null);
-    this._tokenRepository.setIdentity(null);
+    this.tokenRepository.setToken(null);
+    this.tokenRepository.setIdentity(null);
     this._eventAggregator.publish(AuthenticationStateEvent.LOGOUT);
     window.localStorage.removeItem(LOCAL_STORAGE_TOKEN_KEY);
     return result;
   }
 
   public hasToken(): boolean {
-    const token: string = this._tokenRepository.getToken();
+    const token: string = this.tokenRepository.getToken();
     return token !== null && token !== undefined && token !== '';
   }
 }
