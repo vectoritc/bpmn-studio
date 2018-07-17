@@ -58,8 +58,8 @@ export class AuthenticationService implements IAuthenticationService {
     return this.tokenRepository.getToken();
   }
 
-  public getIdentity(): IIdentity {
-    return this.tokenRepository.getIdentity();
+  public getIdentity(): Promise<IIdentity> {
+    return Promise.resolve(this.tokenRepository.getIdentity());
   }
 
   public async login(username: string, password: string): Promise<IIdentity> {

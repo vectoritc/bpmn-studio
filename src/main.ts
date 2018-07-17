@@ -73,6 +73,7 @@ export function configure(aurelia: Aurelia): void {
     .feature('modules/notification')
     .feature('modules/authentication')
     .feature('modules/bpmn-studio_client', tokenRepository)
+    .feature('modules/management-api_client')
     .feature('resources')
     .plugin('aurelia-bootstrap')
     .plugin('aurelia-validation')

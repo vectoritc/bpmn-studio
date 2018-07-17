@@ -7,8 +7,6 @@ import {Event, EventList, IManagementApiService, ManagementContext, ProcessModel
 
 import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 
-import {ExternalAccessor, ManagementApiClientService} from '@process-engine/management_api_client';
-
 import {
   AuthenticationStateEvent,
   IAuthenticationService,
@@ -28,7 +26,14 @@ interface RouteParameters {
   processDefId: string;
 }
 
-@inject('ProcessEngineService', EventAggregator, Router, ValidationController, 'NotificationService', 'NewAuthenticationService')
+@inject(
+  'ProcessEngineService',
+  EventAggregator,
+  Router,
+  ValidationController,
+  'NotificationService',
+  'NewAuthenticationService',
+  'ManagementApiClientService')
 export class ProcessDefDetail {
 
   public bpmnio: BpmnIo;
@@ -47,8 +52,8 @@ export class ProcessDefDetail {
   private _diagramIsInvalid: boolean = false;
   // Used to control the modal view; shows the modal view for pressing the play button.
   private _startButtonPressed: boolean = false;
-  private _managementApiClient: IManagementApiService;
   private _authenticationService: IAuthenticationService;
+  private _managementApiClient: IManagementApiService;
 
   public dropdownArrow: HTMLElement;
   private dropdownIsCollapsed: boolean = true;
@@ -61,7 +66,8 @@ export class ProcessDefDetail {
               router: Router,
               validationController: ValidationController,
               notificationService: NotificationService,
-              authenticationService: IAuthenticationService) {
+              authenticationService: IAuthenticationService,
+              managementApiClient: IManagementApiService) {
 
     this._processEngineService = processEngineService;
     this._eventAggregator = eventAggregator;
@@ -69,58 +75,7 @@ export class ProcessDefDetail {
     this._validationController = validationController;
     this._notificationService = notificationService;
     this._authenticationService = authenticationService;
-  }
-
-  private _initializeManagementApiClient(): void {
-
-    const token: string = this._authenticationService.getAccessToken();
-    const context: ManagementContext = {
-      identity: token,
-    };
-
-    const httpClient: any = {
-      post: async(url: string, payload: any, headers: any): Promise<any> => {
-
-        const request: Request = new Request(`${environment.bpmnStudioClient.baseRoute}/${url}`, {
-          method: 'POST',
-          mode: 'cors',
-          referrer: 'no-referrer',
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-            ...headers,
-          },
-        });
-        const response: Response = await fetch(request);
-        return {
-          result: response.json(),
-          status: response.status,
-        };
-      },
-
-      get: async(url: string, payload: any, headers: any): Promise<any> => {
-
-        const request: Request = new Request(`${environment.bpmnStudioClient.baseRoute}/${url}`, {
-          method: 'GET',
-          mode: 'cors',
-          referrer: 'no-referrer',
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-            ...headers,
-          },
-        });
-        const response: Response = await fetch(request);
-        return {
-          result: response.json(),
-          status: response.status,
-        };
-      },
-    };
-    const externalAccessor: ExternalAccessor = new ExternalAccessor(httpClient);
-    this._managementApiClient = new ManagementApiClientService(externalAccessor);
+    this._managementApiClient = managementApiClient;
   }
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
@@ -131,12 +86,11 @@ export class ProcessDefDetail {
 
   public attached(): void {
     this._subscriptions = [
-      //  Aurelia Event Subscriptions {{{ //
+      //#region Aurelia Event Subscriptions
       // Aurelia will expose the ValidateEvent, we use this to check the BPMN in the modeler.
       this._validationController.subscribe((event: ValidateEvent) => {
         this._handleFormValidateEvents(event);
       }),
-      //  }}} Aurelia Event Subscriptions //
 
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
         this._refreshProcess();
@@ -144,8 +98,11 @@ export class ProcessDefDetail {
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
         this._refreshProcess();
       }),
+      //#endregion
 
-      //  Button Subscriptions {{{ //
+      //#region Button Subscriptions
+
+      //#region Save Button Subscription
       this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
         this._saveDiagram()
           .catch((error: Error) => {
@@ -157,27 +114,27 @@ export class ProcessDefDetail {
               );
           });
       }),
+      //#endregion
 
-      //  Start Button Subscription {{{ //
+      //#region Start Button Subscription
       this._eventAggregator.subscribe(environment.events.processDefDetail.startProcess, () => {
         this._startProcess();
       }),
-      //  }}} Start Button Subscription //
-      //  }}} Button Subscriptions //
+      //#endregion
 
-      //  General Event Subscritions {{{ //
+      //#endregion
+
+      //#region General Event Subscritions
       this._eventAggregator.subscribe(environment.events.diagramChange, () => {
         this._diagramHasChanged = true;
       }),
-      //  }}} General Event Subscritions //
+      //#endregion
 
     ];
 
     this._eventAggregator.publish(environment.events.navBar.showTools, this.process);
     this._eventAggregator.publish(environment.events.navBar.showStartButton);
     this._eventAggregator.publish(environment.events.statusBar.showXMLButton);
-
-    this._initializeManagementApiClient();
   }
 
   /**
@@ -207,7 +164,7 @@ export class ProcessDefDetail {
 
         modal.classList.add('show-modal');
 
-        //  register onClick handler {{{ //
+        //#region register onClick handler
         /* Do not save and leave */
         const dontSaveButtonId: string = 'dontSaveButtonLeaveView';
         document
@@ -259,7 +216,7 @@ export class ProcessDefDetail {
             resolve(false);
           });
         }
-        //  }}} register onClick handler //
+        //#endregion
     });
 
     const result: boolean = await _modal;
@@ -349,20 +306,6 @@ export class ProcessDefDetail {
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, `Error while obtaining the StartEvents which belongs to the Process.`);
       console.error(error);
-
-      /*
-       * TODO: these are currently mock StartEvents which are used for debugging.
-       * Please remove them!!!!!
-      */
-      const event1: Event = new Event();
-      event1.key = 'StartEvent1';
-      event1.id = 'StartEvent1';
-      this.processesStartEvents.push(event1);
-
-      const event2: Event = new Event();
-      event2.key = 'StartEvent2';
-      event2.id = 'StartEvent2';
-      this.processesStartEvents.push(event2);
     }
   }
 
@@ -373,10 +316,6 @@ export class ProcessDefDetail {
    */
   private async _startProcess(): Promise<void> {
 
-    /*
-     * This is only temporary until the gathering of the StartEvents via the
-     * ManagementAPI works flawless.
-     */
     try {
       await this._updateProcessStartEvents();
     } catch (error) {
@@ -411,7 +350,13 @@ export class ProcessDefDetail {
     const startRequestPayload: ProcessModelExecution.ProcessStartRequestPayload = {
       inputValues: {},
     };
-    this._managementApiClient.startProcessInstance(context, this.process.key, modalResult, startRequestPayload, undefined, undefined);
+
+    try {
+      await this._managementApiClient.startProcessInstance(context, this.process.key, modalResult, startRequestPayload, undefined, undefined);
+
+    } catch (error) {
+      console.log(error);
+    }
 
     this._router.navigate(`processdef/${this.process.id}/start`);
   }
@@ -479,7 +424,7 @@ export class ProcessDefDetail {
       return;
     }
 
-    //  Save the diagram to the ProcessEngine {{{ //
+    //#region Save the diagram to the ProcessEngine
     // TODO: Explain what this is doing -> Refactor.
     let response: any;
 
@@ -489,9 +434,9 @@ export class ProcessDefDetail {
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, `An error occured: ${error.message}`);
     }
-    //  }}} Save the diagram to the ProcessEngine //
+    //#endregion
 
-    // Treat possible errors {{{ //
+    //#region Treat possible errors
     if (response.error) {
       this
         ._notificationService
@@ -511,7 +456,7 @@ export class ProcessDefDetail {
           `Something is very wrong: ${JSON.stringify(response)}. Please contact the BPMN-Studio team, they can help.`,
         );
     }
-    //  }}}  Treat possible errors //
+    //#endregion
 
     this._diagramHasChanged = false;
   }

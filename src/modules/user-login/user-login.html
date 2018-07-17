@@ -3,7 +3,7 @@
   <div class="user-login" ref="userLogin">
     <button show.bind="!isLoggedIn" click.delegate="login()">login</button>
     <div show.bind="isLoggedIn">
-      <span>${user.profile.name}</span>
+      <span>${username}</span>
       <button click.delegate="logout()">logout</button>
     </div>
     <!-- <div ref="dropdown" class="dropdown-menu dropdown-menu-right user-login-dropdown">

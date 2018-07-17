@@ -2,7 +2,9 @@ import { inject } from 'aurelia-framework';
 import { OpenIdConnect } from 'aurelia-open-id-connect';
 import { User } from 'oidc-client';
 
+import { access } from 'fs';
 import {IAuthenticationService, IIdentity} from '../../contracts/index';
+import environment from './../../environment';
 
 @inject(OpenIdConnect)
 export class NewAuthenticationService implements IAuthenticationService {
@@ -65,11 +67,10 @@ export class NewAuthenticationService implements IAuthenticationService {
   }
 
   public getAccessToken(): string {
+    if (!this._user) {
+      return null;
+    }
     return this._user.access_token;
-  }
-
-  public getIdentityToken(): string {
-    return this._user.id_token;
   }
 
   public hasToken(): boolean {
@@ -80,8 +81,28 @@ export class NewAuthenticationService implements IAuthenticationService {
 
     return hasToken;
   }
-  public getIdentity(): IIdentity {
-    return undefined;
+
+  public async getIdentity(): Promise<IIdentity> {
+
+    const accessToken: string = this.getAccessToken();
+
+    if (!accessToken) {
+      return null;
+    }
+
+    const request: Request = new Request(`${environment.openIdConnect.authority}/connect/userinfo`, {
+      method: 'GET',
+      mode: 'cors',
+      referrer: 'no-referrer',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    const response: Response = await fetch(request);
+
+    return response.json();
   }
 
 }

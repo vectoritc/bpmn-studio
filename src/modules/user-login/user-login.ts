@@ -1,4 +1,4 @@
-import {computedFrom, inject} from 'aurelia-framework';
+import {bindable, bindingMode, computedFrom, inject} from 'aurelia-framework';
 import { OpenIdConnect } from 'aurelia-open-id-connect';
 import { User } from 'oidc-client';
 
@@ -17,7 +17,22 @@ export class UserLogin {
     return this.user !== null && this.user !== undefined;
   }
 
+  @computedFrom('identity')
+  public get username(): string {
+    if (!this.identity) {
+      return '';
+    }
+    if (!this.identity.given_name || !this.identity.family_name) {
+      return this.identity.name;
+    }
+    const fullName: string = `${this.identity.given_name} ${this.identity.family_name}`;
+    return fullName;
+  }
+
+  @bindable({ defaultBindingMode: bindingMode.oneWay })
   public user: User | null = null;
+  @bindable({ defaultBindingMode: bindingMode.oneWay })
+  public identity: IIdentity = null;
 
   constructor(authenticationService: IAuthenticationService,
               notificationService: NotificationService,
@@ -37,6 +52,10 @@ export class UserLogin {
     });
     this._openIdConnect.observeUser((user: User) => this.user = user);
     this.user = await this._openIdConnect.getUser();
+  }
+
+  public async userChanged(): Promise<void> {
+    this.identity = await this._authenticationService.getIdentity();
   }
 
   public async login(): Promise<void> {
