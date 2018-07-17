@@ -1,67 +1,61 @@
 import {IProcessDefEntity, IUserTaskEntity} from '@process-engine/process_engine_contracts';
-import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
-import {IPagination, IProcessEngineRepository, IProcessEngineService, IProcessEntity, NotificationType} from '../../contracts/index';
-import {NotificationService} from '../notification/notification.service';
+import {IPagination, IProcessEngineRepository, IProcessEngineService, IProcessEntity} from '../../contracts/index';
 
-@inject('ProcessEngineRepository', 'NotificationService', EventAggregator)
+@inject('ProcessEngineRepository')
 export class ProcessEngineService implements IProcessEngineService {
 
-  private repository: IProcessEngineRepository;
-  private notificationService: NotificationService;
-  private _eventAggregator: EventAggregator;
+  private _repository: IProcessEngineRepository;
 
-  constructor(repository: IProcessEngineRepository, notificationService: NotificationService, eventAggregator: EventAggregator) {
-    this.repository = repository;
-    this.notificationService = notificationService;
-    this._eventAggregator = eventAggregator;
+  constructor(repository: IProcessEngineRepository) {
+    this._repository = repository;
   }
 
   public deleteProcessDef(processId: string): Promise<void> {
-    return this.repository.deleteProcessDef(processId);
+    return this._repository.deleteProcessDef(processId);
   }
 
   public getProcessDefById(processDefId: string): Promise<IProcessDefEntity> {
-    return this.repository.getProcessDefById(processDefId);
+    return this._repository.getProcessDefById(processDefId);
   }
 
   public updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<any> {
-    return this.repository.updateProcessDef(processDef, xml);
+    return this._repository.updateProcessDef(processDef, xml);
   }
 
   public createProcessfromXML(xml: string, name?: string): Promise<any> {
-    return this.repository.createProcessfromXML(xml, name);
+    return this._repository.createProcessfromXML(xml, name);
   }
 
   public getIdentity(): Promise<any> {
-    return this.repository.getIdentity();
+    return this._repository.getIdentity();
   }
 
   public getUserTasks(limit: number, offset: number): Promise<IPagination<IUserTaskEntity>> {
-    return this.repository.getUserTasks(limit, offset);
+    return this._repository.getUserTasks(limit, offset);
   }
 
   public getUserTaskById(userTaskId: string): Promise<IUserTaskEntity> {
-    return this.repository.getUserTaskById(userTaskId);
+    return this._repository.getUserTaskById(userTaskId);
   }
 
   public getUserTasksByProcessDefId(processDefId: string): Promise<IPagination<IUserTaskEntity>> {
-    return this.repository.getUserTasksByProcessDefId(processDefId);
+    return this._repository.getUserTasksByProcessDefId(processDefId);
   }
 
   public getUserTasksByProcessId(processId: string): Promise<IPagination<IUserTaskEntity>> {
-    return this.repository.getUserTasksByProcessId(processId);
+    return this._repository.getUserTasksByProcessId(processId);
   }
 
   public getProcesses(): Promise<IPagination<IProcessEntity>> {
-    return this.repository.getProcesses();
+    return this._repository.getProcesses();
   }
 
   public getProcessById(processId: string): Promise<IProcessEntity> {
-    return this.repository.getProcessById(processId);
+    return this._repository.getProcessById(processId);
   }
 
   public getProcessesByProcessDefId(processDefId: string): Promise<IPagination<IProcessEntity>> {
-    return this.repository.getProcessesByProcessDefId(processDefId);
+    return this._repository.getProcessesByProcessDefId(processDefId);
   }
 }

@@ -2,7 +2,6 @@ import {HttpClient} from 'aurelia-fetch-client';
 import {inject} from 'aurelia-framework';
 import {
   IAuthenticationRepository,
-  IErrorResponse,
   IIdentity,
   ILoginResult,
   ILogoutResult,
@@ -15,10 +14,10 @@ const HTTP_CODE_OK: number = 200;
 @inject(HttpClient)
 export class AuthenticationRepository implements IAuthenticationRepository {
 
-  private http: HttpClient;
+  private _http: HttpClient;
 
   constructor(http: HttpClient) {
-    this.http = http;
+    this._http = http;
   }
 
   public async login(username: string, password: string): Promise<ILoginResult> {
@@ -34,14 +33,14 @@ export class AuthenticationRepository implements IAuthenticationRepository {
     };
 
     const url: string = `${environment.processengine.routes.iam}/login`;
-    const response: Response = await this.http.fetch(url, options);
+    const response: Response = await this._http.fetch(url, options);
 
     return throwOnErrorResponse<ILoginResult>(response);
   }
 
   public async logout(): Promise<ILogoutResult> {
     const url: string = `${environment.processengine.routes.iam}/logout`;
-    const response: Response = await this.http.fetch(url, { method: 'get' });
+    const response: Response = await this._http.fetch(url, { method: 'get' });
 
     return throwOnErrorResponse<ILogoutResult>(response);
   }
@@ -54,7 +53,7 @@ export class AuthenticationRepository implements IAuthenticationRepository {
         Authorization: `Barear: ${token}`,
       }),
     };
-    const response: Response = await this.http.fetch(url, options);
+    const response: Response = await this._http.fetch(url, options);
 
     return throwOnErrorResponse<IIdentity>(response);
   }

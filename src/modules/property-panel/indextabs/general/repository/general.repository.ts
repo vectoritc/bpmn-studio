@@ -5,16 +5,16 @@ import environment from '../../../../../environment';
 
 @inject('BpmnStudioClient', HttpClient)
 export class GeneralRepository {
-  private bpmnStudioClient: BpmnStudioClient;
-  private httpClient: HttpClient;
+  private _bpmnStudioClient: BpmnStudioClient;
+  private _httpClient: HttpClient;
 
   constructor(bpmnStudioClient: BpmnStudioClient, httpClient: HttpClient) {
-    this.bpmnStudioClient = bpmnStudioClient;
-    this.httpClient = httpClient;
+    this._bpmnStudioClient = bpmnStudioClient;
+    this._httpClient = httpClient;
   }
 
   public async getAllProcesses(): Promise<IPagination<IProcessDefEntity>> {
-    return this.bpmnStudioClient.getProcessDefList();
+    return this._bpmnStudioClient.getProcessDefList();
   }
 
   public updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<any> {
@@ -28,6 +28,6 @@ export class GeneralRepository {
       }),
     };
     const url: string = `${environment.processengine.routes.processes}/${processDef.id}/updateBpmn`;
-    return this.httpClient.fetch(url, options);
+    return this._httpClient.fetch(url, options);
   }
 }

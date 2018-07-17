@@ -10,15 +10,15 @@ import {NotificationService} from '../notification/notification.service';
 @inject(Router, 'BpmnStudioClient', 'NotificationService', EventAggregator, 'AuthenticationService')
 export class ConfigPanel {
 
+  public config: any = environment.bpmnStudioClient;
+  public isLoggedIn: boolean;
+
   private _router: Router;
   private _bpmnStudioClient: BpmnStudioClient;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _authenticationService: IAuthenticationService;
   private _subscriptions: Array<Subscription>;
-
-  public config: any = environment.bpmnStudioClient;
-  public isLoggedIn: boolean;
 
   constructor(router: Router,
               bpmnStudioClient: BpmnStudioClient,

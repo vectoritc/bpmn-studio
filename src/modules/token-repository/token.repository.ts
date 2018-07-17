@@ -2,22 +2,22 @@ import {IIdentity, ITokenRepository} from '@process-engine/bpmn-studio_client';
 
 export class TokenRepository implements ITokenRepository {
 
-  private identity: IIdentity;
-  private token: string;
+  private _identity: IIdentity;
+  private _token: string;
 
   public getToken(): string {
-    return this.token;
+    return this._token;
   }
 
   public setToken(token: string): void {
-    this.token = token;
+    this._token = token;
   }
 
   public getIdentity(): IIdentity {
-    return this.identity;
+    return this._identity;
   }
 
   public setIdentity(identity: IIdentity): void {
-    this.identity = identity;
+    this._identity = identity;
   }
 }

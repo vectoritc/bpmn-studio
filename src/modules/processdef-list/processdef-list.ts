@@ -9,12 +9,10 @@ import {
   BpmnStudioClient,
   IPagination,
   IProcessDefEntity,
-  IUserTaskConfig,
 } from '@process-engine/bpmn-studio_client';
 
 import {
   AuthenticationStateEvent,
-  IFileInfo,
   IProcessEngineService,
   NotificationType,
 } from '../../contracts/index';
@@ -23,18 +21,6 @@ import {NotificationService} from '../notification/notification.service';
 
 @inject(EventAggregator, 'BpmnStudioClient', 'NotificationService', Router, 'ProcessEngineService')
 export class ProcessDefList {
-  private _processEngineService: IProcessEngineService;
-  private _bpmnStudioClient: BpmnStudioClient;
-  private _eventAggregator: EventAggregator;
-  private _router: Router;
-  private _notificationService: NotificationService;
-
-  private _processes: IPagination<IProcessDefEntity>;
-  private _subscriptions: Array<Subscription>;
-  private _fileReader: FileReader = new FileReader();
-  private _offset: number;
-  private _getProcessesIntervalId: number;
-  private _newDiagramXml: string;
 
   @bindable()
   public selectedFiles: FileList;
@@ -49,6 +35,18 @@ export class ProcessDefList {
   public pageSize: number = 10;
   public totalItems: number;
   public showSolutionExplorer: boolean = false;
+
+  private _processEngineService: IProcessEngineService;
+  private _bpmnStudioClient: BpmnStudioClient;
+  private _eventAggregator: EventAggregator;
+  private _router: Router;
+  private _notificationService: NotificationService;
+
+  private _processes: IPagination<IProcessDefEntity>;
+  private _subscriptions: Array<Subscription>;
+  private _fileReader: FileReader = new FileReader();
+  private _getProcessesIntervalId: number;
+  private _newDiagramXml: string;
 
   constructor(eventAggregator: EventAggregator,
               bpmnStudioClient: BpmnStudioClient,

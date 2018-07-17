@@ -7,43 +7,43 @@ import {NotificationService} from '../notification/notification.service';
 @inject(Router, 'BpmnStudioClient', 'NotificationService')
 export class WaitingRoom {
 
-  private router: Router;
-  private bpmnStudioClient: BpmnStudioClient;
-  private processInstanceId: string;
-  private notificationService: NotificationService;
+  private _router: Router;
+  private _bpmnStudioClient: BpmnStudioClient;
+  private _processInstanceId: string;
+  private _notificationService: NotificationService;
 
   constructor(router: Router, bpmnStudioClient: BpmnStudioClient, notificationService: NotificationService) {
-    this.router = router;
-    this.bpmnStudioClient = bpmnStudioClient;
-    this.notificationService = notificationService;
-  }
-
-  private renderUserTaskCallback: any = (userTaskConfig: IUserTaskConfig): void => {
-    this.notificationService.showNotification(NotificationType.SUCCESS, 'Process continued');
-    if (userTaskConfig.userTaskEntity.process.id === this.processInstanceId) {
-      this.router.navigate(`/task/${userTaskConfig.id}/dynamic-ui`);
-      this.bpmnStudioClient.off('renderUserTask', this.renderUserTaskCallback);
-    }
-  }
-
-  private processEndCallback: any = (processInstanceId: string): void => {
-    this.notificationService.showNotification(NotificationType.WARNING, 'Process stopped');
-    if (processInstanceId === this.processInstanceId) {
-      this.router.navigate('task');
-      this.bpmnStudioClient.off('processEnd', this.processEndCallback);
-    }
+    this._router = router;
+    this._bpmnStudioClient = bpmnStudioClient;
+    this._notificationService = notificationService;
   }
 
   public activate(routeParameters: {processInstanceId: string}): void {
-    this.processInstanceId = routeParameters.processInstanceId;
+    this._processInstanceId = routeParameters.processInstanceId;
 
-    this.bpmnStudioClient.on('processEnd', this.processEndCallback);
-    this.bpmnStudioClient.on('renderUserTask', this.renderUserTaskCallback);
+    this._bpmnStudioClient.on('processEnd', this._processEndCallback);
+    this._bpmnStudioClient.on('renderUserTask', this._renderUserTaskCallback);
   }
 
   public navigateToTaskList(): void {
-    this.router.navigate('task');
-    this.bpmnStudioClient.off('processEnd', this.processEndCallback);
-    this.bpmnStudioClient.off('renderUserTask', this.renderUserTaskCallback);
+    this._router.navigate('task');
+    this._bpmnStudioClient.off('processEnd', this._processEndCallback);
+    this._bpmnStudioClient.off('renderUserTask', this._renderUserTaskCallback);
+  }
+
+  private _renderUserTaskCallback: any = (userTaskConfig: IUserTaskConfig): void => {
+    this._notificationService.showNotification(NotificationType.SUCCESS, 'Process continued');
+    if (userTaskConfig.userTaskEntity.process.id === this._processInstanceId) {
+      this._router.navigate(`/task/${userTaskConfig.id}/dynamic-ui`);
+      this._bpmnStudioClient.off('renderUserTask', this._renderUserTaskCallback);
+    }
+  }
+
+  private _processEndCallback: any = (processInstanceId: string): void => {
+    this._notificationService.showNotification(NotificationType.WARNING, 'Process stopped');
+    if (processInstanceId === this._processInstanceId) {
+      this._router.navigate('task');
+      this._bpmnStudioClient.off('processEnd', this._processEndCallback);
+    }
   }
 }

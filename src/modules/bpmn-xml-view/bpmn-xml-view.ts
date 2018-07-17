@@ -13,7 +13,7 @@ const highlightEngine: {
 
 export class BpmnXmlView {
 
-  private codeElement: HTMLElement;
+  public codeElement: HTMLElement;
   @bindable() public xml: string;
   @bindable({ defaultBindingMode: bindingMode.oneWay }) public newXML: string;
 
