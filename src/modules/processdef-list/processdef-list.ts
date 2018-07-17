@@ -191,10 +191,6 @@ export class ProcessDefList {
     this._router.navigate(`processdef/${processId}/start`);
   }
 
-  public startProcess(processId: string): void {
-    this._router.navigate(`processdef/${processId}/start`);
-  }
-
   public showDetails(processId: string): void {
     this._router.navigate(`processdef/${processId}/detail`);
   }
