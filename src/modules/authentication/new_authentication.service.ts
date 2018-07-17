@@ -2,6 +2,7 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import { inject } from 'aurelia-framework';
 import { OpenIdConnect } from 'aurelia-open-id-connect';
 import { User } from 'oidc-client';
+import { SigninResponse } from './open-id/open-id-signin-response';
 
 import {AuthenticationStateEvent, IAuthenticationService, IIdentity} from '../../contracts/index';
 import environment from './../../environment';
@@ -27,6 +28,13 @@ export class NewAuthenticationService implements IAuthenticationService {
 
   public async login(): Promise<void> {
     await this._openIdConnect.login();
+    const identity: IIdentity = await this.getIdentity();
+    this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
+  }
+
+  public async loginViaDeepLink(urlFragment: string): Promise<void> {
+    const user: User = new User(new SigninResponse(urlFragment) as Oidc.SigninResponse);
+    this._user = user;
     const identity: IIdentity = await this.getIdentity();
     this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
   }
