@@ -126,6 +126,8 @@ export class ProcessSolutionPanel {
         return solution.uri === newSolution.uri;
       });
 
+    this.solutionInput.value = '';
+
     if (solutionIsAlreadyOpen) {
       this._notificationService.showNotification(NotificationType.INFO, 'Solution is already open');
 
@@ -133,7 +135,6 @@ export class ProcessSolutionPanel {
     }
 
     this.openedFileSystemSolutions.push(newSolution);
-    this.solutionInput.value = '';
   }
 
   /**
@@ -144,6 +145,8 @@ export class ProcessSolutionPanel {
   public async onSingleDiagramInputChange(event: any): Promise<void> {
     const pathToDiagram: string = event.target.files[0].path;
     const newDiagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(pathToDiagram, this._identity);
+
+    this.singleDiagramInput.value = '';
 
     const diagramIsAlreadyOpen: IDiagram = this.openedSingleDiagrams
       .find((diagram: IDiagram) => {
@@ -157,7 +160,6 @@ export class ProcessSolutionPanel {
     }
 
     this.openedSingleDiagrams.push(newDiagram);
-    this.singleDiagramInput.value = '';
   }
 
   public closeFileSystemSolution(solutionToClose: ISolution): void {
