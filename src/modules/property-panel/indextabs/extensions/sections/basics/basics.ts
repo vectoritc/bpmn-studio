@@ -165,17 +165,17 @@ export class BasicsSection implements ISection {
     this._businessObjInPanel.extensionElements = extensionElements;
   }
 
-  private _createEmptyPropertyElement(): void {
+  private _createEmptyCamundaProperties(): void {
     const addPropertiesElement: ((element: IPropertiesElement) => number) = (element: IPropertiesElement): number =>
       this._businessObjInPanel.extensionElements.values
       .push(element);
 
     const emptyProperties: Array<IProperty> = [];
 
-    const createExtensionProperty: (() => IPropertyElement) = (): IPropertyElement => this._moddle
+    const createCamundaProperties: (() => IPropertiesElement) = (): IPropertiesElement => this._moddle
       .create('camunda:Properties', {values: emptyProperties});
 
-    addPropertyElement(createExtensionProperty());
+    addPropertiesElement(createCamundaProperties());
   }
 
   private _publishDiagramChange(): void {
