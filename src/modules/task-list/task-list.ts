@@ -1,19 +1,11 @@
-import {
-  BpmnStudioClient,
-  IConfirmWidgetConfig,
-  IUserTaskConfig,
-  IUserTaskEntity,
-  UserTaskProceedAction,
-  WidgetConfig,
-  WidgetType,
-} from '@process-engine/bpmn-studio_client';
+import {BpmnStudioClient, IUserTaskEntity} from '@process-engine/bpmn-studio_client';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {bindable, computedFrom, inject} from 'aurelia-framework';
+import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {AuthenticationStateEvent, IDynamicUiService, IPagination, IProcessEngineService, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
-import {NotificationService} from './../notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 
 interface ITaskListRouteParameters {
   processDefId?: string;

@@ -48,10 +48,17 @@
 }
 
 .status-bar__element {
-  display: block;
+  display: inline-block;
+  min-width: 50px;
   padding: 2px 10px;
   color: white;
+  text-align: center;
   white-space: nowrap;
+}
+
+.status-bar__element--active {
+  background-color: #445a65;
+  text-decoration: none;
 }
 
 .status-bar__element:hover {
@@ -61,4 +68,9 @@
 
 .baseroute__lock-icon {
   font-size: 14px;
+}
+
+.center-bar__diff-view-buttons {
+  display: inline-flex;
+  float: left;
 }

@@ -350,6 +350,11 @@
             "name": "@process-engine/management_api_client",
             "path": "../node_modules/@process-engine/management_api_client/dist/amd",
             "main": "index.js"
+          },
+          {
+            "name": "bpmn-js-differ",
+            "main": "dist/index.cjs.js",
+            "path": "../node_modules/bpmn-js-differ"
           }
         ]
       }

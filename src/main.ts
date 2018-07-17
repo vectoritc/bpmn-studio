@@ -6,11 +6,10 @@ import {SolutionExplorerProcessEngineRepository} from '@process-engine/solutione
 import {SolutionExplorerService} from '@process-engine/solutionexplorer.service';
 
 import {NotificationType} from './contracts/index';
-import {IFileInfo} from './contracts/processengine/index';
+import environment from './environment';
 import {NotificationService} from './modules/notification/notification.service';
 import {TokenRepository} from './modules/token-repository/token.repository';
 
-import environment from './environment';
 import {oidcConfig} from './open-id-connect-configuration';
 
 export function configure(aurelia: Aurelia): void {
@@ -26,8 +25,6 @@ export function configure(aurelia: Aurelia): void {
   if ((<any> window).nodeRequire) {
     const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
     const newHost: string = ipcRenderer.sendSync('get_host');
-    const fileInfo: IFileInfo = ipcRenderer.sendSync('get_opened_file');
-    aurelia.container.registerInstance('FileContent', fileInfo);
     /**
      * Currently the internal PE is always connected via http.
      * This will be subject to change.

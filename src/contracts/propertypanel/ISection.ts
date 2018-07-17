@@ -1,6 +1,4 @@
-import {IModdleElement, IModeling, IShape} from '../bpmnmodeler/index';
-import {IEventBus} from '../eventbus/IEventBus';
-import {IPageModel} from './IPageModel';
+import {IPageModel, IShape} from '../index';
 
 export interface ISection {
   path: string;

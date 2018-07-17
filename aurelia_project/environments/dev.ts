@@ -30,8 +30,8 @@ export default {
     xmlChanged: 'xmlChanged',
     refreshProcessDefs: 'processdefs:refresh',
     statusBar: {
-      showXMLButton: 'statusbar:xmlbutton:show',
-      hideXMLButton: 'statusbar:xmlbutton:hide',
+      showDiagramViewButtons: 'statusbar:diagramviewbuttons:show',
+      hideDiagramViewButtons: 'statusbar:diagramviewbuttons:hide',
       updateProcessEngineRoute: 'statusbar:processEngineRoute:update',
     },
     navBar: {
@@ -51,6 +51,11 @@ export default {
     },
     bpmnio: {
       toggleXMLView: 'processdefdetail:xmlview:toggle',
+      toggleDiffView: 'processdefdetail:diffview:toggle',
+    },
+    diffView: {
+      changeDiffMode: 'diffview:diffmode:change',
+      toggleChangeList: 'diffview:changelist:toggle',
     },
     diagramChange: 'diagram:change',
     processSolutionPanel: {

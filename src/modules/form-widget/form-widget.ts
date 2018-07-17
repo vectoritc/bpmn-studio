@@ -1,7 +1,7 @@
 import {FormWidgetFieldType, IFormWidgetConfig, SpecificFormWidgetField} from '@process-engine/bpmn-studio_client';
 import {bindable, inject} from 'aurelia-framework';
-import {NotificationType} from './../../contracts/index';
-import {NotificationService} from './../notification/notification.service';
+import {NotificationType} from '../../contracts/index';
+import {NotificationService} from '../notification/notification.service';
 
 @inject('NotificationService')
 export class FormWidget {

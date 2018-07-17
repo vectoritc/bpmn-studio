@@ -4,7 +4,7 @@ import {computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {AuthenticationStateEvent, IDynamicUiService, NotificationType} from '../../contracts/index';
 import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
-import {NotificationService} from './../notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 
 @inject(EventAggregator, 'DynamicUiService', Router, 'NotificationService')
 export class TaskDynamicUi {

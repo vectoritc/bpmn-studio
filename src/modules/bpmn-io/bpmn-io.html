@@ -1,6 +1,7 @@
 <template>
   <require from="../property-panel/property-panel"></require>
   <require from="@process-engine/bpmn-js-custom-bundle/bpmn-modeler-custom.css"></require>
+  <require from="../bpmn-diff-view/bpmn-diff-view"></require>
   <require from="../bpmn-xml-view/bpmn-xml-view"></require>
   <require from="../diagram-tools-right/diagram-tools-right"></require>
   <require from="./bpmn-io.css"></require>
@@ -9,7 +10,7 @@
       DIAGRAM TOOLS
     -->
     <div class="bpmn-io-layout__tools-left">
-      <div show.bind="!showXMLView" class="tool-list tool-list--vertical">
+      <div show.bind="!showXMLView && !showDiffView" class="tool-list tool-list--vertical">
         <div class="tool">
           <i class="fas fa-mouse-pointer"></i>
         </div>
@@ -26,7 +27,7 @@
       MAIN CANVAS
     -->
     <div class="bpmn-io-layout__main js-main">
-      <div class="modeler" show.bind="!showXMLView">
+      <div class="modeler" show.bind="!showXMLView && !showDiffView">
         <div class="diagram">
           <div ref="canvasModel" class="canvasModel"></div>
         </div>
@@ -37,10 +38,11 @@
         </div>
       </div>
       <bpmn-xml-view if.bind="initialLoadingFinished" show.bind="showXMLView" xml.bind="xml"></bpmn-xml-view>
+      <bpmn-diff-view if.bind="showDiffView" changes.bind="xmlChanges" savedxml.bind="savedXml" xml.bind="xml"></bpmn-diff-view>
     </div>
 
     <div class="bpmn-io-layout__tools-right">
-      <div show.bind="!showXMLView" class="tool-list tool-list--vertical">
+      <div show.bind="!showXMLView && !showDiffView" class="tool-list tool-list--vertical">
         <div ref="toggleButtonPropertyPanel" class="tool__right tool--active">
           <button class="menu-bar__menu-left--tool" click.delegate="togglePanel()">
             <i class="fas fa-sliders-h"></i>

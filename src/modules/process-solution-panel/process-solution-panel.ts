@@ -7,7 +7,7 @@ import {IPagination, IProcessDefEntity} from '@process-engine/bpmn-studio_client
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
-import {AuthenticationStateEvent} from '../../contracts/index';
+import {AuthenticationStateEvent, IFileInfo} from '../../contracts/index';
 import environment from '../../environment';
 
 @inject(EventAggregator, Router, 'SolutionExplorerServiceProcessEngine', 'SolutionExplorerServiceFileSystem', 'Identity')
@@ -16,7 +16,11 @@ export class ProcessSolutionPanel {
   public processengineSolutionString: string;
   public openedProcessEngineSolution: ISolution;
   public openedFileSystemSolutions: Array<ISolution> = [];
+  public openedSingleDiagrams: Array<IDiagram> = [];
   public solutionInput: HTMLInputElement;
+  public singleDiagramInput: HTMLInputElement;
+  public openSingleDiagramButton: HTMLButtonElement;
+  public openSolutionButton: HTMLButtonElement;
   public enableFileSystemSolutions: boolean = false;
   public fileSystemIndexCardIsActive: boolean = false;
   public processEngineIndexCardIsActive: boolean = true;
@@ -40,9 +44,37 @@ export class ProcessSolutionPanel {
   }
 
   public async attached(): Promise<void> {
-    // Check if BPMN-Studio runs in electron
+    /**
+     * Check if BPMN-Studio runs in electron.
+     */
     if ((<any> window).nodeRequire) {
+
+      // Show the FileSystemSolutionExplorer.
       this.enableFileSystemSolutions = true;
+
+      const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
+      const path: any = (<any> window).nodeRequire('path');
+
+      // Register handler for double-click event fired from "elecrin.js".
+      ipcRenderer.on('double-click-on-file', async(event: any, pathToFile: string) => {
+        const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(pathToFile, this._identity);
+        this.openedSingleDiagrams.push(diagram);
+        this.navigateToDiagramDetail(diagram);
+        this.openFileSystemIndexCard();
+      });
+
+      // Send event to signal the component is ready to handle the event.
+      ipcRenderer.send('waiting-for-double-file-click');
+
+      // Check if there was a double click before BPMN-Studio was loaded.
+      const fileInfo: IFileInfo = ipcRenderer.sendSync('get_opened_file');
+
+      if (fileInfo.path) {
+        const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(fileInfo.path, this._identity);
+        this.openedSingleDiagrams.push(diagram);
+        this.navigateToDiagramDetail(diagram);
+        this.openFileSystemIndexCard();
+      }
     }
 
     this._refreshProcesslist();
@@ -65,16 +97,6 @@ export class ProcessSolutionPanel {
         this._refreshProcesslist();
       }),
     ];
-
-    const solutionInputButton: HTMLElement = document.getElementById('solutionInputButton');
-    solutionInputButton.addEventListener('click', () => {
-      this.solutionInput.click();
-    });
-
-    const firstSolutionInoutButton: HTMLElement = document.getElementById('openFirstSolutionButton');
-    firstSolutionInoutButton.addEventListener('click', () => {
-      this.solutionInput.click();
-    });
   }
 
   public detached(): void {
@@ -98,11 +120,30 @@ export class ProcessSolutionPanel {
     this.solutionInput.value = '';
   }
 
+  /**
+   * Handles the file input change event for the single file input.
+   * @param event A event that holds the files that were "uploaded" by the user.
+   * Currently there is no type for this kind of event.
+   */
+  public async onSingleDiagramInputChange(event: any): Promise<void> {
+    const pathToDiagram: string = event.target.files[0].path;
+    const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(pathToDiagram, this._identity);
+    this.openedSingleDiagrams.push(diagram);
+  }
+
   public closeFileSystemSolution(solutionToClose: ISolution): void {
     const index: number = this.openedFileSystemSolutions.findIndex((solution: ISolution) => {
       return solution.uri === solutionToClose.uri;
     });
     this.openedFileSystemSolutions.splice(index, 1);
+  }
+
+  public closeSingleDiagram(diagramToClose: IDiagram): void {
+    const index: number = this.openedSingleDiagrams.findIndex((diagram: IDiagram) => {
+      return diagram.uri === diagramToClose.uri;
+    });
+
+    this.openedSingleDiagrams.splice(index, 1);
   }
 
   public openFileSystemIndexCard(): void {
@@ -115,9 +156,21 @@ export class ProcessSolutionPanel {
     this.processEngineIndexCardIsActive = true;
   }
 
-  public async navigateToDiagramDetail(solution: ISolution, diagram: IDiagram): Promise<void> {
-    await this._solutionExplorerServiceFileSystem.openSolution(solution.uri, this._identity);
-    this._router.navigateToRoute('diagram-detail', {diagramName: diagram.name});
+  public async refreshSolutions(): Promise<void> {
+    this.openedFileSystemSolutions.forEach(async(solution: ISolution) => {
+      try {
+        await this._solutionExplorerServiceFileSystem.openSolution(solution.uri, this._identity);
+        const updatetSolution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
+        this._updateSolution(solution, updatetSolution);
+      } catch (e) {
+        this.closeFileSystemSolution(solution);
+      }
+    });
+  }
+
+  public async navigateToDiagramDetail(diagram: IDiagram): Promise<void> {
+    this._eventAggregator.publish(environment.events.navBar.updateProcess, diagram);
+    this._router.navigateToRoute('diagram-detail', {diagramUri: diagram.uri});
   }
 
   private async _refreshProcesslist(): Promise<void> {
@@ -125,5 +178,10 @@ export class ProcessSolutionPanel {
     await this._solutionExplorerServiceProcessEngine.openSolution(this.processengineSolutionString, this._identity);
 
     this.openedProcessEngineSolution = await this._solutionExplorerServiceProcessEngine.loadSolution();
+  }
+
+  private _updateSolution(solutionToUpdate: ISolution, solution: ISolution): void {
+    const index: number = this.openedFileSystemSolutions.indexOf(solutionToUpdate);
+    this.openedFileSystemSolutions.splice(index, 1, solution);
   }
 }
