@@ -291,7 +291,7 @@ export class BpmnIo {
     this.showXMLView = !this.showXMLView;
 
     if (this.showXMLView) {
-      this._updateXmlChanges();
+      this.xml = await this.getXML();
     }
   }
 
