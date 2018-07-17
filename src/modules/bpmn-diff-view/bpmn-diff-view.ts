@@ -216,8 +216,8 @@ export class BpmnDiffView {
 
   private _startSynchronizingViewers(): void {
     const lowerCanvas: ICanvas = this._lowerViewer.get('canvas');
-    const leftCanvas: any = this._leftViewer.get('canvas');
-    const rightCanvas: any = this._rightViewer.get('canvas');
+    const leftCanvas: ICanvas = this._leftViewer.get('canvas');
+    const rightCanvas: ICanvas = this._rightViewer.get('canvas');
 
     this._setEventFunctions(lowerCanvas, leftCanvas, rightCanvas);
     this._setEventFunctions(leftCanvas, rightCanvas, lowerCanvas);
