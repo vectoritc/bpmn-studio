@@ -121,12 +121,10 @@ export class ProcessSolutionPanel {
     await this._solutionExplorerServiceFileSystem.openSolution(event.target.files[0].path, this._identity);
     const newSolution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
 
-    let solutionIsAlreadyOpen: boolean = false;
-    this.openedFileSystemSolutions.forEach((solution: ISolution) => {
-      if (solution.uri === newSolution.uri) {
-        solutionIsAlreadyOpen = true;
-      }
-    });
+    const solutionIsAlreadyOpen: ISolution = this.openedFileSystemSolutions
+      .find((solution: ISolution) => {
+        return solution.uri === newSolution.uri;
+      });
 
     if (solutionIsAlreadyOpen) {
       this._notificationService.showNotification(NotificationType.INFO, 'Solution is already open');
@@ -146,12 +144,10 @@ export class ProcessSolutionPanel {
     const pathToDiagram: string = event.target.files[0].path;
     const newDiagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(pathToDiagram, this._identity);
 
-    let diagramIsAlreadyOpen: boolean = false;
-    this.openedSingleDiagrams.forEach((diagram: IDiagram) => {
-      if (diagram.uri === newDiagram.uri) {
-        diagramIsAlreadyOpen = true;
-      }
-    });
+    const diagramIsAlreadyOpen: IDiagram = this.openedSingleDiagrams
+      .find((diagram: IDiagram) => {
+        return diagram.uri === newDiagram.uri;
+      });
 
     if (diagramIsAlreadyOpen) {
       this._notificationService.showNotification(NotificationType.INFO, 'Diagram is already open');
