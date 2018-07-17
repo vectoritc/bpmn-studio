@@ -121,12 +121,16 @@ export class ProcessSolutionPanel {
     await this._solutionExplorerServiceFileSystem.openSolution(event.target.files[0].path, this._identity);
     const newSolution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
 
-    const solutionIsAlreadyOpen: ISolution = this.openedFileSystemSolutions
-      .find((solution: ISolution) => {
-        return solution.uri === newSolution.uri;
-      });
-
     this.solutionInput.value = '';
+
+    const getSolutionFromArray: ((solution: ISolution) => ISolution) =
+    (solution: ISolution): ISolution =>
+      this.openedFileSystemSolutions
+        .find((solutionFromArray: ISolution) => {
+          return solutionFromArray.uri === solution.uri;
+        });
+
+    const solutionIsAlreadyOpen: boolean = getSolutionFromArray(newSolution) !== undefined;
 
     if (solutionIsAlreadyOpen) {
       this._notificationService.showNotification(NotificationType.INFO, 'Solution is already open');
@@ -148,10 +152,14 @@ export class ProcessSolutionPanel {
 
     this.singleDiagramInput.value = '';
 
-    const diagramIsAlreadyOpen: IDiagram = this.openedSingleDiagrams
-      .find((diagram: IDiagram) => {
-        return diagram.uri === newDiagram.uri;
-      });
+    const getDiagramFromArray: ((diagram: IDiagram) => IDiagram) =
+    (diagram: IDiagram): IDiagram =>
+      this.openedSingleDiagrams
+        .find((diagramFromArray: IDiagram) => {
+          return diagramFromArray.uri === diagram.uri;
+        });
+
+    const diagramIsAlreadyOpen: boolean = getDiagramFromArray(newDiagram) !== undefined;
 
     if (diagramIsAlreadyOpen) {
       this._notificationService.showNotification(NotificationType.INFO, 'Diagram is already open');
