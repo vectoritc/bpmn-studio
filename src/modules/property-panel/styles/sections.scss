@@ -96,3 +96,7 @@
 .remove-context-button:not(:disabled):hover {
   color: black;
 }
+
+.remove-context-button:not(:disabled):focus {
+  color: black;
+}
