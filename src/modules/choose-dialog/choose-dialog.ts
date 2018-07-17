@@ -5,7 +5,7 @@ export class ChooseDialog {
 
   @bindable() public options: Array<IChooseDialogOption>;
 
-  @bindable() private onSelected: ((option: any) => void);
+  @bindable() public onSelected: ((option: any) => void);
 
   public onSelect(selected: IChooseDialogOption): void {
     if (this.onSelected) {
