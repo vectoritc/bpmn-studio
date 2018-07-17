@@ -7,6 +7,7 @@ import {
   IAuthenticationService,
   IIdentity,
   ILoginResult,
+  ILogoutResult,
 } from '../../contracts/index';
 
 const LOCAL_STORAGE_TOKEN_KEY: string = 'process-engine-token';
@@ -62,12 +63,11 @@ export class AuthenticationService implements IAuthenticationService {
   }
 
   public async logout(): Promise<void> {
-    const result: any = await this._authenticationRepository.logout();
+    const result: ILogoutResult = await this._authenticationRepository.logout();
     this.tokenRepository.setToken(null);
     this.tokenRepository.setIdentity(null);
     this._eventAggregator.publish(AuthenticationStateEvent.LOGOUT);
     window.localStorage.removeItem(LOCAL_STORAGE_TOKEN_KEY);
-    return result;
   }
 
   public hasToken(): boolean {

@@ -45,7 +45,7 @@ export class AuthenticationRepository implements IAuthenticationRepository {
     return throwOnErrorResponse<ILogoutResult>(response);
   }
 
-  public async getIdentity(token: string): Promise<any> {
+  public async getIdentity(token: string): Promise<IIdentity> {
     const url: string = `${environment.processengine.routes.iam}/getidentity`;
     const options: RequestInit = {
       method: 'get',
