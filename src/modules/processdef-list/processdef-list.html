@@ -85,13 +85,10 @@
         <table class="table table-striped table-bordered">
           <tr>
             <th>Process Definition Name</th>
-            <!-- TODO: Drop the Id; it does not seem usefull -->
-            <th>Process Definition Id</th>
             <th></th>
           </tr>
           <tr repeat.for="process of processes" id="processDef">
             <td>${process.name}</td>
-            <td>${process.id}</td>
             <td>
               <button click.delegate="startProcess(process.id)" class="btn btn-success">Start</button>
               <button click.delegate="showDetails(process.id)" class="btn btn-primary" id="processDefDetailsButton">Details</button>
