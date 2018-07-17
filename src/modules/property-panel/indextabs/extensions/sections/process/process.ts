@@ -65,8 +65,8 @@ export class ProcessSection {
   }
 
   private _init(): void {
-    this.propertyElement = this._getPropertyElement();
     this.selectedElement = this.businessObjInPanel;
+    this.propertyElement = this._getPropertiesElement();
     this._reloadProperties();
   }
 
@@ -93,7 +93,7 @@ export class ProcessSection {
     }
   }
 
-  private _getPropertyElement(): IPropertiesElement {
+  private _getPropertiesElement(): IPropertiesElement {
 
     const hasNoBusinessObjExtensionElements: boolean = this.businessObjInPanel.processRef.extensionElements === undefined
                                                   || this.businessObjInPanel.processRef.extensionElements === null;
@@ -102,31 +102,31 @@ export class ProcessSection {
       this._createExtensionElement();
     }
 
-    const propertyElement: IPropertiesElement = this.businessObjInPanel
+    const propertiesElement: IPropertiesElement = this.businessObjInPanel
                                                   .processRef
                                                   .extensionElements
                                                   .values
                                                   .find((extensionValue: IExtensionElement) => {
 
-      const extensionIsPropertyElement: boolean = extensionValue.$type === 'camunda:Properties'
+      const extensionIsPropertiesElement: boolean = extensionValue.$type === 'camunda:Properties'
                                                && extensionValue.values !== undefined
                                                && extensionValue.values !== null;
 
-      return extensionIsPropertyElement;
+      return extensionIsPropertiesElement;
     });
 
-    if (propertyElement === undefined) {
+    if (propertiesElement === undefined) {
       this._createEmptyPropertyElement();
 
-      return this._getPropertyElement();
+      return this._getPropertiesElement();
     }
 
-    return propertyElement;
+    return propertiesElement;
   }
 
   private _createExtensionElement(): void {
-    const propertyValues: Array<IProperty> = [];
-    const propertyElement: IPropertiesElement = this.moddle.create('camunda:Properties', {values: propertyValues});
+    const properties: Array<IProperty> = [];
+    const propertiesElement: IPropertiesElement = this.moddle.create('camunda:Properties', {values: properties});
 
     const bpmnExecutionListenerProperties: Object = {
       class: '',
@@ -135,7 +135,7 @@ export class ProcessSection {
 
     const bpmnExecutionListener: IModdleElement = this.moddle.create('camunda:ExecutionListener', bpmnExecutionListenerProperties);
 
-    const extensionValues: Array<IModdleElement> = [bpmnExecutionListener, propertyElement];
+    const extensionValues: Array<IModdleElement> = [bpmnExecutionListener, propertiesElement];
 
     const extensionElements: IModdleElement = this.moddle.create('bpmn:ExtensionElements', {values: extensionValues});
 
@@ -146,14 +146,14 @@ export class ProcessSection {
   }
 
   private _createEmptyPropertyElement(): void {
-    const propertyValues: Array<IProperty> = [];
+    const properties: Array<IProperty> = [];
 
-    const extensionPropertyElement: IPropertiesElement = this.moddle.create('camunda:Properties', {values: propertyValues});
+    const extensionPropertiesElement: IPropertiesElement = this.moddle.create('camunda:Properties', {values: properties});
 
     // Append to the extension elements of the process reference.
     this.businessObjInPanel
         .extensionElements
         .values
-        .push(extensionPropertyElement);
+        .push(extensionPropertiesElement);
   }
 }
