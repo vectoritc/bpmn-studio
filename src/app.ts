@@ -105,7 +105,7 @@ export class App {
       },
     ]);
 
-    config.fallbackRoute('');
+    config.fallbackRoute('processdef');
 
     this._openIdConnect.configure(config);
   }

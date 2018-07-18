@@ -10,7 +10,7 @@ export const oidcConfig: OpenIdConnectConfiguration = {
   userManagerSettings: {
     accessTokenExpiringNotificationTime: 1,
     authority: environment.openIdConnect.authority,
-    automaticSilentRenew: true,
+    automaticSilentRenew: false,
     monitorSession: true,
     checkSessionInterval: 2000,
     client_id: 'bpmn_studio',
