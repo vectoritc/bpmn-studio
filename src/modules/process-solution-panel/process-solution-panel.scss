@@ -1,10 +1,10 @@
 .process-explorer__solution-explorer {
-  background-color: #f7f7f7;
-  width: 220px;
-  border-right: 2px solid #dcdbdb;
+  width: 220px;  
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
+  background-color: #f7f7f7;
+  border-right: 2px solid #dcdbdb;
   user-select: none;
 }
 
@@ -146,7 +146,7 @@
 
 .single-diagram-group__close:hover {
   cursor: pointer;
-  color: #5e5e5e;
+  text-decoration: underline;
 }
 
 .solution-input-group {

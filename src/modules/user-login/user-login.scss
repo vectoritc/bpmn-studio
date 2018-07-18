@@ -1,26 +1,20 @@
 .user-login-dropdown {
-  z-index: 1;
   position: absolute;  
   top: 38px;  
   right: 33px;
+  z-index: 1;
+  background-color: whitesmoke;
   border: 2px solid #dcdbdb;
   border-radius: 0;
-  background-color: whitesmoke;
 }
 
 .user-login-dropdown__content {
   padding: 10px;
 }
 
-.user-profile-dropdown__content
-label {
-  float: left;
-  margin: 10px 0 0 0;
-}
-
 .user-login a {
- color: #5c5c5c;
- white-space: nowrap;
+  color: #5c5c5c;
+  white-space: nowrap;
 }
 
 .user-login-dropdown__toggle {
@@ -33,4 +27,8 @@ label {
   margin-bottom: 10px;
   background-color: white;
   border: 1px solid darkgray;
+}
+
+.custom-button:focus {
+  border-color: black;
 }
