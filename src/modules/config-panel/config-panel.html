@@ -9,7 +9,7 @@
     </div>
     <div class="config-panel__panel panel panel-default">
       <label for="processEngineRoute">Base Route</label>
-      <input value.bind="config.bpmnStudioClient.baseRoute" type="text" class="form-control" id="processEngineRoute">
+      <input value.bind="baseRoute" type="text" class="form-control" id="processEngineRoute">
       <p if.bind="isLoggedInToProcessEngine">The login session is bound to the current ProcessEngine. Changing the backend route will log you out.</p>
     </div>
     <div class="config-panel__subtitle">
