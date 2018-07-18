@@ -308,8 +308,12 @@ export class ProcessDefDetail {
     try {
       await this._updateProcessStartEvents();
     } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, `Error while obtaining the StartEvents which belongs to the Process.`);
-      console.error(error);
+      this
+        ._notificationService
+        .showNotification(
+          NotificationType.ERROR,
+          `Error while obtaining the StartEvents which belongs to the Process: ${error.message}`,
+        );
     }
   }
 
@@ -323,15 +327,18 @@ export class ProcessDefDetail {
     try {
       await this._updateProcessStartEvents();
     } catch (error) {
-      console.error(error);
+      this.
+        _notificationService
+        .showNotification(
+          NotificationType.ERROR,
+          error.message,
+        );
     }
     const modalResult: string = await this.showModalDialogAndAwaitAnswer();
 
     if (modalResult === '') {
       return;
     }
-
-    console.log(`Start Process with StartEvent: ${modalResult}`);
 
     this._dropInvalidFormData();
 
@@ -356,7 +363,12 @@ export class ProcessDefDetail {
       await this._managementApiClient.startProcessInstance(context, this.process.key, modalResult, startRequestPayload, undefined, undefined);
 
     } catch (error) {
-      console.log(error);
+      this.
+        _notificationService
+        .showNotification(
+          NotificationType.ERROR,
+          error.message,
+        );
     }
 
     this._router.navigate(`processdef/${this.process.id}/start`);
