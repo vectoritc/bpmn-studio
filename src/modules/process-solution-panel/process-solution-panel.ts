@@ -62,7 +62,12 @@ export class ProcessSolutionPanel {
       // Register handler for double-click event fired from "elecrin.js".
       ipcRenderer.on('double-click-on-file', async(event: Event, pathToFile: string) => {
         const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(pathToFile, this._identity);
-        this.openedSingleDiagrams.push(diagram);
+
+        const diagramIsNotAlreadyOpen: boolean = this._findURIObject(this.openedSingleDiagrams, diagram.uri) === undefined;
+        if (diagramIsNotAlreadyOpen) {
+          this.openedSingleDiagrams.push(diagram);
+        }
+
         this.navigateToDiagramDetail(diagram);
         this.openFileSystemIndexCard();
       });
