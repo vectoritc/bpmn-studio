@@ -176,24 +176,29 @@ export class BpmnIo {
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, async(process: IProcessDefEntity) => {
         const xml: string = await this.getXML();
         const bpmn: string = await this._diagramExportService.exportBPMN(xml);
+
         download(bpmn, `${this.name}.bpmn`, 'application/bpmn20-xml');
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, async(process: IProcessDefEntity) => {
         const svg: string = await this.getSVG();
+
         download(svg, `${this.name}.svg`, 'image/svg+xml');
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, async(process: IProcessDefEntity) => {
         const svg: string = await this.getSVG();
         const png: string = await this._diagramExportService.exportPNG(svg);
+
         download(png, `${this.name}.png`, 'image/png');
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, async(process: IProcessDefEntity) => {
         const svg: string = await this.getSVG();
         const jpeg: string = await this._diagramExportService.exportPNG(svg);
+
         download(jpeg, `${this.name}.jpeg`, 'image/jpeg');
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.printDiagram}`, async() => {
         const svgContent: string = await this.getSVG();
+
         this._diagramPrintService.printDiagram(svgContent);
       }),
 
