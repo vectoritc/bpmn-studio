@@ -63,7 +63,7 @@ export class ProcessDefList {
 
     this._refreshProcesslist();
 
-    this._fileReader.onload = async(fileInformations: any): Promise<void> => {
+    this._fileReader.onload = async(fileInformations: FileReaderProgressEvent): Promise<void> => {
 
       const xml: string = fileInformations.target.result;
       const filename: string = this.selectedFiles[0].name;

@@ -7,10 +7,11 @@ import {IPagination, IProcessDefEntity} from '@process-engine/bpmn-studio_client
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
-import {AuthenticationStateEvent, IFileInfo} from '../../contracts/index';
+import {AuthenticationStateEvent, IFileInfo, IInputEvent, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
+import {NotificationService} from '../notification/notification.service';
 
-@inject(EventAggregator, Router, 'SolutionExplorerServiceProcessEngine', 'SolutionExplorerServiceFileSystem', 'Identity')
+@inject(EventAggregator, Router, 'SolutionExplorerServiceProcessEngine', 'SolutionExplorerServiceFileSystem', 'NotificationService', 'Identity')
 export class ProcessSolutionPanel {
   public processes: IPagination<IProcessDefEntity>;
   public processengineSolutionString: string;
@@ -28,6 +29,7 @@ export class ProcessSolutionPanel {
   private _subscriptions: Array<Subscription>;
   private _eventAggregator: EventAggregator;
   private _router: Router;
+  private _notificationService: NotificationService;
   private _identity: IIdentity;
   private _solutionExplorerServiceProcessEngine: ISolutionExplorerService;
   private _solutionExplorerServiceFileSystem: ISolutionExplorerService;
@@ -35,12 +37,14 @@ export class ProcessSolutionPanel {
   constructor(eventAggregator: EventAggregator,
               router: Router,
               solutionExplorerServiceProcessEngine: ISolutionExplorerService,
-              solutionExplorerServiceFileSystem: ISolutionExplorerService) {
+              solutionExplorerServiceFileSystem: ISolutionExplorerService,
+              notificationService: NotificationService) {
 
     this._eventAggregator = eventAggregator;
     this._router = router;
     this._solutionExplorerServiceProcessEngine = solutionExplorerServiceProcessEngine;
     this._solutionExplorerServiceFileSystem = solutionExplorerServiceFileSystem;
+    this._notificationService = notificationService;
   }
 
   public async attached(): Promise<void> {
@@ -113,11 +117,21 @@ export class ProcessSolutionPanel {
    * @param event A event that holds the files that were "uploaded" by the user.
    * Currently there is no type for this kind of event.
    */
-  public async onSolutionInputChange(event: any): Promise<void> {
+  public async onSolutionInputChange(event: IInputEvent): Promise<void> {
     await this._solutionExplorerServiceFileSystem.openSolution(event.target.files[0].path, this._identity);
-    const solution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
-    this.openedFileSystemSolutions.push(solution);
+    const newSolution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
+
     this.solutionInput.value = '';
+
+    const solutionIsAlreadyOpen: boolean = this._findURIObject(this.openedFileSystemSolutions, newSolution.uri) !== undefined;
+
+    if (solutionIsAlreadyOpen) {
+      this._notificationService.showNotification(NotificationType.INFO, 'Solution is already open');
+
+      return;
+    }
+
+    this.openedFileSystemSolutions.push(newSolution);
   }
 
   /**
@@ -125,10 +139,21 @@ export class ProcessSolutionPanel {
    * @param event A event that holds the files that were "uploaded" by the user.
    * Currently there is no type for this kind of event.
    */
-  public async onSingleDiagramInputChange(event: any): Promise<void> {
+  public async onSingleDiagramInputChange(event: IInputEvent): Promise<void> {
     const pathToDiagram: string = event.target.files[0].path;
-    const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(pathToDiagram, this._identity);
-    this.openedSingleDiagrams.push(diagram);
+    const newDiagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(pathToDiagram, this._identity);
+
+    this.singleDiagramInput.value = '';
+
+    const diagramIsAlreadyOpen: boolean = this._findURIObject(this.openedSingleDiagrams, newDiagram.uri) !== undefined;
+
+    if (diagramIsAlreadyOpen) {
+      this._notificationService.showNotification(NotificationType.INFO, 'Diagram is already open');
+
+      return;
+    }
+
+    this.openedSingleDiagrams.push(newDiagram);
   }
 
   public closeFileSystemSolution(solutionToClose: ISolution): void {
@@ -183,5 +208,13 @@ export class ProcessSolutionPanel {
   private _updateSolution(solutionToUpdate: ISolution, solution: ISolution): void {
     const index: number = this.openedFileSystemSolutions.indexOf(solutionToUpdate);
     this.openedFileSystemSolutions.splice(index, 1, solution);
+  }
+
+  private _findURIObject<T extends {uri: string}>(objects: Array<T>, targetURI: string): T {
+    const foundObject: T = objects.find((object: T): boolean => {
+      return object.uri === targetURI;
+    });
+
+    return foundObject;
   }
 }
