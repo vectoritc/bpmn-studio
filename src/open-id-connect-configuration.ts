@@ -1,5 +1,5 @@
 import { OpenIdConnectConfiguration } from 'aurelia-open-id-connect';
-import { UserManagerSettings, WebStorageStateStore } from 'oidc-client';
+import { WebStorageStateStore } from 'oidc-client';
 import environment from './environment';
 
 export const oidcConfig: OpenIdConnectConfiguration = {
@@ -14,7 +14,6 @@ export const oidcConfig: OpenIdConnectConfiguration = {
     monitorSession: true,
     checkSessionInterval: 2000,
     client_id: 'bpmn_studio',
-    // client_id: 'implicit',
     filterProtocolClaims: true,
     loadUserInfo: false,
     post_logout_redirect_uri: `${environment.appHost}/signout-oidc`,
