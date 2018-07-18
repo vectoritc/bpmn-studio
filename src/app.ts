@@ -1,5 +1,5 @@
-import { inject } from 'aurelia-framework';
-import { OpenIdConnect } from 'aurelia-open-id-connect';
+import {inject} from 'aurelia-framework';
+import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {RouterConfiguration} from 'aurelia-router';
 
 @inject(OpenIdConnect)

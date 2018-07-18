@@ -1,5 +1,5 @@
-import { OpenIdConnectConfiguration } from 'aurelia-open-id-connect';
-import { WebStorageStateStore } from 'oidc-client';
+import {OpenIdConnectConfiguration} from 'aurelia-open-id-connect';
+import {WebStorageStateStore} from 'oidc-client';
 import environment from './environment';
 
 export const oidcConfig: OpenIdConnectConfiguration = {

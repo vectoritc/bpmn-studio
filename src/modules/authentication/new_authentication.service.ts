@@ -1,7 +1,7 @@
 import {EventAggregator} from 'aurelia-event-aggregator';
-import { inject } from 'aurelia-framework';
-import { OpenIdConnect } from 'aurelia-open-id-connect';
-import { User } from 'oidc-client';
+import {inject} from 'aurelia-framework';
+import {OpenIdConnect} from 'aurelia-open-id-connect';
+import {User} from 'oidc-client';
 
 import {AuthenticationStateEvent, IAuthenticationService, IIdentity} from '../../contracts/index';
 import environment from './../../environment';

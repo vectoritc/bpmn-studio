@@ -1,7 +1,7 @@
 import {BpmnStudioClient} from '@process-engine/bpmn-studio_client';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
-import { OpenIdConnect } from 'aurelia-open-id-connect';
+import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {Router} from 'aurelia-router';
 import environment from '../../environment';
 import {IAuthenticationService} from './../../contracts/authentication/IAuthenticationService';
