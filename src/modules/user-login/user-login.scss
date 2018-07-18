@@ -28,3 +28,7 @@
   background-color: white;
   border: 1px solid darkgray;
 }
+
+.custom-button:focus {
+  border-color: black;
+}
