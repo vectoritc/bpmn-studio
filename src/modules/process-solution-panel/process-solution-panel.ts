@@ -57,20 +57,19 @@ export class ProcessSolutionPanel {
       this.enableFileSystemSolutions = true;
 
       const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
-      const path: string = (<any> window).nodeRequire('path');
 
       // Register handler for double-click event fired from "elecron.js".
       ipcRenderer.on('double-click-on-file', async(event: Event, pathToFile: string) => {
         const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(pathToFile, this._identity);
 
-        const openedDiagram: IDiagram = this._findURIObject(this.openedSingleDiagrams, diagram.uri);
+        try {
+          const diagramWasAlreadyOpen: boolean = !await this._openSingleDiagram(diagram);
 
-        const diagramIsNotAlreadyOpen: boolean = openedDiagram === undefined;
-        if (diagramIsNotAlreadyOpen) {
-          this.openedSingleDiagrams.push(diagram);
-          this.navigateToDiagramDetail(diagram);
-        } else {
-          this.navigateToDiagramDetail(openedDiagram);
+          if (diagramWasAlreadyOpen) {
+            this._notificationService.showNotification(NotificationType.INFO, 'Diagram is already opened.');
+          }
+        } catch (error) {
+          this._notificationService.showNotification(NotificationType.ERROR, `Error loading diagram: ${error.message}`);
         }
 
         this.openFileSystemIndexCard();
@@ -84,8 +83,13 @@ export class ProcessSolutionPanel {
 
       if (fileInfo.path) {
         const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(fileInfo.path, this._identity);
-        this.openedSingleDiagrams.push(diagram);
-        this.navigateToDiagramDetail(diagram);
+
+        try {
+          await this._openSingleDiagram(diagram);
+        } catch (error) {
+          this._notificationService.showNotification(NotificationType.ERROR, `Error loading diagram: ${error.message}`);
+        }
+
         this.openFileSystemIndexCard();
       }
     }
@@ -154,15 +158,15 @@ export class ProcessSolutionPanel {
 
     this.singleDiagramInput.value = '';
 
-    const diagramIsAlreadyOpen: boolean = this._findURIObject(this.openedSingleDiagrams, newDiagram.uri) !== undefined;
+    try {
+      const diagramWasAlreadyOpen: boolean = !await this._openSingleDiagram(newDiagram);
 
-    if (diagramIsAlreadyOpen) {
-      this._notificationService.showNotification(NotificationType.INFO, 'Diagram is already open');
-
-      return;
+      if (diagramWasAlreadyOpen) {
+        this._notificationService.showNotification(NotificationType.INFO, 'Diagram is already opened.');
+      }
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR, `Error loading diagram: ${error.message}`);
     }
-
-    this.openedSingleDiagrams.push(newDiagram);
   }
 
   public closeFileSystemSolution(solutionToClose: ISolution): void {
@@ -205,6 +209,35 @@ export class ProcessSolutionPanel {
   public async navigateToDiagramDetail(diagram: IDiagram): Promise<void> {
     this._eventAggregator.publish(environment.events.navBar.updateProcess, diagram);
     this._router.navigateToRoute('diagram-detail', {diagramUri: diagram.uri});
+  }
+
+  private async _openSingleDiagram(newDiagram: IDiagram): Promise<boolean> {
+    const diagramWithSameURI: IDiagram = this._findURIObject(this.openedSingleDiagrams, newDiagram.uri);
+
+    const diagramIsAlreadyOpened: boolean = diagramWithSameURI !== undefined;
+
+    if (diagramIsAlreadyOpened) {
+      // When the diagram is already opened we just navigate to that.
+      this.navigateToDiagramDetail(diagramWithSameURI);
+      return false;
+    }
+
+    const isNonXMLFile: boolean = !this._hasXMLFileSignature(newDiagram.xml);
+    if (isNonXMLFile) {
+      throw new Error('Input diagram is not a XML file.');
+    }
+
+    this.openedSingleDiagrams.push(newDiagram);
+    this.navigateToDiagramDetail(newDiagram);
+
+    return true;
+  }
+
+  private _hasXMLFileSignature(content: string): boolean {
+    const xmlSignature: string = '<?xml ';
+    const startsWithSignature: boolean = content.startsWith(xmlSignature);
+
+    return startsWithSignature;
   }
 
   private async _refreshProcesslist(): Promise<void> {
