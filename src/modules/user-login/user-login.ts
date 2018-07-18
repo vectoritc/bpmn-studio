@@ -1,6 +1,5 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, bindingMode, computedFrom, inject} from 'aurelia-framework';
-import { User } from 'oidc-client';
 
 import {AuthenticationStateEvent, IAuthenticationService, IIdentity, NotificationType} from '../../contracts/index';
 import {NotificationService} from './../notification/notification.service';
