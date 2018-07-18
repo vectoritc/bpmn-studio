@@ -63,12 +63,16 @@ export class ProcessSolutionPanel {
       ipcRenderer.on('double-click-on-file', async(event: Event, pathToFile: string) => {
         const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(pathToFile, this._identity);
 
-        const diagramIsNotAlreadyOpen: boolean = this._findURIObject(this.openedSingleDiagrams, diagram.uri) === undefined;
+        const openedDiagram: IDiagram = this._findURIObject(this.openedSingleDiagrams, diagram.uri);
+
+        const diagramIsNotAlreadyOpen: boolean = openedDiagram === undefined;
         if (diagramIsNotAlreadyOpen) {
           this.openedSingleDiagrams.push(diagram);
+          this.navigateToDiagramDetail(diagram);
+        } else {
+          this.navigateToDiagramDetail(openedDiagram);
         }
 
-        this.navigateToDiagramDetail(diagram);
         this.openFileSystemIndexCard();
       });
 
