@@ -11,6 +11,10 @@ import {AuthenticationStateEvent, IFileInfo, NotificationType} from '../../contr
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
+interface IURIObject {
+  uri: string;
+}
+
 @inject(EventAggregator, Router, 'SolutionExplorerServiceProcessEngine', 'SolutionExplorerServiceFileSystem', 'NotificationService', 'Identity')
 export class ProcessSolutionPanel {
   public processes: IPagination<IProcessDefEntity>;
@@ -123,14 +127,7 @@ export class ProcessSolutionPanel {
 
     this.solutionInput.value = '';
 
-    const getSolutionFromArray: ((solution: ISolution) => ISolution) =
-    (solution: ISolution): ISolution =>
-      this.openedFileSystemSolutions
-        .find((solutionFromArray: ISolution) => {
-          return solutionFromArray.uri === solution.uri;
-        });
-
-    const solutionIsAlreadyOpen: boolean = getSolutionFromArray(newSolution) !== undefined;
+    const solutionIsAlreadyOpen: boolean = this._findURIObject(this.openedFileSystemSolutions, newSolution.uri) !== undefined;
 
     if (solutionIsAlreadyOpen) {
       this._notificationService.showNotification(NotificationType.INFO, 'Solution is already open');
@@ -152,14 +149,7 @@ export class ProcessSolutionPanel {
 
     this.singleDiagramInput.value = '';
 
-    const getDiagramFromArray: ((diagram: IDiagram) => IDiagram) =
-    (diagram: IDiagram): IDiagram =>
-      this.openedSingleDiagrams
-        .find((diagramFromArray: IDiagram) => {
-          return diagramFromArray.uri === diagram.uri;
-        });
-
-    const diagramIsAlreadyOpen: boolean = getDiagramFromArray(newDiagram) !== undefined;
+    const diagramIsAlreadyOpen: boolean = this._findURIObject(this.openedSingleDiagrams, newDiagram.uri) !== undefined;
 
     if (diagramIsAlreadyOpen) {
       this._notificationService.showNotification(NotificationType.INFO, 'Diagram is already open');
@@ -222,5 +212,13 @@ export class ProcessSolutionPanel {
   private _updateSolution(solutionToUpdate: ISolution, solution: ISolution): void {
     const index: number = this.openedFileSystemSolutions.indexOf(solutionToUpdate);
     this.openedFileSystemSolutions.splice(index, 1, solution);
+  }
+
+  private _findURIObject<T extends IURIObject>(objects: Array<T>, targetURI: string): T {
+    const foundObject: T = objects.find((object: T): boolean => {
+      return object.uri === targetURI;
+    });
+
+    return foundObject;
   }
 }
