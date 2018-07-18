@@ -11,10 +11,6 @@ import {AuthenticationStateEvent, IFileInfo, IInputEvent, NotificationType} from
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
-interface IURIObject {
-  uri: string;
-}
-
 @inject(EventAggregator, Router, 'SolutionExplorerServiceProcessEngine', 'SolutionExplorerServiceFileSystem', 'NotificationService', 'Identity')
 export class ProcessSolutionPanel {
   public processes: IPagination<IProcessDefEntity>;
@@ -214,7 +210,7 @@ export class ProcessSolutionPanel {
     this.openedFileSystemSolutions.splice(index, 1, solution);
   }
 
-  private _findURIObject<T extends IURIObject>(objects: Array<T>, targetURI: string): T {
+  private _findURIObject<T extends {uri: string}>(objects: Array<T>, targetURI: string): T {
     const foundObject: T = objects.find((object: T): boolean => {
       return object.uri === targetURI;
     });
