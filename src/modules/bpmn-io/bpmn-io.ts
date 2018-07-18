@@ -174,8 +174,9 @@ export class BpmnIo {
         this._diagramIsValid = false;
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, async(process: IProcessDefEntity) => {
-        const xml: string = await this._diagramExportService.exportBPMN(this.xml);
-        download(xml, `${this.name}.bpmn`, 'application/bpmn20-xml');
+        const xml: string = await this.getXML();
+        const bpmn: string = await this._diagramExportService.exportBPMN(xml);
+        download(bpmn, `${this.name}.bpmn`, 'application/bpmn20-xml');
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, async(process: IProcessDefEntity) => {
         const svg: string = await this.getSVG();
