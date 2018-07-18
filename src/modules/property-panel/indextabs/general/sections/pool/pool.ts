@@ -2,7 +2,6 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {ValidateEvent, ValidationController, ValidationRules} from 'aurelia-validation';
 import {
-  IBpmnModdle,
   IBpmnModeler,
   IElementRegistry,
   IModdleElement,
@@ -23,7 +22,6 @@ export class PoolSection implements ISection {
   public businessObjInPanel: IPoolElement;
 
   private _modeler: IBpmnModeler;
-  private _bpmnModdle: IBpmnModdle;
   private _previousProcessRefId: string;
   private _eventAggregator: EventAggregator;
 
@@ -42,7 +40,6 @@ export class PoolSection implements ISection {
     this._previousProcessRefId = this.businessObjInPanel.processRef.id;
 
     this._modeler = model.modeler;
-    this._bpmnModdle = this._modeler.get('moddle');
 
     this.validationController.subscribe((event: ValidateEvent) => {
       this._validateId(event);

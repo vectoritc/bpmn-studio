@@ -57,10 +57,10 @@ export class ProcessSolutionPanel {
       this.enableFileSystemSolutions = true;
 
       const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
-      const path: any = (<any> window).nodeRequire('path');
+      const path: string = (<any> window).nodeRequire('path');
 
       // Register handler for double-click event fired from "elecrin.js".
-      ipcRenderer.on('double-click-on-file', async(event: any, pathToFile: string) => {
+      ipcRenderer.on('double-click-on-file', async(event: Event, pathToFile: string) => {
         const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(pathToFile, this._identity);
         this.openedSingleDiagrams.push(diagram);
         this.navigateToDiagramDetail(diagram);

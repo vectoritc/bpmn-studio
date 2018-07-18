@@ -34,6 +34,7 @@ export function configure(aurelia: Aurelia): void {
     const filesystemSolutionexplorerService: SolutionExplorerService = new SolutionExplorerService(fileSystemrepository);
     aurelia.container.registerInstance('SolutionExplorerServiceFileSystem', filesystemSolutionexplorerService);
   }
+
   const processengineRepository: SolutionExplorerProcessEngineRepository = new SolutionExplorerProcessEngineRepository();
   const solutionexplorerService: SolutionExplorerService = new SolutionExplorerService(processengineRepository);
   aurelia.container.registerInstance('SolutionExplorerServiceProcessEngine', solutionexplorerService);

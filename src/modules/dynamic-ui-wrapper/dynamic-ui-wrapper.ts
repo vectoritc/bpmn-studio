@@ -2,25 +2,23 @@ import {
   IConfirmWidgetConfig,
   IUserTaskConfig,
   UserTaskProceedAction,
-  WidgetConfig,
   WidgetType,
 } from '@process-engine/bpmn-studio_client';
 import {bindable, inject} from 'aurelia-framework';
 import {IDynamicUiService} from '../../contracts';
-import environment from '../../environment';
 
 @inject('DynamicUiService')
 export class DynamicUiWrapper {
 
-  private dynamicUiService: IDynamicUiService;
-  @bindable()
-  private _currentConfig: IUserTaskConfig;
-  private declineButtonText: string = 'Cancel';
-  private confirmButtonText: string = 'Continue';
+  public declineButtonText: string = 'Cancel';
+  public confirmButtonText: string = 'Continue';
   public onButtonClick: (action: string) => void;
 
+  private _dynamicUiService: IDynamicUiService;
+  @bindable() private _currentConfig: IUserTaskConfig;
+
   constructor(dynamicUiService: IDynamicUiService) {
-    this.dynamicUiService = dynamicUiService;
+    this._dynamicUiService = dynamicUiService;
   }
 
   public handleButtonClick(action: string): void {
@@ -30,7 +28,7 @@ export class DynamicUiWrapper {
     if (this.onButtonClick) {
       this.onButtonClick(action);
     }
-    this.dynamicUiService.sendProceedAction(action, this._currentConfig);
+    this._dynamicUiService.sendProceedAction(action, this._currentConfig);
     this._currentConfig = null;
   }
 

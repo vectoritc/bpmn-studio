@@ -4,10 +4,11 @@ import {GeneralRepository} from '../repository/general.repository';
 
 @inject(GeneralRepository)
 export class GeneralService {
-  private generalRepository: GeneralRepository;
+
+  private _generalRepository: GeneralRepository;
 
   constructor(generalRepository: GeneralRepository) {
-    this.generalRepository = generalRepository;
+    this._generalRepository = generalRepository;
   }
 
   public generateRandomId(): string {
@@ -22,11 +23,11 @@ export class GeneralService {
   }
 
   public getAllProcesses(): Promise<IPagination<IProcessDefEntity>> {
-    return this.generalRepository.getAllProcesses();
+    return this._generalRepository.getAllProcesses();
   }
 
-  public updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<any> {
-    return this.generalRepository.updateProcessDef(processDef, xml);
+  public updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<Response> {
+    return this._generalRepository.updateProcessDef(processDef, xml);
   }
 
 }
