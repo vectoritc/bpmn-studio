@@ -21,7 +21,7 @@ export class ConfigPanel {
   // We use any here, because we need to call private members (see below)
   private _openIdConnect: OpenIdConnect | any;
 
-  public config: any = environment;
+  public config: typeof environment = environment;
   public isLoggedInToProcessEngine: boolean;
 
   constructor(router: Router,
