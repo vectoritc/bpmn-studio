@@ -7,7 +7,7 @@ import {IPagination, IProcessDefEntity} from '@process-engine/bpmn-studio_client
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
-import {AuthenticationStateEvent, IFileInfo, NotificationType} from '../../contracts/index';
+import {AuthenticationStateEvent, IFileInfo, IInputEvent, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
@@ -121,7 +121,7 @@ export class ProcessSolutionPanel {
    * @param event A event that holds the files that were "uploaded" by the user.
    * Currently there is no type for this kind of event.
    */
-  public async onSolutionInputChange(event: any): Promise<void> {
+  public async onSolutionInputChange(event: IInputEvent): Promise<void> {
     await this._solutionExplorerServiceFileSystem.openSolution(event.target.files[0].path, this._identity);
     const newSolution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
 
@@ -143,7 +143,7 @@ export class ProcessSolutionPanel {
    * @param event A event that holds the files that were "uploaded" by the user.
    * Currently there is no type for this kind of event.
    */
-  public async onSingleDiagramInputChange(event: any): Promise<void> {
+  public async onSingleDiagramInputChange(event: IInputEvent): Promise<void> {
     const pathToDiagram: string = event.target.files[0].path;
     const newDiagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(pathToDiagram, this._identity);
 
