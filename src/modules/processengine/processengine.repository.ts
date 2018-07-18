@@ -5,10 +5,11 @@ import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {
   IAuthenticationService,
-  IErrorResponse, IIdentity,
+  IIdentity,
   IPagination,
   IProcessEngineRepository,
   IProcessEntity,
+  IResponse,
 } from '../../contracts';
 import environment from '../../environment';
 import {throwOnErrorResponse} from '../../resources/http-repository-tools';
@@ -104,10 +105,10 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
     this._router.navigate(`processdef/${processDefId}/detail`);
   }
 
-  public async updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<Response | IErrorResponse> {
+  public async updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<IResponse> {
 
     let updateError: Error;
-    let result: Response | IErrorResponse;
+    let result: IResponse;
     try {
       const options: RequestInit = {
         method: 'post',
@@ -121,7 +122,7 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
       const url: string = `${environment.processengine.routes.processes}/${processDef.id}/updateBpmn`;
       const response: Response = await this._http.fetch(url, options);
 
-      result = await throwOnErrorResponse<IErrorResponse>(response);
+      result = await throwOnErrorResponse<IResponse>(response);
     } catch (error) {
       updateError = error;
     }

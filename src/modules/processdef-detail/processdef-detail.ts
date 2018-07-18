@@ -7,10 +7,12 @@ import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 
 import {
   AuthenticationStateEvent,
+  IErrorResponse,
   IExtensionElement,
   IFormElement,
   IModdleElement,
   IProcessEngineService,
+  IResponse,
   IShape,
   NotificationType,
 } from '../../contracts/index';
@@ -221,7 +223,7 @@ export class ProcessDefDetail {
     return this
       ._processEngineService
       .getProcessDefById(this._processId)
-      .then((result: (IProcessDefEntity | any)) => {
+      .then((result: IProcessDefEntity & IErrorResponse) => {
         // TODO: Extract Business Rule
         if (result && !result.error) {
           this.process = result;
@@ -314,7 +316,7 @@ export class ProcessDefDetail {
 
     //  Save the diagram to the ProcessEngine {{{ //
     // TODO: Explain what this is doing -> Refactor.
-    let response: Response | any;
+    let response: IResponse;
 
     try {
       const xml: string = await this.bpmnio.getXML();
