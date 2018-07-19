@@ -28,11 +28,11 @@ export class DiagramValidator implements IDiagramValidator {
   public isBPMN(): IDiagramValidator {
     const containsBPMNDefinitions: Promise<boolean> = this._service.containsBPMNDefinitions(this._diagramXML);
 
-    const iisBPMNPromises: Array<Promise<boolean>> = [
+    const isBPMNPromises: Array<Promise<boolean>> = [
       containsBPMNDefinitions,
     ];
 
-    const flatterned: Promise<void> = this._throwOnFalselyPromise(iisBPMNPromises, 'Diagram is not a valid BPMN file.');
+    const flatterned: Promise<void> = this._throwOnFalselyPromise(isBPMNPromises, 'Diagram is not a valid BPMN file.');
     this._validations.push(flatterned);
 
     return this;
