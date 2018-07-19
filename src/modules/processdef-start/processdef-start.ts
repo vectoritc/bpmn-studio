@@ -54,7 +54,7 @@ export class ProcessDefStart {
        * we then use the router to navigate to the prvious view-- this could be the
        * design view-- but any other last view will work as well.
        */
-      this._eventAggregator.subscribe('closed-process', (message: any) => {
+      this._eventAggregator.subscribe('closed-process', () => {
         this._router.navigateBack();
       }),
     ];

@@ -7,11 +7,11 @@ import {NotificationService} from '../notification/notification.service';
 export class FormWidget {
 
   @bindable()
-  private widget: IFormWidgetConfig;
-  private notificationService: NotificationService;
+  public widget: IFormWidgetConfig;
+  private _notificationService: NotificationService;
 
   constructor(notificationService: NotificationService) {
-    this.notificationService = notificationService;
+    this._notificationService = notificationService;
   }
 
   public getFieldControl(field: SpecificFormWidgetField): string {
@@ -25,7 +25,7 @@ export class FormWidget {
       case FormWidgetFieldType.long:
         return 'number';
       default:
-        this.notificationService.showNotification(NotificationType.ERROR, `Not supported FromWidgetFieldType: ${field.type}`);
+        this._notificationService.showNotification(NotificationType.ERROR, `Not supported FromWidgetFieldType: ${field.type}`);
         return null;
     }
   }

@@ -125,7 +125,7 @@ export class BpmnIo {
       const windowEvent: Event = e || window.event;
       windowEvent.cancelBubble = true;
 
-      const mousemoveFunction: IEventFunction = (event: Event): void => {
+      const mousemoveFunction: IEventFunction = (event: MouseEvent): void => {
         this.resize(event);
         document.getSelection().empty();
       };
@@ -174,25 +174,31 @@ export class BpmnIo {
         this._diagramIsValid = false;
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, async(process: IProcessDefEntity) => {
-        const xml: string = await this._diagramExportService.exportBPMN(this.xml);
-        download(xml, `${this.name}.bpmn`, 'application/bpmn20-xml');
+        const xml: string = await this.getXML();
+        const bpmn: string = await this._diagramExportService.exportBPMN(xml);
+
+        download(bpmn, `${this.name}.bpmn`, 'application/bpmn20-xml');
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, async(process: IProcessDefEntity) => {
         const svg: string = await this.getSVG();
+
         download(svg, `${this.name}.svg`, 'image/svg+xml');
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, async(process: IProcessDefEntity) => {
         const svg: string = await this.getSVG();
         const png: string = await this._diagramExportService.exportPNG(svg);
+
         download(png, `${this.name}.png`, 'image/png');
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, async(process: IProcessDefEntity) => {
         const svg: string = await this.getSVG();
         const jpeg: string = await this._diagramExportService.exportPNG(svg);
+
         download(jpeg, `${this.name}.jpeg`, 'image/jpeg');
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.printDiagram}`, async() => {
         const svgContent: string = await this.getSVG();
+
         this._diagramPrintService.printDiagram(svgContent);
       }),
 
@@ -281,7 +287,7 @@ export class BpmnIo {
     }
   }
 
-  public resize(event: any): void {
+  public resize(event: MouseEvent): void {
     const mousePosition: number = event.clientX;
 
     this._setNewPropertyPanelWidthFromMousePosition(mousePosition);
@@ -364,7 +370,7 @@ export class BpmnIo {
     this.togglePanel();
   }
 
-  private _resizeEventHandler = (event: any): void => {
+  private _resizeEventHandler = (event: MouseEvent): void => {
     this._hideOrShowPpForSpaceReasons();
 
     const mousePosition: number = event.clientX;

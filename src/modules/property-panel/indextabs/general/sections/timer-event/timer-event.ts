@@ -27,7 +27,6 @@ export class TimerEventSection implements ISection {
 
   private _businessObjInPanel: IModdleElement;
   private _moddle: IBpmnModdle;
-  private _modeler: IBpmnModeler;
   private _eventAggregator: EventAggregator;
 
   constructor(eventAggregator?: EventAggregator) {
@@ -38,7 +37,6 @@ export class TimerEventSection implements ISection {
     this._businessObjInPanel = model.elementInPanel.businessObject;
 
     this._moddle = model.modeler.get('moddle');
-    this._modeler = model.modeler;
     this.timerElement = this._getTimerElement();
 
     this._init();

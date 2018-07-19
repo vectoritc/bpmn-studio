@@ -20,7 +20,6 @@ export class CallActivitySection implements ISection {
   public allProcesses: IPagination<IProcessDefEntity>;
   public selectedProcess: IProcessDefEntity;
 
-  private _modeler: IBpmnModeler;
   private _businessObjInPanel: ICallActivityElement;
   private _generalService: GeneralService;
   private _router: Router;
@@ -34,7 +33,6 @@ export class CallActivitySection implements ISection {
 
   public async activate(model: IPageModel): Promise<void> {
     this._businessObjInPanel = model.elementInPanel.businessObject;
-    this._modeler = model.modeler;
     await this._getAllProcesses();
     this.selectedProcess = this.allProcesses.data.find((process: IProcessDefEntity) => {
       return process.key === this._businessObjInPanel.calledElement;

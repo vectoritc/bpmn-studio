@@ -4,3 +4,4 @@ export {IErrorResponse} from './IErrorResponse';
 export {IPagination} from './IPagination';
 export {IProcessEngineRepository} from './IProcessEngineRepository';
 export {IProcessEngineService} from './IProcessEngineService';
+export {IResponse} from './IResponse';

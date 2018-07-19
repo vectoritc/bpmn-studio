@@ -1,10 +1,10 @@
 .process-explorer__solution-explorer {
-  background-color: #f7f7f7;
-  width: 220px;
-  border-right: 2px solid #dcdbdb;
+  width: 220px;  
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
+  background-color: #f7f7f7;
+  border-right: 2px solid #dcdbdb;
   user-select: none;
 }
 
@@ -63,6 +63,7 @@
 .process-explorer__heading {
   padding: 8px;
   margin-bottom: 10px;
+  cursor: default;
   font-weight: 400;
   color: #a5a5a5;
 }
@@ -89,7 +90,9 @@
   width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
+  cursor: default;
   color: darkgray;
+  white-space: nowrap;
 }
 
 .solution-group__close {
@@ -143,7 +146,7 @@
 
 .single-diagram-group__close:hover {
   cursor: pointer;
-  color: #5e5e5e;
+  text-decoration: underline;
 }
 
 .solution-input-group {
