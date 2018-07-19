@@ -31,7 +31,6 @@ export class App {
     if ((<any> window).nodeRequire) {
       const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
       ipcRenderer.on('deep-linking-request-in-runtime', (event: any, url: string) => {
-        console.log('deep linking request received: ', event, url);
         this._processDeepLinkingRequest(url);
       });
       ipcRenderer.on('deep-linking-request', async(event: any, url: string) => {
