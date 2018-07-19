@@ -243,28 +243,6 @@ export class ProcessDefDetail {
     this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
   }
 
-  private _refreshProcess(): Promise<IProcessDefEntity> {
-    return this
-      ._processEngineService
-      .getProcessDefById(this._processId)
-      .then((result: any) => {
-        // TODO: Extract Business Rule
-        if (result && !result.error) {
-          this.process = result;
-
-          this
-            ._eventAggregator
-            .publish(environment.events.navBar.updateProcess, this.process);
-
-          return this.process;
-
-        } else {
-          this.process = null;
-          return result.error;
-        }
-    });
-  }
-
   /**
    * Opens a modal dialog to ask the user, which StartEvent he want's to
    * use to start the process.
@@ -308,6 +286,28 @@ export class ProcessDefDetail {
     });
 
     return returnPromise;
+  }
+
+  private _refreshProcess(): Promise<IProcessDefEntity> {
+    return this
+      ._processEngineService
+      .getProcessDefById(this._processId)
+      .then((result: any) => {
+        // TODO: Extract Business Rule
+        if (result && !result.error) {
+          this.process = result;
+
+          this
+            ._eventAggregator
+            .publish(environment.events.navBar.updateProcess, this.process);
+
+          return this.process;
+
+        } else {
+          this.process = null;
+          return result.error;
+        }
+    });
   }
 
   private async _initializeModalDialog(): Promise<void> {
