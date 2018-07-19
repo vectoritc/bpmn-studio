@@ -10,7 +10,6 @@ import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 import {
   AuthenticationStateEvent,
   IAuthenticationService,
-  IEvent,
   IErrorResponse,
   IExtensionElement,
   IFormElement,
