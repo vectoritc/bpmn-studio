@@ -7,11 +7,24 @@ import {IPagination, IProcessDefEntity} from '@process-engine/bpmn-studio_client
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
-import {AuthenticationStateEvent, IFileInfo, IInputEvent, NotificationType} from '../../contracts/index';
+import {
+  AuthenticationStateEvent,
+  IDiagramValidationService,
+  IFileInfo,
+  IInputEvent,
+  NotificationType,
+} from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
-@inject(EventAggregator, Router, 'SolutionExplorerServiceProcessEngine', 'SolutionExplorerServiceFileSystem', 'NotificationService', 'Identity')
+@inject(
+  EventAggregator,
+  Router,
+  'SolutionExplorerServiceProcessEngine',
+  'SolutionExplorerServiceFileSystem',
+  'NotificationService',
+  'DiagramValidationService',
+  'Identity')
 export class ProcessSolutionPanel {
   public processes: IPagination<IProcessDefEntity>;
   public processengineSolutionString: string;
@@ -33,18 +46,21 @@ export class ProcessSolutionPanel {
   private _identity: IIdentity;
   private _solutionExplorerServiceProcessEngine: ISolutionExplorerService;
   private _solutionExplorerServiceFileSystem: ISolutionExplorerService;
+  private _diagramValidationService: IDiagramValidationService;
 
   constructor(eventAggregator: EventAggregator,
               router: Router,
               solutionExplorerServiceProcessEngine: ISolutionExplorerService,
               solutionExplorerServiceFileSystem: ISolutionExplorerService,
-              notificationService: NotificationService) {
+              notificationService: NotificationService,
+              diagramValidationService: IDiagramValidationService) {
 
     this._eventAggregator = eventAggregator;
     this._router = router;
     this._solutionExplorerServiceProcessEngine = solutionExplorerServiceProcessEngine;
     this._solutionExplorerServiceFileSystem = solutionExplorerServiceFileSystem;
     this._notificationService = notificationService;
+    this._diagramValidationService = diagramValidationService;
   }
 
   public async attached(): Promise<void> {
@@ -223,22 +239,16 @@ export class ProcessSolutionPanel {
       return false;
     }
 
-    const diagramIsNoXMLFile: boolean = !this._hasXMLFileSignature(newDiagram.xml);
-    if (diagramIsNoXMLFile) {
-      throw new Error('Input diagram is not a XML file.');
-    }
+    await this._diagramValidationService
+      .start(newDiagram.xml)
+      .isXML()
+      .isBPMN()
+      .throwIfError();
 
     this.openedSingleDiagrams.push(newDiagram);
     this.navigateToDiagramDetail(newDiagram);
 
     return true;
-  }
-
-  private _hasXMLFileSignature(content: string): boolean {
-    const xmlSignature: string = '<?xml ';
-    const startsWithSignature: boolean = content.startsWith(xmlSignature);
-
-    return startsWithSignature;
   }
 
   private async _refreshProcesslist(): Promise<void> {
