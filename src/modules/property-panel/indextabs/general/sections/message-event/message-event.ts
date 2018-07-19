@@ -93,6 +93,33 @@ export class MessageEventSection implements ISection {
     this._publishDiagramChange();
   }
 
+  public removeSelectedMessage(): void {
+    const noMessageIsSelected: boolean = !this.selectedId;
+    if (noMessageIsSelected) {
+      return;
+    }
+
+    const messageIndex: number = this.messages.findIndex((message: IMessage) => {
+      return message.id === this.selectedId;
+    });
+
+    this.messages.splice(messageIndex, 1);
+    this._modeler._definitions.rootElements.splice(this._getRootElementsIndex(this.selectedId), 1);
+
+    this.updateMessage();
+    this._publishDiagramChange();
+  }
+
+  private _getRootElementsIndex(elementId: string): number {
+    const rootElements: Array<IModdleElement> = this._modeler._definitions.rootElements;
+
+    const rootElementsIndex: number = rootElements.findIndex((element: IModdleElement) => {
+      return element.id === elementId;
+    });
+
+    return rootElementsIndex;
+  }
+
   private _elementIsMessageEvent(element: IShape): boolean {
     return element !== undefined
         && element.businessObject !== undefined
