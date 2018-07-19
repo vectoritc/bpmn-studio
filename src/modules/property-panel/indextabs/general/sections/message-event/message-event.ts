@@ -73,7 +73,7 @@ export class MessageEventSection implements ISection {
   }
 
   public addMessage(): void {
-    const bpmnMessageProperty: Object = {
+    const bpmnMessageProperty: {id: string, name: string} = {
       id: `Message_${this._generalService.generateRandomId()}`,
       name: 'Message Name',
     };
