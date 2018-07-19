@@ -4,13 +4,13 @@ import environment from './environment';
 
 export const oidcConfig: OpenIdConnectConfiguration = {
   loginRedirectRoute: '',
-  logoutRedirectRoute: '',
+  logoutRedirectRoute: 'bpmn-studio://',
   unauthorizedRedirectRoute: '',
   logLevel: 0,
   userManagerSettings: {
     accessTokenExpiringNotificationTime: 1,
     authority: environment.openIdConnect.authority,
-    automaticSilentRenew: false,
+    automaticSilentRenew: true,
     monitorSession: true,
     checkSessionInterval: 2000,
     client_id: 'bpmn_studio',
