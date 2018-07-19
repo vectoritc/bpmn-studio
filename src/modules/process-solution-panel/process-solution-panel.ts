@@ -7,11 +7,24 @@ import {IPagination, IProcessDefEntity} from '@process-engine/bpmn-studio_client
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
-import {AuthenticationStateEvent, IFileInfo, IInputEvent, NotificationType} from '../../contracts/index';
+import {
+  AuthenticationStateEvent,
+  IDiagramValidationService,
+  IFileInfo,
+  IInputEvent,
+  NotificationType,
+} from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
-@inject(EventAggregator, Router, 'SolutionExplorerServiceProcessEngine', 'SolutionExplorerServiceFileSystem', 'NotificationService', 'Identity')
+@inject(
+  EventAggregator,
+  Router,
+  'SolutionExplorerServiceProcessEngine',
+  'SolutionExplorerServiceFileSystem',
+  'NotificationService',
+  'DiagramValidationService',
+  'Identity')
 export class ProcessSolutionPanel {
   public processes: IPagination<IProcessDefEntity>;
   public processengineSolutionString: string;
@@ -33,18 +46,21 @@ export class ProcessSolutionPanel {
   private _identity: IIdentity;
   private _solutionExplorerServiceProcessEngine: ISolutionExplorerService;
   private _solutionExplorerServiceFileSystem: ISolutionExplorerService;
+  private _diagramValidationService: IDiagramValidationService;
 
   constructor(eventAggregator: EventAggregator,
               router: Router,
               solutionExplorerServiceProcessEngine: ISolutionExplorerService,
               solutionExplorerServiceFileSystem: ISolutionExplorerService,
-              notificationService: NotificationService) {
+              notificationService: NotificationService,
+              diagramValidationService: IDiagramValidationService) {
 
     this._eventAggregator = eventAggregator;
     this._router = router;
     this._solutionExplorerServiceProcessEngine = solutionExplorerServiceProcessEngine;
     this._solutionExplorerServiceFileSystem = solutionExplorerServiceFileSystem;
     this._notificationService = notificationService;
+    this._diagramValidationService = diagramValidationService;
   }
 
   public async attached(): Promise<void> {
@@ -57,20 +73,19 @@ export class ProcessSolutionPanel {
       this.enableFileSystemSolutions = true;
 
       const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
-      const path: string = (<any> window).nodeRequire('path');
 
       // Register handler for double-click event fired from "elecron.js".
       ipcRenderer.on('double-click-on-file', async(event: Event, pathToFile: string) => {
         const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(pathToFile, this._identity);
 
-        const openedDiagram: IDiagram = this._findURIObject(this.openedSingleDiagrams, diagram.uri);
+        try {
+          const diagramAlreadyOpen: boolean = !await this._openSingleDiagram(diagram);
 
-        const diagramIsNotAlreadyOpen: boolean = openedDiagram === undefined;
-        if (diagramIsNotAlreadyOpen) {
-          this.openedSingleDiagrams.push(diagram);
-          this.navigateToDiagramDetail(diagram);
-        } else {
-          this.navigateToDiagramDetail(openedDiagram);
+          if (diagramAlreadyOpen) {
+            this._notificationService.showNotification(NotificationType.INFO, 'Diagram is already opened.');
+          }
+        } catch (error) {
+          this._notificationService.showNotification(NotificationType.ERROR, error.message);
         }
 
         this.openFileSystemIndexCard();
@@ -84,8 +99,13 @@ export class ProcessSolutionPanel {
 
       if (fileInfo.path) {
         const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(fileInfo.path, this._identity);
-        this.openedSingleDiagrams.push(diagram);
-        this.navigateToDiagramDetail(diagram);
+
+        try {
+          await this._openSingleDiagram(diagram);
+        } catch (error) {
+          this._notificationService.showNotification(NotificationType.ERROR, error.message);
+        }
+
         this.openFileSystemIndexCard();
       }
     }
@@ -154,15 +174,15 @@ export class ProcessSolutionPanel {
 
     this.singleDiagramInput.value = '';
 
-    const diagramIsAlreadyOpen: boolean = this._findURIObject(this.openedSingleDiagrams, newDiagram.uri) !== undefined;
+    try {
+      const diagramAlreadyOpen: boolean = !await this._openSingleDiagram(newDiagram);
 
-    if (diagramIsAlreadyOpen) {
-      this._notificationService.showNotification(NotificationType.INFO, 'Diagram is already open');
-
-      return;
+      if (diagramAlreadyOpen) {
+        this._notificationService.showNotification(NotificationType.INFO, 'Diagram is already opened.');
+      }
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR, error.message);
     }
-
-    this.openedSingleDiagrams.push(newDiagram);
   }
 
   public closeFileSystemSolution(solutionToClose: ISolution): void {
@@ -205,6 +225,30 @@ export class ProcessSolutionPanel {
   public async navigateToDiagramDetail(diagram: IDiagram): Promise<void> {
     this._eventAggregator.publish(environment.events.navBar.updateProcess, diagram);
     this._router.navigateToRoute('diagram-detail', {diagramUri: diagram.uri});
+  }
+
+  private async _openSingleDiagram(newDiagram: IDiagram): Promise<boolean> {
+    const diagramWithSameURI: IDiagram = this._findURIObject(this.openedSingleDiagrams, newDiagram.uri);
+
+    const diagramIsAlreadyOpened: boolean = diagramWithSameURI !== undefined;
+
+    if (diagramIsAlreadyOpened) {
+      // When the diagram is already opened we just navigate to that.
+      this.navigateToDiagramDetail(diagramWithSameURI);
+
+      return false;
+    }
+
+    await this._diagramValidationService
+      .validate(newDiagram.xml)
+      .isXML()
+      .isBPMN()
+      .throwIfError();
+
+    this.openedSingleDiagrams.push(newDiagram);
+    this.navigateToDiagramDetail(newDiagram);
+
+    return true;
   }
 
   private async _refreshProcesslist(): Promise<void> {
