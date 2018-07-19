@@ -16,9 +16,9 @@ import environment from '../../../../../../environment';
 import {GeneralService} from '../../service/general.service';
 
 @inject(GeneralService, EventAggregator)
-export class MessageEventSection implements ISection {
+export class MessageTaskSection implements ISection {
 
-  public path: string = '/sections/message-event/message-event';
+  public path: string = '/sections/message-task/message-task';
   public canHandleElement: boolean = false;
   public messages: Array<IMessage>;
   public selectedId: string;
@@ -47,7 +47,7 @@ export class MessageEventSection implements ISection {
   }
 
   public isSuitableForElement(element: IShape): boolean {
-    return this._elementIsMessageEvent(element);
+    return this._elementIsMessageTask(element);
   }
 
   public updateMessage(): void {
@@ -55,8 +55,7 @@ export class MessageEventSection implements ISection {
       return message.id === this.selectedId;
     });
 
-    const messageElement: IMessageElement = this._businessObjInPanel.eventDefinitions[0];
-    messageElement.messageRef = this.selectedMessage;
+    this._businessObjInPanel.messageRef = this.selectedMessage;
     this._publishDiagramChange();
   }
 
@@ -90,36 +89,30 @@ export class MessageEventSection implements ISection {
         this.updateMessage();
       });
     });
+
     this._publishDiagramChange();
   }
 
-  private _elementIsMessageEvent(element: IShape): boolean {
+  private _elementIsMessageTask(element: IShape): boolean {
     return element !== undefined
-        && element.businessObject !== undefined
-        && element.businessObject.eventDefinitions !== undefined
-        && element.businessObject.eventDefinitions[0].$type === 'bpmn:MessageEventDefinition';
+        && (element.type === 'bpmn:SendTask'
+          || element.type === 'bpmn:ReceiveTask');
   }
 
   private _init(): void {
-    const eventDefinitions: Array<IModdleElement> = this._businessObjInPanel.eventDefinitions;
-    const businessObjectHasNoMessageEvents: boolean = eventDefinitions === undefined
-                                                   || eventDefinitions === null
-                                                   || eventDefinitions[0].$type !== 'bpmn:MessageEventDefinition';
+    const businessObjectHasNoMessageEvents: boolean = this._businessObjInPanel === undefined
+                                                   || this._businessObjInPanel.messageRef === undefined;
     if (businessObjectHasNoMessageEvents) {
+      this.selectedMessage = undefined;
+      this.selectedId = undefined;
+
       return;
     }
 
-    const messageElement: IMessageElement = this._businessObjInPanel.eventDefinitions[0];
-    const elementReferencesMessage: boolean = messageElement.messageRef !== undefined
-                                           && messageElement.messageRef !== null;
+    const messageRef: IMessage = this._businessObjInPanel.messageRef;
 
-    if (elementReferencesMessage) {
-      this.selectedId = messageElement.messageRef.id;
-      this.updateMessage();
-    } else {
-      this.selectedMessage = undefined;
-      this.selectedId = undefined;
-    }
+    this.selectedId = messageRef.id;
+    this.updateMessage();
   }
 
   private _getMessages(): Array<IMessage> {
