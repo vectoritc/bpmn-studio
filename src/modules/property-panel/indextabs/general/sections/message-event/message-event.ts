@@ -117,8 +117,8 @@ export class MessageEventSection implements ISection {
       this.selectedId = messageElement.messageRef.id;
       this.updateMessage();
     } else {
-      this.selectedMessage = null;
-      this.selectedId = null;
+      this.selectedMessage = undefined;
+      this.selectedId = undefined;
     }
   }
 
