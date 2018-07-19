@@ -107,18 +107,7 @@ export class BpmnIo {
     const handlerPriority: number = 1000;
 
     this.modeler.on('commandStack.changed', async() => {
-      await this._updateXmlChanges();
-
-      const objectIsNotEmpty: (obj: Object) => boolean = (obj: Object): boolean => {
-        return !(Object.keys(obj).length === 0 && obj.constructor === Object);
-      };
-
-      const savingNeeded: boolean = objectIsNotEmpty(this.xmlChanges._added)
-        || objectIsNotEmpty(this.xmlChanges._changed)
-        || objectIsNotEmpty(this.xmlChanges._layoutChanged)
-        || objectIsNotEmpty(this.xmlChanges._removed);
-
-      this._eventAggregator.publish(environment.events.diagramChange, savingNeeded);
+      this._eventAggregator.publish(environment.events.diagramChange);
       }, handlerPriority);
 
     this._diagramPrintService = new DiagramPrintService();
@@ -243,6 +232,21 @@ export class BpmnIo {
 
       this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, async() => {
         this.savedXml = await this.getXML();
+      }),
+
+      this._eventAggregator.subscribe(environment.events.diagramChange, async() => {
+        await this._updateXmlChanges();
+
+        const objectIsNotEmpty: (obj: Object) => boolean = (obj: Object): boolean => {
+          return !(Object.keys(obj).length === 0 && obj.constructor === Object);
+        };
+
+        const savingNeeded: boolean = objectIsNotEmpty(this.xmlChanges._added)
+          || objectIsNotEmpty(this.xmlChanges._changed)
+          || objectIsNotEmpty(this.xmlChanges._layoutChanged)
+          || objectIsNotEmpty(this.xmlChanges._removed);
+
+        this._eventAggregator.publish(environment.events.diagramNeedsSaving, savingNeeded);
       }),
     ];
 
