@@ -276,7 +276,17 @@ export class ProcessDefDetail {
   public async showModalDialogAndAwaitAnswer(): Promise<string> {
     this.showModal = true;
 
-    await this._initializeModalDialog();
+    /*
+     * TODO: Find out if the call here is necessary. The only place where this
+     * the showModalDialogAndAwaitAnswer method is needed, is in startProcess,
+     * which updates the current start events before even calling this method
+     * anyways.
+     */
+    try {
+      await this._initializeModalDialog();
+    } catch (error) {
+      return;
+    }
 
     /*
      * Create a promise which displays the modal and resolves, if the user
@@ -311,6 +321,7 @@ export class ProcessDefDetail {
           NotificationType.ERROR,
           `Error while obtaining the StartEvents which belongs to the Process: ${error.message}`,
         );
+      throw Error(error);
     }
   }
 
@@ -321,6 +332,12 @@ export class ProcessDefDetail {
    */
   private async _startProcess(): Promise<void> {
 
+    /*
+    * TODO: Since the existence of the _initializeModal Method, a call
+    * to _updateProcessStartEvents is redundant here. Since we need to refresh
+    * the start events here to look, if we only have one or more start events,
+    * I would suggest that we remove the _initializeModal method.
+    */
     try {
       await this._updateProcessStartEvents();
     } catch (error) {
@@ -328,8 +345,14 @@ export class ProcessDefDetail {
         _notificationService
         .showNotification(
           NotificationType.ERROR,
-          error.message,
+          `Could not load the processes start Events: ${error.message}`,
         );
+
+        /*
+         * When it is not possible to obtain the processes start events,
+         * we can return.
+         */
+      return;
     }
     const modalResult: string = await this.showModalDialogAndAwaitAnswer();
 
