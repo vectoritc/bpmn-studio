@@ -1,39 +1,26 @@
-import {IDiagramValidator} from '../../contracts';
+import { ValidationRules } from '../../../node_modules/aurelia-validation';
+import {IDiagramValidationRule, IDiagramValidationRules, IDiagramValidationRuleSet, IDiagramValidator} from '../../contracts';
 import {DiagramValidationService} from './DiagramValidationService';
 
 export class DiagramValidator implements IDiagramValidator {
 
-  private _service: DiagramValidationService;
+  private _rules: IDiagramValidationRules;
   private _diagramXML: string;
   private _validations: Array<Promise<void>> = [];
 
-  constructor(service: DiagramValidationService, diagramXML: string) {
-    this._service = service;
+  constructor(rules: IDiagramValidationRules, diagramXML: string) {
+    this._rules = rules;
     this._diagramXML = diagramXML;
   }
 
   public isXML(): IDiagramValidator {
-    const hasXMLFileSignature: Promise<boolean> = this._service.hasXMLFileSignature(this._diagramXML);
-
-    const isXMLPromises: Array<Promise<boolean>> = [
-      hasXMLFileSignature,
-    ];
-
-    const flattened: Promise<void> = this._throwOnFalselyPromise(isXMLPromises, 'Diagram is not a valid XML file.');
-    this._validations.push(flattened);
+    this._processRuleSet(this._rules.isXML);
 
     return this;
   }
 
   public isBPMN(): IDiagramValidator {
-    const containsBPMNDefinitions: Promise<boolean> = this._service.containsBPMNDefinitions(this._diagramXML);
-
-    const isBPMNPromises: Array<Promise<boolean>> = [
-      containsBPMNDefinitions,
-    ];
-
-    const flattened: Promise<void> = this._throwOnFalselyPromise(isBPMNPromises, 'Diagram is not a valid BPMN file.');
-    this._validations.push(flattened);
+    this._processRuleSet(this._rules.isBPMN);
 
     return this;
   }
@@ -50,25 +37,34 @@ export class DiagramValidator implements IDiagramValidator {
     }
   }
 
-  /**
-   * Converts the given promise array into single promise. The new promise will
-   * resolve, if all given promises returned true. It will reject with the given
-   * error message, if any of the promises returned false.
-   *
-   * @param promises the promise array to converted.
-   * @param errorMessage the message of the error thrown on falsely promise.
-   */
-  private _throwOnFalselyPromise(promises: Array<Promise<boolean>>, errorMessage: string): Promise<void> {
-    const allPromise: Promise<Array<boolean>> = Promise.all(promises);
+  private _processRuleSet(ruleSet: IDiagramValidationRuleSet): void {
+    const ruleSetPromise: Promise<void> = this._promiseForRuleSet(ruleSet);
+    this._validations.push(ruleSetPromise);
+  }
 
-    const flattened: Promise<void> = allPromise
-      .then((promiseResults: Array<boolean>): void => {
-        const containsFalse: boolean = promiseResults.indexOf(false) !== -1;
-        if (containsFalse) {
-          throw new Error(errorMessage);
-        }
+  private _promiseForRuleSet(ruleSet: IDiagramValidationRuleSet): Promise<void> {
+
+    // Create an array with promises for all validation rules.
+    const validationsResultPromise: Array<Promise<boolean>> = ruleSet.rules
+      .map((validationRule: IDiagramValidationRule): Promise<boolean> => {
+        return validationRule(this._diagramXML);
       });
 
-    return flattened;
+    const unifiedPromise: Promise<Array<boolean>> = Promise.all(validationsResultPromise);
+
+    // Create a single promise that will resolve when all validations succeed.
+    // It will reject with the ruleset error if some validation did not succeed.
+    const ruleSetPromise: Promise<void> = unifiedPromise
+      .then((validationResult: Array<boolean>): void => {
+
+        const someValidationsFailed: boolean = validationResult.indexOf(false) !== -1;
+        if (someValidationsFailed) {
+          throw new Error(ruleSet.errorMessage);
+        }
+      }).catch((error: Error) => {
+        throw new Error(`Error during validation: ${error.message}`);
+      });
+
+    return ruleSetPromise;
   }
 }
