@@ -92,7 +92,7 @@ export class EscalationEventSection implements ISection {
   }
 
   public addEscalation(): void {
-    const bpmnEscalationProperty: Object = {
+    const bpmnEscalationProperty: {id: string, name: string} = {
       id: `Escalation_${this._generalService.generateRandomId()}`,
       name: 'Escalation Name',
     };
@@ -110,6 +110,33 @@ export class EscalationEventSection implements ISection {
       });
     });
     this._publishDiagramChange();
+  }
+
+  public removeSelectedEscalation(): void {
+    const noEscalationIsSelected: boolean = !this.selectedId;
+    if (noEscalationIsSelected) {
+      return;
+    }
+
+    const escalationIndex: number = this.escalations.findIndex((escalation: IEscalation) => {
+      return escalation.id === this.selectedId;
+    });
+
+    this.escalations.splice(escalationIndex, 1);
+    this._modeler._definitions.rootElements.splice(this._getRootElementsIndex(this.selectedId), 1);
+
+    this.updateEscalation();
+    this._publishDiagramChange();
+  }
+
+  private _getRootElementsIndex(elementId: string): number {
+    const rootElements: Array<IModdleElement> = this._modeler._definitions.rootElements;
+
+    const rootElementsIndex: number = rootElements.findIndex((element: IModdleElement) => {
+      return element.id === elementId;
+    });
+
+    return rootElementsIndex;
   }
 
   private async _refreshEscalations(): Promise<void> {
