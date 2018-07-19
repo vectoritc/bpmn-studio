@@ -31,9 +31,7 @@ export class DiagramValidationService implements IDiagramValidationService {
     const xmlSignature: string = '<?xml ';
     const startsWithSignature: boolean = content.startsWith(xmlSignature);
 
-    // return Promise.resolve(startsWithSignature);
-
-    return Promise.reject(new Error('lol'));
+    return Promise.resolve(startsWithSignature);
   }
 
   private _containsBPMNDefinitions(content: string): Promise<boolean> {
