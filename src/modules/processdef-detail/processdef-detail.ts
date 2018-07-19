@@ -55,9 +55,6 @@ export class ProcessDefDetail {
   private _authenticationService: IAuthenticationService;
   private _managementApiClient: IManagementApiService;
 
-  public dropdownArrow: HTMLElement;
-  private dropdownIsCollapsed: boolean = true;
-
   public processesStartEvents: Array<Event> = [];
   public dropdownMenu: HTMLSelectElement;
 
@@ -279,7 +276,17 @@ export class ProcessDefDetail {
   public async showModalDialogAndAwaitAnswer(): Promise<string> {
     this.showModal = true;
 
-    await this._initializeModalDialog();
+    /*
+     * TODO: Find out if the call here is necessary. The only place where this
+     * the showModalDialogAndAwaitAnswer method is needed, is in startProcess,
+     * which updates the current start events before even calling this method
+     * anyways.
+     */
+    try {
+      await this._initializeModalDialog();
+    } catch (error) {
+      return;
+    }
 
     /*
      * Create a promise which displays the modal and resolves, if the user
@@ -308,8 +315,13 @@ export class ProcessDefDetail {
     try {
       await this._updateProcessStartEvents();
     } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, `Error while obtaining the StartEvents which belongs to the Process.`);
-      console.error(error);
+      this
+        ._notificationService
+        .showNotification(
+          NotificationType.ERROR,
+          `Error while obtaining the StartEvents which belongs to the Process: ${error.message}`,
+        );
+      throw Error(error);
     }
   }
 
@@ -320,18 +332,41 @@ export class ProcessDefDetail {
    */
   private async _startProcess(): Promise<void> {
 
+    /*
+    * TODO: Since the existence of the _initializeModal Method, a call
+    * to _updateProcessStartEvents is redundant here. Since we need to refresh
+    * the start events here to look, if we only have one or more start events,
+    * I would suggest that we remove the _initializeModal method.
+    */
     try {
       await this._updateProcessStartEvents();
     } catch (error) {
-      console.error(error);
-    }
-    const modalResult: string = await this.showModalDialogAndAwaitAnswer();
+      this.
+        _notificationService
+        .showNotification(
+          NotificationType.ERROR,
+          `Could not load the processes start Events: ${error.message}`,
+        );
 
-    if (modalResult === '') {
+        /*
+         * When it is not possible to obtain the processes start events,
+         * we can return.
+         */
       return;
     }
 
-    console.log(`Start Process with StartEvent: ${modalResult}`);
+    /*
+     * If the process has only one defined start event, we dont need to
+     * ask the user, from which start event he wants to start the process since
+     * we always can pick the normal start event.
+     */
+    const selectedStartEvent: string = (this.processesStartEvents.length > 1)
+                                        ? await this.showModalDialogAndAwaitAnswer()
+                                        : this.processesStartEvents[0].id;
+
+    if (selectedStartEvent === '') {
+      return;
+    }
 
     this._dropInvalidFormData();
 
@@ -353,10 +388,15 @@ export class ProcessDefDetail {
     };
 
     try {
-      await this._managementApiClient.startProcessInstance(context, this.process.key, modalResult, startRequestPayload, undefined, undefined);
+      await this._managementApiClient.startProcessInstance(context, this.process.key, selectedStartEvent, startRequestPayload, undefined, undefined);
 
     } catch (error) {
-      console.log(error);
+      this.
+        _notificationService
+        .showNotification(
+          NotificationType.ERROR,
+          error.message,
+        );
     }
 
     this._router.navigate(`processdef/${this.process.id}/start`);

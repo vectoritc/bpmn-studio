@@ -1,7 +1,7 @@
 import {BpmnStudioClient} from '@process-engine/bpmn-studio_client';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {inject} from 'aurelia-framework';
-import { OpenIdConnect } from 'aurelia-open-id-connect';
+import {bindable, inject} from 'aurelia-framework';
+import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {Router} from 'aurelia-router';
 import environment from '../../environment';
 import {IAuthenticationService} from './../../contracts/authentication/IAuthenticationService';
@@ -21,8 +21,9 @@ export class ConfigPanel {
   // We use any here, because we need to call private members (see below)
   private _openIdConnect: OpenIdConnect | any;
 
-  public config: any = environment;
+  public config: typeof environment = environment;
   public isLoggedInToProcessEngine: boolean;
+  @bindable() public baseRoute: string;
 
   constructor(router: Router,
               bpmnStudioClient: BpmnStudioClient,
@@ -44,6 +45,7 @@ export class ConfigPanel {
   }
 
   public attached(): void {
+    this.baseRoute = this.config.bpmnStudioClient.baseRoute;
     this.isLoggedInToProcessEngine = this._authenticationService.hasToken();
 
     this._subscriptions = [
@@ -64,15 +66,15 @@ export class ConfigPanel {
 
   public updateSettings(): void {
     this._authenticationService.logout();
-    environment.bpmnStudioClient.baseRoute = this.config.bpmnStudioClient.baseRoute;
-    window.localStorage.setItem('processEngineRoute', this.config.bpmnStudioClient.baseRoute);
-    environment.processengine.routes.processes = `${this.config.bpmnStudioClient.baseRoute}/datastore/ProcessDef`;
-    environment.processengine.routes.iam = `${this.config.bpmnStudioClient.baseRoute}/iam`;
-    environment.processengine.routes.messageBus = `${this.config.bpmnStudioClient.baseRoute}/mb`;
-    environment.processengine.routes.processInstances = `${this.config.bpmnStudioClient.baseRoute}/datastore/Process`;
-    environment.processengine.routes.startProcess = `${this.config.bpmnStudioClient.baseRoute}/processengine/start`;
-    environment.processengine.routes.userTasks =  `${this.config.bpmnStudioClient.baseRoute}/datastore/UserTask`;
-    environment.processengine.routes.importBPMN = `${this.config.bpmnStudioClient.baseRoute}/processengine/create_bpmn_from_xml`;
+    environment.bpmnStudioClient.baseRoute = this.baseRoute;
+    window.localStorage.setItem('processEngineRoute', this.baseRoute);
+    environment.processengine.routes.processes = `${this.baseRoute}/datastore/ProcessDef`;
+    environment.processengine.routes.iam = `${this.baseRoute}/iam`;
+    environment.processengine.routes.messageBus = `${this.baseRoute}/mb`;
+    environment.processengine.routes.processInstances = `${this.baseRoute}/datastore/Process`;
+    environment.processengine.routes.startProcess = `${this.baseRoute}/processengine/start`;
+    environment.processengine.routes.userTasks =  `${this.baseRoute}/datastore/UserTask`;
+    environment.processengine.routes.importBPMN = `${this.baseRoute}/processengine/create_bpmn_from_xml`;
 
     oidcConfig.userManagerSettings.authority = this.config.openIdConnect.authority;
 
@@ -83,7 +85,7 @@ export class ConfigPanel {
     this._bpmnStudioClient.updateConfig(this.config);
 
     this._notificationService.showNotification(NotificationType.SUCCESS, 'Successfully saved settings!');
-    this._eventAggregator.publish('statusbar:processEngineRoute:update', this.config.bpmnStudioClient.baseRoute);
+    this._eventAggregator.publish('statusbar:processEngineRoute:update', this.baseRoute);
     this._router.navigateBack();
   }
 

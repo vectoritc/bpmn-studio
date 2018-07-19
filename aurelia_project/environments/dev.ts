@@ -1,5 +1,3 @@
-import { UserManagerSettings, WebStorageStateStore } from 'oidc-client';
-
 const processEngineRoute: string = 'http://localhost:8000';
 const appHost: string = 'bpmn-studio:/';
 
