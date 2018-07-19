@@ -9,5 +9,4 @@ export interface IDiagramValidationService {
    * @returns A fluent API to chain validations.
    */
   validate(xml: string): IDiagramValidator;
-
 }
