@@ -39,11 +39,6 @@ export class ConfigPanel {
     this._openIdConnect = openIdConnect;
   }
 
-  private _initializeConfig(): void {
-    this.config.bpmnStudioClient.baseRoute = environment.bpmnStudioClient.baseRoute;
-    this.config.openIdConnect.authority = environment.openIdConnect.authority;
-  }
-
   public attached(): void {
     this.baseRoute = this.config.bpmnStudioClient.baseRoute;
     this.isLoggedInToProcessEngine = this._authenticationService.hasToken();
