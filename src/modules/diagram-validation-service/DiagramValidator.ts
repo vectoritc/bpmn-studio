@@ -19,8 +19,8 @@ export class DiagramValidator implements IDiagramValidator {
       hasXMLFileSignature,
     ];
 
-    const flatterned: Promise<void> = this._throwOnFalselyPromise(isXMLPromises, 'Diagram is not a valid XML file.');
-    this._validations.push(flatterned);
+    const flattened: Promise<void> = this._throwOnFalselyPromise(isXMLPromises, 'Diagram is not a valid XML file.');
+    this._validations.push(flattened);
 
     return this;
   }
@@ -32,8 +32,8 @@ export class DiagramValidator implements IDiagramValidator {
       containsBPMNDefinitions,
     ];
 
-    const flatterned: Promise<void> = this._throwOnFalselyPromise(isBPMNPromises, 'Diagram is not a valid BPMN file.');
-    this._validations.push(flatterned);
+    const flattened: Promise<void> = this._throwOnFalselyPromise(isBPMNPromises, 'Diagram is not a valid BPMN file.');
+    this._validations.push(flattened);
 
     return this;
   }
@@ -61,7 +61,7 @@ export class DiagramValidator implements IDiagramValidator {
   private _throwOnFalselyPromise(promises: Array<Promise<boolean>>, errorMessage: string): Promise<void> {
     const allPromise: Promise<Array<boolean>> = Promise.all(promises);
 
-    const flatterned: Promise<void> = allPromise
+    const flattened: Promise<void> = allPromise
       .then((promiseResults: Array<boolean>): void => {
         const containsFalse: boolean = promiseResults.indexOf(false) !== -1;
         if (containsFalse) {
@@ -69,6 +69,6 @@ export class DiagramValidator implements IDiagramValidator {
         }
       });
 
-    return flatterned;
+    return flattened;
   }
 }

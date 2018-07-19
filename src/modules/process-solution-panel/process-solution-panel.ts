@@ -79,13 +79,13 @@ export class ProcessSolutionPanel {
         const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(pathToFile, this._identity);
 
         try {
-          const diagramWasAlreadyOpen: boolean = !await this._openSingleDiagram(diagram);
+          const diagramAlreadyOpen: boolean = !await this._openSingleDiagram(diagram);
 
-          if (diagramWasAlreadyOpen) {
+          if (diagramAlreadyOpen) {
             this._notificationService.showNotification(NotificationType.INFO, 'Diagram is already opened.');
           }
         } catch (error) {
-          this._notificationService.showNotification(NotificationType.ERROR, `Error loading diagram: ${error.message}`);
+          this._notificationService.showNotification(NotificationType.ERROR, error.message);
         }
 
         this.openFileSystemIndexCard();
@@ -103,7 +103,7 @@ export class ProcessSolutionPanel {
         try {
           await this._openSingleDiagram(diagram);
         } catch (error) {
-          this._notificationService.showNotification(NotificationType.ERROR, `Error loading diagram: ${error.message}`);
+          this._notificationService.showNotification(NotificationType.ERROR, error.message);
         }
 
         this.openFileSystemIndexCard();
@@ -175,13 +175,13 @@ export class ProcessSolutionPanel {
     this.singleDiagramInput.value = '';
 
     try {
-      const diagramWasAlreadyOpen: boolean = !await this._openSingleDiagram(newDiagram);
+      const diagramAlreadyOpen: boolean = !await this._openSingleDiagram(newDiagram);
 
-      if (diagramWasAlreadyOpen) {
+      if (diagramAlreadyOpen) {
         this._notificationService.showNotification(NotificationType.INFO, 'Diagram is already opened.');
       }
     } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, `Error loading diagram: ${error.message}`);
+      this._notificationService.showNotification(NotificationType.ERROR, error.message);
     }
   }
 
@@ -240,7 +240,7 @@ export class ProcessSolutionPanel {
     }
 
     await this._diagramValidationService
-      .start(newDiagram.xml)
+      .validate(newDiagram.xml)
       .isXML()
       .isBPMN()
       .throwIfError();

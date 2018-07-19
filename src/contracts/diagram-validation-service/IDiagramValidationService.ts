@@ -8,6 +8,6 @@ export interface IDiagramValidationService {
    * @param xml the xml to be validated.
    * @returns A fluent API to chain validations.
    */
-  start(xml: string): IDiagramValidator;
+  validate(xml: string): IDiagramValidator;
 
 }

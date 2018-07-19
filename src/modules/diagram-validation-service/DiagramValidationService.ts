@@ -3,7 +3,7 @@ import {DiagramValidator} from './DiagramValidator';
 
 export class DiagramValidationService implements IDiagramValidationService {
 
-  public start(diagramXML: string): IDiagramValidator {
+  public validate(diagramXML: string): IDiagramValidator {
     return new DiagramValidator(this, diagramXML);
   }
 
