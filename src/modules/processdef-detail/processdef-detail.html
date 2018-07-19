@@ -60,8 +60,8 @@
           <div class="modal-body process-start-event-modal-dialog__body">
             This Process has more then one defined StartEvent. In order to start
             the process, you have to select an initial StartEvent.
-            <div class="process-start-event-modal-dialog__dropdown-menu">
-              <select value.bind="selectedStartEvent" ref="dropdownMenu">
+            <div>
+              <select value.bind="selectedStartEvent" ref="dropdownMenu" class="process-start-event-modal-dialog__dropdown-menu">
                 <option value="">Select StartEvent</option>
                 <option repeat.for="startEvent of processesStartEvents" value.bind="startEvent.id">${startEvent.id}</option>
               </select>
