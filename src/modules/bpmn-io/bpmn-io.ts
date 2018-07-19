@@ -10,6 +10,7 @@ import {IBpmnModdle,
         IDefinition,
         IDiagramExportService,
         IDiagramPrintService,
+        IDiffChanges,
         IEditorActions,
         IEventFunction,
         IKeyboard,
@@ -38,7 +39,7 @@ export class BpmnIo {
   public initialLoadingFinished: boolean = false;
   public showXMLView: boolean = false;
   public showDiffView: boolean = false;
-  public xmlChanges: Object;
+  public xmlChanges: IDiffChanges;
   public colorPickerLoaded: boolean = false;
   @observable public propertyPanelWidth: number;
   public minCanvasWidth: number = 100;
@@ -105,9 +106,20 @@ export class BpmnIo {
      */
     const handlerPriority: number = 1000;
 
-    this.modeler.on('commandStack.changed', () => {
-      this._eventAggregator.publish(environment.events.diagramChange);
-    }, handlerPriority);
+    this.modeler.on('commandStack.changed', async() => {
+      await this._updateXmlChanges();
+
+      const objectIsNotEmpty: (obj: Object) => boolean = (obj: Object): boolean => {
+        return !(Object.keys(obj).length === 0 && obj.constructor === Object);
+      };
+
+      const savingNeeded: boolean = objectIsNotEmpty(this.xmlChanges._added)
+        || objectIsNotEmpty(this.xmlChanges._changed)
+        || objectIsNotEmpty(this.xmlChanges._layoutChanged)
+        || objectIsNotEmpty(this.xmlChanges._removed);
+
+      this._eventAggregator.publish(environment.events.diagramChange, savingNeeded);
+      }, handlerPriority);
 
     this._diagramPrintService = new DiagramPrintService();
     this._diagramExportService = new DiagramExportService();
