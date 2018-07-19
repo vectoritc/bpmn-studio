@@ -20,7 +20,7 @@ export class DiagramPrintService implements IDiagramPrintService {
   public async printDiagram(svg?: string): Promise<void> {
     let svgToPrint: string;
 
-    if (svg !== undefined && svg !== null) {
+    if (svg !== undefined) {
       svgToPrint = svg;
     } else if (this._svg !== undefined && this._svg !== null) {
       svgToPrint = this._svg;
