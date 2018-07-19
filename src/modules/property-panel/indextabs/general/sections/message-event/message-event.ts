@@ -85,6 +85,7 @@ export class MessageEventSection implements ISection {
       this._modeler.importXML(xmlStrUpdated, async(errr: Error) => {
         await this._refreshMessages();
         await this._setBusinessObj();
+
         this.selectedId = bpmnMessage.id;
         this.updateMessage();
       });
@@ -137,6 +138,7 @@ export class MessageEventSection implements ISection {
   private _setBusinessObj(): void {
     const elementRegistry: IElementRegistry = this._modeler.get('elementRegistry');
     const elementInPanel: IShape = elementRegistry.get(this._businessObjInPanel.id);
+
     this._businessObjInPanel = elementInPanel.businessObject;
   }
 
