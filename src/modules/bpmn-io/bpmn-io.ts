@@ -235,18 +235,20 @@ export class BpmnIo {
       }),
 
       this._eventAggregator.subscribe(environment.events.diagramChange, async() => {
-        await this._updateXmlChanges();
+        /*
+        * This Regex removes all newlines and spaces to make sure that both xml
+        * are not formatted.
+        */
+        const whitespaceAndNewLineRegex: RegExp = /\r?\n|\r|\s/g;
 
-        const objectIsNotEmpty: (obj: Object) => boolean = (obj: Object): boolean => {
-          return !(Object.keys(obj).length === 0 && obj.constructor === Object);
-        };
+        const currentXml: string = await this.getXML();
+        const unformattedXml: string = currentXml.replace(whitespaceAndNewLineRegex, '');
+        const unformattedSaveXml: string = this.savedXml.replace(whitespaceAndNewLineRegex, '');
 
-        const savingNeeded: boolean = objectIsNotEmpty(this.xmlChanges._added)
-          || objectIsNotEmpty(this.xmlChanges._changed)
-          || objectIsNotEmpty(this.xmlChanges._layoutChanged)
-          || objectIsNotEmpty(this.xmlChanges._removed);
+        const diagramIsUnchanged: boolean = unformattedSaveXml === unformattedXml;
 
-        this._eventAggregator.publish(environment.events.diagramNeedsSaving, savingNeeded);
+        this._eventAggregator.publish(environment.events.diagramNeedsSaving, !diagramIsUnchanged);
+
       }),
     ];
 
