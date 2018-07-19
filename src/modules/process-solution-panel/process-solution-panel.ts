@@ -219,11 +219,12 @@ export class ProcessSolutionPanel {
     if (diagramIsAlreadyOpened) {
       // When the diagram is already opened we just navigate to that.
       this.navigateToDiagramDetail(diagramWithSameURI);
+
       return false;
     }
 
-    const isNonXMLFile: boolean = !this._hasXMLFileSignature(newDiagram.xml);
-    if (isNonXMLFile) {
+    const diagramIsNoXMLFile: boolean = !this._hasXMLFileSignature(newDiagram.xml);
+    if (diagramIsNoXMLFile) {
       throw new Error('Input diagram is not a XML file.');
     }
 
