@@ -32,7 +32,7 @@ export class BpmnIo {
   public canvasModel: HTMLDivElement;
   public propertyPanel: HTMLElement;
 
-  @bindable({changeHandler: 'xmlChanged'}) public xml: string;
+  @bindable() public xml: string;
   @bindable({changeHandler: 'nameChanged'}) public name: string;
 
   public savedXml: string;
@@ -232,17 +232,6 @@ export class BpmnIo {
 
     for (const subscription of this._subscriptions) {
       subscription.dispose();
-    }
-  }
-
-  public xmlChanged(newValue: string): void {
-    const xmlIsEmpty: boolean = this.modeler !== undefined && this.modeler !== null;
-    if (xmlIsEmpty) {
-      this.modeler.importXML(newValue, (err: Error) => {
-        return;
-      });
-
-      this.xml = newValue;
     }
   }
 
