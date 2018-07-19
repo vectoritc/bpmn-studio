@@ -103,8 +103,8 @@ export class MessageTaskSection implements ISection {
     const businessObjectHasNoMessageEvents: boolean = this._businessObjInPanel === undefined
                                                    || this._businessObjInPanel.messageRef === undefined;
     if (businessObjectHasNoMessageEvents) {
-      this.selectedMessage = null;
-      this.selectedId = null;
+      this.selectedMessage = undefined;
+      this.selectedId = undefined;
 
       return;
     }
