@@ -354,9 +354,17 @@ export class ProcessDefDetail {
          */
       return;
     }
-    const modalResult: string = await this.showModalDialogAndAwaitAnswer();
 
-    if (modalResult === '') {
+    /*
+     * If the process has only one defined start event, we dont need to
+     * ask the user, from which start event he wants to start the process since
+     * we always can pick the normal start event.
+     */
+    const selectedStartEvent: string = (this.processesStartEvents.length > 1)
+                                        ? await this.showModalDialogAndAwaitAnswer()
+                                        : this.processesStartEvents[0].id;
+
+    if (selectedStartEvent === '') {
       return;
     }
 
@@ -380,7 +388,7 @@ export class ProcessDefDetail {
     };
 
     try {
-      await this._managementApiClient.startProcessInstance(context, this.process.key, modalResult, startRequestPayload, undefined, undefined);
+      await this._managementApiClient.startProcessInstance(context, this.process.key, selectedStartEvent, startRequestPayload, undefined, undefined);
 
     } catch (error) {
       this.
