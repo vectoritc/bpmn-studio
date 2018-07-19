@@ -56,7 +56,7 @@ export class DiagramValidator implements IDiagramValidator {
     const unifiedPromise: Promise<Array<boolean>> = Promise.all(validationsResultPromise);
 
     // Create a single promise that will resolve when all validations succeed.
-    // It will reject with the ruleset error if some validation did not succeed.
+    // It will reject with the ruleset error, if one or more validation did not succeed.
     const ruleSetPromise: Promise<void> = unifiedPromise
       .then((validationResult: Array<boolean>): void => {
 
