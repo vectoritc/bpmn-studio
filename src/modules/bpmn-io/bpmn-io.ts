@@ -267,7 +267,7 @@ export class BpmnIo {
     }
   }
 
-  public async toggleDiffView(): void {
+  public async toggleDiffView(): Promise<void> {
     if (!this.showDiffView) {
       await this._updateXmlChanges();
       this.showDiffView = true;
