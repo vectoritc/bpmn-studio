@@ -81,7 +81,7 @@ export class MessageTaskSection implements ISection {
     this._modeler._definitions.rootElements.push(bpmnMessage);
 
     this._moddle.toXML(this._modeler._definitions.rootElements, (toXMLError: Error, xmlStrUpdated: string) => {
-      this._modeler.importXML(xmlStrUpdated, async(errr: Error) => {
+      this._modeler.importXML(xmlStrUpdated, async(importXMLError: Error) => {
         await this._refreshMessages();
         await this._setBusinessObj();
 
