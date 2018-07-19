@@ -1,6 +1,9 @@
-import { ValidationRules } from '../../../node_modules/aurelia-validation';
-import {IDiagramValidationRule, IDiagramValidationRules, IDiagramValidationRuleSet, IDiagramValidator} from '../../contracts';
-import {DiagramValidationService} from './DiagramValidationService';
+import {
+  IDiagramValidationRule,
+  IDiagramValidationRules,
+  IDiagramValidationRuleSet,
+  IDiagramValidator,
+} from '../../contracts';
 
 export class DiagramValidator implements IDiagramValidator {
 
