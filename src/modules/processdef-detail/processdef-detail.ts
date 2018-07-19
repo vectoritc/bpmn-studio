@@ -55,9 +55,6 @@ export class ProcessDefDetail {
   private _authenticationService: IAuthenticationService;
   private _managementApiClient: IManagementApiService;
 
-  public dropdownArrow: HTMLElement;
-  private dropdownIsCollapsed: boolean = true;
-
   public processesStartEvents: Array<Event> = [];
   public dropdownMenu: HTMLSelectElement;
 
