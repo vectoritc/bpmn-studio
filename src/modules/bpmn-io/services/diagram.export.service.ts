@@ -4,7 +4,6 @@ import {DiagramXmlConverter} from './diagram.xml.converter';
 
 export class DiagramExportService implements IDiagramExportService {
   public loadXML(xml: string): IXmlConvertService {
-    console.log('xml exporter');
     return new DiagramXmlConverter(xml);
   }
 
