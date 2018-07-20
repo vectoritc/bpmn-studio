@@ -245,10 +245,9 @@ export class BpmnIo {
         const unformattedXml: string = currentXml.replace(whitespaceAndNewLineRegex, '');
         const unformattedSaveXml: string = this.savedXml.replace(whitespaceAndNewLineRegex, '');
 
-        const diagramIsUnchanged: boolean = unformattedSaveXml === unformattedXml;
+        const diagramIsChanged: boolean = unformattedSaveXml !== unformattedXml;
 
-        this._eventAggregator.publish(environment.events.diagramNeedsSaving, !diagramIsUnchanged);
-
+        this._eventAggregator.publish(environment.events.diagramNeedsSaving, diagramIsChanged);
       }),
     ];
 
