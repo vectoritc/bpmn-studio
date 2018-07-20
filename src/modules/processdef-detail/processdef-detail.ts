@@ -355,14 +355,7 @@ export class ProcessDefDetail {
       return;
     }
 
-    /*
-     * If the process has only one defined start event, we dont need to
-     * ask the user, from which start event he wants to start the process since
-     * we always can pick the normal start event.
-     */
-    const selectedStartEvent: string | null = (this.processesStartEvents.length > 1)
-                                        ? await this.showModalDialogAndAwaitAnswer()
-                                        : this.processesStartEvents[0].id;
+    const selectedStartEvent: string | null = await this.showModalDialogAndAwaitAnswer();
 
     if (selectedStartEvent === null) {
       return;
