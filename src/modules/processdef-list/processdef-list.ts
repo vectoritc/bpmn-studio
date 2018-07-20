@@ -215,7 +215,8 @@ export class ProcessDefList {
 
   private async _saveNewDiagram(): Promise<void> {
     try {
-      const response: IProcessDefEntity = await this._processEngineService.createProcessfromXML(this._newDiagramXml, this.newDiagramName);
+      const createdProcessDef: IProcessDefEntity = await this._processEngineService.createProcessfromXML(this._newDiagramXml, this.newDiagramName);
+      this._navigateToProcessDefDetail(createdProcessDef.id);
       this._refreshProcesslist();
       this._eventAggregator.publish(environment.events.refreshProcessDefs);
       this._notificationService.showNotification(NotificationType.SUCCESS, 'Diagram successfully imported!');
@@ -225,6 +226,10 @@ export class ProcessDefList {
     this.newDiagramName = undefined;
     this._newDiagramXml = undefined;
   }
+
+  private _navigateToProcessDefDetail(processDefId: string): void {
+    this._router.navigate(`processdef/${processDefId}/detail`);
+}
 
   private _diagramNameIsEmpty(): boolean {
     return (this.newDiagramName === '' || this.newDiagramName === undefined);
