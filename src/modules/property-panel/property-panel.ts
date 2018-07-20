@@ -113,13 +113,6 @@ export class PropertyPanel {
     return processHasLanes;
   }
 
-  private xmlChanged(newValue: string, oldValue: string): void {
-    if (oldValue) {
-      this.setFirstElement();
-      this.updateIndextab(this.generalIndextab);
-    }
-  }
-
   private updateIndexTabsSuitability(): void {
     for (const indextab of this.indextabs) {
       indextab.canHandleElement = indextab.isSuitableForElement(this.elementInPanel);
