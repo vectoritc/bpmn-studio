@@ -1,4 +1,4 @@
-import {BpmnStudioClient, IUserTaskConfig} from '@process-engine/bpmn-studio_client';
+import {IUserTaskConfig} from '@process-engine/bpmn-studio_client';
 import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {computedFrom, inject} from 'aurelia-framework';
@@ -7,7 +7,7 @@ import {AuthenticationStateEvent, IProcessEngineService, NotificationType} from 
 import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
 import {NotificationService} from '../notification/notification.service';
 
-@inject('ProcessEngineService', EventAggregator, Router, 'BpmnStudioClient', 'NotificationService')
+@inject('ProcessEngineService', EventAggregator, Router, 'NotificationService')
 export class ProcessDefStart {
   public dynamicUiWrapper: DynamicUiWrapper;
 
@@ -18,29 +18,22 @@ export class ProcessDefStart {
   private _processDefId: string;
   private _process: IProcessDefEntity;
   private _router: Router;
-  private _bpmnStudioClient: BpmnStudioClient;
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
               router: Router,
-              bpmnStudioClient: BpmnStudioClient,
               notificationService: NotificationService) {
     this._processEngineService = processEngineService;
     this._eventAggregator = eventAggregator;
     this._router = router;
-    this._bpmnStudioClient = bpmnStudioClient;
     this._notificationService = notificationService;
   }
 
   // TODO: Add a usefull comment here; what does it do? what is it good for? when is this invoked?
   public async activate(routeParameters: {processDefId: string}): Promise<void> {
     this._processDefId = routeParameters.processDefId;
-    await this._refreshProcess();
 
-    /*
-     * Start the processinstance in the connected ProcessEngine.
-     */
-    this._startProcess();
+    await this._refreshProcess();
 
     this._subscriptions = [
       /*
@@ -87,7 +80,4 @@ export class ProcessDefStart {
     }
   }
 
-  private _startProcess(): void {
-    this._bpmnStudioClient.startProcessByKey(this.process.key);
-  }
 }

@@ -10,6 +10,8 @@ import environment from './environment';
 import {NotificationService} from './modules/notification/notification.service';
 import {TokenRepository} from './modules/token-repository/token.repository';
 
+import {oidcConfig} from './open-id-connect-configuration';
+
 export function configure(aurelia: Aurelia): void {
 
   const tokenRepository: TokenRepository = new TokenRepository();
@@ -70,9 +72,11 @@ export function configure(aurelia: Aurelia): void {
     .feature('modules/authentication')
     .feature('modules/diagram-validation-service')
     .feature('modules/bpmn-studio_client', tokenRepository)
+    .feature('modules/management-api_client')
     .feature('resources')
     .plugin('aurelia-bootstrap')
-    .plugin('aurelia-validation');
+    .plugin('aurelia-validation')
+    .plugin('aurelia-open-id-connect', () => oidcConfig);
 
   if (environment.debug) {
     aurelia.use.developmentLogging();

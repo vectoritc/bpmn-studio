@@ -7,6 +7,9 @@ export default {
   processlist: {
     pageLimit: 10,
   },
+  openIdConnect: {
+    authority: 'http://localhost:5000',
+  },
   processengine: {
     poolingInterval: 10000,
     routes: {
