@@ -100,7 +100,7 @@ export class BpmnIo {
     }, handlerPriority);
 
     this._diagramPrintService = new DiagramPrintService();
-    this._diagramExportService = new DiagramExportService(this.xml);
+    this._diagramExportService = new DiagramExportService();
 
   }
 
