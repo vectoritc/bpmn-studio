@@ -15,8 +15,10 @@ export class DiagramXmlConverter implements IXmlConvertService {
 
   public asBpmn(): IExportService {
     const formatterPromise: Promise<string> = this._bpmnExporter();
-    this._enqueuedPromises.push(formatterPromise);
     const mimeType: string = 'application/bpmn20-xml';
+
+    this._enqueuedPromises.push(formatterPromise);
+
     return new ExportService(mimeType, this._enqueuedPromises);
   }
 
@@ -26,8 +28,10 @@ export class DiagramXmlConverter implements IXmlConvertService {
   private _bpmnExporter = async(): Promise<string> => {
     const formatterPromise: Promise<string> = new Promise((resolve: Function): void => {
       const formattedXml: string = beautify(this._xmlContent);
+
       resolve(formattedXml);
     });
+
     return formatterPromise;
   }
 }

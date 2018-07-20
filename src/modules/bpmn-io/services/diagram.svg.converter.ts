@@ -1,5 +1,5 @@
 import {IExportService, ISvgConvertService} from '../../../contracts/index';
-import { ExportService } from './export.service';
+import {ExportService} from './export.service';
 
 export class DiagramSvgConverter implements ISvgConvertService {
   private _enqueuedPromises: Array<Promise<string>> = [];
@@ -11,24 +11,30 @@ export class DiagramSvgConverter implements ISvgConvertService {
 
   public asPNG(): IExportService {
     const pngExporterPromise: Promise<string> = this._pngExporter();
-    this._enqueuedPromises.push(pngExporterPromise);
     const mimeType: string = 'image/png';
+
+    this._enqueuedPromises.push(pngExporterPromise);
+
     return new ExportService(mimeType, this._enqueuedPromises);
   }
 
   public asJPEG(): IExportService {
     const jpegExporterPromise: Promise<string> = this._jpegExporter();
-    this._enqueuedPromises.push(jpegExporterPromise);
     const mimeType: string = 'image/jpeg';
+
+    this._enqueuedPromises.push(jpegExporterPromise);
+
     return new ExportService(mimeType, this._enqueuedPromises);
   }
 
   public asSVG(): IExportService {
+    const mimeType: string = 'image/svg+xml';
     const svgExporterPromise: Promise<string> = new Promise((resolve: Function): void => {
       resolve(this._svgContent);
     });
+
     this._enqueuedPromises.push(svgExporterPromise);
-    const mimeType: string = 'image/svg+xml';
+
     return new ExportService(mimeType, this._enqueuedPromises);
   }
 
@@ -36,14 +42,14 @@ export class DiagramSvgConverter implements ISvgConvertService {
    * Exports the current diagram as a PNG image.
    */
   private _pngExporter = async(): Promise<string> => {
-    return await this._generateImageFromSVG('png', this._svgContent);
+    return this._generateImageFromSVG('png', this._svgContent);
   }
 
   /**
    * Exports the current diagram as a jpeg image.
    */
   private _jpegExporter = async(): Promise<string> => {
-    return await this._generateImageFromSVG('png', this._svgContent);
+    return this._generateImageFromSVG('png', this._svgContent);
   }
 
   /**
