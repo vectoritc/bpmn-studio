@@ -135,16 +135,34 @@ export class SignalEventSection implements ISection {
     }
 
     const signalElement: ISignalElement = this._businessObjInPanel.eventDefinitions[0];
-    const elementReferencesSignal: boolean = signalElement.signalRef !== undefined
-                                          && signalElement.signalRef !== null;
+    const elementHasNoSignalRef: boolean = signalElement.signalRef === undefined;
+
+    if (elementHasNoSignalRef) {
+      this.selectedSignal = null;
+      this.selectedId = null;
+
+      return;
+    }
+
+    const signalElementId: string = signalElement.signalRef.id;
+    const elementReferencesSignal: boolean = this._getSignalById(signalElementId) !== undefined;
 
     if (elementReferencesSignal) {
-      this.selectedId = signalElement.signalRef.id;
+      this.selectedId = signalElementId;
       this.updateSignal();
     } else {
       this.selectedSignal = null;
       this.selectedId = null;
     }
+  }
+
+  private _getSignalById(signalId: string): ISignal {
+    const signals: Array<ISignal> = this._getSignals();
+    const signal: ISignal = signals.find((signalElement: ISignal) => {
+      return signalElement.id === signalId;
+    });
+
+    return signal;
   }
 
   private _getSignals(): Array<ISignal> {

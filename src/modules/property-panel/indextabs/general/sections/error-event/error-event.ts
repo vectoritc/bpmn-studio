@@ -152,16 +152,34 @@ export class ErrorEventSection implements ISection {
     }
 
     const errorElement: IErrorElement = this._businessObjInPanel.eventDefinitions[0];
-    const elementReferencesError: boolean = errorElement.errorRef !== undefined
-                                         && errorElement.errorRef !== null;
+    const elementHasNoErrorRef: boolean = errorElement.errorRef === undefined;
+
+    if (elementHasNoErrorRef) {
+      this.selectedError = null;
+      this.selectedId = null;
+
+      return;
+    }
+
+    const errorElementId: string = errorElement.errorRef.id;
+    const elementReferencesError: boolean = this._getErrorById(errorElementId) !== undefined;
 
     if (elementReferencesError) {
-      this.selectedId = errorElement.errorRef.id;
+      this.selectedId = errorElementId;
       this.updateError();
     } else {
       this.selectedError = null;
       this.selectedId = null;
     }
+  }
+
+  private _getErrorById(errorId: string): IError {
+    const errors: Array<IError> = this._getErrors();
+    const error: IError = errors.find((errorElement: IError) => {
+      return errorId === errorElement.id;
+    });
+
+    return error;
   }
 
   private _elementIsErrorEvent(element: IShape): boolean {

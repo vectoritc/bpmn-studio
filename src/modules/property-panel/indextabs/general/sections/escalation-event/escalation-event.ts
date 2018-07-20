@@ -173,16 +173,34 @@ export class EscalationEventSection implements ISection {
     }
 
     const escalationElement: IEscalationElement = this._businessObjInPanel.eventDefinitions[0];
-    const elementReferencesEscalation: boolean = escalationElement.escalationRef !== undefined
-                                              && escalationElement.escalationRef !== null;
+    const elementHasNoEscalationRef: boolean = escalationElement.escalationRef === undefined;
+
+    if (elementHasNoEscalationRef) {
+      this.selectedEscalation = null;
+      this.selectedId = null;
+
+      return;
+    }
+
+    const escalationElementId: string = escalationElement.escalationRef.id;
+    const elementReferencesEscalation: boolean = this._getEscalationsById(escalationElementId) !== undefined;
 
     if (elementReferencesEscalation) {
-      this.selectedId = escalationElement.escalationRef.id;
+      this.selectedId = escalationElementId;
       this.updateEscalation();
     } else {
       this.selectedEscalation = null;
       this.selectedId = null;
     }
+  }
+
+  private _getEscalationsById(escalationId: string): IEscalation {
+    const escalations: Array<IEscalation> = this._getEscalations();
+    const escalation: IEscalation = escalations.find((escalationElement: IEscalation) => {
+      return escalationElement.id === escalationId;
+    });
+
+    return escalation;
   }
 
   private _getEscalations(): Array<IEscalation> {

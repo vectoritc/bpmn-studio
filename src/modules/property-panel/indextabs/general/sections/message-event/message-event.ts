@@ -137,16 +137,34 @@ export class MessageEventSection implements ISection {
     }
 
     const messageElement: IMessageElement = this._businessObjInPanel.eventDefinitions[0];
-    const elementReferencesMessage: boolean = messageElement.messageRef !== undefined
-                                           && messageElement.messageRef !== null;
+    const elementHasNoMessageRef: boolean = messageElement.messageRef === undefined;
+
+    if (elementHasNoMessageRef) {
+      this.selectedMessage = null;
+      this.selectedId = null;
+
+      return;
+    }
+
+    const messageElementId: string = messageElement.messageRef.id;
+    const elementReferencesMessage: boolean = this._getMessageById(messageElementId) !== undefined;
 
     if (elementReferencesMessage) {
-      this.selectedId = messageElement.messageRef.id;
+      this.selectedId = messageElementId;
       this.updateMessage();
     } else {
       this.selectedMessage = undefined;
       this.selectedId = undefined;
     }
+  }
+
+  private _getMessageById(messageId: string): IMessage {
+    const messages: Array<IMessage> = this._getMessages();
+    const message: IMessage = messages.find((messageElement: IMessage) => {
+      return messageElement.id === messageId;
+    });
+
+    return message;
   }
 
   private _getMessages(): Array<IMessage> {
