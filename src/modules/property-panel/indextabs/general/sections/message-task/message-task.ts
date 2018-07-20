@@ -137,11 +137,11 @@ export class MessageTaskSection implements ISection {
     }
 
     const messageRef: IMessage = this._businessObjInPanel.messageRef;
-    const messageElementId: string = messageRef.id;
-    const elementReferencesMessage: boolean = this._getMessageById(messageElementId) !== undefined;
+    const messageId: string = messageRef.id;
+    const elementReferencesMessage: boolean = this._getMessageById(messageId) !== undefined;
 
     if (elementReferencesMessage) {
-      this.selectedId = messageElementId;
+      this.selectedId = messageId;
       this.updateMessage();
     } else {
       this.selectedMessage = undefined;

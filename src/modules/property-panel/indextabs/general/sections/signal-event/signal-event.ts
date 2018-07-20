@@ -144,11 +144,11 @@ export class SignalEventSection implements ISection {
       return;
     }
 
-    const signalElementId: string = signalElement.signalRef.id;
-    const elementReferencesSignal: boolean = this._getSignalById(signalElementId) !== undefined;
+    const signalId: string = signalElement.signalRef.id;
+    const elementReferencesSignal: boolean = this._getSignalById(signalId) !== undefined;
 
     if (elementReferencesSignal) {
-      this.selectedId = signalElementId;
+      this.selectedId = signalId;
       this.updateSignal();
     } else {
       this.selectedSignal = null;

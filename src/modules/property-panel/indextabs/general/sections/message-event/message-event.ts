@@ -146,11 +146,11 @@ export class MessageEventSection implements ISection {
       return;
     }
 
-    const messageElementId: string = messageElement.messageRef.id;
-    const elementReferencesMessage: boolean = this._getMessageById(messageElementId) !== undefined;
+    const messageId: string = messageElement.messageRef.id;
+    const elementReferencesMessage: boolean = this._getMessageById(messageId) !== undefined;
 
     if (elementReferencesMessage) {
-      this.selectedId = messageElementId;
+      this.selectedId = messageId;
       this.updateMessage();
     } else {
       this.selectedMessage = undefined;

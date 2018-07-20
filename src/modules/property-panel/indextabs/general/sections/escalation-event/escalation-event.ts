@@ -182,11 +182,11 @@ export class EscalationEventSection implements ISection {
       return;
     }
 
-    const escalationElementId: string = escalationElement.escalationRef.id;
-    const elementReferencesEscalation: boolean = this._getEscalationsById(escalationElementId) !== undefined;
+    const escalationId: string = escalationElement.escalationRef.id;
+    const elementReferencesEscalation: boolean = this._getEscalationsById(escalationId) !== undefined;
 
     if (elementReferencesEscalation) {
-      this.selectedId = escalationElementId;
+      this.selectedId = escalationId;
       this.updateEscalation();
     } else {
       this.selectedEscalation = null;

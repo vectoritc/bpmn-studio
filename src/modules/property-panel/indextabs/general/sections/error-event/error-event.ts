@@ -161,11 +161,11 @@ export class ErrorEventSection implements ISection {
       return;
     }
 
-    const errorElementId: string = errorElement.errorRef.id;
-    const elementReferencesError: boolean = this._getErrorById(errorElementId) !== undefined;
+    const errorId: string = errorElement.errorRef.id;
+    const elementReferencesError: boolean = this._getErrorById(errorId) !== undefined;
 
     if (elementReferencesError) {
-      this.selectedId = errorElementId;
+      this.selectedId = errorId;
       this.updateError();
     } else {
       this.selectedError = null;
