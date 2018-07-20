@@ -27,6 +27,7 @@ export default {
     },
   },
   events: {
+    diagramNeedsSaving: 'diagramNeedsSaving',
     xmlChanged: 'xmlChanged',
     refreshProcessDefs: 'processdefs:refresh',
     statusBar: {
