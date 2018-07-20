@@ -20,6 +20,11 @@ export class ExportService implements IExportService {
      * Wait, until all queued functions are executed
      */
     for (const currentPromise of this._enqueuedPromises) {
+      /*
+       * TODO: We are only interested on the last resolved promise
+       * here. Find out, how to obtain the last resolved promise and remove
+       * the unnecessary assignments.
+       */
       contentToExport = await currentPromise;
     }
 
