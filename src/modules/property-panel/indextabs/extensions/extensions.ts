@@ -7,16 +7,15 @@ export class Extensions implements IIndextab {
   public path: string = '/indextabs/extensions/extensions';
   public elementInPanel: IShape;
   public canHandleElement: boolean = true;
-
-  private basicsSection: ISection = new BasicsSection();
-  private processSection: ISection = new ProcessSection();
-
   public sections: Array<ISection>;
+
+  private _basicsSection: ISection = new BasicsSection();
+  private _processSection: ISection = new ProcessSection();
 
   constructor() {
     this.sections = [
-      this.basicsSection,
-      this.processSection,
+      this._basicsSection,
+      this._processSection,
     ];
   }
 

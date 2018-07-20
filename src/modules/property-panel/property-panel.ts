@@ -24,16 +24,15 @@ export class PropertyPanel {
   public generalIndextab: IIndextab = new General();
   public formsIndextab: IIndextab = new Forms();
   public extensionsIndextab: IIndextab = new Extensions();
+  public indextabs: Array<IIndextab>;
 
-  private moddle: IBpmnModdle;
-  private eventBus: IEventBus;
-  private currentIndextabTitle: string = this.generalIndextab.title;
-  private indextabs: Array<IIndextab>;
-  private selectedElementId: string;
+  private _moddle: IBpmnModdle;
+  private _eventBus: IEventBus;
+  private _currentIndextabTitle: string = this.generalIndextab.title;
 
   public attached(): void {
-    this.moddle = this.modeler.get('moddle');
-    this.eventBus = this.modeler.get('eventBus');
+    this._moddle = this.modeler.get('moddle');
+    this._eventBus = this.modeler.get('eventBus');
 
     this.indextabs = [
       this.generalIndextab,
@@ -44,7 +43,7 @@ export class PropertyPanel {
     this.updateIndexTabsSuitability();
     this.checkIndexTabSuitability();
 
-    this.eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
+    this._eventBus.on(['element.click', 'shape.changed', 'selection.changed'], (event: IEvent) => {
       const elementWasClickedOn: boolean = event.type === 'element.click';
       const elementIsValidShape: boolean = event.type === 'shape.changed' && event.element.type !== 'label';
 
@@ -52,14 +51,12 @@ export class PropertyPanel {
 
       if (elementWasClickedOn || elementIsShapeInPanel) {
         this.elementInPanel = event.element;
-        this.selectedElementId = this.elementInPanel.businessObject.id;
       }
 
       const selectedElementChanged: boolean = event.type === 'selection.changed' && event.newSelection.length !== 0;
 
       if (selectedElementChanged) {
         this.elementInPanel = event.newSelection[0];
-        this.selectedElementId = this.elementInPanel.businessObject.id;
       }
 
       this.updateIndexTabsSuitability();
@@ -70,12 +67,12 @@ export class PropertyPanel {
   }
 
   public updateIndextab(selectedIndextab: IIndextab): void {
-    this.currentIndextabTitle = selectedIndextab.title;
+    this._currentIndextabTitle = selectedIndextab.title;
   }
 
   private setFirstElement(): void {
     let firstElement: IModdleElement;
-    this.moddle.fromXML(this.xml, ((err: Error, definitions: IDefinition): void => {
+    this._moddle.fromXML(this.xml, ((err: Error, definitions: IDefinition): void => {
       const process: IModdleElement = definitions.rootElements.find((element: IModdleElement) => {
         return element.$type === 'bpmn:Process';
       });
@@ -116,13 +113,6 @@ export class PropertyPanel {
     return processHasLanes;
   }
 
-  private xmlChanged(newValue: string, oldValue: string): void {
-    if (oldValue) {
-      this.setFirstElement();
-      this.updateIndextab(this.generalIndextab);
-    }
-  }
-
   private updateIndexTabsSuitability(): void {
     for (const indextab of this.indextabs) {
       indextab.canHandleElement = indextab.isSuitableForElement(this.elementInPanel);
@@ -131,11 +121,11 @@ export class PropertyPanel {
 
   private checkIndexTabSuitability(): void {
     const currentIndexTab: IIndextab = this.indextabs.find((indextab: IIndextab) => {
-      return indextab.title === this.currentIndextabTitle;
+      return indextab.title === this._currentIndextabTitle;
     });
 
     if (!currentIndexTab.canHandleElement) {
-      this.currentIndextabTitle = this.generalIndextab.title;
+      this._currentIndextabTitle = this.generalIndextab.title;
     }
   }
 

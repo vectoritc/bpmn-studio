@@ -3,16 +3,12 @@
  */
 .process-def-list {
   display: flex;
-  align-items: stretch;
   height: 100%;
+  align-items: stretch;
 }
 
 .process-def-list-table {
   table-layout: fixed;
-}
-
-.processdef-list__btn-table-cell {
-  text-align: center;
 }
 
 .processdef-list__btn-import {
@@ -24,8 +20,8 @@
 }
 
 .processdef-list-container {
-  flex: 1;
   padding: 20px 60px;
+  flex: 1;
 }
 
 .process-def-list__modal-body {

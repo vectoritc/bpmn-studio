@@ -36,6 +36,7 @@ export function configure(aurelia: Aurelia): void {
     const filesystemSolutionexplorerService: SolutionExplorerService = new SolutionExplorerService(fileSystemrepository);
     aurelia.container.registerInstance('SolutionExplorerServiceFileSystem', filesystemSolutionexplorerService);
   }
+
   const processengineRepository: SolutionExplorerProcessEngineRepository = new SolutionExplorerProcessEngineRepository();
   const solutionexplorerService: SolutionExplorerService = new SolutionExplorerService(processengineRepository);
   aurelia.container.registerInstance('SolutionExplorerServiceProcessEngine', solutionexplorerService);
@@ -69,6 +70,7 @@ export function configure(aurelia: Aurelia): void {
     .feature('modules/processengine')
     .feature('modules/notification')
     .feature('modules/authentication')
+    .feature('modules/diagram-validation-service')
     .feature('modules/bpmn-studio_client', tokenRepository)
     .feature('modules/management-api_client')
     .feature('resources')

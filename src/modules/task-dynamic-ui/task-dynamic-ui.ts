@@ -9,37 +9,37 @@ import {NotificationService} from '../notification/notification.service';
 @inject(EventAggregator, 'DynamicUiService', Router, 'NotificationService')
 export class TaskDynamicUi {
 
-  private eventAggregator: EventAggregator;
-  private dynamicUiService: IDynamicUiService;
-  private router: Router;
-  private notificationService: NotificationService;
+  public dynamicUiWrapper: DynamicUiWrapper;
 
-  private subscriptions: Array<Subscription>;
-  private userTaskId: string;
-  private dynamicUiWrapper: DynamicUiWrapper;
+  private _subscriptions: Array<Subscription>;
+  private _userTaskId: string;
   private _userTask: IUserTaskConfig;
+  private _eventAggregator: EventAggregator;
+  private _dynamicUiService: IDynamicUiService;
+  private _router: Router;
+  private _notificationService: NotificationService;
 
   constructor(eventAggregator: EventAggregator,
               dynamicUiService: IDynamicUiService,
               router: Router,
               notificationService: NotificationService) {
-    this.eventAggregator = eventAggregator;
-    this.dynamicUiService = dynamicUiService;
-    this.router = router;
-    this.notificationService = notificationService;
+    this._eventAggregator = eventAggregator;
+    this._dynamicUiService = dynamicUiService;
+    this._router = router;
+    this._notificationService = notificationService;
   }
 
   private activate(routeParameters: {userTaskId: string}): void {
-    this.userTaskId = routeParameters.userTaskId;
+    this._userTaskId = routeParameters.userTaskId;
     this.refreshUserTask();
   }
 
   public attached(): void {
-    this.subscriptions = [
-      this.eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
+    this._subscriptions = [
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
         this.refreshUserTask();
       }),
-      this.eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
         this.refreshUserTask();
       }),
     ];
@@ -50,20 +50,20 @@ export class TaskDynamicUi {
   }
 
   public detached(): void {
-    for (const subscription of this.subscriptions) {
+    for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
   }
 
   private finishTask(action: string): void {
-    this.router.navigate(`waitingroom/${this._userTask.userTaskEntity.process.id}`);
+    this._router.navigate(`waitingroom/${this._userTask.userTaskEntity.process.id}`);
   }
 
   private async refreshUserTask(): Promise<void> {
     try {
-      this.userTask = await this.dynamicUiService.getUserTaskConfig(this.userTaskId);
+      this.userTask = await this._dynamicUiService.getUserTaskConfig(this._userTaskId);
     } catch (error) {
-      this.notificationService.showNotification(NotificationType.ERROR, `Failed to refresh user task: ${error.message}`);
+      this._notificationService.showNotification(NotificationType.ERROR, `Failed to refresh user task: ${error.message}`);
       throw error;
     }
   }

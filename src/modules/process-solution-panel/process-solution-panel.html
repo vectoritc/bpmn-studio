@@ -28,11 +28,11 @@
           </button>
         </div>
       </div>
-      <input class="single-diagram-input" ref="singleDiagramInput" type="file" change.delegate="onSingleDiagramInputChange($event)" id="singleFileInput">
+      <input class="single-diagram-input" ref="singleDiagramInput" type="file" change.delegate="onSingleDiagramInputChange($event)" id="singleFileInput" accept="*.xml, application/xml, *.bpmn, application/bpmn20-xml">
       <div class="single-diagrams" if.bind="openedSingleDiagrams.length > 0">
         <div class="process-explorer__heading">Opened Diagrams</div>
         <div class="single-diagram-group" repeat.for="diagram of openedSingleDiagrams">
-          <div class="single-diagram-group__link" click.delegate="navigateToDiagramDetail(diagram)">${diagram.name}</div>
+          <div class="single-diagram-group__link" click.delegate="navigateToDiagramDetail(diagram)" title="${diagram.name}">${diagram.name}</div>
           <div class="single-diagram-group__close" title="Close diagram"><i class="fas fa-times" click.delegate="closeSingleDiagram(diagram)"></i></div>
         </div>
       </div>
@@ -41,7 +41,7 @@
         <div class="process-explorer__heading">Opened Solutions</div>
         <div repeat.for="solution of openedFileSystemSolutions">
           <div class="solution-group">
-            <div class="solution-headline">
+            <div class="solution-headline" title="${solution.name}">
               <i class="fa fa-folder-open"></i>
               ${solution.name}
             </div>
@@ -50,7 +50,7 @@
             </div>
           </div>
           <div repeat.for="diagram of solution.diagrams" class="solution-diagram-group">
-            <div class="solution-diagram-group__link" click.delegate="navigateToDiagramDetail(diagram)">${diagram.name}</div>
+            <div class="solution-diagram-group__link" click.delegate="navigateToDiagramDetail(diagram)"  title="${diagram.name}">${diagram.name}</div>
           </div>
         </div>
       </div>
@@ -63,7 +63,7 @@
     <div class="solution-explorer__process-engine" if.bind="processEngineIndexCardIsActive">
       <div class="process-explorer__heading">Solution Explorer</div>
       <div repeat.for="diagram of openedProcessEngineSolution.diagrams" class="process-explorer__structure-item">
-        <a href="/processdef/${diagram.id}/detail">${diagram.name}</a>
+        <a href="/processdef/${diagram.id}/detail"  title="${diagram.name}">${diagram.name}</a>
       </div>
     </div>
   </div>

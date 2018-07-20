@@ -73,7 +73,7 @@ export class MessageEventSection implements ISection {
   }
 
   public addMessage(): void {
-    const bpmnMessageProperty: Object = {
+    const bpmnMessageProperty: {id: string, name: string} = {
       id: `Message_${this._generalService.generateRandomId()}`,
       name: 'Message Name',
     };
@@ -82,9 +82,10 @@ export class MessageEventSection implements ISection {
     this._modeler._definitions.rootElements.push(bpmnMessage);
 
     this._moddle.toXML(this._modeler._definitions.rootElements, (toXMLError: Error, xmlStrUpdated: string) => {
-      this._modeler.importXML(xmlStrUpdated, async(errr: Error) => {
+      this._modeler.importXML(xmlStrUpdated, async(importXMLError: Error) => {
         await this._refreshMessages();
         await this._setBusinessObj();
+
         this.selectedId = bpmnMessage.id;
         this.updateMessage();
       });
@@ -116,8 +117,8 @@ export class MessageEventSection implements ISection {
       this.selectedId = messageElement.messageRef.id;
       this.updateMessage();
     } else {
-      this.selectedMessage = null;
-      this.selectedId = null;
+      this.selectedMessage = undefined;
+      this.selectedId = undefined;
     }
   }
 
@@ -137,6 +138,7 @@ export class MessageEventSection implements ISection {
   private _setBusinessObj(): void {
     const elementRegistry: IElementRegistry = this._modeler.get('elementRegistry');
     const elementInPanel: IShape = elementRegistry.get(this._businessObjInPanel.id);
+
     this._businessObjInPanel = elementInPanel.businessObject;
   }
 
