@@ -40,6 +40,9 @@ export class ProcessDefDetail {
   public process: IProcessDefEntity;
   public showModal: boolean = false;
 
+  public processesStartEvents: Array<Event> = [];
+  public dropdownMenu: HTMLSelectElement;
+
   private _processEngineService: IProcessEngineService;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
@@ -54,9 +57,6 @@ export class ProcessDefDetail {
   private _startButtonPressed: boolean = false;
   private _authenticationService: IAuthenticationService;
   private _managementApiClient: IManagementApiService;
-
-  public processesStartEvents: Array<Event> = [];
-  public dropdownMenu: HTMLSelectElement;
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
