@@ -4,6 +4,9 @@
   <div class="panel panel--grow">
     <div class="panel__heading">
       Message
+      <button class="remove-context-button" disabled.bind="!selectedId" click.delegate="removeSelectedMessage()">
+        <i class="fas fa-trash"></i>
+      </button>
       <button class="add-context-button" click.delegate="addMessage()">
         <i class="fas fa-plus"></i>
       </button>
@@ -21,7 +24,7 @@
           </td>
         </tr>
       </table>
-      <table show.bind="selectedId" class="props-table probs-table--details">
+      <table show.bind="selectedId" class="props-table">
         <tr>
           <th>Name</th>
           <td>
