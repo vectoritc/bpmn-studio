@@ -18,10 +18,10 @@ export class NewAuthenticationService implements IAuthenticationService {
   constructor(eventAggregator: EventAggregator, openIdConnect: OpenIdConnect) {
     this._eventAggregator = eventAggregator;
     this._openIdConnect = openIdConnect;
-    this.initialize();
+    this._initialize();
   }
 
-  public async initialize(): Promise<void> {
+  private async _initialize(): Promise<void> {
     this._user = await this._openIdConnect.getUser();
   }
 
