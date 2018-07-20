@@ -67,6 +67,7 @@ export class ProcessDefList {
       const filename: string = this.selectedFiles[0].name;
 
       this.fileInput.value = '';
+      this.selectedFiles = undefined;
 
       this._importXmlFromFile(filename, xml);
     };
