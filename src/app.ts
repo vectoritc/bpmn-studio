@@ -17,7 +17,13 @@ export class App {
 
     config.map([
       {
-        route: ['', 'processdef', 'processdef/:page'],
+        route: [''],
+        title: 'Start Page',
+        name: 'start-page',
+        moduleId: 'modules/start-page/start-page',
+      },
+      {
+        route: ['processdef', 'processdef/:page'],
         title: 'Process Definition List',
         name: 'processdef-list',
         moduleId: 'modules/processdef-list/processdef-list',
