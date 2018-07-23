@@ -129,6 +129,17 @@
           "aurelia-templating-binding",
           "text",
           {
+            "name": "aurelia-open-id-connect",
+            "main": "index.js",
+            "path": "../node_modules/aurelia-open-id-connect/dist/amd",
+            "resources": [
+              "open-id-connect-user-block.html",
+              "open-id-connect-user-debug.html",
+              "open-id-connect.js"
+            ]
+          },
+          "oidc-client",
+          {
             "name": "aurelia-templating-resources",
             "path": "../node_modules/aurelia-templating-resources/dist/amd",
             "main": "aurelia-templating-resources"
@@ -328,6 +339,16 @@
           {
             "name": "@process-engine/solutionexplorer.service",
             "path": "../node_modules/@process-engine/solutionexplorer.service/dist/amd",
+            "main": "index.js"
+          },
+          {
+            "name": "@process-engine/management_api_contracts",
+            "path": "../node_modules/@process-engine/management_api_contracts/dist/amd",
+            "main": "index.js"
+          },
+          {
+            "name": "@process-engine/management_api_client",
+            "path": "../node_modules/@process-engine/management_api_client/dist/amd",
             "main": "index.js"
           },
           {

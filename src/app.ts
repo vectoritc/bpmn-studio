@@ -1,11 +1,20 @@
-import {Router, RouterConfiguration} from 'aurelia-router';
+import {inject} from 'aurelia-framework';
+import {OpenIdConnect} from 'aurelia-open-id-connect';
+import {RouterConfiguration} from 'aurelia-router';
 
+@inject(OpenIdConnect)
 export class App {
-  private _router: Router;
+  private _openIdConnect: OpenIdConnect;
 
-  public configureRouter(config: RouterConfiguration, router: Router): void {
-    this._router = router;
+  constructor(openIdConnect: OpenIdConnect) {
+    this._openIdConnect = openIdConnect;
+  }
+
+  public configureRouter(config: RouterConfiguration): void {
+
+    config.options.pushState = true;
     config.title = 'BPMN-Studio';
+
     config.map([
       {
         route: ['', 'processdef', 'processdef/:page'],
@@ -65,5 +74,7 @@ export class App {
         moduleId: 'modules/waiting-room/waiting-room',
       },
     ]);
+
+    this._openIdConnect.configure(config);
   }
 }

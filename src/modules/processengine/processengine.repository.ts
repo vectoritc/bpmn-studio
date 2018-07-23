@@ -33,7 +33,7 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
           // In that case we dont want to override the token. Even
           // when we authentication service has a token.
           if (authenticationService.hasToken() && !request.headers.has('Authorization')) {
-            request.headers.set('Authorization', `Bearer ${authenticationService.getToken()}`);
+            request.headers.set('Authorization', `Bearer ${authenticationService.getAccessToken()}`);
           }
           return request;
         },

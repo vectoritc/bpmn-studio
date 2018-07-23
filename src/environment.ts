@@ -1,11 +1,16 @@
 const processEngineRoute: string = 'http://localhost:8000';
+const appHost: string = 'http://localhost:9000';
 
 // tslint:disable-next-line no-default-export
 export default {
   debug: true,
   testing: true,
+  appHost: appHost,
   processlist: {
     pageLimit: 10,
+  },
+  openIdConnect: {
+    authority: 'http://localhost:5000',
   },
   processengine: {
     poolingInterval: 5000,

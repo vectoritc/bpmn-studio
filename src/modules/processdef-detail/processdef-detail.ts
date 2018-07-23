@@ -3,10 +3,14 @@ import {inject} from 'aurelia-framework';
 import {Redirect, Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
+import {Event, EventList, IManagementApiService, ManagementContext, ProcessModelExecution} from '@process-engine/management_api_contracts';
+
 import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 
 import {
   AuthenticationStateEvent,
+  IAuthenticationService,
+  IEvent,
   IErrorResponse,
   IExtensionElement,
   IFormElement,
@@ -24,11 +28,22 @@ interface RouteParameters {
   processDefId: string;
 }
 
-@inject('ProcessEngineService', EventAggregator, Router, ValidationController, 'NotificationService')
+@inject(
+  'ProcessEngineService',
+  EventAggregator,
+  Router,
+  ValidationController,
+  'NotificationService',
+  'NewAuthenticationService',
+  'ManagementApiClientService')
 export class ProcessDefDetail {
 
   public bpmnio: BpmnIo;
   public process: IProcessDefEntity;
+  public showModal: boolean = false;
+
+  public processesStartEvents: Array<Event> = [];
+  public dropdownMenu: HTMLSelectElement;
 
   private _processEngineService: IProcessEngineService;
   private _notificationService: NotificationService;
@@ -42,18 +57,24 @@ export class ProcessDefDetail {
   private _diagramIsInvalid: boolean = false;
   // Used to control the modal view; shows the modal view for pressing the play button.
   private _startButtonPressed: boolean = false;
+  private _authenticationService: IAuthenticationService;
+  private _managementApiClient: IManagementApiService;
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
               router: Router,
               validationController: ValidationController,
-              notificationService: NotificationService) {
+              notificationService: NotificationService,
+              authenticationService: IAuthenticationService,
+              managementApiClient: IManagementApiService) {
 
     this._processEngineService = processEngineService;
     this._eventAggregator = eventAggregator;
     this._router = router;
     this._validationController = validationController;
     this._notificationService = notificationService;
+    this._authenticationService = authenticationService;
+    this._managementApiClient = managementApiClient;
   }
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
@@ -64,12 +85,11 @@ export class ProcessDefDetail {
 
   public attached(): void {
     this._subscriptions = [
-      //  Aurelia Event Subscriptions {{{ //
+      //#region Aurelia Event Subscriptions
       // Aurelia will expose the ValidateEvent, we use this to check the BPMN in the modeler.
       this._validationController.subscribe((event: ValidateEvent) => {
         this._handleFormValidateEvents(event);
       }),
-      //  }}} Aurelia Event Subscriptions //
 
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
         this._refreshProcess();
@@ -77,8 +97,11 @@ export class ProcessDefDetail {
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
         this._refreshProcess();
       }),
+      //#endregion
 
-      //  Button Subscriptions {{{ //
+      //#region Button Subscriptions
+
+      //#region Save Button Subscription
       this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
         this._saveDiagram()
           .catch((error: Error) => {
@@ -90,19 +113,22 @@ export class ProcessDefDetail {
               );
           });
       }),
+      //#endregion
 
-      //  Start Button Subscription {{{ //
+      //#region Start Button Subscription
       this._eventAggregator.subscribe(environment.events.processDefDetail.startProcess, () => {
         this._startProcess();
       }),
-      //  }}} Start Button Subscription //
-      //  }}} Button Subscriptions //
+      //#endregion
 
-      //  General Event Subscritions {{{ //
+      //#endregion
+
+      //#region General Event Subscritions
       this._eventAggregator.subscribe(environment.events.diagramChange, () => {
         this._diagramHasChanged = true;
       }),
-      //  }}} General Event Subscritions //
+      //#endregion
+
     ];
 
     this._eventAggregator.publish(environment.events.navBar.showTools, this.process);
@@ -141,7 +167,7 @@ export class ProcessDefDetail {
 
         modal.classList.add('show-modal');
 
-        //  register onClick handler {{{ //
+        //#region register onClick handler
         /* Do not save and leave */
         const dontSaveButtonId: string = 'dontSaveButtonLeaveView';
         document
@@ -193,7 +219,7 @@ export class ProcessDefDetail {
             resolve(false);
           });
         }
-        //  }}} register onClick handler //
+        //#endregion
     });
 
     const result: boolean = await _modal;
@@ -219,6 +245,51 @@ export class ProcessDefDetail {
     this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
   }
 
+  /**
+   * Opens a modal dialog to ask the user, which StartEvent he want's to
+   * use to start the process.
+   *
+   * @returns A promise which resolves, if the user confirms his answer. The
+   * promise is either resolved with the id of the selected StartEvent or with an
+   * empty string, if the user dismissed this modal dialog.
+   */
+  public async showModalDialogAndAwaitAnswer(): Promise<string> {
+    this.showModal = true;
+
+    /*
+     * TODO: Find out if the call here is necessary. The only place where this
+     * the showModalDialogAndAwaitAnswer method is needed, is in startProcess,
+     * which updates the current start events before even calling this method
+     * anyways.
+     */
+    try {
+      await this._initializeModalDialog();
+    } catch (error) {
+      return;
+    }
+
+    /*
+     * Create a promise which displays the modal and resolves, if the user
+     * clicks on the buttons.
+     */
+    const returnPromise: Promise<string | null> = new Promise((resolve: Function, reject: Function): void => {
+      const cancelButton: HTMLElement = document.getElementById('cancelStartEventSelection');
+      const startProcessButton: HTMLElement = document.getElementById('startProcessWithSelectedStartEvent');
+
+      cancelButton.addEventListener('click', () => {
+        this.showModal = false;
+        resolve(null);
+      });
+
+      startProcessButton.addEventListener('click', () => {
+        this.showModal = false;
+        resolve(this.dropdownMenu.value);
+      });
+    });
+
+    return returnPromise;
+  }
+
   private _refreshProcess(): Promise<IProcessDefEntity> {
     return this
       ._processEngineService
@@ -241,12 +312,57 @@ export class ProcessDefDetail {
     });
   }
 
+  private async _initializeModalDialog(): Promise<void> {
+
+    try {
+      await this._updateProcessStartEvents();
+    } catch (error) {
+      this
+        ._notificationService
+        .showNotification(
+          NotificationType.ERROR,
+          `Error while obtaining the StartEvents which belongs to the Process: ${error.message}`,
+        );
+      throw error;
+    }
+  }
+
   /**
    * This sets the _startButtonPressed flag to control the modal view of the save dialog.
    *
    * If the process is not valid, it will not start it.
    */
-  private _startProcess(): void {
+  private async _startProcess(): Promise<void> {
+
+    /*
+    * TODO: Since the existence of the _initializeModal Method, a call
+    * to _updateProcessStartEvents is redundant here. Since we need to refresh
+    * the start events here to look, if we only have one or more start events,
+    * I would suggest that we remove the _initializeModal method.
+    */
+    try {
+      await this._updateProcessStartEvents();
+    } catch (error) {
+      this.
+        _notificationService
+        .showNotification(
+          NotificationType.ERROR,
+          `Could not load the processes StartEvents: ${error.message}`,
+        );
+
+        /*
+         * When it is not possible to obtain the processes start events,
+         * we can return.
+         */
+      return;
+    }
+
+    const selectedStartEvent: string | null = await this.showModalDialogAndAwaitAnswer();
+
+    if (selectedStartEvent === null) {
+      return;
+    }
+
     this._dropInvalidFormData();
 
     if (this._diagramIsInvalid) {
@@ -261,7 +377,41 @@ export class ProcessDefDetail {
 
     this._startButtonPressed = true;
 
+    const context: ManagementContext = this._getManagementContext();
+    const startRequestPayload: ProcessModelExecution.ProcessStartRequestPayload = {
+      inputValues: {},
+    };
+
+    try {
+      await this._managementApiClient.startProcessInstance(context, this.process.key, selectedStartEvent, startRequestPayload, undefined, undefined);
+
+    } catch (error) {
+      this.
+        _notificationService
+        .showNotification(
+          NotificationType.ERROR,
+          error.message,
+        );
+    }
+
     this._router.navigate(`processdef/${this.process.id}/start`);
+  }
+
+  private _getManagementContext(): ManagementContext {
+    const accessToken: string = this._authenticationService.getAccessToken();
+    const context: ManagementContext = {
+      identity: accessToken,
+    };
+    return context;
+  }
+
+  /**
+   * Updates the StartEvents of the current Process.
+   */
+  private async _updateProcessStartEvents(): Promise<void> {
+    const context: ManagementContext = this._getManagementContext();
+    const startEventResponse: EventList = await this._managementApiClient.getEventsForProcessModel(context, this.process.key);
+    this.processesStartEvents = startEventResponse.events;
   }
 
   /**
@@ -314,7 +464,7 @@ export class ProcessDefDetail {
       return;
     }
 
-    //  Save the diagram to the ProcessEngine {{{ //
+    //#region Save the diagram to the ProcessEngine
     // TODO: Explain what this is doing -> Refactor.
     let response: IResponse;
 
@@ -324,9 +474,9 @@ export class ProcessDefDetail {
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, `An error occured: ${error.message}`);
     }
-    //  }}} Save the diagram to the ProcessEngine //
+    //#endregion
 
-    // Treat possible errors {{{ //
+    //#region Treat possible errors
     if (response.error) {
       this
         ._notificationService
@@ -346,7 +496,7 @@ export class ProcessDefDetail {
           `Something is very wrong: ${JSON.stringify(response)}. Please contact the BPMN-Studio team, they can help.`,
         );
     }
-    //  }}}  Treat possible errors //
+    //#endregion
 
     this._diagramHasChanged = false;
   }

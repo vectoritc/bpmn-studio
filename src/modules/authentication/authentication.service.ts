@@ -7,7 +7,6 @@ import {
   IAuthenticationService,
   IIdentity,
   ILoginResult,
-  ILogoutResult,
 } from '../../contracts/index';
 
 const LOCAL_STORAGE_TOKEN_KEY: string = 'process-engine-token';
@@ -45,12 +44,12 @@ export class AuthenticationService implements IAuthenticationService {
     this.tokenRepository.setIdentity(identity);
   }
 
-  public getToken(): string {
+  public getAccessToken(): string {
     return this.tokenRepository.getToken();
   }
 
-  public getIdentity(): IIdentity {
-    return this.tokenRepository.getIdentity();
+  public getIdentity(): Promise<IIdentity> {
+    return Promise.resolve(this.tokenRepository.getIdentity() as IIdentity);
   }
 
   public async login(username: string, password: string): Promise<IIdentity> {

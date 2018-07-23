@@ -14,24 +14,10 @@
   display: none;
 }
 
-.process-details-dropdown-menu {
-  width: 400px;
-  padding: 5px;
-  overflow-x: scroll;
-}
-
-.process-details-dropdown-menu__entry {
-  padding-right: 10px;
-}
-
-.save-modal-dialog {
+.save-modal__dialog {
   position: relative;
   top: 20%;
   width: 400px;
-}
-
-.save-modal-header {
-  text-align: center
 }
 
 .show-modal {
@@ -44,4 +30,32 @@
   background-color: white;
   border: 1px solid darkgray;
   border-radius: 4px;
+}
+
+.process-start-event-modal-dialog__dropdown-menu {
+  margin-top: 15px;
+}
+
+.process-start-event-modal-dialog__content {
+  height: 250px;
+}
+
+.process-start-event-modal-dialog__header-headline {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  font-size: 25px;
+}
+
+.process-start-event-modal-dialog__header {
+  height: 60px;
+}
+
+.process-start-event-modal-dialog__body {
+  height: 130px;
+}
+
+.process-start-event-modal-dialog__footer {
+  height: 55px;
+  padding-top: 0px;
+  padding-bottom: 0px;
 }
