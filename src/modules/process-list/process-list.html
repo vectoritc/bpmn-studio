@@ -1,8 +1,9 @@
 <template>
   <require from="./process-list.css"></require>
   <div class="process-list">
-    <div class="container process-list-container">
+    <div class="process-list-container">
       <template if.bind="instances && instances.length > 0">
+        <h3>Processes running</h3>
         <table class="table table-striped table-bordered">
           <tr>
             <th>ProcessDefinitionName</th>

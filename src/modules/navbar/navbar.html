@@ -17,21 +17,8 @@
       <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'Publish' ? 'menu__menu-tabbed-link--active' : ''">
         <a class="menu-tabbed-link menu-tabbed-link--disabled">Publish</a>
       </div>
-      <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'Task List' || activeRouteTitle === 'Process Instance List'
-                                                        ? 'menu__menu-tabbed-link--active' : ''">
-        <div class="btn-group">
-          <div data-toggle="dropdown">
-            <a class="menu-tabbed-link">Dashboard</a>
-          </div>
-          <ul class="dropdown-menu menu-bar__dashboard-dropdown">
-            <li>
-              <a click.delegate="navigate('Task List')">Task List</a>
-            </li>
-            <li>
-              <a click.delegate="navigate('Process Instance List')">Process Instance List</a>
-            </li>
-          </ul>
-        </div>
+      <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'Dashboard' ? 'menu__menu-tabbed-link--active' : ''">
+        <a class="menu-tabbed-link" click.delegate="navigate('Dashboard')">Dashboard</a>
       </div>
     </div>
     <div class="menu-bar__menu menu-bar__menu--center">

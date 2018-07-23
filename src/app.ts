@@ -30,6 +30,13 @@ export class App {
         nav: true,
       },
       {
+        route: ['dashboard'],
+        title: 'Dashboard',
+        name: 'dashboard',
+        moduleId: 'modules/dashboard/dashboard',
+        nav: true,
+      },
+      {
         route: ['task', 'processdef/:processDefId/task', 'process/:processId/task'],
         title: 'Task List',
         name: 'task-list',

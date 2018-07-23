@@ -2,8 +2,9 @@
   <require from="./task-list.css"></require>
   <require from="../user-login/user-login"></require>
   <div class="task-list">
-    <div class="container task-list-container">
+    <div class="task-list-container">
       <div show.bind="tasks && tasks.length > 0">
+        <h3>Tasks waiting</h3>
         <table class="table table-striped table-bordered">
           <tr>
             <th>ProcessName</th>
@@ -13,12 +14,12 @@
             <th></th>
           </tr>
           <tr repeat.for="task of shownTasks">
-            <td><a href="#/processdef/${task.process.processDef.id}/detail">${task.process.processDef.name}</a></td>
+            <td><a href="/processdef/${task.process.processDef.id}/detail">${task.process.processDef.name}</a></td>
             <td>${task.name}</td>
             <td>${task.id}</td>
             <td>${task.state}</td>
             <td>
-              <a class="btn btn-success" href="#/task/${task.id}/dynamic-ui">Continue</a>
+              <a class="btn btn-success" href="/task/${task.id}/dynamic-ui">Continue</a>
             </td>
           </tr>
         </table>

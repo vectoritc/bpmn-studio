@@ -61,8 +61,6 @@ export class ProcessList {
         return this.getProcessesForProcessDef(routeParameters.processDefId);
       };
     }
-    this.updateProcesses();
-
   }
 
   public async updateProcesses(): Promise<void> {
@@ -86,7 +84,7 @@ export class ProcessList {
   }
 
   public updateList(): void {
-    if (this.selectedState.value === 'all') {
+    if (!this.selectedState || this.selectedState.value === 'all') {
       this.instances = this.allInstances;
       return;
     }
@@ -96,6 +94,11 @@ export class ProcessList {
   }
 
   public attached(): void {
+    if (!this._getProcesses) {
+      this._getProcesses = this.getAllProcesses;
+    }
+    this.updateProcesses();
+
     this._getProcessesIntervalId = window.setInterval(async() => {
       await this.updateProcesses();
       this.updateList();
