@@ -2,165 +2,58 @@
 //       The big issue with this file is: it is the main
 //       anchor for the studio; but it is not aaparent why.
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {bindable, inject, observable} from 'aurelia-framework';
+import {inject, observable} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
-import {
-  BpmnStudioClient,
-  IPagination,
-  IProcessDefEntity,
-} from '@process-engine/bpmn-studio_client';
+import {IManagementApiService, ManagementContext, ProcessModelExecution} from '@process-engine/management_api_contracts';
 
-import {
-  AuthenticationStateEvent,
-  IProcessEngineService,
-  NotificationType,
-} from '../../contracts/index';
+import {AuthenticationStateEvent, IAuthenticationService} from '../../contracts/index';
 import environment from '../../environment';
-import {NotificationService} from '../notification/notification.service';
 
-@inject(EventAggregator, 'BpmnStudioClient', 'NotificationService', Router, 'ProcessEngineService')
+@inject(EventAggregator, Router,  'NewAuthenticationService', 'ManagementApiClientService')
 export class ProcessDefList {
-
-  @bindable()
-  public selectedFiles: FileList;
-  public fileInput: HTMLInputElement;
-  public showOverwriteDialog: boolean;
-  public showDiagramNameDialog: boolean;
-
-  // TODO: Put this into an interface IBpmnDiagram and into the contracts folder
-  public newDiagramName: string;
 
   @observable public currentPage: number = 1;
   public pageSize: number = 10;
   public totalItems: number;
-  public showSolutionExplorer: boolean = false;
+  public allProcessModels: ProcessModelExecution.ProcessModelList;
 
-  private _processEngineService: IProcessEngineService;
-  private _bpmnStudioClient: BpmnStudioClient;
+  private _authenticationService: IAuthenticationService;
+  private _managementApiClient: IManagementApiService;
   private _eventAggregator: EventAggregator;
   private _router: Router;
-  private _notificationService: NotificationService;
-
-  private _processes: IPagination<IProcessDefEntity>;
   private _subscriptions: Array<Subscription>;
-  private _fileReader: FileReader = new FileReader();
   private _getProcessesIntervalId: number;
-  private _newDiagramXml: string;
 
   constructor(eventAggregator: EventAggregator,
-              bpmnStudioClient: BpmnStudioClient,
-              notificationService: NotificationService,
               router: Router,
-              processEngineService: IProcessEngineService) {
-    this._processEngineService = processEngineService;
+              authenticationService: IAuthenticationService,
+              managementApiClient: IManagementApiService) {
+
     this._eventAggregator = eventAggregator;
-    this._bpmnStudioClient = bpmnStudioClient;
     this._router = router;
-    this._notificationService = notificationService;
-
-    this._refreshProcesslist();
-
-    this._fileReader.onload = async(fileInformations: FileReaderProgressEvent): Promise<void> => {
-
-      const xml: string = fileInformations.target.result;
-      const filename: string = this.selectedFiles[0].name;
-
-      this.fileInput.value = '';
-      this.selectedFiles = undefined;
-
-      this._importXmlFromFile(filename, xml);
-    };
+    this._authenticationService = authenticationService;
+    this._managementApiClient = managementApiClient;
 
     this._eventAggregator.publish(environment.events.refreshProcessDefs);
   }
 
-  // TODO: This needs to be refactored into an importService;
-  //       Therefore it is not very usefuly to engineer too much now.
-  public async importNewDiagram(): Promise<void> {
-    //  Check is name is empty; do not close dialog if it is {{{ //
-    const nameIsEmpty: boolean = this._diagramNameIsEmpty();
-    if (nameIsEmpty) {
-      this._notificationService
-        .showNotification(NotificationType.ERROR, 'Name can not be empty. Please specify a name.');
-      return;
-    }
-    //  }}} Check is name is empty; do not close dialog if it is //
-
-    const diagramNameNotUnique: boolean = ! await this._diagramNameIsUnique();
-
-    //  Close the dialog and check for uniqueness {{{ //
-    // close the previous dialog, we do not need it for the next steps.
-    this.showDiagramNameDialog = false;
-
-    if (diagramNameNotUnique) {
-      this.showOverwriteDialog = true;
-      this._notificationService
-        .showNotification(NotificationType.WARNING, 'Name is already taken.');
-      return;
-    } else {
-      this._saveNewDiagram();
-      return;
-    }
-    //  }}} Close the dialog and check for uniqueness //
-  }
-
-  public cancelImport(): void {
-    this.newDiagramName = undefined;
-    this._newDiagramXml = undefined;
-    this.showDiagramNameDialog = false;
-  }
-
-  public overwriteDiagram(): void {
-    this._saveNewDiagram();
-    this.showOverwriteDialog = false;
-  }
-
-  public async changeNewDiagramName(): Promise<void> {
-    this.showOverwriteDialog = false;
-    this.showDiagramNameDialog = true;
-  }
-
-  public async checkIfProcessDefNameUnique(processDefName: string): Promise<boolean> {
-    // TODO: Check if IPagination is needed, why can't this be a simple list.
-    const processes: IPagination<IProcessDefEntity> = await this._bpmnStudioClient.getProcessDefList();
-    const processExists: boolean = processes.data.some((process: IProcessDefEntity) => {
-          return process.name === processDefName;
-    });
-    return !processExists;
-  }
-
-  public selectedFilesChanged(): void {
-    if (this.selectedFiles !== undefined && this.selectedFiles.length > 0) {
-      this._fileReader.readAsText(this.selectedFiles[0]);
-    }
-  }
-
-  public currentPageChanged(newValue: number, oldValue: number): void {
-    if (oldValue !== undefined && oldValue !== null) {
-      this._refreshProcesslist();
-    }
-  }
-
-  public async getProcessesFromService(): Promise<void> {
-    const processCount: IPagination<IProcessDefEntity> = await this._bpmnStudioClient.getProcessDefList();
-    this.totalItems = processCount.count;
-    this._processes = await this._bpmnStudioClient.getProcessDefList(this.pageSize, this.pageSize * (this.currentPage - 1));
-  }
-
   public attached(): void {
+
+    this._getAllProcessModels();
+
     this._getProcessesIntervalId = window.setInterval(() => {
-      this.getProcessesFromService();
+      this._getAllProcessModels();
       this._eventAggregator.publish(environment.events.refreshProcessDefs);
       // tslint:disable-next-line
     }, environment.processengine.poolingInterval);
 
     this._subscriptions = [
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
-        this._refreshProcesslist();
+        this._getAllProcessModels();
       }),
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
-        this._refreshProcesslist();
+        this._getAllProcessModels();
       }),
     ];
   }
@@ -172,68 +65,24 @@ export class ProcessDefList {
     }
   }
 
-  public get processes(): Array<IProcessDefEntity> {
-    if (this._processes === undefined) {
-      return [];
-    }
-    return this._processes.data;
-  }
-
-  public async createProcess(): Promise<void> {
-    const processesDefList: IPagination<IProcessDefEntity> = await this._bpmnStudioClient.getProcessDefList();
-    const processes: Array<IProcessDefEntity> = processesDefList.data;
-
-    const processId: string = processes.find((process: IProcessDefEntity) => {
-      return process.key === 'CreateProcessDef';
-    }).id;
-
-    this._router.navigate(`processdef/${processId}/start`);
-  }
-
   public showDetails(processId: string): void {
     this._router.navigate(`processdef/${processId}/detail`);
   }
 
-  public toggleSolutionExplorer(): void {
-    this.showSolutionExplorer = !this.showSolutionExplorer;
+  private async _getAllProcessModels(): Promise<void> {
+    this.allProcessModels = await this._managementApiClient.getProcessModels(this._managementContext);
   }
 
-  private _importXmlFromFile(filename: string, xml: string): void {
-    this._newDiagramXml = xml;
-    this.newDiagramName = filename.substring(0, filename.lastIndexOf('.'));
-
-    this.showDiagramNameDialog = true;
+  private get _managementContext(): ManagementContext {
+    return this._getManagementContext();
   }
 
-  private _refreshProcesslist(): void {
-    this.getProcessesFromService();
-  }
-
-  private async _saveNewDiagram(): Promise<void> {
-    try {
-      const createdProcessDef: IProcessDefEntity = await this._processEngineService.createProcessfromXML(this._newDiagramXml, this.newDiagramName);
-      this._navigateToProcessDefDetail(createdProcessDef.id);
-      this._refreshProcesslist();
-      this._eventAggregator.publish(environment.events.refreshProcessDefs);
-      this._notificationService.showNotification(NotificationType.SUCCESS, 'Diagram successfully imported!');
-    } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, `Error while importing file: ${error.message}`);
-    }
-    this.newDiagramName = undefined;
-    this._newDiagramXml = undefined;
-  }
-
-  private _navigateToProcessDefDetail(processDefId: string): void {
-    this._router.navigate(`processdef/${processDefId}/detail`);
-}
-
-  private _diagramNameIsEmpty(): boolean {
-    return (this.newDiagramName === '' || this.newDiagramName === undefined);
-  }
-
-  private async _diagramNameIsUnique(): Promise<boolean> {
-    const isNameUnique: boolean = await this.checkIfProcessDefNameUnique(this.newDiagramName);
-    return isNameUnique;
+  private _getManagementContext(): ManagementContext {
+    const accessToken: string = this._authenticationService.getAccessToken();
+    const context: ManagementContext = {
+      identity: accessToken,
+    };
+    return context;
   }
 
 }
