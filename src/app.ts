@@ -37,7 +37,7 @@ export class App {
         nav: true,
       },
       {
-        route: ['task', 'processdef/:processDefId/task', 'process/:processId/task'],
+        route: ['task', 'processdef/:processDefId/task', 'correlation/:correlationId/task'],
         title: 'Task List',
         name: 'task-list',
         moduleId: 'modules/task-list/task-list',
