@@ -89,7 +89,7 @@
     "@process-engine/solutionexplorer.repository.processengine": "1.0.0",
     "@process-engine/solutionexplorer.service": "1.0.0",
     "@process-engine/solutionexplorer.service.contracts": "1.0.0",
-    "@process-engine/management_api_contracts": "^0.3.0",
+    "@process-engine/management_api_contracts": "^0.4.0",
     "@process-engine/management_api_client": "^0.3.0",
     "aurelia-open-id-connect": "^1.0.3",
     "aurelia-validation": "^1.1.2",

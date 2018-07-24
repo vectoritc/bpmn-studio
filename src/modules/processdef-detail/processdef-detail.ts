@@ -8,7 +8,6 @@ import {
   EventList,
   IManagementApiService,
   ManagementContext,
-  ProcessModel,
   ProcessModelExecution,
 } from '@process-engine/management_api_contracts';
 
@@ -40,7 +39,7 @@ interface RouteParameters {
 export class ProcessDefDetail {
 
   public bpmnio: BpmnIo;
-  public process: ProcessModel;
+  public process: ProcessModelExecution.ProcessModel;
   public showModal: boolean = false;
 
   public processesStartEvents: Array<Event> = [];
@@ -289,10 +288,10 @@ export class ProcessDefDetail {
     return returnPromise;
   }
 
-  private async _refreshProcess(): Promise<ProcessModel> {
+  private async _refreshProcess(): Promise<ProcessModelExecution.ProcessModel> {
     const context: ManagementContext = this._getManagementContext();
 
-    const updatedProcessModel: ProcessModel = await this._managementApiClient.getProcessModelById(context, this._processId);
+    const updatedProcessModel: ProcessModelExecution.ProcessModel = await this._managementApiClient.getProcessModelById(context, this._processId);
 
     this.process = updatedProcessModel;
     this
@@ -384,7 +383,7 @@ export class ProcessDefDetail {
         );
     }
 
-    this._router.navigate(`processdef/${this.process.id}/start`);
+    this._router.navigate(`processdef/${this.process.key}/start`);
   }
 
   private _getManagementContext(): ManagementContext {
@@ -439,7 +438,7 @@ export class ProcessDefDetail {
       const context: ManagementContext = this._getManagementContext();
 
       // TODO (api): Implemenet updateProcessDef method.
-      response = await this._managementApiClient.updateProcessDef(context, this.process.key, xml);
+      response = await this._managementApiClient.updateProcessModel(context, this.process.key, xml);
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, `An error occured: ${error.message}`);
     }
