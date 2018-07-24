@@ -5,7 +5,7 @@ import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject, observable} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
-import {isError, UnauthorizedError} from '@essential-projects/errors_ts';
+import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/errors_ts';
 import {IManagementApiService, ManagementContext, ProcessModelExecution} from '@process-engine/management_api_contracts';
 
 import {AuthenticationStateEvent, IAuthenticationService, NotificationType} from '../../contracts/index';
@@ -51,10 +51,10 @@ export class ProcessDefList {
       try {
         await this._managementApiClient.getProcessModels(this._managementContext);
       } catch (error) {
-        if (isError(error, UnauthorizedError)) {
+        if (isError(error, ForbiddenError)) {
           this._notificationService.showNotification(NotificationType.ERROR, 'You dont have the permission to use the planning feature.');
         } else {
-          this._notificationService.showNotification(NotificationType.ERROR, error.message);
+          this._notificationService.showNotification(NotificationType.ERROR, error);
         }
         return false;
       }
