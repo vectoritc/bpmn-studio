@@ -71,6 +71,7 @@ export class ProcessDefList {
 
   private async _getAllProcessModels(): Promise<void> {
     const processModelExecution: ProcessModelExecution.ProcessModelList = await this._managementApiClient.getProcessModels(this._managementContext);
+
     this.allProcessModels = processModelExecution.processModels;
     this.totalItems = this.allProcessModels.length;
   }
