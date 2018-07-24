@@ -1,4 +1,4 @@
-import {isError, NotFoundError} from '@essential-projects/errors_ts';
+import {isError, NotFoundError, UnauthorizedError} from '@essential-projects/errors_ts';
 import {
   IManagementApiService,
   ManagementContext,
@@ -66,7 +66,11 @@ export class TaskList {
       this._userTasks = await this._getUserTasks();
       this.succesfullRequested = true;
     } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, error.message);
+      if (isError(error, UnauthorizedError)) {
+        this._notificationService.showNotification(NotificationType.ERROR, 'You dont have permission to view the task list.');
+      } else {
+        this._notificationService.showNotification(NotificationType.ERROR, error.message);
+      }
     }
 
     this.totalItems = this.tasks.length;
