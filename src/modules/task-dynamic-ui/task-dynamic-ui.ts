@@ -1,36 +1,46 @@
-import {IUserTaskConfig} from '@process-engine/bpmn-studio_client';
+import {ManagementContext, UserTask} from '@process-engine/management_api_contracts';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {AuthenticationStateEvent, IDynamicUiService, NotificationType} from '../../contracts/index';
+import {NewAuthenticationService} from '../authentication/new_authentication.service';
 import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
 import {NotificationService} from '../notification/notification.service';
 
-@inject(EventAggregator, 'DynamicUiService', Router, 'NotificationService')
+@inject(EventAggregator, 'DynamicUiService', Router, 'NotificationService', 'NewAuthenticationService')
 export class TaskDynamicUi {
 
   public dynamicUiWrapper: DynamicUiWrapper;
 
-  private _subscriptions: Array<Subscription>;
-  private _userTaskId: string;
-  private _userTask: IUserTaskConfig;
   private _eventAggregator: EventAggregator;
-  private _dynamicUiService: IDynamicUiService;
   private _router: Router;
   private _notificationService: NotificationService;
+  private _authenticationService: NewAuthenticationService;
+  private _dynamicUiService: IDynamicUiService;
+  private _subscriptions: Array<Subscription>;
+  private _userTask: UserTask;
+  private _userTaskId: string;
+  private _correlationId: string;
+  private _processDefId: string;
 
   constructor(eventAggregator: EventAggregator,
               dynamicUiService: IDynamicUiService,
               router: Router,
-              notificationService: NotificationService) {
+              notificationService: NotificationService,
+              authenticationService: NewAuthenticationService) {
+
     this._eventAggregator = eventAggregator;
     this._dynamicUiService = dynamicUiService;
     this._router = router;
     this._notificationService = notificationService;
+    this._authenticationService = authenticationService;
   }
 
-  public activate(routeParameters: {userTaskId: string}): void {
+  public activate(routeParameters: {userTaskId: string, correlationId?: string, processDefId?: string}): void {
     this._userTaskId = routeParameters.userTaskId;
+    this._correlationId = routeParameters.correlationId;
+    this._processDefId = routeParameters.processDefId;
+
     this.refreshUserTask();
   }
 
@@ -62,8 +72,19 @@ export class TaskDynamicUi {
   }
 
   private async refreshUserTask(): Promise<void> {
+    const managementContext: ManagementContext = this._getManagementContext();
+
     try {
-      this.userTask = await this._dynamicUiService.getUserTaskConfig(this._userTaskId);
+      //
+      if (this._correlationId !== undefined) {
+        this.userTask = await this._dynamicUiService.getUserTaskFromCorrelationById(managementContext,
+          this._userTaskId,
+          this._correlationId);
+      } else if (this._processDefId !== undefined) {
+        this.userTask = await this._dynamicUiService.getUserTaskFromCorrelationById(managementContext,
+          this._userTaskId,
+          this._correlationId);
+      }
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, `Failed to refresh user task: ${error.message}`);
       throw error;
@@ -74,19 +95,32 @@ export class TaskDynamicUi {
     if (!this.dynamicUiWrapper) {
       return;
     }
+
     if (!this._userTask) {
       return;
     }
-    this.dynamicUiWrapper.currentConfig = this._userTask;
+
+    this.dynamicUiWrapper.currentUserTask = this._userTask;
+    this.dynamicUiWrapper.currentCorrelationId = this._correlationId;
+    this.dynamicUiWrapper.currentProcessDefId = this._processDefId;
   }
 
-  public set userTask(task: UserTask) {
-    this._userTask = task;
+  public set userTask(userTask: UserTask) {
+    this._userTask = userTask;
     this.trySettingWidget();
   }
 
   @computedFrom('_userTask')
   public get userTask(): UserTask {
     return this._userTask;
+  }
+
+  private _getManagementContext(): ManagementContext {
+    const accessToken: string = this._authenticationService.getAccessToken();
+    const context: ManagementContext = {
+      identity: accessToken,
+    };
+
+    return context;
   }
 }
