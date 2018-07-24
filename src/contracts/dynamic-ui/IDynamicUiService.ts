@@ -1,6 +1,6 @@
-import {IUserTaskConfig} from '@process-engine/bpmn-studio_client';
+import {UserTask, UserTaskResult} from '@process-engine/management_api_contracts';
 
 export interface IDynamicUiService {
-  sendProceedAction(action: string, widget: IUserTaskConfig): void;
-  getUserTaskConfig(userTaskId: string): Promise<IUserTaskConfig>;
+  sendProceedAction(processModelKey: string,  correlationId: string, userTaskId: string, userTaskResult: UserTaskResult): void;
+  getUserTaskById(userTaskId: string, correlationId: string): Promise<UserTask>;
 }
