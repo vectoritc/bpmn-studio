@@ -40,7 +40,7 @@ export class StatusBar {
       this.currentDiffMode = undefined;
     });
 
-    this._eventAggregator.subscribe(environment.events.statusBar.updateProcessEngineRoute, (newProcessEngineRoute: string) => {
+    this._eventAggregator.subscribe(environment.events.configPanel.processEngineRouteChanged, (newProcessEngineRoute: string) => {
       this._setProcessEngineRoute(newProcessEngineRoute);
     });
   }

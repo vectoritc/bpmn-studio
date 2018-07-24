@@ -3,11 +3,11 @@ import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
 import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {Router} from 'aurelia-router';
+import {IAuthenticationService} from '../../contracts/authentication/IAuthenticationService';
+import {AuthenticationStateEvent, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
-import {IAuthenticationService} from './../../contracts/authentication/IAuthenticationService';
-import {AuthenticationStateEvent, NotificationType} from './../../contracts/index';
-import {oidcConfig} from './../../open-id-connect-configuration';
-import {NotificationService} from './../notification/notification.service';
+import {oidcConfig} from '../../open-id-connect-configuration';
+import {NotificationService} from '../notification/notification.service';
 
 @inject(Router, 'NotificationService', EventAggregator, 'NewAuthenticationService', OpenIdConnect)
 export class ConfigPanel {
@@ -67,9 +67,14 @@ export class ConfigPanel {
     // This dirty way to update the settings is the only way during runtime
     this._openIdConnect.configuration.userManagerSettings.authority = this.config.openIdConnect.authority;
     this._openIdConnect.userManager._settings._authority = this.config.openIdConnect.authority;
+<<<<<<< HEAD
+=======
+
+    this._bpmnStudioClient.updateConfig(this.config);
+>>>>>>> feature/migrate_bpmn_studio_to_new_stack
 
     this._notificationService.showNotification(NotificationType.SUCCESS, 'Successfully saved settings!');
-    this._eventAggregator.publish('statusbar:processEngineRoute:update', this.baseRoute);
+    this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, this.baseRoute);
     this._router.navigateBack();
   }
 
