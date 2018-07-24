@@ -10,4 +10,8 @@ export interface IDynamicUiService {
   getUserTaskFromCorrelationById(managementContext: ManagementContext,
                                  userTaskId: string,
                                  correlationId: string): Promise<UserTask>;
+
+  getUserTaskFromProcessDefById(managementContext: ManagementContext,
+                                userTaskId: string,
+                                processDefId: string): Promise<UserTask>;
 }
