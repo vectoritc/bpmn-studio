@@ -43,13 +43,13 @@ export class ProcessDefList {
     this._eventAggregator.publish(environment.events.refreshProcessDefs);
   }
 
-  public canActivate(): boolean {
+  public async canActivate(): Promise<boolean> {
     if (!this._managementContext.identity) {
       this._notificationService.showNotification(NotificationType.ERROR, 'You have to be logged in to use the planning feature.');
       return false;
     } else {
       try {
-        this._managementApiClient.getProcessModels(this._managementContext);
+        await this._managementApiClient.getProcessModels(this._managementContext);
       } catch (error) {
         if (isError(error, UnauthorizedError)) {
           this._notificationService.showNotification(NotificationType.ERROR, 'You dont have the permission to use the planning feature.');
