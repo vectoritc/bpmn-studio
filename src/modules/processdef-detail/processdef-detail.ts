@@ -392,12 +392,14 @@ export class ProcessDefDetail {
     const context: ManagementContext = {
       identity: accessToken,
     };
+
     return context;
   }
 
   private async _updateProcessStartEvents(): Promise<void> {
     const context: ManagementContext = this._getManagementContext();
     const startEventResponse: EventList = await this._managementApiClient.getEventsForProcessModel(context, this.process.key);
+
     this.processesStartEvents = startEventResponse.events;
   }
 
