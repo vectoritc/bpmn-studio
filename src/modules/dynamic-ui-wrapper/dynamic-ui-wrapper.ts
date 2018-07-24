@@ -1,13 +1,10 @@
-import {
-  IConfirmWidgetConfig,
-  IUserTaskConfig,
-  UserTaskProceedAction,
-  WidgetType,
-} from '@process-engine/bpmn-studio_client';
+import {ManagementApiClientService} from '@process-engine/management_api_client';
+import {ManagementContext, UserTask, UserTaskResult} from '@process-engine/management_api_contracts';
 import {bindable, inject} from 'aurelia-framework';
 import {IDynamicUiService} from '../../contracts';
+import {NewAuthenticationService} from '../authentication/new_authentication.service';
 
-@inject('DynamicUiService')
+@inject('DynamicUiService', 'ManagementApiClient', 'NewAuthenticationService')
 export class DynamicUiWrapper {
 
   public declineButtonText: string = 'Cancel';
@@ -15,47 +12,101 @@ export class DynamicUiWrapper {
   public onButtonClick: (action: string) => void;
 
   private _dynamicUiService: IDynamicUiService;
-  @bindable() private _currentConfig: IUserTaskConfig;
+  @bindable() private _currentUserTask: UserTask;
+  @bindable() private _currentCorrelationId: string;
+  @bindable() private _currentProcessModelKey: string;
+  private _managementApiClient: ManagementApiClientService;
+  private _authenticationService: NewAuthenticationService;
 
-  constructor(dynamicUiService: IDynamicUiService) {
+  constructor(dynamicUiService: IDynamicUiService,
+              managementApiClient: ManagementApiClientService,
+              newAuthenticationService: NewAuthenticationService) {
+
     this._dynamicUiService = dynamicUiService;
+    this._managementApiClient = managementApiClient;
+    this._authenticationService = newAuthenticationService;
   }
 
-  public handleButtonClick(action: string): void {
-    if (!this._currentConfig) {
+  public async handleButtonClick(action: string): Promise<void> {
+    if (!this._currentUserTask || !this._currentCorrelationId) {
       return;
     }
+
     if (this.onButtonClick) {
       this.onButtonClick(action);
     }
-    this._dynamicUiService.sendProceedAction(action, this._currentConfig);
-    this._currentConfig = null;
+
+    const managementContext: ManagementContext = this._getManagementContext();
+
+    const correlationId: string = this._currentCorrelationId;
+    const processModelKey: string = this._currentProcessModelKey;
+
+    const userTaskId: string = this.currentUserTask.id;
+    const userTaskResult: UserTaskResult = this.currentUserTask.data;
+
+    this._dynamicUiService.finishUserTask(managementContext,
+                                          processModelKey,
+                                          correlationId,
+                                          userTaskId,
+                                          userTaskResult);
+
+    this._currentUserTask = null;
+    this._currentCorrelationId = null;
   }
 
-  public set currentConfig(userTaskConfig: IUserTaskConfig) {
-    this._currentConfig = userTaskConfig;
-    if (this._currentConfig.widgetType === WidgetType.confirm) {
-      this.handleConfirmLayout();
-    } else {
-      this.confirmButtonText = 'Continue';
-      this.declineButtonText = 'Cancel';
-    }
+  // public set currentConfig(userTaskConfig: UserTask) {
+    // this._currentConfig = userTaskConfig;
+    // if (this._currentConfig.widgetType === WidgetType.confirm) {
+    //   this.handleConfirmLayout();
+    // } else {
+    //   this.confirmButtonText = 'Continue';
+    //   this.declineButtonText = 'Cancel';
+    // }
+  // }
+
+  public set currentUserTask(userTask: UserTask) {
+    this._currentUserTask = userTask;
   }
 
-  public get currentConfig(): IUserTaskConfig {
-    return this._currentConfig;
+  public get currentUserTask(): UserTask {
+    return this._currentUserTask;
+  }
+
+  public set currentCorrelationId(correlationId: string) {
+    this._currentCorrelationId = this.currentCorrelationId;
+  }
+
+  public get currentCorrelationId(): string {
+    return this._currentCorrelationId;
+  }
+
+  public set currentProcessModelKey(processModelKey: string) {
+    this._currentProcessModelKey = this.currentProcessModelKey;
+  }
+
+  public get currentProcessModelKey(): string {
+    return this._currentProcessModelKey;
   }
 
   public handleConfirmLayout(): void {
-    const confirmWidget: IConfirmWidgetConfig = this.currentConfig.widgetConfig as IConfirmWidgetConfig;
-    this.confirmButtonText = null;
-    this.declineButtonText = null;
-    for (const action of confirmWidget.actions) {
-      if (action.action === UserTaskProceedAction.cancel) {
-        this.declineButtonText = action.label;
-      } else if (action.action === UserTaskProceedAction.proceed) {
-        this.confirmButtonText = action.label;
-      }
-    }
+    // const confirmWidget: IConfirmWidgetConfig = this.currentConfig.widgetConfig as IConfirmWidgetConfig;
+    // this.confirmButtonText = null;
+    // this.declineButtonText = null;
+    // for (const action of confirmWidget.actions) {
+    //   if (action.action === UserTaskProceedAction.cancel) {
+    //     this.declineButtonText = action.label;
+    //   } else if (action.action === UserTaskProceedAction.proceed) {
+    //     this.confirmButtonText = action.label;
+    //   }
+    // }
+  }
+
+  private _getManagementContext(): ManagementContext {
+    const accessToken: string = this._authenticationService.getAccessToken();
+    const context: ManagementContext = {
+      identity: accessToken,
+    };
+
+    return context;
   }
 }
