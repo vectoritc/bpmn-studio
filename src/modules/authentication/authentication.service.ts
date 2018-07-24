@@ -7,12 +7,13 @@ import {
   IAuthenticationService,
   IIdentity,
   ILoginResult,
+  ILogoutResult,
 } from '../../contracts/index';
 
 const LOCAL_STORAGE_TOKEN_KEY: string = 'process-engine-token';
 
 @inject(EventAggregator, 'AuthenticationRepository', 'TokenRepository')
-export class AuthenticationService implements IAuthenticationService {
+export class AuthenticationService {
 
   public tokenRepository: ITokenRepository;
 
