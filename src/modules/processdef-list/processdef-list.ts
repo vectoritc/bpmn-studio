@@ -16,7 +16,7 @@ export class ProcessDefList {
   @observable public currentPage: number = 1;
   public pageSize: number = 10;
   public totalItems: number;
-  public allProcessModels: ProcessModelExecution.ProcessModelList;
+  public allProcessModels: Array<ProcessModelExecution.ProcessModel>;
 
   private _authenticationService: IAuthenticationService;
   private _managementApiClient: IManagementApiService;
@@ -65,12 +65,14 @@ export class ProcessDefList {
     }
   }
 
-  public showDetails(processId: string): void {
-    this._router.navigate(`processdef/${processId}/detail`);
+  public showDetails(processKey: string): void {
+    this._router.navigate(`processdef/${processKey}/detail`);
   }
 
   private async _getAllProcessModels(): Promise<void> {
-    this.allProcessModels = await this._managementApiClient.getProcessModels(this._managementContext);
+    const processModelExecution: ProcessModelExecution.ProcessModelList = await this._managementApiClient.getProcessModels(this._managementContext);
+    this.allProcessModels = processModelExecution.processModels;
+    this.totalItems = this.allProcessModels.length;
   }
 
   private get _managementContext(): ManagementContext {
