@@ -43,6 +43,25 @@ export class ProcessDefList {
     this._eventAggregator.publish(environment.events.refreshProcessDefs);
   }
 
+  public canActivate(): boolean {
+    if (!this._managementContext.identity) {
+      this._notificationService.showNotification(NotificationType.ERROR, 'You have to be logged in to use the planning feature.');
+      return false;
+    } else {
+      try {
+        this._managementApiClient.getProcessModels(this._managementContext);
+      } catch (error) {
+        if (isError(error, UnauthorizedError)) {
+          this._notificationService.showNotification(NotificationType.ERROR, 'You dont have the permission to use the planning feature.');
+        } else {
+          this._notificationService.showNotification(NotificationType.ERROR, error.message);
+        }
+        return false;
+      }
+    }
+    return true;
+  }
+
   public attached(): void {
 
     this._getAllProcessModels();
@@ -75,19 +94,12 @@ export class ProcessDefList {
   }
 
   private async _getAllProcessModels(): Promise<void> {
-    try {
-      const processModelExecution: ProcessModelExecution.ProcessModelList = await this._managementApiClient.getProcessModels(this._managementContext);
 
-      this.allProcessModels = processModelExecution.processModels;
-      this.totalItems = this.allProcessModels.length;
-    } catch (error) {
-      if (isError(error, UnauthorizedError)) {
-        this._notificationService.showNotification(NotificationType.ERROR, 'You dont have permission to view the planning page');
-        this._router.navigate('/');
-      } else {
-        this._notificationService.showNotification(NotificationType.ERROR, error.message);
-      }
-    }
+    const processModelExecution: ProcessModelExecution.ProcessModelList = await this._managementApiClient.getProcessModels(this._managementContext);
+
+    this.allProcessModels = processModelExecution.processModels;
+    this.totalItems = this.allProcessModels.length;
+
   }
 
   private get _managementContext(): ManagementContext {
