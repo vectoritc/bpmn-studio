@@ -1,3 +1,4 @@
+import {isError, NotFoundError} from '@essential-projects/errors_ts';
 import {
   IManagementApiService,
   ManagementContext,
@@ -136,6 +137,7 @@ export class TaskList {
 
     const allProcesModels: ProcessModelList = await this._managementApiService.getProcessModels(managementApiContext);
 
+    // TODO (ph): This will create 1 + n http reqeusts, where n is the number of process models in the processengine.
     const promisesForAllUserTasks: Array<Promise<Array<IUserTaskWithProcessModel>>> = allProcesModels.processModels
       .map(async(processModel: ProcessModel): Promise<Array<IUserTaskWithProcessModel>> => {
         try {
@@ -145,17 +147,18 @@ export class TaskList {
 
           return userTasksAndProcessModels;
 
-        } catch (ignored) {
-          // the management api returns a 404 if there is no instance of a process model running
-          return Promise.resolve([]);
+        } catch (error) {
+          if (isError(error, NotFoundError)) {
+            // the management api returns a 404 if there is no instance of a process model running.
+            return Promise.resolve([]);
+          }
+          throw error;
         }
       });
 
     const userTaksListArray: Array<Array<IUserTaskWithProcessModel>> = await Promise.all(promisesForAllUserTasks);
 
     const flatternedUserTasks: Array<IUserTaskWithProcessModel> = [].concat(...userTaksListArray);
-
-    console.log(flatternedUserTasks);
 
     return flatternedUserTasks;
   }
@@ -167,8 +170,13 @@ export class TaskList {
     let userTaskList: UserTaskList;
     try {
       userTaskList = await this._managementApiService.getUserTasksForProcessModel(managementApiContext, processDefId);
-    } catch (ignored) {
-      return [];
+
+    } catch (error) {
+      if (isError(error, NotFoundError)) {
+        // the management api returns a 404 if there is no instance of a process model running.
+        return Promise.resolve([]);
+      }
+      throw error;
     }
 
     const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = this._addProcessModelToUserTasks(userTaskList, processModel);
