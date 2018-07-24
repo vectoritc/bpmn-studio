@@ -9,11 +9,10 @@ import {AuthenticationStateEvent, NotificationType} from './../../contracts/inde
 import {oidcConfig} from './../../open-id-connect-configuration';
 import {NotificationService} from './../notification/notification.service';
 
-@inject(Router, 'BpmnStudioClient', 'NotificationService', EventAggregator, 'AuthenticationService', OpenIdConnect)
+@inject(Router, 'NotificationService', EventAggregator, 'NewAuthenticationService', OpenIdConnect)
 export class ConfigPanel {
 
   private _router: Router;
-  private _bpmnStudioClient: BpmnStudioClient;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _authenticationService: IAuthenticationService;
@@ -26,14 +25,12 @@ export class ConfigPanel {
   @bindable() public baseRoute: string;
 
   constructor(router: Router,
-              bpmnStudioClient: BpmnStudioClient,
               notificationService: NotificationService,
               eventAggregator: EventAggregator,
               authenticationService: IAuthenticationService,
               openIdConnect: OpenIdConnect) {
+
     this._router = router;
-    this._bpmnStudioClient = bpmnStudioClient;
-    this.config.processEngineRoute = environment.bpmnStudioClient.baseRoute;
     this._notificationService = notificationService;
     this._eventAggregator = eventAggregator;
     this._authenticationService = authenticationService;
@@ -62,23 +59,14 @@ export class ConfigPanel {
 
   public updateSettings(): void {
     this._authenticationService.logout();
-    environment.bpmnStudioClient.baseRoute = this.config.processEngineRoute;
+
     window.localStorage.setItem('processEngineRoute', this.config.processEngineRoute);
-    environment.processengine.routes.processes = `${this.config.processEngineRoute}/datastore/ProcessDef`;
-    environment.processengine.routes.iam = `${this.config.processEngineRoute}/iam`;
-    environment.processengine.routes.messageBus = `${this.config.processEngineRoute}/mb`;
-    environment.processengine.routes.processInstances = `${this.config.processEngineRoute}/datastore/Process`;
-    environment.processengine.routes.startProcess = `${this.config.processEngineRoute}/processengine/start`;
-    environment.processengine.routes.userTasks =  `${this.config.processEngineRoute}/datastore/UserTask`;
-    environment.processengine.routes.importBPMN = `${this.config.processEngineRoute}/processengine/create_bpmn_from_xml`;
 
-  oidcConfig.userManagerSettings.authority = this.config.openIdConnect.authority;
+    oidcConfig.userManagerSettings.authority = this.config.openIdConnect.authority;
 
-  // This dirty way to update the settings is the only way during runtime
-  this._openIdConnect.configuration.userManagerSettings.authority = this.config.openIdConnect.authority;
-  this._openIdConnect.userManager._settings._authority = this.config.openIdConnect.authority;
-    
-  this._bpmnStudioClient.updateConfig(this.config);
+    // This dirty way to update the settings is the only way during runtime
+    this._openIdConnect.configuration.userManagerSettings.authority = this.config.openIdConnect.authority;
+    this._openIdConnect.userManager._settings._authority = this.config.openIdConnect.authority;
 
     this._notificationService.showNotification(NotificationType.SUCCESS, 'Successfully saved settings!');
     this._eventAggregator.publish('statusbar:processEngineRoute:update', this.baseRoute);
