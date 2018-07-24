@@ -29,7 +29,7 @@ export class TaskDynamicUi {
     this._notificationService = notificationService;
   }
 
-  private activate(routeParameters: {userTaskId: string}): void {
+  public activate(routeParameters: {userTaskId: string}): void {
     this._userTaskId = routeParameters.userTaskId;
     this.refreshUserTask();
   }
@@ -80,13 +80,13 @@ export class TaskDynamicUi {
     this.dynamicUiWrapper.currentConfig = this._userTask;
   }
 
-  private set userTask(task: IUserTaskConfig) {
+  public set userTask(task: UserTask) {
     this._userTask = task;
     this.trySettingWidget();
   }
 
   @computedFrom('_userTask')
-  private get userTask(): IUserTaskConfig {
+  public get userTask(): UserTask {
     return this._userTask;
   }
 }
