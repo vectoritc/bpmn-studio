@@ -28,7 +28,9 @@ export default {
     statusBar: {
       showDiagramViewButtons: 'statusbar:diagramviewbuttons:show',
       hdieDiagramViewButtons: 'statusbar:diagramviewbuttons:hide',
-      updateProcessEngineRoute: 'statusbar:processEngineRoute:update',
+    },
+    configPanel: {
+      processEngineRouteChanged: 'configpanel:processEngineRoute:changed',
     },
     navBar: {
       showTools: 'navbar:tools:show',

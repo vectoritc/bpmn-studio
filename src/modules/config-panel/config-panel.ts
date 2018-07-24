@@ -3,11 +3,11 @@ import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
 import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {Router} from 'aurelia-router';
+import {IAuthenticationService} from '../../contracts/authentication/IAuthenticationService';
+import {AuthenticationStateEvent, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
-import {IAuthenticationService} from './../../contracts/authentication/IAuthenticationService';
-import {AuthenticationStateEvent, NotificationType} from './../../contracts/index';
-import {oidcConfig} from './../../open-id-connect-configuration';
-import {NotificationService} from './../notification/notification.service';
+import {oidcConfig} from '../../open-id-connect-configuration';
+import {NotificationService} from '../notification/notification.service';
 
 @inject(Router, 'BpmnStudioClient', 'NotificationService', EventAggregator, 'AuthenticationService', OpenIdConnect)
 export class ConfigPanel {
@@ -72,16 +72,16 @@ export class ConfigPanel {
     environment.processengine.routes.userTasks =  `${this.config.processEngineRoute}/datastore/UserTask`;
     environment.processengine.routes.importBPMN = `${this.config.processEngineRoute}/processengine/create_bpmn_from_xml`;
 
-  oidcConfig.userManagerSettings.authority = this.config.openIdConnect.authority;
+    oidcConfig.userManagerSettings.authority = this.config.openIdConnect.authority;
 
-  // This dirty way to update the settings is the only way during runtime
-  this._openIdConnect.configuration.userManagerSettings.authority = this.config.openIdConnect.authority;
-  this._openIdConnect.userManager._settings._authority = this.config.openIdConnect.authority;
-    
-  this._bpmnStudioClient.updateConfig(this.config);
+    // This dirty way to update the settings is the only way during runtime
+    this._openIdConnect.configuration.userManagerSettings.authority = this.config.openIdConnect.authority;
+    this._openIdConnect.userManager._settings._authority = this.config.openIdConnect.authority;
+
+    this._bpmnStudioClient.updateConfig(this.config);
 
     this._notificationService.showNotification(NotificationType.SUCCESS, 'Successfully saved settings!');
-    this._eventAggregator.publish('statusbar:processEngineRoute:update', this.baseRoute);
+    this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, this.baseRoute);
     this._router.navigateBack();
   }
 
