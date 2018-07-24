@@ -93,6 +93,33 @@ export class MessageEventSection implements ISection {
     this._publishDiagramChange();
   }
 
+  public removeSelectedMessage(): void {
+    const noMessageIsSelected: boolean = !this.selectedId;
+    if (noMessageIsSelected) {
+      return;
+    }
+
+    const messageIndex: number = this.messages.findIndex((message: IMessage) => {
+      return message.id === this.selectedId;
+    });
+
+    this.messages.splice(messageIndex, 1);
+    this._modeler._definitions.rootElements.splice(this._getRootElementsIndex(this.selectedId), 1);
+
+    this.updateMessage();
+    this._publishDiagramChange();
+  }
+
+  private _getRootElementsIndex(elementId: string): number {
+    const rootElements: Array<IModdleElement> = this._modeler._definitions.rootElements;
+
+    const rootElementsIndex: number = rootElements.findIndex((element: IModdleElement) => {
+      return element.id === elementId;
+    });
+
+    return rootElementsIndex;
+  }
+
   private _elementIsMessageEvent(element: IShape): boolean {
     return element !== undefined
         && element.businessObject !== undefined
@@ -110,16 +137,34 @@ export class MessageEventSection implements ISection {
     }
 
     const messageElement: IMessageElement = this._businessObjInPanel.eventDefinitions[0];
-    const elementReferencesMessage: boolean = messageElement.messageRef !== undefined
-                                           && messageElement.messageRef !== null;
+    const elementHasNoMessageRef: boolean = messageElement.messageRef === undefined;
+
+    if (elementHasNoMessageRef) {
+      this.selectedMessage = null;
+      this.selectedId = null;
+
+      return;
+    }
+
+    const messageId: string = messageElement.messageRef.id;
+    const elementReferencesMessage: boolean = this._getMessageById(messageId) !== undefined;
 
     if (elementReferencesMessage) {
-      this.selectedId = messageElement.messageRef.id;
+      this.selectedId = messageId;
       this.updateMessage();
     } else {
       this.selectedMessage = undefined;
       this.selectedId = undefined;
     }
+  }
+
+  private _getMessageById(messageId: string): IMessage {
+    const messages: Array<IMessage> = this._getMessages();
+    const message: IMessage = messages.find((messageElement: IMessage) => {
+      return messageElement.id === messageId;
+    });
+
+    return message;
   }
 
   private _getMessages(): Array<IMessage> {
