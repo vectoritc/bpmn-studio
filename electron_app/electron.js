@@ -21,9 +21,7 @@ Main._startupUrl = null;
 Main.execute = function () {
 
   // All custom scheme notifications on Windows and Linux will try to create a new instance of the application
-  const existingInstance = app.makeSingleInstance((argv, workingDirectory) => {
-
-  });
+  const existingInstance = app.makeSingleInstance((argv, workingDirectory) => {});
 
   if (existingInstance) {
 
@@ -292,7 +290,15 @@ Main._ensureProcessEngineStarted = function () {
   return getPort(getPortConfig)
     .then((port) => {
 
+      console.log(`process engine starting on port ${port}`);
+
       process.env.http__http_extension__server__port = port;
+
+      const userDataPath = app.getPath('userData');
+      const processEngineDatabaseFolderName = 'process_engine_databases';
+
+      process.env.process_engine__process_model_repository__storage = path.join(userDataPath, processEngineDatabaseFolderName, 'process_model.sqlite');
+      process.env.process_engine__flow_node_instance_repository__storage = path.join(userDataPath, processEngineDatabaseFolderName, 'flow_node_instance.sqlite');
 
       let internalProcessEngineStatus = undefined;
       let internalProcessEngineStartupError = undefined;
@@ -380,7 +386,8 @@ Main._ensureProcessEngineStarted = function () {
           _publishProcessEngineStatus();
 
         }).catch((error) => {
-          console.log('Failed to start internal ProcessEngine: ', error);
+
+          console.error('Failed to start internal ProcessEngine: ', error);
           internalProcessEngineStatus = 'error';
           internalProcessEngineStartupError = error;
 

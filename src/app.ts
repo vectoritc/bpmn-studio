@@ -41,7 +41,6 @@ export class App {
       ipcRenderer.send('deep-linking-ready');
     }
 
-    config.options.pushState = true;
     config.title = 'BPMN-Studio';
 
     config.map([
