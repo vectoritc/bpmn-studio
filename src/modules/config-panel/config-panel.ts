@@ -57,24 +57,22 @@ export class ConfigPanel {
     }
   }
 
-  public updateSettings(): void {
-    this._authenticationService.logout();
+  public async updateSettings(): Promise<void> {
+    if (this._authenticationService.getAccessToken()) {
+      await this._authenticationService.logout();
+    }
 
-    window.localStorage.setItem('processEngineRoute', this.config.processEngineRoute);
+    this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, this.baseRoute);
+    window.localStorage.setItem('processEngineRoute', this.baseRoute);
 
     oidcConfig.userManagerSettings.authority = this.config.openIdConnect.authority;
 
     // This dirty way to update the settings is the only way during runtime
     this._openIdConnect.configuration.userManagerSettings.authority = this.config.openIdConnect.authority;
     this._openIdConnect.userManager._settings._authority = this.config.openIdConnect.authority;
-<<<<<<< HEAD
-=======
-
-    this._bpmnStudioClient.updateConfig(this.config);
->>>>>>> feature/migrate_bpmn_studio_to_new_stack
 
     this._notificationService.showNotification(NotificationType.SUCCESS, 'Successfully saved settings!');
-    this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, this.baseRoute);
+
     this._router.navigateBack();
   }
 
