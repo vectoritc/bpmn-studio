@@ -1,6 +1,5 @@
 import * as EssentialProjectErrors from '@essential-projects/errors_ts';
 import {IHttpClient, IRequestOptions, IResponse} from '@essential-projects/http_contracts';
-import environment from '../../environment';
 
 export class HttpFetchClient implements IHttpClient {
 
@@ -9,7 +8,7 @@ export class HttpFetchClient implements IHttpClient {
 
   public async get<T>(url: string, options?: IRequestOptions): Promise<IResponse<T>> {
 
-    const request: Request = new Request(`${environment.bpmnStudioClient.baseRoute}/${url}`, {
+    const request: Request = new Request(url, {
       method: 'GET',
       mode: 'cors',
       referrer: 'no-referrer',
@@ -29,7 +28,7 @@ export class HttpFetchClient implements IHttpClient {
 
   public async post<D, T>(url: string, data: D, options?: IRequestOptions): Promise<IResponse<T>> {
 
-    const request: Request = new Request(`${environment.bpmnStudioClient.baseRoute}/${url}`, {
+    const request: Request = new Request(url, {
       method: 'POST',
       mode: 'cors',
       referrer: 'no-referrer',
@@ -50,7 +49,7 @@ export class HttpFetchClient implements IHttpClient {
 
   public async put<T>(url: string, data: T, options?: IRequestOptions): Promise<IResponse<T>> {
 
-    const request: Request = new Request(`${environment.bpmnStudioClient.baseRoute}/${url}`, {
+    const request: Request = new Request(url, {
       method: 'PUT',
       mode: 'cors',
       referrer: 'no-referrer',
@@ -71,7 +70,7 @@ export class HttpFetchClient implements IHttpClient {
 
   public async delete<T>(url: string, options?: IRequestOptions): Promise<IResponse<T>> {
 
-    const request: Request = new Request(`${environment.bpmnStudioClient.baseRoute}/${url}`, {
+    const request: Request = new Request(url, {
       method: 'DELETE',
       mode: 'cors',
       referrer: 'no-referrer',
