@@ -1,12 +1,10 @@
-import {IManagementApiService, ManagementContext} from '@process-engine/management_api_contracts';
+import {Correlation, IManagementApiService, ManagementContext} from '@process-engine/management_api_contracts';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject, observable} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {
   AuthenticationStateEvent,
   IAuthenticationService,
-  IPagination,
-  IProcessEntity,
   NotificationType,
 } from '../../contracts/index';
 import environment from '../../environment';
@@ -22,7 +20,7 @@ export class ProcessList {
   @observable public currentPage: number = 0;
   public pageSize: number = 10;
   public totalItems: number;
-  public instances: Array<IProcessEntity>;
+  public instances: Array<Correlation>;
   public status: Array<string> = [];
   public succesfullRequested: boolean = false;
   public selectedState: HTMLSelectElement;
@@ -34,9 +32,9 @@ export class ProcessList {
   private _authenticationService: IAuthenticationService;
 
   private _getProcessesIntervalId: number;
-  private _getProcesses: () => Promise<IPagination<IProcessEntity>>;
+  private _getProcesses: () => Promise<Array<Correlation>>;
   private _subscriptions: Array<Subscription>;
-  private _processes: IPagination<IProcessEntity>;
+  private _processes: Array<Correlation>;
 
   constructor(managementApiService: IManagementApiService,
               eventAggregator: EventAggregator,
@@ -61,7 +59,7 @@ export class ProcessList {
     if (!routeParameters.processDefId) {
       this._getProcesses = this.getAllProcesses;
     } else {
-      this._getProcesses = (): Promise<IPagination<IProcessEntity>> => {
+      this._getProcesses = (): Promise<Array<Correlation>> => {
         return this.getProcessesForProcessDef(routeParameters.processDefId);
       };
     }
@@ -72,7 +70,7 @@ export class ProcessList {
       this._processes = await this._getProcesses();
       this.succesfullRequested = true;
     } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, error.message);
+      this._notificationService.showNotification(NotificationType.ERROR, `Error receiving task list: ${error.message}`);
     }
 
     for (const instance of this.allInstances) {
@@ -88,13 +86,7 @@ export class ProcessList {
   }
 
   public updateList(): void {
-    if (!this.selectedState || this.selectedState.value === 'all') {
-      this.instances = this.allInstances;
-      return;
-    }
-    this.instances = this.allInstances.filter((entry: IProcessEntity): boolean => {
-      return entry.status === this.selectedState.value;
-    });
+    this.instances = this.allInstances;
   }
 
   public attached(): void {
@@ -129,24 +121,27 @@ export class ProcessList {
     this._router.navigateBack();
   }
 
-  public get shownProcesses(): Array<IProcessEntity> {
+  public get shownProcesses(): Array<Correlation> {
     return this.instances.slice((this.currentPage - 1) * this.pageSize, this.pageSize * this.currentPage);
   }
 
-  public get allInstances(): Array<IProcessEntity> {
-    return this._processes.data;
+  public get allInstances(): Array<Correlation> {
+    if (!this._processes) {
+      return [];
+    }
+    return this._processes;
   }
 
-  private async getAllProcesses(): Promise<IPagination<IProcessEntity>> {
+  private async getAllProcesses(): Promise<Array<Correlation>> {
     const managementApiContext: ManagementContext = this._getManagementContext();
 
-    return this._managementApiService.getProcessModel(managementApiContext);
+    return this._managementApiService.getAllActiveCorrelations(managementApiContext);
   }
 
-  private async getProcessesForProcessDef(processDefId: string): Promise<IPagination<IProcessEntity>> {
+  private async getProcessesForProcessDef(processDefId: string): Promise<Array<Correlation>> {
     const managementApiContext: ManagementContext = this._getManagementContext();
 
-    return this._managementApiService.getProcessesByProcessDefId(managementApiContext, processDefId);
+    return []; // this._managementApiService.getProcessesByProcessDefId(managementApiContext, processDefId);
   }
 
   // TODO: Move this method into a service.

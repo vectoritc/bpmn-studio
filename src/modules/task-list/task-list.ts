@@ -2,8 +2,7 @@ import {isError, NotFoundError, UnauthorizedError} from '@essential-projects/err
 import {
   IManagementApiService,
   ManagementContext,
-  ProcessModel,
-  ProcessModelList,
+  ProcessModelExecution,
   UserTask,
   UserTaskList,
 } from '@process-engine/management_api_contracts';
@@ -25,7 +24,7 @@ interface ITaskListRouteParameters {
 
 interface IUserTaskWithProcessModel {
   userTask: UserTask;
-  processModel: ProcessModel;
+  processModel: ProcessModelExecution.ProcessModel;
 }
 
 @inject(EventAggregator, 'ManagementApiClientService', Router, 'NotificationService', 'NewAuthenticationService')
@@ -69,7 +68,7 @@ export class TaskList {
       if (isError(error, UnauthorizedError)) {
         this._notificationService.showNotification(NotificationType.ERROR, 'You dont have permission to view the task list.');
       } else {
-        this._notificationService.showNotification(NotificationType.ERROR, error.message);
+        this._notificationService.showNotification(NotificationType.ERROR, `Error receiving task list: ${error.message}`);
       }
     }
 
@@ -139,11 +138,11 @@ export class TaskList {
   private async _getAllUserTasks(): Promise<Array<IUserTaskWithProcessModel>> {
     const managementApiContext: ManagementContext = this._getManagementContext();
 
-    const allProcesModels: ProcessModelList = await this._managementApiService.getProcessModels(managementApiContext);
+    const allProcesModels: ProcessModelExecution.ProcessModelList = await this._managementApiService.getProcessModels(managementApiContext);
 
     // TODO (ph): This will create 1 + n http reqeusts, where n is the number of process models in the processengine.
     const promisesForAllUserTasks: Array<Promise<Array<IUserTaskWithProcessModel>>> = allProcesModels.processModels
-      .map(async(processModel: ProcessModel): Promise<Array<IUserTaskWithProcessModel>> => {
+      .map(async(processModel: ProcessModelExecution.ProcessModel): Promise<Array<IUserTaskWithProcessModel>> => {
         try {
           const userTaskList: UserTaskList = await this._managementApiService.getUserTasksForProcessModel(managementApiContext, processModel.key);
 
@@ -152,6 +151,8 @@ export class TaskList {
           return userTasksAndProcessModels;
 
         } catch (error) {
+          console.log(error);
+
           if (isError(error, NotFoundError)) {
             // the management api returns a 404 if there is no instance of a process model running.
             return Promise.resolve([]);
@@ -170,7 +171,7 @@ export class TaskList {
   private async _getUserTasksForProcessDef(processDefId: string): Promise<Array<IUserTaskWithProcessModel>> {
     const managementApiContext: ManagementContext = this._getManagementContext();
 
-    const processModel: ProcessModel = await this._managementApiService.getProcessModelById(managementApiContext, processDefId);
+    const processModel: ProcessModelExecution.ProcessModel = await this._managementApiService.getProcessModelById(managementApiContext, processDefId);
     let userTaskList: UserTaskList;
     try {
       userTaskList = await this._managementApiService.getUserTasksForProcessModel(managementApiContext, processDefId);
@@ -197,7 +198,10 @@ export class TaskList {
     return userTasksAndProcessModels;
   }
 
-  private _addProcessModelToUserTasks(userTaskList: UserTaskList, processModel: ProcessModel): Array<IUserTaskWithProcessModel> {
+  private _addProcessModelToUserTasks(
+    userTaskList: UserTaskList,
+    processModel: ProcessModelExecution.ProcessModel,
+  ): Array<IUserTaskWithProcessModel> {
 
     const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = userTaskList.userTasks
       .map((userTask: UserTask): IUserTaskWithProcessModel => {
