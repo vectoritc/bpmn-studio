@@ -21,19 +21,19 @@ export class ProcessSection {
   private _propertiesElement: IPropertiesElement;
 
   public activate(model: IPageModel): void {
-    this._businessObjInPanel = model.elementInPanel.businessObject;
+    this._businessObjInPanel = model.elementInPanel.businessObject.participants[0];
     this._moddle = model.modeler.get('moddle');
     this._init();
   }
 
   public isSuitableForElement(element: IShape): boolean {
-    if (element.businessObject === undefined) {
+    if (element === undefined || element.businessObject === undefined) {
       return false;
     }
 
-    const elementHasExtensions: boolean = element.businessObject.$type === 'bpmn:Participant';
+    const elementIsRoot: boolean = element.businessObject.$type === 'bpmn:Collaboration';
 
-    return elementHasExtensions;
+    return elementIsRoot;
   }
 
   public addProperty(): void {
