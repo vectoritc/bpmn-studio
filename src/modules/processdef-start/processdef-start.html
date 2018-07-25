@@ -3,13 +3,13 @@
   <require from="../dynamic-ui-wrapper/dynamic-ui-wrapper"></require>
   <div class="start-process">
     <div class="container-fluid start-process-container">
-      <template if.bind="process">
-        <h3>Start process: ${process.name}</h3>
+      <template if.bind="processModel">
+        <h3>Start process: ${processModel.key}</h3>
 
         <dynamic-ui-wrapper view-model.ref="dynamicUiWrapper"></dynamic-ui-wrapper>
       </template>
 
-      <template if.bind="!process">
+      <template if.bind="!processModel">
         <h3>Process not found</h3>
       </template>
     </div>
