@@ -1,7 +1,7 @@
-import { inject } from 'aurelia-framework';
-import { OpenIdConnect } from 'aurelia-open-id-connect';
+import {inject} from 'aurelia-framework';
+import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {Router, RouterConfiguration} from 'aurelia-router';
-import { NewAuthenticationService } from './modules/authentication/new_authentication.service';
+import {NewAuthenticationService} from './modules/authentication/new_authentication.service';
 
 @inject(OpenIdConnect, 'NewAuthenticationService')
 export class App {
