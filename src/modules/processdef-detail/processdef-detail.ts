@@ -372,7 +372,6 @@ export class ProcessDefDetail {
     };
 
     try {
-      console.log('test');
       await this._managementApiClient.startProcessInstance(context, this.process.key, selectedStartEvent, startRequestPayload, undefined, undefined);
 
     } catch (error) {
