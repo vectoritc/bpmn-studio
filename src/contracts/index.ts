@@ -2,7 +2,7 @@ export * from './authentication/index';
 export * from './bpmnmodeler/index';
 export * from './choose-dialog/index';
 export * from './colorpicker/index';
-export * from './diagram-validation-service';
+export * from './diagram-validation-service/index';
 export * from './diffview/index';
 export * from './dynamic-ui/index';
 export * from './eventbus/index';
