@@ -21,7 +21,7 @@ export class TaskDynamicUi {
   private _userTask: UserTask;
   private _userTaskId: string;
   private _correlationId: string;
-  private _processDefId: string;
+  private _processModelId: string;
 
   constructor(eventAggregator: EventAggregator,
               dynamicUiService: IDynamicUiService,
@@ -36,10 +36,11 @@ export class TaskDynamicUi {
     this._authenticationService = authenticationService;
   }
 
-  public activate(routeParameters: {userTaskId: string, correlationId?: string, processDefId?: string}): void {
+  public activate(routeParameters: {userTaskId: string, correlationId?: string, processModelId?: string}): void {
     this._userTaskId = routeParameters.userTaskId;
     this._correlationId = routeParameters.correlationId;
-    this._processDefId = routeParameters.processDefId;
+    this._processModelId = routeParameters.processModelId;
+    // This is called when starting usertask
 
     this.refreshUserTask();
   }
@@ -84,7 +85,7 @@ export class TaskDynamicUi {
                                                                                   this._userTaskId,
                                                                                   this._processModelId);
       } else {
-        // TODO
+        throw Error('CorrelationId or ProcessModelId must be given.');
       }
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, `Failed to refresh user task: ${error.message}`);
