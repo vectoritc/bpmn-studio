@@ -42,9 +42,9 @@ export class DynamicUiService implements IDynamicUiService {
                                             userTaskResult);
   }
 
-  public async getUserTaskFromCorrelationById(managementContext: ManagementContext,
-                                              userTaskId: string,
-                                              correlationId: string): Promise<UserTask> {
+  public async getUserTaskByCorrelationId(managementContext: ManagementContext,
+                                          userTaskId: string,
+                                          correlationId: string): Promise<UserTask> {
 
     const userTaskList: UserTaskList = await this._managmentApiClient.getUserTasksForCorrelation(managementContext, correlationId);
 
@@ -53,9 +53,9 @@ export class DynamicUiService implements IDynamicUiService {
     });
   }
 
-  public async getUserTaskFromProcessModelById(managementContext: ManagementContext,
-                                               userTaskId: string,
-                                               processModelKey: string): Promise<UserTask> {
+  public async getUserTaskByProcessModelId(managementContext: ManagementContext,
+                                           userTaskId: string,
+                                           processModelId: string): Promise<UserTask> {
 
     const userTaskList: UserTaskList = await this._managmentApiClient.getUserTasksForProcessModel(managementContext, processModelKey);
 

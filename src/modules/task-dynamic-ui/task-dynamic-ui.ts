@@ -76,9 +76,13 @@ export class TaskDynamicUi {
 
     try {
       if (this._correlationId !== undefined) {
-        this.userTask = await this._dynamicUiService.getUserTaskFromCorrelationById(managementContext,
-          this._userTaskId,
-          this._correlationId);
+        this.userTask = await this._dynamicUiService.getUserTaskByCorrelationId(managementContext,
+                                                                                 this._userTaskId,
+                                                                                 this._correlationId);
+      } else if (this._processModelId !== undefined) {
+        this.userTask =  await this._dynamicUiService.getUserTaskByProcessModelId(managementContext,
+                                                                                  this._userTaskId,
+                                                                                  this._processModelId);
       } else {
         // TODO
       }
