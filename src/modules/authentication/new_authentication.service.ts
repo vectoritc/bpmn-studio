@@ -46,6 +46,8 @@ export class NewAuthenticationService implements IAuthenticationService {
     const isRunningInElectron: boolean = !!(<any> window).nodeRequire;
 
     if (!isRunningInElectron) {
+      // If we're in the browser, we need to let the oidc plugin handle the
+      // logout so that push state works correctly
       return await this._openIdConnect.logout();
     }
 
