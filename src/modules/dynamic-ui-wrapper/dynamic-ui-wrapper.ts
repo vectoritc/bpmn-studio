@@ -4,7 +4,7 @@ import {bindable, inject} from 'aurelia-framework';
 import {IDynamicUiService} from '../../contracts';
 import {NewAuthenticationService} from '../authentication/new_authentication.service';
 
-@inject('DynamicUiService', 'ManagementApiClient', 'NewAuthenticationService')
+@inject('DynamicUiService', 'ManagementApiClientService', 'NewAuthenticationService')
 export class DynamicUiWrapper {
 
   public declineButtonText: string = 'Cancel';

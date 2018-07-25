@@ -5,7 +5,7 @@ import {inject} from 'aurelia-framework';
 import {IDynamicUiService} from '../../contracts';
 import {NewAuthenticationService} from '../authentication/new_authentication.service';
 
-@inject(EventAggregator, 'ManagmentApiClient', 'NewAuthenticationService')
+@inject(EventAggregator, 'ManagementApiClientService', 'NewAuthenticationService')
 export class DynamicUiService implements IDynamicUiService {
 
   private _eventAggregator: EventAggregator;
