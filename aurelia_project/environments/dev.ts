@@ -1,11 +1,15 @@
 const processEngineRoute: string = 'http://localhost:8000';
-const appHost: string = 'http://localhost:9000';
+const electronHost: string = 'bpmn-studio:/';
+
+const isRunningInElectron: boolean = !!(<any> window).nodeRequire;
 
 // tslint:disable-next-line no-default-export
 export default {
   debug: true,
   testing: true,
-  appHost: appHost,
+  appHost: isRunningInElectron
+    ? electronHost
+    : `http://${window.location.host}`,
   processlist: {
     pageLimit: 10,
   },
@@ -48,6 +52,7 @@ export default {
       saveDiagram: 'processdefdetail:diagram:save',
       exportDiagramAs: 'processdefdetail:diagram:exportas',
       startProcess: 'processdefdetail:process:start',
+      toggleXMLView: 'processdefdetail:xmlview:toggle',
     },
     bpmnio: {
       toggleXMLView: 'processdefdetail:xmlview:toggle',

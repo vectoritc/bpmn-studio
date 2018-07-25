@@ -1,18 +1,53 @@
 import {inject} from 'aurelia-framework';
 import {OpenIdConnect} from 'aurelia-open-id-connect';
-import {RouterConfiguration} from 'aurelia-router';
+import {Router, RouterConfiguration} from 'aurelia-router';
+import {NewAuthenticationService} from './modules/authentication/new_authentication.service';
 
-@inject(OpenIdConnect)
+@inject(OpenIdConnect, 'NewAuthenticationService')
 export class App {
   private _openIdConnect: OpenIdConnect;
+  private _authenticationService: NewAuthenticationService;
+  private _router: Router;
 
-  constructor(openIdConnect: OpenIdConnect) {
+  constructor(openIdConnect: OpenIdConnect, authenticationService: NewAuthenticationService) {
     this._openIdConnect = openIdConnect;
+    this._authenticationService = authenticationService;
   }
 
-  public configureRouter(config: RouterConfiguration): void {
+  private _parseDeepLinkingUrl(url: string): string {
+    const customProtocolPrefix: string = 'bpmn-studio://';
+    const urlFragment: string = url.substring(customProtocolPrefix.length);
+    return urlFragment;
+  }
 
-    config.options.pushState = true;
+  private _processDeepLinkingRequest(url: string): void {
+    const urlFragment: string = this._parseDeepLinkingUrl(url);
+    this._router.navigate(urlFragment);
+  }
+
+  public configureRouter(config: RouterConfiguration, router: Router): void {
+    this._router = router;
+
+    const isRunningInElectron: boolean = !!(<any> window).nodeRequire;
+
+    if (isRunningInElectron) {
+      const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
+      ipcRenderer.on('deep-linking-request-in-runtime', (event: any, url: string) => {
+        this._processDeepLinkingRequest(url);
+      });
+      ipcRenderer.on('deep-linking-request', async(event: any, url: string) => {
+        const urlFragment: string = this._parseDeepLinkingUrl(url);
+        this._authenticationService.loginViaDeepLink(urlFragment);
+        this._router.navigate('/');
+      });
+      ipcRenderer.send('deep-linking-ready');
+    }
+
+    if (!isRunningInElectron) {
+      config.options.pushState = true;
+      config.options.baseRoute = '/';
+    }
+
     config.title = 'BPMN-Studio';
 
     config.map([
