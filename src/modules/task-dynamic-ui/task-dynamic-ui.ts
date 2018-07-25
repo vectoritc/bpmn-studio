@@ -105,6 +105,7 @@ export class TaskDynamicUi {
 
     this.dynamicUiWrapper.currentUserTask = this._userTask;
     this.dynamicUiWrapper.currentCorrelationId = this._correlationId;
+    this.dynamicUiWrapper.currentProcessModelKey = this._processModelId;
   }
 
   public set userTask(userTask: UserTask) {
