@@ -17,6 +17,7 @@ const httpServerOptions = {
 };
 
 pushserve(httpServerOptions);
+open(`http://localhost:${portUsed}`);
 
 /*
  * Check if a given port is okay.
