@@ -36,6 +36,7 @@ export class DynamicUiWrapper {
       this.onButtonClick(action);
     }
 
+    // This happens when clicking on continue on a usertask
     const managementContext: ManagementContext = this._getManagementContext();
 
     const correlationId: string = this._currentCorrelationId;
@@ -43,6 +44,8 @@ export class DynamicUiWrapper {
 
     const userTaskId: string = this.currentUserTask.id;
     const userTaskResult: UserTaskResult = this.currentUserTask.data;
+    console.log(userTaskResult);
+    // TODO! check if userTaskResult contains right data
 
     this._dynamicUiService.finishUserTask(managementContext,
                                           processModelKey,
@@ -54,7 +57,8 @@ export class DynamicUiWrapper {
     this._currentCorrelationId = null;
   }
 
-  // TODO
+  // TODO!
+  // WHAT ABOUT WIDGETTYPE?
   // public set currentConfig(userTaskConfig: UserTask) {
     // this._currentConfig = userTaskConfig;
     // if (this._currentConfig.widgetType === WidgetType.confirm) {
@@ -90,7 +94,7 @@ export class DynamicUiWrapper {
   }
 
   public handleConfirmLayout(): void {
-    // TODO
+    // TODO!
     // const confirmWidget: IConfirmWidgetConfig = this.currentConfig.widgetConfig as IConfirmWidgetConfig;
     // this.confirmButtonText = null;
     // this.declineButtonText = null;
@@ -101,6 +105,7 @@ export class DynamicUiWrapper {
     //     this.confirmButtonText = action.label;
     //   }
     // }
+    console.log('TODO!');
   }
 
   private _getManagementContext(): ManagementContext {
