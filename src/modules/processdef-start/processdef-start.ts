@@ -102,7 +102,6 @@ export class ProcessDefStart {
 
   private async _refreshProcess(): Promise<void> {
     try {
-      this._processModel = await this._processEngineService.getProcessDefById(this._processModelId);
       const managementContext: ManagementContext = this._getManagementContext();
 
       this._processModel = await this._managementApiClient.getProcessModelById(managementContext, this._processModelId);
