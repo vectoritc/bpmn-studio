@@ -59,6 +59,8 @@ export class Dashboard {
       await this._managementApiService.getProcessModels(managementContext);
       await this._managementApiService.getUserTasksForProcessModel(managementContext, undefined);
       await this._managementApiService.getUserTasksForCorrelation(managementContext, undefined);
+      await this._managementApiService.getAllActiveCorrelations(managementContext);
+      await this._managementApiService.getProcessModelById(managementContext, undefined);
 
       return true;
 
