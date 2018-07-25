@@ -43,6 +43,12 @@ export class NewAuthenticationService implements IAuthenticationService {
 
   public async logout(): Promise<void> {
 
+    const isRunningInElectron: boolean = !!(<any> window).nodeRequire;
+
+    if (!isRunningInElectron) {
+      return await this._openIdConnect.logout();
+    }
+
     const idToken: string = this._user.id_token;
     const logoutRedirectUri: string = oidcConfig.userManagerSettings.post_logout_redirect_uri;
     const queryParams: Array<Array<string>> = [

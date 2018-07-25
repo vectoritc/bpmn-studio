@@ -4,7 +4,7 @@ import environment from './environment';
 
 export const oidcConfig: OpenIdConnectConfiguration = {
   loginRedirectRoute: '',
-  logoutRedirectRoute: 'bpmn-studio://',
+  logoutRedirectRoute: '',
   unauthorizedRedirectRoute: '',
   logLevel: 0,
   userManagerSettings: {

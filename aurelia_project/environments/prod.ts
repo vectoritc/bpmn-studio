@@ -1,11 +1,15 @@
 const processEngineRoute: string = 'http://localhost:8000';
-const appHost: string = 'bpmn-studio:/';
+const electronHost: string = 'bpmn-studio:/';
+
+const isRunningInElectron: boolean = !!(<any> window).nodeRequire;
 
 // tslint:disable-next-line no-default-export
 export default {
   debug: false,
   testing: false,
-  appHost: appHost,
+  appHost: isRunningInElectron
+    ? electronHost
+    : `http://${window.location.host}`,
   processlist: {
     pageLimit: 10,
   },
@@ -17,8 +21,8 @@ export default {
     routes: {
       processes: `${processEngineRoute}/datastore/ProcessDef`,
       startProcess: `${processEngineRoute}/processengine/start`,
-      processInstances: `${processEngineRoute}/datastore/Process`,
-      messageBus: `${processEngineRoute}/mb`,
+      processInstances: `${processEngineRoute} / datastore/ Process`,
+      messageBus: `${processEngineRoute} / mb`,
       iam: `${processEngineRoute}/iam`,
       userTasks: `${processEngineRoute}/datastore/UserTask`,
       importBPMN: `${processEngineRoute}/processengine/create_bpmn_from_xml`,

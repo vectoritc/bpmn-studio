@@ -28,7 +28,9 @@ export class App {
   public configureRouter(config: RouterConfiguration, router: Router): void {
     this._router = router;
 
-    if ((<any> window).nodeRequire) {
+    const isRunningInElectron: boolean = !!(<any> window).nodeRequire;
+
+    if (isRunningInElectron) {
       const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
       ipcRenderer.on('deep-linking-request-in-runtime', (event: any, url: string) => {
         this._processDeepLinkingRequest(url);
@@ -39,6 +41,11 @@ export class App {
         this._router.navigate('/');
       });
       ipcRenderer.send('deep-linking-ready');
+    }
+
+    if (!isRunningInElectron) {
+      config.options.pushState = true;
+      config.options.baseRoute = '/';
     }
 
     config.title = 'BPMN-Studio';
@@ -102,8 +109,6 @@ export class App {
         moduleId: 'modules/waiting-room/waiting-room',
       },
     ]);
-
-    config.fallbackRoute('processdef');
 
     this._openIdConnect.configure(config);
   }
