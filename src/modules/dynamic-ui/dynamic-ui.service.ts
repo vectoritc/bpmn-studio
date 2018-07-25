@@ -53,11 +53,11 @@ export class DynamicUiService implements IDynamicUiService {
     });
   }
 
-  public async getUserTaskFromProcessDefById(managementContext: ManagementContext,
-                                             userTaskId: string,
-                                             processDefId: string): Promise<UserTask> {
+  public async getUserTaskFromProcessModelById(managementContext: ManagementContext,
+                                               userTaskId: string,
+                                               processModelKey: string): Promise<UserTask> {
 
-    const userTaskList: UserTaskList = await this._managmentApiClient.getUserTasksForProcessModel(managementContext, processDefId);
+    const userTaskList: UserTaskList = await this._managmentApiClient.getUserTasksForProcessModel(managementContext, processModelKey);
 
     return  userTaskList.userTasks.find((userTask: UserTask) => {
       return userTask.id === userTaskId;
