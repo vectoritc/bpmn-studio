@@ -54,6 +54,7 @@ export class DynamicUiWrapper {
     this._currentCorrelationId = null;
   }
 
+  // TODO
   // public set currentConfig(userTaskConfig: UserTask) {
     // this._currentConfig = userTaskConfig;
     // if (this._currentConfig.widgetType === WidgetType.confirm) {
@@ -89,6 +90,7 @@ export class DynamicUiWrapper {
   }
 
   public handleConfirmLayout(): void {
+    // TODO
     // const confirmWidget: IConfirmWidgetConfig = this.currentConfig.widgetConfig as IConfirmWidgetConfig;
     // this.confirmButtonText = null;
     // this.declineButtonText = null;

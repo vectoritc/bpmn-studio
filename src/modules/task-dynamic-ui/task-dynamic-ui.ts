@@ -75,15 +75,12 @@ export class TaskDynamicUi {
     const managementContext: ManagementContext = this._getManagementContext();
 
     try {
-      //
       if (this._correlationId !== undefined) {
         this.userTask = await this._dynamicUiService.getUserTaskFromCorrelationById(managementContext,
           this._userTaskId,
           this._correlationId);
-      } else if (this._processDefId !== undefined) {
-        this.userTask = await this._dynamicUiService.getUserTaskFromCorrelationById(managementContext,
-          this._userTaskId,
-          this._correlationId);
+      } else {
+        // TODO
       }
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, `Failed to refresh user task: ${error.message}`);
@@ -102,7 +99,6 @@ export class TaskDynamicUi {
 
     this.dynamicUiWrapper.currentUserTask = this._userTask;
     this.dynamicUiWrapper.currentCorrelationId = this._correlationId;
-    this.dynamicUiWrapper.currentProcessDefId = this._processDefId;
   }
 
   public set userTask(userTask: UserTask) {
