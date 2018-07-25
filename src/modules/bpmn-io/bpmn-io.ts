@@ -32,7 +32,7 @@ export class BpmnIo {
   public canvasModel: HTMLDivElement;
   public propertyPanel: HTMLElement;
 
-  @bindable({changeHandler: 'xmlChanged'}) public xml: string;
+  @bindable() public xml: string;
   @bindable({changeHandler: 'nameChanged'}) public name: string;
 
   public savedXml: string;
@@ -235,17 +235,6 @@ export class BpmnIo {
     }
   }
 
-  public xmlChanged(newValue: string): void {
-    const xmlIsEmpty: boolean = this.modeler !== undefined && this.modeler !== null;
-    if (xmlIsEmpty) {
-      this.modeler.importXML(newValue, (err: Error) => {
-        return;
-      });
-
-      this.xml = newValue;
-    }
-  }
-
   public nameChanged(newValue: string): void {
     if (this.modeler !== undefined && this.modeler !== null) {
       this.name = newValue;
@@ -278,9 +267,9 @@ export class BpmnIo {
     }
   }
 
-  public toggleDiffView(): void {
+  public async toggleDiffView(): Promise<void> {
     if (!this.showDiffView) {
-      this._updateXmlChanges();
+      await this._updateXmlChanges();
       this.showDiffView = true;
     } else {
       this.showDiffView = false;
@@ -294,11 +283,11 @@ export class BpmnIo {
   }
 
   public async toggleXMLView(): Promise<void> {
-    this.showXMLView = !this.showXMLView;
-
     if (this.showXMLView) {
       this.xml = await this.getXML();
     }
+
+    this.showXMLView = !this.showXMLView;
   }
 
   public async getXML(): Promise<string> {

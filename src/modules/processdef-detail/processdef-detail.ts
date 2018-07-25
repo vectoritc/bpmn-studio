@@ -10,6 +10,7 @@ import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 import {
   AuthenticationStateEvent,
   IAuthenticationService,
+  IEvent,
   IErrorResponse,
   IExtensionElement,
   IFormElement,
@@ -41,6 +42,9 @@ export class ProcessDefDetail {
   public process: IProcessDefEntity;
   public showModal: boolean = false;
 
+  public processesStartEvents: Array<Event> = [];
+  public dropdownMenu: HTMLSelectElement;
+
   private _processEngineService: IProcessEngineService;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
@@ -55,9 +59,6 @@ export class ProcessDefDetail {
   private _startButtonPressed: boolean = false;
   private _authenticationService: IAuthenticationService;
   private _managementApiClient: IManagementApiService;
-
-  public processesStartEvents: Array<Event> = [];
-  public dropdownMenu: HTMLSelectElement;
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
@@ -244,28 +245,6 @@ export class ProcessDefDetail {
     this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
   }
 
-  private _refreshProcess(): Promise<IProcessDefEntity> {
-    return this
-      ._processEngineService
-      .getProcessDefById(this._processId)
-      .then((result: IProcessDefEntity & IErrorResponse) => {
-        // TODO: Extract Business Rule
-        if (result && !result.error) {
-          this.process = result;
-
-          this
-            ._eventAggregator
-            .publish(environment.events.navBar.updateProcess, this.process);
-
-          return this.process;
-
-        } else {
-          this.process = null;
-          return result.error;
-        }
-    });
-  }
-
   /**
    * Opens a modal dialog to ask the user, which StartEvent he want's to
    * use to start the process.
@@ -293,13 +272,13 @@ export class ProcessDefDetail {
      * Create a promise which displays the modal and resolves, if the user
      * clicks on the buttons.
      */
-    const returnPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void => {
+    const returnPromise: Promise<string | null> = new Promise((resolve: Function, reject: Function): void => {
       const cancelButton: HTMLElement = document.getElementById('cancelStartEventSelection');
       const startProcessButton: HTMLElement = document.getElementById('startProcessWithSelectedStartEvent');
 
       cancelButton.addEventListener('click', () => {
         this.showModal = false;
-        resolve('');
+        resolve(null);
       });
 
       startProcessButton.addEventListener('click', () => {
@@ -309,6 +288,28 @@ export class ProcessDefDetail {
     });
 
     return returnPromise;
+  }
+
+  private _refreshProcess(): Promise<IProcessDefEntity> {
+    return this
+      ._processEngineService
+      .getProcessDefById(this._processId)
+      .then((result: IProcessDefEntity & IErrorResponse) => {
+        // TODO: Extract Business Rule
+        if (result && !result.error) {
+          this.process = result;
+
+          this
+            ._eventAggregator
+            .publish(environment.events.navBar.updateProcess, this.process);
+
+          return this.process;
+
+        } else {
+          this.process = null;
+          return result.error;
+        }
+    });
   }
 
   private async _initializeModalDialog(): Promise<void> {
@@ -322,7 +323,7 @@ export class ProcessDefDetail {
           NotificationType.ERROR,
           `Error while obtaining the StartEvents which belongs to the Process: ${error.message}`,
         );
-      throw Error(error);
+      throw error;
     }
   }
 
@@ -346,7 +347,7 @@ export class ProcessDefDetail {
         _notificationService
         .showNotification(
           NotificationType.ERROR,
-          `Could not load the processes start Events: ${error.message}`,
+          `Could not load the processes StartEvents: ${error.message}`,
         );
 
         /*
@@ -356,16 +357,9 @@ export class ProcessDefDetail {
       return;
     }
 
-    /*
-     * If the process has only one defined start event, we dont need to
-     * ask the user, from which start event he wants to start the process since
-     * we always can pick the normal start event.
-     */
-    const selectedStartEvent: string = (this.processesStartEvents.length > 1)
-                                        ? await this.showModalDialogAndAwaitAnswer()
-                                        : this.processesStartEvents[0].id;
+    const selectedStartEvent: string | null = await this.showModalDialogAndAwaitAnswer();
 
-    if (selectedStartEvent === '') {
+    if (selectedStartEvent === null) {
       return;
     }
 

@@ -66,10 +66,12 @@ export function configure(aurelia: Aurelia): void {
 
   aurelia.use
     .standardConfiguration()
+    .feature('modules/fetch-http-client')
     .feature('modules/dynamic-ui')
     .feature('modules/processengine')
     .feature('modules/notification')
     .feature('modules/authentication')
+    .feature('modules/diagram-validation-service')
     .feature('modules/bpmn-studio_client', tokenRepository)
     .feature('modules/management-api_client')
     .feature('resources')

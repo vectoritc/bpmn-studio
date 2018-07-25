@@ -6,6 +6,7 @@ import {ErrorEventSection} from './sections/error-event/error-event';
 import {EscalationEventSection} from './sections/escalation-event/escalation-event';
 import {FlowSection} from './sections/flow/flow';
 import {MessageEventSection} from './sections/message-event/message-event';
+import {MessageTaskSection} from './sections/message-task/message-task';
 import {PoolSection} from './sections/pool/pool';
 import {ScriptTaskSection} from './sections/script-task/script-task';
 import {SignalEventSection} from './sections/signal-event/signal-event';
@@ -19,6 +20,7 @@ export class General implements IIndextab {
   public basicsSection: ISection = new BasicsSection();
   public poolSection: ISection = new PoolSection();
   public messageEventSection: ISection = new MessageEventSection();
+  public messageTaskSection: ISection = new MessageTaskSection();
   public signalEventSection: ISection = new SignalEventSection();
   public scriptTaskSection: ISection = new ScriptTaskSection();
   public callActivitySection: ISection = new CallActivitySection();
@@ -32,6 +34,7 @@ export class General implements IIndextab {
     this.basicsSection,
     this.poolSection,
     this.messageEventSection,
+    this.messageTaskSection,
     this.signalEventSection,
     this.scriptTaskSection,
     this.callActivitySection,

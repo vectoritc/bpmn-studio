@@ -2,7 +2,6 @@ import {IQueryClause} from '@essential-projects/core_contracts';
 import {IProcessDefEntity, IUserTaskEntity} from '@process-engine/process_engine_contracts';
 import {HttpClient, Interceptor} from 'aurelia-fetch-client';
 import {inject} from 'aurelia-framework';
-import {Router} from 'aurelia-router';
 import {
   IAuthenticationService,
   IIdentity,
@@ -14,20 +13,18 @@ import {
 import environment from '../../environment';
 import {throwOnErrorResponse} from '../../resources/http-repository-tools';
 
-@inject(HttpClient, 'AuthenticationService', Router)
+@inject(HttpClient, 'AuthenticationService')
 export class ProcessEngineRepository implements IProcessEngineRepository {
 
   private _http: HttpClient;
   private _authenticationService: IAuthenticationService;
-  private _router: Router;
 
-  constructor(http: HttpClient, authenticationService: IAuthenticationService, router: Router) {
+  constructor(http: HttpClient, authenticationService: IAuthenticationService) {
     this._http = http;
     this._authenticationService = authenticationService;
     if (http.defaults === null || http.defaults === undefined) {
       http.defaults = {};
     }
-    this._router = router;
     this._http = http.configure((config: any): void => {
       config.withInterceptor({
         request(request: Request): Request {
@@ -93,16 +90,8 @@ export class ProcessEngineRepository implements IProcessEngineRepository {
 
     const url: string = environment.processengine.routes.importBPMN;
     const response: Response = await this._http.fetch(url, options);
-    const responseBody: IProcessDefEntity & IResponse = await response.json();
-    if (responseBody.error === undefined) {
-      this.navigateToProcessDefDetail(responseBody.id);
-    }
 
-    return throwOnErrorResponse<IProcessDefEntity>(responseBody);
-  }
-
-  private navigateToProcessDefDetail(processDefId: string): void {
-    this._router.navigate(`processdef/${processDefId}/detail`);
+    return throwOnErrorResponse<IProcessDefEntity>(response);
   }
 
   public async updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<IResponse> {

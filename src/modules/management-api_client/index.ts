@@ -1,55 +1,30 @@
+import {IHttpClient} from '@essential-projects/http_contracts';
 import {ExternalAccessor, ManagementApiClientService} from '@process-engine/management_api_client';
+import {EventAggregator} from 'aurelia-event-aggregator';
 import {FrameworkConfiguration} from 'aurelia-framework';
 import environment from '../../environment';
+import {HttpClientProxy} from './HttpClientProxy';
 
 export async function configure(config: FrameworkConfiguration): Promise<void> {
 
-  const clientService: ManagementApiClientService = createManagementApiClient();
+  const httpClient: IHttpClient = config.container.get('HttpFetchClient');
+
+  const urlPrefix: string = `${environment.bpmnStudioClient.baseRoute}/`;
+  const proxiedHttpClient: HttpClientProxy = new HttpClientProxy(httpClient, urlPrefix);
+
+  const clientService: ManagementApiClientService = createManagementApiClient(proxiedHttpClient);
+
+  // register event to change url prefix
+  const eventAggregator: EventAggregator = config.container.get(EventAggregator);
+  eventAggregator.subscribe(environment.events.configPanel.processEngineRouteChanged, (newUrlPrefix: string) => {
+    proxiedHttpClient.setUrlPrefix(`${newUrlPrefix}/`);
+  });
 
   config.container.registerInstance('ManagementApiClientService', clientService);
 }
 
-function createManagementApiClient(): ManagementApiClientService {
+function createManagementApiClient(httpClient: IHttpClient): ManagementApiClientService {
 
-  const httpClient: any = {
-    post: async(url: string, payload: any, headers: any): Promise<any> => {
-
-      const request: Request = new Request(`${environment.bpmnStudioClient.baseRoute}/${url}`, {
-        method: 'POST',
-        mode: 'cors',
-        referrer: 'no-referrer',
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json',
-          ...headers.headers,
-        },
-      });
-      const response: Response = await fetch(request);
-      return {
-        result: response.json(),
-        status: response.status,
-      };
-    },
-
-    get: async(url: string, headers: any): Promise<any> => {
-
-      const request: Request = new Request(`${environment.bpmnStudioClient.baseRoute}/${url}`, {
-        method: 'GET',
-        mode: 'cors',
-        referrer: 'no-referrer',
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json',
-          ...headers.headers,
-        },
-      });
-      const response: Response = await fetch(request);
-      return {
-        result: response.json(),
-        status: response.status,
-      };
-    },
-  };
   const externalAccessor: ExternalAccessor = new ExternalAccessor(httpClient);
 
   return new ManagementApiClientService(externalAccessor);

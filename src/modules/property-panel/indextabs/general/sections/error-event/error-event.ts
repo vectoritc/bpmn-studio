@@ -94,24 +94,51 @@ export class ErrorEventSection implements ISection {
 
   public async addError(): Promise<void> {
 
-      const bpmnErrorObject: Object = {
-        id: `Error_${this._generalService.generateRandomId()}`,
-        name: 'Error Name',
-      };
-      const bpmnError: IError = this._moddle.create('bpmn:Error', bpmnErrorObject);
+    const bpmnErrorObject: {id: string, name: string} = {
+      id: `Error_${this._generalService.generateRandomId()}`,
+      name: 'Error Name',
+    };
+    const bpmnError: IError = this._moddle.create('bpmn:Error', bpmnErrorObject);
 
-      this._modeler._definitions.rootElements.push(bpmnError);
+    this._modeler._definitions.rootElements.push(bpmnError);
 
-      this._moddle.toXML(this._modeler._definitions, (toXMLError: Error, xmlStrUpdated: string) => {
-        this._modeler.importXML(xmlStrUpdated, async(importXMLError: Error) => {
-          await this._refreshErrors();
-          await this._setBusinessObject();
-          this.selectedId = bpmnError.id;
-          this.selectedError = bpmnError;
-          this.updateError();
-        });
+    this._moddle.toXML(this._modeler._definitions, (toXMLError: Error, xmlStrUpdated: string) => {
+      this._modeler.importXML(xmlStrUpdated, async(importXMLError: Error) => {
+        await this._refreshErrors();
+        await this._setBusinessObject();
+        this.selectedId = bpmnError.id;
+        this.selectedError = bpmnError;
+        this.updateError();
       });
-      this._publishDiagramChange();
+    });
+    this._publishDiagramChange();
+  }
+
+  public removeSelectedError(): void {
+    const noErrorIsSelected: boolean = !this.selectedId;
+    if (noErrorIsSelected) {
+      return;
+    }
+
+    const errorIndex: number = this.errors.findIndex((error: IError) => {
+      return error.id === this.selectedId;
+    });
+
+    this.errors.splice(errorIndex, 1);
+    this._modeler._definitions.rootElements.splice(this._getRootElementsIndex(this.selectedId), 1);
+
+    this.updateError();
+    this._publishDiagramChange();
+  }
+
+  private _getRootElementsIndex(elementId: string): number {
+    const rootElements: Array<IModdleElement> = this._modeler._definitions.rootElements;
+
+    const rootElementsIndex: number = rootElements.findIndex((element: IModdleElement) => {
+      return element.id === elementId;
+    });
+
+    return rootElementsIndex;
   }
 
   private _init(): void {
@@ -125,16 +152,34 @@ export class ErrorEventSection implements ISection {
     }
 
     const errorElement: IErrorElement = this._businessObjInPanel.eventDefinitions[0];
-    const elementReferencesError: boolean = errorElement.errorRef !== undefined
-                                         && errorElement.errorRef !== null;
+    const elementHasNoErrorRef: boolean = errorElement.errorRef === undefined;
+
+    if (elementHasNoErrorRef) {
+      this.selectedError = null;
+      this.selectedId = null;
+
+      return;
+    }
+
+    const errorId: string = errorElement.errorRef.id;
+    const elementReferencesError: boolean = this._getErrorById(errorId) !== undefined;
 
     if (elementReferencesError) {
-      this.selectedId = errorElement.errorRef.id;
+      this.selectedId = errorId;
       this.updateError();
     } else {
       this.selectedError = null;
       this.selectedId = null;
     }
+  }
+
+  private _getErrorById(errorId: string): IError {
+    const errors: Array<IError> = this._getErrors();
+    const error: IError = errors.find((errorElement: IError) => {
+      return errorId === errorElement.id;
+    });
+
+    return error;
   }
 
   private _elementIsErrorEvent(element: IShape): boolean {

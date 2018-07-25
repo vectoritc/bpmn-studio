@@ -1,50 +1,52 @@
+import {Correlation, IManagementApiService, ManagementContext} from '@process-engine/management_api_contracts';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject, observable} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {
   AuthenticationStateEvent,
-  IPagination,
-  IProcessEngineService,
-  IProcessEntity,
+  IAuthenticationService,
   NotificationType,
 } from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
 interface IProcessListRouteParameters {
-  processDefId?: string;
+  processModelId?: string;
 }
 
-@inject('ProcessEngineService', EventAggregator, Router, 'NotificationService')
+@inject('ManagementApiClientService', EventAggregator, Router, 'NotificationService', 'NewAuthenticationService')
 export class ProcessList {
 
   @observable public currentPage: number = 0;
   public pageSize: number = 10;
   public totalItems: number;
-  public solutionExplorerIsShown: boolean = false;
-  public instances: Array<IProcessEntity>;
+  public instances: Array<Correlation>;
   public status: Array<string> = [];
   public succesfullRequested: boolean = false;
   public selectedState: HTMLSelectElement;
 
-  private _processEngineService: IProcessEngineService;
-  private _notificationService: NotificationService;
+  private _managementApiService: IManagementApiService;
   private _eventAggregator: EventAggregator;
+  private _router: Router;
+  private _notificationService: NotificationService;
+  private _authenticationService: IAuthenticationService;
 
   private _getProcessesIntervalId: number;
-  private _getProcesses: () => Promise<IPagination<IProcessEntity>>;
+  private _getProcesses: () => Promise<Array<Correlation>>;
   private _subscriptions: Array<Subscription>;
-  private _processes: IPagination<IProcessEntity>;
-  private _router: Router;
+  private _processes: Array<Correlation>;
 
-  constructor(processEngineService: IProcessEngineService,
+  constructor(managementApiService: IManagementApiService,
               eventAggregator: EventAggregator,
               router: Router,
-              notificationService: NotificationService) {
-    this._processEngineService = processEngineService;
+              notificationService: NotificationService,
+              authenticationService: IAuthenticationService,
+  ) {
+    this._managementApiService = managementApiService;
     this._eventAggregator = eventAggregator;
-    this._notificationService = notificationService;
     this._router = router;
+    this._notificationService = notificationService;
+    this._authenticationService = authenticationService;
   }
 
   public currentPageChanged(newValue: number, oldValue: number): void {
@@ -54,15 +56,13 @@ export class ProcessList {
   }
 
   public activate(routeParameters: IProcessListRouteParameters): void {
-    if (!routeParameters.processDefId) {
+    if (!routeParameters.processModelId) {
       this._getProcesses = this.getAllProcesses;
     } else {
-      this._getProcesses = (): Promise<IPagination<IProcessEntity>> => {
-        return this.getProcessesForProcessDef(routeParameters.processDefId);
+      this._getProcesses = (): Promise<Array<Correlation>> => {
+        return this.getProcessesForProcessModel(routeParameters.processModelId);
       };
     }
-    this.updateProcesses();
-
   }
 
   public async updateProcesses(): Promise<void> {
@@ -70,32 +70,26 @@ export class ProcessList {
       this._processes = await this._getProcesses();
       this.succesfullRequested = true;
     } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, error.message);
-    }
-
-    for (const instance of this.allInstances) {
-      if (!this.status.includes(instance.status)) {
-        this.status.push(instance.status);
-      }
+      this._notificationService.showNotification(NotificationType.ERROR, `Error receiving task list: ${error.message}`);
     }
 
     if (!this.instances) {
       this.instances = this.allInstances;
     }
+
     this.totalItems = this.instances.length;
   }
 
   public updateList(): void {
-    if (this.selectedState.value === 'all') {
-      this.instances = this.allInstances;
-      return;
-    }
-    this.instances = this.allInstances.filter((entry: IProcessEntity): boolean => {
-      return entry.status === this.selectedState.value;
-    });
+    this.instances = this.allInstances;
   }
 
   public attached(): void {
+    if (!this._getProcesses) {
+      this._getProcesses = this.getAllProcesses;
+    }
+    this.updateProcesses();
+
     this._getProcessesIntervalId = window.setInterval(async() => {
       await this.updateProcesses();
       this.updateList();
@@ -122,23 +116,42 @@ export class ProcessList {
     this._router.navigateBack();
   }
 
-  public get shownProcesses(): Array<IProcessEntity> {
+  public get shownProcesses(): Array<Correlation> {
     return this.instances.slice((this.currentPage - 1) * this.pageSize, this.pageSize * this.currentPage);
   }
 
-  public get allInstances(): Array<IProcessEntity> {
-    return this._processes.data;
+  public get allInstances(): Array<Correlation> {
+    if (!this._processes) {
+      return [];
+    }
+    return this._processes;
   }
 
-  public toggleSolutionExplorer(): void {
-    this.solutionExplorerIsShown = !this.solutionExplorerIsShown;
+  private async getAllProcesses(): Promise<Array<Correlation>> {
+    const managementApiContext: ManagementContext = this._getManagementContext();
+
+    return this._managementApiService.getAllActiveCorrelations(managementApiContext);
   }
 
-  private async getAllProcesses(): Promise<IPagination<IProcessEntity>> {
-    return this._processEngineService.getProcesses();
+  private async getProcessesForProcessModel(processModelId: string): Promise<Array<Correlation>> {
+    const managementApiContext: ManagementContext = this._getManagementContext();
+
+    const runningCorrelations: Array<Correlation> = await this._managementApiService.getAllActiveCorrelations(managementApiContext);
+
+    const correlationsWithId: Array<Correlation> = runningCorrelations.filter((correlation: Correlation) => {
+      return correlation.processModelId === processModelId;
+    });
+
+    return correlationsWithId;
   }
 
-  private async getProcessesForProcessDef(processDefId: string): Promise<IPagination<IProcessEntity>> {
-    return this._processEngineService.getProcessesByProcessDefId(processDefId);
+  // TODO: Move this method into a service.
+  private _getManagementContext(): ManagementContext {
+    const accessToken: string = this._authenticationService.getAccessToken();
+    const context: ManagementContext = {
+      identity: accessToken,
+    };
+
+    return context;
   }
 }
