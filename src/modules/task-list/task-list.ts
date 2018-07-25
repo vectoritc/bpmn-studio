@@ -122,16 +122,17 @@ export class TaskList {
     this._router.navigateBack();
   }
 
-  public continueUserTask(userTaskEntity: IUserTaskEntity): void {
-    const processModelId: string = userTaskEntity.process.processDef.key;
-    const userTaskId: string = userTaskEntity.id;
+  public continueUserTask(userTaskWithProcessModel: IUserTaskWithProcessModel): void {
+    const userTask: UserTask = userTaskWithProcessModel.userTask;
+    const processModel: ProcessModelExecution.ProcessModel = userTaskWithProcessModel.processModel;
+
+    const processModelId: string = processModel.key;
+    const userTaskId: string = userTask.id;
 
     this._router.navigate('task-dynamic-ui', {
       processModelId: processModelId,
       userTaskId: userTaskId,
     });
-
-    this._eventAggregator.publish('render-dynamic-ui', {userTaskEntity: userTaskEntity});
   }
 
   public get shownTasks(): Array<IUserTaskWithProcessModel> {
