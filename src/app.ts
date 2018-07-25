@@ -17,21 +17,34 @@ export class App {
 
     config.map([
       {
-        route: ['', 'processdef', 'processdef/:page'],
+        route: [''],
+        title: 'Start Page',
+        name: 'start-page',
+        moduleId: 'modules/start-page/start-page',
+      },
+      {
+        route: ['processdef', 'processdef/:page'],
         title: 'Process Definition List',
         name: 'processdef-list',
         moduleId: 'modules/processdef-list/processdef-list',
         nav: true,
       },
       {
-        route: ['task', 'processdef/:processDefId/task', 'process/:processId/task'],
+        route: ['dashboard'],
+        title: 'Dashboard',
+        name: 'dashboard',
+        moduleId: 'modules/dashboard/dashboard',
+        nav: true,
+      },
+      {
+        route: ['task', 'processdef/:processModelId/task', 'correlation/:correlationId/task'],
         title: 'Task List',
         name: 'task-list',
         moduleId: 'modules/task-list/task-list',
         nav: true,
       },
       {
-        route: ['process', 'processdef/:processDefId/process'],
+        route: ['process', 'processdef/:processModelId/process'],
         title: 'Process Instance List',
         name: 'process-list',
         moduleId: 'modules/process-list/process-list',

@@ -71,7 +71,7 @@ export class SignalEventSection implements ISection {
   }
 
   public addSignal(): void {
-    const bpmnSignalProperty: Object = {
+    const bpmnSignalProperty: {id: string, name: string} = {
       id: `Signal_${this._generalService.generateRandomId()}`,
       name: 'Signal Name',
     };
@@ -91,6 +91,33 @@ export class SignalEventSection implements ISection {
     this._publishDiagramChange();
   }
 
+  public removeSelectedSignal(): void {
+    const noSignalIsSelected: boolean = !this.selectedId;
+    if (noSignalIsSelected) {
+      return;
+    }
+
+    const signalIndex: number = this.signals.findIndex((signal: ISignal) => {
+      return signal.id === this.selectedId;
+    });
+
+    this.signals.splice(signalIndex, 1);
+    this._modeler._definitions.rootElements.splice(this._getRootElementsIndex(this.selectedId), 1);
+
+    this.updateSignal();
+    this._publishDiagramChange();
+  }
+
+  private _getRootElementsIndex(elementId: string): number {
+    const rootElements: Array<IModdleElement> = this._modeler._definitions.rootElements;
+
+    const rootElementsIndex: number = rootElements.findIndex((element: IModdleElement) => {
+      return element.id === elementId;
+    });
+
+    return rootElementsIndex;
+  }
+
   private _elementIsSignalEvent(element: IShape): boolean {
     return element !== undefined
         && element.businessObject !== undefined
@@ -108,16 +135,34 @@ export class SignalEventSection implements ISection {
     }
 
     const signalElement: ISignalElement = this._businessObjInPanel.eventDefinitions[0];
-    const elementReferencesSignal: boolean = signalElement.signalRef !== undefined
-                                          && signalElement.signalRef !== null;
+    const elementHasNoSignalRef: boolean = signalElement.signalRef === undefined;
+
+    if (elementHasNoSignalRef) {
+      this.selectedSignal = null;
+      this.selectedId = null;
+
+      return;
+    }
+
+    const signalId: string = signalElement.signalRef.id;
+    const elementReferencesSignal: boolean = this._getSignalById(signalId) !== undefined;
 
     if (elementReferencesSignal) {
-      this.selectedId = signalElement.signalRef.id;
+      this.selectedId = signalId;
       this.updateSignal();
     } else {
       this.selectedSignal = null;
       this.selectedId = null;
     }
+  }
+
+  private _getSignalById(signalId: string): ISignal {
+    const signals: Array<ISignal> = this._getSignals();
+    const signal: ISignal = signals.find((signalElement: ISignal) => {
+      return signalElement.id === signalId;
+    });
+
+    return signal;
   }
 
   private _getSignals(): Array<ISignal> {
