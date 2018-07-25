@@ -13,6 +13,7 @@ import {Router} from 'aurelia-router';
 import {
   AuthenticationStateEvent,
   IAuthenticationService,
+  IUserTaskEntity,
   NotificationType,
 } from '../../contracts/index';
 import environment from '../../environment';
@@ -119,6 +120,18 @@ export class TaskList {
 
   public goBack(): void {
     this._router.navigateBack();
+  }
+
+  public continueUserTask(userTaskEntity: IUserTaskEntity): void {
+    const processModelId: string = userTaskEntity.process.processDef.key;
+    const userTaskId: string = userTaskEntity.id;
+
+    this._router.navigate('task-dynamic-ui', {
+      processModelId: processModelId,
+      userTaskId: userTaskId,
+    });
+
+    this._eventAggregator.publish('render-dynamic-ui', {userTaskEntity: userTaskEntity});
   }
 
   public get shownTasks(): Array<IUserTaskWithProcessModel> {

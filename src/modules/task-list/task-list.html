@@ -18,7 +18,7 @@
             <td>${entry.userTask.key}</td>
             <td>${entry.userTask.id}</td>
             <td>
-              <a class="btn btn-success" route-href="route: task-dynamic-ui; params.bind: { userTaskId: entry.userTask.id }">Continue</a>
+              <a class="btn btn-success" click.delegate="continueUserTask(task)">Continue</a>
             </td>
           </tr>
         </table>
