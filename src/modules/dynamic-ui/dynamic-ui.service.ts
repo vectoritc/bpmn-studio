@@ -9,7 +9,7 @@ import {NewAuthenticationService} from '../authentication/new_authentication.ser
 export class DynamicUiService implements IDynamicUiService {
 
   private _eventAggregator: EventAggregator;
-  private _managmentApiClient: ManagementApiClientService;
+  private _managementApiClient: ManagementApiClientService;
   private _authenticationService: NewAuthenticationService;
 
   constructor(eventAggregator: EventAggregator,
@@ -17,7 +17,7 @@ export class DynamicUiService implements IDynamicUiService {
               authenticationService: NewAuthenticationService) {
 
     this._eventAggregator = eventAggregator;
-    this._managmentApiClient = managmentApiClient;
+    this._managementApiClient = managmentApiClient;
     this._authenticationService = authenticationService;
 
     // this._bpmnStudioClient.on('renderUserTask', (userTaskConfig: IUserTaskConfig) => {
@@ -35,7 +35,7 @@ export class DynamicUiService implements IDynamicUiService {
                         userTaskId: string,
                         userTaskResult: UserTaskResult): void {
 
-    this._managmentApiClient.finishUserTask(managementContext,
+    this._managementApiClient.finishUserTask(managementContext,
                                             processModelKey,
                                             correlationId,
                                             userTaskId,
@@ -46,7 +46,7 @@ export class DynamicUiService implements IDynamicUiService {
                                           userTaskId: string,
                                           correlationId: string): Promise<UserTask> {
 
-    const userTaskList: UserTaskList = await this._managmentApiClient.getUserTasksForCorrelation(managementContext, correlationId);
+    const userTaskList: UserTaskList = await this._managementApiClient.getUserTasksForCorrelation(managementContext, correlationId);
 
     return  userTaskList.userTasks.find((userTask: UserTask) => {
       return userTask.id === userTaskId;
@@ -57,7 +57,7 @@ export class DynamicUiService implements IDynamicUiService {
                                            userTaskId: string,
                                            processModelId: string): Promise<UserTask> {
 
-    const userTaskList: UserTaskList = await this._managmentApiClient.getUserTasksForProcessModel(managementContext, processModelKey);
+    const userTaskList: UserTaskList = await this._managementApiClient.getUserTasksForProcessModel(managementContext, processModelId);
 
     return  userTaskList.userTasks.find((userTask: UserTask) => {
       return userTask.id === userTaskId;
