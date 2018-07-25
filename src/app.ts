@@ -93,15 +93,14 @@ export class App {
         nav: true,
       },
       {
-        route: ['task/:userTaskId/dynamic-ui',
-                'processdef/:processDefId/task/:userTaskId/dynamic-ui',
-                'correlation/:correlationId/task/:userTaskId/dynamic-ui'],
+        route: ['processmodelId/:processModelId/task/:userTaskId/dynamic-ui',
+                'correlationId/:correlationId/task/:userTaskId/dynamic-ui'],
         title: 'Task Dynamic UI',
         name: 'task-dynamic-ui',
         moduleId: 'modules/task-dynamic-ui/task-dynamic-ui',
       },
       {
-        route: ['processdef/:processDefId/detail'],
+        route: ['processdef/:processKey/detail'],
         title: 'ProcessDef Detail',
         name: 'processdef-detail',
         moduleId: 'modules/processdef-detail/processdef-detail',
