@@ -372,6 +372,7 @@ export class ProcessDefDetail {
     };
 
     try {
+      console.log('test');
       await this._managementApiClient.startProcessInstance(context, this.process.key, selectedStartEvent, startRequestPayload, undefined, undefined);
 
     } catch (error) {
@@ -394,9 +395,6 @@ export class ProcessDefDetail {
     return context;
   }
 
-  /**
-   * Updates the StartEvents of the current Process.
-   */
   private async _updateProcessStartEvents(): Promise<void> {
     const context: ManagementContext = this._getManagementContext();
     const startEventResponse: EventList = await this._managementApiClient.getEventsForProcessModel(context, this.process.key);
