@@ -47,12 +47,15 @@ export class ProcessDefStart {
 
     console.log(userTaskList);
 
+    // TODO! get this data
     // this.dynamicUiWrapper.currentUserTask = data.userTask;
     // this.dynamicUiWrapper.currentCorrelationId = data.correlationId;
+
     this.dynamicUiWrapper.currentProcessModelKey = this._processModelId;
+
     // TODO! basically this needs to happen:
-    this._eventAggregator.publish('render-dynamic-ui', null);
-    // TODO! Find out how to get new usertask
+    // this._eventAggregator.publish('render-dynamic-ui', null);
+    // Find out how to get the new usertask to start
 
     await this._refreshProcess();
 
@@ -68,11 +71,13 @@ export class ProcessDefStart {
         this._refreshProcess();
       }),
 
+      // TODO! Replace this
       this._eventAggregator.subscribe('render-dynamic-ui', (data: any) => {
         this.dynamicUiWrapper.currentUserTask = data.userTask;
         this.dynamicUiWrapper.currentCorrelationId = data.correlationId;
         this.dynamicUiWrapper.currentProcessModelKey = data.processModelKey;
       }),
+
       /*
        * The closed-process event is thrown at the end of a process run;
        * we then use the router to navigate to the prvious view-- this could be the

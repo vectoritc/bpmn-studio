@@ -37,10 +37,11 @@ export class TaskDynamicUi {
   }
 
   public activate(routeParameters: {userTaskId: string, correlationId?: string, processModelId?: string}): void {
+    // This is called when starting usertask
+
     this._userTaskId = routeParameters.userTaskId;
     this._correlationId = routeParameters.correlationId;
     this._processModelId = routeParameters.processModelId;
-    // This is called when starting usertask
 
     this.refreshUserTask();
   }
