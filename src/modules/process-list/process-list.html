@@ -6,22 +6,14 @@
         <h3>Processes running</h3>
         <table class="table table-striped table-bordered">
           <tr>
-            <th>ProcessDefinitionName</th>
-            <th>ProcessDefinitionKey</th>
-            <th>ProcessInstanceId</th>
-            <th>
-              State
-              <select ref="selectedState" change.delegate="updateList()">
-                <option value="all">all</option>
-                <option repeat.for="state of status" value="${state}">${state}</option>
-              </select>
-            </th>
+            <th>Correlation Id</th>
+            <th>Process Model Id</th>
+            <th></th>
           </tr>
           <tr repeat.for="instance of shownProcesses">
-            <td><a href="#/processdef/${instance.processDef.id}/detail">${instance.processDef.name}</a></td>
-            <td>${instance.key}</td>
             <td>${instance.id}</td>
-            <td><a href="#/process/${instance.id}/task">${instance.status}</a></td>
+            <td><a href="#/processdef/${instance.processModelId}/detail">${instance.processModelId}</a></td>
+            <td><a href="#/process/${instance.id}/task">User tasks</a></td>
           </tr>
         </table>
       </template>

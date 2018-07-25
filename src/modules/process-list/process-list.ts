@@ -11,7 +11,7 @@ import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
 interface IProcessListRouteParameters {
-  processDefId?: string;
+  processModelId?: string;
 }
 
 @inject('ManagementApiClientService', EventAggregator, Router, 'NotificationService', 'NewAuthenticationService')
@@ -56,11 +56,11 @@ export class ProcessList {
   }
 
   public activate(routeParameters: IProcessListRouteParameters): void {
-    if (!routeParameters.processDefId) {
+    if (!routeParameters.processModelId) {
       this._getProcesses = this.getAllProcesses;
     } else {
       this._getProcesses = (): Promise<Array<Correlation>> => {
-        return this.getProcessesForProcessDef(routeParameters.processDefId);
+        return this.getProcessesForProcessModel(routeParameters.processModelId);
       };
     }
   }
@@ -73,15 +73,10 @@ export class ProcessList {
       this._notificationService.showNotification(NotificationType.ERROR, `Error receiving task list: ${error.message}`);
     }
 
-    for (const instance of this.allInstances) {
-      if (!this.status.includes(instance.status)) {
-        this.status.push(instance.status);
-      }
-    }
-
     if (!this.instances) {
       this.instances = this.allInstances;
     }
+
     this.totalItems = this.instances.length;
   }
 
@@ -138,10 +133,16 @@ export class ProcessList {
     return this._managementApiService.getAllActiveCorrelations(managementApiContext);
   }
 
-  private async getProcessesForProcessDef(processDefId: string): Promise<Array<Correlation>> {
+  private async getProcessesForProcessModel(processModelId: string): Promise<Array<Correlation>> {
     const managementApiContext: ManagementContext = this._getManagementContext();
 
-    return []; // this._managementApiService.getProcessesByProcessDefId(managementApiContext, processDefId);
+    const runningCorrelations: Array<Correlation> = await this._managementApiService.getAllActiveCorrelations(managementApiContext);
+
+    const correlationsWithId: Array<Correlation> = runningCorrelations.filter((correlation: Correlation) => {
+      return correlation.processModelId === processModelId;
+    });
+
+    return correlationsWithId;
   }
 
   // TODO: Move this method into a service.

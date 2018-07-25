@@ -18,7 +18,7 @@ import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
 interface ITaskListRouteParameters {
-  processDefId?: string;
+  processModelId?: string;
   correlationId?: string;
 }
 
@@ -76,9 +76,9 @@ export class TaskList {
   }
 
   public activate(routeParameters: ITaskListRouteParameters): void {
-    if (routeParameters.processDefId) {
+    if (routeParameters.processModelId) {
       this._getUserTasks = (): Promise<Array<IUserTaskWithProcessModel>> => {
-        return this._getUserTasksForProcessDef(routeParameters.processDefId);
+        return this._getUserTasksForProcessDef(routeParameters.processModelId);
       };
     } else if (routeParameters.correlationId) {
       this._getUserTasks = (): Promise<Array<IUserTaskWithProcessModel>> => {
@@ -151,8 +151,6 @@ export class TaskList {
           return userTasksAndProcessModels;
 
         } catch (error) {
-          console.log(error);
-
           if (isError(error, NotFoundError)) {
             // the management api returns a 404 if there is no instance of a process model running.
             return Promise.resolve([]);
@@ -168,13 +166,17 @@ export class TaskList {
     return flatternedUserTasks;
   }
 
-  private async _getUserTasksForProcessDef(processDefId: string): Promise<Array<IUserTaskWithProcessModel>> {
+  private async _getUserTasksForProcessModel(processModelId: string): Promise<Array<IUserTaskWithProcessModel>> {
     const managementApiContext: ManagementContext = this._getManagementContext();
 
-    const processModel: ProcessModelExecution.ProcessModel = await this._managementApiService.getProcessModelById(managementApiContext, processDefId);
+    const processModel: ProcessModelExecution.ProcessModel = await
+      this
+      ._managementApiService
+      .getProcessModelById(managementApiContext, processModelId);
+
     let userTaskList: UserTaskList;
     try {
-      userTaskList = await this._managementApiService.getUserTasksForProcessModel(managementApiContext, processDefId);
+      userTaskList = await this._managementApiService.getUserTasksForProcessModel(managementApiContext, processModelId);
 
     } catch (error) {
       if (isError(error, NotFoundError)) {
