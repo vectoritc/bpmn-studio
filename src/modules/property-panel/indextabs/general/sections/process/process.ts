@@ -33,7 +33,6 @@ export class ProcessSection implements ISection {
   }
 
   public toggleExecutable(): void {
-    this.businessObjInPanel.isExecutable = !this.businessObjInPanel.isExecutable;
     this._publishDiagramChange();
   }
 
