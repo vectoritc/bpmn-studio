@@ -42,16 +42,13 @@ export class DynamicUiWrapper {
     // This happens when clicking on continue on a usertask
     const managementContext: ManagementContext = this._getManagementContext();
 
-    const correlationId: string = this._currentCorrelationId;
-    const processModelKey: string = this._currentProcessModelKey;
-
-    const userTaskId: string = this.currentUserTask.id;
-    const userTaskResult: UserTaskResult = this.currentUserTask.data;
-    console.log(userTaskResult);
-    // TODO! check if userTaskResult contains right data
+    const correlationId: string = ''; // this._currentUserTask.correlationId;
+    const processModelId: string = ''; // this._currentUserTask.processModelId;
+    const userTaskId: string = this._currentUserTask.id;
+    const userTaskResult: UserTaskResult = this._currentUserTask.data;
 
     this._dynamicUiService.finishUserTask(managementContext,
-                                          processModelKey,
+                                          processModelId,
                                           correlationId,
                                           userTaskId,
                                           userTaskResult);
