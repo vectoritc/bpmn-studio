@@ -14,19 +14,15 @@ export class ExportService implements IExportService {
 
   public async export(filename: string): Promise<void> {
 
-    let contentToExport: string;
-
     /*
      * Wait, until all queued functions are executed
      */
-    for (const currentPromise of this._enqueuedPromises) {
-      /*
-       * TODO: We are only interested on the last resolved promise
-       * here. Find out, how to obtain the last resolved promise and remove
-       * the unnecessary assignments.
-       */
-      contentToExport = await currentPromise;
-    }
+    const contentToExport: string = await this._enqueuedPromises.reduce(
+      ((lastPromise: Promise<string>, currentPromise: Promise<string>): Promise<string> => {
+        return lastPromise.then((result: string) => {
+          return currentPromise;
+        });
+      }));
 
     /*
      * If all exporters are finished, save the diagram to disk using the
