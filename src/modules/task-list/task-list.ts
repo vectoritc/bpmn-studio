@@ -1,5 +1,6 @@
 import {isError, NotFoundError, UnauthorizedError} from '@essential-projects/errors_ts';
 import {
+  Correlation,
   IManagementApiService,
   ManagementContext,
   ProcessModelExecution,
@@ -78,7 +79,7 @@ export class TaskList {
   public activate(routeParameters: ITaskListRouteParameters): void {
     if (routeParameters.processModelId) {
       this._getUserTasks = (): Promise<Array<IUserTaskWithProcessModel>> => {
-        return this._getUserTasksForProcessDef(routeParameters.processModelId);
+        return this._getUserTasksForProcessModel(routeParameters.processModelId);
       };
     } else if (routeParameters.correlationId) {
       this._getUserTasks = (): Promise<Array<IUserTaskWithProcessModel>> => {
@@ -195,7 +196,24 @@ export class TaskList {
     const managementApiContext: ManagementContext = this._getManagementContext();
 
     const userTaskList: UserTaskList = await this._managementApiService.getUserTasksForCorrelation(managementApiContext, correlationId);
-    const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = this._addProcessModelToUserTasks(userTaskList, {});
+
+    const runningCorrelations: Array<Correlation> = await this._managementApiService.getAllActiveCorrelations(managementApiContext);
+
+    const correlation: Correlation = runningCorrelations.find((otherCorrelation: Correlation) => {
+      return otherCorrelation.id === correlationId;
+    });
+
+    const correlationWasNotFound: boolean = correlation === undefined || correlation === null;
+    if (correlationWasNotFound) {
+      throw new NotFoundError(`Not correlation found with id ${correlationId}`);
+    }
+
+    const processModelOfCorrelation: ProcessModelExecution.ProcessModel = await
+      this
+      ._managementApiService
+      .getProcessModelById(managementApiContext, correlation.processModelId);
+
+    const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = this._addProcessModelToUserTasks(userTaskList, processModelOfCorrelation);
 
     return userTasksAndProcessModels;
   }

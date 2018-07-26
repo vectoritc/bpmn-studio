@@ -1,6 +1,5 @@
 <template>
   <require from="./task-list.css"></require>
-  <require from="../user-login/user-login"></require>
   <div class="task-list">
     <div class="task-list-container">
       <div show.bind="tasks && tasks.length > 0">
@@ -13,7 +12,9 @@
             <th></th>
           </tr>
           <tr repeat.for="entry of shownTasks">
-            <td><a href="/processdef/${entry.processModel.key}/detail">${entry.processModel.key}</a></td>
+            <td>
+              <a href="/processdef/${entry.processModel.key}/detail">${entry.processModel.key}</a>
+            </td>
             <td>${entry.userTask.key}</td>
             <td>${entry.userTask.id}</td>
             <td>
