@@ -86,7 +86,6 @@ export class DynamicUiWrapper {
     //     this.confirmButtonText = action.label;
     //   }
     // }
-    console.log('TODO!');
   }
 
   private _getManagementContext(): ManagementContext {
