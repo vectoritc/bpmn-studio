@@ -93,8 +93,8 @@ export class App {
         nav: true,
       },
       {
-        route: ['processmodelId/:processModelId/task/:userTaskId/dynamic-ui',
-                'correlationId/:correlationId/task/:userTaskId/dynamic-ui'],
+        route: ['processmodelid/:processModelId/task/:userTaskId/dynamic-ui',
+                'correlationid/:correlationId/task/:userTaskId/dynamic-ui'],
         title: 'Task Dynamic UI',
         name: 'task-dynamic-ui',
         moduleId: 'modules/task-dynamic-ui/task-dynamic-ui',
