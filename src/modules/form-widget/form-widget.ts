@@ -15,6 +15,7 @@ export class FormWidget {
   }
 
   public getFieldControl(field: UserTaskFormField): string {
+    // TODO: Support Date and CustomType
     switch (field.type) {
       case UserTaskFormFieldType.enumeration:
         return 'dropdown';
