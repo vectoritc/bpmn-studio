@@ -23,26 +23,7 @@
     </div>
     <div class="menu-bar__menu menu-bar__menu--center">
       <div class="menu__element menu__element--title btn-group" if.bind="showTools" ref="diagramInfo">
-        <div class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <span class="process-details-title">${process.name}</span>
-          <button class="menu-bar__menu-center--action-button">
-            <i class="fas fa-angle-down"></i>
-          </button>
-        </div>
-        <table class="dropdown-menu process-details-dropdown-menu" ref="dropdown">
-          <tr>
-            <th class="process-details-dropdown-menu__entry">Process Id: </th>
-            <td>${process.id}</td>
-          </tr>
-          <tr>
-            <th class="process-details-dropdown-menu__entry">Process Name: </th>
-            <td>${process.name}</td>
-          </tr>
-          <tr>
-            <th class="process-details-dropdown-menu__entry">Process Key: </th>
-            <td>${process.key}</td>
-          </tr>
-        </table>
+        <span class="process-details-title">${process.key}</span>
       </div>
     </div>
     <div class="menu-bar__menu menu-bar__menu--right">
@@ -75,6 +56,11 @@
       <template if.bind="showStartButton">
         <button class="menu-bar__menu-center--action-button" click.delegate="startProcess()" disabled.bind="validationError" title="Start Process">
           <i class="fas fa-play"></i>
+        </button>
+      </template>
+      <template if.bind="false">
+        <button class="menu-bar__menu-center--action-button" click.delegate="uploadProcess()" disabled.bind="validationError" title="Upload to ProcessEngine">
+          <i class="fas fa-dolly-flatbed"></i>
         </button>
       </template>
       <user-login class="menu-bar__user-login"></user-login>

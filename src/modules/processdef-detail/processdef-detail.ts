@@ -3,19 +3,20 @@ import {inject} from 'aurelia-framework';
 import {Redirect, Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
-import {Event, EventList, IManagementApiService, ManagementContext, ProcessModelExecution} from '@process-engine/management_api_contracts';
-
-import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
+import {
+  Event,
+  EventList,
+  IManagementApiService,
+  ManagementContext,
+  ProcessModelExecution,
+} from '@process-engine/management_api_contracts';
 
 import {
   AuthenticationStateEvent,
   IAuthenticationService,
-  IErrorResponse,
-  IEvent,
   IExtensionElement,
   IFormElement,
   IModdleElement,
-  IProcessEngineService,
   IResponse,
   IShape,
   NotificationType,
@@ -29,7 +30,6 @@ interface RouteParameters {
 }
 
 @inject(
-  'ProcessEngineService',
   EventAggregator,
   Router,
   ValidationController,
@@ -39,13 +39,13 @@ interface RouteParameters {
 export class ProcessDefDetail {
 
   public bpmnio: BpmnIo;
-  public process: IProcessDefEntity;
+  public process: ProcessModelExecution.ProcessModel;
   public showModal: boolean = false;
 
   public processesStartEvents: Array<Event> = [];
+  // TODO: Explain what dropdown this is and find a better name.
   public dropdownMenu: HTMLSelectElement;
 
-  private _processEngineService: IProcessEngineService;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
@@ -60,15 +60,13 @@ export class ProcessDefDetail {
   private _authenticationService: IAuthenticationService;
   private _managementApiClient: IManagementApiService;
 
-  constructor(processEngineService: IProcessEngineService,
-              eventAggregator: EventAggregator,
+  constructor(eventAggregator: EventAggregator,
               router: Router,
               validationController: ValidationController,
               notificationService: NotificationService,
               authenticationService: IAuthenticationService,
               managementApiClient: IManagementApiService) {
 
-    this._processEngineService = processEngineService;
     this._eventAggregator = eventAggregator;
     this._router = router;
     this._validationController = validationController;
@@ -107,10 +105,7 @@ export class ProcessDefDetail {
           .catch((error: Error) => {
             this
               ._notificationService
-              .showNotification(
-                NotificationType.ERROR,
-                `Error while saving the diagram: ${error.message}`,
-              );
+              .showNotification(NotificationType.ERROR, `Error while saving the diagram: ${error.message}`);
           });
       }),
       //#endregion
@@ -290,26 +285,17 @@ export class ProcessDefDetail {
     return returnPromise;
   }
 
-  private _refreshProcess(): Promise<IProcessDefEntity> {
-    return this
-      ._processEngineService
-      .getProcessDefById(this._processId)
-      .then((result: IProcessDefEntity & IErrorResponse) => {
-        // TODO: Extract Business Rule
-        if (result && !result.error) {
-          this.process = result;
+  private async _refreshProcess(): Promise<ProcessModelExecution.ProcessModel> {
+    const context: ManagementContext = this._getManagementContext();
 
-          this
-            ._eventAggregator
-            .publish(environment.events.navBar.updateProcess, this.process);
+    const updatedProcessModel: ProcessModelExecution.ProcessModel = await this._managementApiClient.getProcessModelById(context, this._processId);
 
-          return this.process;
+    this.process = updatedProcessModel;
+    this
+      ._eventAggregator
+      .publish(environment.events.navBar.updateProcess, this.process);
 
-        } else {
-          this.process = null;
-          return result.error;
-        }
-    });
+    return updatedProcessModel;
   }
 
   private async _initializeModalDialog(): Promise<void> {
@@ -383,8 +369,15 @@ export class ProcessDefDetail {
     };
 
     try {
-      await this._managementApiClient.startProcessInstance(context, this.process.key, selectedStartEvent, startRequestPayload, undefined, undefined);
+      const response: ProcessModelExecution.ProcessStartResponsePayload = await this._managementApiClient
+        .startProcessInstance(context, this.process.key, selectedStartEvent, startRequestPayload, undefined, undefined);
 
+      const correlationId: string = response.correlationId;
+
+      // TODO (Stefffen): Change Route as needed.
+    this._router.navigateToRoute('processdef-start', {
+      processDefId: this.process.id,
+    });
     } catch (error) {
       this.
         _notificationService
@@ -393,10 +386,6 @@ export class ProcessDefDetail {
           error.message,
         );
     }
-
-    this._router.navigateToRoute('processdef-start', {
-      processDefId: this.process.id,
-    });
   }
 
   private _getManagementContext(): ManagementContext {
@@ -407,38 +396,10 @@ export class ProcessDefDetail {
     return context;
   }
 
-  /**
-   * Updates the StartEvents of the current Process.
-   */
   private async _updateProcessStartEvents(): Promise<void> {
     const context: ManagementContext = this._getManagementContext();
     const startEventResponse: EventList = await this._managementApiClient.getEventsForProcessModel(context, this.process.key);
     this.processesStartEvents = startEventResponse.events;
-  }
-
-  /**
-   * Currently unused Method.
-   *
-   * TODO: Look deeper into this if we need this method anymore and/or in this
-   * particular way.
-   *
-   * TODO: Use this again.
-   */
-  private _deleteProcess(): void {
-    const userIsSureOfDeletion: boolean = confirm('Are you sure you want to delete the process definition?');
-
-    if (userIsSureOfDeletion) {
-      this
-        ._processEngineService
-        .deleteProcessDef(this.process.id)
-        .then(() => {
-          this.process = null;
-          this._router.navigateToRoute('start-page');
-        })
-        .catch((error: Error) => {
-          this._notificationService.showNotification(NotificationType.ERROR, error.message);
-        });
-    }
   }
 
   /**
@@ -467,36 +428,20 @@ export class ProcessDefDetail {
     }
 
     //#region Save the diagram to the ProcessEngine
-    // TODO: Explain what this is doing -> Refactor.
-    let response: IResponse;
 
     try {
       const xml: string = await this.bpmnio.getXML();
-      response = await this._processEngineService.updateProcessDef(this.process, xml);
+
+      const context: ManagementContext = this._getManagementContext();
+
+      const payload: ProcessModelExecution.UpdateProcessModelRequestPayload = {
+        xml: xml,
+      };
+
+      await this._managementApiClient.updateProcessModelById(context, this.process.key, payload);
+      this._notificationService.showNotification(NotificationType.SUCCESS, 'File saved.');
     } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, `An error occured: ${error.message}`);
-    }
-    //#endregion
-
-    //#region Treat possible errors
-    if (response.error) {
-      this
-        ._notificationService
-        .showNotification(NotificationType.ERROR, `Unable to save the file: ${response.error}`);
-
-    } else if (response.result) {
-      this
-        ._notificationService
-        .showNotification(NotificationType.SUCCESS, 'File saved.');
-
-    } else {
-      // TODO: Not gonna buy this. Is this needed at all?
-      this
-        ._notificationService
-        .showNotification(
-          NotificationType.WARNING,
-          `Something is very wrong: ${JSON.stringify(response)}. Please contact the BPMN-Studio team, they can help.`,
-        );
+      this._notificationService.showNotification(NotificationType.ERROR, `Error while saving diagram: ${error.message}`);
     }
     //#endregion
 

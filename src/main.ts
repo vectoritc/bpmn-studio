@@ -1,9 +1,6 @@
 import {Aurelia} from 'aurelia-framework';
 
 import {IIdentity} from '@essential-projects/core_contracts';
-import {SolutionExplorerFileSystemRepository} from '@process-engine/solutionexplorer.repository.filesystem';
-import {SolutionExplorerProcessEngineRepository} from '@process-engine/solutionexplorer.repository.processengine';
-import {SolutionExplorerService} from '@process-engine/solutionexplorer.service';
 
 import {NotificationType} from './contracts/index';
 import environment from './environment';
@@ -29,17 +26,10 @@ export function configure(aurelia: Aurelia): void {
      * Currently the internal PE is always connected via http.
      * This will be subject to change.
      */
-    localStorage.setItem('processEngineRoute', `http://${newHost}`);
-
-    // Register SolutionExplorerFileSystemService
-    const fileSystemrepository: SolutionExplorerFileSystemRepository = new SolutionExplorerFileSystemRepository();
-    const filesystemSolutionexplorerService: SolutionExplorerService = new SolutionExplorerService(fileSystemrepository);
-    aurelia.container.registerInstance('SolutionExplorerServiceFileSystem', filesystemSolutionexplorerService);
+    if (!window.localStorage.getItem('processEngineRoute')) {
+      localStorage.setItem('processEngineRoute', `http://${newHost}`);
+    }
   }
-
-  const processengineRepository: SolutionExplorerProcessEngineRepository = new SolutionExplorerProcessEngineRepository();
-  const solutionexplorerService: SolutionExplorerService = new SolutionExplorerService(processengineRepository);
-  aurelia.container.registerInstance('SolutionExplorerServiceProcessEngine', solutionexplorerService);
 
   if (window.localStorage.getItem('processEngineRoute')) {
     const processEngineRoute: string = window.localStorage.getItem('processEngineRoute');
@@ -53,17 +43,6 @@ export function configure(aurelia: Aurelia): void {
     environment.processengine.routes.importBPMN = `${processEngineRoute}/processengine/create_bpmn_from_xml`;
   }
 
-  /**
-   * Register Fake Identity for SolutionExplorer.
-   * TODO: Get real identity when IAM is finished.
-  */
-  const fakeIdentity: IIdentity = {
-    name: 'fakeIdentity',
-    id: 'fakeIdentity',
-    roles: [],
-  };
-  aurelia.container.registerInstance('Identity', fakeIdentity);
-
   aurelia.use
     .standardConfiguration()
     .feature('modules/fetch-http-client')
@@ -74,6 +53,7 @@ export function configure(aurelia: Aurelia): void {
     .feature('modules/diagram-validation-service')
     .feature('modules/bpmn-studio_client', tokenRepository)
     .feature('modules/management-api_client')
+    .feature('modules/solution-explorer-services')
     .feature('resources')
     .plugin('aurelia-bootstrap')
     .plugin('aurelia-validation')

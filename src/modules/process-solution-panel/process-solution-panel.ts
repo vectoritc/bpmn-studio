@@ -9,6 +9,7 @@ import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service
 
 import {
   AuthenticationStateEvent,
+  IAuthenticationService,
   IDiagramValidationService,
   IFileInfo,
   IInputEvent,
@@ -20,14 +21,13 @@ import {NotificationService} from '../notification/notification.service';
 @inject(
   EventAggregator,
   Router,
-  'SolutionExplorerServiceProcessEngine',
+  'SolutionExplorerServiceManagementApi',
   'SolutionExplorerServiceFileSystem',
   'NotificationService',
   'DiagramValidationService',
-  'Identity')
+  'NewAuthenticationService')
 export class ProcessSolutionPanel {
   public processes: IPagination<IProcessDefEntity>;
-  public processengineSolutionString: string;
   public openedProcessEngineSolution: ISolution;
   public openedFileSystemSolutions: Array<ISolution> = [];
   public openedSingleDiagrams: Array<IDiagram> = [];
@@ -43,24 +43,28 @@ export class ProcessSolutionPanel {
   private _eventAggregator: EventAggregator;
   private _router: Router;
   private _notificationService: NotificationService;
-  private _identity: IIdentity;
-  private _solutionExplorerServiceProcessEngine: ISolutionExplorerService;
+  private _solutionExplorerServiceManagementApi: ISolutionExplorerService;
   private _solutionExplorerServiceFileSystem: ISolutionExplorerService;
   private _diagramValidationService: IDiagramValidationService;
+  private _authenticationService: IAuthenticationService;
+  private _identity: IIdentity;
 
   constructor(eventAggregator: EventAggregator,
               router: Router,
-              solutionExplorerServiceProcessEngine: ISolutionExplorerService,
+              solutionExplorerServiceManagementApi: ISolutionExplorerService,
               solutionExplorerServiceFileSystem: ISolutionExplorerService,
               notificationService: NotificationService,
-              diagramValidationService: IDiagramValidationService) {
+              diagramValidationService: IDiagramValidationService,
+              authenticationService: IAuthenticationService,
+            ) {
 
     this._eventAggregator = eventAggregator;
     this._router = router;
-    this._solutionExplorerServiceProcessEngine = solutionExplorerServiceProcessEngine;
+    this._solutionExplorerServiceManagementApi = solutionExplorerServiceManagementApi;
     this._solutionExplorerServiceFileSystem = solutionExplorerServiceFileSystem;
     this._notificationService = notificationService;
     this._diagramValidationService = diagramValidationService;
+    this._authenticationService = authenticationService;
   }
 
   public async attached(): Promise<void> {
@@ -254,15 +258,30 @@ export class ProcessSolutionPanel {
   }
 
   private async _refreshProcesslist(): Promise<void> {
-    this.processengineSolutionString = environment.bpmnStudioClient.baseRoute;
-    await this._solutionExplorerServiceProcessEngine.openSolution(this.processengineSolutionString, this._identity);
+    const processengineSolutionString: string = environment.bpmnStudioClient.baseRoute;
 
-    this.openedProcessEngineSolution = await this._solutionExplorerServiceProcessEngine.loadSolution();
+    const identity: IIdentity = await this._createIdentityForSolutionExplorer();
+
+    await this._solutionExplorerServiceManagementApi.openSolution(processengineSolutionString, identity);
+
+    this.openedProcessEngineSolution = await this._solutionExplorerServiceManagementApi.loadSolution();
   }
 
   private _updateSolution(solutionToUpdate: ISolution, solution: ISolution): void {
     const index: number = this.openedFileSystemSolutions.indexOf(solutionToUpdate);
     this.openedFileSystemSolutions.splice(index, 1, solution);
+  }
+
+  private async _createIdentityForSolutionExplorer(): Promise<IIdentity> {
+    const orginalIdentity: IIdentity = await this._authenticationService.getIdentity();
+
+    const solutionExplorerIdentity: any = {
+      accessToken: this._authenticationService.getAccessToken(),
+    };
+
+    Object.assign(solutionExplorerIdentity, orginalIdentity);
+
+    return solutionExplorerIdentity;
   }
 
   private _findURIObject<T extends {uri: string}>(objects: Array<T>, targetURI: string): T {

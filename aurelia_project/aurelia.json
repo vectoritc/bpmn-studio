@@ -337,6 +337,11 @@
             "path": "../node_modules/@process-engine/solutionexplorer.repository.processengine/dist/amd"
           },
           {
+            "name": "@process-engine/solutionexplorer.repository.management_api",
+            "main": "index.js",
+            "path": "../node_modules/@process-engine/solutionexplorer.repository.management_api/dist/amd"
+          },
+          {
             "name": "@process-engine/solutionexplorer.service",
             "path": "../node_modules/@process-engine/solutionexplorer.service/dist/amd",
             "main": "index.js"
