@@ -104,6 +104,10 @@ export class NavBar {
     this._eventAggregator.publish(environment.events.processDefDetail.startProcess);
   }
 
+  public uploadProcess(): void {
+    this._eventAggregator.publish(environment.events.processDefDetail.uploadProcess);
+  }
+
   /**
    * Checks if the user clicked inside of the dropdown, to prevent it from
    * closing in that case.

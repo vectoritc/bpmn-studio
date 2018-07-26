@@ -53,6 +53,7 @@ export default {
       exportDiagramAs: 'processdefdetail:diagram:exportas',
       startProcess: 'processdefdetail:process:start',
       toggleXMLView: 'processdefdetail:xmlview:toggle',
+      uploadProcess: 'processdefdetail:xmlview:toggle',
     },
     bpmnio: {
       toggleXMLView: 'processdefdetail:xmlview:toggle',

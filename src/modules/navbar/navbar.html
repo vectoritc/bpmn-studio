@@ -58,6 +58,9 @@
           <i class="fas fa-play"></i>
         </button>
       </template>
+      <template>
+        <button class="menu-bar__menu-center--action-button" click.delegate="uploadProcess()" disabled.bind="validationError" title="Upload to ProcessEngine"></button>
+      </template>
       <user-login class="menu-bar__user-login"></user-login>
     </div>
   </div>

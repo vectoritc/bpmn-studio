@@ -6,6 +6,7 @@ import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 import {IIdentity} from '../../../node_modules/@process-engine/bpmn-studio_client';
 
+import { IManagementApiService } from '../../../node_modules/@process-engine/management_api_contracts';
 import {NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
@@ -15,13 +16,14 @@ interface RouteParameters {
   diagramUri: string;
 }
 
-@inject('SolutionExplorerServiceFileSystem', 'NotificationService', EventAggregator, Router)
+@inject('SolutionExplorerServiceFileSystem', 'ManagementApiClientService', 'NotificationService', EventAggregator, Router)
 export class DiagramDetail {
 
   public diagram: IDiagram;
   public bpmnio: BpmnIo;
 
   private _solutionExplorerService: ISolutionExplorerService;
+  private _managementClient: IManagementApiService;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
@@ -30,10 +32,12 @@ export class DiagramDetail {
   private _identity: IIdentity;
 
   constructor(solutionExplorerService: ISolutionExplorerService,
+              managementClient: IManagementApiService,
               notificationService: NotificationService,
               eventAggregator: EventAggregator,
               router: Router) {
     this._solutionExplorerService = solutionExplorerService;
+    this._managementClient = managementClient;
     this._notificationService = notificationService;
     this._eventAggregator = eventAggregator;
     this._router = router;
@@ -59,6 +63,9 @@ export class DiagramDetail {
       }),
       this._eventAggregator.subscribe(environment.events.diagramChange, () => {
         this._diagramHasChanged = true;
+      }),
+      this._eventAggregator.subscribe(environment.events.processDefDetail.uploadProcess, () => {
+        this._uploadProcess();
       }),
     ];
   }
@@ -123,5 +130,9 @@ export class DiagramDetail {
       this._notificationService
           .showNotification(NotificationType.ERROR, `Unable to save the file: ${error}`);
     }
+  }
+
+  private _uploadProcess(): void {
+
   }
 }
