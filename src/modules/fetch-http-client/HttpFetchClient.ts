@@ -37,7 +37,7 @@ export class HttpFetchClient implements IHttpClient {
         'Content-Type': 'application/json',
         ...options.headers,
       },
-      body: data as any,
+      body: JSON.stringify(data),
     });
 
     const response: Response = await fetch(request);
