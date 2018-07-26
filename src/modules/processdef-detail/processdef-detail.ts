@@ -369,8 +369,13 @@ export class ProcessDefDetail {
     };
 
     try {
-      await this._managementApiClient.startProcessInstance(context, this.process.key, selectedStartEvent, startRequestPayload, undefined, undefined);
+      const response: ProcessModelExecution.ProcessStartResponsePayload = await this._managementApiClient
+        .startProcessInstance(context, this.process.key, selectedStartEvent, startRequestPayload, undefined, undefined);
 
+      const correlationId: string = response.correlationId;
+
+      // TODO (Stefffen): Change Route as needed.
+      this._router.navigate(`processdef/${this.process.key}/start`);
     } catch (error) {
       this.
         _notificationService
@@ -379,8 +384,6 @@ export class ProcessDefDetail {
           error.message,
         );
     }
-
-    this._router.navigate(`processdef/${this.process.key}/start`);
   }
 
   private _getManagementContext(): ManagementContext {
