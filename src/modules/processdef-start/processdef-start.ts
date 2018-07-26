@@ -45,8 +45,6 @@ export class ProcessDefStart {
 
     const userTaskList: UserTaskList = await this._managementApiClient.getUserTasksForProcessModel(managementContext, this._processModelId);
 
-    console.log(userTaskList);
-
     // TODO! get this data
     // this.dynamicUiWrapper.currentUserTask = data.userTask;
     // this.dynamicUiWrapper.currentCorrelationId = data.correlationId;
