@@ -29,11 +29,13 @@ export class DynamicUiWrapper {
   }
 
   public async handleButtonClick(action: string): Promise<void> {
-    if (!this._currentUserTask || !this._currentCorrelationId) {
+    const hasNoCurrentUserTask: boolean = this._currentUserTask === undefined;
+    if (hasNoCurrentUserTask) {
       return;
     }
 
-    if (this.onButtonClick) {
+    const hasOnButtonClickFunction: boolean = this.onButtonClick !== undefined;
+    if (hasOnButtonClickFunction) {
       this.onButtonClick(action);
     }
 
