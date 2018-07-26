@@ -47,6 +47,7 @@ export class ProcessSolutionPanel {
   private _solutionExplorerServiceFileSystem: ISolutionExplorerService;
   private _diagramValidationService: IDiagramValidationService;
   private _authenticationService: IAuthenticationService;
+  private _identity: IIdentity;
 
   constructor(eventAggregator: EventAggregator,
               router: Router,
