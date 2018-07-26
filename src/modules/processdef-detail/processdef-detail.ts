@@ -9,7 +9,6 @@ import {
   IManagementApiService,
   ManagementContext,
   ProcessModelExecution,
-  UpdateProcessModelRequestPayload,
 } from '@process-engine/management_api_contracts';
 
 import {
@@ -430,7 +429,7 @@ export class ProcessDefDetail {
 
       const context: ManagementContext = this._getManagementContext();
 
-      const payload: UpdateProcessModelRequestPayload = {
+      const payload: ProcessModelExecution.UpdateProcessModelRequestPayload = {
         xml: xml,
       };
 

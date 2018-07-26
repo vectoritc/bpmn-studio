@@ -4,12 +4,10 @@ import {Redirect, Router} from 'aurelia-router';
 
 import {IIdentity} from '@process-engine/bpmn-studio_client';
 import {IManagementApiService, ManagementContext} from '@process-engine/management_api_contracts';
+import {ProcessModelExecution} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
-import {UpdateProcessModelRequestPayload} from '@process-engine/management_api_contracts';
-import { log } from 'util';
-import { log } from 'util';
 import {IAuthenticationService, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
@@ -139,7 +137,7 @@ export class DiagramDetail {
   }
 
   private _uploadProcess(): void {
-    const payload: UpdateProcessModelRequestPayload = {
+    const payload: ProcessModelExecution.UpdateProcessModelRequestPayload = {
       xml: this.diagram.xml,
     };
 
