@@ -14,8 +14,6 @@ export class DynamicUiWrapper {
 
   private _dynamicUiService: IDynamicUiService;
   @bindable() private _currentUserTask: UserTask;
-  @bindable() private _currentCorrelationId: string;
-  @bindable() private _currentProcessModelKey: string;
   private _managementApiClient: ManagementApiClientService;
   private _authenticationService: NewAuthenticationService;
 
@@ -54,7 +52,6 @@ export class DynamicUiWrapper {
                                           userTaskResult);
 
     this._currentUserTask = null;
-    this._currentCorrelationId = null;
   }
 
   // TODO!
@@ -75,22 +72,6 @@ export class DynamicUiWrapper {
 
   public get currentUserTask(): UserTask {
     return this._currentUserTask;
-  }
-
-  public set currentCorrelationId(correlationId: string) {
-    this._currentCorrelationId = this.currentCorrelationId;
-  }
-
-  public get currentCorrelationId(): string {
-    return this._currentCorrelationId;
-  }
-
-  public set currentProcessModelKey(processModelKey: string) {
-    this._currentProcessModelKey = processModelKey;
-  }
-
-  public get currentProcessModelKey(): string {
-    return this._currentProcessModelKey;
   }
 
   public handleConfirmLayout(): void {
