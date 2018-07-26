@@ -86,7 +86,7 @@ export class DynamicUiWrapper {
   }
 
   public set currentProcessModelKey(processModelKey: string) {
-    this._currentProcessModelKey = this.currentProcessModelKey;
+    this._currentProcessModelKey = processModelKey;
   }
 
   public get currentProcessModelKey(): string {
