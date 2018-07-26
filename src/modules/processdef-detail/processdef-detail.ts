@@ -9,6 +9,7 @@ import {
   IManagementApiService,
   ManagementContext,
   ProcessModelExecution,
+  UpdateProcessModelRequestPayload,
 } from '@process-engine/management_api_contracts';
 
 import {
@@ -105,10 +106,7 @@ export class ProcessDefDetail {
           .catch((error: Error) => {
             this
               ._notificationService
-              .showNotification(
-                NotificationType.ERROR,
-                `Error while saving the diagram: ${error.message}`,
-              );
+              .showNotification(NotificationType.ERROR, `Error while saving the diagram: ${error.message}`);
           });
       }),
       //#endregion
@@ -426,40 +424,20 @@ export class ProcessDefDetail {
     }
 
     //#region Save the diagram to the ProcessEngine
-    // TODO: Explain what this is doing -> Refactor.
-    let response: IResponse;
 
     try {
       const xml: string = await this.bpmnio.getXML();
 
       const context: ManagementContext = this._getManagementContext();
 
-      // TODO (api): Implemenet updateProcessDef method.
-      response = await this._managementApiClient.updateProcessModel(context, this.process.key, xml);
+      const payload: UpdateProcessModelRequestPayload = {
+        xml: xml,
+      };
+
+      await this._managementApiClient.updateProcessModelById(context, this.process.key, payload);
+      this._notificationService.showNotification(NotificationType.SUCCESS, 'File saved.');
     } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, `An error occured: ${error.message}`);
-    }
-    //#endregion
-
-    //#region Treat possible errors
-    if (response.error) {
-      this
-        ._notificationService
-        .showNotification(NotificationType.ERROR, `Unable to save the file: ${response.error}`);
-
-    } else if (response.result) {
-      this
-        ._notificationService
-        .showNotification(NotificationType.SUCCESS, 'File saved.');
-
-    } else {
-      // TODO: Not gonna buy this. Is this needed at all?
-      this
-        ._notificationService
-        .showNotification(
-          NotificationType.WARNING,
-          `Something is very wrong: ${JSON.stringify(response)}. Please contact the BPMN-Studio team, they can help.`,
-        );
+      this._notificationService.showNotification(NotificationType.ERROR, `Error while saving diagram: ${error.message}`);
     }
     //#endregion
 

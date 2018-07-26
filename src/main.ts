@@ -29,8 +29,9 @@ export function configure(aurelia: Aurelia): void {
      * Currently the internal PE is always connected via http.
      * This will be subject to change.
      */
-    localStorage.setItem('processEngineRoute', `http://${newHost}`);
-
+    if (!window.localStorage.getItem('processEngineRoute')) {
+      localStorage.setItem('processEngineRoute', `http://${newHost}`);
+    }
     // Register SolutionExplorerFileSystemService
     const fileSystemrepository: SolutionExplorerFileSystemRepository = new SolutionExplorerFileSystemRepository();
     const filesystemSolutionexplorerService: SolutionExplorerService = new SolutionExplorerService(fileSystemrepository);
