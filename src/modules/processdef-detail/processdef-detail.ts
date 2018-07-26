@@ -17,7 +17,6 @@ import {
   IExtensionElement,
   IFormElement,
   IModdleElement,
-  IResponse,
   IShape,
   NotificationType,
 } from '../../contracts/index';
