@@ -123,13 +123,7 @@ export class ProcessDefDetail {
 
       //  General Event Subscritions {{{ //
       this._eventAggregator.subscribe(environment.events.diagramNeedsSaving, (savingNeeded: boolean) => {
-        /*
-         * Using a tenary expression instead a direct assigment makes sure, that
-         * diagramHasChanges never contains undefined as a value.
-         */
-        this._diagramHasChanged = (savingNeeded === true)
-          ? (this._diagramHasChanged = true)
-          : (this._diagramHasChanged = false);
+        this._diagramHasChanged = savingNeeded === true;
       }),
       //#endregion
 
