@@ -12,8 +12,12 @@
           </tr>
           <tr repeat.for="instance of shownProcesses">
             <td>${instance.id}</td>
-            <td><a href="#/processdef/${instance.processModelId}/detail">${instance.processModelId}</a></td>
-            <td><a href="#/process/${instance.id}/task">User tasks</a></td>
+            <td>
+              <a href="#/processdef/${instance.processModelId}/detail">${instance.processModelId}</a>
+            </td>
+            <td>
+              <a href="#/process/${instance.id}/task">User tasks</a>
+            </td>
           </tr>
         </table>
       </template>
@@ -25,9 +29,9 @@
       <template if.bind="succesfullRequested && (!instances || instances.length === 0)">
         <h3>No process instances found</h3>
       </template>
-    </div>
-    <div show.bind="!succesfullRequested" class="container">
-      <img src="src/resources/images/gears.svg" class="loading-spinner">
+      <div show.bind="!succesfullRequested" class="container">
+        <img src="src/resources/images/gears.svg" class="loading-spinner">
+      </div>
     </div>
   </div>
 </template>
