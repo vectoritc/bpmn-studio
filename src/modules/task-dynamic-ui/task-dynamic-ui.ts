@@ -56,7 +56,9 @@ export class TaskDynamicUi {
   }
 
   private finishTask(action: string): void {
-    this._router.navigate(`waitingroom/${this._userTask.userTaskEntity.process.id}`);
+    this._router.navigateToRoute('waiting-room', {
+      processInstanceId: this._userTask.userTaskEntity.process.id,
+    });
   }
 
   private async refreshUserTask(): Promise<void> {

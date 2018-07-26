@@ -10,8 +10,8 @@ import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
 import {
   AuthenticationStateEvent,
   IAuthenticationService,
-  IEvent,
   IErrorResponse,
+  IEvent,
   IExtensionElement,
   IFormElement,
   IModdleElement,
@@ -394,7 +394,9 @@ export class ProcessDefDetail {
         );
     }
 
-    this._router.navigate(`processdef/${this.process.id}/start`);
+    this._router.navigateToRoute('processdef-start', {
+      processDefId: this.process.id,
+    });
   }
 
   private _getManagementContext(): ManagementContext {
@@ -431,7 +433,7 @@ export class ProcessDefDetail {
         .deleteProcessDef(this.process.id)
         .then(() => {
           this.process = null;
-          this._router.navigate('');
+          this._router.navigateToRoute('start-page');
         })
         .catch((error: Error) => {
           this._notificationService.showNotification(NotificationType.ERROR, error.message);

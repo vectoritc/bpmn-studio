@@ -90,7 +90,9 @@ export class ProcessDefList {
   }
 
   public showDetails(processKey: string): void {
-    this._router.navigate(`processdef/${processKey}/detail`);
+    this._router.navigateToRoute('processdef-detail', {
+      processDefId: processKey,
+    });
   }
 
   private async _getAllProcessModels(): Promise<void> {

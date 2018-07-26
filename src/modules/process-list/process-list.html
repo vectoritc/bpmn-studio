@@ -12,8 +12,8 @@
           </tr>
           <tr repeat.for="instance of shownProcesses">
             <td>${instance.id}</td>
-            <td><a href="#/processdef/${instance.processModelId}/detail">${instance.processModelId}</a></td>
-            <td><a href="#/process/${instance.id}/task">User tasks</a></td>
+            <td><a route-href="route: processdef-detail; params.bind: { processDefId: instance.processModelId }">${instance.processModelId}</a></td>
+            <td><a route-href="route: task-list; params.bind: { processModelId: instance.processModelId }">User tasks</a></td>
           </tr>
         </table>
       </template>

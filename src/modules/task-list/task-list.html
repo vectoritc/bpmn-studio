@@ -13,11 +13,11 @@
             <th></th>
           </tr>
           <tr repeat.for="entry of shownTasks">
-            <td><a href="/processdef/${entry.processModel.key}/detail">${entry.processModel.key}</a></td>
+            <td><a route-href="route: processdef-detail; params.bind: { processDefId: entry.processModel.key }">${entry.processModel.key}</a></td>
             <td>${entry.userTask.key}</td>
             <td>${entry.userTask.id}</td>
             <td>
-              <a class="btn btn-success" href="/task/${entry.userTask.id}/dynamic-ui">Continue</a>
+              <a class="btn btn-success" route-href="route: task-dynamic-ui; params.bind: { userTaskId: entry.userTask.id }">Continue</a>
             </td>
           </tr>
         </table>

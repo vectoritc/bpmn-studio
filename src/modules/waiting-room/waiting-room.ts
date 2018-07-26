@@ -26,7 +26,7 @@ export class WaitingRoom {
   }
 
   public navigateToTaskList(): void {
-    this._router.navigate('task');
+    this._router.navigateToRoute('task-list');
     this._bpmnStudioClient.off('processEnd', this._processEndCallback);
     this._bpmnStudioClient.off('renderUserTask', this._renderUserTaskCallback);
   }
@@ -34,7 +34,9 @@ export class WaitingRoom {
   private _renderUserTaskCallback: ((userTaskConfig: IUserTaskConfig) => void) = (userTaskConfig: IUserTaskConfig): void => {
     this._notificationService.showNotification(NotificationType.SUCCESS, 'Process continued');
     if (userTaskConfig.userTaskEntity.process.id === this._processInstanceId) {
-      this._router.navigate(`/task/${userTaskConfig.id}/dynamic-ui`);
+      this._router.navigateToRoute('task-dynamic-ui', {
+        userTaskId: userTaskConfig.id,
+      });
       this._bpmnStudioClient.off('renderUserTask', this._renderUserTaskCallback);
     }
   }
@@ -42,7 +44,7 @@ export class WaitingRoom {
   private _processEndCallback: ((processInstanceId: string) => void) = (processInstanceId: string): void => {
     this._notificationService.showNotification(NotificationType.WARNING, 'Process stopped');
     if (processInstanceId === this._processInstanceId) {
-      this._router.navigate('task');
+      this._router.navigateToRoute('task-list');
       this._bpmnStudioClient.off('processEnd', this._processEndCallback);
     }
   }

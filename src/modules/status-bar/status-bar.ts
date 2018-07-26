@@ -74,7 +74,7 @@ export class StatusBar {
   }
 
   public navigateToSettings(): void {
-    this._router.navigate('/configuration');
+    this._router.navigateToRoute('configuration');
   }
 
   private _setProcessEngineRoute(processEngineRoute: string): void {
