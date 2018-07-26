@@ -38,22 +38,15 @@ export class ProcessDefStart {
   }
 
   // TODO: Add a usefull comment here; what does it do? what is it good for? when is this invoked?
-  public async activate(routeParameters: {processKey: string}): Promise<void> {
-    this._processModelId = routeParameters.processKey;
+  public async activate(routeParameters: {processModelId: string}): Promise<void> {
+    this._processModelId = routeParameters.processModelId;
 
     const managementContext: ManagementContext = this._getManagementContext();
 
     const userTaskList: UserTaskList = await this._managementApiClient.getUserTasksForProcessModel(managementContext, this._processModelId);
 
-    // TODO! get this data
-    // this.dynamicUiWrapper.currentUserTask = data.userTask;
-    // this.dynamicUiWrapper.currentCorrelationId = data.correlationId;
-
-    this.dynamicUiWrapper.currentProcessModelKey = this._processModelId;
-
-    // TODO! basically this needs to happen:
-    // this._eventAggregator.publish('render-dynamic-ui', null);
-    // Find out how to get the new usertask to start
+    // TODO! Get the userTask
+    // this.dynamicUiWrapper.currentUserTask = userTask;
 
     await this._refreshProcess();
 
@@ -68,14 +61,6 @@ export class ProcessDefStart {
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
         this._refreshProcess();
       }),
-
-      // TODO! Replace this
-      this._eventAggregator.subscribe('render-dynamic-ui', (data: any) => {
-        this.dynamicUiWrapper.currentUserTask = data.userTask;
-        this.dynamicUiWrapper.currentCorrelationId = data.correlationId;
-        this.dynamicUiWrapper.currentProcessModelKey = data.processModelKey;
-      }),
-
       /*
        * The closed-process event is thrown at the end of a process run;
        * we then use the router to navigate to the prvious view-- this could be the
