@@ -30,13 +30,13 @@ export class DynamicUiService implements IDynamicUiService {
   }
 
   public finishUserTask(managementContext: ManagementContext,
-                        processModelKey: string,
+                        processModelId: string,
                         correlationId: string,
                         userTaskId: string,
                         userTaskResult: UserTaskResult): void {
 
     this._managementApiClient.finishUserTask(managementContext,
-                                            processModelKey,
+                                            processModelId,
                                             correlationId,
                                             userTaskId,
                                             userTaskResult);

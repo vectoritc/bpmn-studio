@@ -2,7 +2,7 @@ import {ManagementContext, UserTask, UserTaskResult} from '@process-engine/manag
 
 export interface IDynamicUiService {
   finishUserTask(managementContext: ManagementContext,
-                 processModelKey: string,
+                 processModelId: string,
                  correlationId: string,
                  userTaskId: string,
                  userTaskResult: UserTaskResult): void;
