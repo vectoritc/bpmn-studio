@@ -9,6 +9,7 @@ export class DynamicUiWrapper {
 
   public declineButtonText: string = 'Cancel';
   public confirmButtonText: string = 'Continue';
+  public widgetType: string = 'form';
   public onButtonClick: (action: string) => void;
 
   private _dynamicUiService: IDynamicUiService;
