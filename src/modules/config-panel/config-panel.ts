@@ -1,4 +1,3 @@
-import {BpmnStudioClient} from '@process-engine/bpmn-studio_client';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
 import {OpenIdConnect} from 'aurelia-open-id-connect';

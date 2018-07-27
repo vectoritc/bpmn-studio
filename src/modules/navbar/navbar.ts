@@ -1,7 +1,8 @@
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
 import {RouteConfig, Router} from 'aurelia-router';
-import {IEventFunction, IProcessDefEntity} from '../../contracts';
+import {IEventFunction} from '../../contracts';
 import environment from '../../environment';
 
 @inject(Router, EventAggregator)
@@ -11,7 +12,7 @@ export class NavBar {
 
   @bindable() public showSolutionExplorer: boolean;
   @bindable() public activeRouteName: string;
-  public process: IProcessDefEntity;
+  public process: IDiagram;
   public diagramInfo: HTMLElement;
   public dropdown: HTMLElement;
   public showTools: boolean = false;
@@ -36,7 +37,7 @@ export class NavBar {
       this._dertermineActiveRoute();
     });
 
-    this._eventAggregator.subscribe(environment.events.navBar.showTools, (process: IProcessDefEntity) => {
+    this._eventAggregator.subscribe(environment.events.navBar.showTools, (process: IDiagram) => {
       this.showTools = true;
       this.process = process;
     });
@@ -45,7 +46,7 @@ export class NavBar {
       this.showTools = false;
     });
 
-    this._eventAggregator.subscribe(environment.events.navBar.updateProcess, (process: IProcessDefEntity) => {
+    this._eventAggregator.subscribe(environment.events.navBar.updateProcess, (process: IDiagram) => {
       this.process = process;
     });
 

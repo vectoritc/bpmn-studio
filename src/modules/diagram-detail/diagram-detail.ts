@@ -2,7 +2,6 @@ import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {Redirect, Router} from 'aurelia-router';
 
-import {IIdentity} from '@process-engine/bpmn-studio_client';
 import {IManagementApiService, ManagementContext} from '@process-engine/management_api_contracts';
 import {ProcessModelExecution} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
@@ -31,7 +30,9 @@ export class DiagramDetail {
   private _subscriptions: Array<Subscription>;
   private _router: Router;
   private _diagramHasChanged: boolean;
-  private _identity: IIdentity;
+
+  // This identity is used for the filesystem actions. Needs to be refactored.
+  private _identity: any;
 
   constructor(solutionExplorerService: ISolutionExplorerService,
               managementClient: IManagementApiService,

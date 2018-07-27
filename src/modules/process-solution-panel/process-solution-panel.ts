@@ -3,7 +3,6 @@ import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
 import {IIdentity} from '@essential-projects/core_contracts';
-import {IPagination, IProcessDefEntity} from '@process-engine/bpmn-studio_client';
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
@@ -11,7 +10,7 @@ import {
   AuthenticationStateEvent,
   IAuthenticationService,
   IDiagramValidationService,
-  IFileInfo,
+  IFile,
   IInputEvent,
   NotificationType,
 } from '../../contracts/index';
@@ -27,7 +26,6 @@ import {NotificationService} from '../notification/notification.service';
   'DiagramValidationService',
   'NewAuthenticationService')
 export class ProcessSolutionPanel {
-  public processes: IPagination<IProcessDefEntity>;
   public openedProcessEngineSolution: ISolution;
   public openedFileSystemSolutions: Array<ISolution> = [];
   public openedSingleDiagrams: Array<IDiagram> = [];
@@ -99,7 +97,7 @@ export class ProcessSolutionPanel {
       ipcRenderer.send('waiting-for-double-file-click');
 
       // Check if there was a double click before BPMN-Studio was loaded.
-      const fileInfo: IFileInfo = ipcRenderer.sendSync('get_opened_file');
+      const fileInfo: IFile = ipcRenderer.sendSync('get_opened_file');
 
       if (fileInfo.path) {
         const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(fileInfo.path, this._identity);

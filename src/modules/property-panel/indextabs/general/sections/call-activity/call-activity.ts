@@ -1,9 +1,10 @@
-import {IPagination, IProcessDefEntity} from '@process-engine/bpmn-studio_client';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
+
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
+
 import {
-  IBpmnModeler,
   ICallActivityElement,
   IPageModel,
   ISection,
@@ -17,8 +18,8 @@ export class CallActivitySection implements ISection {
 
   public path: string = '/sections/call-activity/call-activity';
   public canHandleElement: boolean = false;
-  public allProcesses: IPagination<IProcessDefEntity>;
-  public selectedProcess: IProcessDefEntity;
+  public allDiagrams: Array<IDiagram>;
+  public selectedDiagram: IDiagram;
 
   private _businessObjInPanel: ICallActivityElement;
   private _generalService: GeneralService;
@@ -33,9 +34,9 @@ export class CallActivitySection implements ISection {
 
   public async activate(model: IPageModel): Promise<void> {
     this._businessObjInPanel = model.elementInPanel.businessObject;
-    await this._getAllProcesses();
-    this.selectedProcess = this.allProcesses.data.find((process: IProcessDefEntity) => {
-      return process.key === this._businessObjInPanel.calledElement;
+    await this._getAllDiagrams();
+    this.selectedDiagram = this.allDiagrams.find((diagram: IDiagram) => {
+      return diagram.id === this._businessObjInPanel.calledElement;
     });
   }
 
@@ -47,19 +48,19 @@ export class CallActivitySection implements ISection {
     return elementIsCallActivity;
   }
 
-  public navigateToCalledProcess(): void {
+  public navigateToCalledDiagram(): void {
     this._router.navigateToRoute('processdef-detail', {
-      processDefId: this.selectedProcess.id,
+      processDefId: this.selectedDiagram.id,
     });
   }
 
-  public updateCalledProcess(): void {
-    this._businessObjInPanel.calledElement = this.selectedProcess.key;
+  public updateCalledDiagram(): void {
+    this._businessObjInPanel.calledElement = this.selectedDiagram.id;
     this._publishDiagramChange();
   }
 
-  private async _getAllProcesses(): Promise<void> {
-    this.allProcesses = await this._generalService.getAllProcesses();
+  private async _getAllDiagrams(): Promise<void> {
+    this.allDiagrams = await this._generalService.getAllDiagrams();
   }
 
   private _publishDiagramChange(): void {

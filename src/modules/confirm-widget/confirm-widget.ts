@@ -1,5 +1,5 @@
+import {WidgetConfig} from '@process-engine/bpmn-studio_client';
 import {bindable} from 'aurelia-framework';
-import {WidgetConfig} from '../../../node_modules/@process-engine/bpmn-studio_client';
 
 export class ConfirmWidget {
 
