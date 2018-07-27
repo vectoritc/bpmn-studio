@@ -7,6 +7,11 @@ import {NewAuthenticationService} from '../authentication/new_authentication.ser
 import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
 import {NotificationService} from '../notification/notification.service';
 
+interface RouteParameters {
+  userTaskId: string;
+  processModelId: string;
+}
+
 @inject(EventAggregator, 'DynamicUiService', Router, 'NotificationService', 'NewAuthenticationService')
 export class TaskDynamicUi {
 
