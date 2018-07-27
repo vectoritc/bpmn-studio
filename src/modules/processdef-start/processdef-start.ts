@@ -3,7 +3,7 @@ import {ManagementContext, ProcessModelExecution, UserTask, UserTaskList} from '
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import {AuthenticationStateEvent, IProcessEngineService, NotificationType} from '../../contracts/index';
+import {AuthenticationStateEvent, NotificationType} from '../../contracts/index';
 import {NewAuthenticationService} from '../authentication/new_authentication.service';
 import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
 import {NotificationService} from '../notification/notification.service';
@@ -23,7 +23,6 @@ export class ProcessDefStart {
 
   public dynamicUiWrapper: DynamicUiWrapper;
 
-  private _processEngineService: IProcessEngineService;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
@@ -35,14 +34,12 @@ export class ProcessDefStart {
   private _correlationId: string;
   private _userTask: UserTask;
 
-  constructor(processEngineService: IProcessEngineService,
-              eventAggregator: EventAggregator,
+  constructor(eventAggregator: EventAggregator,
               router: Router,
               notificationService: NotificationService,
               managementApiClient: ManagementApiClientService,
               authenticationService: NewAuthenticationService) {
 
-    this._processEngineService = processEngineService;
     this._eventAggregator = eventAggregator;
     this._router = router;
     this._notificationService = notificationService;
