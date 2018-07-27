@@ -25,7 +25,7 @@ import {BpmnIo} from '../bpmn-io/bpmn-io';
 import {NotificationService} from '../notification/notification.service';
 
 interface RouteParameters {
-  processDefId: string;
+  processKey: string;
 }
 
 @inject(
@@ -75,7 +75,7 @@ export class ProcessDefDetail {
   }
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
-    this._processId = routeParameters.processDefId;
+    this._processId = routeParameters.processKey;
     this._diagramHasChanged = false;
     await this._refreshProcess();
   }
