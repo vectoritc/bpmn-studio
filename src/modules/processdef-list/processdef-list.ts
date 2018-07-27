@@ -44,21 +44,14 @@ export class ProcessDefList {
   }
 
   public async canActivate(): Promise<boolean> {
-    if (!this._managementContext.identity) {
-      this._notificationService.showNotification(NotificationType.ERROR, 'You have to be logged in to use the planning feature.');
+
+    const hasClaimsForProcessDefList: boolean = await this._hasClaimsForProcessDefList(this._managementContext);
+
+    if (!hasClaimsForProcessDefList) {
+      this._notificationService.showNotification(NotificationType.ERROR, 'You dont have the permission to use the planning feature.');
       return false;
-    } else {
-      try {
-        await this._managementApiClient.getProcessModels(this._managementContext);
-      } catch (error) {
-        if (isError(error, ForbiddenError)) {
-          this._notificationService.showNotification(NotificationType.ERROR, 'You dont have the permission to use the planning feature.');
-        } else {
-          this._notificationService.showNotification(NotificationType.ERROR, error);
-        }
-        return false;
-      }
     }
+
     return true;
   }
 
@@ -93,6 +86,23 @@ export class ProcessDefList {
     this._router.navigateToRoute('processdef-detail', {
       processDefId: processKey,
     });
+  }
+
+  private async _hasClaimsForProcessDefList(managementContext: ManagementContext): Promise<boolean> {
+    try {
+
+      await this._managementApiClient.getProcessModels(managementContext);
+
+    } catch (error) {
+      const errorIsForbiddenError: boolean = isError(error, ForbiddenError);
+      const errorIsUnauthorizedError: boolean = isError(error, UnauthorizedError);
+
+      if (errorIsForbiddenError || errorIsUnauthorizedError) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   private async _getAllProcessModels(): Promise<void> {
