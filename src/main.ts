@@ -1,18 +1,12 @@
 import {Aurelia} from 'aurelia-framework';
 
-import {IIdentity} from '@essential-projects/core_contracts';
-
 import {NotificationType} from './contracts/index';
 import environment from './environment';
 import {NotificationService} from './modules/notification/notification.service';
-import {TokenRepository} from './modules/token-repository/token.repository';
 
 import {oidcConfig} from './open-id-connect-configuration';
 
 export function configure(aurelia: Aurelia): void {
-
-  const tokenRepository: TokenRepository = new TokenRepository();
-  aurelia.container.registerInstance('TokenRepository', tokenRepository);
 
   if (navigator.cookieEnabled === false) {
     const url: string = location.href;
@@ -47,12 +41,10 @@ export function configure(aurelia: Aurelia): void {
     .standardConfiguration()
     .feature('modules/fetch-http-client')
     .feature('modules/dynamic-ui')
-    .feature('modules/processengine')
     .feature('modules/notification')
-    .feature('modules/authentication')
     .feature('modules/diagram-validation-service')
-    .feature('modules/bpmn-studio_client', tokenRepository)
     .feature('modules/management-api_client')
+    .feature('modules/authentication')
     .feature('modules/solution-explorer-services')
     .feature('resources')
     .plugin('aurelia-bootstrap')

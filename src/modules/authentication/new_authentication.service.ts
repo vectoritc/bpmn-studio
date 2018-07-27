@@ -5,8 +5,8 @@ import {User} from 'oidc-client';
 import {SigninResponse} from './open-id/open-id-signin-response';
 
 import {AuthenticationStateEvent, IAuthenticationService, IIdentity} from '../../contracts/index';
-import environment from './../../environment';
-import {oidcConfig} from './../../open-id-connect-configuration';
+import environment from '../../environment';
+import {oidcConfig} from '../../open-id-connect-configuration';
 
 const UNAUTHORIZED_STATUS_CODE: number = 401;
 const LOGOUT_SUCCESS_STATUS_CODE: number = 200;
