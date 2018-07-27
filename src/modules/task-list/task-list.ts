@@ -129,7 +129,7 @@ export class TaskList {
     const processModelId: string = processModel.key;
     const userTaskId: string = userTask.id;
 
-    this._router.navigate('task-dynamic-ui', {
+    this._router.navigateToRoute('task-dynamic-ui', {
       processModelId: processModelId,
       userTaskId: userTaskId,
     });
