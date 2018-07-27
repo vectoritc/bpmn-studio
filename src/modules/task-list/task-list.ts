@@ -13,7 +13,6 @@ import {Router} from 'aurelia-router';
 import {
   AuthenticationStateEvent,
   IAuthenticationService,
-  IUserTaskEntity,
   NotificationType,
 } from '../../contracts/index';
 import environment from '../../environment';
@@ -126,7 +125,7 @@ export class TaskList {
     const userTask: UserTask = userTaskWithProcessModel.userTask;
     const processModel: ProcessModelExecution.ProcessModel = userTaskWithProcessModel.processModel;
 
-    const processModelId: string = processModel.key;
+    const processModelId: string = processModel.id;
     const userTaskId: string = userTask.id;
 
     this._router.navigateToRoute('task-dynamic-ui', {
@@ -159,7 +158,7 @@ export class TaskList {
     const promisesForAllUserTasks: Array<Promise<Array<IUserTaskWithProcessModel>>> = allProcesModels.processModels
       .map(async(processModel: ProcessModelExecution.ProcessModel): Promise<Array<IUserTaskWithProcessModel>> => {
         try {
-          const userTaskList: UserTaskList = await this._managementApiService.getUserTasksForProcessModel(managementApiContext, processModel.key);
+          const userTaskList: UserTaskList = await this._managementApiService.getUserTasksForProcessModel(managementApiContext, processModel.id);
 
           const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = this._addProcessModelToUserTasks(userTaskList, processModel);
 

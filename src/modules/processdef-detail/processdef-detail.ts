@@ -369,14 +369,14 @@ export class ProcessDefDetail {
 
     try {
       const response: ProcessModelExecution.ProcessStartResponsePayload = await this._managementApiClient
-        .startProcessInstance(context, this.process.key, selectedStartEvent, startRequestPayload, undefined, undefined);
+        .startProcessInstance(context, this.process.id, selectedStartEvent, startRequestPayload, undefined, undefined);
 
       const correlationId: string = response.correlationId;
 
       // TODO (Stefffen): Change Route as needed.
       this._router.navigateToRoute('processdef-start', {
         correlationId: correlationId,
-        processModelId: this.process.key,
+        processModelId: this.process.id,
       });
     } catch (error) {
       this.
@@ -399,7 +399,7 @@ export class ProcessDefDetail {
 
   private async _updateProcessStartEvents(): Promise<void> {
     const context: ManagementContext = this._getManagementContext();
-    const startEventResponse: EventList = await this._managementApiClient.getEventsForProcessModel(context, this.process.key);
+    const startEventResponse: EventList = await this._managementApiClient.getEventsForProcessModel(context, this.process.id);
 
     this.processesStartEvents = startEventResponse.events;
   }
@@ -440,7 +440,7 @@ export class ProcessDefDetail {
         xml: xml,
       };
 
-      await this._managementApiClient.updateProcessModelById(context, this.process.key, payload);
+      await this._managementApiClient.updateProcessModelById(context, this.process.id, payload);
       this._notificationService.showNotification(NotificationType.SUCCESS, 'File saved.');
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, `Error while saving diagram: ${error.message}`);

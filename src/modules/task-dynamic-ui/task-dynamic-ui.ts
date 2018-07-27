@@ -72,7 +72,7 @@ export class TaskDynamicUi {
 
   private finishTask(action: string): void {
     this._router.navigateToRoute('waiting-room', {
-      processInstanceId: this._userTask.processInstanceId,
+      processModelId: this._userTask.processModelId,
     });
   }
 

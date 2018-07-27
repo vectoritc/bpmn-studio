@@ -1,4 +1,4 @@
-import {UserTaskConfig, UserTaskFormField, UserTaskFormFieldType} from '@process-engine/management_api_contracts';
+import {UserTaskFormField, UserTaskFormFieldType} from '@process-engine/consumer_api_contracts';
 import {bindable, inject} from 'aurelia-framework';
 import {NotificationType} from '../../contracts/index';
 import {NotificationService} from '../notification/notification.service';
@@ -7,7 +7,7 @@ import {NotificationService} from '../notification/notification.service';
 export class FormWidget {
 
   @bindable()
-  public widget: UserTaskConfig;
+  public widget: UserTaskFormField;
   private _notificationService: NotificationService;
 
   constructor(notificationService: NotificationService) {
@@ -15,9 +15,8 @@ export class FormWidget {
   }
 
   public getFieldControl(field: UserTaskFormField): string {
-    // TODO: Support Date and CustomType
     switch (field.type) {
-      case UserTaskFormFieldType.enumeration:
+      case UserTaskFormFieldType.enum:
         return 'dropdown';
       case UserTaskFormFieldType.string:
         return 'textbox';
