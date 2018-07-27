@@ -8,8 +8,19 @@ import {NewAuthenticationService} from '../authentication/new_authentication.ser
 import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
 import {NotificationService} from '../notification/notification.service';
 
-@inject('ProcessEngineService', EventAggregator, Router, 'NotificationService', 'ManagementApiClientService', 'NewAuthenticationService')
+interface RouteParameters {
+  processModelId: string;
+  correlationId: string;
+}
+
+@inject('ProcessEngineService',
+        EventAggregator,
+        Router,
+        'NotificationService',
+        'ManagementApiClientService',
+        'NewAuthenticationService')
 export class ProcessDefStart {
+
   public dynamicUiWrapper: DynamicUiWrapper;
 
   private _processEngineService: IProcessEngineService;
@@ -21,6 +32,8 @@ export class ProcessDefStart {
   private _router: Router;
   private _managementApiClient: ManagementApiClientService;
   private _authenticationService: NewAuthenticationService;
+  private _correlationId: string;
+  private _userTask: UserTask;
 
   constructor(processEngineService: IProcessEngineService,
               eventAggregator: EventAggregator,
@@ -38,16 +51,17 @@ export class ProcessDefStart {
   }
 
   // TODO: Add a usefull comment here; what does it do? what is it good for? when is this invoked?
-  public async activate(routeParameters: {processModelId: string}): Promise<void> {
+  public async activate(routeParameters: RouteParameters): Promise<void> {
     this._processModelId = routeParameters.processModelId;
+    this._correlationId = routeParameters.correlationId;
 
     const managementContext: ManagementContext = this._getManagementContext();
+    const userTaskList: UserTaskList = await this._managementApiClient.getUserTasksForProcessModelInCorrelation(managementContext,
+                                                                                                                this._processModelId,
+                                                                                                                this._correlationId);
 
-    const userTaskList: UserTaskList = await this._managementApiClient.getUserTasksForProcessModel(managementContext, this._processModelId);
-
-    // TODO! Get the userTask
-    // this.dynamicUiWrapper.currentUserTask = userTask;
-
+    const userTasks: Array<UserTask> = userTaskList.userTasks;
+    this._userTask = userTasks[0];
     await this._refreshProcess();
 
     this._subscriptions = [
@@ -70,6 +84,10 @@ export class ProcessDefStart {
         this._router.navigateBack();
       }),
     ];
+  }
+
+  public attached(): void {
+    this.dynamicUiWrapper.currentUserTask =  this._userTask;
   }
 
   public detached(): void {

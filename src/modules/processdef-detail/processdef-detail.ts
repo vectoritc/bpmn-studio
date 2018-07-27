@@ -375,6 +375,7 @@ export class ProcessDefDetail {
 
       // TODO (Stefffen): Change Route as needed.
       this._router.navigateToRoute('processdef-start', {
+        correlationId: correlationId,
         processDefId: this.process.key,
       });
     } catch (error) {
