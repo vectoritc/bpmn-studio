@@ -19,14 +19,6 @@ export class DynamicUiService implements IDynamicUiService {
     this._eventAggregator = eventAggregator;
     this._managementApiClient = managmentApiClient;
     this._authenticationService = authenticationService;
-
-    // this._bpmnStudioClient.on('renderUserTask', (userTaskConfig: IUserTaskConfig) => {
-    //   this._eventAggregator.publish('render-dynamic-ui', userTaskConfig);
-    // });
-
-    // this._bpmnStudioClient.on('processEnd', (message: string) => {
-    //   this._eventAggregator.publish('closed-process', message);
-    // });
   }
 
   public finishUserTask(managementContext: ManagementContext,
