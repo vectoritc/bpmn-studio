@@ -25,7 +25,7 @@ import {BpmnIo} from '../bpmn-io/bpmn-io';
 import {NotificationService} from '../notification/notification.service';
 
 interface RouteParameters {
-  processKey: string;
+  processId: string;
 }
 
 @inject(
@@ -75,7 +75,7 @@ export class ProcessDefDetail {
   }
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
-    this._processId = routeParameters.processKey;
+    this._processId = routeParameters.processId;
     this._diagramHasChanged = false;
     await this._refreshProcess();
   }
@@ -376,7 +376,7 @@ export class ProcessDefDetail {
       // TODO (Stefffen): Change Route as needed.
       this._router.navigateToRoute('processdef-start', {
         correlationId: correlationId,
-        processDefId: this.process.key,
+        processModelId: this.process.key,
       });
     } catch (error) {
       this.

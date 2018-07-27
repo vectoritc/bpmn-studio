@@ -99,7 +99,7 @@ export class App {
         moduleId: 'modules/task-dynamic-ui/task-dynamic-ui',
       },
       {
-        route: ['processdef/:processKey/detail'],
+        route: ['processdef/:processId/detail'],
         title: 'ProcessDef Detail',
         name: 'processdef-detail',
         moduleId: 'modules/processdef-detail/processdef-detail',
