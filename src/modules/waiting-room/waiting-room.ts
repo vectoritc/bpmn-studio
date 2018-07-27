@@ -4,6 +4,10 @@ import {Router} from 'aurelia-router';
 import {NotificationType} from '../../contracts/index';
 import {NotificationService} from '../notification/notification.service';
 
+interface RouteParameters {
+  processInstanceId: string;
+}
+
 @inject(Router, 'BpmnStudioClient', 'NotificationService')
 export class WaitingRoom {
 
@@ -18,7 +22,7 @@ export class WaitingRoom {
     this._notificationService = notificationService;
   }
 
-  public activate(routeParameters: {processInstanceId: string}): void {
+  public activate(routeParameters: RouteParameters): void {
     this._processInstanceId = routeParameters.processInstanceId;
 
     this._bpmnStudioClient.on('processEnd', this._processEndCallback);
