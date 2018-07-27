@@ -88,7 +88,7 @@
     "@process-engine/solutionexplorer.contracts": "1.0.0",
     "@process-engine/solutionexplorer.repository.contracts": "1.0.0",
     "@process-engine/solutionexplorer.repository.filesystem": "1.0.0",
-    "@process-engine/solutionexplorer.repository.management_api": "0.0.1-d06f162e-b5",
+    "@process-engine/solutionexplorer.repository.management_api": "0.0.2",
     "@process-engine/solutionexplorer.repository.processengine": "1.0.0",
     "@process-engine/solutionexplorer.service": "1.0.0",
     "@process-engine/solutionexplorer.service.contracts": "1.0.0",
