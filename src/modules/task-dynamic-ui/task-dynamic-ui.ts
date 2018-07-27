@@ -20,7 +20,6 @@ export class TaskDynamicUi {
   private _subscriptions: Array<Subscription>;
   private _userTask: UserTask;
   private _userTaskId: string;
-  private _correlationId: string;
   private _processModelId: string;
 
   constructor(eventAggregator: EventAggregator,
@@ -36,11 +35,10 @@ export class TaskDynamicUi {
     this._authenticationService = authenticationService;
   }
 
-  public activate(routeParameters: {userTaskId: string, correlationId?: string, processModelId?: string}): void {
+  public activate(routeParameters: RouteParameters): void {
     // This is called when starting usertask
 
     this._userTaskId = routeParameters.userTaskId;
-    this._correlationId = routeParameters.correlationId;
     this._processModelId = routeParameters.processModelId;
 
     this.refreshUserTask();
@@ -69,7 +67,7 @@ export class TaskDynamicUi {
 
   private finishTask(action: string): void {
     this._router.navigateToRoute('waiting-room', {
-      processInstanceId: this._userTask.userTaskEntity.process.id,
+      processInstanceId: this._userTask.processInstanceId,
     });
   }
 
@@ -77,11 +75,7 @@ export class TaskDynamicUi {
     const managementContext: ManagementContext = this._getManagementContext();
 
     try {
-      if (this._correlationId !== undefined) {
-        this.userTask = await this._dynamicUiService.getUserTaskByCorrelationId(managementContext,
-                                                                                 this._userTaskId,
-                                                                                 this._correlationId);
-      } else if (this._processModelId !== undefined) {
+      if (this._processModelId !== undefined) {
         this.userTask =  await this._dynamicUiService.getUserTaskByProcessModelId(managementContext,
                                                                                   this._userTaskId,
                                                                                   this._processModelId);
