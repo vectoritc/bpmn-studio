@@ -1,55 +1,56 @@
-import {BpmnStudioClient, IUserTaskConfig} from '@process-engine/bpmn-studio_client';
+import { ManagementApiClientService } from '@process-engine/management_api_client';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
+import { UserTask } from '../../../node_modules/@process-engine/management_api_contracts';
 import {NotificationType} from '../../contracts/index';
 import {NotificationService} from '../notification/notification.service';
 
 interface RouteParameters {
-  processInstanceId: string;
+  processModelId: string;
 }
 
-@inject(Router, 'BpmnStudioClient', 'NotificationService')
+@inject(Router, 'ManagementApiClientService', 'NotificationService')
 export class WaitingRoom {
 
   private _router: Router;
-  private _bpmnStudioClient: BpmnStudioClient;
-  private _processInstanceId: string;
+  private _managementApiClient: ManagementApiClientService;
+  private _processModelId: string;
   private _notificationService: NotificationService;
 
-  constructor(router: Router, bpmnStudioClient: BpmnStudioClient, notificationService: NotificationService) {
+  constructor(router: Router, managementApiClient: ManagementApiClientService, notificationService: NotificationService) {
     this._router = router;
-    this._bpmnStudioClient = bpmnStudioClient;
+    this._managementApiClient = managementApiClient;
     this._notificationService = notificationService;
   }
 
   public activate(routeParameters: RouteParameters): void {
-    this._processInstanceId = routeParameters.processInstanceId;
+    this._processModelId = routeParameters.processModelId;
 
-    this._bpmnStudioClient.on('processEnd', this._processEndCallback);
-    this._bpmnStudioClient.on('renderUserTask', this._renderUserTaskCallback);
+    // this._bpmnStudioClient.on('processEnd', this._processEndCallback);
+    // this._bpmnStudioClient.on('renderUserTask', this._renderUserTaskCallback);
   }
 
   public navigateToTaskList(): void {
     this._router.navigateToRoute('task-list');
-    this._bpmnStudioClient.off('processEnd', this._processEndCallback);
-    this._bpmnStudioClient.off('renderUserTask', this._renderUserTaskCallback);
+    // this._bpmnStudioClient.off('processEnd', this._processEndCallback);
+    // this._bpmnStudioClient.off('renderUserTask', this._renderUserTaskCallback);
   }
 
-  private _renderUserTaskCallback: ((userTaskConfig: IUserTaskConfig) => void) = (userTaskConfig: IUserTaskConfig): void => {
+  private _renderUserTaskCallback: ((userTask: UserTask) => void) = (userTask: UserTask): void => {
     this._notificationService.showNotification(NotificationType.SUCCESS, 'Process continued');
-    if (userTaskConfig.userTaskEntity.process.id === this._processInstanceId) {
+    if (userTask.processModelId === this._processModelId) {
       this._router.navigateToRoute('task-dynamic-ui', {
-        userTaskId: userTaskConfig.id,
+        userTaskId: userTask.id,
       });
-      this._bpmnStudioClient.off('renderUserTask', this._renderUserTaskCallback);
+      // this._bpmnStudioClient.off('renderUserTask', this._renderUserTaskCallback);
     }
   }
 
   private _processEndCallback: ((processInstanceId: string) => void) = (processInstanceId: string): void => {
     this._notificationService.showNotification(NotificationType.WARNING, 'Process stopped');
-    if (processInstanceId === this._processInstanceId) {
+    if (processInstanceId === this._processModelId) {
       this._router.navigateToRoute('task-list');
-      this._bpmnStudioClient.off('processEnd', this._processEndCallback);
+      // this._bpmnStudioClient.off('processEnd', this._processEndCallback);
     }
   }
 }
