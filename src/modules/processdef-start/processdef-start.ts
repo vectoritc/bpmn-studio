@@ -13,8 +13,7 @@ interface RouteParameters {
   correlationId: string;
 }
 
-@inject('ProcessEngineService',
-        EventAggregator,
+@inject(EventAggregator,
         Router,
         'NotificationService',
         'ManagementApiClientService',
