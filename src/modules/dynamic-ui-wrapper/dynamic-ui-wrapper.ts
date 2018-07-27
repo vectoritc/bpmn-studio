@@ -9,7 +9,6 @@ export class DynamicUiWrapper {
 
   public declineButtonText: string = 'Cancel';
   public confirmButtonText: string = 'Continue';
-  public widgetType: string = 'form';
   public onButtonClick: (action: string) => void;
 
   private _dynamicUiService: IDynamicUiService;
@@ -54,38 +53,12 @@ export class DynamicUiWrapper {
     this._currentUserTask = null;
   }
 
-  // TODO!
-  // WHAT ABOUT WIDGETTYPE?
-  // public set currentConfig(userTaskConfig: UserTask) {
-    // this._currentConfig = userTaskConfig;
-    // if (this._currentConfig.widgetType === WidgetType.confirm) {
-    //   this.handleConfirmLayout();
-    // } else {
-    //   this.confirmButtonText = 'Continue';
-    //   this.declineButtonText = 'Cancel';
-    // }
-  // }
-
   public set currentUserTask(userTask: UserTask) {
     this._currentUserTask = userTask;
   }
 
   public get currentUserTask(): UserTask {
     return this._currentUserTask;
-  }
-
-  public handleConfirmLayout(): void {
-    // TODO!
-    // const confirmWidget: IConfirmWidgetConfig = this.currentConfig.widgetConfig as IConfirmWidgetConfig;
-    // this.confirmButtonText = null;
-    // this.declineButtonText = null;
-    // for (const action of confirmWidget.actions) {
-    //   if (action.action === UserTaskProceedAction.cancel) {
-    //     this.declineButtonText = action.label;
-    //   } else if (action.action === UserTaskProceedAction.proceed) {
-    //     this.confirmButtonText = action.label;
-    //   }
-    // }
   }
 
   private _getManagementContext(): ManagementContext {
