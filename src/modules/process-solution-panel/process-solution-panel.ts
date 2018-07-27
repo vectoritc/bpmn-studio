@@ -3,6 +3,8 @@ import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
 import {IIdentity} from '@essential-projects/core_contracts';
+import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/errors_ts';
+import {IPagination, IProcessDefEntity} from '@process-engine/bpmn-studio_client';
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
@@ -260,9 +262,22 @@ export class ProcessSolutionPanel {
 
     const identity: IIdentity = await this._createIdentityForSolutionExplorer();
 
-    await this._solutionExplorerServiceManagementApi.openSolution(processengineSolutionString, identity);
+    try {
 
-    this.openedProcessEngineSolution = await this._solutionExplorerServiceManagementApi.loadSolution();
+      await this._solutionExplorerServiceManagementApi.openSolution(processengineSolutionString, identity);
+      this.openedProcessEngineSolution = await this._solutionExplorerServiceManagementApi.loadSolution();
+
+    } catch (error) {
+
+      if (isError(error, UnauthorizedError)) {
+        this._notificationService.showNotification(NotificationType.ERROR, 'You need to login to list process models.');
+      } else if (isError(error, ForbiddenError)) {
+        this._notificationService.showNotification(NotificationType.ERROR, 'You dont have the required permissions to list process models.');
+      }
+
+      this.openedProcessEngineSolution = null;
+
+    }
   }
 
   private _updateSolution(solutionToUpdate: ISolution, solution: ISolution): void {
