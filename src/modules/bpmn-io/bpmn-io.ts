@@ -283,7 +283,8 @@ export class BpmnIo {
   }
 
   public async toggleXMLView(): Promise<void> {
-    if (this.showXMLView) {
+    const shouldShowXmlView: boolean = !this.showXMLView;
+    if (shouldShowXmlView) {
       this.xml = await this.getXML();
     }
 
