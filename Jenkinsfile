@@ -133,7 +133,15 @@ pipeline {
             unstash('post_build')
             bat('node --version')
 
-            powershell('npm install --global windows-build-tools');
+            script {
+              try {
+                timeout(time: 5, unit: 'MINUTES') {
+                  powershell('npm install --global windows-build-tools');
+                }
+              } catch (error) {
+                echo('Unable to install windows-build-tools, trying to continue with jobs execution.')
+              }
+            }
 
             // we copy the node_modules folder from the main slave
             // which runs linux. Some dependencies may not be installed
