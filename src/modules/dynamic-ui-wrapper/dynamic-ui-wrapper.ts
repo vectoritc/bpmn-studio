@@ -1,10 +1,9 @@
-import {ManagementApiClientService} from '@process-engine/management_api_client';
 import {ManagementContext, UserTask, UserTaskResult} from '@process-engine/management_api_contracts';
 import {bindable, inject} from 'aurelia-framework';
 import {IDynamicUiService} from '../../contracts';
 import {NewAuthenticationService} from '../authentication/new_authentication.service';
 
-@inject('DynamicUiService', 'ManagementApiClientService', 'NewAuthenticationService')
+@inject('DynamicUiService', 'NewAuthenticationService')
 export class DynamicUiWrapper {
 
   public declineButtonText: string = 'Cancel';
@@ -13,15 +12,12 @@ export class DynamicUiWrapper {
 
   private _dynamicUiService: IDynamicUiService;
   @bindable() private _currentUserTask: UserTask;
-  private _managementApiClient: ManagementApiClientService;
   private _authenticationService: NewAuthenticationService;
 
   constructor(dynamicUiService: IDynamicUiService,
-              managementApiClient: ManagementApiClientService,
               newAuthenticationService: NewAuthenticationService) {
 
     this._dynamicUiService = dynamicUiService;
-    this._managementApiClient = managementApiClient;
     this._authenticationService = newAuthenticationService;
   }
 
