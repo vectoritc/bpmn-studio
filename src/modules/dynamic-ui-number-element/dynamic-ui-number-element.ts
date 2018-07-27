@@ -8,7 +8,9 @@ export class DynamicUiNumberElement {
 
   public activate(field: IEnumFormField): void {
     this.field = field;
-    if (this.field.value === undefined || this.field.value === null || this.field.value === '') {
+
+    const fieldHasNoValue: boolean = this.field.value === undefined || this.field.value === null || this.field.value === '';
+    if (fieldHasNoValue) {
       this.field.value = this.field.defaultValue;
     }
   }
