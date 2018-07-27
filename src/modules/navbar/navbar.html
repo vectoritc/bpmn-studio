@@ -8,17 +8,18 @@
           <i class="fas fa-project-diagram"></i>
         </button>
       </div>
-      <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'Process Definition List' ? 'menu__menu-tabbed-link--active' : ''">
-        <a class="menu-tabbed-link" click.delegate="navigate('Process Definition List')">Plan</a>
+      <div class="menu__menu-tabbed-link"
+      class.bind="activeRouteName === 'processdef-list' ? 'menu__menu-tabbed-link--active' : ''">
+        <a class="menu-tabbed-link" route-href="route: processdef-list">Plan</a>
       </div>
-      <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'ProcessDef Detail' ? 'menu__menu-tabbed-link--active' : ''">
+      <div class="menu__menu-tabbed-link" class.bind="activeRouteName === 'processdef-detail' ? 'menu__menu-tabbed-link--active' : ''">
         <a class="menu-tabbed-link menu-tabbed-link--disabled">Design</a>
       </div>
-      <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'Publish' ? 'menu__menu-tabbed-link--active' : ''">
+      <div class="menu__menu-tabbed-link" class.bind="activeRouteName === 'publish' ? 'menu__menu-tabbed-link--active' : ''">
         <a class="menu-tabbed-link menu-tabbed-link--disabled">Publish</a>
       </div>
-      <div class="menu__menu-tabbed-link" class.bind="activeRouteTitle === 'Dashboard' ? 'menu__menu-tabbed-link--active' : ''">
-        <a class="menu-tabbed-link" click.delegate="navigate('Dashboard')">Dashboard</a>
+      <div class="menu__menu-tabbed-link" class.bind="activeRouteName === 'dashboard' ? 'menu__menu-tabbed-link--active' : ''">
+        <a class="menu-tabbed-link" route-href="route: dashboard">Dashboard</a>
       </div>
     </div>
     <div class="menu-bar__menu menu-bar__menu--center">

@@ -48,7 +48,9 @@ export class CallActivitySection implements ISection {
   }
 
   public navigateToCalledProcess(): void {
-    this._router.navigate(`/processdef/${this.selectedProcess.id}/detail`);
+    this._router.navigateToRoute('processdef-detail', {
+      processDefId: this.selectedProcess.id,
+    });
   }
 
   public updateCalledProcess(): void {

@@ -58,7 +58,7 @@ export class App {
         moduleId: 'modules/start-page/start-page',
       },
       {
-        route: ['processdef', 'processdef/:page'],
+        route: ['processdef', 'processdef/:page?'],
         title: 'Process Definition List',
         name: 'processdef-list',
         moduleId: 'modules/processdef-list/processdef-list',
@@ -72,11 +72,18 @@ export class App {
         nav: true,
       },
       {
-        route: ['task', 'processdef/:processModelId/task', 'correlation/:correlationId/task'],
+        route: ['task', 'processdef/:processModelId/task'],
         title: 'Task List',
-        name: 'task-list',
+        name: 'task-list-processmodel',
         moduleId: 'modules/task-list/task-list',
-        nav: true,
+        nav: false,
+      },
+      {
+        route: ['correlation/:correlationId/task'],
+        title: 'Task List',
+        name: 'task-list-correlation',
+        moduleId: 'modules/task-list/task-list',
+        nav: false,
       },
       {
         route: ['process', 'processdef/:processModelId/process'],

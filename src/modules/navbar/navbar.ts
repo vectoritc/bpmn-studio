@@ -10,7 +10,7 @@ export class NavBar {
   private _eventAggregator: EventAggregator;
 
   @bindable() public showSolutionExplorer: boolean;
-  public activeRouteTitle: string;
+  @bindable() public activeRouteName: string;
   public process: IProcessDefEntity;
   public diagramInfo: HTMLElement;
   public dropdown: HTMLElement;
@@ -70,14 +70,6 @@ export class NavBar {
     document.removeEventListener('click', this.dropdownClickListener);
   }
 
-  public navigate(routeTitle: string): void {
-    const route: RouteConfig = this._router.routes.find((r: RouteConfig) => {
-      return r.title === routeTitle;
-    });
-
-    this._router.navigate(`/${route.route}`);
-  }
-
   public navigateBack(): void {
     this._router.navigateBack();
   }
@@ -129,17 +121,18 @@ export class NavBar {
     }
   }
 
-  private _isRouteActive(routeTitle: string): boolean {
-    if (this._router.currentInstruction.config.title === routeTitle) {
+  private _isRouteActive(routeName: string): boolean {
+    if (this._router.currentInstruction.config.name === routeName) {
       return true;
     }
     return false;
   }
 
   private _dertermineActiveRoute(): void {
-    this._router.routes.forEach((route: RouteConfig) => {
-      if (this._isRouteActive(route.title)) {
-        this.activeRouteTitle = route.title;
+    this._router.routes.some((route: RouteConfig) => {
+      if (this._isRouteActive(route.name)) {
+        this.activeRouteName = route.name;
+        return true;
       }
     });
   }
