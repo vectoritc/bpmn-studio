@@ -347,6 +347,11 @@
             "main": "index.js"
           },
           {
+            "name": "@process-engine/consumer_api_contracts",
+            "path": "../node_modules/@process-engine/consumer_api_contracts/dist/amd",
+            "main": "index.js"
+          },
+          {
             "name": "@process-engine/management_api_contracts",
             "path": "../node_modules/@process-engine/management_api_contracts/dist/amd",
             "main": "index.js"
