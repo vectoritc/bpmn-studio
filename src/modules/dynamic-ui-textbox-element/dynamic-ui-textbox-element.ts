@@ -1,14 +1,12 @@
-import {IFormWidgetStringField} from '@process-engine/bpmn-studio_client';
 import {bindable} from 'aurelia-framework';
+import { IStringFormField } from '../../contracts';
 
 export class DynamicUiTextboxElement {
 
   @bindable()
-  public field: IFormWidgetStringField;
+  public field: IStringFormField;
 
-    // The textbox sometimes does not get rendered even though the activate function is called
-
-  public activate(field: IFormWidgetStringField): void {
+  public activate(field: IStringFormField): void {
     this.field = field;
 
     const fieldValueIsNotSet: boolean = this.field.value === undefined || this.field.value === null || this.field.value === '';
