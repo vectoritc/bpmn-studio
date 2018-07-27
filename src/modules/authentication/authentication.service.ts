@@ -12,11 +12,15 @@ const UNAUTHORIZED_STATUS_CODE: number = 401;
 const LOGOUT_SUCCESS_STATUS_CODE: number = 200;
 
 @inject(EventAggregator, OpenIdConnect)
-export class NewAuthenticationService implements IAuthenticationService {
+export class AuthenticationService implements IAuthenticationService {
 
   private _eventAggregator: EventAggregator;
   private _openIdConnect: OpenIdConnect;
   private _user: User;
+
+  public get isLoggedIn(): boolean {
+    return !!this._user;
+  }
 
   constructor(eventAggregator: EventAggregator, openIdConnect: OpenIdConnect) {
     this._eventAggregator = eventAggregator;
@@ -86,15 +90,6 @@ export class NewAuthenticationService implements IAuthenticationService {
       return null;
     }
     return this._user.access_token;
-  }
-
-  public hasToken(): boolean {
-    const hasToken: boolean =
-      this._user !== undefined
-      && this._user !== null
-      && !!this._user.id_token;
-
-    return hasToken;
   }
 
   public async getIdentity(): Promise<IIdentity> {

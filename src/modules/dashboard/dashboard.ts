@@ -7,7 +7,7 @@ import {
 } from '../../contracts/index';
 import {NotificationService} from '../notification/notification.service';
 
-@inject('ManagementApiClientService', 'NotificationService', 'NewAuthenticationService')
+@inject('ManagementApiClientService', 'NotificationService', 'AuthenticationService')
 export class Dashboard {
 
   public showTaskList: boolean = false;

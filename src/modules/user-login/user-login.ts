@@ -4,7 +4,7 @@ import {bindable, bindingMode, computedFrom, inject} from 'aurelia-framework';
 import {AuthenticationStateEvent, IAuthenticationService, IIdentity, NotificationType} from '../../contracts/index';
 import {NotificationService} from './../notification/notification.service';
 
-@inject('NewAuthenticationService', EventAggregator, 'NotificationService')
+@inject('AuthenticationService', EventAggregator, 'NotificationService')
 export class UserLogin {
 
   private _authenticationService: IAuthenticationService;
