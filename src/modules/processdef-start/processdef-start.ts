@@ -32,7 +32,6 @@ export class ProcessDefStart {
   private _managementApiClient: ManagementApiClientService;
   private _authenticationService: NewAuthenticationService;
   private _correlationId: string;
-  private _userTask: UserTask;
 
   constructor(eventAggregator: EventAggregator,
               router: Router,
@@ -52,13 +51,6 @@ export class ProcessDefStart {
     this._processModelId = routeParameters.processModelId;
     this._correlationId = routeParameters.correlationId;
 
-    const managementContext: ManagementContext = this._getManagementContext();
-    const userTaskList: UserTaskList = await this._managementApiClient.getUserTasksForProcessModelInCorrelation(managementContext,
-                                                                                                                this._processModelId,
-                                                                                                                this._correlationId);
-
-    const userTasks: Array<UserTask> = userTaskList.userTasks;
-    this._userTask = userTasks[0];
     await this._refreshProcess();
 
     this._subscriptions = [
@@ -84,7 +76,17 @@ export class ProcessDefStart {
   }
 
   public attached(): void {
-    this.dynamicUiWrapper.currentUserTask =  this._userTask;
+    this.setUserTaskToHandle();
+  }
+
+  private async setUserTaskToHandle(): Promise<void> {
+    const managementContext: ManagementContext = this._getManagementContext();
+    const userTaskList: UserTaskList = await this._managementApiClient.getUserTasksForProcessModelInCorrelation(managementContext,
+                                                                                                                this._processModelId,
+                                                                                                                this._correlationId);
+    const userTaskToHandle: UserTask = userTaskList.userTasks[0];
+
+    this.dynamicUiWrapper.currentUserTask =  userTaskToHandle;
   }
 
   public detached(): void {
