@@ -1,4 +1,4 @@
-import {ForbiddenError, isError} from '@essential-projects/errors_ts';
+import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/errors_ts';
 import {IManagementApiService, ManagementContext} from '@process-engine/management_api_contracts';
 import {inject} from 'aurelia-framework';
 import {
@@ -27,20 +27,13 @@ export class Dashboard {
   }
 
   public async canActivate(): Promise<boolean> {
-    const notLoggedIn: boolean = this._authenticationService.getAccessToken() === undefined || this._authenticationService.getAccessToken() === null;
-
-    if (notLoggedIn) {
-      this._notificationService.showNotification(NotificationType.ERROR, 'You have to be logged in to use the dashboard feature.');
-      return false;
-    }
-
     const managementContext: ManagementContext = this._getManagementContext();
 
     const hasClaimsForTaskList: boolean = await this._hasClaimsForTaskList(managementContext);
     const hasClaimsForProcessList: boolean = await this._hasClaimsForProcessList(managementContext);
 
     if (!hasClaimsForProcessList && !hasClaimsForTaskList) {
-      this._notificationService.showNotification(NotificationType.ERROR, 'You dont have the permission to use the planning feature.');
+      this._notificationService.showNotification(NotificationType.ERROR, 'You dont have the permission to use the dashboard features.');
       return false;
     }
 
@@ -59,16 +52,16 @@ export class Dashboard {
       await this._managementApiService.getAllActiveCorrelations(managementContext);
       await this._managementApiService.getProcessModelById(managementContext, undefined);
 
-      return true;
-
     } catch (error) {
-      const errorIsNotForbiddenError: boolean = !isError(error, ForbiddenError);
-      if (errorIsNotForbiddenError) {
-        return true;
+      const errorIsForbiddenError: boolean = isError(error, ForbiddenError);
+      const errorIsUnauthorizedError: boolean = isError(error, UnauthorizedError);
+
+      if (errorIsForbiddenError || errorIsUnauthorizedError) {
+        return false;
       }
     }
 
-    return false;
+    return true;
   }
 
   private async _hasClaimsForProcessList(managementContext: ManagementContext): Promise<boolean> {
@@ -76,16 +69,16 @@ export class Dashboard {
 
       await this._managementApiService.getAllActiveCorrelations(managementContext);
 
-      return true;
-
     } catch (error) {
-      const errorIsNotForbiddenError: boolean = !isError(error, ForbiddenError);
-      if (errorIsNotForbiddenError) {
-        return true;
+      const errorIsForbiddenError: boolean = isError(error, ForbiddenError);
+      const errorIsUnauthorizedError: boolean = isError(error, UnauthorizedError);
+
+      if (errorIsForbiddenError || errorIsUnauthorizedError) {
+        return false;
       }
     }
 
-    return false;
+    return true;
   }
 
   // TODO: Move this method into a service.
