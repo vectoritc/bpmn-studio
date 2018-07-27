@@ -58,7 +58,7 @@ export class App {
         moduleId: 'modules/start-page/start-page',
       },
       {
-        route: ['processdef', 'processdef/:page'],
+        route: ['processdef', 'processdef/:page?'],
         title: 'Process Definition List',
         name: 'processdef-list',
         moduleId: 'modules/processdef-list/processdef-list',

@@ -10,6 +10,7 @@ export class NavBar {
   private _eventAggregator: EventAggregator;
 
   @bindable() public showSolutionExplorer: boolean;
+  @bindable() public activeRouteName: string;
   public process: IProcessDefEntity;
   public diagramInfo: HTMLElement;
   public dropdown: HTMLElement;
@@ -23,6 +24,7 @@ export class NavBar {
   }
 
   public attached(): void {
+    this._dertermineActiveRoute();
 
     document.addEventListener('click', this.dropdownClickListener);
 
@@ -66,10 +68,6 @@ export class NavBar {
 
   public detached(): void {
     document.removeEventListener('click', this.dropdownClickListener);
-  }
-
-  public isRouteActive(routeName: string): boolean {
-    return this._router.currentInstruction.config.name === routeName;
   }
 
   public navigateBack(): void {
@@ -123,11 +121,19 @@ export class NavBar {
     }
   }
 
-  private _isRouteActive(routeTitle: string): boolean {
-    if (this._router.currentInstruction.config.title === routeTitle) {
+  private _isRouteActive(routeName: string): boolean {
+    if (this._router.currentInstruction.config.name === routeName) {
       return true;
     }
     return false;
   }
 
+  private _dertermineActiveRoute(): void {
+    this._router.routes.some((route: RouteConfig) => {
+      if (this._isRouteActive(route.name)) {
+        this.activeRouteName = route.name;
+        return true;
+      }
+    });
+  }
 }
