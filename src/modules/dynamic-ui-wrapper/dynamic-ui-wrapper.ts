@@ -40,18 +40,34 @@ export class DynamicUiWrapper {
   }
 
   public async handleButtonClick(action: string): Promise<void> {
-    const hasNoCurrentUserTask: boolean = this._currentUserTask === undefined;
     const actionCanceled: boolean = action === 'cancel';
 
-    if (hasNoCurrentUserTask) {
+    if (actionCanceled) {
+      this._cancelUserTask();
       return;
     }
 
-    if (actionCanceled) {
-      this._router.navigateToRoute('task-list-correlation', {
-        correlationId: this._currentUserTask.correlationId,
-      });
+    this._finishUserTask(action);
+  }
 
+  public set currentUserTask(userTask: UserTask) {
+    this._currentUserTask = userTask;
+  }
+
+  public get currentUserTask(): UserTask {
+    return this._currentUserTask;
+  }
+
+  private _cancelUserTask(): void {
+    this._router.navigateToRoute('task-list-correlation', {
+      correlationId: this._currentUserTask.correlationId,
+    });
+  }
+
+  private _finishUserTask(action: string): void {
+    const hasNoCurrentUserTask: boolean = this._currentUserTask === undefined;
+
+    if (hasNoCurrentUserTask) {
       return;
     }
 
@@ -60,7 +76,6 @@ export class DynamicUiWrapper {
       this.onButtonClick(action);
     }
 
-    // This happens when clicking on continue on a usertask
     const managementContext: ManagementContext = this._getManagementContext();
 
     const correlationId: string = this._currentUserTask.correlationId;
@@ -75,14 +90,6 @@ export class DynamicUiWrapper {
                                           userTaskResult);
 
     this._currentUserTask = null;
-  }
-
-  public set currentUserTask(userTask: UserTask) {
-    this._currentUserTask = userTask;
-  }
-
-  public get currentUserTask(): UserTask {
-    return this._currentUserTask;
   }
 
   private _getUserTaskResults(): UserTaskResult {
