@@ -59,7 +59,7 @@ export class TaskDynamicUi {
       }),
     ];
     this.dynamicUiWrapper.onButtonClick = (action: string): void => {
-      this.finishTask(action);
+      this._finishTask(action);
     };
     this.trySettingUserTask();
   }
@@ -70,7 +70,7 @@ export class TaskDynamicUi {
     }
   }
 
-  private finishTask(action: string): void {
+  private _finishTask(action: string): void {
     this._router.navigateToRoute('waiting-room', {
       processModelId: this._userTask.processModelId,
     });
