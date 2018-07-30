@@ -42,6 +42,13 @@ export class ConfigPanel {
 
   public attached(): void {
     this.baseRoute = this.config.bpmnStudioClient.baseRoute;
+
+    // If there is a route set in the localstorage, we prefer this setting.
+    const baseRouteConfiguredInLocalStorage: string = window.localStorage.getItem('processEngineRoute');
+    if (baseRouteConfiguredInLocalStorage) {
+      this.baseRoute = baseRouteConfiguredInLocalStorage;
+    }
+
     this.isLoggedInToProcessEngine = this._authenticationService.hasToken();
 
     this._subscriptions = [
