@@ -18,7 +18,7 @@
     "integration-test": "au e2e",
     "lint": "tslint --project .",
     "test": "echo 'Currently there a no tests specified'",
-    "electron-start-dev": "electron electron_app/electron.js",
+    "electron-start-dev": "npm run build && electron electron_app/electron.js",
     "rebuild": "electron-rebuild --force --which-module deasync",
     "electron-build-windows": "npm run rebuild && npm run build && build --publish never --windows",
     "electron-build-macos": "npm run build && build --publish never --macos",
