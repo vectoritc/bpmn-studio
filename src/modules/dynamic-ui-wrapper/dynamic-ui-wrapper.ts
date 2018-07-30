@@ -1,7 +1,20 @@
-import {ManagementContext, UserTask, UserTaskFormField, UserTaskResult} from '@process-engine/management_api_contracts';
+
 import {bindable, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import {IBooleanFormField, IDynamicUiService, IEnumFormField, IStringFormField} from '../../contracts';
+
+import {
+  ManagementContext,
+  UserTask,
+  UserTaskFormField,
+  UserTaskResult,
+} from '@process-engine/management_api_contracts';
+
+import {
+  IBooleanFormField,
+  IDynamicUiService,
+  IEnumFormField,
+  IStringFormField,
+} from '../../contracts';
 import {NewAuthenticationService} from '../authentication/new_authentication.service';
 
 @inject('DynamicUiService', 'NewAuthenticationService', Router)
