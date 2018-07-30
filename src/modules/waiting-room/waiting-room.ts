@@ -27,15 +27,10 @@ export class WaitingRoom {
 
   public activate(routeParameters: RouteParameters): void {
     this._processModelId = routeParameters.processModelId;
-
-    // this._bpmnStudioClient.on('processEnd', this._processEndCallback);
-    // this._bpmnStudioClient.on('renderUserTask', this._renderUserTaskCallback);
   }
 
   public navigateToTaskList(): void {
     this._router.navigateToRoute('task-list');
-    // this._bpmnStudioClient.off('processEnd', this._processEndCallback);
-    // this._bpmnStudioClient.off('renderUserTask', this._renderUserTaskCallback);
   }
 
   private _renderUserTaskCallback: ((userTask: UserTask) => void) = (userTask: UserTask): void => {
@@ -44,7 +39,6 @@ export class WaitingRoom {
       this._router.navigateToRoute('task-dynamic-ui', {
         userTaskId: userTask.id,
       });
-      // this._bpmnStudioClient.off('renderUserTask', this._renderUserTaskCallback);
     }
   }
 
@@ -52,7 +46,6 @@ export class WaitingRoom {
     this._notificationService.showNotification(NotificationType.WARNING, 'Process stopped');
     if (processInstanceId === this._processModelId) {
       this._router.navigateToRoute('task-list');
-      // this._bpmnStudioClient.off('processEnd', this._processEndCallback);
     }
   }
 }
