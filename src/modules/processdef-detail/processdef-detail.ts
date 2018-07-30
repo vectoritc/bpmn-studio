@@ -287,7 +287,8 @@ export class ProcessDefDetail {
   private async _refreshProcess(): Promise<ProcessModelExecution.ProcessModel> {
     const context: ManagementContext = this._getManagementContext();
 
-    const updatedProcessModel: ProcessModelExecution.ProcessModel = await this._managementApiClient.getProcessModelById(context, this._processModelId);
+    const updatedProcessModel: ProcessModelExecution.ProcessModel = await this._managementApiClient.getProcessModelById(context,
+                                                                                                                        this._processModelId);
 
     this.process = updatedProcessModel;
     this
