@@ -21,12 +21,12 @@ interface RouteParameters {
 export class ProcessDefStart {
 
   public dynamicUiWrapper: DynamicUiWrapper;
+  public processModel: ProcessModelExecution.ProcessModel;
 
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
   private _processModelId: string;
-  private _processModel: ProcessModelExecution.ProcessModel;
   private _router: Router;
   private _managementApiClient: ManagementApiClientService;
   private _authenticationService: NewAuthenticationService;
@@ -92,7 +92,7 @@ export class ProcessDefStart {
     try {
       const managementContext: ManagementContext = this._getManagementContext();
 
-      this._processModel = await this._managementApiClient.getProcessModelById(managementContext, this._processModelId);
+      this.processModel = await this._managementApiClient.getProcessModelById(managementContext, this._processModelId);
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, `Failed to refresh process: ${error.message}`);
       throw error;
