@@ -138,14 +138,16 @@ export class DiagramDetail {
   }
 
   private _uploadProcess(): void {
+    const rootElements: Array<IModdleElement> = this.bpmnio.modeler._definitions.rootElements;
     const payload: ProcessModelExecution.UpdateProcessModelRequestPayload = {
       xml: this.diagram.xml,
     };
-    console.log(this.bpmnio.modeler);
-    const processModelId: string = this.bpmnio.modeler._definitions.rootElements.find((definition: IModdleElement) => {
-      console.log(definition.id);
+
+    const processModel: IModdleElement = rootElements.find((definition: IModdleElement) => {
       return definition.$type === 'bpmn:Process';
-    }).id;
+    });
+    const processModelId: string = processModel.id;
+
     this._managementClient.updateProcessModelById(this._getManagementContext(), processModelId, payload);
   }
 
