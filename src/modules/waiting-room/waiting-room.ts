@@ -1,7 +1,7 @@
-import { ManagementApiClientService } from '@process-engine/management_api_client';
+import {ManagementApiClientService} from '@process-engine/management_api_client';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import { UserTask } from '../../../node_modules/@process-engine/management_api_contracts';
+import {UserTask} from '../../../node_modules/@process-engine/management_api_contracts';
 import {NotificationType} from '../../contracts/index';
 import {NotificationService} from '../notification/notification.service';
 
