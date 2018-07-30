@@ -91,7 +91,7 @@ export class TaskDynamicUi {
 
     try {
       if (this._processModelId !== undefined) {
-        this.userTask =  await this._dynamicUiService.getUserTaskByProcessModelId(managementContext,
+        this._userTask =  await this._dynamicUiService.getUserTaskByProcessModelId(managementContext,
                                                                                   this._userTaskId,
                                                                                   this._processModelId);
       } else {
