@@ -27,7 +27,7 @@ export class DynamicUiWrapper {
   private _router: Router;
 
   private _dynamicUiService: IDynamicUiService;
-  @bindable() private _currentUserTask: UserTask;
+  @bindable() public currentUserTask: UserTask;
   private _authenticationService: NewAuthenticationService;
 
   constructor(dynamicUiService: IDynamicUiService,
@@ -50,22 +50,14 @@ export class DynamicUiWrapper {
     this._finishUserTask(action);
   }
 
-  public set currentUserTask(userTask: UserTask) {
-    this._currentUserTask = userTask;
-  }
-
-  public get currentUserTask(): UserTask {
-    return this._currentUserTask;
-  }
-
   private _cancelUserTask(): void {
     this._router.navigateToRoute('task-list-correlation', {
-      correlationId: this._currentUserTask.correlationId,
+      correlationId: this.currentUserTask.correlationId,
     });
   }
 
   private _finishUserTask(action: string): void {
-    const hasNoCurrentUserTask: boolean = this._currentUserTask === undefined;
+    const hasNoCurrentUserTask: boolean = this.currentUserTask === undefined;
 
     if (hasNoCurrentUserTask) {
       return;
@@ -78,9 +70,9 @@ export class DynamicUiWrapper {
 
     const managementContext: ManagementContext = this._getManagementContext();
 
-    const correlationId: string = this._currentUserTask.correlationId;
-    const processModelId: string = this._currentUserTask.processModelId;
-    const userTaskId: string = this._currentUserTask.id;
+    const correlationId: string = this.currentUserTask.correlationId;
+    const processModelId: string = this.currentUserTask.processModelId;
+    const userTaskId: string = this.currentUserTask.id;
     const userTaskResult: UserTaskResult = this._getUserTaskResults();
 
     this._dynamicUiService.finishUserTask(managementContext,
@@ -89,7 +81,7 @@ export class DynamicUiWrapper {
                                           userTaskId,
                                           userTaskResult);
 
-    this._currentUserTask = null;
+    this.currentUserTask = null;
   }
 
   private _getUserTaskResults(): UserTaskResult {
@@ -97,7 +89,7 @@ export class DynamicUiWrapper {
       formFields: {},
     };
 
-    const currentFormFields: Array<UserTaskFormField> = this._currentUserTask.data.formFields;
+    const currentFormFields: Array<UserTaskFormField> = this.currentUserTask.data.formFields;
 
     currentFormFields.forEach((formField: IStringFormField | IEnumFormField | IBooleanFormField) => {
       const formFieldId: string = formField.id;
