@@ -1,13 +1,11 @@
 <template>
   <require from="./dynamic-ui-wrapper.css"></require>
   <require from="../form-widget/form-widget"></require>
-  <require from="../confirm-widget/confirm-widget"></require>
 
   <div>
-    <form-widget if.bind="currentConfig.widgetType === 'form'" widget.bind="currentConfig.widgetConfig"></form-widget>
-    <confirm-widget if.bind="currentConfig.widgetType === 'confirm'" widget.bind="currentConfig.widgetConfig"></confirm-widget>
+    <form-widget widget.bind="currentUserTask.data"></form-widget>
 
-    <div if.bind="currentConfig" class="btn-group dynamic-ui-btn-group" role="group">
+    <div if.bind="currentUserTask" class="btn-group dynamic-ui-btn-group" role="group">
       <button if.bind="declineButtonText" class="btn btn-danger" click.delegate="handleButtonClick('cancel')">${declineButtonText}</button>
       <button if.bind="confirmButtonText" class="btn btn-success" click.delegate="handleButtonClick('proceed')">${confirmButtonText}</button>
     </div>

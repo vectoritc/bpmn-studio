@@ -7,7 +7,7 @@ import {ProcessModelExecution} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
-import {IAuthenticationService, NotificationType} from '../../contracts/index';
+import {IAuthenticationService, IModdleElement, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
 import {NotificationService} from '../notification/notification.service';
@@ -138,11 +138,17 @@ export class DiagramDetail {
   }
 
   private _uploadProcess(): void {
+    const rootElements: Array<IModdleElement> = this.bpmnio.modeler._definitions.rootElements;
     const payload: ProcessModelExecution.UpdateProcessModelRequestPayload = {
       xml: this.diagram.xml,
     };
 
-    this._managementClient.updateProcessModelById(this._getManagementContext(), this.diagram.id, payload);
+    const processModel: IModdleElement = rootElements.find((definition: IModdleElement) => {
+      return definition.$type === 'bpmn:Process';
+    });
+    const processModelId: string = processModel.id;
+
+    this._managementClient.updateProcessModelById(this._getManagementContext(), processModelId, payload);
   }
 
   private _getManagementContext(): ManagementContext {

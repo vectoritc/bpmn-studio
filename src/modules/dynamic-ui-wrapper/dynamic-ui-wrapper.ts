@@ -1,61 +1,112 @@
-import {
-  IConfirmWidgetConfig,
-  IUserTaskConfig,
-  UserTaskProceedAction,
-  WidgetType,
-} from '@process-engine/bpmn-studio_client';
-import {bindable, inject} from 'aurelia-framework';
-import {IDynamicUiService} from '../../contracts';
 
-@inject('DynamicUiService')
+import {bindable, inject} from 'aurelia-framework';
+import {Router} from 'aurelia-router';
+
+import {
+  ManagementContext,
+  UserTask,
+  UserTaskFormField,
+  UserTaskResult,
+} from '@process-engine/management_api_contracts';
+
+import {
+  IBooleanFormField,
+  IDynamicUiService,
+  IEnumFormField,
+  IStringFormField,
+} from '../../contracts';
+import {NewAuthenticationService} from '../authentication/new_authentication.service';
+
+@inject('DynamicUiService', 'NewAuthenticationService', Router)
 export class DynamicUiWrapper {
 
   public declineButtonText: string = 'Cancel';
   public confirmButtonText: string = 'Continue';
   public onButtonClick: (action: string) => void;
 
-  private _dynamicUiService: IDynamicUiService;
-  @bindable() private _currentConfig: IUserTaskConfig;
+  private _router: Router;
 
-  constructor(dynamicUiService: IDynamicUiService) {
+  private _dynamicUiService: IDynamicUiService;
+  @bindable() public currentUserTask: UserTask;
+  private _authenticationService: NewAuthenticationService;
+
+  constructor(dynamicUiService: IDynamicUiService,
+              newAuthenticationService: NewAuthenticationService,
+              router: Router) {
+
     this._dynamicUiService = dynamicUiService;
+    this._authenticationService = newAuthenticationService;
+    this._router = router;
   }
 
-  public handleButtonClick(action: string): void {
-    if (!this._currentConfig) {
+  public async handleButtonClick(action: string): Promise<void> {
+    const actionCanceled: boolean = action === 'cancel';
+
+    if (actionCanceled) {
+      this._cancelUserTask();
       return;
     }
-    if (this.onButtonClick) {
+
+    this._finishUserTask(action);
+  }
+
+  private _cancelUserTask(): void {
+    this._router.navigateToRoute('task-list-correlation', {
+      correlationId: this.currentUserTask.correlationId,
+    });
+  }
+
+  private _finishUserTask(action: string): void {
+    const hasNoCurrentUserTask: boolean = this.currentUserTask === undefined;
+
+    if (hasNoCurrentUserTask) {
+      return;
+    }
+
+    const hasOnButtonClickFunction: boolean = this.onButtonClick !== undefined;
+    if (hasOnButtonClickFunction) {
       this.onButtonClick(action);
     }
-    this._dynamicUiService.sendProceedAction(action, this._currentConfig);
-    this._currentConfig = null;
+
+    const managementContext: ManagementContext = this._getManagementContext();
+
+    const correlationId: string = this.currentUserTask.correlationId;
+    const processModelId: string = this.currentUserTask.processModelId;
+    const userTaskId: string = this.currentUserTask.id;
+    const userTaskResult: UserTaskResult = this._getUserTaskResults();
+
+    this._dynamicUiService.finishUserTask(managementContext,
+                                          processModelId,
+                                          correlationId,
+                                          userTaskId,
+                                          userTaskResult);
+
+    this.currentUserTask = null;
   }
 
-  public set currentConfig(userTaskConfig: IUserTaskConfig) {
-    this._currentConfig = userTaskConfig;
-    if (this._currentConfig.widgetType === WidgetType.confirm) {
-      this.handleConfirmLayout();
-    } else {
-      this.confirmButtonText = 'Continue';
-      this.declineButtonText = 'Cancel';
-    }
+  private _getUserTaskResults(): UserTaskResult {
+    const userTaskResult: UserTaskResult = {
+      formFields: {},
+    };
+
+    const currentFormFields: Array<UserTaskFormField> = this.currentUserTask.data.formFields;
+
+    currentFormFields.forEach((formField: IStringFormField | IEnumFormField | IBooleanFormField) => {
+      const formFieldId: string = formField.id;
+      const formFieldValue: string = formField.value.toString();
+
+      userTaskResult.formFields[formFieldId] = formFieldValue;
+    });
+
+    return userTaskResult;
   }
 
-  public get currentConfig(): IUserTaskConfig {
-    return this._currentConfig;
-  }
+  private _getManagementContext(): ManagementContext {
+    const accessToken: string = this._authenticationService.getAccessToken();
+    const context: ManagementContext = {
+      identity: accessToken,
+    };
 
-  public handleConfirmLayout(): void {
-    const confirmWidget: IConfirmWidgetConfig = this.currentConfig.widgetConfig as IConfirmWidgetConfig;
-    this.confirmButtonText = null;
-    this.declineButtonText = null;
-    for (const action of confirmWidget.actions) {
-      if (action.action === UserTaskProceedAction.cancel) {
-        this.declineButtonText = action.label;
-      } else if (action.action === UserTaskProceedAction.proceed) {
-        this.confirmButtonText = action.label;
-      }
-    }
+    return context;
   }
 }

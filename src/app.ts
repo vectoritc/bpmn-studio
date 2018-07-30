@@ -93,13 +93,13 @@ export class App {
         nav: true,
       },
       {
-        route: ['task/:userTaskId/dynamic-ui'],
+        route: ['processdef/:processModelId/task/:userTaskId/dynamic-ui'],
         title: 'Task Dynamic UI',
         name: 'task-dynamic-ui',
         moduleId: 'modules/task-dynamic-ui/task-dynamic-ui',
       },
       {
-        route: ['processdef/:processDefId/detail'],
+        route: ['processdef/:processModelId/detail'],
         title: 'ProcessDef Detail',
         name: 'processdef-detail',
         moduleId: 'modules/processdef-detail/processdef-detail',
@@ -111,19 +111,13 @@ export class App {
         moduleId: 'modules/diagram-detail/diagram-detail',
       },
       {
-        route: 'processdef/:processDefId/start',
-        title: 'ProcessDef Start',
-        name: 'processdef-start',
-        moduleId: 'modules/processdef-start/processdef-start',
-      },
-      {
         route: 'configuration',
         title: 'Configuration',
         name: 'configuration',
         moduleId: 'modules/config-panel/config-panel',
       },
       {
-        route: 'waitingroom/:processInstanceId',
+        route: 'waitingroom/:processModelId',
         title: 'Waiting Room',
         name: 'waiting-room',
         moduleId: 'modules/waiting-room/waiting-room',

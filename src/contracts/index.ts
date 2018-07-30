@@ -11,3 +11,4 @@ export * from './file-input-event/index';
 export * from './notification/index';
 export * from './print/index';
 export * from './propertypanel/index';
+export * from './form-fields/index';

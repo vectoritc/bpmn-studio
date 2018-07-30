@@ -150,6 +150,7 @@ export class ProcessSection {
 
     // Append to the extension elements of the process reference.
     this._businessObjInPanel
+        .processRef
         .extensionElements
         .values
         .push(extensionPropertiesElement);

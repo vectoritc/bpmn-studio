@@ -1,14 +1,19 @@
-import {IFormWidgetEnumField} from '@process-engine/bpmn-studio_client';
 import {bindable} from 'aurelia-framework';
+import {IEnumFormField} from '../../contracts';
 
 export class DynamicUiRadioButtonElement {
 
   @bindable()
-  public field: IFormWidgetEnumField;
+  public field: IEnumFormField;
 
-  public activate(field: IFormWidgetEnumField): void {
+  public activate(field: IEnumFormField): void {
     this.field = field;
-    if (this.field.value === undefined || this.field.value === null || this.field.value === '') {
+
+    const fieldHasNoValues: boolean = this.field.value === undefined
+                                   || this.field.value === null
+                                   || this.field.value === '';
+
+    if (fieldHasNoValues) {
       this.field.value = this.field.defaultValue;
     }
   }

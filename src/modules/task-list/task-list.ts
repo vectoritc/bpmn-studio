@@ -121,6 +121,19 @@ export class TaskList {
     this._router.navigateBack();
   }
 
+  public continueUserTask(userTaskWithProcessModel: IUserTaskWithProcessModel): void {
+    const userTask: UserTask = userTaskWithProcessModel.userTask;
+    const processModel: ProcessModelExecution.ProcessModel = userTaskWithProcessModel.processModel;
+
+    const processModelId: string = processModel.id;
+    const userTaskId: string = userTask.id;
+
+    this._router.navigateToRoute('task-dynamic-ui', {
+      processModelId: processModelId,
+      userTaskId: userTaskId,
+    });
+  }
+
   public get shownTasks(): Array<IUserTaskWithProcessModel> {
     return this.tasks.slice((this.currentPage - 1) * this.pageSize, this.pageSize * this.currentPage);
   }
@@ -145,7 +158,7 @@ export class TaskList {
     const promisesForAllUserTasks: Array<Promise<Array<IUserTaskWithProcessModel>>> = allProcesModels.processModels
       .map(async(processModel: ProcessModelExecution.ProcessModel): Promise<Array<IUserTaskWithProcessModel>> => {
         try {
-          const userTaskList: UserTaskList = await this._managementApiService.getUserTasksForProcessModel(managementApiContext, processModel.key);
+          const userTaskList: UserTaskList = await this._managementApiService.getUserTasksForProcessModel(managementApiContext, processModel.id);
 
           const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = this._addProcessModelToUserTasks(userTaskList, processModel);
 

@@ -59,7 +59,7 @@ export class NewAuthenticationService implements IAuthenticationService {
     ];
 
     const endSessionUrl: URL = new URL(`${environment.openIdConnect.authority}/connect/endsession`);
-    endSessionUrl.search = new URLSearchParams(queryParams).toString();
+    endSessionUrl.search = new URLSearchParams(queryParams as any).toString();
 
     const request: RequestInit = {
       method: 'GET',

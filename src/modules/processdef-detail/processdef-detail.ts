@@ -25,7 +25,7 @@ import {BpmnIo} from '../bpmn-io/bpmn-io';
 import {NotificationService} from '../notification/notification.service';
 
 interface RouteParameters {
-  processDefId: string;
+  processModelId: string;
 }
 
 @inject(
@@ -48,7 +48,7 @@ export class ProcessDefDetail {
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
-  private _processId: string;
+  private _processModelId: string;
   private _router: Router;
   private _diagramHasChanged: boolean = false;
   private _validationController: ValidationController;
@@ -75,7 +75,7 @@ export class ProcessDefDetail {
   }
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
-    this._processId = routeParameters.processDefId;
+    this._processModelId = routeParameters.processModelId;
     this._diagramHasChanged = false;
     await this._refreshProcess();
   }
@@ -287,7 +287,8 @@ export class ProcessDefDetail {
   private async _refreshProcess(): Promise<ProcessModelExecution.ProcessModel> {
     const context: ManagementContext = this._getManagementContext();
 
-    const updatedProcessModel: ProcessModelExecution.ProcessModel = await this._managementApiClient.getProcessModelById(context, this._processId);
+    const updatedProcessModel: ProcessModelExecution.ProcessModel = await this._managementApiClient.getProcessModelById(context,
+                                                                                                                        this._processModelId);
 
     this.process = updatedProcessModel;
     this
@@ -369,13 +370,12 @@ export class ProcessDefDetail {
 
     try {
       const response: ProcessModelExecution.ProcessStartResponsePayload = await this._managementApiClient
-        .startProcessInstance(context, this.process.key, selectedStartEvent, startRequestPayload, undefined, undefined);
+        .startProcessInstance(context, this.process.id, selectedStartEvent, startRequestPayload, undefined, undefined);
 
       const correlationId: string = response.correlationId;
 
-      // TODO (Stefffen): Change Route as needed.
-      this._router.navigateToRoute('processdef-start', {
-        processDefId: this.process.key,
+      this._router.navigateToRoute('waiting-room', {
+        processModelId: this.process.id,
       });
     } catch (error) {
       this.
@@ -392,12 +392,14 @@ export class ProcessDefDetail {
     const context: ManagementContext = {
       identity: accessToken,
     };
+
     return context;
   }
 
   private async _updateProcessStartEvents(): Promise<void> {
     const context: ManagementContext = this._getManagementContext();
-    const startEventResponse: EventList = await this._managementApiClient.getEventsForProcessModel(context, this.process.key);
+    const startEventResponse: EventList = await this._managementApiClient.getEventsForProcessModel(context, this.process.id);
+
     this.processesStartEvents = startEventResponse.events;
   }
 
@@ -437,7 +439,7 @@ export class ProcessDefDetail {
         xml: xml,
       };
 
-      await this._managementApiClient.updateProcessModelById(context, this.process.key, payload);
+      await this._managementApiClient.updateProcessModelById(context, this.process.id, payload);
       this._notificationService.showNotification(NotificationType.SUCCESS, 'File saved.');
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, `Error while saving diagram: ${error.message}`);

@@ -199,11 +199,6 @@
             ]
           },
           {
-            "name": "@process-engine/bpmn-studio_client",
-            "path": "../node_modules/@process-engine/bpmn-studio_client/dist/amd",
-            "main": "index.js"
-          },
-          {
             "name": "addict-ioc",
             "path": "../node_modules/addict-ioc/dist/amd",
             "main": "index.js"
@@ -332,11 +327,6 @@
             "path": "../node_modules/@process-engine/solutionexplorer.repository.filesystem/dist/amd"
           },
           {
-            "name": "@process-engine/solutionexplorer.repository.processengine",
-            "main": "index.js",
-            "path": "../node_modules/@process-engine/solutionexplorer.repository.processengine/dist/amd"
-          },
-          {
             "name": "@process-engine/solutionexplorer.repository.management_api",
             "main": "index.js",
             "path": "../node_modules/@process-engine/solutionexplorer.repository.management_api/dist/amd"
@@ -347,14 +337,25 @@
             "main": "index.js"
           },
           {
+            "name": "@process-engine/consumer_api_contracts",
+            "path": "../node_modules/@process-engine/consumer_api_contracts/dist/amd",
+            "main": "index.js"
+          },
+          {
             "name": "@process-engine/management_api_contracts",
             "path": "../node_modules/@process-engine/management_api_contracts/dist/amd",
-            "main": "index.js"
+            "main": "index.js",
+            "deps":[
+              "@process-engine/consumer_api_contracts"
+            ]
           },
           {
             "name": "@process-engine/management_api_client",
             "path": "../node_modules/@process-engine/management_api_client/dist/amd",
-            "main": "index.js"
+            "main": "index.js",
+            "deps":[
+              "@process-engine/consumer_api_contracts"
+            ]
           },
           {
             "name": "bpmn-js-differ",

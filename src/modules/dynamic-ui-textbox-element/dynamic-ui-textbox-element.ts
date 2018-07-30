@@ -1,14 +1,19 @@
-import {IFormWidgetStringField} from '@process-engine/bpmn-studio_client';
 import {bindable} from 'aurelia-framework';
+import {IStringFormField} from '../../contracts';
 
 export class DynamicUiTextboxElement {
 
   @bindable()
-  public field: IFormWidgetStringField;
+  public field: IStringFormField;
 
-  public activate(field: IFormWidgetStringField): void {
+  public activate(field: IStringFormField): void {
     this.field = field;
-    if (this.field.value === undefined || this.field.value === null || this.field.value === '') {
+
+    const fieldValueIsNotSet: boolean = this.field.value === undefined
+                                    || this.field.value === null
+                                    || this.field.value === '';
+
+    if (fieldValueIsNotSet) {
       this.field.value = this.field.defaultValue;
     }
   }

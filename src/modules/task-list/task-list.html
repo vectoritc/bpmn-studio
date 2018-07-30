@@ -6,19 +6,19 @@
         <h3>Tasks waiting</h3>
         <table class="table table-striped table-bordered">
           <tr>
-            <th>Process key</th>
-            <th>User task key</th>
-            <th>User task id</th>
+            <th>Process Id</th>
+            <th>User task Id</th>
+            <th>User task Id</th>
             <th></th>
           </tr>
           <tr repeat.for="entry of shownTasks">
             <td>
-              <a route-href="route: processdef-detail; params.bind: { processDefId: entry.processModel.key }">${entry.processModel.key}</a>
+              <a route-href="route: processdef-detail; params.bind: { processModelId: entry.processModel.id }">${entry.processModel.id}</a>
             </td>
-            <td>${entry.userTask.key}</td>
+            <td>${entry.userTask.id}</td>
             <td>${entry.userTask.id}</td>
             <td>
-              <a class="btn btn-success" route-href="route: task-dynamic-ui; params.bind: { userTaskId: entry.userTask.id }">Continue</a>
+              <a class="btn btn-success" click.delegate="continueUserTask(entry)">Continue</a>
             </td>
           </tr>
         </table>

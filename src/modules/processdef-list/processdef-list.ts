@@ -82,9 +82,9 @@ export class ProcessDefList {
     }
   }
 
-  public showDetails(processKey: string): void {
+  public showDetails(processModelId: string): void {
     this._router.navigateToRoute('processdef-detail', {
-      processDefId: processKey,
+      processModelId: processModelId,
     });
   }
 
