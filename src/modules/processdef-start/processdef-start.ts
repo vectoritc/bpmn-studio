@@ -82,22 +82,6 @@ export class ProcessDefStart {
     };
   }
 
-  private _finishTask(action: string): void {
-    this._router.navigateToRoute('waiting-room', {
-      processModelId: this._processModelId,
-    });
-  }
-
-  private async _setUserTaskToHandle(): Promise<void> {
-    const managementContext: ManagementContext = this._getManagementContext();
-    const userTaskList: UserTaskList = await this._managementApiClient.getUserTasksForProcessModelInCorrelation(managementContext,
-                                                                                                                this._processModelId,
-                                                                                                                this._correlationId);
-    const userTaskToHandle: UserTask = userTaskList.userTasks[0];
-
-    this.dynamicUiWrapper.currentUserTask = userTaskToHandle;
-  }
-
   public detached(): void {
     for (const subscription of this._subscriptions) {
       subscription.dispose();
@@ -113,6 +97,22 @@ export class ProcessDefStart {
       this._notificationService.showNotification(NotificationType.ERROR, `Failed to refresh process: ${error.message}`);
       throw error;
     }
+  }
+
+  private _finishTask(action: string): void {
+    this._router.navigateToRoute('waiting-room', {
+      processModelId: this._processModelId,
+    });
+  }
+
+  private async _setUserTaskToHandle(): Promise<void> {
+    const managementContext: ManagementContext = this._getManagementContext();
+    const userTaskList: UserTaskList = await this._managementApiClient.getUserTasksForProcessModelInCorrelation(managementContext,
+                                                                                                                this._processModelId,
+                                                                                                                this._correlationId);
+    const userTaskToHandle: UserTask = userTaskList.userTasks[0];
+
+    this.dynamicUiWrapper.currentUserTask = userTaskToHandle;
   }
 
   private _getManagementContext(): ManagementContext {
