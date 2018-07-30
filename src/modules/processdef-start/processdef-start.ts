@@ -75,7 +75,7 @@ export class ProcessDefStart {
   }
 
   public attached(): void {
-    this.setUserTaskToHandle();
+    this._setUserTaskToHandle();
 
     this.dynamicUiWrapper.onButtonClick = (action: string): void => {
       this._finishTask(action);
@@ -88,7 +88,7 @@ export class ProcessDefStart {
     });
   }
 
-  private async setUserTaskToHandle(): Promise<void> {
+  private async _setUserTaskToHandle(): Promise<void> {
     const managementContext: ManagementContext = this._getManagementContext();
     const userTaskList: UserTaskList = await this._managementApiClient.getUserTasksForProcessModelInCorrelation(managementContext,
                                                                                                                 this._processModelId,
