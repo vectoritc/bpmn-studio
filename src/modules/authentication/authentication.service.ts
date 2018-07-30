@@ -18,10 +18,6 @@ export class AuthenticationService implements IAuthenticationService {
   private _openIdConnect: OpenIdConnect;
   private _user: User;
 
-  public get isLoggedIn(): boolean {
-    return !!this._user;
-  }
-
   constructor(eventAggregator: EventAggregator, openIdConnect: OpenIdConnect) {
     this._eventAggregator = eventAggregator;
     this._openIdConnect = openIdConnect;
@@ -30,6 +26,10 @@ export class AuthenticationService implements IAuthenticationService {
 
   private async _initialize(): Promise<void> {
     this._user = await this._openIdConnect.getUser();
+  }
+
+  public isLoggedIn(): boolean {
+    return !!this._user;
   }
 
   public async login(): Promise<void> {
