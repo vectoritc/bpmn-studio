@@ -58,9 +58,11 @@ export class TaskDynamicUi {
         this.refreshUserTask();
       }),
     ];
+
     this.dynamicUiWrapper.onButtonClick = (action: string): void => {
       this._finishTask(action);
     };
+
     this.trySettingUserTask();
   }
 
@@ -72,6 +74,7 @@ export class TaskDynamicUi {
 
   public set userTask(userTask: UserTask) {
     this._userTask = userTask;
+
     this.trySettingUserTask();
   }
 
