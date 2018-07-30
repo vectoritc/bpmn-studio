@@ -104,11 +104,6 @@ export class ProcessDefStart {
     }
   }
 
-  @computedFrom('_processModel')
-  public get processModel(): ProcessModelExecution.ProcessModel {
-    return this._processModel;
-  }
-
   private async _refreshProcess(): Promise<void> {
     try {
       const managementContext: ManagementContext = this._getManagementContext();
