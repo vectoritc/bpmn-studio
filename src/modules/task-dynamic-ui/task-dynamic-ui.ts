@@ -70,6 +70,16 @@ export class TaskDynamicUi {
     }
   }
 
+  public set userTask(userTask: UserTask) {
+    this._userTask = userTask;
+    this.trySettingUserTask();
+  }
+
+  @computedFrom('_userTask')
+  public get userTask(): UserTask {
+    return this._userTask;
+  }
+
   private _finishTask(action: string): void {
     this._router.navigateToRoute('waiting-room', {
       processModelId: this._userTask.processModelId,
@@ -103,16 +113,6 @@ export class TaskDynamicUi {
     }
 
     this.dynamicUiWrapper.currentUserTask = this._userTask;
-  }
-
-  public set userTask(userTask: UserTask) {
-    this._userTask = userTask;
-    this.trySettingUserTask();
-  }
-
-  @computedFrom('_userTask')
-  public get userTask(): UserTask {
-    return this._userTask;
   }
 
   private _getManagementContext(): ManagementContext {
