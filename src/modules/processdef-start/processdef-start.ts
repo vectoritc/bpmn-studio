@@ -75,7 +75,17 @@ export class ProcessDefStart {
   }
 
   public async attached(): Promise<void> {
-    this.dynamicUiWrapper.currentUserTask = await this._waitForUserTask();
+    this.dynamicUiWrapper.currentUserTask = await this._waitForUserTask(0);
+
+    if (this.dynamicUiWrapper.currentUserTask === undefined) {
+      this._notificationService.showNonDisappearingNotification(NotificationType.INFO, 'No User Task found! Redirecting to task-list.');
+
+      this._router.navigateToRoute('task-list-correlation', {
+        correlationId: this._correlationId,
+      });
+
+      return;
+    }
 
     this.dynamicUiWrapper.onButtonClick = (action: string): void => {
       this._finishTask(action);
@@ -88,21 +98,20 @@ export class ProcessDefStart {
     }
   }
 
-  private async _waitForUserTask(): Promise<UserTask> {
+  private async _waitForUserTask(retryCount: number): Promise<UserTask> {
     const maxNumberOfRetries: number = 10;
     const delayBetweenRetriesInMs: number = 500;
 
-    for (let index: number = 0; index < maxNumberOfRetries; index++) {
-      await this._wait(delayBetweenRetriesInMs);
-
-      const userTask: UserTask = await this._setUserTaskToHandle();
-
-      if (userTask !== undefined) {
-        return userTask;
-      }
+    if (retryCount >= maxNumberOfRetries) {
+      return undefined;
     }
 
-    return undefined;
+    await this._wait(delayBetweenRetriesInMs);
+
+    const userTask: UserTask = await this._setUserTaskToHandle();
+    retryCount++;
+
+    return userTask || this._waitForUserTask(retryCount);
   }
 
   private async _refreshProcess(): Promise<void> {
