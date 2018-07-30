@@ -10,7 +10,7 @@ import {Router} from 'aurelia-router';
 import {IAuthenticationService, NotificationType} from '../../contracts/index';
 import {NotificationService} from '../notification/notification.service';
 
-const POLLING_INTERVAL = 4000;
+const POLLING_INTERVAL: number = 4000;
 
 @inject(Router, 'BpmnStudioClient', 'NotificationService', 'NewAuthenticationService', 'ManagementApiClientService')
 export class WaitingRoom {
@@ -20,7 +20,7 @@ export class WaitingRoom {
   private _notificationService: NotificationService;
   private _authenticationService: IAuthenticationService;
   private _managementApiClient: IManagementApiService;
-  private _pollingTimeout: number;
+  private _pollingTimeout: NodeJS.Timer;
 
   constructor(router: Router,
               notificationService: NotificationService,
@@ -55,20 +55,21 @@ export class WaitingRoom {
 
   private async _pollUserTasksForCorrelation(): Promise<void> {
 
-    const userTasksForCorrelation: ProcessModelExecution.UserTaskList = await this._managementApiClient.getUserTasksForCorrelation(this._managementContext, this._correlationId);
+    const userTasksForCorrelation: UserTaskList = await this._managementApiClient.getUserTasksForCorrelation(this._managementContext,
+                                                                                                             this._correlationId);
 
     if (userTasksForCorrelation.userTasks.length > 0) {
 
-      const nextUserTask = userTasksForCorrelation.userTasks[0];
+      const nextUserTask: UserTask = userTasksForCorrelation.userTasks[0];
       this._renderUserTaskCallback(nextUserTask);
     }
   }
 
   private async _pollIsCorrelationStillActive(): Promise<void> {
 
-    const allActiveCorrelations: Array<ProcessModelExecution.Correlation> = await this._managementApiClient.getAllActiveCorrelations(this._managementContext);
+    const allActiveCorrelations: Array<Correlation> = await this._managementApiClient.getAllActiveCorrelations(this._managementContext);
 
-    const correlationIsStillActive = allActiveCorrelations.some((activeCorrelation) => {
+    const correlationIsStillActive: boolean = allActiveCorrelations.some((activeCorrelation: Correlation) => {
       return activeCorrelation.id === this._correlationId;
     });
 
@@ -81,7 +82,7 @@ export class WaitingRoom {
     this._router.navigateToRoute('task-list');
   }
 
-  private _renderUserTaskCallback(userTaskConfig: UserTaskConfig): void {
+  private _renderUserTaskCallback(userTaskConfig: UserTask): void {
     this._notificationService.showNotification(NotificationType.SUCCESS, 'Process continued');
     this._router.navigateToRoute('task-dynamic-ui', {
       userTaskId: userTaskConfig.id,
