@@ -109,11 +109,10 @@ export class TaskDynamicUi {
   }
 
   private async trySettingUserTask(): Promise<void> {
-    if (!this.dynamicUiWrapper) {
-      return;
-    }
+    const dynamicUiWrapperNotExisting: boolean = this.dynamicUiWrapper === undefined;
+    const userTaskNotExisting: boolean = this._userTask === undefined;
 
-    if (!this._userTask) {
+    if (dynamicUiWrapperNotExisting || userTaskNotExisting) {
       return;
     }
 
