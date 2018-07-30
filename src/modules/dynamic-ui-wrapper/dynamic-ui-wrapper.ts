@@ -1,6 +1,6 @@
-import {ManagementContext, UserTask, UserTaskResult} from '@process-engine/management_api_contracts';
+import {ManagementContext, UserTask, UserTaskFormField, UserTaskResult} from '@process-engine/management_api_contracts';
 import {bindable, inject} from 'aurelia-framework';
-import {IDynamicUiService} from '../../contracts';
+import {IBooleanFormField, IDynamicUiService, IEnumFormField, IStringFormField} from '../../contracts';
 import {NewAuthenticationService} from '../authentication/new_authentication.service';
 
 @inject('DynamicUiService', 'NewAuthenticationService')
@@ -35,10 +35,10 @@ export class DynamicUiWrapper {
     // This happens when clicking on continue on a usertask
     const managementContext: ManagementContext = this._getManagementContext();
 
-    const correlationId: string = ''; // this._currentUserTask.correlationId;
-    const processModelId: string = ''; // this._currentUserTask.processModelId;
+    const correlationId: string = this._currentUserTask.correlationId;
+    const processModelId: string = this._currentUserTask.processModelId;
     const userTaskId: string = this._currentUserTask.id;
-    const userTaskResult: UserTaskResult = this._currentUserTask.data;
+    const userTaskResult: UserTaskResult = this._getUserTaskResults();
 
     this._dynamicUiService.finishUserTask(managementContext,
                                           processModelId,
@@ -55,6 +55,23 @@ export class DynamicUiWrapper {
 
   public get currentUserTask(): UserTask {
     return this._currentUserTask;
+  }
+
+  private _getUserTaskResults(): UserTaskResult {
+    const userTaskResult: UserTaskResult = {
+      formFields: {},
+    };
+
+    const currentFormFields: Array<UserTaskFormField> = this._currentUserTask.data.formFields;
+
+    currentFormFields.forEach((formField: IStringFormField | IEnumFormField | IBooleanFormField) => {
+      const formFieldId: string = formField.id;
+      const formFieldValue: string = formField.value.toString();
+
+      userTaskResult.formFields[formFieldId] = formFieldValue;
+    });
+
+    return userTaskResult;
   }
 
   private _getManagementContext(): ManagementContext {
