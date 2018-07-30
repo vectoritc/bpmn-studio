@@ -31,10 +31,9 @@ Main.execute = function () {
   } else {
 
     // If this is the first instance then start the application
-    Main._startInternalProcessEngine()
-      .then(() => {
-        Main._initializeApplication();
-      });
+    Main._startInternalProcessEngine();
+
+    Main._initializeApplication();
   }
 }
 
