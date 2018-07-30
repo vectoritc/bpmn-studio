@@ -1,6 +1,5 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {bindable, inject} from 'aurelia-framework';
-import {computedFrom} from 'aurelia-framework';
+import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {Router} from 'aurelia-router';
 import {IAuthenticationService} from '../../contracts/authentication/IAuthenticationService';
@@ -94,7 +93,7 @@ export class ConfigPanel {
     return this.internalProcessEngineBaseRoute !== null;
   }
 
-  public async setBaseRouteToInternalProcessEngine(): Promise<void> {
+  public setBaseRouteToInternalProcessEngine(): void {
     this.baseRoute = this.internalProcessEngineBaseRoute;
   }
 
