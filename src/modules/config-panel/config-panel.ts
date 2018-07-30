@@ -1,5 +1,6 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
+import {computedFrom} from 'aurelia-framework';
 import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {Router} from 'aurelia-router';
 import {IAuthenticationService} from '../../contracts/authentication/IAuthenticationService';
@@ -8,7 +9,7 @@ import environment from '../../environment';
 import {oidcConfig} from '../../open-id-connect-configuration';
 import {NotificationService} from '../notification/notification.service';
 
-@inject(Router, 'NotificationService', EventAggregator, 'NewAuthenticationService', OpenIdConnect)
+@inject(Router, 'NotificationService', EventAggregator, 'NewAuthenticationService', OpenIdConnect, 'InternalProcessEngineBaseRoute')
 export class ConfigPanel {
 
   private _router: Router;
@@ -22,18 +23,22 @@ export class ConfigPanel {
   public config: typeof environment = environment;
   public isLoggedInToProcessEngine: boolean;
   @bindable() public baseRoute: string;
+  public internalProcessEngineBaseRoute: string | null;
 
   constructor(router: Router,
               notificationService: NotificationService,
               eventAggregator: EventAggregator,
               authenticationService: IAuthenticationService,
-              openIdConnect: OpenIdConnect) {
+              openIdConnect: OpenIdConnect,
+              internalProcessEngineBaseRoute: string | null,
+            ) {
 
     this._router = router;
     this._notificationService = notificationService;
     this._eventAggregator = eventAggregator;
     this._authenticationService = authenticationService;
     this._openIdConnect = openIdConnect;
+    this.internalProcessEngineBaseRoute = internalProcessEngineBaseRoute;
   }
 
   public attached(): void {
@@ -78,6 +83,19 @@ export class ConfigPanel {
   public cancelUpdate(): void {
     this._notificationService.showNotification(NotificationType.WARNING, 'Settings dismissed!');
     this._router.navigateBack();
+  }
+
+  @computedFrom('baseRoute')
+  public get isBaseRouteNotSetToInternalProcessEngine(): boolean {
+    return this.internalProcessEngineBaseRoute !== this.baseRoute;
+  }
+
+  public hasInternalProcessEngineBaseRouteSet(): boolean {
+    return this.internalProcessEngineBaseRoute !== null;
+  }
+
+  public async setBaseRouteToInternalProcessEngine(): Promise<void> {
+    this.baseRoute = this.internalProcessEngineBaseRoute;
   }
 
 }

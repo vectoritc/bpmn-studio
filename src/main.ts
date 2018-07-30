@@ -23,6 +23,10 @@ export function configure(aurelia: Aurelia): void {
     if (!window.localStorage.getItem('processEngineRoute')) {
       localStorage.setItem('processEngineRoute', `http://${newHost}`);
     }
+
+    aurelia.container.registerInstance('InternalProcessEngineBaseRoute', newHost);
+  } else {
+    aurelia.container.registerInstance('InternalProcessEngineBaseRoute', null);
   }
 
   if (window.localStorage.getItem('processEngineRoute')) {
