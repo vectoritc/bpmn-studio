@@ -374,7 +374,6 @@ export class ProcessDefDetail {
 
       const correlationId: string = response.correlationId;
 
-      // TODO (Stefffen): Change Route as needed.
       this._router.navigateToRoute('processdef-start', {
         correlationId: correlationId,
         processModelId: this.process.id,
