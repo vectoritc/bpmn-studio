@@ -97,6 +97,8 @@ export class TaskDynamicUi {
         this._userTask =  await this._dynamicUiService.getUserTaskByProcessModelId(managementContext,
                                                                                   this._userTaskId,
                                                                                   this._processModelId);
+
+        this.trySettingUserTask();
       } else {
         throw Error('CorrelationId or ProcessModelId must be given.');
       }
