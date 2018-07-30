@@ -1,7 +1,7 @@
 import {ManagementApiClientService} from '@process-engine/management_api_client';
 import {ManagementContext, ProcessModelExecution, UserTask, UserTaskList} from '@process-engine/management_api_contracts';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {computedFrom, inject} from 'aurelia-framework';
+import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {AuthenticationStateEvent, NotificationType} from '../../contracts/index';
 import {NewAuthenticationService} from '../authentication/new_authentication.service';
@@ -74,8 +74,8 @@ export class ProcessDefStart {
     ];
   }
 
-  public attached(): void {
-    this._setUserTaskToHandle();
+  public async attached(): Promise<void> {
+    this.dynamicUiWrapper.currentUserTask = await this._waitForUserTask();
 
     this.dynamicUiWrapper.onButtonClick = (action: string): void => {
       this._finishTask(action);
@@ -86,6 +86,26 @@ export class ProcessDefStart {
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
+  }
+
+  private async _waitForUserTask(): Promise<UserTask> {
+    const maxNumberOfRetries: number = 10;
+    const delayBetweenRetriesInMs: number = 500;
+
+    for (let index: number = 0; index < maxNumberOfRetries; index++) {
+
+      await this._wait(delayBetweenRetriesInMs);
+
+      const userTask: UserTask = await this._setUserTaskToHandle();
+
+      console.log(userTask);
+
+      if (userTask !== undefined) {
+        return userTask;
+      }
+    }
+
+    return undefined;
   }
 
   private async _refreshProcess(): Promise<void> {
@@ -105,14 +125,22 @@ export class ProcessDefStart {
     });
   }
 
-  private async _setUserTaskToHandle(): Promise<void> {
+  private async _setUserTaskToHandle(): Promise<UserTask> {
     const managementContext: ManagementContext = this._getManagementContext();
     const userTaskList: UserTaskList = await this._managementApiClient.getUserTasksForProcessModelInCorrelation(managementContext,
                                                                                                                 this._processModelId,
                                                                                                                 this._correlationId);
     const userTaskToHandle: UserTask = userTaskList.userTasks[0];
 
-    this.dynamicUiWrapper.currentUserTask = userTaskToHandle;
+    return userTaskToHandle;
+  }
+
+  private async _wait(timeInMs: number): Promise<void> {
+    await new Promise((resolve: Function, reject: Function): void => {
+      setTimeout(() => {
+        resolve();
+      }, timeInMs);
+    });
   }
 
   private _getManagementContext(): ManagementContext {
