@@ -31,7 +31,10 @@ Main.execute = function () {
   } else {
 
     // If this is the first instance then start the application
-    Main._initializeApplication();
+    Main._startInternalProcessEngine()
+      .then(() => {
+        Main._initializeApplication();
+      });
   }
 }
 
@@ -169,33 +172,28 @@ Main._createMainWindow = function () {
 
   setElectronMenubar();
 
-  Main._ensureProcessEngineStarted()
-    .then(() => {
+  Main._window = new electron.BrowserWindow({
+    width: 1300,
+    height: 800,
+    title: "BPMN-Studio",
+    minWidth: 1300,
+    minHeight: 800,
+    icon: path.join(__dirname, '../build/icon.png'), // only for windows and linux
+    titleBarStyle: 'hiddenInset'
+  });
 
-      Main._window = new electron.BrowserWindow({
-        width: 1300,
-        height: 800,
-        title: "BPMN-Studio",
-        minWidth: 1300,
-        minHeight: 800,
-        icon: path.join(__dirname, '../build/icon.png'), // only for windows and linux
-        titleBarStyle: 'hiddenInset'
-      });
+  electron.ipcMain.on('deep-linking-ready', (event) => {
+    if (Main._startupUrl) {
+      console.log('sending startup uri: ' + Main._startupUrl);
+      Main._window.webContents.send('deep-linking-request', Main._startupUrl);
+    }
+  });
 
-      electron.ipcMain.on('deep-linking-ready', (event) => {
-        if (Main._startupUrl) {
-          console.log('sending startup uri: ' + Main._startupUrl);
-          Main._window.webContents.send('deep-linking-request', Main._startupUrl);
-        }
-      });
-
-      Main._window.loadURL(`file://${__dirname}/../index.html`);
-      Main._window.loadURL('/');
-      Main._window.on('closed', () => {
-        Main._window = null;
-      });
-
-    });
+  Main._window.loadURL(`file://${__dirname}/../index.html`);
+  Main._window.loadURL('/');
+  Main._window.on('closed', () => {
+    Main._window = null;
+  });
 
   function setElectronMenubar() {
 
@@ -273,7 +271,7 @@ Main._createMainWindow = function () {
   }
 }
 
-Main._ensureProcessEngineStarted = function () {
+Main._startInternalProcessEngine = function () {
 
   if (!isDev) {
     const userDataFolder = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : '/var/local');
@@ -290,7 +288,7 @@ Main._ensureProcessEngineStarted = function () {
   return getPort(getPortConfig)
     .then((port) => {
 
-      console.log(`process engine starting on port ${port}`);
+      console.log(`Internal ProcessEngine starting on port ${port}.`);
 
       process.env.http__http_extension__server__port = port;
 
