@@ -93,12 +93,9 @@ export class ProcessDefStart {
     const delayBetweenRetriesInMs: number = 500;
 
     for (let index: number = 0; index < maxNumberOfRetries; index++) {
-
       await this._wait(delayBetweenRetriesInMs);
 
       const userTask: UserTask = await this._setUserTaskToHandle();
-
-      console.log(userTask);
 
       if (userTask !== undefined) {
         return userTask;
