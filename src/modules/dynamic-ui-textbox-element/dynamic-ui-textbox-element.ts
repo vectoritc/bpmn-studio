@@ -9,7 +9,10 @@ export class DynamicUiTextboxElement {
   public activate(field: IStringFormField): void {
     this.field = field;
 
-    const fieldValueIsNotSet: boolean = this.field.value === undefined || this.field.value === null || this.field.value === '';
+    const fieldValueIsNotSet: boolean = this.field.value === undefined
+                                    || this.field.value === null
+                                    || this.field.value === '';
+
     if (fieldValueIsNotSet) {
       this.field.value = this.field.defaultValue;
     }
