@@ -4,7 +4,6 @@ import {Router} from 'aurelia-router';
 
 import {IIdentity} from '@essential-projects/core_contracts';
 import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/errors_ts';
-import {IPagination, IProcessDefEntity} from '@process-engine/bpmn-studio_client';
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
