@@ -76,6 +76,16 @@ export class ProcessDefStart {
 
   public attached(): void {
     this.setUserTaskToHandle();
+
+    this.dynamicUiWrapper.onButtonClick = (action: string): void => {
+      this._finishTask(action);
+    };
+  }
+
+  private _finishTask(action: string): void {
+    this._router.navigateToRoute('waiting-room', {
+      processModelId: this._processModelId,
+    });
   }
 
   private async setUserTaskToHandle(): Promise<void> {
