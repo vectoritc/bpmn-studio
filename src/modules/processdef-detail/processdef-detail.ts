@@ -25,7 +25,7 @@ import {BpmnIo} from '../bpmn-io/bpmn-io';
 import {NotificationService} from '../notification/notification.service';
 
 interface RouteParameters {
-  processId: string;
+  processModelId: string;
 }
 
 @inject(
@@ -48,7 +48,7 @@ export class ProcessDefDetail {
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
-  private _processId: string;
+  private _processModelId: string;
   private _router: Router;
   private _diagramHasChanged: boolean = false;
   private _validationController: ValidationController;
@@ -75,7 +75,7 @@ export class ProcessDefDetail {
   }
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
-    this._processId = routeParameters.processId;
+    this._processModelId = routeParameters.processModelId;
     this._diagramHasChanged = false;
     await this._refreshProcess();
   }
@@ -287,7 +287,7 @@ export class ProcessDefDetail {
   private async _refreshProcess(): Promise<ProcessModelExecution.ProcessModel> {
     const context: ManagementContext = this._getManagementContext();
 
-    const updatedProcessModel: ProcessModelExecution.ProcessModel = await this._managementApiClient.getProcessModelById(context, this._processId);
+    const updatedProcessModel: ProcessModelExecution.ProcessModel = await this._managementApiClient.getProcessModelById(context, this._processModelId);
 
     this.process = updatedProcessModel;
     this
