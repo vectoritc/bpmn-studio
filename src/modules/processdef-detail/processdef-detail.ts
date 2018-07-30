@@ -374,8 +374,7 @@ export class ProcessDefDetail {
 
       const correlationId: string = response.correlationId;
 
-      this._router.navigateToRoute('processdef-start', {
-        correlationId: correlationId,
+      this._router.navigateToRoute('waiting-room', {
         processModelId: this.process.id,
       });
     } catch (error) {

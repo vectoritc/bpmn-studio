@@ -111,12 +111,6 @@ export class App {
         moduleId: 'modules/diagram-detail/diagram-detail',
       },
       {
-        route: 'processdef/:processModelId/correlation/:correlationId/start',
-        title: 'ProcessDef Start',
-        name: 'processdef-start',
-        moduleId: 'modules/processdef-start/processdef-start',
-      },
-      {
         route: 'configuration',
         title: 'Configuration',
         name: 'configuration',
