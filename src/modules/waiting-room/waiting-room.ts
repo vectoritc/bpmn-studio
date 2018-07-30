@@ -1,4 +1,10 @@
-import {IManagementApiService, ManagementContext, ProcessModelExecution, UserTaskConfig} from '@process-engine/management_api_contracts';
+import {
+  Correlation,
+  IManagementApiService,
+  ManagementContext,
+  UserTask,
+  UserTaskList,
+} from '@process-engine/management_api_contracts';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {IAuthenticationService, NotificationType} from '../../contracts/index';
