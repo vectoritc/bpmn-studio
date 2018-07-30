@@ -1,29 +1,44 @@
 import {ManagementContext, UserTask, UserTaskFormField, UserTaskResult} from '@process-engine/management_api_contracts';
 import {bindable, inject} from 'aurelia-framework';
+import {Router} from 'aurelia-router';
 import {IBooleanFormField, IDynamicUiService, IEnumFormField, IStringFormField} from '../../contracts';
 import {NewAuthenticationService} from '../authentication/new_authentication.service';
 
-@inject('DynamicUiService', 'NewAuthenticationService')
+@inject('DynamicUiService', 'NewAuthenticationService', Router)
 export class DynamicUiWrapper {
 
   public declineButtonText: string = 'Cancel';
   public confirmButtonText: string = 'Continue';
   public onButtonClick: (action: string) => void;
 
+  private _router: Router;
+
   private _dynamicUiService: IDynamicUiService;
   @bindable() private _currentUserTask: UserTask;
   private _authenticationService: NewAuthenticationService;
 
   constructor(dynamicUiService: IDynamicUiService,
-              newAuthenticationService: NewAuthenticationService) {
+              newAuthenticationService: NewAuthenticationService,
+              router: Router) {
 
     this._dynamicUiService = dynamicUiService;
     this._authenticationService = newAuthenticationService;
+    this._router = router;
   }
 
   public async handleButtonClick(action: string): Promise<void> {
     const hasNoCurrentUserTask: boolean = this._currentUserTask === undefined;
+    const actionCanceled: boolean = action === 'cancel';
+
     if (hasNoCurrentUserTask) {
+      return;
+    }
+
+    if (actionCanceled) {
+      this._router.navigateToRoute('task-list-correlation', {
+        correlationId: this._currentUserTask.correlationId,
+      });
+
       return;
     }
 
