@@ -85,7 +85,7 @@ export class ProcessDefStart {
                                                                                                                 this._correlationId);
     const userTaskToHandle: UserTask = userTaskList.userTasks[0];
 
-    this.dynamicUiWrapper.currentUserTask =  userTaskToHandle;
+    this.dynamicUiWrapper.currentUserTask = userTaskToHandle;
   }
 
   public detached(): void {
