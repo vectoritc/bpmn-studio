@@ -77,11 +77,11 @@ export class WaitingRoom {
 
     const allActiveCorrelations: Array<Correlation> = await this._managementApiClient.getAllActiveCorrelations(this._managementContext);
 
-    const correlationIsStillActive: boolean = allActiveCorrelations.some((activeCorrelation: Correlation) => {
+    const correlationIsNotActive: boolean = !allActiveCorrelations.some((activeCorrelation: Correlation) => {
       return activeCorrelation.id === this._correlationId;
     });
 
-    if (!correlationIsStillActive) {
+    if (correlationIsNotActive) {
       this._correlationEndCallback(this._correlationId);
     }
   }
