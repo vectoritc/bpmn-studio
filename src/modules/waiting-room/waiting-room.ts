@@ -12,6 +12,10 @@ import {NotificationService} from '../notification/notification.service';
 
 const POLLING_INTERVAL: number = 4000;
 
+interface RouteParameters {
+  correlationId: string;
+}
+
 @inject(Router, 'NotificationService', 'AuthenticationService', 'ManagementApiClientService')
 export class WaitingRoom {
 
@@ -26,13 +30,14 @@ export class WaitingRoom {
               notificationService: NotificationService,
               authenticationService: IAuthenticationService,
               managementApiClient: IManagementApiService) {
+
     this._router = router;
     this._notificationService = notificationService;
     this._authenticationService = authenticationService;
     this._managementApiClient = managementApiClient;
   }
 
-  public activate(routeParameters: {correlationId: string}): void {
+  public activate(routeParameters: RouteParameters): void {
     this._correlationId = routeParameters.correlationId;
 
     this._startPolling();
