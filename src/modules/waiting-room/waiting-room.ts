@@ -60,7 +60,8 @@ export class WaitingRoom {
 
   private async _pollUserTasksForCorrelation(): Promise<void> {
 
-    const userTasksForCorrelation: UserTaskList = await this._managementApiClient.getUserTasksForCorrelation(this._managementContext,
+    const managementContext: ManagementContext = this._getManagementContext();
+    const userTasksForCorrelation: UserTaskList = await this._managementApiClient.getUserTasksForCorrelation(managementContext,
                                                                                                              this._correlationId);
 
     const userTaskListHasNoUserTask: boolean = userTasksForCorrelation.userTasks.length > 0;
@@ -75,7 +76,8 @@ export class WaitingRoom {
 
   private async _pollIsCorrelationStillActive(): Promise<void> {
 
-    const allActiveCorrelations: Array<Correlation> = await this._managementApiClient.getAllActiveCorrelations(this._managementContext);
+    const managementContext: ManagementContext = this._getManagementContext();
+    const allActiveCorrelations: Array<Correlation> = await this._managementApiClient.getAllActiveCorrelations(managementContext);
 
     const correlationIsNotActive: boolean = !allActiveCorrelations.some((activeCorrelation: Correlation) => {
       return activeCorrelation.id === this._correlationId;
@@ -107,15 +109,12 @@ export class WaitingRoom {
     this._router.navigateToRoute('dashboard');
   }
 
-  private get _managementContext(): ManagementContext {
-    return this._getManagementContext();
-  }
-
   private _getManagementContext(): ManagementContext {
     const accessToken: string = this._authenticationService.getAccessToken();
     const context: ManagementContext = {
       identity: accessToken,
     };
+
     return context;
   }
 }
