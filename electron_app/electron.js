@@ -66,6 +66,38 @@ Main._initializeApplication = function () {
 
       Main._bringExistingInstanceToForeground();
 
+      // ----------------------------------------------------------------------
+      // Hacky Implicit Flow in Electron ©2018 5Minds
+      // ----------------------------------------------------------------------
+
+      // The Login
+
+      // 1. trigger sign in on oidc-client
+      // 2. get redirected to Identity Server login page
+      // 3. login on that page
+      // 4. get redirected to the custom protocol
+      //    (bpmn-studio://signin-oidc#<<token_data_goes_here>>)
+      // 5. electron main process navigates the browser window from Identity
+      //    Server login page to Aurelia application
+      // 6. electron main process sends the extracted token data from the signin
+      //    response to the Aurelia application
+      // 7. oidc client fetches the data via push state
+      // 8. login state is propagated through application
+
+      // ----------------------------------------------------------------------
+
+      // The Logout
+
+      // 1. send http request to Identity Server for logout
+      //    (/connect/endsession)
+      // 2. if success, open Identity Server success page as a separate window
+      // 3. if finish link in the new window is clicked, get redirected to
+      //    custom protocol (bpmn-studio://signout-oidc)
+      // 6. electron main process sends the signout to the Aurelia application
+      // 8. state is cleared and logout state is propagated through application
+
+      // ----------------------------------------------------------------------
+
       if (url.startsWith('bpmn-studio://signin-oidc')) {
 
         // If this is the signin response from the implicit OAuth flow,
