@@ -23,7 +23,7 @@ export class WaitingRoom {
   private _notificationService: NotificationService;
   private _authenticationService: IAuthenticationService;
   private _managementApiClient: IManagementApiService;
-  private _pollingTimeout: NodeJS.Timer;
+  private _pollingTimer: NodeJS.Timer;
 
   constructor(router: Router,
               notificationService: NotificationService,
@@ -47,11 +47,11 @@ export class WaitingRoom {
   }
 
   private _stopPolling(): void {
-    clearInterval(this._pollingTimeout);
+    clearInterval(this._pollingTimer);
   }
 
   private async _startPolling(): Promise<void> {
-    this._pollingTimeout = setTimeout(async() => {
+    this._pollingTimer = setTimeout(async() => {
       await this._pollUserTasksForCorrelation();
       await this._pollIsCorrelationStillActive();
 
