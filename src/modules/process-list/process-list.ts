@@ -124,6 +124,7 @@ export class ProcessList {
     if (!this._processes) {
       return [];
     }
+
     return this._processes;
   }
 

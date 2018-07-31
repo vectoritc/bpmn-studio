@@ -90,9 +90,7 @@ export class ProcessDefList {
 
   private async _hasClaimsForProcessDefList(managementContext: ManagementContext): Promise<boolean> {
     try {
-
       await this._managementApiClient.getProcessModels(managementContext);
-
     } catch (error) {
       const errorIsForbiddenError: boolean = isError(error, ForbiddenError);
       const errorIsUnauthorizedError: boolean = isError(error, UnauthorizedError);
@@ -123,6 +121,7 @@ export class ProcessDefList {
     const context: ManagementContext = {
       identity: accessToken,
     };
+
     return context;
   }
 

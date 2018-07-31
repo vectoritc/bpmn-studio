@@ -218,6 +218,7 @@ export class ProcessSolutionPanel {
       try {
         await this._solutionExplorerServiceFileSystem.openSolution(solution.uri, this._identity);
         const updatetSolution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
+
         this._updateSolution(solution, updatetSolution);
       } catch (e) {
         this.closeFileSystemSolution(solution);
@@ -262,12 +263,10 @@ export class ProcessSolutionPanel {
     const identity: IIdentity = await this._createIdentityForSolutionExplorer();
 
     try {
-
       await this._solutionExplorerServiceManagementApi.openSolution(processengineSolutionString, identity);
       this.openedProcessEngineSolution = await this._solutionExplorerServiceManagementApi.loadSolution();
 
     } catch (error) {
-
       if (isError(error, UnauthorizedError)) {
         this._notificationService.showNotification(NotificationType.ERROR, 'You need to login to list process models.');
       } else if (isError(error, ForbiddenError)) {
@@ -275,7 +274,6 @@ export class ProcessSolutionPanel {
       }
 
       this.openedProcessEngineSolution = null;
-
     }
   }
 

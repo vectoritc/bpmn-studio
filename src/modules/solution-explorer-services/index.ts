@@ -16,13 +16,14 @@ export async function configure(config: FrameworkConfiguration): Promise<void> {
 function registerFileSystem(container: Container): void {
   const fileSystemrepository: SolutionExplorerFileSystemRepository = new SolutionExplorerFileSystemRepository();
   const filesystemSolutionexplorerService: SolutionExplorerService = new SolutionExplorerService(fileSystemrepository);
+
   container.registerInstance('SolutionExplorerServiceFileSystem', filesystemSolutionexplorerService);
 }
 
 function registerManagementApi(container: Container): void {
   const httpClient: IHttpClient = container.get('HttpFetchClient');
-
   const managementApiRepository: SolutionExplorerManagementApiRepository = new SolutionExplorerManagementApiRepository(httpClient);
   const solutionexplorerService: SolutionExplorerService = new SolutionExplorerService(managementApiRepository);
+
   container.registerInstance('SolutionExplorerServiceManagementApi', solutionexplorerService);
 }

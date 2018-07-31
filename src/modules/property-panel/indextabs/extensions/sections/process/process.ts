@@ -85,6 +85,7 @@ export class ProcessSection {
       if (property.$type !== 'camunda:Property') {
         continue;
       }
+
       this.newNames.push(property.name);
       this.newValues.push(property.value);
       this.properties.push(property);
@@ -132,9 +133,7 @@ export class ProcessSection {
     };
 
     const bpmnExecutionListener: IModdleElement = this._moddle.create('camunda:ExecutionListener', bpmnExecutionListenerProperties);
-
     const extensionValues: Array<IModdleElement> = [bpmnExecutionListener, propertiesElement];
-
     const extensionElements: IModdleElement = this._moddle.create('bpmn:ExtensionElements', {values: extensionValues});
 
     // Set the extension elements of the process reference.

@@ -25,16 +25,20 @@ export class UserLogin {
     if (!this.identity) {
       return '';
     }
+
     if (!this.identity.given_name || !this.identity.family_name) {
       return this.identity.name;
     }
+
     const fullName: string = `${this.identity.given_name} ${this.identity.family_name}`;
+
     return fullName;
   }
 
   constructor(authenticationService: IAuthenticationService,
               eventAggregator: EventAggregator,
               notificationService: NotificationService) {
+
     this._authenticationService = authenticationService;
     this._eventAggregator = eventAggregator;
     this._notificationService = notificationService;
