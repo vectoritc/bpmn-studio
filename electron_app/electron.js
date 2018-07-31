@@ -272,10 +272,12 @@ Main._createMainWindow = function () {
 
 Main._startInternalProcessEngine = function () {
 
-  if (!isDev) {
-    const userDataFolder = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Preferences' : '/var/local');
-    process.env.datastore__service__data_sources__default__adapter__databasePath = path.join(userDataFolder, 'process-engine_database');
+  const devUserDataFolderPath = path.join(__dirname, '..', 'userData');
+  const prodUserDataFolderPath = app.getPath('userData');
 
+  const userDataFolderPath = isDev ? devUserDataFolderPath : prodUserDataFolderPath;
+
+  if (!isDev) {
     process.env.CONFIG_PATH = path.join(__dirname, '..', '..', '..', 'config');
   }
 
@@ -291,11 +293,11 @@ Main._startInternalProcessEngine = function () {
 
       process.env.http__http_extension__server__port = port;
 
-      const userDataPath = app.getPath('userData');
       const processEngineDatabaseFolderName = 'process_engine_databases';
 
-      process.env.process_engine__process_model_repository__storage = path.join(userDataPath, processEngineDatabaseFolderName, 'process_model.sqlite');
-      process.env.process_engine__flow_node_instance_repository__storage = path.join(userDataPath, processEngineDatabaseFolderName, 'flow_node_instance.sqlite');
+      process.env.process_engine__process_model_repository__storage = path.join(userDataFolderPath, processEngineDatabaseFolderName, 'process_model.sqlite');
+      process.env.process_engine__flow_node_instance_repository__storage = path.join(userDataFolderPath, processEngineDatabaseFolderName, 'flow_node_instance.sqlite');
+      process.env.process_engine__timer_repository__storage = path.join(userDataFolderPath, processEngineDatabaseFolderName, 'timer.sqlite');
 
       let internalProcessEngineStatus = undefined;
       let internalProcessEngineStartupError = undefined;
