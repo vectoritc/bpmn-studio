@@ -34,14 +34,12 @@ export class AuthenticationService implements IAuthenticationService {
   }
 
   public async login(): Promise<void> {
-    console.log('login');
     await this._openIdConnect.login();
     const identity: IIdentity = await this.getIdentity();
     this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
   }
 
   public async loginViaDeepLink(urlFragment: string): Promise<void> {
-    console.log('login via deep link: ' + urlFragment);
     const user: User = new User(new SigninResponse(urlFragment) as Oidc.SigninResponse);
     this._user = user;
     const identity: IIdentity = await this.getIdentity();
@@ -49,7 +47,6 @@ export class AuthenticationService implements IAuthenticationService {
   }
 
   public finishLogout(): void {
-    console.log('finish logout');
     if (this._logoutWindow !== null) {
       this._logoutWindow.close();
       this._logoutWindow = null;
