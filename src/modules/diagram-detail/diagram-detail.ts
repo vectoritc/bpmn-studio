@@ -141,7 +141,7 @@ export class DiagramDetail {
     }
   }
 
-  private _uploadProcess(): void {
+  private async _uploadProcess(): Promise<void> {
     const rootElements: Array<IModdleElement> = this.bpmnio.modeler._definitions.rootElements;
     const payload: ProcessModelExecution.UpdateProcessModelRequestPayload = {
       xml: this.diagram.xml,
@@ -152,7 +152,12 @@ export class DiagramDetail {
     });
     const processModelId: string = processModel.id;
 
-    this._managementClient.updateProcessModelById(this._getManagementContext(), processModelId, payload);
+    try {
+      await this._managementClient.updateProcessModelById(this._getManagementContext(), processModelId, payload);
+    } catch (error) {
+      this._notificationService
+          .showNotification(NotificationType.ERROR, `Unable to update diagram: ${error}`);
+    }
   }
 
   private _getManagementContext(): ManagementContext {
