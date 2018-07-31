@@ -84,7 +84,9 @@ export class WaitingRoom {
   }
 
   public navigateToTaskList(): void {
-    this._router.navigateToRoute('task-list');
+    this._router.navigateToRoute('task-list-correlation', {
+      correlationId: this._correlationId,
+    });
   }
 
   private _renderUserTaskCallback(userTaskConfig: UserTask): void {
