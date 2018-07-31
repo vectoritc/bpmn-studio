@@ -8,9 +8,8 @@ import {
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {IAuthenticationService, NotificationType} from '../../contracts/index';
+import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
-
-const POLLING_INTERVAL: number = 4000;
 
 interface RouteParameters {
   correlationId: string;
@@ -55,7 +54,7 @@ export class WaitingRoom {
     this._pollingTimeout = setTimeout(() => {
       this._pollUserTasksForCorrelation();
       this._pollIsCorrelationStillActive();
-    }, POLLING_INTERVAL);
+    }, environment.processengine.pollingInterval);
   }
 
   private async _pollUserTasksForCorrelation(): Promise<void> {
