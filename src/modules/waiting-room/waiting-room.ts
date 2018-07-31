@@ -62,12 +62,15 @@ export class WaitingRoom {
 
     const userTasksForCorrelation: UserTaskList = await this._managementApiClient.getUserTasksForCorrelation(this._managementContext,
                                                                                                              this._correlationId);
-    const userTaskListHasUserTasks: boolean = userTasksForCorrelation.userTasks.length > 0;
-    if (userTaskListHasUserTasks) {
-      const nextUserTask: UserTask = userTasksForCorrelation.userTasks[0];
 
-      this._renderUserTaskCallback(nextUserTask);
+    const userTaskListHasNoUserTask: boolean = userTasksForCorrelation.userTasks.length > 0;
+    if (userTaskListHasNoUserTask) {
+      return;
     }
+
+    const nextUserTask: UserTask = userTasksForCorrelation.userTasks[0];
+
+    this._renderUserTaskCallback(nextUserTask);
   }
 
   private async _pollIsCorrelationStillActive(): Promise<void> {
