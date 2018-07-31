@@ -14,17 +14,6 @@ export class App {
     this._authenticationService = authenticationService;
   }
 
-  private _parseDeepLinkingUrl(url: string): string {
-    const customProtocolPrefix: string = 'bpmn-studio://';
-    const urlFragment: string = url.substring(customProtocolPrefix.length);
-    return urlFragment;
-  }
-
-  private _processDeepLinkingRequest(url: string): void {
-    const urlFragment: string = this._parseDeepLinkingUrl(url);
-    this._router.navigate(urlFragment);
-  }
-
   public configureRouter(config: RouterConfiguration, router: Router): void {
     this._router = router;
 
@@ -125,5 +114,16 @@ export class App {
     ]);
 
     this._openIdConnect.configure(config);
+  }
+
+  private _parseDeepLinkingUrl(url: string): string {
+    const customProtocolPrefix: string = 'bpmn-studio://';
+    const urlFragment: string = url.substring(customProtocolPrefix.length);
+    return urlFragment;
+  }
+
+  private _processDeepLinkingRequest(url: string): void {
+    const urlFragment: string = this._parseDeepLinkingUrl(url);
+    this._router.navigate(urlFragment);
   }
 }
