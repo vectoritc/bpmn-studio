@@ -93,7 +93,7 @@ export class ProcessList {
     this._getProcessesIntervalId = window.setInterval(async() => {
       await this.updateProcesses();
       this.updateList();
-    }, environment.processengine.poolingInterval);
+    }, environment.processengine.pollingIntervalInMs);
 
     this._subscriptions = [
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {

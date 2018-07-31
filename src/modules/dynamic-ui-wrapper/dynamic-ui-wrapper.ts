@@ -93,9 +93,11 @@ export class DynamicUiWrapper {
 
     currentFormFields.forEach((formField: IStringFormField | IEnumFormField | IBooleanFormField) => {
       const formFieldId: string = formField.id;
-      const formFieldValue: string = formField.value.toString();
 
-      userTaskResult.formFields[formFieldId] = formFieldValue;
+      const formFieldValue: string | boolean = formField.value;
+      const formFieldStringValue: string = formFieldValue !== undefined ? formFieldValue.toString() : undefined;
+
+      userTaskResult.formFields[formFieldId] = formFieldStringValue;
     });
 
     return userTaskResult;
