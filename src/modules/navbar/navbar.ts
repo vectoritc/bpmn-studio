@@ -131,11 +131,9 @@ export class NavBar {
   }
 
   private _dertermineActiveRoute(): void {
-    this._router.routes.some((route: RouteConfig) => {
-      if (this._isRouteActive(route.name)) {
-        this.activeRouteName = route.name;
-        return true;
-      }
+    const activeRoute: RouteConfig = this._router.routes.find((route: RouteConfig) => {
+      return this._isRouteActive(route.name);
     });
+    this.activeRouteName = activeRoute.name;
   }
 }
