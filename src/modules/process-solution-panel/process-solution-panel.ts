@@ -117,7 +117,7 @@ export class ProcessSolutionPanel {
     this._eventAggregator.publish(environment.events.processSolutionPanel.toggleProcessSolutionExplorer);
 
     /**
-     * Set Interval to get the deployed processes of the currently connected Process Engine.
+     * Set Interval to get the deployed processes of the currently connected ProcessEngine.
      */
     window.setInterval(async() => {
       this._refreshProcesslist();
