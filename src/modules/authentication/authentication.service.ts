@@ -47,6 +47,8 @@ export class AuthenticationService implements IAuthenticationService {
   }
 
   public finishLogout(): void {
+    // This will be called in the electron version where we perform the logout
+    // manually.
     if (this._logoutWindow !== null) {
       this._logoutWindow.close();
       this._logoutWindow = null;
@@ -69,6 +71,11 @@ export class AuthenticationService implements IAuthenticationService {
       return await this._openIdConnect.logout();
     }
 
+    // The following part is a manual implementation of the implicit flow logout
+    // specifically for the Identity Server endpoints.
+    // It is not tested with other providers yet and will definitely get
+    // refactored once we switch to hybrid flow.
+
     const idToken: string = this._user.id_token;
     const logoutRedirectUri: string = oidcConfig.userManagerSettings.post_logout_redirect_uri;
     const queryParams: Array<Array<string>> = [
@@ -88,12 +95,20 @@ export class AuthenticationService implements IAuthenticationService {
         'Content-Type': 'application/json',
       },
     };
+
     try {
+
       const response: Response = await fetch(endSessionUrl.toString(), request);
       if (response.status !== LOGOUT_SUCCESS_STATUS_CODE) {
         throw new Error('Logout not successful');
       }
+
+      // If Identity Server replies with success, is has already invalidated the
+      // access_token. Now we can show the success dialog of the Identity Server
+      // in a new window and finish the logout process once the "return to
+      // application" link is clicked.
       this._logoutWindow = window.open(response.url, '_blank');
+
     } catch (error) {
       throw new Error('Logout not successful');
     }

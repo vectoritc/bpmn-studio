@@ -54,6 +54,8 @@ Main._initializeApplication = function () {
 
     app.setAsDefaultProtocolClient('bpmn-studio');
 
+    // open-url is called every time someone tries to open a link like
+    // bpmn-studio://myActualUrl
     app.on('open-url', (event, url) => {
       console.log('open-url called', url);
       event.preventDefault();
@@ -65,15 +67,30 @@ Main._initializeApplication = function () {
       Main._bringExistingInstanceToForeground();
 
       if (url.startsWith('bpmn-studio://signin-oidc')) {
+
+        // If this is the signin response from the implicit OAuth flow,
+        // we need to navigate to the start page to activate the Aurelia
+        // application again.
+        // Due to the bug referenced above, the login page of the Identity
+        // Server is opened in the same window, so that the Aurelia application
+        // closes down. 
+
         Main._window.loadURL(`file://${__dirname}/../index.html`);
 
         Main._window.loadURL('/');
 
+        // Once the Aurelia application is ready to accept deep linking
+        // requests, we can send the url with the id_token and access_token
+        // contained in the query params of the url.
         electron.ipcMain.once('deep-linking-ready', (event) => {
           Main._window.webContents.send('deep-linking-request', url);
         });
       } else {
 
+        // Because the logout portion of the implicit workflow is handled
+        // manually, the Identity Server dialog can be opened in a separate
+        // window, so that the Aurelia application keeps running.
+        // Therefore we can directly send the url for the deep linking request.
         Main._window.webContents.send('deep-linking-request', url);
       }
 
@@ -189,6 +206,9 @@ Main._createMainWindow = function () {
   });
 
   Main._window.loadURL(`file://${__dirname}/../index.html`);
+  // We need to navigate to "/" because something in the push state seems to be
+  // broken if we carry a file system link as the last item of the browser
+  // history.
   Main._window.loadURL('/');
 
   Main._window.on('closed', () => {
