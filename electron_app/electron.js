@@ -64,12 +64,19 @@ Main._initializeApplication = function () {
 
       Main._bringExistingInstanceToForeground();
 
-      Main._window.loadURL(`file://${__dirname}/../index.html`);
-      Main._window.loadURL('/');
+      if (url.startsWith('bpmn-studio://signin-oidc')) {
+        Main._window.loadURL(`file://${__dirname}/../index.html`);
 
-      electron.ipcMain.once('deep-linking-ready', (event) => {
+        Main._window.loadURL('/');
+
+        electron.ipcMain.once('deep-linking-ready', (event) => {
+          Main._window.webContents.send('deep-linking-request', url);
+        });
+      } else {
+
         Main._window.webContents.send('deep-linking-request', url);
-      });
+      }
+
     });
   }
 

@@ -17,6 +17,7 @@ export class AuthenticationService implements IAuthenticationService {
   private _eventAggregator: EventAggregator;
   private _openIdConnect: OpenIdConnect;
   private _user: User;
+  private _logoutWindow: Window = null;
 
   constructor(eventAggregator: EventAggregator, openIdConnect: OpenIdConnect) {
     this._eventAggregator = eventAggregator;
@@ -49,6 +50,10 @@ export class AuthenticationService implements IAuthenticationService {
 
   public finishLogout(): void {
     console.log('finish logout');
+    if (this._logoutWindow !== null) {
+      this._logoutWindow.close();
+      this._logoutWindow = null;
+    }
     this._user = null;
     this._eventAggregator.publish(AuthenticationStateEvent.LOGOUT);
   }
@@ -91,7 +96,7 @@ export class AuthenticationService implements IAuthenticationService {
       if (response.status !== LOGOUT_SUCCESS_STATUS_CODE) {
         throw new Error('Logout not successful');
       }
-      window.open(response.url, '_blank');
+      this._logoutWindow = window.open(response.url, '_blank');
     } catch (error) {
       throw new Error('Logout not successful');
     }
