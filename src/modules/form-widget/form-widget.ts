@@ -25,7 +25,11 @@ export class FormWidget {
       case UserTaskFormFieldType.long:
         return 'number';
       default:
-        this._notificationService.showNotification(NotificationType.ERROR, `Not supported FromWidgetFieldType: ${field.type}`);
+        const notSupportedType: string = field.type !== undefined ? field.type : 'Custom Type';
+        const errorMessage: string = `Not supported form field type: ${notSupportedType}.`
+                                   + `</br>Please change the form field type with id "${field.id}".`;
+
+        this._notificationService.showNotification(NotificationType.ERROR, errorMessage);
         return null;
     }
   }
