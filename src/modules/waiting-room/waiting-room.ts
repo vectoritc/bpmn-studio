@@ -92,6 +92,7 @@ export class WaitingRoom {
   private _renderUserTaskCallback(userTask: UserTask): void {
     this._notificationService.showNotification(NotificationType.SUCCESS, 'Process continued');
     this._router.navigateToRoute('task-dynamic-ui', {
+      processModelId: userTask.processModelId,
       userTaskId: userTask.id,
     });
   }
