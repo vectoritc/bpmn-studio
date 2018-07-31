@@ -97,7 +97,7 @@ export class WaitingRoom {
     });
   }
 
-  private _correlationEndCallback: ((processInstanceId: string) => void) = (processInstanceId: string): void => {
+  private _correlationEndCallback: ((correlationId: string) => void) = (correlationId: string): void => {
     this._notificationService.showNotification(NotificationType.WARNING, 'Process stopped');
     this._router.navigateToRoute('task-list');
   }
