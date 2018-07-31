@@ -39,6 +39,7 @@ export class UrlUtility {
     // tslint:disable-next-line:no-conditional-assignment
     while (m = regex.exec(value)) {
       params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+
       if (counter++ > 50) {
         return {
           error: 'Response exceeded expected number of parameters',
