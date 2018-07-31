@@ -16,7 +16,6 @@ let filePath;
 const Main = {};
 
 Main._window = null;
-Main._startupUrl = null;
 
 Main.execute = function () {
 
@@ -62,14 +61,15 @@ Main._initializeApplication = function () {
       // This bug seems to be causing the oidc-client to use a hard redirect
       // instead of using an iFrame:
       // https://github.com/electron/electron/issues/9581
-      //
-      // As a workaround we 
 
-      Main._startupUrl = url;
       Main._bringExistingInstanceToForeground();
-      Main._window.close();
-      Main._createMainWindow();
 
+      Main._window.loadURL(`file://${__dirname}/../index.html`);
+      Main._window.loadURL('/');
+
+      electron.ipcMain.once('deep-linking-ready', (event) => {
+        Main._window.webContents.send('deep-linking-request', url);
+      });
     });
   }
 
@@ -181,15 +181,9 @@ Main._createMainWindow = function () {
     titleBarStyle: 'hiddenInset'
   });
 
-  electron.ipcMain.on('deep-linking-ready', (event) => {
-    if (Main._startupUrl) {
-      console.log('sending startup uri: ' + Main._startupUrl);
-      Main._window.webContents.send('deep-linking-request', Main._startupUrl);
-    }
-  });
-
   Main._window.loadURL(`file://${__dirname}/../index.html`);
   Main._window.loadURL('/');
+
   Main._window.on('closed', () => {
     Main._window = null;
   });

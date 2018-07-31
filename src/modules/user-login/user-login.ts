@@ -47,9 +47,11 @@ export class UserLogin {
   public async attached(): Promise<void> {
     this._subscriptions = [
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
+        console.log('logout received');
         this.identity = null;
       }),
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, (identity: IIdentity) => {
+        console.log('login received');
         this.identity = identity;
       }),
     ];

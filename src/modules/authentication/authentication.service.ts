@@ -33,19 +33,31 @@ export class AuthenticationService implements IAuthenticationService {
   }
 
   public async login(): Promise<void> {
+    console.log('login');
     await this._openIdConnect.login();
     const identity: IIdentity = await this.getIdentity();
     this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
   }
 
   public async loginViaDeepLink(urlFragment: string): Promise<void> {
+    console.log('login via deep link: ' + urlFragment);
     const user: User = new User(new SigninResponse(urlFragment) as Oidc.SigninResponse);
     this._user = user;
     const identity: IIdentity = await this.getIdentity();
     this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
   }
 
+  public finishLogout(): void {
+    console.log('finish logout');
+    this._user = null;
+    this._eventAggregator.publish(AuthenticationStateEvent.LOGOUT);
+  }
+
   public async logout(): Promise<void> {
+
+    if (!this.isLoggedIn) {
+      return;
+    }
 
     const isRunningInElectron: boolean = !!(<any> window).nodeRequire;
 
