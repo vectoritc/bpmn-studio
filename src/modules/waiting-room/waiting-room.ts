@@ -64,7 +64,7 @@ export class WaitingRoom {
     const userTasksForCorrelation: UserTaskList = await this._managementApiClient.getUserTasksForCorrelation(managementContext,
                                                                                                              this._correlationId);
 
-    const userTaskListHasNoUserTask: boolean = userTasksForCorrelation.userTasks.length > 0;
+    const userTaskListHasNoUserTask: boolean = userTasksForCorrelation.userTasks.length <= 0;
     if (userTaskListHasNoUserTask) {
       return;
     }
