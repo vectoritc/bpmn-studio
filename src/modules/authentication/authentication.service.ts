@@ -51,7 +51,7 @@ export class AuthenticationService implements IAuthenticationService {
 
   public async logout(): Promise<void> {
 
-    const isRunningInElectron: boolean = !!(<any> window).nodeRequire;
+    const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
 
     if (!isRunningInElectron) {
       // If we're in the browser, we need to let the oidc plugin handle the

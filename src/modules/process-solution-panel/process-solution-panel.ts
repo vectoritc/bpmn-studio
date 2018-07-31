@@ -70,12 +70,12 @@ export class ProcessSolutionPanel {
     /**
      * Check if BPMN-Studio runs in electron.
      */
-    if ((<any> window).nodeRequire) {
+    if ((window as any).nodeRequire) {
 
       // Show the FileSystemSolutionExplorer.
       this.enableFileSystemSolutions = true;
 
-      const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
+      const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
 
       // Register handler for double-click event fired from "elecron.js".
       ipcRenderer.on('double-click-on-file', async(event: Event, pathToFile: string) => {

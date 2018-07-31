@@ -1,7 +1,7 @@
 const processEngineRoute: string = 'http://localhost:8000';
 const electronHost: string = 'bpmn-studio:/';
 
-const isRunningInElectron: boolean = Boolean((<any> window).nodeRequire);
+const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
 
 // tslint:disable-next-line no-default-export
 export default {

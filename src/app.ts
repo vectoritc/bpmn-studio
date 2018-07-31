@@ -17,10 +17,10 @@ export class App {
   public configureRouter(config: RouterConfiguration, router: Router): void {
     this._router = router;
 
-    const isRunningInElectron: boolean = Boolean((<any> window).nodeRequire);
+    const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
 
     if (isRunningInElectron) {
-      const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
+      const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
 
       ipcRenderer.on('deep-linking-request-in-runtime', (event: any, url: string) => {
         this._processDeepLinkingRequest(url);
