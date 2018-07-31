@@ -20,25 +20,26 @@ export class UrlUtility {
     return url;
   }
 
-  public static parseUrlFragment(value: string, delimiter: string = '#'): any {
-    if (typeof value !== 'string') {
-      value = location.href;
+  public static parseUrlFragment(url: string, delimiter: string = '#'): any {
+    if (typeof url !== 'string') {
+      url = location.href;
     }
 
-    const idx: number = value.lastIndexOf(delimiter);
+    const idx: number = url.lastIndexOf(delimiter);
     if (idx >= 0) {
-      value = value.substr(idx + 1);
+      url = url.substr(idx + 1);
     }
 
     // tslint:disable-next-line:one-variable-per-declaration
     const params: any = {};
-    const regex: any = /([^&=]+)=([^&]*)/g;
+    const regex: RegExp = /([^&=]+)=([^&]*)/g;
     let m: any;
 
     let counter: number = 0;
     // tslint:disable-next-line:no-conditional-assignment
-    while (m = regex.exec(value)) {
+    while (m = regex.exec(url)) {
       params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+
       if (counter++ > 50) {
         return {
           error: 'Response exceeded expected number of parameters',
@@ -46,10 +47,6 @@ export class UrlUtility {
       }
     }
 
-    for (const prop in params) {
-      return params;
-    }
-
-    return {};
+    return params;
   }
 }

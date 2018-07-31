@@ -27,7 +27,7 @@ import {NotificationService} from '../notification/notification.service';
   'DiagramValidationService',
   'AuthenticationService')
 export class ProcessSolutionPanel {
-  public openedProcessEngineSolution: ISolution;
+  public openedProcessEngineSolution: ISolution | null;
   public openedFileSystemSolutions: Array<ISolution> = [];
   public openedSingleDiagrams: Array<IDiagram> = [];
   public solutionInput: HTMLInputElement;
@@ -70,12 +70,12 @@ export class ProcessSolutionPanel {
     /**
      * Check if BPMN-Studio runs in electron.
      */
-    if ((<any> window).nodeRequire) {
+    if ((window as any).nodeRequire) {
 
       // Show the FileSystemSolutionExplorer.
       this.enableFileSystemSolutions = true;
 
-      const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
+      const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
 
       // Register handler for double-click event fired from "elecron.js".
       ipcRenderer.on('double-click-on-file', async(event: Event, pathToFile: string) => {
@@ -117,7 +117,7 @@ export class ProcessSolutionPanel {
     this._eventAggregator.publish(environment.events.processSolutionPanel.toggleProcessSolutionExplorer);
 
     /**
-     * Set Interval to get the deployed processes of the currently connected Process Engine.
+     * Set Interval to get the deployed processes of the currently connected ProcessEngine.
      */
     window.setInterval(async() => {
       this._refreshProcesslist();
@@ -270,7 +270,7 @@ export class ProcessSolutionPanel {
       if (isError(error, UnauthorizedError)) {
         this._notificationService.showNotification(NotificationType.ERROR, 'You need to login to list process models.');
       } else if (isError(error, ForbiddenError)) {
-        this._notificationService.showNotification(NotificationType.ERROR, 'You dont have the required permissions to list process models.');
+        this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have the required permissions to list process models.');
       }
 
       this.openedProcessEngineSolution = null;
@@ -283,13 +283,13 @@ export class ProcessSolutionPanel {
   }
 
   private async _createIdentityForSolutionExplorer(): Promise<IIdentity> {
-    const orginalIdentity: IIdentity = await this._authenticationService.getIdentity();
+    const solutionExplorerIdentity: IIdentity = await this._authenticationService.getIdentity();
 
-    const solutionExplorerIdentity: any = {
+    const solutionExplorerAccesstoken: {accessToken: string} = {
       accessToken: this._authenticationService.getAccessToken(),
     };
 
-    Object.assign(solutionExplorerIdentity, orginalIdentity);
+    Object.assign(solutionExplorerIdentity, solutionExplorerAccesstoken);
 
     return solutionExplorerIdentity;
   }

@@ -23,10 +23,10 @@ export class App {
   public configureRouter(config: RouterConfiguration, router: Router): void {
     this._router = router;
 
-    const isRunningInElectron: boolean = !!(<any> window).nodeRequire;
+    const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
 
     if (isRunningInElectron) {
-      const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
+      const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
       ipcRenderer.on('deep-linking-request', async(event: any, url: string) => {
 
         const urlFragment: string = this._parseDeepLinkingUrl(url);
@@ -37,6 +37,7 @@ export class App {
           this._authenticationService.loginViaDeepLink(urlFragment);
         }
       });
+
       ipcRenderer.send('deep-linking-ready');
     }
 

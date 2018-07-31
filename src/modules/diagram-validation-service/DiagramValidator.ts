@@ -30,7 +30,7 @@ export class DiagramValidator implements IDiagramValidator {
 
   public async throwIfError(): Promise<void> {
     /*
-    * We dont use `await Promise.all(this._validations);` here,
+    * We don't use `await Promise.all(this._validations);` here,
     * because we want to await the promises in order.
     *
     * Also .forEach is not possible because of await.

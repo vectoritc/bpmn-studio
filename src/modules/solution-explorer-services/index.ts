@@ -5,7 +5,7 @@ import {SolutionExplorerService} from '@process-engine/solutionexplorer.service'
 import {Container, FrameworkConfiguration} from 'aurelia-framework';
 
 export async function configure(config: FrameworkConfiguration): Promise<void> {
-  if ((<any> window).nodeRequire) {
+  if ((window as any).nodeRequire) {
     // only available if a filesystem is present
     registerFileSystem(config.container);
   }

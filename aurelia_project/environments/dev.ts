@@ -1,7 +1,7 @@
 const processEngineRoute: string = 'http://localhost:8000';
 const electronHost: string = 'bpmn-studio:/';
 
-const isRunningInElectron: boolean = !!(<any> window).nodeRequire;
+const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
 
 // tslint:disable-next-line no-default-export
 export default {
@@ -46,6 +46,8 @@ export default {
       updateProcess: 'navbar:process:update',
       disableSaveButton: 'navbar:saveButton:disable',
       enableSaveButton: 'navbar:saveButton:enable',
+      showDiagramUploadButton: 'navbar:diagramUploadButton:show',
+      hideDiagramUploadButton: 'navbar:diagramUploadButton:hide',
     },
     processDefDetail: {
       printDiagram: 'processdefdetail:diagram:print',

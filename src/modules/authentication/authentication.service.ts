@@ -22,6 +22,7 @@ export class AuthenticationService implements IAuthenticationService {
   constructor(eventAggregator: EventAggregator, openIdConnect: OpenIdConnect) {
     this._eventAggregator = eventAggregator;
     this._openIdConnect = openIdConnect;
+
     this._initialize();
   }
 
@@ -30,7 +31,9 @@ export class AuthenticationService implements IAuthenticationService {
   }
 
   public isLoggedIn(): boolean {
-    return !!this._user;
+    const userIsExisting: boolean = this._user !== undefined;
+
+    return userIsExisting;
   }
 
   public async login(): Promise<void> {
@@ -40,9 +43,11 @@ export class AuthenticationService implements IAuthenticationService {
   }
 
   public async loginViaDeepLink(urlFragment: string): Promise<void> {
-    const user: User = new User(new SigninResponse(urlFragment) as Oidc.SigninResponse);
+    const signinResponse: Oidc.SigninResponse = new SigninResponse(urlFragment) as Oidc.SigninResponse;
+    const user: User = new User(signinResponse);
     this._user = user;
     const identity: IIdentity = await this.getIdentity();
+
     this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
   }
 
@@ -63,7 +68,7 @@ export class AuthenticationService implements IAuthenticationService {
       return;
     }
 
-    const isRunningInElectron: boolean = !!(<any> window).nodeRequire;
+    const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
 
     if (!isRunningInElectron) {
       // If we're in the browser, we need to let the oidc plugin handle the
@@ -114,14 +119,14 @@ export class AuthenticationService implements IAuthenticationService {
     }
   }
 
-  public getAccessToken(): string {
+  public getAccessToken(): string | null {
     if (!this._user) {
       return null;
     }
     return this._user.access_token;
   }
 
-  public async getIdentity(): Promise<IIdentity> {
+  public async getIdentity(): Promise<IIdentity | null> {
 
     const accessToken: string = this.getAccessToken();
 

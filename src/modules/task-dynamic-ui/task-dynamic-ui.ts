@@ -63,7 +63,7 @@ export class TaskDynamicUi {
       this._finishTask(action);
     };
 
-    this.trySettingUserTask();
+    this.setDynamicUIWrapperUserTask();
   }
 
   public detached(): void {
@@ -75,7 +75,7 @@ export class TaskDynamicUi {
   public set userTask(userTask: UserTask) {
     this._userTask = userTask;
 
-    this.trySettingUserTask();
+    this.setDynamicUIWrapperUserTask();
   }
 
   @computedFrom('_userTask')
@@ -98,7 +98,7 @@ export class TaskDynamicUi {
                                                                                   this._userTaskId,
                                                                                   this._processModelId);
 
-        this.trySettingUserTask();
+        this.setDynamicUIWrapperUserTask();
       } else {
         throw Error('CorrelationId or ProcessModelId must be given.');
       }
@@ -108,7 +108,7 @@ export class TaskDynamicUi {
     }
   }
 
-  private async trySettingUserTask(): Promise<void> {
+  private async setDynamicUIWrapperUserTask(): Promise<void> {
     const dynamicUiWrapperNotExisting: boolean = this.dynamicUiWrapper === undefined;
     const userTaskNotExisting: boolean = this._userTask === undefined;
 

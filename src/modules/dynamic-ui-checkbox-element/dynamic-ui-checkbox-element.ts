@@ -9,8 +9,7 @@ export class DynamicUiCheckboxElement {
   public activate(field: IBooleanFormField): void {
     this.field = field;
 
-    const fieldHasNoValue: boolean = this.field.value === undefined
-                                  || this.field.value === null;
+    const fieldHasNoValue: boolean = this.field.value === undefined;
 
     if (fieldHasNoValue) {
       this.field.value = Boolean(this.field.defaultValue);

@@ -67,7 +67,7 @@ export class TaskList {
       this.succesfullRequested = true;
     } catch (error) {
       if (isError(error, UnauthorizedError)) {
-        this._notificationService.showNotification(NotificationType.ERROR, 'You dont have permission to view the task list.');
+        this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have permission to view the task list.');
       } else {
         this._notificationService.showNotification(NotificationType.ERROR, `Error receiving task list: ${error.message}`);
       }
@@ -152,10 +152,10 @@ export class TaskList {
   private async _getAllUserTasks(): Promise<Array<IUserTaskWithProcessModel>> {
     const managementApiContext: ManagementContext = this._getManagementContext();
 
-    const allProcesModels: ProcessModelExecution.ProcessModelList = await this._managementApiService.getProcessModels(managementApiContext);
+    const allProcessModels: ProcessModelExecution.ProcessModelList = await this._managementApiService.getProcessModels(managementApiContext);
 
     // TODO (ph): This will create 1 + n http reqeusts, where n is the number of process models in the processengine.
-    const promisesForAllUserTasks: Array<Promise<Array<IUserTaskWithProcessModel>>> = allProcesModels.processModels
+    const promisesForAllUserTasks: Array<Promise<Array<IUserTaskWithProcessModel>>> = allProcessModels.processModels
       .map(async(processModel: ProcessModelExecution.ProcessModel): Promise<Array<IUserTaskWithProcessModel>> => {
         try {
           const userTaskList: UserTaskList = await this._managementApiService.getUserTasksForProcessModel(managementApiContext, processModel.id);
@@ -173,11 +173,11 @@ export class TaskList {
         }
       });
 
-    const userTaksListArray: Array<Array<IUserTaskWithProcessModel>> = await Promise.all(promisesForAllUserTasks);
+    const userTaskListArray: Array<Array<IUserTaskWithProcessModel>> = await Promise.all(promisesForAllUserTasks);
 
-    const flatternedUserTasks: Array<IUserTaskWithProcessModel> = [].concat(...userTaksListArray);
+    const flattenedUserTasks: Array<IUserTaskWithProcessModel> = [].concat(...userTaskListArray);
 
-    return flatternedUserTasks;
+    return flattenedUserTasks;
   }
 
   private async _getUserTasksForProcessModel(processModelId: string): Promise<Array<IUserTaskWithProcessModel>> {
@@ -237,12 +237,10 @@ export class TaskList {
   ): Array<IUserTaskWithProcessModel> {
 
     const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = userTaskList.userTasks
-      .map((userTask: UserTask): IUserTaskWithProcessModel => {
-        return {
-          processModel,
-          userTask,
-        };
-      });
+      .map((userTask: UserTask): IUserTaskWithProcessModel => ({
+          processModel: processModel,
+          userTask: userTask,
+      }));
 
     return userTasksAndProcessModels;
   }

@@ -13,7 +13,7 @@ export class UserLogin {
   private _subscriptions: Array<Subscription>;
 
   @bindable({ defaultBindingMode: bindingMode.oneWay })
-  public identity: IIdentity = null;
+  public identity: IIdentity | null = null;
 
   @computedFrom('identity')
   public get isLoggedIn(): boolean {

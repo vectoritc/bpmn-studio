@@ -4,7 +4,7 @@
 // tslint:disable:variable-name
 // tslint:disable:no-magic-numbers
 
-import { UrlUtility } from './open-id-url-utility';
+import {UrlUtility} from './open-id-url-utility';
 
 const OidcScope: string = 'openid';
 
@@ -39,25 +39,29 @@ export class SigninResponse {
 
     const expires_in: number = parseInt(values.expires_in);
     if (typeof expires_in === 'number' && expires_in > 0) {
-      const now: number = parseInt((Date.now() / 1000).toString());
-      this.expires_at = now + expires_in;
+      const nowInSeconds: number = Math.floor(Date.now() / 1000);
+
+      this.expires_at = nowInSeconds + expires_in;
     }
   }
 
   public get expires_in(): number {
-    if (this.expires_at) {
-      const now: number = parseInt((Date.now() / 1000).toString());
-      return this.expires_at - now;
+    if (this.expires_at === undefined) {
+      return undefined;
     }
-    return undefined;
+
+    const nowInSeconds: number = Math.floor(Date.now() / 1000);
+
+    return this.expires_at - nowInSeconds;
   }
 
   public get expired(): boolean {
     const expires_in: number = this.expires_in;
-    if (expires_in !== undefined) {
-      return expires_in <= 0;
+    if (expires_in === undefined) {
+      return undefined;
     }
-    return undefined;
+
+    return expires_in <= 0;
   }
 
   public get scopes(): Array<string> {
@@ -65,6 +69,6 @@ export class SigninResponse {
   }
 
   public get isOpenIdConnect(): boolean {
-    return this.scopes.indexOf(OidcScope) >= 0 || !!this.id_token;
+    return this.scopes.indexOf(OidcScope) >= 0 || Boolean(this.id_token);
   }
 }

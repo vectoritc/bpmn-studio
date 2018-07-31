@@ -22,12 +22,12 @@ export class DynamicUiWrapper {
 
   public declineButtonText: string = 'Cancel';
   public confirmButtonText: string = 'Continue';
-  public onButtonClick: (action: string) => void;
+  public onButtonClick: (action: 'cancel' | 'proceed') => void;
+  @bindable() public currentUserTask: UserTask;
 
   private _router: Router;
 
   private _dynamicUiService: IDynamicUiService;
-  @bindable() public currentUserTask: UserTask;
   private _authenticationService: AuthenticationService;
 
   constructor(dynamicUiService: IDynamicUiService,
@@ -39,7 +39,7 @@ export class DynamicUiWrapper {
     this._router = router;
   }
 
-  public async handleButtonClick(action: string): Promise<void> {
+  public async handleButtonClick(action: 'cancel' | 'proceed'): Promise<void> {
     const actionCanceled: boolean = action === 'cancel';
 
     if (actionCanceled) {
@@ -56,7 +56,7 @@ export class DynamicUiWrapper {
     });
   }
 
-  private _finishUserTask(action: string): void {
+  private _finishUserTask(action: 'cancel' | 'proceed'): void {
     const hasNoCurrentUserTask: boolean = this.currentUserTask === undefined;
 
     if (hasNoCurrentUserTask) {
@@ -81,7 +81,7 @@ export class DynamicUiWrapper {
                                           userTaskId,
                                           userTaskResult);
 
-    this.currentUserTask = null;
+    this.currentUserTask = undefined;
   }
 
   private _getUserTaskResults(): UserTaskResult {

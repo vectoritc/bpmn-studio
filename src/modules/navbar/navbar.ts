@@ -7,8 +7,6 @@ import environment from '../../environment';
 
 @inject(Router, EventAggregator)
 export class NavBar {
-  private _router: Router;
-  private _eventAggregator: EventAggregator;
 
   @bindable() public showSolutionExplorer: boolean;
   @bindable() public activeRouteName: string;
@@ -18,6 +16,10 @@ export class NavBar {
   public showTools: boolean = false;
   public showStartButton: boolean = false;
   public disableSaveButton: boolean = false;
+  public showDiagramUploadButton: boolean = false;
+
+  private _router: Router;
+  private _eventAggregator: EventAggregator;
 
   constructor(router: Router, eventAggregator: EventAggregator) {
     this._router = router;
@@ -64,6 +66,14 @@ export class NavBar {
 
     this._eventAggregator.subscribe(environment.events.navBar.hideStartButton, () => {
       this.showStartButton = false;
+    });
+
+    this._eventAggregator.subscribe(environment.events.navBar.showDiagramUploadButton, () => {
+      this.showDiagramUploadButton = true;
+    });
+
+    this._eventAggregator.subscribe(environment.events.navBar.hideDiagramUploadButton, () => {
+      this.showDiagramUploadButton = false;
     });
   }
 
@@ -130,11 +140,9 @@ export class NavBar {
   }
 
   private _dertermineActiveRoute(): void {
-    this._router.routes.some((route: RouteConfig) => {
-      if (this._isRouteActive(route.name)) {
-        this.activeRouteName = route.name;
-        return true;
-      }
+    const activeRoute: RouteConfig = this._router.routes.find((route: RouteConfig) => {
+      return this._isRouteActive(route.name);
     });
+    this.activeRouteName = activeRoute.name;
   }
 }

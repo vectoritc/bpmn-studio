@@ -48,7 +48,7 @@ export class ProcessDefList {
     const hasClaimsForProcessDefList: boolean = await this._hasClaimsForProcessDefList(this._managementContext);
 
     if (!hasClaimsForProcessDefList) {
-      this._notificationService.showNotification(NotificationType.ERROR, 'You dont have the permission to use the planning feature.');
+      this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have the permission to use the planning feature.');
       return false;
     }
 

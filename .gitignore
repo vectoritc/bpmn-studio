@@ -27,5 +27,7 @@ node_modules
 scripts
 dist
 @fortawesome
+src/environment.ts
 
 process-engine_local_db
+userData

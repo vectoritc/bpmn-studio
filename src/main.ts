@@ -13,8 +13,8 @@ export function configure(aurelia: Aurelia): void {
     throw new Error(`In order to use the web version of BPMN Studio please enable cookies for this URL: ${url}.`);
   }
 
-  if ((<any> window).nodeRequire) {
-    const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
+  if ((window as any).nodeRequire) {
+    const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
     const newHost: string = ipcRenderer.sendSync('get_host');
 
     /**
@@ -69,9 +69,9 @@ export function configure(aurelia: Aurelia): void {
     aurelia.setRoot();
 
     // check if the processengine started successfull
-    if ((<any> window).nodeRequire) {
+    if ((window as any).nodeRequire) {
 
-      const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
+      const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
       // subscribe to processengine status
       ipcRenderer.send('add_internal_processengine_status_listener');
       // wait for status to be reported
