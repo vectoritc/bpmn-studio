@@ -51,9 +51,11 @@ export class WaitingRoom {
   }
 
   private async _startPolling(): Promise<void> {
-    this._pollingTimeout = setTimeout(() => {
-      this._pollUserTasksForCorrelation();
-      this._pollIsCorrelationStillActive();
+    this._pollingTimeout = setTimeout(async() => {
+      await this._pollUserTasksForCorrelation();
+      await this._pollIsCorrelationStillActive();
+
+      this._startPolling();
     }, environment.processengine.pollingInterval);
   }
 
