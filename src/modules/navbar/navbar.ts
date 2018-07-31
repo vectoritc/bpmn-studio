@@ -16,6 +16,7 @@ export class NavBar {
   public showTools: boolean = false;
   public showStartButton: boolean = false;
   public disableSaveButton: boolean = false;
+  public showDiagramUploadButton: boolean = false;
 
   private _router: Router;
   private _eventAggregator: EventAggregator;
@@ -65,6 +66,14 @@ export class NavBar {
 
     this._eventAggregator.subscribe(environment.events.navBar.hideStartButton, () => {
       this.showStartButton = false;
+    });
+
+    this._eventAggregator.subscribe(environment.events.navBar.showDiagramUploadButton, () => {
+      this.showDiagramUploadButton = true;
+    });
+
+    this._eventAggregator.subscribe(environment.events.navBar.hideDiagramUploadButton, () => {
+      this.showDiagramUploadButton = false;
     });
   }
 

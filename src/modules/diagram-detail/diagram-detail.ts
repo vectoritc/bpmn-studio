@@ -60,6 +60,8 @@ export class DiagramDetail {
 
   public attached(): void {
     this._eventAggregator.publish(environment.events.navBar.showTools, this.diagram);
+    this._eventAggregator.publish(environment.events.navBar.showDiagramUploadButton);
+
     this._eventAggregator.publish(environment.events.statusBar.showDiagramViewButtons);
 
     this._subscriptions = [
@@ -121,6 +123,8 @@ export class DiagramDetail {
     }
 
     this._eventAggregator.publish(environment.events.navBar.hideTools);
+    this._eventAggregator.publish(environment.events.navBar.hideDiagramUploadButton);
+
     this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
   }
 
