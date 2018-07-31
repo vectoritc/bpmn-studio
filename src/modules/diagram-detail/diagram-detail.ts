@@ -137,7 +137,7 @@ export class DiagramDetail {
           .showNotification(NotificationType.SUCCESS, `File saved!`);
     } catch (error) {
       this._notificationService
-          .showNotification(NotificationType.ERROR, `Unable to save the file: ${error}`);
+          .showNotification(NotificationType.ERROR, `Unable to save the file: ${error}.`);
     }
   }
 
@@ -152,11 +152,15 @@ export class DiagramDetail {
     });
     const processModelId: string = processModel.id;
 
+    const managementContext: ManagementContext = this._getManagementContext();
+
     try {
-      await this._managementClient.updateProcessModelById(this._getManagementContext(), processModelId, payload);
+      await this
+        ._managementClient
+        .updateProcessModelById(managementContext, processModelId, payload);
     } catch (error) {
       this._notificationService
-          .showNotification(NotificationType.ERROR, `Unable to update diagram: ${error}`);
+          .showNotification(NotificationType.ERROR, `Unable to update diagram: ${error}.`);
     }
   }
 
