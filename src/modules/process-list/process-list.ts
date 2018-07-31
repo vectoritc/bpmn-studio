@@ -14,7 +14,7 @@ interface IProcessListRouteParameters {
   processModelId?: string;
 }
 
-@inject('ManagementApiClientService', EventAggregator, Router, 'NotificationService', 'NewAuthenticationService')
+@inject('ManagementApiClientService', EventAggregator, Router, 'NotificationService', 'AuthenticationService')
 export class ProcessList {
 
   @observable public currentPage: number = 0;

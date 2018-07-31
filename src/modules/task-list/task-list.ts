@@ -28,7 +28,7 @@ interface IUserTaskWithProcessModel {
   processModel: ProcessModelExecution.ProcessModel;
 }
 
-@inject(EventAggregator, 'ManagementApiClientService', Router, 'NotificationService', 'NewAuthenticationService')
+@inject(EventAggregator, 'ManagementApiClientService', Router, 'NotificationService', 'AuthenticationService')
 export class TaskList {
 
   public currentPage: number = 0;

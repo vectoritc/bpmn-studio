@@ -12,7 +12,7 @@ import {AuthenticationStateEvent, IAuthenticationService, NotificationType} from
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
-@inject(EventAggregator, Router,  'NewAuthenticationService', 'ManagementApiClientService', 'NotificationService')
+@inject(EventAggregator, Router,  'AuthenticationService', 'ManagementApiClientService', 'NotificationService')
 export class ProcessDefList {
 
   @observable public currentPage: number = 1;

@@ -25,7 +25,7 @@ import {NotificationService} from '../notification/notification.service';
   'SolutionExplorerServiceFileSystem',
   'NotificationService',
   'DiagramValidationService',
-  'NewAuthenticationService')
+  'AuthenticationService')
 export class ProcessSolutionPanel {
   public openedProcessEngineSolution: ISolution;
   public openedFileSystemSolutions: Array<ISolution> = [];

@@ -8,7 +8,7 @@ import environment from '../../environment';
 import {oidcConfig} from '../../open-id-connect-configuration';
 import {NotificationService} from '../notification/notification.service';
 
-@inject(Router, 'NotificationService', EventAggregator, 'NewAuthenticationService', OpenIdConnect, 'InternalProcessEngineBaseRoute')
+@inject(Router, 'NotificationService', EventAggregator, 'AuthenticationService', OpenIdConnect, 'InternalProcessEngineBaseRoute')
 export class ConfigPanel {
 
   private _router: Router;
@@ -49,14 +49,14 @@ export class ConfigPanel {
       this.baseRoute = baseRouteConfiguredInLocalStorage;
     }
 
-    this.isLoggedInToProcessEngine = this._authenticationService.hasToken();
+    this.isLoggedInToProcessEngine = this._authenticationService.isLoggedIn();
 
     this._subscriptions = [
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
-        this.isLoggedInToProcessEngine = this._authenticationService.hasToken();
+        this.isLoggedInToProcessEngine = this._authenticationService.isLoggedIn();
       }),
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
-        this.isLoggedInToProcessEngine = this._authenticationService.hasToken();
+        this.isLoggedInToProcessEngine = this._authenticationService.isLoggedIn();
       }),
     ];
   }

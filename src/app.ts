@@ -1,15 +1,15 @@
 import {inject} from 'aurelia-framework';
 import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {Router, RouterConfiguration} from 'aurelia-router';
-import {NewAuthenticationService} from './modules/authentication/new_authentication.service';
+import {AuthenticationService} from './modules/authentication/authentication.service';
 
-@inject(OpenIdConnect, 'NewAuthenticationService')
+@inject(OpenIdConnect, 'AuthenticationService')
 export class App {
   private _openIdConnect: OpenIdConnect;
-  private _authenticationService: NewAuthenticationService;
+  private _authenticationService: AuthenticationService;
   private _router: Router;
 
-  constructor(openIdConnect: OpenIdConnect, authenticationService: NewAuthenticationService) {
+  constructor(openIdConnect: OpenIdConnect, authenticationService: AuthenticationService) {
     this._openIdConnect = openIdConnect;
     this._authenticationService = authenticationService;
   }

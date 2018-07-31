@@ -33,7 +33,7 @@ interface RouteParameters {
   Router,
   ValidationController,
   'NotificationService',
-  'NewAuthenticationService',
+  'AuthenticationService',
   'ManagementApiClientService')
 export class ProcessDefDetail {
 

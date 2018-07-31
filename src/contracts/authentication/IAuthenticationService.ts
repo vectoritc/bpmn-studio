@@ -1,10 +1,9 @@
 import {IIdentity} from './IIdentity';
 
 export interface IAuthenticationService {
-  // TODO: remove old implementations that still use username and password
-  login(username?: string, password?: string): Promise<void>;
+  login(): Promise<void>;
   logout(): Promise<void>;
+  isLoggedIn(): boolean;
   getAccessToken(): string;
-  hasToken(): boolean;
   getIdentity(): Promise<IIdentity>;
 }
