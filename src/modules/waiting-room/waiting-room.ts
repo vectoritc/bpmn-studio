@@ -89,10 +89,10 @@ export class WaitingRoom {
     });
   }
 
-  private _renderUserTaskCallback(userTaskConfig: UserTask): void {
+  private _renderUserTaskCallback(userTask: UserTask): void {
     this._notificationService.showNotification(NotificationType.SUCCESS, 'Process continued');
     this._router.navigateToRoute('task-dynamic-ui', {
-      userTaskId: userTaskConfig.id,
+      userTaskId: userTask.id,
     });
   }
 
