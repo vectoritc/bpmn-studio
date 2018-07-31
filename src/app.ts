@@ -109,7 +109,7 @@ export class App {
         moduleId: 'modules/config-panel/config-panel',
       },
       {
-        route: 'waitingroom/:processModelId',
+        route: 'waitingroom/:correlationId',
         title: 'Waiting Room',
         name: 'waiting-room',
         moduleId: 'modules/waiting-room/waiting-room',
