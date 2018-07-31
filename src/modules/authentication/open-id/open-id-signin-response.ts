@@ -39,15 +39,15 @@ export class SigninResponse {
 
     const expires_in: number = parseInt(values.expires_in);
     if (typeof expires_in === 'number' && expires_in > 0) {
-      const now: number = parseInt((Date.now() / 1000).toString());
-      this.expires_at = now + expires_in;
+      const nowInSeconds: number = Math.floor(Date.now() / 1000);
+      this.expires_at = nowInSeconds + expires_in;
     }
   }
 
   public get expires_in(): number {
     if (this.expires_at) {
-      const now: number = parseInt((Date.now() / 1000).toString());
-      return this.expires_at - now;
+      const nowInSeconds: number = Math.floor(Date.now() / 1000);
+      return this.expires_at - nowInSeconds;
     }
     return undefined;
   }
