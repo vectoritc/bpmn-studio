@@ -46,6 +46,8 @@ export default {
       updateProcess: 'navbar:process:update',
       disableSaveButton: 'navbar:saveButton:disable',
       enableSaveButton: 'navbar:saveButton:enable',
+      showDiagramUploadButton: 'navbar:diagramUploadButton:show',
+      hideDiagramUploadButton: 'navbar:diagramUploadButton:hide',
     },
     processDefDetail: {
       printDiagram: 'processdefdetail:diagram:print',
