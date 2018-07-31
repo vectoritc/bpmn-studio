@@ -7,8 +7,6 @@ import environment from '../../environment';
 
 @inject(Router, EventAggregator)
 export class NavBar {
-  private _router: Router;
-  private _eventAggregator: EventAggregator;
 
   @bindable() public showSolutionExplorer: boolean;
   @bindable() public activeRouteName: string;
@@ -18,6 +16,9 @@ export class NavBar {
   public showTools: boolean = false;
   public showStartButton: boolean = false;
   public disableSaveButton: boolean = false;
+
+  private _router: Router;
+  private _eventAggregator: EventAggregator;
 
   constructor(router: Router, eventAggregator: EventAggregator) {
     this._router = router;
