@@ -21,14 +21,17 @@ export class App {
 
     if (isRunningInElectron) {
       const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
+
       ipcRenderer.on('deep-linking-request-in-runtime', (event: any, url: string) => {
         this._processDeepLinkingRequest(url);
       });
+
       ipcRenderer.on('deep-linking-request', async(event: any, url: string) => {
         const urlFragment: string = this._parseDeepLinkingUrl(url);
         this._authenticationService.loginViaDeepLink(urlFragment);
         this._router.navigate('/');
       });
+
       ipcRenderer.send('deep-linking-ready');
     }
 
