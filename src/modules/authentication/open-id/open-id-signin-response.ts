@@ -46,22 +46,22 @@ export class SigninResponse {
   }
 
   public get expires_in(): number {
-    if (this.expires_at) {
-      const nowInSeconds: number = Math.floor(Date.now() / 1000);
-
-      return this.expires_at - nowInSeconds;
+    if (this.expires_at === undefined) {
+      return undefined;
     }
 
-    return undefined;
+    const nowInSeconds: number = Math.floor(Date.now() / 1000);
+
+    return this.expires_at - nowInSeconds;
   }
 
   public get expired(): boolean {
     const expires_in: number = this.expires_in;
-    if (expires_in !== undefined) {
-      return expires_in <= 0;
+    if (expires_in === undefined) {
+      return undefined;
     }
 
-    return undefined;
+    return expires_in <= 0;
   }
 
   public get scopes(): Array<string> {
