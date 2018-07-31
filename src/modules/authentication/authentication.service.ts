@@ -21,6 +21,7 @@ export class AuthenticationService implements IAuthenticationService {
   constructor(eventAggregator: EventAggregator, openIdConnect: OpenIdConnect) {
     this._eventAggregator = eventAggregator;
     this._openIdConnect = openIdConnect;
+
     this._initialize();
   }
 
@@ -46,6 +47,7 @@ export class AuthenticationService implements IAuthenticationService {
     const user: User = new User(new SigninResponse(urlFragment) as Oidc.SigninResponse);
     this._user = user;
     const identity: IIdentity = await this.getIdentity();
+
     this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
   }
 
