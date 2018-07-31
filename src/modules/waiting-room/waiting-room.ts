@@ -93,7 +93,7 @@ export class WaitingRoom {
   }
 
   private _renderUserTaskCallback(userTask: UserTask): void {
-    this._notificationService.showNotification(NotificationType.SUCCESS, 'Process continued');
+    this._notificationService.showNotification(NotificationType.SUCCESS, 'Process continued.');
 
     this._router.navigateToRoute('task-dynamic-ui', {
       processModelId: userTask.processModelId,
@@ -102,7 +102,7 @@ export class WaitingRoom {
   }
 
   private _correlationEndCallback: ((correlationId: string) => void) = (correlationId: string): void => {
-    this._notificationService.showNotification(NotificationType.WARNING, 'Process stopped');
+    this._notificationService.showNotification(NotificationType.INFO, 'Process stopped.');
 
     this._router.navigateToRoute('dashboard');
   }
