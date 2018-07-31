@@ -27,7 +27,8 @@ export class ProcessSection {
   }
 
   public isSuitableForElement(element: IShape): boolean {
-    if (element === undefined || element.businessObject === undefined) {
+    const businessObjectIsNotExisting: boolean = element === undefined || element.businessObject === undefined;
+    if (businessObjectIsNotExisting) {
       return false;
     }
 
@@ -82,7 +83,8 @@ export class ProcessSection {
 
     const properties: Array<IProperty> = this._propertiesElement.values;
     for (const property of properties) {
-      if (property.$type !== 'camunda:Property') {
+      const propertyTypeIsNotCamunda: boolean = property.$type !== 'camunda:Property';
+      if (propertyTypeIsNotCamunda) {
         continue;
       }
 

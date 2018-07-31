@@ -23,7 +23,8 @@ export class ProcessSection implements ISection {
   }
 
   public isSuitableForElement(element: IShape): boolean {
-    if (element === undefined || element.businessObject === undefined) {
+    const elementHasNoBusinessObject: boolean = element === undefined || element.businessObject === undefined;
+    if (elementHasNoBusinessObject) {
       return false;
     }
 
