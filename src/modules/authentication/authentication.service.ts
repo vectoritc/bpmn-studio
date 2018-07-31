@@ -92,14 +92,14 @@ export class AuthenticationService implements IAuthenticationService {
     }
   }
 
-  public getAccessToken(): string {
+  public getAccessToken(): string | null {
     if (!this._user) {
       return null;
     }
     return this._user.access_token;
   }
 
-  public async getIdentity(): Promise<IIdentity> {
+  public async getIdentity(): Promise<IIdentity | null> {
 
     const accessToken: string = this.getAccessToken();
 
