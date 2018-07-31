@@ -17,6 +17,7 @@ export class AuthenticationService implements IAuthenticationService {
   private _eventAggregator: EventAggregator;
   private _openIdConnect: OpenIdConnect;
   private _user: User;
+  private _logoutWindow: Window = null;
 
   constructor(eventAggregator: EventAggregator, openIdConnect: OpenIdConnect) {
     this._eventAggregator = eventAggregator;
@@ -37,9 +38,7 @@ export class AuthenticationService implements IAuthenticationService {
 
   public async login(): Promise<void> {
     await this._openIdConnect.login();
-
     const identity: IIdentity = await this.getIdentity();
-
     this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
   }
 
@@ -52,7 +51,22 @@ export class AuthenticationService implements IAuthenticationService {
     this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
   }
 
+  public finishLogout(): void {
+    // This will be called in the electron version where we perform the logout
+    // manually.
+    if (this._logoutWindow !== null) {
+      this._logoutWindow.close();
+      this._logoutWindow = null;
+    }
+    this._user = null;
+    this._eventAggregator.publish(AuthenticationStateEvent.LOGOUT);
+  }
+
   public async logout(): Promise<void> {
+
+    if (!this.isLoggedIn) {
+      return;
+    }
 
     const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
 
@@ -61,6 +75,11 @@ export class AuthenticationService implements IAuthenticationService {
       // logout so that push state works correctly
       return await this._openIdConnect.logout();
     }
+
+    // The following part is a manual implementation of the implicit flow logout
+    // specifically for the Identity Server endpoints.
+    // It is not tested with other providers yet and will definitely get
+    // refactored once we switch to hybrid flow.
 
     const idToken: string = this._user.id_token;
     const logoutRedirectUri: string = oidcConfig.userManagerSettings.post_logout_redirect_uri;
@@ -81,12 +100,20 @@ export class AuthenticationService implements IAuthenticationService {
         'Content-Type': 'application/json',
       },
     };
+
     try {
+
       const response: Response = await fetch(endSessionUrl.toString(), request);
       if (response.status !== LOGOUT_SUCCESS_STATUS_CODE) {
         throw new Error('Logout not successful');
       }
-      window.open(response.url, '_blank');
+
+      // If Identity Server replies with success, is has already invalidated the
+      // access_token. Now we can show the success dialog of the Identity Server
+      // in a new window and finish the logout process once the "return to
+      // application" link is clicked.
+      this._logoutWindow = window.open(response.url, '_blank');
+
     } catch (error) {
       throw new Error('Logout not successful');
     }
