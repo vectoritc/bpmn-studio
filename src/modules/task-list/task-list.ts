@@ -218,7 +218,7 @@ export class TaskList {
 
     const correlationWasNotFound: boolean = correlation === undefined || correlation === null;
     if (correlationWasNotFound) {
-      throw new NotFoundError(`Not correlation found with id ${correlationId}`);
+      throw new NotFoundError(`No correlation found with id ${correlationId}`);
     }
 
     const processModelOfCorrelation: ProcessModelExecution.ProcessModel = await
