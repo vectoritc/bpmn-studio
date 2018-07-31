@@ -71,7 +71,7 @@ export function configure(aurelia: Aurelia): void {
     // check if the processengine started successfull
     if ((window as any).nodeRequire) {
 
-      const ipcRenderer: any = ((window as any).nodeRequire('electron').ipcRenderer;
+      const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
       // subscribe to processengine status
       ipcRenderer.send('add_internal_processengine_status_listener');
       // wait for status to be reported
