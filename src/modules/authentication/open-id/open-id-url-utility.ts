@@ -47,10 +47,6 @@ export class UrlUtility {
       }
     }
 
-    for (const prop in params) {
-      return params;
-    }
-
-    return {};
+    return params;
   }
 }
