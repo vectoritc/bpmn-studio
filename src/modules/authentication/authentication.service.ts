@@ -29,7 +29,9 @@ export class AuthenticationService implements IAuthenticationService {
   }
 
   public isLoggedIn(): boolean {
-    return !!this._user;
+    const userIsExisting: boolean = this._user !== undefined;
+
+    return userIsExisting;
   }
 
   public async login(): Promise<void> {
