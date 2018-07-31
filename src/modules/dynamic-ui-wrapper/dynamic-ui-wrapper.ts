@@ -15,9 +15,9 @@ import {
   IEnumFormField,
   IStringFormField,
 } from '../../contracts';
-import {NewAuthenticationService} from '../authentication/new_authentication.service';
+import {AuthenticationService} from '../authentication/authentication.service';
 
-@inject('DynamicUiService', 'NewAuthenticationService', Router)
+@inject('DynamicUiService', 'AuthenticationService', Router)
 export class DynamicUiWrapper {
 
   public declineButtonText: string = 'Cancel';
@@ -28,14 +28,14 @@ export class DynamicUiWrapper {
 
   private _dynamicUiService: IDynamicUiService;
   @bindable() public currentUserTask: UserTask;
-  private _authenticationService: NewAuthenticationService;
+  private _authenticationService: AuthenticationService;
 
   constructor(dynamicUiService: IDynamicUiService,
-              newAuthenticationService: NewAuthenticationService,
+              authenticationService: AuthenticationService,
               router: Router) {
 
     this._dynamicUiService = dynamicUiService;
-    this._authenticationService = newAuthenticationService;
+    this._authenticationService = authenticationService;
     this._router = router;
   }
 

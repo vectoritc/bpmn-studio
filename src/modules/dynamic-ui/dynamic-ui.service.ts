@@ -3,18 +3,18 @@ import {ManagementContext, UserTask, UserTaskList, UserTaskResult} from '@proces
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {IDynamicUiService} from '../../contracts';
-import {NewAuthenticationService} from '../authentication/new_authentication.service';
+import {AuthenticationService} from '../authentication/authentication.service';
 
-@inject(EventAggregator, 'ManagementApiClientService', 'NewAuthenticationService')
+@inject(EventAggregator, 'ManagementApiClientService', 'AuthenticationService')
 export class DynamicUiService implements IDynamicUiService {
 
   private _eventAggregator: EventAggregator;
   private _managementApiClient: ManagementApiClientService;
-  private _authenticationService: NewAuthenticationService;
+  private _authenticationService: AuthenticationService;
 
   constructor(eventAggregator: EventAggregator,
               managmentApiClient: ManagementApiClientService,
-              authenticationService: NewAuthenticationService) {
+              authenticationService: AuthenticationService) {
 
     this._eventAggregator = eventAggregator;
     this._managementApiClient = managmentApiClient;
