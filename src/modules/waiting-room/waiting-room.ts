@@ -12,7 +12,7 @@ import {NotificationService} from '../notification/notification.service';
 
 const POLLING_INTERVAL: number = 4000;
 
-@inject(Router, 'BpmnStudioClient', 'NotificationService', 'NewAuthenticationService', 'ManagementApiClientService')
+@inject(Router, 'NotificationService', 'AuthenticationService', 'ManagementApiClientService')
 export class WaitingRoom {
 
   private _router: Router;
