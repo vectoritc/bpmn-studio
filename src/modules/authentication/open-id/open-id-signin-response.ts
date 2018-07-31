@@ -69,6 +69,6 @@ export class SigninResponse {
   }
 
   public get isOpenIdConnect(): boolean {
-    return this.scopes.indexOf(OidcScope) >= 0 || !!this.id_token;
+    return this.scopes.indexOf(OidcScope) >= 0 || Boolean(this.id_token);
   }
 }
