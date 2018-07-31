@@ -275,7 +275,7 @@ Main._startInternalProcessEngine = function () {
   const devUserDataFolderPath = path.join(__dirname, '..', 'userData');
   const prodUserDataFolderPath = app.getPath('userData');
 
-  let userDataFolderPath = isDev ? devUserDataFolderPath : prodUserDataFolderPath;
+  const userDataFolderPath = isDev ? devUserDataFolderPath : prodUserDataFolderPath;
 
   if (!isDev) {
     process.env.CONFIG_PATH = path.join(__dirname, '..', '..', '..', 'config');
