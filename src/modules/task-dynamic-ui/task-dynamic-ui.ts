@@ -3,7 +3,7 @@ import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {AuthenticationStateEvent, IDynamicUiService, NotificationType} from '../../contracts/index';
-import {NewAuthenticationService} from '../authentication/new_authentication.service';
+import {AuthenticationService} from '../authentication/authentication.service';
 import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
 import {NotificationService} from '../notification/notification.service';
 
@@ -12,7 +12,7 @@ interface RouteParameters {
   processModelId: string;
 }
 
-@inject(EventAggregator, 'DynamicUiService', Router, 'NotificationService', 'NewAuthenticationService')
+@inject(EventAggregator, 'DynamicUiService', Router, 'NotificationService', 'AuthenticationService')
 export class TaskDynamicUi {
 
   public dynamicUiWrapper: DynamicUiWrapper;
@@ -20,7 +20,7 @@ export class TaskDynamicUi {
   private _eventAggregator: EventAggregator;
   private _router: Router;
   private _notificationService: NotificationService;
-  private _authenticationService: NewAuthenticationService;
+  private _authenticationService: AuthenticationService;
   private _dynamicUiService: IDynamicUiService;
   private _subscriptions: Array<Subscription>;
   private _userTask: UserTask;
@@ -31,7 +31,7 @@ export class TaskDynamicUi {
               dynamicUiService: IDynamicUiService,
               router: Router,
               notificationService: NotificationService,
-              authenticationService: NewAuthenticationService) {
+              authenticationService: AuthenticationService) {
 
     this._eventAggregator = eventAggregator;
     this._dynamicUiService = dynamicUiService;
