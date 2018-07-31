@@ -17,7 +17,7 @@ export class App {
   public configureRouter(config: RouterConfiguration, router: Router): void {
     this._router = router;
 
-    const isRunningInElectron: boolean = !!(<any> window).nodeRequire;
+    const isRunningInElectron: boolean = Boolean((<any> window).nodeRequire);
 
     if (isRunningInElectron) {
       const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
