@@ -10,7 +10,6 @@ export class DynamicUiRadioButtonElement {
     this.field = field;
 
     const fieldHasNoValues: boolean = this.field.value === undefined
-                                   || this.field.value === null
                                    || this.field.value === '';
 
     if (fieldHasNoValues) {

@@ -10,7 +10,6 @@ export class DynamicUiDropdownElement {
     this.field = field;
 
     const fieldHasNoValue: boolean = this.field.value === undefined
-                                  || this.field.value === null
                                   || this.field.value === '';
 
     if (fieldHasNoValue) {
