@@ -3,8 +3,8 @@ import {IHttpClient, IRequestOptions, IResponse} from '@essential-projects/http_
 
 export class HttpFetchClient implements IHttpClient {
 
-  private httpSuccessResponseCode: number = 200;
-  private httpRedirectResponseCode: number = 300;
+  private _httpSuccessResponseCode: number = 200;
+  private _httpRedirectResponseCode: number = 300;
 
   public async get<T>(url: string, options?: IRequestOptions): Promise<IResponse<T>> {
 
@@ -109,7 +109,7 @@ export class HttpFetchClient implements IHttpClient {
   }
 
   private _responseIsAnError(responseStatus: number): boolean {
-    return responseStatus < this.httpSuccessResponseCode || responseStatus >= this.httpRedirectResponseCode;
+    return responseStatus < this._httpSuccessResponseCode || responseStatus >= this._httpRedirectResponseCode;
   }
 
   private _getErrorForStatusCode(responseStatus: number): typeof Error {
