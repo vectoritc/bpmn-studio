@@ -40,6 +40,7 @@ export class SigninResponse {
     const expires_in: number = parseInt(values.expires_in);
     if (typeof expires_in === 'number' && expires_in > 0) {
       const nowInSeconds: number = Math.floor(Date.now() / 1000);
+
       this.expires_at = nowInSeconds + expires_in;
     }
   }
@@ -47,8 +48,10 @@ export class SigninResponse {
   public get expires_in(): number {
     if (this.expires_at) {
       const nowInSeconds: number = Math.floor(Date.now() / 1000);
+
       return this.expires_at - nowInSeconds;
     }
+
     return undefined;
   }
 
@@ -57,6 +60,7 @@ export class SigninResponse {
     if (expires_in !== undefined) {
       return expires_in <= 0;
     }
+
     return undefined;
   }
 
