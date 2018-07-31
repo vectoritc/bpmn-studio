@@ -270,7 +270,7 @@ export class ProcessSolutionPanel {
       if (isError(error, UnauthorizedError)) {
         this._notificationService.showNotification(NotificationType.ERROR, 'You need to login to list process models.');
       } else if (isError(error, ForbiddenError)) {
-        this._notificationService.showNotification(NotificationType.ERROR, 'You dont have the required permissions to list process models.');
+        this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have the required permissions to list process models.');
       }
 
       this.openedProcessEngineSolution = null;

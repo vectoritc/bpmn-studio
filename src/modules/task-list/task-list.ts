@@ -67,7 +67,7 @@ export class TaskList {
       this.succesfullRequested = true;
     } catch (error) {
       if (isError(error, UnauthorizedError)) {
-        this._notificationService.showNotification(NotificationType.ERROR, 'You dont have permission to view the task list.');
+        this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have permission to view the task list.');
       } else {
         this._notificationService.showNotification(NotificationType.ERROR, `Error receiving task list: ${error.message}`);
       }

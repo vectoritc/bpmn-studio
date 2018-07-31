@@ -33,7 +33,7 @@ export class Dashboard {
     const hasClaimsForProcessList: boolean = await this._hasClaimsForProcessList(managementContext);
 
     if (!hasClaimsForProcessList && !hasClaimsForTaskList) {
-      this._notificationService.showNotification(NotificationType.ERROR, 'You dont have the permission to use the dashboard features.');
+      this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have the permission to use the dashboard features.');';
       return false;
     }
 
