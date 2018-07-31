@@ -27,7 +27,7 @@ import {NotificationService} from '../notification/notification.service';
   'DiagramValidationService',
   'AuthenticationService')
 export class ProcessSolutionPanel {
-  public openedProcessEngineSolution: ISolution;
+  public openedProcessEngineSolution: ISolution | null;
   public openedFileSystemSolutions: Array<ISolution> = [];
   public openedSingleDiagrams: Array<IDiagram> = [];
   public solutionInput: HTMLInputElement;
