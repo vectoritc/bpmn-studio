@@ -36,7 +36,9 @@ export class AuthenticationService implements IAuthenticationService {
 
   public async login(): Promise<void> {
     await this._openIdConnect.login();
+
     const identity: IIdentity = await this.getIdentity();
+
     this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
   }
 
