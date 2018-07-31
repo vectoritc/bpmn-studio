@@ -54,7 +54,7 @@ Main._initializeApplication = function () {
 
     app.setAsDefaultProtocolClient('bpmn-studio');
 
-    // open-url is called every time someone tries to open a link like
+    // open-url is called every time someone tries to open a link like:
     // bpmn-studio://myActualUrl
     app.on('open-url', (event, url) => {
       console.log('open-url called', url);
@@ -73,7 +73,7 @@ Main._initializeApplication = function () {
       // The Login
 
       // 1. trigger sign in on oidc-client
-      // 2. get redirected to Identity Server login page
+      // 2. get redirected to IdentityServer login page
       // 3. login on that page
       // 4. get redirected to the custom protocol
       //    (bpmn-studio://signin-oidc#<<token_data_goes_here>>)
@@ -88,7 +88,7 @@ Main._initializeApplication = function () {
 
       // The Logout
 
-      // 1. send http request to Identity Server for logout
+      // 1. send http request to IdentityServer for logout
       //    (/connect/endsession)
       // 2. if success, open Identity Server success page as a separate window
       // 3. if finish link in the new window is clicked, get redirected to
@@ -102,10 +102,9 @@ Main._initializeApplication = function () {
 
         // If this is the signin response from the implicit OAuth flow,
         // we need to navigate to the start page to activate the Aurelia
-        // application again.
-        // Due to the bug referenced above, the login page of the Identity
-        // Server is opened in the same window, so that the Aurelia application
-        // closes down. 
+        // application again. Due to the bug referenced above, the login page of
+        // the IdentityServer is opened in the same window, so that the Aurelia
+        // application closes down. 
 
         Main._window.loadURL(`file://${__dirname}/../index.html`);
 
