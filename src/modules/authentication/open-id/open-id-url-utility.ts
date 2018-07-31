@@ -32,7 +32,7 @@ export class UrlUtility {
 
     // tslint:disable-next-line:one-variable-per-declaration
     const params: any = {};
-    const regex: any = /([^&=]+)=([^&]*)/g;
+    const regex: RegExp = /([^&=]+)=([^&]*)/g;
     let m: any;
 
     let counter: number = 0;
