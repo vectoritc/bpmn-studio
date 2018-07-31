@@ -9,7 +9,8 @@ export async function configure(config: FrameworkConfiguration): Promise<void> {
 
   const httpClient: IHttpClient = config.container.get('HttpFetchClient');
 
-  const urlPrefix: string = `${environment.bpmnStudioClient.baseRoute}/`;
+  const configuredBaseRoute: string = window.localStorage.getItem('processEngineRoute');
+  const urlPrefix: string = `${configuredBaseRoute}/`;
   const proxiedHttpClient: HttpClientProxy = new HttpClientProxy(httpClient, urlPrefix);
 
   const clientService: ManagementApiClientService = createManagementApiClient(proxiedHttpClient);
