@@ -237,12 +237,10 @@ export class TaskList {
   ): Array<IUserTaskWithProcessModel> {
 
     const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = userTaskList.userTasks
-      .map((userTask: UserTask): IUserTaskWithProcessModel => {
-        return {
-          processModel,
-          userTask,
-        };
-      });
+      .map((userTask: UserTask): IUserTaskWithProcessModel => ({
+          processModel: processModel,
+          userTask: userTask,
+      }));
 
     return userTasksAndProcessModels;
   }
