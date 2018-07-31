@@ -93,8 +93,8 @@ Main._initializeApplication = function () {
       // 2. if success, open Identity Server success page as a separate window
       // 3. if finish link in the new window is clicked, get redirected to
       //    custom protocol (bpmn-studio://signout-oidc)
-      // 6. electron main process sends the signout to the Aurelia application
-      // 8. state is cleared and logout state is propagated through application
+      // 4. electron main process sends the signout to the Aurelia application
+      // 5. state is cleared and logout state is propagated through application
 
       // ----------------------------------------------------------------------
 
