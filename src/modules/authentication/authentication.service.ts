@@ -44,7 +44,8 @@ export class AuthenticationService implements IAuthenticationService {
   }
 
   public async loginViaDeepLink(urlFragment: string): Promise<void> {
-    const user: User = new User(new SigninResponse(urlFragment) as Oidc.SigninResponse);
+    const signinResponse: Oidc.SigninResponse = new SigninResponse(urlFragment) as Oidc.SigninResponse;
+    const user: User = new User(signinResponse);
     this._user = user;
     const identity: IIdentity = await this.getIdentity();
 
