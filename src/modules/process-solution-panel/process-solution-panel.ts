@@ -258,7 +258,7 @@ export class ProcessSolutionPanel {
   }
 
   private async _refreshProcesslist(): Promise<void> {
-    const processengineSolutionString: string = environment.bpmnStudioClient.baseRoute;
+    const processengineSolutionString: string = window.localStorage.getItem('processEngineRoute');
 
     const identity: IIdentity = await this._createIdentityForSolutionExplorer();
 
