@@ -32,6 +32,10 @@
   border-radius: 4px;
 }
 
+.custom-button:disabled {
+  color: darkgray;
+}
+
 .process-start-event-modal-dialog__dropdown-menu {
   margin-top: 15px;
 }
