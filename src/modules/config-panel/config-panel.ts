@@ -68,7 +68,9 @@ export class ConfigPanel {
   }
 
   public async updateSettings(): Promise<void> {
-    if (this._authenticationService.getAccessToken()) {
+
+    const accessTokenIsNotDummy: boolean = this._authenticationService.getAccessToken() !== 'ZHVtbXlfdG9rZW4=';
+    if (accessTokenIsNotDummy) {
       await this._authenticationService.logout();
     }
 
