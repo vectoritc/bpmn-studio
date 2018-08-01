@@ -6,7 +6,7 @@ import {
   UserTaskList,
 } from '@process-engine/management_api_contracts';
 import {inject} from 'aurelia-framework';
-import {Router} from 'aurelia-router';
+import {activationStrategy, Router} from 'aurelia-router';
 import {IAuthenticationService, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
@@ -38,12 +38,18 @@ export class WaitingRoom {
 
   public activate(routeParameters: RouteParameters): void {
     this._correlationId = routeParameters.correlationId;
+  }
 
+  public attached(): void {
     this._startPolling();
   }
 
   public detached(): void {
     this._stopPolling();
+  }
+
+  public determineActivationStrategy(): string {
+    return activationStrategy.replace;
   }
 
   public navigateToTaskList(): void {

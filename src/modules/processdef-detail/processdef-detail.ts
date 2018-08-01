@@ -1,6 +1,6 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
-import {Redirect, Router} from 'aurelia-router';
+import {activationStrategy, Redirect, Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
 import {
@@ -132,7 +132,7 @@ export class ProcessDefDetail {
   }
 
   public determineActivationStrategy(): string {
-    return 'replace';
+    return activationStrategy.replace;
   }
 
   /**
