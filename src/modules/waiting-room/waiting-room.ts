@@ -38,7 +38,9 @@ export class WaitingRoom {
 
   public activate(routeParameters: RouteParameters): void {
     this._correlationId = routeParameters.correlationId;
+  }
 
+  public attached(): void {
     this._startPolling();
   }
 
