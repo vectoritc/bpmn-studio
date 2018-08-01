@@ -1,22 +1,25 @@
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
 import {RouteConfig, Router} from 'aurelia-router';
-import {IEventFunction, IProcessDefEntity} from '../../contracts';
+import {IEventFunction} from '../../contracts';
 import environment from '../../environment';
 
 @inject(Router, EventAggregator)
 export class NavBar {
-  private _router: Router;
-  private _eventAggregator: EventAggregator;
 
   @bindable() public showSolutionExplorer: boolean;
-  public activeRouteTitle: string;
-  public process: IProcessDefEntity;
+  @bindable() public activeRouteName: string;
+  public process: IDiagram;
   public diagramInfo: HTMLElement;
   public dropdown: HTMLElement;
   public showTools: boolean = false;
   public showStartButton: boolean = false;
   public disableSaveButton: boolean = false;
+  public showDiagramUploadButton: boolean = false;
+
+  private _router: Router;
+  private _eventAggregator: EventAggregator;
 
   constructor(router: Router, eventAggregator: EventAggregator) {
     this._router = router;
@@ -36,7 +39,7 @@ export class NavBar {
       this._dertermineActiveRoute();
     });
 
-    this._eventAggregator.subscribe(environment.events.navBar.showTools, (process: IProcessDefEntity) => {
+    this._eventAggregator.subscribe(environment.events.navBar.showTools, (process: IDiagram) => {
       this.showTools = true;
       this.process = process;
     });
@@ -45,7 +48,7 @@ export class NavBar {
       this.showTools = false;
     });
 
-    this._eventAggregator.subscribe(environment.events.navBar.updateProcess, (process: IProcessDefEntity) => {
+    this._eventAggregator.subscribe(environment.events.navBar.updateProcess, (process: IDiagram) => {
       this.process = process;
     });
 
@@ -64,18 +67,18 @@ export class NavBar {
     this._eventAggregator.subscribe(environment.events.navBar.hideStartButton, () => {
       this.showStartButton = false;
     });
+
+    this._eventAggregator.subscribe(environment.events.navBar.showDiagramUploadButton, () => {
+      this.showDiagramUploadButton = true;
+    });
+
+    this._eventAggregator.subscribe(environment.events.navBar.hideDiagramUploadButton, () => {
+      this.showDiagramUploadButton = false;
+    });
   }
 
   public detached(): void {
     document.removeEventListener('click', this.dropdownClickListener);
-  }
-
-  public navigate(routeTitle: string): void {
-    const route: RouteConfig = this._router.routes.find((r: RouteConfig) => {
-      return r.title === routeTitle;
-    });
-
-    this._router.navigate(`/${route.route}`);
   }
 
   public navigateBack(): void {
@@ -104,6 +107,10 @@ export class NavBar {
     this._eventAggregator.publish(environment.events.processDefDetail.startProcess);
   }
 
+  public uploadProcess(): void {
+    this._eventAggregator.publish(environment.events.processDefDetail.uploadProcess);
+  }
+
   /**
    * Checks if the user clicked inside of the dropdown, to prevent it from
    * closing in that case.
@@ -125,18 +132,17 @@ export class NavBar {
     }
   }
 
-  private _isRouteActive(routeTitle: string): boolean {
-    if (this._router.currentInstruction.config.title === routeTitle) {
+  private _isRouteActive(routeName: string): boolean {
+    if (this._router.currentInstruction.config.name === routeName) {
       return true;
     }
     return false;
   }
 
   private _dertermineActiveRoute(): void {
-    this._router.routes.forEach((route: RouteConfig) => {
-      if (this._isRouteActive(route.title)) {
-        this.activeRouteTitle = route.title;
-      }
+    const activeRoute: RouteConfig = this._router.routes.find((route: RouteConfig) => {
+      return this._isRouteActive(route.name);
     });
+    this.activeRouteName = activeRoute.name;
   }
 }

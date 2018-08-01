@@ -21,19 +21,20 @@ export class ProcessSection {
   private _propertiesElement: IPropertiesElement;
 
   public activate(model: IPageModel): void {
-    this._businessObjInPanel = model.elementInPanel.businessObject;
+    this._businessObjInPanel = model.elementInPanel.businessObject.participants[0];
     this._moddle = model.modeler.get('moddle');
     this._init();
   }
 
   public isSuitableForElement(element: IShape): boolean {
-    if (element.businessObject === undefined) {
+    const businessObjectIsNotExisting: boolean = element === undefined || element.businessObject === undefined;
+    if (businessObjectIsNotExisting) {
       return false;
     }
 
-    const elementHasExtensions: boolean = element.businessObject.$type === 'bpmn:Participant';
+    const elementIsRoot: boolean = element.businessObject.$type === 'bpmn:Collaboration';
 
-    return elementHasExtensions;
+    return elementIsRoot;
   }
 
   public addProperty(): void {
@@ -82,9 +83,11 @@ export class ProcessSection {
 
     const properties: Array<IProperty> = this._propertiesElement.values;
     for (const property of properties) {
-      if (property.$type !== 'camunda:Property') {
+      const propertyTypeIsNotCamunda: boolean = property.$type !== 'camunda:Property';
+      if (propertyTypeIsNotCamunda) {
         continue;
       }
+
       this.newNames.push(property.name);
       this.newValues.push(property.value);
       this.properties.push(property);
@@ -132,9 +135,7 @@ export class ProcessSection {
     };
 
     const bpmnExecutionListener: IModdleElement = this._moddle.create('camunda:ExecutionListener', bpmnExecutionListenerProperties);
-
     const extensionValues: Array<IModdleElement> = [bpmnExecutionListener, propertiesElement];
-
     const extensionElements: IModdleElement = this._moddle.create('bpmn:ExtensionElements', {values: extensionValues});
 
     // Set the extension elements of the process reference.
@@ -150,6 +151,7 @@ export class ProcessSection {
 
     // Append to the extension elements of the process reference.
     this._businessObjInPanel
+        .processRef
         .extensionElements
         .values
         .push(extensionPropertiesElement);

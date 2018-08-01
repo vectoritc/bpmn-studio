@@ -1,19 +1,26 @@
 const processEngineRoute: string = 'http://localhost:8000';
+const electronHost: string = 'bpmn-studio:/';
+
+const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
 
 // tslint:disable-next-line no-default-export
 export default {
   debug: false,
   testing: false,
+  appHost: isRunningInElectron
+    ? electronHost
+    : `http://${window.location.host}`,
   processlist: {
     pageLimit: 10,
   },
+  openIdConnect: {
+    authority: 'http://localhost:5000',
+  },
   processengine: {
-    poolingInterval: 30000,
+    pollingIntervalInMs: 5000,
     routes: {
       processes: `${processEngineRoute}/datastore/ProcessDef`,
       startProcess: `${processEngineRoute}/processengine/start`,
-      processInstances: `${processEngineRoute}/datastore/Process`,
-      messageBus: `${processEngineRoute}/mb`,
       iam: `${processEngineRoute}/iam`,
       userTasks: `${processEngineRoute}/datastore/UserTask`,
       importBPMN: `${processEngineRoute}/processengine/create_bpmn_from_xml`,
@@ -25,7 +32,9 @@ export default {
     statusBar: {
       showDiagramViewButtons: 'statusbar:diagramviewbuttons:show',
       hideDiagramViewButtons: 'statusbar:diagramviewbuttons:hide',
-      updateProcessEngineRoute: 'statusbar:processEngineRoute:update',
+    },
+    configPanel: {
+      processEngineRouteChanged: 'configpanel:processEngineRoute:changed',
     },
     navBar: {
       showTools: 'navbar:tools:show',
@@ -35,6 +44,8 @@ export default {
       updateProcess: 'navbar:process:update',
       disableSaveButton: 'navbar:saveButton:disable',
       enableSaveButton: 'navbar:saveButton:enable',
+      showDiagramUploadButton: 'navbar:diagramUploadButton:show',
+      hideDiagramUploadButton: 'navbar:diagramUploadButton:hide',
     },
     processDefDetail: {
       printDiagram: 'processdefdetail:diagram:print',
@@ -42,6 +53,7 @@ export default {
       exportDiagramAs: 'processdefdetail:diagram:exportas',
       startProcess: 'processdefdetail:process:start',
       toggleXMLView: 'processdefdetail:xmlview:toggle',
+      uploadProcess: 'processdefdetail:process:upload',
     },
     bpmnio: {
       toggleXMLView: 'processdefdetail:xmlview:toggle',

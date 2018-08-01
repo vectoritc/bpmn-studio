@@ -1,33 +1,27 @@
-import {BpmnStudioClient, IPagination, IProcessDefEntity} from '@process-engine/bpmn-studio_client';
-import {HttpClient} from 'aurelia-fetch-client';
 import {inject} from 'aurelia-framework';
-import environment from '../../../../../environment';
 
-@inject('BpmnStudioClient', HttpClient)
+import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
+import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
+
+import {IIdentity} from '../../../../../contracts';
+
+@inject('SolutionExplorerServiceManagementApi')
 export class GeneralRepository {
-  private _bpmnStudioClient: BpmnStudioClient;
-  private _httpClient: HttpClient;
+  private _solutionExplorerManagementService: ISolutionExplorerService;
+  private _identity: IIdentity;
 
-  constructor(bpmnStudioClient: BpmnStudioClient, httpClient: HttpClient) {
-    this._bpmnStudioClient = bpmnStudioClient;
-    this._httpClient = httpClient;
+  constructor(solutionExplorerService: ISolutionExplorerService) {
+    this._solutionExplorerManagementService = solutionExplorerService;
   }
 
-  public async getAllProcesses(): Promise<IPagination<IProcessDefEntity>> {
-    return this._bpmnStudioClient.getProcessDefList();
+  public async getAllDiagrams(): Promise<Array<IDiagram>> {
+    const solution: ISolution = await this._solutionExplorerManagementService.loadSolution();
+    const diagrams: Array<IDiagram> = solution.diagrams;
+
+    return diagrams;
   }
 
-  public updateProcessDef(processDef: IProcessDefEntity, xml: string): Promise<Response> {
-    const options: RequestInit = {
-      method: 'post',
-      headers: new Headers({
-        'Content-Type': 'application/json',
-      }),
-      body: JSON.stringify({
-          xml: xml,
-      }),
-    };
-    const url: string = `${environment.processengine.routes.processes}/${processDef.id}/updateBpmn`;
-    return this._httpClient.fetch(url, options);
+  public updateDiagram(diagram: IDiagram): Promise<IDiagram> {
+    return this._solutionExplorerManagementService.saveSingleDiagram(diagram, this._identity);
   }
 }

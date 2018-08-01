@@ -24,7 +24,7 @@ export class StatusBar {
   constructor(eventAggregator: EventAggregator, router: Router) {
     this._eventAggregator = eventAggregator;
     this._router = router;
-    this._setProcessEngineRoute(environment.bpmnStudioClient.baseRoute);
+    this._setProcessEngineRoute(window.localStorage.getItem('processEngineRoute'));
   }
 
   public attached(): void {
@@ -40,7 +40,7 @@ export class StatusBar {
       this.currentDiffMode = undefined;
     });
 
-    this._eventAggregator.subscribe(environment.events.statusBar.updateProcessEngineRoute, (newProcessEngineRoute: string) => {
+    this._eventAggregator.subscribe(environment.events.configPanel.processEngineRouteChanged, (newProcessEngineRoute: string) => {
       this._setProcessEngineRoute(newProcessEngineRoute);
     });
   }
@@ -74,7 +74,7 @@ export class StatusBar {
   }
 
   public navigateToSettings(): void {
-    this._router.navigate('/configuration');
+    this._router.navigateToRoute('configuration');
   }
 
   private _setProcessEngineRoute(processEngineRoute: string): void {

@@ -11,7 +11,6 @@ import {IBpmnModdle,
         IEditorActions,
         IEventFunction,
         IKeyboard,
-        IProcessDefEntity,
         NotificationType,
       } from '../../contracts/index';
 
@@ -53,7 +52,6 @@ export class BpmnIo {
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
-  private _diagramIsValid: boolean = true;
   private _diagramPrintService: IDiagramPrintService;
   private _diagramExportService: IDiagramExportService;
 
@@ -167,30 +165,24 @@ export class BpmnIo {
         }, 0);
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.enableSaveButton, () => {
-        this._diagramIsValid = true;
-      }),
-      this._eventAggregator.subscribe(environment.events.navBar.disableSaveButton, () => {
-        this._diagramIsValid = false;
-      }),
-      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, async(process: IProcessDefEntity) => {
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, async() => {
         const xml: string = await this.getXML();
         const bpmn: string = await this._diagramExportService.exportBPMN(xml);
 
         download(bpmn, `${this.name}.bpmn`, 'application/bpmn20-xml');
       }),
-      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, async(process: IProcessDefEntity) => {
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, async() => {
         const svg: string = await this.getSVG();
 
         download(svg, `${this.name}.svg`, 'image/svg+xml');
       }),
-      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, async(process: IProcessDefEntity) => {
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, async() => {
         const svg: string = await this.getSVG();
         const png: string = await this._diagramExportService.exportPNG(svg);
 
         download(png, `${this.name}.png`, 'image/png');
       }),
-      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, async(process: IProcessDefEntity) => {
+      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, async() => {
         const svg: string = await this.getSVG();
         const jpeg: string = await this._diagramExportService.exportPNG(svg);
 

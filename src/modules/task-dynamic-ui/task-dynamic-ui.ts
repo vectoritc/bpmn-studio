@@ -1,36 +1,51 @@
-import {IUserTaskConfig} from '@process-engine/bpmn-studio_client';
+import {ManagementContext, UserTask} from '@process-engine/management_api_contracts';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {AuthenticationStateEvent, IDynamicUiService, NotificationType} from '../../contracts/index';
+import {AuthenticationService} from '../authentication/authentication.service';
 import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
 import {NotificationService} from '../notification/notification.service';
 
-@inject(EventAggregator, 'DynamicUiService', Router, 'NotificationService')
+interface RouteParameters {
+  userTaskId: string;
+  processModelId: string;
+}
+
+@inject(EventAggregator, 'DynamicUiService', Router, 'NotificationService', 'AuthenticationService')
 export class TaskDynamicUi {
 
   public dynamicUiWrapper: DynamicUiWrapper;
 
-  private _subscriptions: Array<Subscription>;
-  private _userTaskId: string;
-  private _userTask: IUserTaskConfig;
   private _eventAggregator: EventAggregator;
-  private _dynamicUiService: IDynamicUiService;
   private _router: Router;
   private _notificationService: NotificationService;
+  private _authenticationService: AuthenticationService;
+  private _dynamicUiService: IDynamicUiService;
+  private _subscriptions: Array<Subscription>;
+  private _userTask: UserTask;
+  private _userTaskId: string;
+  private _processModelId: string;
 
   constructor(eventAggregator: EventAggregator,
               dynamicUiService: IDynamicUiService,
               router: Router,
-              notificationService: NotificationService) {
+              notificationService: NotificationService,
+              authenticationService: AuthenticationService) {
+
     this._eventAggregator = eventAggregator;
     this._dynamicUiService = dynamicUiService;
     this._router = router;
     this._notificationService = notificationService;
+    this._authenticationService = authenticationService;
   }
 
-  private activate(routeParameters: {userTaskId: string}): void {
+  public activate(routeParameters: RouteParameters): void {
+    // This is called when starting usertask
+
     this._userTaskId = routeParameters.userTaskId;
+    this._processModelId = routeParameters.processModelId;
+
     this.refreshUserTask();
   }
 
@@ -43,10 +58,12 @@ export class TaskDynamicUi {
         this.refreshUserTask();
       }),
     ];
+
     this.dynamicUiWrapper.onButtonClick = (action: string): void => {
-      this.finishTask(action);
+      this._finishTask(action);
     };
-    this.trySettingWidget();
+
+    this.setDynamicUIWrapperUserTask();
   }
 
   public detached(): void {
@@ -55,36 +72,59 @@ export class TaskDynamicUi {
     }
   }
 
-  private finishTask(action: string): void {
-    this._router.navigate(`waitingroom/${this._userTask.userTaskEntity.process.id}`);
+  public set userTask(userTask: UserTask) {
+    this._userTask = userTask;
+
+    this.setDynamicUIWrapperUserTask();
+  }
+
+  @computedFrom('_userTask')
+  public get userTask(): UserTask {
+    return this._userTask;
+  }
+
+  private _finishTask(action: string): void {
+    this._router.navigateToRoute('waiting-room', {
+      correlationId: this._userTask.correlationId,
+    });
   }
 
   private async refreshUserTask(): Promise<void> {
+    const managementContext: ManagementContext = this._getManagementContext();
+
     try {
-      this.userTask = await this._dynamicUiService.getUserTaskConfig(this._userTaskId);
+      if (this._processModelId !== undefined) {
+        this._userTask =  await this._dynamicUiService.getUserTaskByProcessModelId(managementContext,
+                                                                                  this._userTaskId,
+                                                                                  this._processModelId);
+
+        this.setDynamicUIWrapperUserTask();
+      } else {
+        throw Error('CorrelationId or ProcessModelId must be given.');
+      }
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, `Failed to refresh user task: ${error.message}`);
       throw error;
     }
   }
 
-  private async trySettingWidget(): Promise<void> {
-    if (!this.dynamicUiWrapper) {
+  private async setDynamicUIWrapperUserTask(): Promise<void> {
+    const dynamicUiWrapperNotExisting: boolean = this.dynamicUiWrapper === undefined;
+    const userTaskNotExisting: boolean = this._userTask === undefined;
+
+    if (dynamicUiWrapperNotExisting || userTaskNotExisting) {
       return;
     }
-    if (!this._userTask) {
-      return;
-    }
-    this.dynamicUiWrapper.currentConfig = this._userTask;
+
+    this.dynamicUiWrapper.currentUserTask = this._userTask;
   }
 
-  private set userTask(task: IUserTaskConfig) {
-    this._userTask = task;
-    this.trySettingWidget();
-  }
+  private _getManagementContext(): ManagementContext {
+    const accessToken: string = this._authenticationService.getAccessToken();
+    const context: ManagementContext = {
+      identity: accessToken,
+    };
 
-  @computedFrom('_userTask')
-  private get userTask(): IUserTaskConfig {
-    return this._userTask;
+    return context;
   }
 }

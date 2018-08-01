@@ -14,7 +14,7 @@
         <tr>
           <th>Id</th>
           <td>
-            <input type="text" id="processId" class="props-input" value.bind="businessObjInPanel.processRef.id & validateOnChange" change.delegate="validate()">
+            <input type="text" title="In the current version this feature ist not available." id="processId" class="props-input" value.bind="businessObjInPanel.processRef.id & validateOnChange" change.delegate="validate()" disabled>
           </td>
           <td>
             <template if.bind="validationError">

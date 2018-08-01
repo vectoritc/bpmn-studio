@@ -3,14 +3,15 @@ import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
 import {IIdentity} from '@essential-projects/core_contracts';
-import {IPagination, IProcessDefEntity} from '@process-engine/bpmn-studio_client';
+import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/errors_ts';
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
 import {
   AuthenticationStateEvent,
+  IAuthenticationService,
   IDiagramValidationService,
-  IFileInfo,
+  IFile,
   IInputEvent,
   NotificationType,
 } from '../../contracts/index';
@@ -20,15 +21,13 @@ import {NotificationService} from '../notification/notification.service';
 @inject(
   EventAggregator,
   Router,
-  'SolutionExplorerServiceProcessEngine',
+  'SolutionExplorerServiceManagementApi',
   'SolutionExplorerServiceFileSystem',
   'NotificationService',
   'DiagramValidationService',
-  'Identity')
+  'AuthenticationService')
 export class ProcessSolutionPanel {
-  public processes: IPagination<IProcessDefEntity>;
-  public processengineSolutionString: string;
-  public openedProcessEngineSolution: ISolution;
+  public openedProcessEngineSolution: ISolution | null;
   public openedFileSystemSolutions: Array<ISolution> = [];
   public openedSingleDiagrams: Array<IDiagram> = [];
   public solutionInput: HTMLInputElement;
@@ -43,36 +42,41 @@ export class ProcessSolutionPanel {
   private _eventAggregator: EventAggregator;
   private _router: Router;
   private _notificationService: NotificationService;
-  private _identity: IIdentity;
-  private _solutionExplorerServiceProcessEngine: ISolutionExplorerService;
+  private _solutionExplorerServiceManagementApi: ISolutionExplorerService;
   private _solutionExplorerServiceFileSystem: ISolutionExplorerService;
   private _diagramValidationService: IDiagramValidationService;
+  private _authenticationService: IAuthenticationService;
+  private _identity: IIdentity;
+  private _solutionExplorerIdentity: IIdentity;
 
   constructor(eventAggregator: EventAggregator,
               router: Router,
-              solutionExplorerServiceProcessEngine: ISolutionExplorerService,
+              solutionExplorerServiceManagementApi: ISolutionExplorerService,
               solutionExplorerServiceFileSystem: ISolutionExplorerService,
               notificationService: NotificationService,
-              diagramValidationService: IDiagramValidationService) {
+              diagramValidationService: IDiagramValidationService,
+              authenticationService: IAuthenticationService,
+            ) {
 
     this._eventAggregator = eventAggregator;
     this._router = router;
-    this._solutionExplorerServiceProcessEngine = solutionExplorerServiceProcessEngine;
+    this._solutionExplorerServiceManagementApi = solutionExplorerServiceManagementApi;
     this._solutionExplorerServiceFileSystem = solutionExplorerServiceFileSystem;
     this._notificationService = notificationService;
     this._diagramValidationService = diagramValidationService;
+    this._authenticationService = authenticationService;
   }
 
   public async attached(): Promise<void> {
     /**
      * Check if BPMN-Studio runs in electron.
      */
-    if ((<any> window).nodeRequire) {
+    if ((window as any).nodeRequire) {
 
       // Show the FileSystemSolutionExplorer.
       this.enableFileSystemSolutions = true;
 
-      const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
+      const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
 
       // Register handler for double-click event fired from "elecron.js".
       ipcRenderer.on('double-click-on-file', async(event: Event, pathToFile: string) => {
@@ -95,7 +99,7 @@ export class ProcessSolutionPanel {
       ipcRenderer.send('waiting-for-double-file-click');
 
       // Check if there was a double click before BPMN-Studio was loaded.
-      const fileInfo: IFileInfo = ipcRenderer.sendSync('get_opened_file');
+      const fileInfo: IFile = ipcRenderer.sendSync('get_opened_file');
 
       if (fileInfo.path) {
         const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(fileInfo.path, this._identity);
@@ -110,15 +114,17 @@ export class ProcessSolutionPanel {
       }
     }
 
+    this._solutionExplorerIdentity = await this._createIdentityForSolutionExplorer();
+
     this._refreshProcesslist();
     this._eventAggregator.publish(environment.events.processSolutionPanel.toggleProcessSolutionExplorer);
 
     /**
-     * Set Interval to get the deployed processes of the currently connected Process Engine.
+     * Set Interval to get the deployed processes of the currently connected ProcessEngine.
      */
     window.setInterval(async() => {
       this._refreshProcesslist();
-    }, environment.processengine.poolingInterval);
+    }, environment.processengine.pollingIntervalInMs);
 
     window.localStorage.setItem('processSolutionExplorerHideState', 'show');
 
@@ -127,6 +133,9 @@ export class ProcessSolutionPanel {
         this._refreshProcesslist();
       }),
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
+        this._refreshProcesslist();
+      }),
+      this._eventAggregator.subscribe(environment.events.refreshProcessDefs, () => {
         this._refreshProcesslist();
       }),
     ];
@@ -215,6 +224,7 @@ export class ProcessSolutionPanel {
       try {
         await this._solutionExplorerServiceFileSystem.openSolution(solution.uri, this._identity);
         const updatetSolution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
+
         this._updateSolution(solution, updatetSolution);
       } catch (e) {
         this.closeFileSystemSolution(solution);
@@ -224,7 +234,9 @@ export class ProcessSolutionPanel {
 
   public async navigateToDiagramDetail(diagram: IDiagram): Promise<void> {
     this._eventAggregator.publish(environment.events.navBar.updateProcess, diagram);
-    this._router.navigateToRoute('diagram-detail', {diagramUri: diagram.uri});
+    this._router.navigateToRoute('diagram-detail', {
+      diagramUri: diagram.uri,
+    });
   }
 
   private async _openSingleDiagram(newDiagram: IDiagram): Promise<boolean> {
@@ -252,15 +264,38 @@ export class ProcessSolutionPanel {
   }
 
   private async _refreshProcesslist(): Promise<void> {
-    this.processengineSolutionString = environment.bpmnStudioClient.baseRoute;
-    await this._solutionExplorerServiceProcessEngine.openSolution(this.processengineSolutionString, this._identity);
+    const processengineSolutionString: string = window.localStorage.getItem('processEngineRoute');
 
-    this.openedProcessEngineSolution = await this._solutionExplorerServiceProcessEngine.loadSolution();
+    try {
+      await this._solutionExplorerServiceManagementApi.openSolution(processengineSolutionString, this._solutionExplorerIdentity);
+      this.openedProcessEngineSolution = await this._solutionExplorerServiceManagementApi.loadSolution();
+
+    } catch (error) {
+      if (isError(error, UnauthorizedError)) {
+        this._notificationService.showNotification(NotificationType.ERROR, 'You need to login to list process models.');
+      } else if (isError(error, ForbiddenError)) {
+        this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have the required permissions to list process models.');
+      }
+
+      this.openedProcessEngineSolution = null;
+    }
   }
 
   private _updateSolution(solutionToUpdate: ISolution, solution: ISolution): void {
     const index: number = this.openedFileSystemSolutions.indexOf(solutionToUpdate);
     this.openedFileSystemSolutions.splice(index, 1, solution);
+  }
+
+  private async _createIdentityForSolutionExplorer(): Promise<IIdentity> {
+    const solutionExplorerIdentity: IIdentity = await this._authenticationService.getIdentity() || {} as IIdentity;
+
+    const solutionExplorerAccessToken: {accessToken: string} = {
+      accessToken: this._authenticationService.getAccessToken(),
+    };
+
+    Object.assign(solutionExplorerIdentity, solutionExplorerAccessToken);
+
+    return solutionExplorerIdentity;
   }
 
   private _findURIObject<T extends {uri: string}>(objects: Array<T>, targetURI: string): T {

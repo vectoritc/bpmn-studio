@@ -1,14 +1,17 @@
-import {IFormWidgetBooleanField} from '@process-engine/bpmn-studio_client';
 import {bindable} from 'aurelia-framework';
+import {IBooleanFormField} from '../../contracts/index';
 
 export class DynamicUiCheckboxElement {
 
   @bindable()
-  public field: IFormWidgetBooleanField;
+  public field: IBooleanFormField;
 
-  public activate(field: IFormWidgetBooleanField): void {
+  public activate(field: IBooleanFormField): void {
     this.field = field;
-    if (this.field.value === undefined || this.field.value === null) {
+
+    const fieldHasNoValue: boolean = this.field.value === undefined;
+
+    if (fieldHasNoValue) {
       this.field.value = Boolean(this.field.defaultValue);
     }
   }

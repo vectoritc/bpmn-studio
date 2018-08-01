@@ -1,78 +1,59 @@
 import {Aurelia} from 'aurelia-framework';
 
-import {IIdentity} from '@essential-projects/core_contracts';
-import {SolutionExplorerFileSystemRepository} from '@process-engine/solutionexplorer.repository.filesystem';
-import {SolutionExplorerProcessEngineRepository} from '@process-engine/solutionexplorer.repository.processengine';
-import {SolutionExplorerService} from '@process-engine/solutionexplorer.service';
-
 import {NotificationType} from './contracts/index';
 import environment from './environment';
 import {NotificationService} from './modules/notification/notification.service';
-import {TokenRepository} from './modules/token-repository/token.repository';
+
+import {oidcConfig} from './open-id-connect-configuration';
 
 export function configure(aurelia: Aurelia): void {
-
-  const tokenRepository: TokenRepository = new TokenRepository();
-  aurelia.container.registerInstance('TokenRepository', tokenRepository);
 
   if (navigator.cookieEnabled === false) {
     const url: string = location.href;
     throw new Error(`In order to use the web version of BPMN Studio please enable cookies for this URL: ${url}.`);
   }
 
-  if ((<any> window).nodeRequire) {
-    const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
+  if ((window as any).nodeRequire) {
+    const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
     const newHost: string = ipcRenderer.sendSync('get_host');
+
     /**
      * Currently the internal PE is always connected via http.
      * This will be subject to change.
      */
-    localStorage.setItem('processEngineRoute', `http://${newHost}`);
+    const processEngineBaseRouteWithProtocol: string = `http://${newHost}`;
 
-    // Register SolutionExplorerFileSystemService
-    const fileSystemrepository: SolutionExplorerFileSystemRepository = new SolutionExplorerFileSystemRepository();
-    const filesystemSolutionexplorerService: SolutionExplorerService = new SolutionExplorerService(fileSystemrepository);
-    aurelia.container.registerInstance('SolutionExplorerServiceFileSystem', filesystemSolutionexplorerService);
+    if (!window.localStorage.getItem('processEngineRoute')) {
+      localStorage.setItem('processEngineRoute', processEngineBaseRouteWithProtocol);
+    }
+
+    aurelia.container.registerInstance('InternalProcessEngineBaseRoute', processEngineBaseRouteWithProtocol);
+  } else {
+    aurelia.container.registerInstance('InternalProcessEngineBaseRoute', null);
   }
-
-  const processengineRepository: SolutionExplorerProcessEngineRepository = new SolutionExplorerProcessEngineRepository();
-  const solutionexplorerService: SolutionExplorerService = new SolutionExplorerService(processengineRepository);
-  aurelia.container.registerInstance('SolutionExplorerServiceProcessEngine', solutionexplorerService);
 
   if (window.localStorage.getItem('processEngineRoute')) {
     const processEngineRoute: string = window.localStorage.getItem('processEngineRoute');
     environment.bpmnStudioClient.baseRoute = processEngineRoute;
     environment.processengine.routes.processes = `${processEngineRoute}/datastore/ProcessDef`;
     environment.processengine.routes.iam = `${processEngineRoute}/iam`;
-    environment.processengine.routes.messageBus = `${processEngineRoute}/mb`;
-    environment.processengine.routes.processInstances = `${processEngineRoute}/datastore/Process`;
     environment.processengine.routes.startProcess = `${processEngineRoute}/processengine/start`;
     environment.processengine.routes.userTasks =  `${processEngineRoute}/datastore/UserTask`;
     environment.processengine.routes.importBPMN = `${processEngineRoute}/processengine/create_bpmn_from_xml`;
   }
 
-  /**
-   * Register Fake Identity for SolutionExplorer.
-   * TODO: Get real identity when IAM is finished.
-  */
-  const fakeIdentity: IIdentity = {
-    name: 'fakeIdentity',
-    id: 'fakeIdentity',
-    roles: [],
-  };
-  aurelia.container.registerInstance('Identity', fakeIdentity);
-
   aurelia.use
     .standardConfiguration()
+    .feature('modules/fetch-http-client')
     .feature('modules/dynamic-ui')
-    .feature('modules/processengine')
     .feature('modules/notification')
-    .feature('modules/authentication')
     .feature('modules/diagram-validation-service')
-    .feature('modules/bpmn-studio_client', tokenRepository)
-    .feature('resources')
+    .feature('modules/management-api_client')
+    .feature('modules/authentication')
+    .feature('modules/solution-explorer-services')
     .plugin('aurelia-bootstrap')
-    .plugin('aurelia-validation');
+    .plugin('aurelia-validation')
+    .plugin('aurelia-open-id-connect', () => oidcConfig);
 
   if (environment.debug) {
     aurelia.use.developmentLogging();
@@ -86,9 +67,9 @@ export function configure(aurelia: Aurelia): void {
     aurelia.setRoot();
 
     // check if the processengine started successfull
-    if ((<any> window).nodeRequire) {
+    if ((window as any).nodeRequire) {
 
-      const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
+      const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
       // subscribe to processengine status
       ipcRenderer.send('add_internal_processengine_status_listener');
       // wait for status to be reported

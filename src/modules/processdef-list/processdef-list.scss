@@ -11,17 +11,10 @@
   table-layout: fixed;
 }
 
-.processdef-list__btn-import {
-  margin-bottom: 10px;
-}
-
-.processdef-list__btn-create {
-  margin-bottom: 10px;
-}
-
 .processdef-list-container {
   padding: 20px 60px;
   flex: 1;
+  overflow: scroll;
 }
 
 .process-def-list__modal-body {
@@ -55,11 +48,13 @@
 }
 
 .process-name-table-entry {
+  height: 50px;
   overflow: hidden;
+  cursor: pointer;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.process-buttons-table-entry {
-  width: 150px;
+.process-name-table-entry:hover {
+  background: #E5E5E5;
 }

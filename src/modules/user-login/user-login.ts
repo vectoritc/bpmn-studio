@@ -1,76 +1,76 @@
-import {computedFrom, inject} from 'aurelia-framework';
-import {IAuthenticationService, IEventFunction, IIdentity, NotificationType} from '../../contracts/index';
-import {NotificationService} from '../notification/notification.service';
+import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
+import {bindable, bindingMode, computedFrom, inject} from 'aurelia-framework';
 
-@inject('AuthenticationService', 'NotificationService')
+import {AuthenticationStateEvent, IAuthenticationService, IIdentity, NotificationType} from '../../contracts/index';
+import {NotificationService} from './../notification/notification.service';
+
+@inject('AuthenticationService', EventAggregator, 'NotificationService')
 export class UserLogin {
 
-  public username: string;
-  public password: string;
-
-    /**
-   * We are using the direct reference of a container element to open or
-   * close the dropdown.
-   *
-   * This needs to be refactored.
-   *
-   * https://github.com/process-engine/bpmn-studio/issues/455
-   */
-
-  public userLogin: HTMLElement;
-  public dropdown: HTMLElement;
-  public logoutButton: HTMLButtonElement;
-
   private _authenticationService: IAuthenticationService;
+  private _eventAggregator: EventAggregator;
   private _notificationService: NotificationService;
+  private _subscriptions: Array<Subscription>;
 
-  constructor(authenticationService: IAuthenticationService, notificationService: NotificationService) {
+  @bindable({ defaultBindingMode: bindingMode.oneWay })
+  public identity: IIdentity | null = null;
+
+  @computedFrom('identity')
+  public get isLoggedIn(): boolean {
+    return this.identity !== null && this.identity !== undefined;
+  }
+
+  @computedFrom('identity')
+  public get username(): string {
+    if (!this.identity) {
+      return '';
+    }
+
+    if (!this.identity.given_name || !this.identity.family_name) {
+      return this.identity.name;
+    }
+
+    const fullName: string = `${this.identity.given_name} ${this.identity.family_name}`;
+
+    return fullName;
+  }
+
+  constructor(authenticationService: IAuthenticationService,
+              eventAggregator: EventAggregator,
+              notificationService: NotificationService) {
+
     this._authenticationService = authenticationService;
+    this._eventAggregator = eventAggregator;
     this._notificationService = notificationService;
   }
 
-  public attached(): void {
-    document.addEventListener('click', this.dropdownClickListener);
+  public async attached(): Promise<void> {
+    this._subscriptions = [
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
+        this.identity = null;
+      }),
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, (identity: IIdentity) => {
+        this.identity = identity;
+      }),
+    ];
+    this.identity = await this._authenticationService.getIdentity();
   }
 
   public detached(): void {
-    document.removeEventListener('click', this.dropdownClickListener);
-  }
-
-  public dropdownClickListener: IEventFunction =  (event: MouseEvent): void => {
-    const eventTarget: Node = event.target as Node;
-    if (this.dropdown.contains(eventTarget) && event.target !== this.logoutButton) {
-      this.userLogin.className = 'user-login open';
+    for (const subscription of this._subscriptions) {
+      subscription.dispose();
     }
   }
 
   public async login(): Promise<void> {
     try {
-      await this._authenticationService.login(this.username, this.password);
-      this.username = undefined;
-      this.password = undefined;
-      this._closeDropdown();
+      await this._authenticationService.login();
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, error.message);
     }
   }
 
-  public logout(): void {
-    this._authenticationService.logout();
-    this._closeDropdown();
-  }
-
-  @computedFrom('_authenticationService.tokenRepository.token')
-  public get isLoggedIn(): boolean {
-    return this._authenticationService.hasToken();
-  }
-
-  @computedFrom('isLoggedIn')
-  public get identity(): IIdentity {
-    return this._authenticationService.getIdentity();
-  }
-
-  private _closeDropdown(): void {
-    this.userLogin.className = 'user-login';
+  public logout(): Promise<void> {
+    return this._authenticationService.logout();
   }
 }
