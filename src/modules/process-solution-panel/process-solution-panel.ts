@@ -286,13 +286,13 @@ export class ProcessSolutionPanel {
   }
 
   private async _createIdentityForSolutionExplorer(): Promise<IIdentity> {
-    const solutionExplorerIdentity: IIdentity = await this._authenticationService.getIdentity();
+    const solutionExplorerIdentity: IIdentity = await this._authenticationService.getIdentity() || {};
 
     const solutionExplorerAccesstoken: {accessToken: string} = {
       accessToken: this._authenticationService.getAccessToken(),
     };
 
-    Object.assign(solutionExplorerIdentity || {}, solutionExplorerAccesstoken);
+    Object.assign(solutionExplorerIdentity, solutionExplorerAccesstoken);
 
     return solutionExplorerIdentity;
   }
