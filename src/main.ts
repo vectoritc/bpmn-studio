@@ -37,8 +37,6 @@ export function configure(aurelia: Aurelia): void {
     environment.bpmnStudioClient.baseRoute = processEngineRoute;
     environment.processengine.routes.processes = `${processEngineRoute}/datastore/ProcessDef`;
     environment.processengine.routes.iam = `${processEngineRoute}/iam`;
-    environment.processengine.routes.messageBus = `${processEngineRoute}/mb`;
-    environment.processengine.routes.processInstances = `${processEngineRoute}/datastore/Process`;
     environment.processengine.routes.startProcess = `${processEngineRoute}/processengine/start`;
     environment.processengine.routes.userTasks =  `${processEngineRoute}/datastore/UserTask`;
     environment.processengine.routes.importBPMN = `${processEngineRoute}/processengine/create_bpmn_from_xml`;
