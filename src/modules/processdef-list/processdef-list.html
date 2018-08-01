@@ -4,98 +4,15 @@
   <require from="../process-solution-panel/process-solution-panel"></require>
 
   <div class="process-def-list">
-    <!-- Modal dialog for importing BPMN diagrams {{{ -->
-    <!-- Import Dialog {{{ -->
-    <div if.bind="showDiagramNameDialog">
-      <div class="modal fade in show" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-dialog__headline">Import BPMN Diagram</h1>
-            </div>
-            <div class="form-group modal-body process-def-list__modal-body">
-              <form submit.delegate = "importNewDiagram()">
-                <label for="processDefinitionName">Import as:</label>
-                <input type="text" class="form-control"
-                  id="processDefinitionName"
-                  aria-describedby="processDefinitionNameHelp"
-                  value.bind="newDiagramName"
-                  focus.one-time="true"
-                  placeholder="Definition Name">
-
-                <small id="processDefinitionNameHelp" class="form-text text-muted">
-                  This will set the Process Definition Name for the new diagram.
-                </small>
-              </form>
-            </div>
-            <div class="modal-footer">
-              <button type="button"
-                class="btn btn-danger"
-                data-dismiss="modal"
-                click.delegate="cancelImport()">Cancel</button>
-
-              <button type="button"
-                class="btn btn-success"
-                click.delegate="importNewDiagram()">Confirm</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Modal Gray Bacground {{{ -->
-      <div class="modal-backdrop fade in"></div>
-      <!-- }}} Modal Gray Bacground -->
-    </div>
-    <!-- }}} Import Dialog -->
-    <!-- Overwrite Dialog {{{ -->
-    <div if.bind="showOverwriteDialog">
-      <div class="modal  fade in show" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-dialog__headline">Diagram already exists!</h1>
-            </div>
-            <div class="modal-body process-def-list__modal-body">
-              A diagram with that name is already imported. Hit Cancel to change the name.
-              Hit Overwrite! to save anyway and discard the old diagram.
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-danger" data-dismiss="modal"
-                click.delegate="changeNewDiagramName()">Cancel</button>
-              <button type="button" class="btn btn-warning"
-                click.delegate="overwriteDiagram()">Overwrite!</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- Modal Gray Bacground {{{ -->
-      <div class="modal-backdrop fade in"></div>
-      <!-- }}} Modal Gray Bacground -->
-    </div>
-    <!-- }}} Overwrite Dialog -->
-    <!-- }}} Modal dialog for importing BPMN diagrams -->
     <div class="processdef-list-container">
-      <div show.bind="_processes">
-        <a class="btn btn-success processdef-list__btn-create" click.delegate="createProcess()">
-          <i class="fa fa-magic"></i> Create Process Definition
-        </a>
-        <a class="btn btn-primary processdef-list__btn-import" click.delegate="fileInput.click()">
-          <i class="fa fa-download"></i> Import BPMN
-        </a>
-        <input type="file" ref="fileInput" accept=".xml,.bpmn" files.bind="selectedFiles" class="hidden">
-        <table class="table table-striped table-bordered">
+      <div show.bind="allProcessModels">
+        <input type="file" ref="fileInput" accept=".xml, application/xml, .bpmn, application/bpmn20-xml" files.bind="selectedFiles" class="hidden">
+        <table class="table table-striped table-bordered process-def-list-table">
           <tr>
-            <th>Process Definition Name</th>
-            <!-- TODO: Drop the Id; it does not seem usefull -->
-            <th>Process Definition Id</th>
-            <th></th>
+            <th>Process Name</th>
           </tr>
-          <tr repeat.for="process of processes" id="processDef">
-            <td>${process.name}</td>
-            <td>${process.id}</td>
-            <td>
-              <button click.delegate="startProcess(process.id)" class="btn btn-success">Start</button>
-              <button click.delegate="showDetails(process.id)" class="btn btn-primary" id="processDefDetailsButton">Details</button>
-            </td>
+          <tr repeat.for="process of allProcessModels" id="processDef">
+            <td class="process-name-table-entry" title="${process.id}" click.delegate="showDetails(process.id)">${process.id}</td>
           </tr>
         </table>
         <div class="col-md-12 col-xs-12 pagination">
@@ -104,10 +21,9 @@
           </aubs-pagination>
         </div>
       </div>
-      <div show.bind="!_processes" class="container">
+      <div show.bind="!allProcessModels" class="container">
         <img src="src/resources/images/gears.svg" class="loading-spinner">
       </div>
     </div>
   </div>
-    <!-- }}} TODO: Refactor this - put into a component -->
 </template>

@@ -4,7 +4,12 @@
   <div class="section-panel panel--grow">
     <div class="panel__heading">
       Error Event
-      <button class="add-context-button" click.delegate="addError()">+</button>
+      <button class="remove-context-button" disabled.bind="!selectedId" click.delegate="removeSelectedError()">
+        <i class="fas fa-trash"></i>
+      </button>
+      <button class="add-context-button" click.delegate="addError()">
+        <i class="fas fa-plus"></i>
+      </button>
     </div>
     <div class="panel__content">
       <table class="props-table">
@@ -19,14 +24,11 @@
           </td>
         </tr>
       </table>
-      <table show.bind="selectedId" class="props-table probs-table--details">
+      <table show.bind="selectedId" class="props-table">
         <tr>
           <th>Name</th>
           <td>
             <input type="text" class="props-input" value.bind="selectedError.name" change.delegate="updateErrorName()">
-          </td>
-          <td>
-            <span class="glyphicon glyphicon-remove-circle props-table--clear-button" click.delegate="clearName()"></span>
           </td>
         </tr>
         <tr>
@@ -34,17 +36,11 @@
           <td>
             <input type="text" class="props-input" value.bind="selectedError.errorCode" change.delegate="updateErrorCode()">
           </td>
-          <td>
-            <span class="glyphicon glyphicon-remove-circle props-table--clear-button" click.delegate="clearCode()"></span>
-          </td>
         </tr>
         <tr>
           <th>Message</th>
           <td>
             <input type="text" class="props-input" value.bind="errorMessageVariable" change.delegate="updateErrorMessage()">
-          </td>
-          <td>
-            <span class="glyphicon glyphicon-remove-circle props-table--clear-button" click.delegate="clearMessage()"></span>
           </td>
         </tr>
       </table>

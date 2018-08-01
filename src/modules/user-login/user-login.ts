@@ -1,80 +1,76 @@
-import {bindable, computedFrom, inject} from 'aurelia-framework';
-import {IAuthenticationService, IIdentity} from '../../contracts/index';
+import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
+import {bindable, bindingMode, computedFrom, inject} from 'aurelia-framework';
 
-@inject('AuthenticationService')
+import {AuthenticationStateEvent, IAuthenticationService, IIdentity, NotificationType} from '../../contracts/index';
+import {NotificationService} from './../notification/notification.service';
+
+@inject('AuthenticationService', EventAggregator, 'NotificationService')
 export class UserLogin {
 
-  private authenticationService: IAuthenticationService;
-  private dropdown: HTMLLIElement;
-  private windowClickListener: (event: MouseEvent) => void;
-  @bindable()
-  private username: string;
-  @bindable()
-  private password: string;
-  @bindable()
-  private loginError: string;
+  private _authenticationService: IAuthenticationService;
+  private _eventAggregator: EventAggregator;
+  private _notificationService: NotificationService;
+  private _subscriptions: Array<Subscription>;
 
-  constructor(authenticationService: IAuthenticationService) {
-    this.authenticationService = authenticationService;
-    this.windowClickListener = (event: MouseEvent): void => {
-      const node: Node = event.target as Node;
-      if (this.dropdown.contains(node)) {
-        return;
-      }
-      this.closeDropdown();
-    };
+  @bindable({ defaultBindingMode: bindingMode.oneWay })
+  public identity: IIdentity | null = null;
+
+  @computedFrom('identity')
+  public get isLoggedIn(): boolean {
+    return this.identity !== null && this.identity !== undefined;
   }
 
-  public get hasValidInput(): boolean {
-    const validUsername: boolean = this.username !== null && this.username !== undefined && this.username !== '';
-    const validPassword: boolean = this.password !== null && this.password !== undefined && this.password !== '';
-    return validUsername && validPassword;
+  @computedFrom('identity')
+  public get username(): string {
+    if (!this.identity) {
+      return '';
+    }
+
+    if (!this.identity.given_name || !this.identity.family_name) {
+      return this.identity.name;
+    }
+
+    const fullName: string = `${this.identity.given_name} ${this.identity.family_name}`;
+
+    return fullName;
+  }
+
+  constructor(authenticationService: IAuthenticationService,
+              eventAggregator: EventAggregator,
+              notificationService: NotificationService) {
+
+    this._authenticationService = authenticationService;
+    this._eventAggregator = eventAggregator;
+    this._notificationService = notificationService;
+  }
+
+  public async attached(): Promise<void> {
+    this._subscriptions = [
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
+        this.identity = null;
+      }),
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, (identity: IIdentity) => {
+        this.identity = identity;
+      }),
+    ];
+    this.identity = await this._authenticationService.getIdentity();
+  }
+
+  public detached(): void {
+    for (const subscription of this._subscriptions) {
+      subscription.dispose();
+    }
   }
 
   public async login(): Promise<void> {
     try {
-      await this.authenticationService.login(this.username, this.password);
-      this.closeDropdown();
-      this.username = null;
-      this.password = null;
-      this.loginError = null;
+      await this._authenticationService.login();
     } catch (error) {
-      this.loginError = error.message;
+      this._notificationService.showNotification(NotificationType.ERROR, error.message);
     }
   }
 
-  public logout(): void {
-    this.authenticationService.logout();
-    this.closeDropdown();
-  }
-
-  public toggleDropdown(): void {
-    if (this.dropdown.classList.contains('open')) {
-      this.closeDropdown();
-    } else {
-      this.openDropdown();
-    }
-  }
-
-  public openDropdown(): void {
-    this.dropdown.classList.add('open');
-    setTimeout(() => {
-      window.addEventListener('click', this.windowClickListener);
-    });
-  }
-
-  public closeDropdown(): void {
-    this.dropdown.classList.remove('open');
-    window.removeEventListener('click', this.windowClickListener);
-  }
-
-  @computedFrom('authenticationService.tokenRepository.token')
-  public get isLoggedIn(): boolean {
-    return this.authenticationService.hasToken();
-  }
-
-  @computedFrom('isLoggedIn')
-  public get identity(): IIdentity {
-    return this.authenticationService.getIdentity();
+  public logout(): Promise<void> {
+    return this._authenticationService.logout();
   }
 }

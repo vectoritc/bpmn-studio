@@ -1,49 +1,132 @@
-import {BpmnStudioClient, IUserTaskConfig} from '@process-engine/bpmn-studio_client';
+import {
+  Correlation,
+  IManagementApiService,
+  ManagementContext,
+  UserTask,
+  UserTaskList,
+} from '@process-engine/management_api_contracts';
 import {inject} from 'aurelia-framework';
-import {Router} from 'aurelia-router';
-import {NotificationType} from './../../contracts/index';
-import {NotificationService} from './../notification/notification.service';
+import {activationStrategy, Router} from 'aurelia-router';
+import {IAuthenticationService, NotificationType} from '../../contracts/index';
+import environment from '../../environment';
+import {NotificationService} from '../notification/notification.service';
 
-@inject(Router, 'BpmnStudioClient', 'NotificationService')
+interface RouteParameters {
+  correlationId: string;
+}
+
+@inject(Router, 'NotificationService', 'AuthenticationService', 'ManagementApiClientService')
 export class WaitingRoom {
 
-  private router: Router;
-  private bpmnStudioClient: BpmnStudioClient;
-  private processInstanceId: string;
-  private notificationService: NotificationService;
+  private _router: Router;
+  private _correlationId: string;
+  private _notificationService: NotificationService;
+  private _authenticationService: IAuthenticationService;
+  private _managementApiClient: IManagementApiService;
+  private _pollingTimer: NodeJS.Timer;
 
-  constructor(router: Router, bpmnStudioClient: BpmnStudioClient, notificationService: NotificationService) {
-    this.router = router;
-    this.bpmnStudioClient = bpmnStudioClient;
-    this.notificationService = notificationService;
+  constructor(router: Router,
+              notificationService: NotificationService,
+              authenticationService: IAuthenticationService,
+              managementApiClient: IManagementApiService) {
+
+    this._router = router;
+    this._notificationService = notificationService;
+    this._authenticationService = authenticationService;
+    this._managementApiClient = managementApiClient;
   }
 
-  private renderUserTaskCallback: any = (userTaskConfig: IUserTaskConfig): void => {
-    this.notificationService.showNotification(NotificationType.SUCCESS, 'Process continued');
-    if (userTaskConfig.userTaskEntity.process.id === this.processInstanceId) {
-      this.router.navigate(`/task/${userTaskConfig.id}/dynamic-ui`);
-      this.bpmnStudioClient.off('renderUserTask', this.renderUserTaskCallback);
-    }
+  public activate(routeParameters: RouteParameters): void {
+    this._correlationId = routeParameters.correlationId;
   }
 
-  private processEndCallback: any = (processInstanceId: string): void => {
-    this.notificationService.showNotification(NotificationType.WARNING, 'Process stopped');
-    if (processInstanceId === this.processInstanceId) {
-      this.router.navigate('task');
-      this.bpmnStudioClient.off('processEnd', this.processEndCallback);
-    }
+  public attached(): void {
+    this._startPolling();
   }
 
-  public activate(routeParameters: {processInstanceId: string}): void {
-    this.processInstanceId = routeParameters.processInstanceId;
+  public detached(): void {
+    this._stopPolling();
+  }
 
-    this.bpmnStudioClient.on('processEnd', this.processEndCallback);
-    this.bpmnStudioClient.on('renderUserTask', this.renderUserTaskCallback);
+  public determineActivationStrategy(): string {
+    return activationStrategy.replace;
   }
 
   public navigateToTaskList(): void {
-    this.router.navigate('task');
-    this.bpmnStudioClient.off('processEnd', this.processEndCallback);
-    this.bpmnStudioClient.off('renderUserTask', this.renderUserTaskCallback);
+    this._router.navigateToRoute('task-list-correlation', {
+      correlationId: this._correlationId,
+    });
+  }
+
+  private async _startPolling(): Promise<void> {
+    this._pollingTimer = setTimeout(async() => {
+      const noUserTaskFound: boolean = await this._pollUserTasksForCorrelation();
+      const correlationIsStillActive: boolean = await this._pollIsCorrelationStillActive();
+
+      if (noUserTaskFound && correlationIsStillActive) {
+        this._startPolling();
+      }
+    }, environment.processengine.pollingIntervalInMs);
+  }
+
+  private _stopPolling(): void {
+    clearTimeout(this._pollingTimer);
+  }
+
+  private async _pollUserTasksForCorrelation(): Promise<boolean> {
+
+    const managementContext: ManagementContext = this._getManagementContext();
+    const userTasksForCorrelation: UserTaskList = await this._managementApiClient.getUserTasksForCorrelation(managementContext,
+                                                                                                             this._correlationId);
+
+    const userTaskListHasNoUserTask: boolean = userTasksForCorrelation.userTasks.length <= 0;
+    if (userTaskListHasNoUserTask) {
+      return false;
+    }
+
+    const nextUserTask: UserTask = userTasksForCorrelation.userTasks[0];
+
+    this._renderUserTaskCallback(nextUserTask);
+    return true;
+  }
+
+  private async _pollIsCorrelationStillActive(): Promise<boolean> {
+
+    const managementContext: ManagementContext = this._getManagementContext();
+    const allActiveCorrelations: Array<Correlation> = await this._managementApiClient.getAllActiveCorrelations(managementContext);
+
+    const correlationIsNotActive: boolean = !allActiveCorrelations.some((activeCorrelation: Correlation) => {
+      return activeCorrelation.id === this._correlationId;
+    });
+
+    if (correlationIsNotActive) {
+      this._correlationEndCallback(this._correlationId);
+    }
+
+    return !correlationIsNotActive;
+  }
+
+  private _renderUserTaskCallback(userTask: UserTask): void {
+    this._notificationService.showNotification(NotificationType.SUCCESS, 'Process continued.');
+
+    this._router.navigateToRoute('task-dynamic-ui', {
+      processModelId: userTask.processModelId,
+      userTaskId: userTask.id,
+    });
+  }
+
+  private _correlationEndCallback: ((correlationId: string) => void) = (correlationId: string): void => {
+    this._notificationService.showNotification(NotificationType.INFO, 'Process stopped.');
+
+    this._router.navigateToRoute('dashboard');
+  }
+
+  private _getManagementContext(): ManagementContext {
+    const accessToken: string = this._authenticationService.getAccessToken();
+    const context: ManagementContext = {
+      identity: accessToken,
+    };
+
+    return context;
   }
 }

@@ -1,3 +1,5 @@
+import {EventAggregator} from 'aurelia-event-aggregator';
+import {inject} from 'aurelia-framework';
 import {
   IBpmnModdle,
   IBpmnModeler,
@@ -6,6 +8,7 @@ import {
   ISection,
   IShape,
 } from '../../../../../../contracts';
+import environment from '../../../../../../environment';
 
 enum TimerType {
   Date,
@@ -13,31 +16,60 @@ enum TimerType {
   Cycle,
 }
 
+@inject(EventAggregator)
 export class TimerEventSection implements ISection {
 
   public path: string = '/sections/timer-event/timer-event';
   public canHandleElement: boolean = false;
-
-  private businessObjInPanel: IModdleElement;
-  private moddle: IBpmnModdle;
-  private modeler: IBpmnModeler;
-
   public timerElement: IModdleElement;
   public TimerType: typeof TimerType = TimerType;
   public timerType: TimerType;
 
-  public activate(model: IPageModel): void {
-    this.businessObjInPanel = model.elementInPanel.businessObject;
+  private _businessObjInPanel: IModdleElement;
+  private _moddle: IBpmnModdle;
+  private _eventAggregator: EventAggregator;
 
-    this.moddle = model.modeler.get('moddle');
-    this.modeler = model.modeler;
+  constructor(eventAggregator?: EventAggregator) {
+    this._eventAggregator = eventAggregator;
+  }
+
+  public activate(model: IPageModel): void {
+    this._businessObjInPanel = model.elementInPanel.businessObject;
+
+    this._moddle = model.modeler.get('moddle');
     this.timerElement = this._getTimerElement();
 
     this._init();
   }
 
+  public isSuitableForElement(element: IShape): boolean {
+    return element !== undefined
+        && element.businessObject !== undefined
+        && element.businessObject.eventDefinitions !== undefined
+        && element.businessObject.eventDefinitions[0].$type === 'bpmn:TimerEventDefinition';
+  }
+
+  public updateTimerType(): void {
+    const moddleElement: IModdleElement = this._moddle.create('bpmn:FormalExpression', {body: this.timerElement.body});
+    const timerTypeObject: Object = {
+      timeDate: (this.timerType === TimerType.Date) ? moddleElement : undefined,
+      timeDuration: (this.timerType === TimerType.Duration) ? moddleElement : undefined,
+      timeCycle: (this.timerType === TimerType.Cycle) ? moddleElement : undefined,
+    };
+
+    Object.assign(this._businessObjInPanel.eventDefinitions[0], timerTypeObject);
+    this.timerElement.body = '';
+    this._publishDiagramChange();
+  }
+
+  public updateTimerDefinition(): void {
+    const timeElement: IModdleElement = this._getTimerElement();
+    timeElement.body = this.timerElement.body;
+    this._publishDiagramChange();
+  }
+
   private _init(): void {
-    const {timeDate, timeDuration, timeCycle} = this.businessObjInPanel.eventDefinitions[0];
+    const {timeDate, timeDuration, timeCycle} = this._businessObjInPanel.eventDefinitions[0];
 
     if ((timeDate === undefined)
         && (timeDuration === undefined)
@@ -62,7 +94,7 @@ export class TimerEventSection implements ISection {
   }
 
   private _getTimerElement(): IModdleElement {
-    const {timeDuration, timeDate, timeCycle} = this.businessObjInPanel.eventDefinitions[0];
+    const {timeDuration, timeDate, timeCycle} = this._businessObjInPanel.eventDefinitions[0];
 
     if (timeDuration !== undefined) {
        return timeDuration;
@@ -74,35 +106,12 @@ export class TimerEventSection implements ISection {
       return timeCycle;
     }
 
-    const timerEventDefinition: IModdleElement = this.moddle.create('bpmn:FormalExpression', {body: ''});
+    const timerEventDefinition: IModdleElement = this._moddle.create('bpmn:FormalExpression', {body: ''});
     return timerEventDefinition;
   }
 
-  public isSuitableForElement(element: IShape): boolean {
-    return element !== undefined
-        && element.businessObject !== undefined
-        && element.businessObject.eventDefinitions !== undefined
-        && element.businessObject.eventDefinitions[0].$type === 'bpmn:TimerEventDefinition';
+  private _publishDiagramChange(): void {
+    this._eventAggregator.publish(environment.events.diagramChange);
   }
 
-  public updateTimerType(): void {
-    const moddleElement: IModdleElement = this.moddle.create('bpmn:FormalExpression', {body: this.timerElement.body});
-    const timerTypeObject: Object = {
-      timeDate: (this.timerType === TimerType.Date) ? moddleElement : undefined,
-      timeDuration: (this.timerType === TimerType.Duration) ? moddleElement : undefined,
-      timeCycle: (this.timerType === TimerType.Cycle) ? moddleElement : undefined,
-    };
-
-    Object.assign(this.businessObjInPanel.eventDefinitions[0], timerTypeObject);
-    this.timerElement.body = '';
-  }
-
-  public updateTimerDefinition(): void {
-    const timeElement: IModdleElement = this._getTimerElement();
-    timeElement.body = this.timerElement.body;
-  }
-
-  public clearDefinition(): void {
-    this.timerElement.body = '';
-  }
 }

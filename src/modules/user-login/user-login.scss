@@ -1,25 +1,34 @@
-.user-profile-image {
-  height: 20px;
-  border-radius: 50%;
-}
-
-.user-profile-dropdown {
-  top: 27px;
-  right: -16px;
-  width: 250px;
+.user-login-dropdown {
+  position: absolute;  
+  top: 38px;  
+  right: 33px;
+  z-index: 1;
+  background-color: whitesmoke;
   border: 2px solid #dcdbdb;
   border-radius: 0;
 }
 
-.user-profile-dropdown-content {
+.user-login-dropdown__content {
   padding: 10px;
 }
 
-.user-login a {
- color: #5c5c5c;
+.user-login {
+  color: #5c5c5c;
+  white-space: nowrap;
 }
 
-.dropdown-toggle--user-login {
+.user-login-dropdown__toggle {
   padding: 13px;
   cursor: pointer;
+}
+
+.custom-button {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  background-color: white;
+  border: 1px solid darkgray;
+}
+
+.custom-button:focus {
+  border-color: black;
 }

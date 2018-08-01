@@ -129,6 +129,17 @@
           "aurelia-templating-binding",
           "text",
           {
+            "name": "aurelia-open-id-connect",
+            "main": "index.js",
+            "path": "../node_modules/aurelia-open-id-connect/dist/amd",
+            "resources": [
+              "open-id-connect-user-block.html",
+              "open-id-connect-user-debug.html",
+              "open-id-connect.js"
+            ]
+          },
+          "oidc-client",
+          {
             "name": "aurelia-templating-resources",
             "path": "../node_modules/aurelia-templating-resources/dist/amd",
             "main": "aurelia-templating-resources"
@@ -180,17 +191,12 @@
             "exports": "Faye"
           },
           {
-            "name": "font-awesome",
-            "path": "../node_modules/font-awesome",
-            "main": "css/font-awesome.min.css",
+            "name": "@fortawesome/fontawesome-free",
+            "path": "../node_modules/@fortawesome/fontawesome-free",
+            "main": "css/all.css",
             "resources": [
-              "css/font-awesome.min.css"
+              "css/all.css"
             ]
-          },
-          {
-            "name": "@process-engine/bpmn-studio_client",
-            "path": "../node_modules/@process-engine/bpmn-studio_client/dist/amd",
-            "main": "index.js"
           },
           {
             "name": "addict-ioc",
@@ -248,22 +254,6 @@
             ]
           },
           {
-            "name": "canvg-browser",
-            "path": "../node_modules/canvg-browser",
-            "main": "index.js",
-            "exports": "canvg"
-          },
-          {
-            "name": "rgbcolor",
-            "path": "../node_modules/rgbcolor",
-            "main": "index.js"
-          },
-          {
-            "name": "stackblur",
-            "path": "../node_modules/stackblur",
-            "main": "index.js"
-          },
-          {
             "name": "xmldom",
             "path": "../node_modules/xmldom",
             "main": "dom-parser.js"
@@ -308,6 +298,69 @@
             "resources": [
               "styles/*.css"
             ]
+          },
+          {
+            "name": "print-js",
+            "main": "dist/print.min.js",
+            "path": "../node_modules/print-js"
+          },
+          {
+            "name": "@essential-projects/errors_ts",
+            "main": "index.js",
+            "path": "../node_modules/@essential-projects/errors_ts/dist/amd"
+          },
+          {
+            "name": "fs",
+            "path": "../aurelia_project/native/fs"
+          },
+          {
+            "name": "path",
+            "path": "../aurelia_project/native/path"
+          },
+          {
+            "name": "util",
+            "path": "../aurelia_project/native/util"
+          },
+          {
+            "name": "@process-engine/solutionexplorer.repository.filesystem",
+            "main": "index.js",
+            "path": "../node_modules/@process-engine/solutionexplorer.repository.filesystem/dist/amd"
+          },
+          {
+            "name": "@process-engine/solutionexplorer.repository.management_api",
+            "main": "index.js",
+            "path": "../node_modules/@process-engine/solutionexplorer.repository.management_api/dist/amd"
+          },
+          {
+            "name": "@process-engine/solutionexplorer.service",
+            "path": "../node_modules/@process-engine/solutionexplorer.service/dist/amd",
+            "main": "index.js"
+          },
+          {
+            "name": "@process-engine/consumer_api_contracts",
+            "path": "../node_modules/@process-engine/consumer_api_contracts/dist/amd",
+            "main": "index.js"
+          },
+          {
+            "name": "@process-engine/management_api_contracts",
+            "path": "../node_modules/@process-engine/management_api_contracts/dist/amd",
+            "main": "index.js",
+            "deps":[
+              "@process-engine/consumer_api_contracts"
+            ]
+          },
+          {
+            "name": "@process-engine/management_api_client",
+            "path": "../node_modules/@process-engine/management_api_client/dist/amd",
+            "main": "index.js",
+            "deps":[
+              "@process-engine/consumer_api_contracts"
+            ]
+          },
+          {
+            "name": "bpmn-js-differ",
+            "main": "dist/index.cjs.js",
+            "path": "../node_modules/bpmn-js-differ"
           }
         ]
       }
@@ -316,8 +369,15 @@
       "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2": "bootstrap/fonts",
       "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff": "bootstrap/fonts",
       "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf": "bootstrap/fonts",
+      "node_modules/bootstrap/dist/css/bootstrap.css": "bootstrap/css",
+      "node_modules/bootstrap/dist/css/bootstrap-theme.css": "bootstrap/css",
       "src/resources/images/default-avatar.png": "src/resources/images",
-      "node_modules/font-awesome/fonts/fontawesome-webfont.woff2": "fonts"
+      "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf": "@fortawesome/fontawesome-free/webfonts",
+      "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff": "@fortawesome/fontawesome-free/webfonts",
+      "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2": "@fortawesome/fontawesome-free/webfonts",
+      "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.ttf": "@fortawesome/fontawesome-free/webfonts",
+      "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff": "@fortawesome/fontawesome-free/webfonts",
+      "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2": "@fortawesome/fontawesome-free/webfonts"
     }
   }
 }

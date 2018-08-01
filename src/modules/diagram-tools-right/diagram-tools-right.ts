@@ -2,10 +2,13 @@ import {bindable, inject} from 'aurelia-framework';
 import environment from '../../environment';
 
 import * as spectrum from 'spectrum-colorpicker';
+import 'spectrum-colorpicker/spectrum';
 
-import {ElementDistributeOptions,
+import {defaultBpmnColors,
+        ElementDistributeOptions,
         IBpmnFunction,
         IBpmnModeler,
+        IColorPickerColor,
         IColorPickerSettings,
         IModdleElement,
         IModeling,
@@ -22,9 +25,9 @@ export class DiagramToolsRight {
   public colorPickerBorder: HTMLInputElement;
   public colorPickerFill: HTMLInputElement;
   public colorPickerLoaded: boolean = false;
+  public fillColor: string;
+  public borderColor: string;
 
-  private _fillColor: string;
-  private _borderColor: string;
   private _notificationService: NotificationService;
 
   constructor(notificationService: NotificationService) {
@@ -34,34 +37,39 @@ export class DiagramToolsRight {
   public detached(): void {
     $(this.colorPickerBorder).spectrum('destroy');
     $(this.colorPickerFill).spectrum('destroy');
+
+    window.localStorage.removeItem('borderColors');
+    window.localStorage.removeItem('fillColors');
   }
 
   public setColorRed(): void {
-    this._setColor('#FFCDD2', '#E53935');
+    this._setColor(defaultBpmnColors.red);
   }
 
   public setColorBlue(): void {
-    this._setColor('#BBDEFB', '#1E88E5');
-  }
-
-  public setColorOrange(): void {
-    this._setColor('#FFE0B2', '#FB8C00');
+    this._setColor(defaultBpmnColors.blue);
   }
 
   public setColorGreen(): void {
-    this._setColor('#C8E6C9', '#43A047');
+    this._setColor(defaultBpmnColors.green);
   }
 
   public setColorPurple(): void {
-    this._setColor('#E1BEE7', '#8E24AA');
+    this._setColor(defaultBpmnColors.purple);
+  }
+
+  public setColorOrange(): void {
+    this._setColor(defaultBpmnColors.orange);
   }
 
   public removeColor(): void {
-    this._setColor(null, null);
+    this._setColor(defaultBpmnColors.none);
   }
 
   public setPickedColor(): void {
-    this._setColor(this._fillColor, this._borderColor);
+    const customColor: IColorPickerColor = {fill: this.fillColor, border: this.borderColor};
+
+    this._setColor(customColor);
   }
 
   public updateCustomColors(): void {
@@ -69,10 +77,10 @@ export class DiagramToolsRight {
       this._activateColorPicker();
     }
 
-    [this._fillColor, this._borderColor] = this._getColors();
+    [this.fillColor, this.borderColor] = this._getColors();
 
-    $(this.colorPickerFill).spectrum('set', this._fillColor);
-    $(this.colorPickerBorder).spectrum('set', this._borderColor);
+    $(this.colorPickerFill).spectrum('set', this.fillColor);
+    $(this.colorPickerBorder).spectrum('set', this.borderColor);
   }
 
   public distributeElementsVertically(): void {
@@ -83,23 +91,25 @@ export class DiagramToolsRight {
     this._distributeElementsHorizontally();
   }
 
-  private _setColor(fillColor: string, strokeColor: string): void {
+  private _setColor(color: IColorPickerColor): void {
     const modeling: IModeling = this.modeler.get('modeling');
 
     const selectedElements: Array<IShape> = this._getSelectedElements();
 
-    const isNoValidElement: boolean = selectedElements.length < 1
+    const elementIsNotValid: boolean = selectedElements.length < 1
                                     || selectedElements.length === 1
                                     && selectedElements[0].$type === 'bpmn:Collaboration';
 
-    if (isNoValidElement) {
-      this._notificationService.showNotification(NotificationType.ERROR, 'Error while changing the color: No valid element was selected.');
+    if (elementIsNotValid) {
+      const notificationMessage: string = 'Unable to apply color. Please select an element and use the color picker again.';
+      this._notificationService.showNotification(NotificationType.INFO, notificationMessage);
+
       return;
     }
 
     modeling.setColor(selectedElements, {
-      fill: fillColor,
-      stroke: strokeColor,
+      fill: color.fill,
+      stroke: color.border,
     });
   }
 
@@ -145,22 +155,59 @@ export class DiagramToolsRight {
   }
 
   private _activateColorPicker(): void {
+    window.localStorage.removeItem('borderColors');
+    window.localStorage.removeItem('fillColors');
+
+    // Colorpicker bordercolor
     const borderMoveSetting: spectrum.Options = {
       move: (borderColor: spectrum.tinycolorInstance): void => {
         this._updateBorderColor(borderColor);
       },
     };
 
-    const colorPickerBorderSettings: IColorPickerSettings = Object.assign({}, environment.colorPickerSettings, borderMoveSetting);
+    const borderLocalStorageKey: spectrum.Options = { localStorageKey: 'borderColors' };
+
+    const borderDefaultColors: Array<string> = [defaultBpmnColors.red.border,
+                                                defaultBpmnColors.blue.border,
+                                                defaultBpmnColors.green.border,
+                                                defaultBpmnColors.purple.border,
+                                                defaultBpmnColors.orange.border];
+
+    const borderDefaultPalette: spectrum.Options = { palette: borderDefaultColors };
+
+    const colorPickerBorderSettings: IColorPickerSettings = Object.assign({},
+      environment.colorPickerSettings,
+      borderDefaultPalette,
+      borderLocalStorageKey,
+      borderMoveSetting);
+
     $(this.colorPickerBorder).spectrum(colorPickerBorderSettings);
 
+    // Colorpicker fillcolor
     const fillMoveSetting: spectrum.Options = {
       move: (fillColor: spectrum.tinycolorInstance): void => {
         this._updateFillColor(fillColor);
       },
     };
 
-    const colorPickerFillSettings: IColorPickerSettings = Object.assign({}, environment.colorPickerSettings, fillMoveSetting);
+    const fillLocalStorageKey: spectrum.Options = { localStorageKey: 'fillColors' };
+
+    const fillDefaultColors: Array<string> = [defaultBpmnColors.red.fill,
+                                              defaultBpmnColors.blue.fill,
+                                              defaultBpmnColors.green.fill,
+                                              defaultBpmnColors.purple.fill,
+                                              defaultBpmnColors.orange.fill];
+
+    const fillDefaultPalette: spectrum.Options = { palette: fillDefaultColors };
+
+    const colorPickerFillSettings: IColorPickerSettings = Object.assign(
+      {},
+      environment.colorPickerSettings,
+      fillDefaultPalette,
+      fillLocalStorageKey,
+      fillMoveSetting,
+    );
+
     $(this.colorPickerFill).spectrum(colorPickerFillSettings);
 
     this.colorPickerLoaded = true;
@@ -168,9 +215,9 @@ export class DiagramToolsRight {
 
   private _updateFillColor(fillColor: spectrum.tinycolorInstance): void {
     if (fillColor) {
-      this._fillColor = fillColor.toHexString();
+      this.fillColor = fillColor.toHexString();
     } else {
-      this._fillColor = undefined;
+      this.fillColor = undefined;
     }
 
     this.setPickedColor();
@@ -178,9 +225,9 @@ export class DiagramToolsRight {
 
   private _updateBorderColor(borderColor: spectrum.tinycolorInstance): void {
     if (borderColor) {
-      this._borderColor = borderColor.toHexString();
+      this.borderColor = borderColor.toHexString();
     } else {
-      this._borderColor = undefined;
+      this.borderColor = undefined;
     }
 
     this.setPickedColor();

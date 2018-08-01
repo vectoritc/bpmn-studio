@@ -1,195 +1,396 @@
-import {BpmnStudioClient} from '@process-engine/bpmn-studio_client';
-import {IProcessDefEntity} from '@process-engine/process_engine_contracts';
-import {bindingMode} from 'aurelia-binding';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {bindable, computedFrom, inject} from 'aurelia-framework';
-import {Router} from 'aurelia-router';
+import {inject} from 'aurelia-framework';
+import {activationStrategy, Redirect, Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
-import * as canvg from 'canvg-browser';
-import * as download from 'downloadjs';
-import * as beautify from 'xml-beautifier';
+
+import {
+  Event,
+  EventList,
+  IManagementApiService,
+  ManagementContext,
+  ProcessModelExecution,
+} from '@process-engine/management_api_contracts';
+
 import {
   AuthenticationStateEvent,
-  ElementDistributeOptions,
+  IAuthenticationService,
   IExtensionElement,
   IFormElement,
   IModdleElement,
-  IProcessEngineService,
   IShape,
   NotificationType,
 } from '../../contracts/index';
 import environment from '../../environment';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
-import {NotificationService} from './../notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 
 interface RouteParameters {
-  processDefId: string;
+  processModelId: string;
 }
 
-@inject('ProcessEngineService', EventAggregator, 'BpmnStudioClient', Router, ValidationController, 'NotificationService')
+@inject(
+  EventAggregator,
+  Router,
+  ValidationController,
+  'NotificationService',
+  'AuthenticationService',
+  'ManagementApiClientService')
 export class ProcessDefDetail {
 
-  private processEngineService: IProcessEngineService;
-  private notificationService: NotificationService;
-  private eventAggregator: EventAggregator;
-  private subscriptions: Array<Subscription>;
-  private processId: string;
-  private _process: IProcessDefEntity;
-  private bpmn: BpmnIo;
-  private startButtonDropdown: HTMLDivElement;
-  private startButton: HTMLButtonElement;
-  private saveButton: HTMLButtonElement;
-  private bpmnStudioClient: BpmnStudioClient;
-  private router: Router;
+  public bpmnio: BpmnIo;
+  public process: ProcessModelExecution.ProcessModel;
+  public showModal: boolean = false;
 
-  public validationController: ValidationController;
-  public validationError: boolean;
-  public solutionExplorerIsShown: boolean = false;
-  public xmlIsShown: boolean = false;
+  public processesStartEvents: Array<Event> = [];
+  public selectedStartEventId: string;
+  // TODO: Explain what dropdown this is and find a better name.
+  public dropdownMenu: HTMLSelectElement;
 
-  @bindable() public uri: string;
-  @bindable() public name: string;
-  @bindable() public startedProcessId: string;
-  @bindable({ defaultBindingMode: bindingMode.oneWay }) public initialLoadingFinished: boolean = false;
+  private _notificationService: NotificationService;
+  private _eventAggregator: EventAggregator;
+  private _subscriptions: Array<Subscription>;
+  private _processModelId: string;
+  private _router: Router;
+  private _diagramHasChanged: boolean = false;
+  private _validationController: ValidationController;
+  // TODO: Explain when this is set and by whom.
+  private _diagramIsInvalid: boolean = false;
+  // Used to control the modal view; shows the modal view for pressing the play button.
+  private _startButtonPressed: boolean = false;
+  private _authenticationService: IAuthenticationService;
+  private _managementApiClient: IManagementApiService;
 
-  constructor(processEngineService: IProcessEngineService,
-              eventAggregator: EventAggregator,
-              bpmnStudioClient: BpmnStudioClient,
+  constructor(eventAggregator: EventAggregator,
               router: Router,
               validationController: ValidationController,
-              notificationService: NotificationService) {
-    this.processEngineService = processEngineService;
-    this.eventAggregator = eventAggregator;
-    this.bpmnStudioClient = bpmnStudioClient;
-    this.router = router;
-    this.validationController = validationController;
-    this.notificationService = notificationService;
+              notificationService: NotificationService,
+              authenticationService: IAuthenticationService,
+              managementApiClient: IManagementApiService) {
+
+    this._eventAggregator = eventAggregator;
+    this._router = router;
+    this._validationController = validationController;
+    this._notificationService = notificationService;
+    this._authenticationService = authenticationService;
+    this._managementApiClient = managementApiClient;
   }
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
-    this.processId = routeParameters.processDefId;
-    await this.refreshProcess();
+    this._processModelId = routeParameters.processModelId;
+    this._diagramHasChanged = false;
+    await this._refreshProcess();
   }
 
   public attached(): void {
-    this.validationController.subscribe((event: ValidateEvent) => {
-      this.validateForm(event);
-    });
+    this._subscriptions = [
+      //#region Aurelia Event Subscriptions
+      // Aurelia will expose the ValidateEvent, we use this to check the BPMN in the modeler.
+      this._validationController.subscribe((event: ValidateEvent) => {
+        this._handleFormValidateEvents(event);
+      }),
 
-    this.subscriptions = [
-      this.eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
-        this.refreshProcess();
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
+        this._refreshProcess();
       }),
-      this.eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
-        this.refreshProcess();
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
+        this._refreshProcess();
       }),
-      this.eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
-        this.saveDiagram();
+      //#endregion
+
+      //#region Button Subscriptions
+
+      //#region Save Button Subscription
+      this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
+        this._saveDiagram()
+          .catch((error: Error) => {
+            this
+              ._notificationService
+              .showNotification(NotificationType.ERROR, `Error while saving the diagram: ${error.message}`);
+          });
       }),
-      this.eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, () => {
-        this.exportBPMN();
+      //#endregion
+
+      //#region Start Button Subscription
+      this._eventAggregator.subscribe(environment.events.processDefDetail.startProcess, () => {
+        this._showStartDialog();
       }),
-      this.eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, () => {
-        this.exportSVG();
+      //#endregion
+
+      //#endregion
+
+      //#region General Event Subscritions
+      this._eventAggregator.subscribe(environment.events.diagramChange, () => {
+        this._diagramHasChanged = true;
       }),
-      this.eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, () => {
-        this.exportPNG();
-      }),
-      this.eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, () => {
-        this.exportJPEG();
-      }),
-      this.eventAggregator.subscribe(environment.events.processDefDetail.startProcess, () => {
-        this.startProcess();
-      }),
-      this.eventAggregator.subscribe(environment.events.processDefDetail.toggleXMLView, () => {
-        this.toggleXMLView();
-      }),
+      //#endregion
+
     ];
 
-    this.eventAggregator.publish(environment.events.navBar.showTools, this.process);
-    this.eventAggregator.publish(environment.events.statusBar.showXMLButton);
+    this._eventAggregator.publish(environment.events.navBar.showTools, this.process);
+    this._eventAggregator.publish(environment.events.navBar.showStartButton);
+    this._eventAggregator.publish(environment.events.statusBar.showDiagramViewButtons);
+  }
+
+  public determineActivationStrategy(): string {
+    return activationStrategy.replace;
+  }
+
+  /**
+   * We implement canDeactivate() for the Aurelia Router, because we want to
+   * prevent the user from leaving the editor, if there are changes, that need
+   * to be saved.
+   *
+   * Basically, the Router will look for an implementation and execute this
+   * method. The Aurelia Router is not working properly at this moment, so we use a workaround to achieve this:
+   *
+   * We return a Promise with a redirection to the previous view!
+   * This will preserve the state and works as expected.
+   *
+   */
+  public async canDeactivate(): Promise<Redirect> {
+
+    const _modal: Promise<boolean> = new Promise((resolve: Function, reject: Function): void => {
+
+      if (!this._diagramHasChanged) {
+        resolve(true);
+
+      } else {
+
+        const modal: HTMLElement = this._startButtonPressed
+          ? document.getElementById('saveModalProcessStart')
+          : document.getElementById('saveModalLeaveView');
+
+        modal.classList.add('show-modal');
+
+        //#region register onClick handler
+        /* Do not save and leave */
+        const dontSaveButtonId: string = 'dontSaveButtonLeaveView';
+        document
+          .getElementById(dontSaveButtonId)
+          .addEventListener('click', () => {
+
+            modal.classList.remove('show-modal');
+
+            this._diagramHasChanged = false;
+
+            resolve(true);
+          });
+
+        /* Save and leave */
+        const saveButtonId: string = this._startButtonPressed
+          ? 'saveButtonProcessStart'
+          : 'saveButtonLeaveView';
+
+        document
+          .getElementById(saveButtonId)
+          .addEventListener('click', () => {
+
+            this
+              ._saveDiagram()
+              .catch((error: Error) => {
+                this._notificationService.showNotification(NotificationType.ERROR, `Unable to save the diagram: ${error.message}`);
+              });
+
+            modal.classList.remove('show-modal');
+
+            this._diagramHasChanged = false;
+            this._startButtonPressed = false;
+
+            resolve(true);
+          });
+
+        /* Stay, do not save */
+        const cancelButtonId: string = this._startButtonPressed
+          ? 'cancelButtonProcessStart'
+          : 'cancelButtonLeaveView';
+
+        document
+          .getElementById(cancelButtonId)
+          .addEventListener('click', () => {
+            modal.classList.remove('show-modal');
+
+            this._startButtonPressed = false;
+
+            resolve(false);
+          });
+        }
+        //#endregion
+    });
+
+    const result: boolean = await _modal;
+
+    // TODO: Extract Business Rule
+    if (result === false) {
+      /*
+       * As suggested in https://github.com/aurelia/router/issues/302, we use
+       * the router directly to navigate back, which results in staying on this
+       * component-- and this is the desired behaviour.
+       */
+      return new Redirect(this._router.currentInstruction.fragment, {trigger: false, replace: false});
+    }
   }
 
   public detached(): void {
-    for (const subscription of this.subscriptions) {
+    for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
 
-    this.eventAggregator.publish(environment.events.navBar.hideTools);
-    this.eventAggregator.publish(environment.events.statusBar.hideXMLButton);
+    this._eventAggregator.publish(environment.events.navBar.hideTools);
+    this._eventAggregator.publish(environment.events.navBar.hideStartButton);
+    this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
   }
 
-  private refreshProcess(): Promise<IProcessDefEntity> {
-    return this.processEngineService.getProcessDefById(this.processId)
-      .then((result: any) => {
-        if (result && !result.error) {
-          this._process = result;
+  public async startProcess(): Promise<void> {
 
-          this.eventAggregator.publish(environment.events.navBar.updateProcess, this._process);
-
-          return this._process;
-        } else {
-          this._process = null;
-          return result.error;
-        }
-    });
-  }
-
-  public startProcess(): void {
-    this.validateXML();
-    this.router.navigate(`processdef/${this.process.id}/start`);
-  }
-
-  public closeProcessStartDropdown(): void {
-    this.startButton.removeAttribute('disabled');
-  }
-
-  public deleteProcess(): void {
-    const deleteForReal: boolean = confirm('Are you sure you want to delete the process definition?');
-    if (!deleteForReal) {
+    if (this.selectedStartEventId === null) {
       return;
     }
-    this.processEngineService.deleteProcessDef(this.process.id)
-      .then(() => {
-        this._process = null;
-        this.router.navigate('');
-      })
-      .catch((error: Error) => {
-        this.notificationService.showNotification(NotificationType.ERROR, error.message);
-      });
-  }
 
-  @computedFrom('_process')
-  public get process(): IProcessDefEntity {
-    return this._process;
-  }
+    this._dropInvalidFormData();
 
-  public onModdlelImported(moddle: any, xml: string): void {
-    this.bpmn.xml = xml;
-  }
+    if (this._diagramIsInvalid) {
+      this
+        ._notificationService
+        .showNotification(
+          NotificationType.WARNING,
+          'Unable to start the process, because it is not valid. This could have something to do with your latest changes. Try to undo them.',
+        );
+      return;
+    }
 
-  public async saveDiagram(): Promise<void> {
-
-    this.validateXML();
+    const context: ManagementContext = this._getManagementContext();
+    const startRequestPayload: ProcessModelExecution.ProcessStartRequestPayload = {
+      inputValues: {},
+    };
 
     try {
-      const xml: string = await this.bpmn.getXML();
-      const response: any = await this.processEngineService.updateProcessDef(this.process, xml);
+      const response: ProcessModelExecution.ProcessStartResponsePayload = await this._managementApiClient
+        .startProcessInstance(context, this.process.id, this.selectedStartEventId, startRequestPayload, undefined, undefined);
 
-      if (response.error) {
-        this.notificationService.showNotification(NotificationType.ERROR, `Error while saving file: ${response.error}`);
-      } else if (response.result) {
-        this.notificationService.showNotification(NotificationType.SUCCESS, 'File saved.');
-      } else {
-        this.notificationService.showNotification(NotificationType.WARNING, `Unknown error: ${JSON.stringify(response)}`);
-      }
+      const correlationId: string = response.correlationId;
+
+      this._router.navigateToRoute('waiting-room', {
+        correlationId: correlationId,
+      });
     } catch (error) {
-      this.notificationService.showNotification(NotificationType.ERROR, `Error: ${error.message}`);
+      this.
+        _notificationService
+        .showNotification(
+          NotificationType.ERROR,
+          error.message,
+        );
     }
   }
 
-  private validateXML(): void {
-    const registry: Array<IShape> = this.bpmn.modeler.get('elementRegistry');
+  public cancelStartDialog(): void {
+    this.showModal = false;
+  }
+
+  /**
+   * Opens a modal dialog to ask the user, which StartEvent he want's to
+   * use to start the process.
+   *
+   * If there is only one startevent this method will select this startevent by
+   * default.
+   */
+  private async _showStartDialog(): Promise<void> {
+    await this._updateProcessStartEvents();
+
+    if (this.processesStartEvents.length === 1) {
+      this.selectedStartEventId = this.processesStartEvents[0].id;
+    }
+
+    this.showModal = true;
+  }
+
+  private async _refreshProcess(): Promise<ProcessModelExecution.ProcessModel> {
+    const context: ManagementContext = this._getManagementContext();
+
+    const updatedProcessModel: ProcessModelExecution.ProcessModel = await this._managementApiClient.getProcessModelById(context,
+                                                                                                                        this._processModelId);
+
+    this.process = updatedProcessModel;
+    this
+      ._eventAggregator
+      .publish(environment.events.navBar.updateProcess, this.process);
+
+    return updatedProcessModel;
+  }
+
+  private _getManagementContext(): ManagementContext {
+    const accessToken: string = this._authenticationService.getAccessToken();
+    const context: ManagementContext = {
+      identity: accessToken,
+    };
+
+    return context;
+  }
+
+  private async _updateProcessStartEvents(): Promise<void> {
+    const context: ManagementContext = this._getManagementContext();
+    const startEventResponse: EventList = await this._managementApiClient.getEventsForProcessModel(context, this.process.id);
+
+    this.processesStartEvents = startEventResponse.events;
+  }
+
+  /**
+   * This method will save the diagram by using the ProcessEngineService.
+   *
+   * The user will be notified, about the outcome of the operation. Errors will be
+   * reported reasonably and a success message will be emitted.
+   *
+   * Saving is not possible, if _diagramIsInvalid has been set to true.
+   *
+   * The source of the XML is the bmpn.io-modeler. It is used to extract the BPMN
+   * while saving; a validation is not executed here.
+   */
+  private async _saveDiagram(): Promise<void> {
+
+    this._dropInvalidFormData();
+
+    if (this._diagramIsInvalid) {
+      this
+        ._notificationService
+        .showNotification(
+          NotificationType.WARNING,
+          'Unable to save the diagram, because it is not valid. This could have something to do with your latest changes. Try to undo them.',
+        );
+      return;
+    }
+
+    //#region Save the diagram to the ProcessEngine
+
+    try {
+      const xml: string = await this.bpmnio.getXML();
+
+      const context: ManagementContext = this._getManagementContext();
+
+      const payload: ProcessModelExecution.UpdateProcessModelRequestPayload = {
+        xml: xml,
+      };
+
+      await this._managementApiClient.updateProcessModelById(context, this.process.id, payload);
+      this._notificationService.showNotification(NotificationType.SUCCESS, 'File saved.');
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR, `Error while saving diagram: ${error.message}`);
+    }
+    //#endregion
+
+    this._diagramHasChanged = false;
+  }
+
+  /**
+   * In the current implementation this method only checks for UserTasks that have
+   * empty or otherwise not allowed FormData in them.
+   *
+   * If that is the case the method will continue by deleting unused/not allowed
+   * FormData to make sure the diagrams XML is further supported by Camunda.
+   *
+   * TODO: Look further into this if this method is not better placed at the FormsSection
+   * in the Property Panel, also split this into two methods and name them right.
+   */
+  private _dropInvalidFormData(): void {
+    const registry: Array<IShape> = this.bpmnio.modeler.get('elementRegistry');
 
     registry.forEach((element: IShape) => {
       if (element.type === 'bpmn:UserTask') {
@@ -211,69 +412,43 @@ export class ProcessDefDetail {
     });
   }
 
-  public async exportBPMN(): Promise<void> {
-    const xml: string = await this.bpmn.getXML();
-    const formattedXml: string = beautify(xml);
-    download(formattedXml, `${this.process.name}.bpmn`, 'application/bpmn20-xml');
-  }
+  /**
+   * This handler will set the diagram state to invalid, if the ValidateEvent arrives.
+   * Currently only form fields in the Property Panel are validated. This will cause
+   * the following behaviour:
+   *
+   * The user inserts an invalid string (e.g. he uses a already used Id for an element);
+   * The Aurelia validators will trigger; the validation event will arrive here;
+   * if there are errors present, we will disable the save button and the save functionality
+   * by setting the _diagramIsInvalid flag to true.
+   *
+   * Events fired here:
+   *
+   * 1. disableSaveButton
+   * 2. enableSaveButton
+   */
+  private _handleFormValidateEvents(event: ValidateEvent): void {
+    const eventIsValidateEvent: boolean = event.type !== 'validate';
 
-  public async exportSVG(): Promise<void> {
-    const svg: string = await this.bpmn.getSVG();
-    download(svg, `${this.process.name}.svg`, 'image/svg+xml');
-  }
-
-  public async exportPNG(): Promise<void> {
-    const svg: string = await this.bpmn.getSVG();
-    download(this.generateImageFromSVG('png', svg), `${this.process.name}.png`, 'image/png');
-  }
-
-  public async exportJPEG(): Promise<void> {
-    const svg: string = await this.bpmn.getSVG();
-    download(this.generateImageFromSVG('jpeg', svg), `${this.process.name}.jpeg`, 'image/jpeg');
-  }
-
-  public generateImageFromSVG(desiredImageType: string, svg: any): string {
-    const encoding: string = `image/${desiredImageType}`;
-    const canvas: HTMLCanvasElement = document.createElement('canvas');
-    const context: CanvasRenderingContext2D = canvas.getContext('2d');
-
-    canvg(canvas, svg);
-    // make the background white for every format
-    context.globalCompositeOperation = 'destination-over';
-    context.fillStyle = 'white';
-    context.fillRect(0, 0, canvas.width, canvas.height);
-
-    const image: string = canvas.toDataURL(encoding); // returns a base64 datastring
-    return image;
-  }
-
-  public toggleXMLView(): void {
-    if (this.xmlIsShown) {
-      this.xmlIsShown = false;
-    } else {
-      this.xmlIsShown = true;
-    }
-
-    this.bpmn.toggleXMLView();
-  }
-
-  public toggleSolutionExplorer(): void {
-    this.solutionExplorerIsShown = !this.solutionExplorerIsShown;
-  }
-
-  private validateForm(event: ValidateEvent): void {
-    if (event.type !== 'validate') {
+    if (eventIsValidateEvent) {
       return;
     }
 
-    this.eventAggregator.publish(environment.events.navBar.enableSaveButton);
-
     for (const result of event.results) {
-      if (result.valid === false) {
-        this.eventAggregator.publish(environment.events.navBar.disableSaveButton);
+      const resultIsNotValid: boolean = result.valid === false;
+
+      if (resultIsNotValid) {
+        this._diagramIsInvalid = true;
+        this._eventAggregator
+          .publish(environment.events.navBar.disableSaveButton);
+
         return;
       }
     }
-  }
 
+    this._eventAggregator
+      .publish(environment.events.navBar.enableSaveButton);
+
+    this._diagramIsInvalid = false;
+  }
 }

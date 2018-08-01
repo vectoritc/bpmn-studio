@@ -5,20 +5,22 @@
     <div class="panel__heading">
       Properties
       <button class="add-context-button" click.delegate="addProperty()">
-        <span class="fa fa-plus"></span>
+        <i class="fas fa-plus"></i>
       </button>
     </div>
     <div class="panel__content">
       <table>
         <tr repeat.for="property of properties" index.bind="$index">
-          <td class="key-value-column">
+          <td class="key-value-column-left">
             <input type="text" class="key-value-input" value.bind="newNames[$index]" placeholder="Name" change.delegate="changeName($index)">
           </td>
-          <td class="key-value-column">
+          <td class="key-value-column-right">
             <input type="text" class="key-value-input" value.bind="newValues[$index]" placeholder="Value" change.delegate="changeValue($index)">
           </td>
           <td>
-            <button class="extensions-remove" click.delegate="removeProperty($index)">x</button>
+            <button class="key-value-delete-button" click.delegate="removeProperty($index)">
+              <i class="fas fa-times"></i>
+            </button>
           </td>
         </tr>
       </table>

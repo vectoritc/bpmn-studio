@@ -3,10 +3,9 @@ import {IChooseDialogOption} from '../../contracts';
 
 export class ChooseDialog {
 
-  @bindable()
-  private options: Array<IChooseDialogOption>;
-  @bindable()
-  private onSelected: ((option: any) => void);
+  @bindable() public options: Array<IChooseDialogOption>;
+
+  @bindable() public onSelected: ((option: IChooseDialogOption) => void);
 
   public onSelect(selected: IChooseDialogOption): void {
     if (this.onSelected) {

@@ -4,14 +4,14 @@
 
   <div class="container">
 
-    <div if.bind="userTask">
-      <h3>${userTask.title}</h3>
-    </div>
+    <template if.bind="userTask">
+      <h3>${userTask.id}</h3>
+    </template>
     <dynamic-ui-wrapper view-model.ref="dynamicUiWrapper"></dynamic-ui-wrapper>
 
-    <div if.bind="!userTask">
+    <template if.bind="!userTask">
       <h3>UserTask not found</h3>
-    </div>
+    </template>
 
   </div>
 

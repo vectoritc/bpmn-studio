@@ -1,21 +1,22 @@
 .diagram-tools-panel {
-  margin-bottom: 2px;
-  border-bottom: 1px solid #eee;
-  background-color: #f7f7f7;
-  border-left: 1px solid #eee;
-  margin-left: 2px;
-
   display: flex;
+  float: left;
+  width: 100%;
+  margin-left: -6px;
+  margin-bottom: 2px;
+  background-color: #f7f7f7;
+  border-left: 2px solid #dcdbdb;
+  border-bottom: 1px solid #eee;
 }
 
 .tool {
   display: block;
-  text-align: center;
   padding: 5px;
   margin: 0 5px;
-  border: none;
   background: inherit;
+  border: none;
   color: darkgray;
+  text-align: center;
 }
 
 .tool:hover {
@@ -25,4 +26,62 @@
 .open .tool {
   color: black;
   box-shadow: none !important; //Overwrite Bootstrap btn-group class combination
+}
+
+.color-dropdown {
+  cursor: default;
+}
+
+/*
+ * The border is used to seperate the two buttons for the colorpickers from the
+ * other buttons
+ *
+ * The fill-colorpicker is the upper button and therefore only has the border at the top
+ */
+.fill-colorpicker--border {
+  border-top: 1px solid #ccc;
+}
+
+/*
+ * The border-colorpicker is the lower button and therefore only has the border at the bottom
+ */
+.border-colorpicker--border {
+  border-bottom: 1px solid #ccc;
+}
+
+.fill-colorpicker__eyedropper {
+  margin-left: 39px;
+  margin-right: -14px;
+}
+
+.border-colorpicker__eyedropper {
+  margin-left: 14px;
+  margin-right: -14px;
+}
+
+.sp-replacer {
+  display: inline-block;
+  margin: 0;
+  overflow: hidden;
+  cursor: pointer;
+  background: 0;
+  border: 0;
+  color: #333;
+  vertical-align: middle;
+}
+
+.sp-container {
+  height: 247px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+}
+
+.sp-palette-container {
+  position: absolute;
+  bottom: 0;
+  left: 6px;
+  z-index: 1;
+  height: 44px;
+  border-right: none;
 }

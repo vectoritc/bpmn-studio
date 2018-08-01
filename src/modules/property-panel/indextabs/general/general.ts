@@ -6,7 +6,9 @@ import {ErrorEventSection} from './sections/error-event/error-event';
 import {EscalationEventSection} from './sections/escalation-event/escalation-event';
 import {FlowSection} from './sections/flow/flow';
 import {MessageEventSection} from './sections/message-event/message-event';
+import {MessageTaskSection} from './sections/message-task/message-task';
 import {PoolSection} from './sections/pool/pool';
+import {ProcessSection} from './sections/process/process';
 import {ScriptTaskSection} from './sections/script-task/script-task';
 import {SignalEventSection} from './sections/signal-event/signal-event';
 import {TimerEventSection} from './sections/timer-event/timer-event';
@@ -19,6 +21,7 @@ export class General implements IIndextab {
   public basicsSection: ISection = new BasicsSection();
   public poolSection: ISection = new PoolSection();
   public messageEventSection: ISection = new MessageEventSection();
+  public messageTaskSection: ISection = new MessageTaskSection();
   public signalEventSection: ISection = new SignalEventSection();
   public scriptTaskSection: ISection = new ScriptTaskSection();
   public callActivitySection: ISection = new CallActivitySection();
@@ -27,11 +30,13 @@ export class General implements IIndextab {
   public escalationEventSection: ISection = new EscalationEventSection();
   public timerEventSection: ISection = new TimerEventSection();
   public conditionalEventSection: ISection = new ConditionalEventSection();
+  public processSection: ISection = new ProcessSection();
 
   public sections: Array<ISection> = [
     this.basicsSection,
     this.poolSection,
     this.messageEventSection,
+    this.messageTaskSection,
     this.signalEventSection,
     this.scriptTaskSection,
     this.callActivitySection,
@@ -40,6 +45,7 @@ export class General implements IIndextab {
     this.escalationEventSection,
     this.timerEventSection,
     this.conditionalEventSection,
+    this.processSection,
   ];
 
   public canHandleElement: boolean = true;

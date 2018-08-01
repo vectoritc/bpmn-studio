@@ -8,15 +8,15 @@
         <tr>
           <th>Process</th>
           <td>
-            <select class="props-input" value.bind="selectedProcess" change.delegate="updateCalledProcess()">
+            <select class="props-input" value.bind="selectedDiagram" change.delegate="updateCalledDiagram()">
               <option model.bind="null">-Choose called Process-</option>
-              <option repeat.for="process of allProcesses.data"
-                      model.bind="process" value="${process.id}">${process.name}</option>
+              <option repeat.for="diagram of allDiagrams"
+                      model.bind="diagram" value="${diagram.id}">${diagram.name}</option>
             </select>
           </td>
         </tr>
       </table>
-      <button class="navigation-button" disabled.bind="!selectedProcess" click.delegate="navigateToCalledProcess()">Navigate to called Process</button>
+      <button class="navigation-button" disabled.bind="!selectedDiagram" click.delegate="navigateToCalledDiagram()">Navigate to called Process</button>
     </div>
   </div>
 </template>

@@ -41,11 +41,14 @@ pipeline {
             full_electron_release_version_string = "${package_version}-pre-b${env.BUILD_NUMBER}";
           }
 
+          // When building a non master or develop branch the release will be a draft.
+          release_will_be_draft = !branch_is_master && !branch_is_develop;
+
           echo("Branch is '${branch}'")
         }
         nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
           sh('node --version')
-          sh('npm install')
+          sh('npm install --prefer-offline')
           sh('npm rebuild node-sass')
         }
       }
@@ -61,7 +64,9 @@ pipeline {
         sh('node --version')
         sh('npm run build')
         sh("npm version ${full_electron_release_version_string} --allow-same-version --force --no-git-tag-version")
-        stash(includes: 'node_modules/, scripts/, package.json', name: 'post_build')
+
+        stash(includes: '@fortawesome/, bootstrap/, scripts/, package.json', name: 'post_build')
+        stash(includes: 'node_modules/', name: 'post_build_node_modules')
       }
     }
     stage('build electron') {
@@ -75,8 +80,13 @@ pipeline {
           }
           steps {
             unstash('post_build')
+            unstash('post_build_node_modules')
+
             sh('node --version')
-            sh('npm run electron-build-linux')
+
+            sh('npm run jenkins-electron-install-app-deps')
+            sh('npm run jenkins-electron-rebuild-native')
+            sh('npm run jenkins-electron-build-linux')
             stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml', name: 'linux_results')
           }
           post {
@@ -91,16 +101,21 @@ pipeline {
           }
           steps {
             unstash('post_build')
+            unstash('post_build_node_modules')
+
             sh('node --version')
             // we copy the node_modules folder from the main slave
             // which runs linux. Some dependencies may not be installed
             // if they have a os restriction in their package.json
-            sh('npm install')
+            sh('npm install --prefer-offline')
+
+            sh('npm run jenkins-electron-install-app-deps')
+            sh('npm run jenkins-electron-rebuild-native')
 
             withCredentials([
               string(credentialsId: 'apple-mac-developer-certifikate', variable: 'CSC_LINK'),
             ]) {
-              sh('npm run electron-build-macos')
+              sh('npm run jenkins-electron-build-macos')
             }
             stash(includes: 'dist/*.*, dist/mac/*', excludes: 'electron-builder-effective-config.yaml', name: 'macos_results')
           }
@@ -110,14 +125,33 @@ pipeline {
             }
           }
         }
-        stage('Build Windows on Linux') {
+        stage('Build on Windows') {
           agent {
-            label "linux"
+            label "windows"
           }
           steps {
             unstash('post_build')
-            sh('node --version')
-            sh('npm run electron-build-windows')
+            bat('node --version')
+
+            script {
+              try {
+                timeout(time: 5, unit: 'MINUTES') {
+                  powershell('npm install --global windows-build-tools');
+                }
+              } catch (error) {
+                echo('Unable to install windows-build-tools, trying to continue with jobs execution.')
+              }
+            }
+
+            // we copy the node_modules folder from the main slave
+            // which runs linux. Some dependencies may not be installed
+            // if they have a os restriction in their package.json
+            bat('npm install --prefer-offline')
+
+            bat('npm run jenkins-electron-install-app-deps')
+            bat('npm run jenkins-electron-rebuild-native')
+            bat('npm run jenkins-electron-build-windows')
+
             stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml', name: 'windows_results')
           }
           post {
@@ -191,13 +225,13 @@ pipeline {
         unstash('windows_results')
         nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
           dir('.ci-tools') {
-            sh('npm install')
+            sh('npm install --prefer-offline')
           }
           withCredentials([
             string(credentialsId: 'process-engine-ci_token', variable: 'RELEASE_GH_TOKEN')
           ]) {
             script {
-              sh("node .ci-tools/publish-github-release.js ${full_electron_release_version_string} ${full_electron_release_version_string} ${branch} false ${!branch_is_master}");
+              sh("node .ci-tools/publish-github-release.js ${full_electron_release_version_string} ${full_electron_release_version_string} ${branch} ${release_will_be_draft} ${!branch_is_master}");
             }
           }
         }

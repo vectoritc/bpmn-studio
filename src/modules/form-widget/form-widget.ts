@@ -1,31 +1,35 @@
-import {FormWidgetFieldType, IFormWidgetConfig, SpecificFormWidgetField} from '@process-engine/bpmn-studio_client';
+import {UserTaskFormField, UserTaskFormFieldType} from '@process-engine/management_api_contracts';
 import {bindable, inject} from 'aurelia-framework';
-import {NotificationType} from './../../contracts/index';
-import {NotificationService} from './../notification/notification.service';
+import {NotificationType} from '../../contracts/index';
+import {NotificationService} from '../notification/notification.service';
 
 @inject('NotificationService')
 export class FormWidget {
 
   @bindable()
-  private widget: IFormWidgetConfig;
-  private notificationService: NotificationService;
+  public widget: UserTaskFormField;
+  private _notificationService: NotificationService;
 
   constructor(notificationService: NotificationService) {
-    this.notificationService = notificationService;
+    this._notificationService = notificationService;
   }
 
-  public getFieldControl(field: SpecificFormWidgetField): string {
+  public getFieldControl(field: UserTaskFormField): string {
     switch (field.type) {
-      case FormWidgetFieldType.enumeration:
+      case UserTaskFormFieldType.enum:
         return 'dropdown';
-      case FormWidgetFieldType.string:
+      case UserTaskFormFieldType.string:
         return 'textbox';
-      case FormWidgetFieldType.boolean:
+      case UserTaskFormFieldType.boolean:
         return 'checkbox';
-      case FormWidgetFieldType.long:
+      case UserTaskFormFieldType.long:
         return 'number';
       default:
-        this.notificationService.showNotification(NotificationType.ERROR, `Not supported FromWidgetFieldType: ${field.type}`);
+        const notSupportedType: string = field.type !== undefined ? field.type : 'Custom Type';
+        const errorMessage: string = `Not supported form field type: ${notSupportedType}.`
+                                   + `</br>Please change the form field type with id "${field.id}".`;
+
+        this._notificationService.showNotification(NotificationType.ERROR, errorMessage);
         return null;
     }
   }

@@ -1,130 +1,258 @@
+import {isError, NotFoundError, UnauthorizedError} from '@essential-projects/errors_ts';
 import {
-  BpmnStudioClient,
-  IConfirmWidgetConfig,
-  IUserTaskConfig,
-  IUserTaskEntity,
-  UserTaskProceedAction,
-  WidgetConfig,
-  WidgetType,
-} from '@process-engine/bpmn-studio_client';
+  Correlation,
+  IManagementApiService,
+  ManagementContext,
+  ProcessModelExecution,
+  UserTask,
+  UserTaskList,
+} from '@process-engine/management_api_contracts';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {bindable, computedFrom, inject} from 'aurelia-framework';
+import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import {AuthenticationStateEvent, IDynamicUiService, IPagination, IProcessEngineService, NotificationType} from '../../contracts/index';
+import {
+  AuthenticationStateEvent,
+  IAuthenticationService,
+  NotificationType,
+} from '../../contracts/index';
 import environment from '../../environment';
-import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
-import {NotificationService} from './../notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 
 interface ITaskListRouteParameters {
-  processDefId?: string;
-  processId?: string;
+  processModelId?: string;
+  correlationId?: string;
 }
 
-@inject(EventAggregator, 'BpmnStudioClient', Router, 'NotificationService')
+interface IUserTaskWithProcessModel {
+  userTask: UserTask;
+  processModel: ProcessModelExecution.ProcessModel;
+}
+
+@inject(EventAggregator, 'ManagementApiClientService', Router, 'NotificationService', 'AuthenticationService')
 export class TaskList {
-
-  private eventAggregator: EventAggregator;
-  private bpmnStudioClient: BpmnStudioClient;
-  private notificationService: NotificationService;
-
-  private succesfullRequested: boolean = false;
-  private subscriptions: Array<Subscription>;
-  private userTasks: IPagination<IUserTaskEntity>;
-  private getUserTasksIntervalId: number;
-  private dynamicUiWrapper: DynamicUiWrapper;
-  private getUserTasks: () => Promise<IPagination<IUserTaskEntity>>;
-  private router: Router;
 
   public currentPage: number = 0;
   public pageSize: number = 10;
   public totalItems: number;
-  public solutionExplorerIsShown: boolean = false;
 
-  constructor(eventAggregator: EventAggregator, bpmnStudioClient: BpmnStudioClient, router: Router, notificationService: NotificationService) {
-    this.eventAggregator = eventAggregator;
-    this.bpmnStudioClient = bpmnStudioClient;
-    this.router = router;
-    this.notificationService = notificationService;
+  public succesfullRequested: boolean = false;
+
+  private _eventAggregator: EventAggregator;
+  private _managementApiService: IManagementApiService;
+  private _router: Router;
+  private _notificationService: NotificationService;
+  private _authenticationService: IAuthenticationService;
+
+  private _subscriptions: Array<Subscription>;
+  private _userTasks: Array<IUserTaskWithProcessModel>;
+  private _getUserTasksIntervalId: number;
+  private _getUserTasks: () => Promise<Array<IUserTaskWithProcessModel>>;
+
+  constructor(eventAggregator: EventAggregator,
+              managementApiService: IManagementApiService,
+              router: Router,
+              notificationService: NotificationService,
+              authenticationService: IAuthenticationService,
+  ) {
+    this._eventAggregator = eventAggregator;
+    this._managementApiService = managementApiService;
+    this._router = router;
+    this._notificationService = notificationService;
+    this._authenticationService = authenticationService;
   }
 
   private async updateUserTasks(): Promise<void> {
     try {
-      this.userTasks = await this.getUserTasks();
+      this._userTasks = await this._getUserTasks();
       this.succesfullRequested = true;
     } catch (error) {
-      this.notificationService.showNotification(NotificationType.ERROR, error.message);
+      if (isError(error, UnauthorizedError)) {
+        this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have permission to view the task list.');
+        this._router.navigateToRoute('start-page');
+      } else {
+        this._notificationService.showNotification(NotificationType.ERROR, `Error receiving task list: ${error.message}`);
+      }
     }
 
     this.totalItems = this.tasks.length;
   }
 
   public activate(routeParameters: ITaskListRouteParameters): void {
-    if (routeParameters.processDefId) {
-      this.getUserTasks = (): Promise<IPagination<IUserTaskEntity>> => {
-        return this.getUserTasksForProcessDef(routeParameters.processDefId);
+    if (routeParameters.processModelId) {
+      this._getUserTasks = (): Promise<Array<IUserTaskWithProcessModel>> => {
+        return this._getUserTasksForProcessModel(routeParameters.processModelId);
       };
-    } else if (routeParameters.processId) {
-      this.getUserTasks = (): Promise<IPagination<IUserTaskEntity>> => {
-        return this.getUserTasksForProcess(routeParameters.processId);
+    } else if (routeParameters.correlationId) {
+      this._getUserTasks = (): Promise<Array<IUserTaskWithProcessModel>> => {
+        return this._getUserTasksForCorrelation(routeParameters.correlationId);
       };
     } else {
-      this.getUserTasks = this.getAllUserTasks;
+      this._getUserTasks = this._getAllUserTasks;
     }
     this.updateUserTasks();
   }
 
   public attached(): void {
-    this.getUserTasksIntervalId = window.setInterval(() => {
-      this.updateUserTasks();
-    }, environment.processengine.poolingInterval);
+    if (!this._getUserTasks) {
+      this._getUserTasks = this._getAllUserTasks;
+    }
 
-    this.subscriptions = [
-      this.eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
+    this._getUserTasksIntervalId = window.setInterval(() => {
+      this.updateUserTasks();
+    }, environment.processengine.pollingIntervalInMs);
+
+    this._subscriptions = [
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
         this.updateUserTasks();
       }),
-      this.eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
         this.updateUserTasks();
       }),
     ];
   }
 
   public detached(): void {
-    clearInterval(this.getUserTasksIntervalId);
-    for (const subscription of this.subscriptions) {
+    clearInterval(this._getUserTasksIntervalId);
+    for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
   }
 
   public goBack(): void {
-    this.router.navigateBack();
+    this._router.navigateBack();
   }
 
-  public get shownTasks(): Array<IUserTaskEntity> {
-    return this.tasks.slice((this.currentPage - 1) * this.pageSize, this.pageSize * this.currentPage);
-  }
+  public continueUserTask(userTaskWithProcessModel: IUserTaskWithProcessModel): void {
+    const userTask: UserTask = userTaskWithProcessModel.userTask;
+    const processModel: ProcessModelExecution.ProcessModel = userTaskWithProcessModel.processModel;
 
-  public get tasks(): Array<IUserTaskEntity> {
-    if (this.userTasks === undefined) {
-      return [];
-    }
-    return this.userTasks.data.filter((entry: IUserTaskEntity): boolean => {
-      return entry.state === 'wait';
+    const processModelId: string = processModel.id;
+    const userTaskId: string = userTask.id;
+
+    this._router.navigateToRoute('task-dynamic-ui', {
+      processModelId: processModelId,
+      userTaskId: userTaskId,
     });
   }
 
-  public toggleSolutionExplorer(): void {
-    this.solutionExplorerIsShown = !this.solutionExplorerIsShown;
+  public get shownTasks(): Array<IUserTaskWithProcessModel> {
+    return this.tasks.slice((this.currentPage - 1) * this.pageSize, this.pageSize * this.currentPage);
   }
 
-  private getAllUserTasks(): Promise<IPagination<IUserTaskEntity>> {
-    return this.bpmnStudioClient.getUserTaskList();
+  public get tasks(): Array<IUserTaskWithProcessModel> {
+    if (this._userTasks === undefined) {
+      return [];
+    }
+    // TODO: Reimplement filtering
+    // return this._userTasks.filter((entry: UserTask): boolean => {
+    //   return entry.state === 'wait';
+    // });
+    return this._userTasks;
   }
 
-  private getUserTasksForProcessDef(processDefId: string): Promise<IPagination<IUserTaskEntity>> {
-    return this.bpmnStudioClient.getUserTaskListByProcessDefId(processDefId);
+  private async _getAllUserTasks(): Promise<Array<IUserTaskWithProcessModel>> {
+    const managementApiContext: ManagementContext = this._getManagementContext();
+
+    const allProcessModels: ProcessModelExecution.ProcessModelList = await this._managementApiService.getProcessModels(managementApiContext);
+
+    // TODO (ph): This will create 1 + n http reqeusts, where n is the number of process models in the processengine.
+    const promisesForAllUserTasks: Array<Promise<Array<IUserTaskWithProcessModel>>> = allProcessModels.processModels
+      .map(async(processModel: ProcessModelExecution.ProcessModel): Promise<Array<IUserTaskWithProcessModel>> => {
+        try {
+          const userTaskList: UserTaskList = await this._managementApiService.getUserTasksForProcessModel(managementApiContext, processModel.id);
+
+          const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = this._addProcessModelToUserTasks(userTaskList, processModel);
+
+          return userTasksAndProcessModels;
+
+        } catch (error) {
+          if (isError(error, NotFoundError)) {
+            // the management api returns a 404 if there is no instance of a process model running.
+            return Promise.resolve([]);
+          }
+          throw error;
+        }
+      });
+
+    const userTaskListArray: Array<Array<IUserTaskWithProcessModel>> = await Promise.all(promisesForAllUserTasks);
+
+    const flattenedUserTasks: Array<IUserTaskWithProcessModel> = [].concat(...userTaskListArray);
+
+    return flattenedUserTasks;
   }
 
-  private getUserTasksForProcess(processId: string): Promise<IPagination<IUserTaskEntity>> {
-    return this.bpmnStudioClient.getUserTaskListByProcessInstanceId(processId);
+  private async _getUserTasksForProcessModel(processModelId: string): Promise<Array<IUserTaskWithProcessModel>> {
+    const managementApiContext: ManagementContext = this._getManagementContext();
+
+    const processModel: ProcessModelExecution.ProcessModel = await
+      this
+      ._managementApiService
+      .getProcessModelById(managementApiContext, processModelId);
+
+    let userTaskList: UserTaskList;
+    try {
+      userTaskList = await this._managementApiService.getUserTasksForProcessModel(managementApiContext, processModelId);
+
+    } catch (error) {
+      if (isError(error, NotFoundError)) {
+        // the management api returns a 404 if there is no instance of a process model running.
+        return Promise.resolve([]);
+      }
+      throw error;
+    }
+
+    const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = this._addProcessModelToUserTasks(userTaskList, processModel);
+
+    return userTasksAndProcessModels;
+  }
+
+  private async _getUserTasksForCorrelation(correlationId: string): Promise<Array<IUserTaskWithProcessModel>> {
+    const managementApiContext: ManagementContext = this._getManagementContext();
+
+    const userTaskList: UserTaskList = await this._managementApiService.getUserTasksForCorrelation(managementApiContext, correlationId);
+
+    const runningCorrelations: Array<Correlation> = await this._managementApiService.getAllActiveCorrelations(managementApiContext);
+
+    const correlation: Correlation = runningCorrelations.find((otherCorrelation: Correlation) => {
+      return otherCorrelation.id === correlationId;
+    });
+
+    const correlationWasNotFound: boolean = correlation === undefined || correlation === null;
+    if (correlationWasNotFound) {
+      throw new NotFoundError(`No correlation found with id ${correlationId}.`);
+    }
+
+    const processModelOfCorrelation: ProcessModelExecution.ProcessModel = await
+      this
+      ._managementApiService
+      .getProcessModelById(managementApiContext, correlation.processModelId);
+
+    const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = this._addProcessModelToUserTasks(userTaskList, processModelOfCorrelation);
+
+    return userTasksAndProcessModels;
+  }
+
+  private _addProcessModelToUserTasks(
+    userTaskList: UserTaskList,
+    processModel: ProcessModelExecution.ProcessModel,
+  ): Array<IUserTaskWithProcessModel> {
+
+    const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = userTaskList.userTasks
+      .map((userTask: UserTask): IUserTaskWithProcessModel => ({
+          processModel: processModel,
+          userTask: userTask,
+      }));
+
+    return userTasksAndProcessModels;
+  }
+
+  // TODO: Move this method into a service.
+  private _getManagementContext(): ManagementContext {
+    const accessToken: string = this._authenticationService.getAccessToken();
+    const context: ManagementContext = {
+      identity: accessToken,
+    };
+
+    return context;
   }
 }

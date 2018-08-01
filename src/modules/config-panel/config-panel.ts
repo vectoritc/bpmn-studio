@@ -1,48 +1,109 @@
-import {BpmnStudioClient, IUserTaskConfig} from '@process-engine/bpmn-studio_client';
-import {EventAggregator} from 'aurelia-event-aggregator';
-import {inject} from 'aurelia-framework';
+import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
+import {bindable, computedFrom, inject} from 'aurelia-framework';
+import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {Router} from 'aurelia-router';
+import {IAuthenticationService} from '../../contracts/authentication/IAuthenticationService';
+import {AuthenticationStateEvent, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
-import {NotificationType} from './../../contracts/index';
-import {NotificationService} from './../notification/notification.service';
+import {oidcConfig} from '../../open-id-connect-configuration';
+import {NotificationService} from '../notification/notification.service';
 
-@inject(Router, 'BpmnStudioClient', 'NotificationService', EventAggregator)
+@inject(Router, 'NotificationService', EventAggregator, 'AuthenticationService', OpenIdConnect, 'InternalProcessEngineBaseRoute')
 export class ConfigPanel {
 
-  private router: Router;
-  private bpmnStudioClient: BpmnStudioClient;
-  private notificationService: NotificationService;
-  private eventAggregator: EventAggregator;
+  private _router: Router;
+  private _notificationService: NotificationService;
+  private _eventAggregator: EventAggregator;
+  private _authenticationService: IAuthenticationService;
+  private _subscriptions: Array<Subscription>;
+  // We use any here, because we need to call private members (see below)
+  private _openIdConnect: OpenIdConnect | any;
 
-  public config: any = environment.bpmnStudioClient;
+  public config: typeof environment = environment;
+  public isLoggedInToProcessEngine: boolean;
+  @bindable() public baseRoute: string;
+  public internalProcessEngineBaseRoute: string | null;
 
-  constructor(router: Router, bpmnStudioClient: BpmnStudioClient, notificationService: NotificationService, eventAggregator: EventAggregator) {
-    this.router = router;
-    this.bpmnStudioClient = bpmnStudioClient;
-    this.config.processEngineRoute = environment.bpmnStudioClient.baseRoute;
-    this.notificationService = notificationService;
-    this.eventAggregator = eventAggregator;
+  constructor(router: Router,
+              notificationService: NotificationService,
+              eventAggregator: EventAggregator,
+              authenticationService: IAuthenticationService,
+              openIdConnect: OpenIdConnect,
+              internalProcessEngineBaseRoute: string | null,
+            ) {
+
+    this._router = router;
+    this._notificationService = notificationService;
+    this._eventAggregator = eventAggregator;
+    this._authenticationService = authenticationService;
+    this._openIdConnect = openIdConnect;
+    this.internalProcessEngineBaseRoute = internalProcessEngineBaseRoute;
   }
 
-  public updateSettings(): void {
-    environment.bpmnStudioClient.baseRoute = this.config.processEngineRoute;
-    window.localStorage.setItem('processEngineRoute', this.config.processEngineRoute);
-    environment.processengine.routes.processes = `${this.config.processEngineRoute}/datastore/ProcessDef`;
-    environment.processengine.routes.iam = `${this.config.processEngineRoute}/iam`;
-    environment.processengine.routes.messageBus = `${this.config.processEngineRoute}/mb`;
-    environment.processengine.routes.processInstances = `${this.config.processEngineRoute}/datastore/Process`;
-    environment.processengine.routes.startProcess = `${this.config.processEngineRoute}/processengine/start`;
-    environment.processengine.routes.userTasks =  `${this.config.processEngineRoute}/datastore/UserTask`;
-    environment.processengine.routes.importBPMN = `${this.config.processEngineRoute}/processengine/create_bpmn_from_xml`;
-    this.bpmnStudioClient.updateConfig(this.config);
-    this.notificationService.showNotification(NotificationType.SUCCESS, 'Sucessfully saved settings!');
-    this.eventAggregator.publish('statusbar:processEngineRoute:update', this.config.processEngineRoute);
-    this.router.navigateBack();
+  public attached(): void {
+    this.baseRoute = this.config.bpmnStudioClient.baseRoute;
+
+    // If there is a route set in the localstorage, we prefer this setting.
+    const baseRouteConfiguredInLocalStorage: string = window.localStorage.getItem('processEngineRoute');
+    if (baseRouteConfiguredInLocalStorage) {
+      this.baseRoute = baseRouteConfiguredInLocalStorage;
+    }
+
+    this.isLoggedInToProcessEngine = this._authenticationService.isLoggedIn();
+
+    this._subscriptions = [
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
+        this.isLoggedInToProcessEngine = this._authenticationService.isLoggedIn();
+      }),
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
+        this.isLoggedInToProcessEngine = this._authenticationService.isLoggedIn();
+      }),
+    ];
+  }
+
+  public detached(): void {
+    for (const subscription of this._subscriptions) {
+      subscription.dispose();
+    }
+  }
+
+  public async updateSettings(): Promise<void> {
+
+    const accessTokenIsNotDummy: boolean = this._authenticationService.getAccessToken() !== 'ZHVtbXlfdG9rZW4=';
+    if (accessTokenIsNotDummy) {
+      await this._authenticationService.logout();
+    }
+
+    this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, this.baseRoute);
+    window.localStorage.setItem('processEngineRoute', this.baseRoute);
+
+    oidcConfig.userManagerSettings.authority = this.config.openIdConnect.authority;
+
+    // This dirty way to update the settings is the only way during runtime
+    this._openIdConnect.configuration.userManagerSettings.authority = this.config.openIdConnect.authority;
+    this._openIdConnect.userManager._settings._authority = this.config.openIdConnect.authority;
+
+    this._notificationService.showNotification(NotificationType.SUCCESS, 'Successfully saved settings!');
+
+    this._router.navigateBack();
   }
 
   public cancelUpdate(): void {
-    this.notificationService.showNotification(NotificationType.WARNING, 'Settings dismissed!');
-    this.router.navigateBack();
+    this._notificationService.showNotification(NotificationType.WARNING, 'Settings dismissed!');
+    this._router.navigateBack();
+  }
+
+  @computedFrom('baseRoute')
+  public get isBaseRouteNotSetToInternalProcessEngine(): boolean {
+    return this.internalProcessEngineBaseRoute !== this.baseRoute;
+  }
+
+  public hasInternalProcessEngineBaseRouteSet(): boolean {
+    return this.internalProcessEngineBaseRoute !== null;
+  }
+
+  public setBaseRouteToInternalProcessEngine(): void {
+    this.baseRoute = this.internalProcessEngineBaseRoute;
   }
 
 }

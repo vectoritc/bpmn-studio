@@ -6,12 +6,13 @@ export class Forms implements IIndextab {
   public path: string = '/indextabs/forms/forms';
   public elementInPanel: IShape;
   public canHandleElement: boolean = false;
+  public sections: Array<ISection>;
 
-  private basicsSection: ISection = new BasicsSection();
+  private _basicsSection: ISection = new BasicsSection();
 
-  public sections: Array<ISection> = [
-    this.basicsSection,
-  ];
+  constructor() {
+    this.sections = [this._basicsSection];
+  }
 
   public activate(model: IPageModel): void {
     this.elementInPanel = model.elementInPanel;

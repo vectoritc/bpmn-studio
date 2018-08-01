@@ -1,28 +1,35 @@
 import {Aurelia} from 'aurelia-framework';
 
 import {NotificationType} from './contracts/index';
-import {IFileInfo} from './contracts/processengine/index';
-import {NotificationService} from './modules/notification/notification.service';
-import {TokenRepository} from './modules/token-repository/token.repository';
-
 import environment from './environment';
+import {NotificationService} from './modules/notification/notification.service';
+
+import {oidcConfig} from './open-id-connect-configuration';
 
 export function configure(aurelia: Aurelia): void {
-
-  const tokenRepository: TokenRepository = new TokenRepository();
-  aurelia.container.registerInstance('TokenRepository', tokenRepository);
 
   if (navigator.cookieEnabled === false) {
     const url: string = location.href;
     throw new Error(`In order to use the web version of BPMN Studio please enable cookies for this URL: ${url}.`);
   }
 
-  if ((<any> window).nodeRequire) {
-    const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
+  if ((window as any).nodeRequire) {
+    const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
     const newHost: string = ipcRenderer.sendSync('get_host');
-    const fileInfo: IFileInfo = ipcRenderer.sendSync('get_opened_file');
-    aurelia.container.registerInstance('FileContent', fileInfo);
-    localStorage.setItem('processEngineRoute', `http://${newHost}`);
+
+    /**
+     * Currently the internal PE is always connected via http.
+     * This will be subject to change.
+     */
+    const processEngineBaseRouteWithProtocol: string = `http://${newHost}`;
+
+    if (!window.localStorage.getItem('processEngineRoute')) {
+      localStorage.setItem('processEngineRoute', processEngineBaseRouteWithProtocol);
+    }
+
+    aurelia.container.registerInstance('InternalProcessEngineBaseRoute', processEngineBaseRouteWithProtocol);
+  } else {
+    aurelia.container.registerInstance('InternalProcessEngineBaseRoute', null);
   }
 
   if (window.localStorage.getItem('processEngineRoute')) {
@@ -30,8 +37,6 @@ export function configure(aurelia: Aurelia): void {
     environment.bpmnStudioClient.baseRoute = processEngineRoute;
     environment.processengine.routes.processes = `${processEngineRoute}/datastore/ProcessDef`;
     environment.processengine.routes.iam = `${processEngineRoute}/iam`;
-    environment.processengine.routes.messageBus = `${processEngineRoute}/mb`;
-    environment.processengine.routes.processInstances = `${processEngineRoute}/datastore/Process`;
     environment.processengine.routes.startProcess = `${processEngineRoute}/processengine/start`;
     environment.processengine.routes.userTasks =  `${processEngineRoute}/datastore/UserTask`;
     environment.processengine.routes.importBPMN = `${processEngineRoute}/processengine/create_bpmn_from_xml`;
@@ -39,14 +44,16 @@ export function configure(aurelia: Aurelia): void {
 
   aurelia.use
     .standardConfiguration()
+    .feature('modules/fetch-http-client')
     .feature('modules/dynamic-ui')
-    .feature('modules/processengine')
     .feature('modules/notification')
+    .feature('modules/diagram-validation-service')
+    .feature('modules/management-api_client')
     .feature('modules/authentication')
-    .feature('modules/bpmn-studio_client', tokenRepository)
-    .feature('resources')
+    .feature('modules/solution-explorer-services')
     .plugin('aurelia-bootstrap')
-    .plugin('aurelia-validation');
+    .plugin('aurelia-validation')
+    .plugin('aurelia-open-id-connect', () => oidcConfig);
 
   if (environment.debug) {
     aurelia.use.developmentLogging();
@@ -60,8 +67,9 @@ export function configure(aurelia: Aurelia): void {
     aurelia.setRoot();
 
     // check if the processengine started successfull
-    if ((<any> window).nodeRequire) {
-      const ipcRenderer: any = (<any> window).nodeRequire('electron').ipcRenderer;
+    if ((window as any).nodeRequire) {
+
+      const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
       // subscribe to processengine status
       ipcRenderer.send('add_internal_processengine_status_listener');
       // wait for status to be reported

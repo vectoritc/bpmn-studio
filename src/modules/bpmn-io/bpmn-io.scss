@@ -1,6 +1,6 @@
 .modeler {
-  height: 100%;
   display: flex;
+  height: 100%;
 }
 
 .canvasModel {
@@ -14,45 +14,26 @@
 }
 
 .properties {
+  width: 250px;
   height: 100%;
   background: rgb(220, 219, 219);
-  width: 250px;
+  overflow-y: auto;
 }
 
 .modeler .label {
   color: black;
 }
 
-.bpp-properties-panel button,
-.bpp-properties-panel [contenteditable] {
-  min-height: 2em;
-}
-
-.bpp-element-list button.clear,
-.bpp-element-list button.add {
-  top: -28px;
-  border-bottom: none;
-}
-
 .resize-div {
-  position: absolute;
-  height: 90%;
-  width: 5px;
+  position: relative;
+  float:left;
+  left: -3px;
+  width: 6px;
+  height: 100%;
 }
 
 .resize-div:hover {
   cursor: col-resize;
-}
-
-.expandIcon {
-  margin-left: 5px;
-  margin-top: 5px;
-  font-size: 36px;
-}
-
-.hideMinimap {
-  margin-left: 143px;
-  display: none;
 }
 
 /*
@@ -60,31 +41,12 @@
  *
 */
 
-.tool-list--horizontal {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-evenly;
-}
-
-.tool-list--bottom {
-  position: absolute;
-  bottom: 26px;
-}
-
-.tool {
-  display: block;
-  text-align: center;
-  padding: 5px;
-  color: darkgray;
-}
-
 .tool__right {
-  color: #5e5e5e;
   display: block;
-  text-align: center;
   padding: 2px;
   opacity: 0.5;
+  color: #5e5e5e;
+  text-align: center;
 }
 
 .tool:hover {
@@ -102,16 +64,23 @@
 
 .bpmn-io-layout {
   display: flex;
-  flex-direction: row;
-  align-items: stretch;
   width: 100%;
   height: 100%;
   background: white;
+  flex-direction: row;
+  align-items: stretch;
 }
 
 .bpmn-io-layout__tools-left {
-  border-right: 2px solid #dcdbdb;
   width: 36px;
+  min-width: 36px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-right: 2px solid #dcdbdb;
+}
+
+.bpmn-io-layout__tools-left::-webkit-scrollbar {
+  display: none;
 }
 
 .bpmn-io-layout__tools-right {
@@ -120,19 +89,10 @@
 
 .bpmn-io-layout__tools-left,
 .bpmn-io-layout__tools-right {
-  background-color: #f7f7f7;
   width: 36px;
+  background-color: #f7f7f7;
 }
 
-.bpmn-io-layout__panel-left,
-.bpmn-io-layout__panel-right {
-  min-width: 220px;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-
-.bpmn-io-layout__panel-left,
 .panel {
   background-color: #f7f7f7;
   border-left: 1px solid #eee;
@@ -140,6 +100,7 @@
 }
 
 .bpmn-io-layout__main {
+  width: 0;
   flex: 1 100%;
 }
 
@@ -149,11 +110,89 @@
 */
 
 .menu-bar__menu-left--tool {
-  border: none;
   background-color: inherit;
+  border: none;
 }
 
-.menu-bar__menu-right--tool {
-  border: none;
-  background-color: inherit;
+.menu-bar__menu-left--tool:focus {
+  color: black;
+}
+
+.tool__right:hover {
+  opacity: 1;
+}
+
+.djs-palette-override {
+  position: relative !important;
+  left: auto !important;
+  top: 4px !important;
+  width: 36px !important;
+  background: transparent !important;
+  border: none !important;
+
+  .entry,
+  .djs-palette-toggle {
+    width: 32px;
+    height: 32px;
+    margin-left: 1px;
+    cursor: default;
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  .entry {
+    opacity: 0.5;
+  }
+
+  .highlighted-entry,
+  .entry:hover {
+    color: #000 !important;
+    opacity: 1;
+  }
+
+  .djs-palette-toggle {
+    display: none !important;
+  }
+
+  .djs-palette-entries .separator {
+    margin: 5px 0;
+    padding: 0;
+  }
+}
+
+/*
+ * Color Picker
+*/
+
+.red {
+  color: #E53935;
+}
+
+.blue {
+  color: #1E88E5;
+}
+
+.orange {
+  color: #FB8C00;
+}
+
+.green {
+  color: #43A047;
+}
+
+.purple {
+  color: #8E24AA;
+}
+
+.none {
+  color: transparent;
+}
+
+/*
+ * !important is needed to override the default
+ * styling of the used color-picker component.
+ */
+.colorpicker-container {
+  background: white !important;
+  border: solid 1px #ccc !important;
 }

@@ -6,6 +6,20 @@
   margin-bottom: 20px;
 }
 
+.config-panel__subtitle {
+  padding-top: 5px;
+}
+
 .config-panel__panel {
   padding: 20px 20px 20px 20px;
+}
+
+.use-internal-processengine {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.config-panel__panel__alert {
+  margin-top: 10px;
+  margin-bottom: 0;
 }

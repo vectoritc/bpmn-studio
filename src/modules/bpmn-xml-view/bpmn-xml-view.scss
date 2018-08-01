@@ -1,14 +1,14 @@
 pre {
-  line-height: 13px;
-  font-size: 13px;
-  font-family: monospace;
+  bottom: 0;
   width: 100%;
   height: 100%;
-  bottom: 0;
+  background-color: unset;
   border: none;
+  font-size: 13px;
+  font-family: monospace;
+  line-height: 13px;
   word-break: unset;
   word-wrap: unset;
-  background-color: unset;
 }
 
 .xml-view {

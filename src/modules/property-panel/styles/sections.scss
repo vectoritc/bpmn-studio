@@ -1,7 +1,7 @@
 .section-panel {
   margin-bottom: 2px;
-  border-bottom: 1px solid #eee;
   background-color: #f7f7f7;
+  border-bottom: 1px solid #eee;
   border-left: 1px solid #eee;
 }
 
@@ -32,60 +32,82 @@
 
 .props-table th {
   width: 40px;
+  padding: 5px 10px 5px 0;
   font-weight: normal;
   color: #a5a5a5;
-  padding: 5px 10px 5px 0px;
 }
 
 .props-table td {
-  color: #a5a5a5;
   width: 100%;
   padding: 5px 0;
-}
-
-
-.probs-table--details {
-  margin-top: 20px;
+  color: #a5a5a5;
 }
 
 .props-input {
   width: 100%;
+  padding-bottom: 5px;
+  padding-right: 17px;
   margin-top: 5px;
-  font-weight: 400;
-  color: #5c5c5c;
   background: transparent;
   border: none;
   border-bottom: 1px solid #e9e9e9;
-  padding-bottom: 5px;
-  padding-right: 17px;
+  font-weight: 400;
+  color: #5c5c5c;
 }
 
 .props-table--clear-button {
-  right: 15px;
   top: 2px;
+  right: 15px;
 }
 
 .add-context-button {
-  color: black;
   float: right;
-  border-radius: 2px;
-  background-color: whitesmoke;
-  border: 1px solid darkgray;
   padding: 2px 7px;
+  background-color: transparent;
+  border: none;
+}
+
+.add-context-button:hover {
+  color: black;
+}
+
+.add-context-button:focus {
+  color: black;
 }
 
 .remove-context-button:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
+  cursor: default;
+  opacity: 0.2;
 }
 
 .remove-context-button {
-  color: black;
   float: right;
-  margin-left: 5px;
-  border-radius: 2px;
-  opacity: 1;
-  background-color: whitesmoke;
-  border: 1px solid darkgray;
   padding: 2px 7px;
+  margin-left: 5px;
+  background-color: transparent;
+  border: none;
+  opacity: 1;
+}
+
+.remove-context-button:not(:disabled):hover {
+  color: black;
+}
+
+.remove-context-button:not(:disabled):focus {
+  color: black;
+}
+
+.key-value-delete-button {
+  padding-top: 2px;
+  background: transparent;
+  border: none;
+  color: darkgray;
+}
+
+.key-value-delete-button:hover {
+  color: black;
+}
+
+.key-value-delete-button:focus {
+  color: black;
 }

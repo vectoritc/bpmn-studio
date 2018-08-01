@@ -9,11 +9,11 @@ const highlightEngine: {
   highlightBlock: (element: HTMLElement) => void;
   // tslint:disable-next-line:prefer-method-signature
   lineNumbersBlock: (element: HTMLElement) => void;
-} = hljs as any;
+} = hljs as hljs;
 
 export class BpmnXmlView {
 
-  private codeElement: HTMLElement;
+  public codeElement: HTMLElement;
   @bindable() public xml: string;
   @bindable({ defaultBindingMode: bindingMode.oneWay }) public newXML: string;
 

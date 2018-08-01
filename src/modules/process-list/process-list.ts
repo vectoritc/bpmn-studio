@@ -1,50 +1,52 @@
-import {INodeInstanceEntity} from '@process-engine/process_engine_contracts';
+import {Correlation, IManagementApiService, ManagementContext} from '@process-engine/management_api_contracts';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject, observable} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {
   AuthenticationStateEvent,
-  IPagination,
-  IProcessEngineService,
-  IProcessEntity,
+  IAuthenticationService,
   NotificationType,
 } from '../../contracts/index';
 import environment from '../../environment';
-import {NotificationService} from './../notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 
 interface IProcessListRouteParameters {
-  processDefId?: string;
+  processModelId?: string;
 }
 
-@inject('ProcessEngineService', EventAggregator, Router, 'NotificationService')
+@inject('ManagementApiClientService', EventAggregator, Router, 'NotificationService', 'AuthenticationService')
 export class ProcessList {
-
-  private processEngineService: IProcessEngineService;
-  private notificationService: NotificationService;
-  private eventAggregator: EventAggregator;
-  private selectedState: HTMLSelectElement;
-  private getProcessesIntervalId: number;
-  private getProcesses: () => Promise<IPagination<IProcessEntity>>;
-  private subscriptions: Array<Subscription>;
-  private processes: IPagination<IProcessEntity>;
-  private instances: Array<IProcessEntity>;
-  private status: Array<string> = [];
-  private succesfullRequested: boolean = false;
-  private router: Router;
 
   @observable public currentPage: number = 0;
   public pageSize: number = 10;
   public totalItems: number;
-  public solutionExplorerIsShown: boolean = false;
+  public instances: Array<Correlation>;
+  public status: Array<string> = [];
+  public succesfullRequested: boolean = false;
+  public selectedState: HTMLSelectElement;
 
-  constructor(processEngineService: IProcessEngineService,
+  private _managementApiService: IManagementApiService;
+  private _eventAggregator: EventAggregator;
+  private _router: Router;
+  private _notificationService: NotificationService;
+  private _authenticationService: IAuthenticationService;
+
+  private _getProcessesIntervalId: number;
+  private _getProcesses: () => Promise<Array<Correlation>>;
+  private _subscriptions: Array<Subscription>;
+  private _processes: Array<Correlation>;
+
+  constructor(managementApiService: IManagementApiService,
               eventAggregator: EventAggregator,
               router: Router,
-              notificationService: NotificationService) {
-    this.processEngineService = processEngineService;
-    this.eventAggregator = eventAggregator;
-    this.notificationService = notificationService;
-    this.router = router;
+              notificationService: NotificationService,
+              authenticationService: IAuthenticationService,
+  ) {
+    this._managementApiService = managementApiService;
+    this._eventAggregator = eventAggregator;
+    this._router = router;
+    this._notificationService = notificationService;
+    this._authenticationService = authenticationService;
   }
 
   public currentPageChanged(newValue: number, oldValue: number): void {
@@ -54,91 +56,103 @@ export class ProcessList {
   }
 
   public activate(routeParameters: IProcessListRouteParameters): void {
-    if (!routeParameters.processDefId) {
-      this.getProcesses = this.getAllProcesses;
+    if (!routeParameters.processModelId) {
+      this._getProcesses = this.getAllProcesses;
     } else {
-      this.getProcesses = (): Promise<IPagination<IProcessEntity>> => {
-        return this.getProcessesForProcessDef(routeParameters.processDefId);
+      this._getProcesses = (): Promise<Array<Correlation>> => {
+        return this.getProcessesForProcessModel(routeParameters.processModelId);
       };
     }
-    this.updateProcesses();
-
   }
 
   public async updateProcesses(): Promise<void> {
     try {
-      this.processes = await this.getProcesses();
+      this._processes = await this._getProcesses();
       this.succesfullRequested = true;
     } catch (error) {
-      this.notificationService.showNotification(NotificationType.ERROR, error.message);
-    }
-
-    for (const instance of this.allInstances) {
-      if (!this.status.includes(instance.status)) {
-        this.status.push(instance.status);
-      }
+      this._notificationService.showNotification(NotificationType.ERROR, `Error receiving task list: ${error.message}`);
     }
 
     if (!this.instances) {
       this.instances = this.allInstances;
     }
+
     this.totalItems = this.instances.length;
   }
 
   public updateList(): void {
-    if (this.selectedState.value === 'all') {
-      this.instances = this.allInstances;
-      return;
-    }
-    this.instances = this.allInstances.filter((entry: IProcessEntity): boolean => {
-      return entry.status === this.selectedState.value;
-    });
+    this.instances = this.allInstances;
   }
 
   public attached(): void {
-    this.getProcessesIntervalId = window.setInterval(async() => {
+    if (!this._getProcesses) {
+      this._getProcesses = this.getAllProcesses;
+    }
+    this.updateProcesses();
+
+    this._getProcessesIntervalId = window.setInterval(async() => {
       await this.updateProcesses();
       this.updateList();
-    }, environment.processengine.poolingInterval);
+    }, environment.processengine.pollingIntervalInMs);
 
-    this.subscriptions = [
-      this.eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
+    this._subscriptions = [
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
         this.updateProcesses();
       }),
-      this.eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
         this.updateProcesses();
       }),
     ];
   }
 
   public detached(): void {
-    clearInterval(this.getProcessesIntervalId);
-    for (const subscription of this.subscriptions) {
+    clearInterval(this._getProcessesIntervalId);
+    for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
   }
 
   public goBack(): void {
-    this.router.navigateBack();
+    this._router.navigateBack();
   }
 
-  public get shownProcesses(): Array<IProcessEntity> {
+  public get shownProcesses(): Array<Correlation> {
     return this.instances.slice((this.currentPage - 1) * this.pageSize, this.pageSize * this.currentPage);
   }
 
-  public get allInstances(): Array<IProcessEntity> {
-    return this.processes.data;
+  public get allInstances(): Array<Correlation> {
+    if (!this._processes) {
+      return [];
+    }
+
+    return this._processes;
   }
 
-  public toggleSolutionExplorer(): void {
-    this.solutionExplorerIsShown = !this.solutionExplorerIsShown;
+  private async getAllProcesses(): Promise<Array<Correlation>> {
+    const managementApiContext: ManagementContext = this._getManagementContext();
+
+    return this._managementApiService.getAllActiveCorrelations(managementApiContext);
   }
 
-  private async getAllProcesses(): Promise<IPagination<IProcessEntity>> {
-    return this.processEngineService.getProcesses();
+  private async getProcessesForProcessModel(processModelId: string): Promise<Array<Correlation>> {
+    const managementApiContext: ManagementContext = this._getManagementContext();
+
+    const runningCorrelations: Array<Correlation> = await this._managementApiService.getAllActiveCorrelations(managementApiContext);
+
+    const correlationsWithId: Array<Correlation> = runningCorrelations.filter((correlation: Correlation) => {
+      return correlation.processModelId === processModelId;
+    });
+
+    return correlationsWithId;
   }
 
-  private async getProcessesForProcessDef(processDefId: string): Promise<IPagination<IProcessEntity>> {
-    return this.processEngineService.getProcessesByProcessDefId(processDefId);
+  // TODO: Move this method into a service.
+  private _getManagementContext(): ManagementContext {
+    const accessToken: string = this._authenticationService.getAccessToken();
+    const context: ManagementContext = {
+      identity: accessToken,
+    };
+
+    return context;
   }
 }
