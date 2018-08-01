@@ -4,6 +4,7 @@ import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {User} from 'oidc-client';
 import {SigninResponse} from './open-id/open-id-signin-response';
 
+import { Router } from 'aurelia-router';
 import {AuthenticationStateEvent, IAuthenticationService, IIdentity} from '../../contracts/index';
 import environment from '../../environment';
 import {oidcConfig} from '../../open-id-connect-configuration';
@@ -11,17 +12,19 @@ import {oidcConfig} from '../../open-id-connect-configuration';
 const UNAUTHORIZED_STATUS_CODE: number = 401;
 const LOGOUT_SUCCESS_STATUS_CODE: number = 200;
 
-@inject(EventAggregator, OpenIdConnect)
+@inject(EventAggregator, OpenIdConnect, Router)
 export class AuthenticationService implements IAuthenticationService {
 
   private _eventAggregator: EventAggregator;
   private _openIdConnect: OpenIdConnect;
+  private _router: Router;
   private _user: User;
   private _logoutWindow: Window = null;
 
-  constructor(eventAggregator: EventAggregator, openIdConnect: OpenIdConnect) {
+  constructor(eventAggregator: EventAggregator, openIdConnect: OpenIdConnect, router: Router) {
     this._eventAggregator = eventAggregator;
     this._openIdConnect = openIdConnect;
+    this._router = router;
 
     this._initialize();
   }
@@ -60,6 +63,7 @@ export class AuthenticationService implements IAuthenticationService {
     }
     this._user = null;
     this._eventAggregator.publish(AuthenticationStateEvent.LOGOUT);
+    this._router.navigate('/');
   }
 
   public async logout(): Promise<void> {
