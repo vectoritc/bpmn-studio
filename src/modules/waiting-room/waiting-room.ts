@@ -46,20 +46,28 @@ export class WaitingRoom {
     this._stopPolling();
   }
 
-  private _stopPolling(): void {
-    clearInterval(this._pollingTimer);
+  public navigateToTaskList(): void {
+    this._router.navigateToRoute('task-list-correlation', {
+      correlationId: this._correlationId,
+    });
   }
 
   private async _startPolling(): Promise<void> {
     this._pollingTimer = setTimeout(async() => {
-      await this._pollUserTasksForCorrelation();
-      await this._pollIsCorrelationStillActive();
+      const noUserTaskFound: boolean = await this._pollUserTasksForCorrelation();
+      const correlationIsStillActive: boolean = await this._pollIsCorrelationStillActive();
 
-      this._startPolling();
+      if (noUserTaskFound && correlationIsStillActive) {
+        this._startPolling();
+      }
     }, environment.processengine.pollingIntervalInMs);
   }
 
-  private async _pollUserTasksForCorrelation(): Promise<void> {
+  private _stopPolling(): void {
+    clearTimeout(this._pollingTimer);
+  }
+
+  private async _pollUserTasksForCorrelation(): Promise<boolean> {
 
     const managementContext: ManagementContext = this._getManagementContext();
     const userTasksForCorrelation: UserTaskList = await this._managementApiClient.getUserTasksForCorrelation(managementContext,
@@ -67,15 +75,16 @@ export class WaitingRoom {
 
     const userTaskListHasNoUserTask: boolean = userTasksForCorrelation.userTasks.length <= 0;
     if (userTaskListHasNoUserTask) {
-      return;
+      return false;
     }
 
     const nextUserTask: UserTask = userTasksForCorrelation.userTasks[0];
 
     this._renderUserTaskCallback(nextUserTask);
+    return true;
   }
 
-  private async _pollIsCorrelationStillActive(): Promise<void> {
+  private async _pollIsCorrelationStillActive(): Promise<boolean> {
 
     const managementContext: ManagementContext = this._getManagementContext();
     const allActiveCorrelations: Array<Correlation> = await this._managementApiClient.getAllActiveCorrelations(managementContext);
@@ -87,12 +96,8 @@ export class WaitingRoom {
     if (correlationIsNotActive) {
       this._correlationEndCallback(this._correlationId);
     }
-  }
 
-  public navigateToTaskList(): void {
-    this._router.navigateToRoute('task-list-correlation', {
-      correlationId: this._correlationId,
-    });
+    return !correlationIsNotActive;
   }
 
   private _renderUserTaskCallback(userTask: UserTask): void {
