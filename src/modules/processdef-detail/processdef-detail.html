@@ -58,10 +58,9 @@
           </div>
 
           <div class="modal-body process-start-event-modal-dialog__body">
-            This Process has more than one defined StartEvent. In order to start
-            the process, you have to select an initial StartEvent.
+            Please select a start event that should be used to start the process.
             <div>
-              <select value.bind="selectedStartEvent" ref="dropdownMenu" class="process-start-event-modal-dialog__dropdown-menu">
+              <select value.bind="selectedStartEventId" ref="dropdownMenu" class="process-start-event-modal-dialog__dropdown-menu">
                 <option value="">Select StartEvent</option>
                 <option repeat.for="startEvent of processesStartEvents" value.bind="startEvent.id">${startEvent.id}</option>
               </select>
@@ -69,8 +68,8 @@
           </div>
 
           <div class="modal-footer process-start-event-modal-dialog__footer">
-              <button type="button" class="custom-button" data-dismiss="modal" id="cancelStartEventSelection">Cancel</button>
-              <button type="button" class="custom-button" data-dismiss="modal" id="startProcessWithSelectedStartEvent">Start Process</button>
+            <button type="button" class="custom-button" data-dismiss="modal" id="cancelStartEventSelection" click.delegate="cancelStartDialog()">Cancel</button>
+            <button type="button" class="custom-button" data-dismiss="modal" id="startProcessWithSelectedStartEvent" click.delegate="startProcess()" disabled.bind="!selectedStartEventId">Start Process</button>
           </div>
 
         </div>

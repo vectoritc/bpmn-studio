@@ -125,9 +125,19 @@ export class AuthenticationService implements IAuthenticationService {
 
   public getAccessToken(): string | null {
     if (!this._user) {
-      return null;
+      return this._getDummyAccessToken();
     }
     return this._user.access_token;
+  }
+
+  // TODO: The dummy token needs to be removed in the future!!
+  // This dummy token serves as a temporary workaround to bypass login. This
+  // enables us to work without depending on a full environment with
+  // IdentityServer.
+  private _getDummyAccessToken(): string {
+    const dummyAccessTokenString: string = 'dummy_token';
+    const base64EncodedString: string = btoa(dummyAccessTokenString);
+    return base64EncodedString;
   }
 
   public async getIdentity(): Promise<IIdentity | null> {

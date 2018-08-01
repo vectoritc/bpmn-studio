@@ -65,7 +65,7 @@ pipeline {
         sh('npm run build')
         sh("npm version ${full_electron_release_version_string} --allow-same-version --force --no-git-tag-version")
 
-        stash(includes: 'scripts/, package.json', name: 'post_build')
+        stash(includes: '@fortawesome/, bootstrap/, scripts/, package.json', name: 'post_build')
         stash(includes: 'node_modules/', name: 'post_build_node_modules')
       }
     }
@@ -133,7 +133,15 @@ pipeline {
             unstash('post_build')
             bat('node --version')
 
-            powershell('npm install --global windows-build-tools');
+            script {
+              try {
+                timeout(time: 5, unit: 'MINUTES') {
+                  powershell('npm install --global windows-build-tools');
+                }
+              } catch (error) {
+                echo('Unable to install windows-build-tools, trying to continue with jobs execution.')
+              }
+            }
 
             // we copy the node_modules folder from the main slave
             // which runs linux. Some dependencies may not be installed

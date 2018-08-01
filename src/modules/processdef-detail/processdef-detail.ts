@@ -1,6 +1,6 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
-import {Redirect, Router} from 'aurelia-router';
+import {activationStrategy, Redirect, Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
 import {
@@ -42,6 +42,7 @@ export class ProcessDefDetail {
   public showModal: boolean = false;
 
   public processesStartEvents: Array<Event> = [];
+  public selectedStartEventId: string;
   // TODO: Explain what dropdown this is and find a better name.
   public dropdownMenu: HTMLSelectElement;
 
@@ -111,7 +112,7 @@ export class ProcessDefDetail {
 
       //#region Start Button Subscription
       this._eventAggregator.subscribe(environment.events.processDefDetail.startProcess, () => {
-        this._startProcess();
+        this._showStartDialog();
       }),
       //#endregion
 
@@ -131,7 +132,7 @@ export class ProcessDefDetail {
   }
 
   public determineActivationStrategy(): string {
-    return 'replace';
+    return activationStrategy.replace;
   }
 
   /**
@@ -239,113 +240,9 @@ export class ProcessDefDetail {
     this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
   }
 
-  /**
-   * Opens a modal dialog to ask the user, which StartEvent he want's to
-   * use to start the process.
-   *
-   * @returns A promise which resolves, if the user confirms his answer. The
-   * promise is either resolved with the id of the selected StartEvent or with an
-   * empty string, if the user dismissed this modal dialog.
-   */
-  public async showModalDialogAndAwaitAnswer(): Promise<string> {
-    this.showModal = true;
+  public async startProcess(): Promise<void> {
 
-    /*
-     * TODO: Find out if the call here is necessary. The only place where this
-     * the showModalDialogAndAwaitAnswer method is needed, is in startProcess,
-     * which updates the current start events before even calling this method
-     * anyways.
-     */
-    try {
-      await this._initializeModalDialog();
-    } catch (error) {
-      return;
-    }
-
-    /*
-     * Create a promise which displays the modal and resolves, if the user
-     * clicks on the buttons.
-     */
-    const returnPromise: Promise<string | null> = new Promise((resolve: Function, reject: Function): void => {
-      const cancelButton: HTMLElement = document.getElementById('cancelStartEventSelection');
-      const startProcessButton: HTMLElement = document.getElementById('startProcessWithSelectedStartEvent');
-
-      cancelButton.addEventListener('click', () => {
-        this.showModal = false;
-        resolve(null);
-      });
-
-      startProcessButton.addEventListener('click', () => {
-        this.showModal = false;
-        resolve(this.dropdownMenu.value);
-      });
-    });
-
-    return returnPromise;
-  }
-
-  private async _refreshProcess(): Promise<ProcessModelExecution.ProcessModel> {
-    const context: ManagementContext = this._getManagementContext();
-
-    const updatedProcessModel: ProcessModelExecution.ProcessModel = await this._managementApiClient.getProcessModelById(context,
-                                                                                                                        this._processModelId);
-
-    this.process = updatedProcessModel;
-    this
-      ._eventAggregator
-      .publish(environment.events.navBar.updateProcess, this.process);
-
-    return updatedProcessModel;
-  }
-
-  private async _initializeModalDialog(): Promise<void> {
-
-    try {
-      await this._updateProcessStartEvents();
-    } catch (error) {
-      this
-        ._notificationService
-        .showNotification(
-          NotificationType.ERROR,
-          `Error while obtaining the StartEvents which belongs to the Process: ${error.message}`,
-        );
-      throw error;
-    }
-  }
-
-  /**
-   * This sets the _startButtonPressed flag to control the modal view of the save dialog.
-   *
-   * If the process is not valid, it will not start it.
-   */
-  private async _startProcess(): Promise<void> {
-
-    /*
-    * TODO: Since the existence of the _initializeModal Method, a call
-    * to _updateProcessStartEvents is redundant here. Since we need to refresh
-    * the start events here to look, if we only have one or more start events,
-    * I would suggest that we remove the _initializeModal method.
-    */
-    try {
-      await this._updateProcessStartEvents();
-    } catch (error) {
-      this.
-        _notificationService
-        .showNotification(
-          NotificationType.ERROR,
-          `Could not load the processes StartEvents: ${error.message}`,
-        );
-
-        /*
-         * When it is not possible to obtain the processes start events,
-         * we can return.
-         */
-      return;
-    }
-
-    const selectedStartEvent: string | null = await this.showModalDialogAndAwaitAnswer();
-
-    if (selectedStartEvent === null) {
+    if (this.selectedStartEventId === null) {
       return;
     }
 
@@ -361,8 +258,6 @@ export class ProcessDefDetail {
       return;
     }
 
-    this._startButtonPressed = true;
-
     const context: ManagementContext = this._getManagementContext();
     const startRequestPayload: ProcessModelExecution.ProcessStartRequestPayload = {
       inputValues: {},
@@ -370,7 +265,7 @@ export class ProcessDefDetail {
 
     try {
       const response: ProcessModelExecution.ProcessStartResponsePayload = await this._managementApiClient
-        .startProcessInstance(context, this.process.id, selectedStartEvent, startRequestPayload, undefined, undefined);
+        .startProcessInstance(context, this.process.id, this.selectedStartEventId, startRequestPayload, undefined, undefined);
 
       const correlationId: string = response.correlationId;
 
@@ -385,6 +280,41 @@ export class ProcessDefDetail {
           error.message,
         );
     }
+  }
+
+  public cancelStartDialog(): void {
+    this.showModal = false;
+  }
+
+  /**
+   * Opens a modal dialog to ask the user, which StartEvent he want's to
+   * use to start the process.
+   *
+   * If there is only one startevent this method will select this startevent by
+   * default.
+   */
+  private async _showStartDialog(): Promise<void> {
+    await this._updateProcessStartEvents();
+
+    if (this.processesStartEvents.length === 1) {
+      this.selectedStartEventId = this.processesStartEvents[0].id;
+    }
+
+    this.showModal = true;
+  }
+
+  private async _refreshProcess(): Promise<ProcessModelExecution.ProcessModel> {
+    const context: ManagementContext = this._getManagementContext();
+
+    const updatedProcessModel: ProcessModelExecution.ProcessModel = await this._managementApiClient.getProcessModelById(context,
+                                                                                                                        this._processModelId);
+
+    this.process = updatedProcessModel;
+    this
+      ._eventAggregator
+      .publish(environment.events.navBar.updateProcess, this.process);
+
+    return updatedProcessModel;
   }
 
   private _getManagementContext(): ManagementContext {

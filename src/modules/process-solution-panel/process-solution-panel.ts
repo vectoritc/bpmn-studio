@@ -47,6 +47,7 @@ export class ProcessSolutionPanel {
   private _diagramValidationService: IDiagramValidationService;
   private _authenticationService: IAuthenticationService;
   private _identity: IIdentity;
+  private _solutionExplorerIdentity: IIdentity;
 
   constructor(eventAggregator: EventAggregator,
               router: Router,
@@ -112,6 +113,8 @@ export class ProcessSolutionPanel {
         this.openFileSystemIndexCard();
       }
     }
+
+    this._solutionExplorerIdentity = await this._createIdentityForSolutionExplorer();
 
     this._refreshProcesslist();
     this._eventAggregator.publish(environment.events.processSolutionPanel.toggleProcessSolutionExplorer);
@@ -263,10 +266,8 @@ export class ProcessSolutionPanel {
   private async _refreshProcesslist(): Promise<void> {
     const processengineSolutionString: string = window.localStorage.getItem('processEngineRoute');
 
-    const identity: IIdentity = await this._createIdentityForSolutionExplorer();
-
     try {
-      await this._solutionExplorerServiceManagementApi.openSolution(processengineSolutionString, identity);
+      await this._solutionExplorerServiceManagementApi.openSolution(processengineSolutionString, this._solutionExplorerIdentity);
       this.openedProcessEngineSolution = await this._solutionExplorerServiceManagementApi.loadSolution();
 
     } catch (error) {
@@ -286,13 +287,13 @@ export class ProcessSolutionPanel {
   }
 
   private async _createIdentityForSolutionExplorer(): Promise<IIdentity> {
-    const solutionExplorerIdentity: IIdentity = await this._authenticationService.getIdentity();
+    const solutionExplorerIdentity: IIdentity = await this._authenticationService.getIdentity() || {} as IIdentity;
 
-    const solutionExplorerAccesstoken: {accessToken: string} = {
+    const solutionExplorerAccessToken: {accessToken: string} = {
       accessToken: this._authenticationService.getAccessToken(),
     };
 
-    Object.assign(solutionExplorerIdentity || {}, solutionExplorerAccesstoken);
+    Object.assign(solutionExplorerIdentity, solutionExplorerAccessToken);
 
     return solutionExplorerIdentity;
   }
