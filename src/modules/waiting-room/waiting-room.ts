@@ -47,7 +47,7 @@ export class WaitingRoom {
   }
 
   private _stopPolling(): void {
-    clearInterval(this._pollingTimer);
+    clearTimeout(this._pollingTimer);
   }
 
   private async _startPolling(): Promise<void> {
