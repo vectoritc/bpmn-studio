@@ -57,6 +57,7 @@ export function configure(aurelia: Aurelia): void {
     .feature('modules/management-api_client')
     .feature('modules/authentication')
     .feature('modules/solution-explorer-services')
+    .feature('modules/diagram-creation-service')
     .plugin('aurelia-bootstrap')
     .plugin('aurelia-validation')
     .plugin('aurelia-open-id-connect', () => oidcConfig);

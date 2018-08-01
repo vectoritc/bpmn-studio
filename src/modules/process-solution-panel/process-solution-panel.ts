@@ -1,6 +1,7 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
+import {FluentRuleCustomizer, ValidateEvent, ValidateResult, ValidationController, ValidationRules} from 'aurelia-validation';
 
 import {IIdentity} from '@essential-projects/core_contracts';
 import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/errors_ts';
@@ -10,6 +11,7 @@ import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service
 import {
   AuthenticationStateEvent,
   IAuthenticationService,
+  IDiagramCreationService,
   IDiagramValidationService,
   IFile,
   IInputEvent,
@@ -18,17 +20,31 @@ import {
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
+const ENTER_KEY: string = 'Enter';
+const ESCAPE_KEY: string = 'Escape';
+
+export interface IViewModelSolution extends ISolution {
+  isCreateDiagramInputShown: boolean;
+  createNewDiagramInput: HTMLInputElement;
+  documentEventHandlers: Map<string, (event: any) => void>;
+  currentDiagramInputValue: string;
+  errors: Array<ValidateResult>;
+}
+
 @inject(
   EventAggregator,
   Router,
+  ValidationController,
   'SolutionExplorerServiceManagementApi',
   'SolutionExplorerServiceFileSystem',
   'NotificationService',
   'DiagramValidationService',
-  'AuthenticationService')
+  'AuthenticationService',
+  'DiagramCreationService',
+)
 export class ProcessSolutionPanel {
   public openedProcessEngineSolution: ISolution | null;
-  public openedFileSystemSolutions: Array<ISolution> = [];
+  public openedFileSystemSolutions: Array<IViewModelSolution> = [];
   public openedSingleDiagrams: Array<IDiagram> = [];
   public solutionInput: HTMLInputElement;
   public singleDiagramInput: HTMLInputElement;
@@ -41,30 +57,49 @@ export class ProcessSolutionPanel {
   private _subscriptions: Array<Subscription> = [];
   private _eventAggregator: EventAggregator;
   private _router: Router;
+  private _validationController: ValidationController;
   private _notificationService: NotificationService;
   private _solutionExplorerServiceManagementApi: ISolutionExplorerService;
   private _solutionExplorerServiceFileSystem: ISolutionExplorerService;
   private _diagramValidationService: IDiagramValidationService;
   private _authenticationService: IAuthenticationService;
+  private _diagramCreationService: IDiagramCreationService;
   private _identity: IIdentity;
   private _solutionExplorerIdentity: IIdentity;
+  private _newDiagramNameValidator: FluentRuleCustomizer<IViewModelSolution, IViewModelSolution> = ValidationRules
+      .ensure((solution: IViewModelSolution) => solution.currentDiagramInputValue)
+      .displayName('Diagram name')
+      .required()
+        .withMessage('Diagram name cannot be blank.')
+      .then()
+      .satisfies((input: string, solution: IViewModelSolution) => {
+        const diagramUri: string = `${solution.uri}/${input}.bpmn`;
+        const diagramWithIdDoesNotExists: boolean = this._findURIObject(solution.diagrams, diagramUri) === undefined;
+
+        return diagramWithIdDoesNotExists;
+      })
+        .withMessage('A diagram with that name already exists.');
 
   constructor(eventAggregator: EventAggregator,
               router: Router,
+              validationController: ValidationController,
               solutionExplorerServiceManagementApi: ISolutionExplorerService,
               solutionExplorerServiceFileSystem: ISolutionExplorerService,
               notificationService: NotificationService,
               diagramValidationService: IDiagramValidationService,
               authenticationService: IAuthenticationService,
+              diagramCreationService: IDiagramCreationService,
             ) {
 
     this._eventAggregator = eventAggregator;
     this._router = router;
+    this._validationController = validationController;
     this._solutionExplorerServiceManagementApi = solutionExplorerServiceManagementApi;
     this._solutionExplorerServiceFileSystem = solutionExplorerServiceFileSystem;
     this._notificationService = notificationService;
     this._diagramValidationService = diagramValidationService;
     this._authenticationService = authenticationService;
+    this._diagramCreationService = diagramCreationService;
   }
 
   public async attached(): Promise<void> {
@@ -169,7 +204,10 @@ export class ProcessSolutionPanel {
       return;
     }
 
-    this.openedFileSystemSolutions.push(newSolution);
+    const viewModelSolution: IViewModelSolution = this.
+      _createViewModelSolutionFromSolution(newSolution);
+
+    this.openedFileSystemSolutions.push(viewModelSolution);
   }
 
   /**
@@ -220,12 +258,15 @@ export class ProcessSolutionPanel {
   }
 
   public async refreshSolutions(): Promise<void> {
-    this.openedFileSystemSolutions.forEach(async(solution: ISolution) => {
+    this.openedFileSystemSolutions.forEach(async(solution: IViewModelSolution) => {
       try {
         await this._solutionExplorerServiceFileSystem.openSolution(solution.uri, this._identity);
         const updatetSolution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
 
-        this._updateSolution(solution, updatetSolution);
+        const viewModelSolution: IViewModelSolution = this
+          ._createViewModelSolutionFromSolution(updatetSolution);
+
+        this._updateSolution(solution, viewModelSolution);
       } catch (e) {
         this.closeFileSystemSolution(solution);
       }
@@ -237,6 +278,110 @@ export class ProcessSolutionPanel {
     this._router.navigateToRoute('diagram-detail', {
       diagramUri: diagram.uri,
     });
+  }
+
+  public showCreateDiagramInput(solution: IViewModelSolution): void {
+    if (solution.isCreateDiagramInputShown) {
+      return;
+    }
+
+    solution.isCreateDiagramInputShown = true;
+
+    this._newDiagramNameValidator.on(solution);
+
+    this._validationController.subscribe((event: ValidateEvent) => {
+      solution.errors = event.errors;
+    });
+
+    window.setTimeout(() => {
+      solution.createNewDiagramInput.focus();
+    }, 0);
+
+    const clickEventHandler: (event: MouseEvent) => void = (event: MouseEvent): void => {
+      this._onCreateNewDiagramClickEvent(solution, event);
+    };
+    const keyEventHandler: (event: KeyboardEvent) => void = (event: KeyboardEvent): void => {
+      this._onCreateNewDiagramKeyupEvent(solution, event);
+    };
+
+    solution.documentEventHandlers.set('click', clickEventHandler);
+    solution.documentEventHandlers.set('keyup', keyEventHandler);
+
+    document.addEventListener('click', clickEventHandler);
+    document.addEventListener('keyup', keyEventHandler);
+  }
+
+  public isCreateDiagramInputShown(solution: IViewModelSolution): boolean {
+    return solution.isCreateDiagramInputShown;
+  }
+
+  private _onCreateNewDiagramClickEvent(solution: IViewModelSolution, event: MouseEvent): void {
+
+    const inputWasClicked: boolean = event.target === solution.createNewDiagramInput;
+
+    if (inputWasClicked) {
+      return;
+    }
+
+    const inputHasNoValue: boolean = !this._hasNonEmptyValue(solution.createNewDiagramInput);
+    if (inputHasNoValue) {
+      this._resetDiagramCreation(solution);
+      return;
+    }
+
+    this._diagramCreationService
+      .createNewDiagram(this._solutionExplorerServiceFileSystem, solution, solution.currentDiagramInputValue);
+    this.refreshSolutions();
+    this._resetDiagramCreation(solution);
+  }
+
+  private _onCreateNewDiagramKeyupEvent(solution: IViewModelSolution, event: KeyboardEvent): void {
+
+    const pressedKey: string = event.key;
+
+    if (pressedKey === ENTER_KEY) {
+
+      const inputHasNoValue: boolean = !this._hasNonEmptyValue(solution.createNewDiagramInput);
+      if (inputHasNoValue) {
+        return;
+      }
+
+      this._diagramCreationService
+        .createNewDiagram(this._solutionExplorerServiceFileSystem, solution, solution.currentDiagramInputValue);
+      this.refreshSolutions();
+      this._resetDiagramCreation(solution);
+
+    } else if (pressedKey === ESCAPE_KEY) {
+
+      this._resetDiagramCreation(solution);
+
+    }
+  }
+
+  private _hasNonEmptyValue(input: HTMLInputElement): boolean {
+    const inputValue: string = input.value;
+
+    const inputHasValue: boolean = inputValue !== undefined
+                                && inputValue !== null
+                                && inputValue !== '';
+
+    return inputHasValue;
+  }
+
+  private _resetDiagramCreation(solution: IViewModelSolution): void {
+    // Remove all used event listeners.
+    solution.documentEventHandlers.forEach((eventHandler: (event: any) => any, eventName: string): void => {
+      document.removeEventListener(eventName, eventHandler);
+    });
+    solution.documentEventHandlers = new Map();
+
+    // Reset input field.
+    solution.currentDiagramInputValue = '';
+    solution.createNewDiagramInput.value = '';
+    // Hide input field.
+    solution.isCreateDiagramInputShown = false;
+
+    ValidationRules.off(solution);
   }
 
   private async _openSingleDiagram(newDiagram: IDiagram): Promise<boolean> {
@@ -287,7 +432,7 @@ export class ProcessSolutionPanel {
     }
   }
 
-  private _updateSolution(solutionToUpdate: ISolution, solution: ISolution): void {
+  private _updateSolution(solutionToUpdate: IViewModelSolution, solution: IViewModelSolution): void {
     const index: number = this.openedFileSystemSolutions.indexOf(solutionToUpdate);
     this.openedFileSystemSolutions.splice(index, 1, solution);
   }
@@ -304,9 +449,22 @@ export class ProcessSolutionPanel {
     return solutionExplorerIdentity;
   }
 
+  private _createViewModelSolutionFromSolution(solution: ISolution): IViewModelSolution {
+    const viewModelSolution: IViewModelSolution = {
+      isCreateDiagramInputShown: false,
+      createNewDiagramInput: null,
+      documentEventHandlers: new Map(),
+      currentDiagramInputValue: null,
+      errors: [],
+      ...solution,
+    };
+
+    return viewModelSolution;
+  }
+
   private _findURIObject<T extends {uri: string}>(objects: Array<T>, targetURI: string): T {
     const foundObject: T = objects.find((object: T): boolean => {
-      return object.uri === targetURI;
+      return object.uri.toLowerCase() === targetURI.toLowerCase();
     });
 
     return foundObject;
