@@ -121,9 +121,15 @@ export class AuthenticationService implements IAuthenticationService {
 
   public getAccessToken(): string | null {
     if (!this._user) {
-      return null;
+      return this._getDummyAccessToken();
     }
     return this._user.access_token;
+  }
+
+  private _getDummyAccessToken(): string {
+    const dummyAccessTokenString: string = 'dummy_token';
+    const base64EncodedString: string = btoa(dummyAccessTokenString);
+    return base64EncodedString;
   }
 
   public async getIdentity(): Promise<IIdentity | null> {
