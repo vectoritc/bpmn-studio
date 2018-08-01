@@ -46,8 +46,10 @@ export class WaitingRoom {
     this._stopPolling();
   }
 
-  private _stopPolling(): void {
-    clearTimeout(this._pollingTimer);
+  public navigateToTaskList(): void {
+    this._router.navigateToRoute('task-list-correlation', {
+      correlationId: this._correlationId,
+    });
   }
 
   private async _startPolling(): Promise<void> {
@@ -59,6 +61,10 @@ export class WaitingRoom {
         this._startPolling();
       }
     }, environment.processengine.pollingIntervalInMs);
+  }
+
+  private _stopPolling(): void {
+    clearTimeout(this._pollingTimer);
   }
 
   private async _pollUserTasksForCorrelation(): Promise<boolean> {
@@ -92,12 +98,6 @@ export class WaitingRoom {
     }
 
     return !correlationIsNotActive;
-  }
-
-  public navigateToTaskList(): void {
-    this._router.navigateToRoute('task-list-correlation', {
-      correlationId: this._correlationId,
-    });
   }
 
   private _renderUserTaskCallback(userTask: UserTask): void {
