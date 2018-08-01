@@ -289,7 +289,7 @@ export class ProcessSolutionPanel {
       accessToken: this._authenticationService.getAccessToken(),
     };
 
-    Object.assign(solutionExplorerIdentity, solutionExplorerAccesstoken);
+    Object.assign(solutionExplorerIdentity || {}, solutionExplorerAccesstoken);
 
     return solutionExplorerIdentity;
   }
