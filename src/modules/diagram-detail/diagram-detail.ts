@@ -158,6 +158,12 @@ export class DiagramDetail {
       await this
         ._managementClient
         .updateProcessModelById(managementContext, processModelId, payload);
+
+      this._notificationService
+          .showNotification(NotificationType.SUCCESS, 'Diagram was sucessfully uploaded to the connected ProcessEngine.');
+
+      // Since a new processmodel was uploaded, we need to refresh any processmodel lists.
+      this._eventAggregator.publish(environment.events.refreshProcessDefs);
     } catch (error) {
       this._notificationService
           .showNotification(NotificationType.ERROR, `Unable to update diagram: ${error}.`);
