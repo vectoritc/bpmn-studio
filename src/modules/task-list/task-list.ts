@@ -68,6 +68,7 @@ export class TaskList {
     } catch (error) {
       if (isError(error, UnauthorizedError)) {
         this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have permission to view the task list.');
+        this._router.navigateToRoute('start-page');
       } else {
         this._notificationService.showNotification(NotificationType.ERROR, `Error receiving task list: ${error.message}`);
       }

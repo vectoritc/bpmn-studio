@@ -49,6 +49,8 @@ export class ProcessDefList {
 
     if (!hasClaimsForProcessDefList) {
       this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have the permission to use the planning feature.');
+      this._router.navigateToRoute('start-page');
+
       return false;
     }
 

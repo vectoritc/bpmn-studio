@@ -21,8 +21,6 @@ export default {
     routes: {
       processes: `${processEngineRoute}/datastore/ProcessDef`,
       startProcess: `${processEngineRoute}/processengine/start`,
-      processInstances: `${processEngineRoute}/datastore/Process`,
-      messageBus: `${processEngineRoute}/mb`,
       iam: `${processEngineRoute}/iam`,
       userTasks: `${processEngineRoute}/datastore/UserTask`,
       importBPMN: `${processEngineRoute}/processengine/create_bpmn_from_xml`,

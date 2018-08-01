@@ -1,13 +1,14 @@
 import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/errors_ts';
 import {IManagementApiService, ManagementContext} from '@process-engine/management_api_contracts';
 import {inject} from 'aurelia-framework';
+import {Router} from 'aurelia-router';
 import {
   IAuthenticationService,
   NotificationType,
 } from '../../contracts/index';
 import {NotificationService} from '../notification/notification.service';
 
-@inject('ManagementApiClientService', 'NotificationService', 'AuthenticationService')
+@inject('ManagementApiClientService', 'NotificationService', 'AuthenticationService', Router)
 export class Dashboard {
 
   public showTaskList: boolean = false;
@@ -16,14 +17,17 @@ export class Dashboard {
   private _managementApiService: IManagementApiService;
   private _notificationService: NotificationService;
   private _authenticationService: IAuthenticationService;
+  private _router: Router;
 
   constructor(managementApiService: IManagementApiService,
               notificationService: NotificationService,
               authenticationService: IAuthenticationService,
-  ) {
+              router: Router) {
+
     this._managementApiService = managementApiService;
     this._notificationService = notificationService;
     this._authenticationService = authenticationService;
+    this._router = router;
   }
 
   public async canActivate(): Promise<boolean> {
@@ -34,6 +38,8 @@ export class Dashboard {
 
     if (!hasClaimsForProcessList && !hasClaimsForTaskList) {
       this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have the permission to use the dashboard features.');
+      this._router.navigateToRoute('start-page');
+
       return false;
     }
 
