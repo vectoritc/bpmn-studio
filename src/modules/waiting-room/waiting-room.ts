@@ -59,7 +59,7 @@ export class WaitingRoom {
     }, environment.processengine.pollingIntervalInMs);
   }
 
-  private async _pollUserTasksForCorrelation(): Promise<void> {
+  private async _pollUserTasksForCorrelation(): Promise<boolean> {
 
     const managementContext: ManagementContext = this._getManagementContext();
     const userTasksForCorrelation: UserTaskList = await this._managementApiClient.getUserTasksForCorrelation(managementContext,
@@ -67,15 +67,16 @@ export class WaitingRoom {
 
     const userTaskListHasNoUserTask: boolean = userTasksForCorrelation.userTasks.length <= 0;
     if (userTaskListHasNoUserTask) {
-      return;
+      return false;
     }
 
     const nextUserTask: UserTask = userTasksForCorrelation.userTasks[0];
 
     this._renderUserTaskCallback(nextUserTask);
+    return true;
   }
 
-  private async _pollIsCorrelationStillActive(): Promise<void> {
+  private async _pollIsCorrelationStillActive(): Promise<boolean> {
 
     const managementContext: ManagementContext = this._getManagementContext();
     const allActiveCorrelations: Array<Correlation> = await this._managementApiClient.getAllActiveCorrelations(managementContext);
@@ -87,6 +88,8 @@ export class WaitingRoom {
     if (correlationIsNotActive) {
       this._correlationEndCallback(this._correlationId);
     }
+
+    return !correlationIsNotActive;
   }
 
   public navigateToTaskList(): void {
