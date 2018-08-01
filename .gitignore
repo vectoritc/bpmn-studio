@@ -26,8 +26,9 @@ node_modules
 # Compiled files
 scripts
 dist
-@fortawesome
 src/environment.ts
+@fortawesome
+bootstrap
 
 process-engine_local_db
 userData
