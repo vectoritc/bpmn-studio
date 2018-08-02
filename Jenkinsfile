@@ -125,7 +125,6 @@ pipeline {
             }
           }
         }
-        // The Windows build-step is currently diabled due to various build errors.
         stage('Build on Windows') {
           agent {
             label "windows"
