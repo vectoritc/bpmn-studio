@@ -336,6 +336,7 @@ export class ProcessSolutionPanel {
     const inputHasNoValue: boolean = !this._hasNonEmptyValue(solution.createNewDiagramInput);
     if (inputHasNoValue) {
       this._resetDiagramCreation(solution);
+      
       return;
     }
 
@@ -347,6 +348,7 @@ export class ProcessSolutionPanel {
       await this._solutionExplorerServiceFileSystem.saveDiagram(emptyDiagram, emptyDiagram.uri);
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, error.message);
+      
       return;
     }
 
@@ -374,6 +376,7 @@ export class ProcessSolutionPanel {
         await this._solutionExplorerServiceFileSystem.saveDiagram(emptyDiagram, emptyDiagram.uri);
       } catch (error) {
         this._notificationService.showNotification(NotificationType.ERROR, error.message);
+        
         return;
       }
 
