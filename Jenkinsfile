@@ -125,42 +125,30 @@ pipeline {
             }
           }
         }
-        // The Windows build-step is currently diabled due to various build errors.
-        // stage('Build on Windows') {
-        //   agent {
-        //     label "windows"
-        //   }
-        //   steps {
-        //     unstash('post_build')
-        //     bat('node --version')
+        stage('Build on Windows') {
+          agent {
+            label "windows"
+          }
+          steps {
+            unstash('post_build')
+            bat('node --version')
 
-        //     script {
-        //       try {
-        //         timeout(time: 5, unit: 'MINUTES') {
-        //           powershell('npm install --global windows-build-tools');
-        //         }
-        //       } catch (error) {
-        //         echo('Unable to install windows-build-tools, trying to continue with jobs execution.')
-        //       }
-        //     }
+            // we copy the node_modules folder from the main slave
+            // which runs linux. Some dependencies may not be installed
+            // if they have a os restriction in their package.json
+            bat('npm install --prefer-offline')
 
-        //     // we copy the node_modules folder from the main slave
-        //     // which runs linux. Some dependencies may not be installed
-        //     // if they have a os restriction in their package.json
-        //     bat('npm install --prefer-offline')
+            bat('npm run jenkins-electron-rebuild-native')
+            bat('npm run jenkins-electron-build-windows')
 
-        //     bat('npm run jenkins-electron-install-app-deps')
-        //     bat('npm run jenkins-electron-rebuild-native')
-        //     bat('npm run jenkins-electron-build-windows')
-
-        //     stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml', name: 'windows_results')
-        //   }
-        //   post {
-        //     always {
-        //       cleanup_workspace()
-        //     }
-        //   }
-        // }
+            stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml', name: 'windows_results')
+          }
+          post {
+            always {
+              cleanup_workspace()
+            }
+          }
+        }
       }
     }
     stage('test') {
@@ -223,7 +211,7 @@ pipeline {
       steps {
         unstash('linux_results')
         unstash('macos_results')
-        // unstash('windows_results')
+        unstash('windows_results')
         nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
           dir('.ci-tools') {
             sh('npm install --prefer-offline')
