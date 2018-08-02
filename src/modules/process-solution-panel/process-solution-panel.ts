@@ -24,6 +24,7 @@ import {
   NotificationType,
 } from '../../contracts/index';
 import environment from '../../environment';
+import {DiagramCreationService} from '../diagram-creation-service/DiagramCreationService';
 import {NotificationService} from '../notification/notification.service';
 
 const ENTER_KEY: string = 'Enter';
@@ -50,7 +51,6 @@ export interface IViewModelSolution extends ISolution {
   'NotificationService',
   'DiagramValidationService',
   'AuthenticationService',
-  'DiagramCreationService',
 )
 export class ProcessSolutionPanel {
   public openedProcessEngineSolution: ISolution | null;
@@ -97,8 +97,7 @@ export class ProcessSolutionPanel {
               solutionExplorerServiceFileSystem: ISolutionExplorerService,
               notificationService: NotificationService,
               diagramValidationService: IDiagramValidationService,
-              authenticationService: IAuthenticationService,
-              diagramCreationService: IDiagramCreationService) {
+              authenticationService: IAuthenticationService) {
 
     this._eventAggregator = eventAggregator;
     this._router = router;
@@ -108,7 +107,8 @@ export class ProcessSolutionPanel {
     this._notificationService = notificationService;
     this._diagramValidationService = diagramValidationService;
     this._authenticationService = authenticationService;
-    this._diagramCreationService = diagramCreationService;
+
+    this._diagramCreationService = new DiagramCreationService();
   }
 
   public async attached(): Promise<void> {
