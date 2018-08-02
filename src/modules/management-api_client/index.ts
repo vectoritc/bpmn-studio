@@ -9,7 +9,14 @@ export async function configure(config: FrameworkConfiguration): Promise<void> {
 
   const httpClient: IHttpClient = config.container.get('HttpFetchClient');
 
-  const configuredBaseRoute: string = window.localStorage.getItem('processEngineRoute');
+  const customProcessEngineRoute: string = window.localStorage.getItem('processEngineRoute');
+  const isCustomProcessEngineRouteSet: boolean = customProcessEngineRoute !== ''
+                                              && customProcessEngineRoute !== null;
+
+  const configuredBaseRoute: string = isCustomProcessEngineRouteSet ?
+  customProcessEngineRoute :
+    window.localStorage.getItem('InternalProcessEngineRoute');
+
   const urlPrefix: string = `${configuredBaseRoute}/`;
   const proxiedHttpClient: HttpClientProxy = new HttpClientProxy(httpClient, urlPrefix);
 

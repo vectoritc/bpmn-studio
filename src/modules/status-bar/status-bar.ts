@@ -24,7 +24,16 @@ export class StatusBar {
   constructor(eventAggregator: EventAggregator, router: Router) {
     this._eventAggregator = eventAggregator;
     this._router = router;
-    this._setProcessEngineRoute(window.localStorage.getItem('processEngineRoute'));
+
+    const customProcessEngineRoute: string = window.localStorage.getItem('processEngineRoute');
+    const isCustomProcessEngineRouteSet: boolean = customProcessEngineRoute !== ''
+                                                && customProcessEngineRoute !== null;
+
+    const processEngineRoute: string = isCustomProcessEngineRouteSet ?
+      customProcessEngineRoute :
+      window.localStorage.getItem('InternalProcessEngineRoute');
+
+    this._setProcessEngineRoute(processEngineRoute);
   }
 
   public attached(): void {

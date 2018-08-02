@@ -264,7 +264,13 @@ export class ProcessSolutionPanel {
   }
 
   private async _refreshProcesslist(): Promise<void> {
-    const processengineSolutionString: string = window.localStorage.getItem('processEngineRoute');
+    const customProcessEngineRoute: string = window.localStorage.getItem('processEngineRoute');
+    const isCustomProcessEngineRouteSet: boolean = customProcessEngineRoute !== ''
+                                                && customProcessEngineRoute !== null;
+
+    const processengineSolutionString: string = isCustomProcessEngineRouteSet ?
+      customProcessEngineRoute :
+      window.localStorage.getItem('InternalProcessEngineRoute');
 
     try {
       await this._solutionExplorerServiceManagementApi.openSolution(processengineSolutionString, this._solutionExplorerIdentity);

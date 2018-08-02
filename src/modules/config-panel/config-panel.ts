@@ -44,7 +44,15 @@ export class ConfigPanel {
     this.baseRoute = this.config.bpmnStudioClient.baseRoute;
 
     // If there is a route set in the localstorage, we prefer this setting.
-    const baseRouteConfiguredInLocalStorage: string = window.localStorage.getItem('processEngineRoute');
+    const customProcessEngineRoute: string = window.localStorage.getItem('processEngineRoute');
+    const isCustomProcessEngineRouteSet: boolean = customProcessEngineRoute !== ''
+                                                && customProcessEngineRoute !== null;
+
+    const baseRouteConfiguredInLocalStorage: string = isCustomProcessEngineRouteSet ?
+      customProcessEngineRoute :
+      window.localStorage.getItem('InternalProcessEngineRoute') ;
+
+    console.log(customProcessEngineRoute);
     if (baseRouteConfiguredInLocalStorage) {
       this.baseRoute = baseRouteConfiguredInLocalStorage;
     }
@@ -75,7 +83,12 @@ export class ConfigPanel {
     }
 
     this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, this.baseRoute);
-    window.localStorage.setItem('processEngineRoute', this.baseRoute);
+    if (this.baseRoute === window.localStorage.getItem('InternalProcessEngineRoute')) {
+      window.localStorage.setItem('processEngineRoute', '');
+    } else {
+      window.localStorage.setItem('processEngineRoute', this.baseRoute);
+
+    }
 
     oidcConfig.userManagerSettings.authority = this.config.openIdConnect.authority;
 
