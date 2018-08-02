@@ -49,10 +49,9 @@ export class ConfigPanel {
                                                 && customProcessEngineRoute !== null;
 
     const baseRouteConfiguredInLocalStorage: string = isCustomProcessEngineRouteSet ?
-      customProcessEngineRoute :
-      window.localStorage.getItem('InternalProcessEngineRoute') ;
+      customProcessEngineRoute
+    : window.localStorage.getItem('InternalProcessEngineRoute') ;
 
-    console.log(customProcessEngineRoute);
     if (baseRouteConfiguredInLocalStorage) {
       this.baseRoute = baseRouteConfiguredInLocalStorage;
     }

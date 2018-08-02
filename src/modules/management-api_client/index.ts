@@ -14,8 +14,8 @@ export async function configure(config: FrameworkConfiguration): Promise<void> {
                                               && customProcessEngineRoute !== null;
 
   const configuredBaseRoute: string = isCustomProcessEngineRouteSet ?
-  customProcessEngineRoute :
-    window.localStorage.getItem('InternalProcessEngineRoute');
+    customProcessEngineRoute
+  : window.localStorage.getItem('InternalProcessEngineRoute');
 
   const urlPrefix: string = `${configuredBaseRoute}/`;
   const proxiedHttpClient: HttpClientProxy = new HttpClientProxy(httpClient, urlPrefix);
