@@ -14,7 +14,7 @@
         <a class="status-bar__element" class.bind="currentDiffMode === DiffMode.BeforeVsAfter ? 'status-bar__element--active' : ''" click.delegate="changeDiffMode(DiffMode.BeforeVsAfter)">
           Before vs. After <i class="fa fa-arrow-right"></i>
         </a>
-        <a class="status-bar__element" class.bind="showChangeList ? 'status-bar__element--active' : ''" click.delegate="toggleChangeList()">
+        <a class="status-bar__element" class.bind="showChangeList ? 'status-bar__element--active' : ''" click.delegate="toggleChangeList()" title="Toggle visibility of the Change List">
           <i class="fas fa-bars"></i>
         </a>
         <a class="status-bar__element" class.bind="currentDiffMode === DiffMode.AfterVsBefore ? 'status-bar__element--active' : ''" click.delegate="changeDiffMode(DiffMode.AfterVsBefore)">
