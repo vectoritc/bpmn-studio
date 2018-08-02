@@ -29,6 +29,10 @@ import {NotificationService} from '../notification/notification.service';
 const ENTER_KEY: string = 'Enter';
 const ESCAPE_KEY: string = 'Escape';
 
+/*
+ * The IViewModelSolution extends ISolution because it basically is a solution
+ * that is used when create new solutions
+ */
 export interface IViewModelSolution extends ISolution {
   isCreateDiagramInputShown: boolean;
   createNewDiagramInput: HTMLInputElement;
