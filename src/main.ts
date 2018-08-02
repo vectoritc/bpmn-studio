@@ -23,9 +23,7 @@ export function configure(aurelia: Aurelia): void {
      */
     const processEngineBaseRouteWithProtocol: string = `http://${newHost}`;
 
-    if (!window.localStorage.getItem('processEngineRoute')) {
-      localStorage.setItem('processEngineRoute', processEngineBaseRouteWithProtocol);
-    }
+    localStorage.setItem('processEngineRoute', processEngineBaseRouteWithProtocol);
 
     aurelia.container.registerInstance('InternalProcessEngineBaseRoute', processEngineBaseRouteWithProtocol);
   } else {
