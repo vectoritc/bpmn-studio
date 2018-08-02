@@ -330,10 +330,17 @@ export class ProcessSolutionPanel {
       return;
     }
 
+    const diagramUri: string = `${solution.uri}/${solution.currentDiagramInputValue}.bpmn`;
+
     this._diagramCreationService
       .createNewDiagram(this._solutionExplorerServiceFileSystem, solution, solution.currentDiagramInputValue);
+
     this.refreshSolutions();
     this._resetDiagramCreation(solution);
+
+    this._router.navigateToRoute('diagram-detail', {
+      diagramUri: diagramUri,
+    });
   }
 
   private _onCreateNewDiagramKeyupEvent(solution: IViewModelSolution, event: KeyboardEvent): void {
@@ -346,11 +353,19 @@ export class ProcessSolutionPanel {
       if (inputHasNoValue) {
         return;
       }
+      const solutionPath: string = solution.uri;
+      const fileName: string = solution.currentDiagramInputValue;
+      const diagramUri: string = `${solutionPath}/${fileName}.bpmn`;
 
       this._diagramCreationService
         .createNewDiagram(this._solutionExplorerServiceFileSystem, solution, solution.currentDiagramInputValue);
+
       this.refreshSolutions();
       this._resetDiagramCreation(solution);
+
+      this._router.navigateToRoute('diagram-detail', {
+        diagramUri: diagramUri,
+      });
 
     } else if (pressedKey === ESCAPE_KEY) {
 
