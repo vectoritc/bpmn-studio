@@ -59,7 +59,7 @@
               <input ref="solution.createNewDiagramInput" type="text" value.bind="solution.currentDiagramInputValue & validateOnChange">
               <div if.bind="solution.errors && solution.errors.length > 0">
                 <ul>
-                  <li repeat.for="error of solution.errors">${error.message}</li>
+                  <li class="solution-error-message" repeat.for="error of solution.errors">${error.message}</li>
                 </ul>
               </div>
             </div>
