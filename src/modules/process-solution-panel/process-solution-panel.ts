@@ -76,7 +76,7 @@ export class ProcessSolutionPanel {
       .ensure((solution: IViewModelSolution) => solution.currentDiagramInputValue)
       .displayName('Diagram name')
       .required()
-        .withMessage('Diagram name cannot be blank.')
+      .withMessage('Diagram name cannot be blank.')
       .then()
       .satisfies((input: string, solution: IViewModelSolution) => {
         const diagramUri: string = `${solution.uri}/${input}.bpmn`;
@@ -84,7 +84,7 @@ export class ProcessSolutionPanel {
 
         return diagramWithIdDoesNotExists;
       })
-        .withMessage('A diagram with that name already exists.');
+      .withMessage('A diagram with that name already exists.');
 
   constructor(eventAggregator: EventAggregator,
               router: Router,
