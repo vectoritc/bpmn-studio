@@ -18,7 +18,7 @@
         Solution Explorer
         <div class="control-buttons">
           <button ref="openSingleDiagramButton" class="control-buttons__open-single-file" click.delegate="singleDiagramInput.click()" title="Open a diagram">
-            <i class="fas fa-file-medical"></i>
+            <i class="fas fa-file"></i>
           </button>
           <button ref="openSolutionButton" class="control-buttons__open-solution" click.delegate="solutionInput.click()" title="Open a solution">
             <i class="fas fa-folder-open"></i>
@@ -45,12 +45,25 @@
               <i class="fa fa-folder-open"></i>
               ${solution.name}
             </div>
-            <div class="solution-group__close" title="Close solution" click.delegate="closeFileSystemSolution(solution)">
-              <i class="fas fa-times solution-close"></i>
+            <div class="solution-group__action-buttons">
+              <button title="Create a new diagram" click.delegate="showCreateDiagramInput(solution)">
+                <i class="fa fa-file-medical"></i>
+              </button>
+              <button title="Close solution" click.delegate="closeFileSystemSolution(solution)">
+                <i class="fas fa-times solution-close"></i>
+              </button>
+            </div>
+          </div>
+          <div if.bind="solution.isCreateDiagramInputShown" class="solution-diagram-group">
+            <div class="solution-diagram-group__entry">
+              <input ref="solution.createNewDiagramInput" type="text" value.bind="solution.currentDiagramInputValue & validateOnChange">
+              <ul if.bind="solution.errors && solution.errors.length > 0">
+                <li class="solution-error-message" repeat.for="error of solution.errors">${error.message}</li>
+              </ul>
             </div>
           </div>
           <div repeat.for="diagram of solution.diagrams" class="solution-diagram-group">
-            <div class="solution-diagram-group__link" click.delegate="navigateToDiagramDetail(diagram)"  title="${diagram.name}">${diagram.name}</div>
+            <div class="solution-diagram-group__entry solution-diagram-group__link" click.delegate="navigateToDiagramDetail(diagram)" title="${diagram.name}">${diagram.name}</div>
           </div>
         </div>
       </div>

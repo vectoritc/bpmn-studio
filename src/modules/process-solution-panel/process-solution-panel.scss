@@ -87,7 +87,7 @@
 }
 
 .solution-headline {
-  width: 180px;
+  flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: default;
@@ -95,12 +95,14 @@
   white-space: nowrap;
 }
 
-.solution-group__close {
-  float: right;
+.solution-group__action-buttons button {
+  padding: 0 2px;
+  background: transparent;
+  border: none;
   color: darkgray;
 }
 
-.solution-group__close:hover {
+.solution-group__action-buttons button:hover {
   cursor: pointer;
   color: #5e5e5e;
 }
@@ -110,7 +112,7 @@
   padding: 5px 30px;
 }
 
-.solution-diagram-group__link {
+.solution-diagram-group__entry {
   width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -158,4 +160,8 @@
   float: right;
   margin-top: 2px;
   cursor: pointer;
+}
+
+.solution-error-message {
+  white-space: normal;
 }
