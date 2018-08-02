@@ -316,7 +316,7 @@ export class ProcessSolutionPanel {
     return solution.isCreateDiagramInputShown;
   }
 
-  private _onCreateNewDiagramClickEvent(solution: IViewModelSolution, event: MouseEvent): void {
+  private async _onCreateNewDiagramClickEvent(solution: IViewModelSolution, event: MouseEvent): Promise<void> {
 
     const inputWasClicked: boolean = event.target === solution.createNewDiagramInput;
 
@@ -332,8 +332,13 @@ export class ProcessSolutionPanel {
 
     const diagramUri: string = `${solution.uri}/${solution.currentDiagramInputValue}.bpmn`;
 
-    this._diagramCreationService
-      .createNewDiagram(this._solutionExplorerServiceFileSystem, solution, solution.currentDiagramInputValue);
+    try {
+      await this._diagramCreationService
+        .createNewDiagram(this._solutionExplorerServiceFileSystem, solution, solution.currentDiagramInputValue);
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR, error.message);
+      return;
+    }
 
     this.refreshSolutions();
     this._resetDiagramCreation(solution);
@@ -343,7 +348,7 @@ export class ProcessSolutionPanel {
     });
   }
 
-  private _onCreateNewDiagramKeyupEvent(solution: IViewModelSolution, event: KeyboardEvent): void {
+  private async _onCreateNewDiagramKeyupEvent(solution: IViewModelSolution, event: KeyboardEvent): Promise<void> {
 
     const pressedKey: string = event.key;
 
@@ -353,12 +358,18 @@ export class ProcessSolutionPanel {
       if (inputHasNoValue) {
         return;
       }
+
       const solutionPath: string = solution.uri;
       const fileName: string = solution.currentDiagramInputValue;
       const diagramUri: string = `${solutionPath}/${fileName}.bpmn`;
 
-      this._diagramCreationService
-        .createNewDiagram(this._solutionExplorerServiceFileSystem, solution, solution.currentDiagramInputValue);
+      try {
+        await this._diagramCreationService
+          .createNewDiagram(this._solutionExplorerServiceFileSystem, solution, solution.currentDiagramInputValue);
+      } catch (error) {
+        this._notificationService.showNotification(NotificationType.ERROR, error.message);
+        return;
+      }
 
       this.refreshSolutions();
       this._resetDiagramCreation(solution);
