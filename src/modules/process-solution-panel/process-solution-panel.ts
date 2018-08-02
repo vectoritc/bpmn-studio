@@ -392,7 +392,7 @@ export class ProcessSolutionPanel {
     const diagramUri: string = `${solution.uri}/${processName}.bpmn`;
 
     const foundDiagram: IDiagram = this
-    ._findURIObject(solution.diagrams, diagramUri);
+      ._findURIObject(solution.diagrams, diagramUri);
 
     const diagramWithIdAlreadyExists: boolean = foundDiagram !== undefined;
     if (diagramWithIdAlreadyExists) {
