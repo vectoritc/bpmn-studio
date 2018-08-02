@@ -341,7 +341,7 @@ export class ProcessSolutionPanel {
     }
 
     const emptyDiagram: IDiagram = this._diagramCreationService
-      .createNewDiagram(solution, solution.currentDiagramInputValue);
+      .createNewDiagram(solution.uri, solution.diagrams, solution.currentDiagramInputValue);
 
     try {
       // TODO: uri is kinda useless, cause the diagram contains its uri... but we fix this later.
@@ -369,7 +369,7 @@ export class ProcessSolutionPanel {
       }
 
       const emptyDiagram: IDiagram = this._diagramCreationService
-        .createNewDiagram(solution, solution.currentDiagramInputValue);
+        .createNewDiagram(solution.uri, solution.diagrams, solution.currentDiagramInputValue);
 
       try {
         // TODO: uri is kinda useless, cause the diagram contains its uri... but we fix this later.

@@ -3,7 +3,7 @@ import {IDiagramCreationService} from '../../contracts';
 
 export class DiagramCreationService implements IDiagramCreationService {
 
-  public createNewDiagram(insideSolution: ISolution, withName: string): IDiagram {
+  public createNewDiagram(solutionBaseUri: string, diagrams: Array<IDiagram>, withName: string): IDiagram {
 
     const processModelId: string = withName.trim();
     const processModelIdIsEmpty: boolean = processModelId.length === 0;
@@ -12,10 +12,10 @@ export class DiagramCreationService implements IDiagramCreationService {
       throw new Error('Empty process model name not allowed.');
     }
 
-    const diagramUri: string = `${insideSolution.uri}/${processModelId}.bpmn`;
+    const diagramUri: string = `${solutionBaseUri}/${processModelId}.bpmn`;
 
     const foundDiagram: IDiagram = this
-      ._findURIObject(insideSolution.diagrams, diagramUri);
+      ._findURIObject(diagrams, diagramUri);
 
     const diagramWithIdAlreadyExists: boolean = foundDiagram !== undefined;
 
