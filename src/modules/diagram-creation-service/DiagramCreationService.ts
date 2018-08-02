@@ -36,7 +36,7 @@ export class DiagramCreationService implements IDiagramCreationService {
   }
 
   private _getInitialProcessXML(processModelId: string): string {
-    const xml: string = `<?xml version="1.0" encoding="UTF-8"?>
+    return `<?xml version="1.0" encoding="UTF-8"?>
     <bpmn:definitions
       xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
       xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
@@ -71,8 +71,6 @@ export class DiagramCreationService implements IDiagramCreationService {
             </bpmndi:BPMNPlane>
         </bpmndi:BPMNDiagram>
     </bpmn:definitions>`;
-
-    return xml;
   }
 
   private _findURIObject<T extends {uri: string}>(objects: Array<T>, targetURI: string): T {
