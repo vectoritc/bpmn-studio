@@ -40,8 +40,8 @@
             Your process has unsaved changes. Save changes to diagram before starting the process?
           </div>
           <div class="modal-footer">
-            <button type="button" class="custom-button" data-dismiss="modal" id="cancelButtonProcessStart">Cancel</button>
-            <button type="button" class="custom-button" data-dismiss="modal" id="saveButtonProcessStart">Save and start process</button>
+            <button type="button" class="custom-button" data-dismiss="modal" id="cancelButtonProcessStart" click.delegate="cancelDialog()">Cancel</button>
+            <button type="button" class="custom-button" data-dismiss="modal" id="saveButtonProcessStart" click.delegate="saveChangesBeforeStart()" >Save and start process</button>
           </div>
         </div>
       </div>
@@ -70,7 +70,7 @@
           </div>
 
           <div class="modal-footer process-start-event-modal-dialog__footer">
-            <button type="button" class="custom-button" data-dismiss="modal" id="cancelStartEventSelection" click.delegate="cancelStartDialog()">Cancel</button>
+            <button type="button" class="custom-button" data-dismiss="modal" id="cancelStartEventSelection" click.delegate="cancelDialog()">Cancel</button>
             <button type="button" class="custom-button" data-dismiss="modal" id="startProcessWithSelectedStartEvent" click.delegate="startProcess()" disabled.bind="!selectedStartEventId">Start Process</button>
           </div>
 

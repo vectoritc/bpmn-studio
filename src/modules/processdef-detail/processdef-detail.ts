@@ -285,8 +285,9 @@ export class ProcessDefDetail {
     }
   }
 
-  public cancelStartDialog(): void {
+  public cancelDialog(): void {
     this.showStartEventModal = false;
+    this.showSaveForStartModal = false;
   }
 
   /**
@@ -297,24 +298,16 @@ export class ProcessDefDetail {
    * If there are no unsaved changes, no modal will be displayed.
    */
   private async _showStartDialog(): Promise<void> {
-
     if (this._diagramHasChanged) {
       this.showSaveForStartModal = true;
-
-      const startProcessButton: HTMLButtonElement = document.getElementById('saveButtonProcessStart') as HTMLButtonElement;
-      const cancelButton: HTMLButtonElement = document.getElementById('cancelButtonProcessStart') as HTMLButtonElement;
-
-      startProcessButton.addEventListener('click', async() => {
-        await this._showSelectStartEventDialog();
-        this._saveDiagram();
-      });
-
-      cancelButton.addEventListener('click', () => {
-        this.showSaveForStartModal = false;
-      });
     } else {
-      await this._showSelectStartEventDialog();
+      await this.showSelectStartEventDialog();
     }
+  }
+
+  public async saveChangesBeforeStart(): Promise<void> {
+    this._saveDiagram();
+    await this.showSelectStartEventDialog();
   }
 
   /**
@@ -324,16 +317,15 @@ export class ProcessDefDetail {
    * If there is only one StartEvent this method will select this StartEvent by
    * default.
    */
-  private async _showSelectStartEventDialog(): Promise<void> {
+  public async showSelectStartEventDialog(): Promise<void> {
     await this._updateProcessStartEvents();
+
     if (this.processesStartEvents.length === 1) {
       this.selectedStartEventId = this.processesStartEvents[0].id;
-      this.showSaveForStartModal = false;
-      this.startProcess();
-    } else {
-      this.showStartEventModal = true;
-      this.showSaveForStartModal = false;
     }
+
+    this.showStartEventModal = true;
+    this.showSaveForStartModal = false;
 
   }
 
