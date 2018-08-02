@@ -39,7 +39,9 @@ export class ProcessDefDetail {
 
   public bpmnio: BpmnIo;
   public process: ProcessModelExecution.ProcessModel;
-  public showModal: boolean = false;
+  public showStartEventModal: boolean = false;
+  public showSaveForStartModal: boolean = false;
+  public saveForStartModal: HTMLElement;
 
   public processesStartEvents: Array<Event> = [];
   public selectedStartEventId: string;
@@ -284,24 +286,55 @@ export class ProcessDefDetail {
   }
 
   public cancelStartDialog(): void {
-    this.showModal = false;
+    this.showStartEventModal = false;
+  }
+
+  /**
+   * Opens a modal, if the diagram has unsaved changes and ask the user,
+   * if he wants to save his changes. This is necessary to
+   * execute the Process.
+   *
+   * If there are no unsaved changes, no modal will be displayed.
+   */
+  private async _showStartDialog(): Promise<void> {
+
+    if (this._diagramHasChanged) {
+      this.showSaveForStartModal = true;
+
+      const startProcessButton: HTMLButtonElement = document.getElementById('saveButtonProcessStart') as HTMLButtonElement;
+      const cancelButton: HTMLButtonElement = document.getElementById('cancelButtonProcessStart') as HTMLButtonElement;
+
+      startProcessButton.addEventListener('click', async() => {
+        await this._showSelectStartEventDialog();
+        this._saveDiagram();
+      });
+
+      cancelButton.addEventListener('click', () => {
+        this.showSaveForStartModal = false;
+      });
+    } else {
+      await this._showSelectStartEventDialog();
+    }
   }
 
   /**
    * Opens a modal dialog to ask the user, which StartEvent he want's to
    * use to start the process.
    *
-   * If there is only one startevent this method will select this startevent by
+   * If there is only one StartEvent this method will select this StartEvent by
    * default.
    */
-  private async _showStartDialog(): Promise<void> {
+  private async _showSelectStartEventDialog(): Promise<void> {
     await this._updateProcessStartEvents();
-
     if (this.processesStartEvents.length === 1) {
       this.selectedStartEventId = this.processesStartEvents[0].id;
+      this.showSaveForStartModal = false;
+      this.startProcess();
+    } else {
+      this.showStartEventModal = true;
+      this.showSaveForStartModal = false;
     }
 
-    this.showModal = true;
   }
 
   private async _refreshProcess(): Promise<ProcessModelExecution.ProcessModel> {
