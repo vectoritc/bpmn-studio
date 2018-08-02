@@ -275,6 +275,7 @@ export class ProcessSolutionPanel {
 
   public async navigateToDiagramDetail(diagram: IDiagram): Promise<void> {
     this._eventAggregator.publish(environment.events.navBar.updateProcess, diagram);
+
     this._router.navigateToRoute('diagram-detail', {
       diagramUri: diagram.uri,
     });
