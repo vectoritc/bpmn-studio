@@ -155,12 +155,12 @@ pipeline {
 
         //     stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml', name: 'windows_results')
         //   }
-          post {
-            always {
-              cleanup_workspace()
-            }
-          }
-        }
+        //   post {
+        //     always {
+        //       cleanup_workspace()
+        //     }
+        //   }
+        // }
       }
     }
     stage('test') {
