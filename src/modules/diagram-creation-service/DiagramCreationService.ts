@@ -7,8 +7,9 @@ export class DiagramCreationService implements IDiagramCreationService {
   public async createNewDiagram(solutionExplorerService: ISolutionExplorerService, insideSolution: ISolution, withName: string): Promise<void> {
 
     const processModelId: string = withName.trim();
+    const processModelIdIsEmpty: boolean = processModelId.length === 0;
 
-    if (processModelId.length === 0) {
+    if (processModelIdIsEmpty) {
       throw new Error('Empty process model name not allowed.');
     }
 
