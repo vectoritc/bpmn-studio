@@ -268,8 +268,8 @@ export class ProcessSolutionPanel {
     const isCustomProcessEngineRouteSet: boolean = customProcessEngineRoute !== ''
                                                 && customProcessEngineRoute !== null;
 
-    const processengineSolutionString: string = isCustomProcessEngineRouteSet ?
-      customProcessEngineRoute
+    const processengineSolutionString: string = isCustomProcessEngineRouteSet
+    ? customProcessEngineRoute
     : window.localStorage.getItem('InternalProcessEngineRoute');
 
     try {

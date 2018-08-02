@@ -13,8 +13,8 @@ export async function configure(config: FrameworkConfiguration): Promise<void> {
   const isCustomProcessEngineRouteSet: boolean = customProcessEngineRoute !== ''
                                               && customProcessEngineRoute !== null;
 
-  const configuredBaseRoute: string = isCustomProcessEngineRouteSet ?
-    customProcessEngineRoute
+  const configuredBaseRoute: string = isCustomProcessEngineRouteSet
+  ? customProcessEngineRoute
   : window.localStorage.getItem('InternalProcessEngineRoute');
 
   const urlPrefix: string = `${configuredBaseRoute}/`;

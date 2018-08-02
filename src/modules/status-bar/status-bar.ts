@@ -29,8 +29,8 @@ export class StatusBar {
     const isCustomProcessEngineRouteSet: boolean = customProcessEngineRoute !== ''
                                                 && customProcessEngineRoute !== null;
 
-    const processEngineRoute: string = isCustomProcessEngineRouteSet ?
-      customProcessEngineRoute
+    const processEngineRoute: string = isCustomProcessEngineRouteSet
+    ? customProcessEngineRoute
     : window.localStorage.getItem('InternalProcessEngineRoute');
 
     this._setProcessEngineRoute(processEngineRoute);

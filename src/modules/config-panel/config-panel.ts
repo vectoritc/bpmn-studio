@@ -48,8 +48,8 @@ export class ConfigPanel {
     const isCustomProcessEngineRouteSet: boolean = customProcessEngineRoute !== ''
                                                 && customProcessEngineRoute !== null;
 
-    const baseRouteConfiguredInLocalStorage: string = isCustomProcessEngineRouteSet ?
-      customProcessEngineRoute
+    const baseRouteConfiguredInLocalStorage: string = isCustomProcessEngineRouteSet
+    ? customProcessEngineRoute
     : window.localStorage.getItem('InternalProcessEngineRoute') ;
 
     if (baseRouteConfiguredInLocalStorage) {

@@ -34,8 +34,8 @@ export function configure(aurelia: Aurelia): void {
   const isCustomProcessEngineRouteSet: boolean = customProcessEngineRoute !== ''
                                               && customProcessEngineRoute !== null;
 
-  const processEngineRoute: string = isCustomProcessEngineRouteSet ?
-    customProcessEngineRoute
+  const processEngineRoute: string = isCustomProcessEngineRouteSet
+  ? customProcessEngineRoute
   : window.localStorage.getItem('InternalProcessEngineRoute');
 
   const processEngineRouteExists: boolean = processEngineRoute !== null && processEngineRoute !== '';
