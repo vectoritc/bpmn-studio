@@ -223,7 +223,7 @@ pipeline {
       steps {
         unstash('linux_results')
         unstash('macos_results')
-        unstash('windows_results')
+        // unstash('windows_results')
         nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
           dir('.ci-tools') {
             sh('npm install --prefer-offline')
