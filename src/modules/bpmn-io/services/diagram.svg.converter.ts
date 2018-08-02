@@ -1,45 +1,55 @@
-import {IDiagramPrintService} from '../../../contracts';
+import {IExportService, ISvgConvertService} from '../../../contracts/index';
+import {ExportService} from './export.service';
 
-import * as print from 'print-js';
+export class DiagramSvgConverter implements ISvgConvertService {
+  private _enqueuedPromises: Array<Promise<string>> = [];
+  private _svgContent: string;
 
-export class DiagramPrintService implements IDiagramPrintService {
+  constructor(svgContent: string) {
+    this._svgContent = svgContent;
+  }
 
-  private _svg: string;
+  public asPNG(): IExportService {
+    const pngExporterPromise: Promise<string> = this._pngExporter();
+    const mimeType: string = 'image/png';
 
-  constructor(svg?: string) {
-    this._svg = svg;
+    this._enqueuedPromises.push(pngExporterPromise);
+
+    return new ExportService(mimeType, this._enqueuedPromises);
+  }
+
+  public asJPEG(): IExportService {
+    const jpegExporterPromise: Promise<string> = this._jpegExporter();
+    const mimeType: string = 'image/jpeg';
+
+    this._enqueuedPromises.push(jpegExporterPromise);
+
+    return new ExportService(mimeType, this._enqueuedPromises);
+  }
+
+  public asSVG(): IExportService {
+    const mimeType: string = 'image/svg+xml';
+    const svgExporterPromise: Promise<string> = new Promise((resolve: Function): void => {
+      resolve(this._svgContent);
+    });
+
+    this._enqueuedPromises.push(svgExporterPromise);
+
+    return new ExportService(mimeType, this._enqueuedPromises);
+  }
+
+    /**
+   * Exports the current diagram as a PNG image.
+   */
+  private _pngExporter = async(): Promise<string> => {
+    return this._generateImageFromSVG('png', this._svgContent);
   }
 
   /**
-   * Prepares the current diagram for printing and opens the system's print
-   * dialogue.
-   *
-   * @param [svg] SVG content that should be printed
-   * @throws Error if no source SVG was defined.
+   * Exports the current diagram as a jpeg image.
    */
-  public async printDiagram(svg?: string): Promise<void> {
-    let svgToPrint: string;
-
-    if (svg !== undefined) {
-      svgToPrint = svg;
-    } else if (this._svg !== undefined && this._svg !== null) {
-      svgToPrint = this._svg;
-    } else {
-      return Promise.reject('No SVG for printing defined');
-    }
-
-    const png: string = await this._generateImageFromSVG('png', svgToPrint);
-
-    const printOptions: {printable: string, type?: string} = {
-        printable: png,
-        type: 'image',
-    };
-
-    print.default(printOptions);
-  }
-
-  public updateSVG(newSVG: string): void {
-    this._svg = newSVG;
+  private _jpegExporter = async(): Promise<string> => {
+    return this._generateImageFromSVG('png', this._svgContent);
   }
 
   /**
@@ -92,12 +102,15 @@ export class DiagramPrintService implements IDiagramPrintService {
    * @param svgHeight Height of the diagrams canvas element.
    * @param targetDPI DPI of the output.
    * @param diagonalSize Diagonal Size of the printed document.
+   * @returns The needed pixel ratio for the current dimensions to achieve the
+   * desired DPI.
    */
   private _calculatePixelRatioForDPI(svgWidth: number, svgHeight: number, targetDPI: number, diagonalSize: number): number {
 
-    // tslint:disable:no-magic-numbers
-    const svgWidthSquared: number = Math.pow(svgWidth, 2);
-    const svgHeightSquared: number = Math.pow(svgHeight, 2);
+    const square: Function = (num: number): number => num * num;
+
+    const svgWidthSquared: number = square(svgWidth);
+    const svgHeightSquared: number = square(svgHeight);
 
     const diagonalResolution: number = Math.sqrt(svgWidthSquared + svgHeightSquared);
 
@@ -157,4 +170,5 @@ export class DiagramPrintService implements IDiagramPrintService {
 
     return loadImagePromise;
   }
+
 }

@@ -1,0 +1,37 @@
+import {IXmlConvertService} from '../../../contracts/index';
+import {IExportService} from '../../../contracts/index';
+import {ExportService} from './export.service';
+
+import * as beautify from 'xml-beautifier';
+
+export class DiagramXmlConverter implements IXmlConvertService {
+
+  private _xmlContent: string;
+  private _enqueuedPromises: Array<Promise<string>> = [];
+
+  constructor(xmlContent: string) {
+    this._xmlContent = xmlContent;
+  }
+
+  public asBpmn(): IExportService {
+    const formatterPromise: Promise<string> = this._bpmnExporter();
+    const mimeType: string = 'application/bpmn20-xml';
+
+    this._enqueuedPromises.push(formatterPromise);
+
+    return new ExportService(mimeType, this._enqueuedPromises);
+  }
+
+  /**
+   * Formats the current loaded xml.
+   */
+  private _bpmnExporter = async(): Promise<string> => {
+    const formatterPromise: Promise<string> = new Promise((resolve: Function): void => {
+      const formattedXml: string = beautify(this._xmlContent);
+
+      resolve(formattedXml);
+    });
+
+    return formatterPromise;
+  }
+}

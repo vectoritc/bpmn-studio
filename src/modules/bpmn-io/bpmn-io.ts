@@ -18,8 +18,6 @@ import environment from '../../environment';
 import {NotificationService} from './../notification/notification.service';
 import {DiagramExportService, DiagramPrintService} from './services/index';
 
-import * as download from 'downloadjs';
-
 const sideBarRightSize: number = 35;
 
 @inject('NotificationService', EventAggregator)
@@ -52,10 +50,10 @@ export class BpmnIo {
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
-  private _diagramPrintService: IDiagramPrintService;
-  private _diagramExportService: IDiagramExportService;
+  private _diagramIsValid: boolean = true;
 
-  private _svg: string;
+  private _diagramExportService: IDiagramExportService;
+  private _diagramPrintService: IDiagramPrintService;
 
   /**
    * We are using the direct reference of a container element to place the tools of bpmn-js
@@ -101,8 +99,9 @@ export class BpmnIo {
       this._eventAggregator.publish(environment.events.diagramChange);
     }, handlerPriority);
 
-    this._diagramPrintService = new DiagramPrintService(this._svg);
+    this._diagramPrintService = new DiagramPrintService();
     this._diagramExportService = new DiagramExportService();
+
   }
 
   public async attached(): Promise<void> {
@@ -165,33 +164,59 @@ export class BpmnIo {
         }, 0);
       }),
 
+      this._eventAggregator.subscribe(environment.events.navBar.enableSaveButton, () => {
+        this._diagramIsValid = true;
+      }),
+      this._eventAggregator.subscribe(environment.events.navBar.disableSaveButton, () => {
+        this._diagramIsValid = false;
+      }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, async() => {
-        const xml: string = await this.getXML();
-        const bpmn: string = await this._diagramExportService.exportBPMN(xml);
-
-        download(bpmn, `${this.name}.bpmn`, 'application/bpmn20-xml');
+        try {
+          const exportName: string = `${this.name}.bpmn`;
+          await this._diagramExportService
+            .loadXML(this.xml)
+            .asBpmn()
+            .export(exportName);
+        } catch (error) {
+          this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
+        }
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, async() => {
-        const svg: string = await this.getSVG();
-
-        download(svg, `${this.name}.svg`, 'image/svg+xml');
+        try {
+          const exportName: string = `${this.name}.svg`;
+          await this._diagramExportService
+            .loadSVG(await this.getSVG())
+            .asSVG()
+            .export(exportName);
+        } catch (error) {
+          this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
+        }
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, async() => {
-        const svg: string = await this.getSVG();
-        const png: string = await this._diagramExportService.exportPNG(svg);
-
-        download(png, `${this.name}.png`, 'image/png');
+        try {
+          const exportName: string = `${this.name}.png`;
+          await this._diagramExportService
+            .loadSVG(await this.getSVG())
+            .asPNG()
+            .export(exportName);
+        } catch (error) {
+          this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
+        }
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, async() => {
-        const svg: string = await this.getSVG();
-        const jpeg: string = await this._diagramExportService.exportPNG(svg);
+        try {
+          const exportName: string = `${this.name}.jpeg`;
+          await this._diagramExportService
+          .loadSVG(await this.getSVG())
+          .asJPEG()
+          .export(exportName);
+        } catch (error) {
+          this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
+        }
 
-        download(jpeg, `${this.name}.jpeg`, 'image/jpeg');
       }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.printDiagram}`, async() => {
-        const svgContent: string = await this.getSVG();
-
-        this._diagramPrintService.printDiagram(svgContent);
+        await this._printHandler();
       }),
 
       this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, async() => {
@@ -224,6 +249,16 @@ export class BpmnIo {
 
     for (const subscription of this._subscriptions) {
       subscription.dispose();
+    }
+  }
+
+  public xmlChanged(newValue: string): void {
+    if (this.modeler !== undefined && this.modeler !== null) {
+      this.modeler.importXML(newValue, (err: Error) => {
+        return 0;
+      });
+
+      this.xml = newValue;
     }
   }
 
@@ -289,6 +324,7 @@ export class BpmnIo {
         if (error) {
           reject(error);
         }
+
         resolve(result);
       });
     });
@@ -373,6 +409,18 @@ export class BpmnIo {
       this._hidePropertyPanelForSpaceReasons();
     } else if (this._propertyPanelHiddenForSpaceReasons) {
       this._showPropertyPanelForSpaceReasons();
+    }
+  }
+
+  /**
+   * Handles an incoming printDiagram message.
+   */
+  private async _printHandler(): Promise<void> {
+    try {
+      const svgToPrint: string = await this.getSVG();
+      this._diagramPrintService.printDiagram(svgToPrint);
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR, `An error while trying to print the diagram occurred.`);
     }
   }
 
