@@ -3,31 +3,15 @@ import {IDiagramCreationService} from '../../contracts';
 
 export class DiagramCreationService implements IDiagramCreationService {
 
-  public createNewDiagram(solutionBaseUri: string, diagrams: Array<IDiagram>, withName: string): IDiagram {
+  public createNewDiagram(solutionBaseUri: string, withName: string): IDiagram {
 
-    const processModelId: string = withName.trim();
-    const processModelIdIsEmpty: boolean = processModelId.length === 0;
-
-    if (processModelIdIsEmpty) {
-      throw new Error('Empty process model name not allowed.');
-    }
-
-    const diagramUri: string = `${solutionBaseUri}/${processModelId}.bpmn`;
-
-    const foundDiagram: IDiagram = this
-      ._findURIObject(diagrams, diagramUri);
-
-    const diagramWithIdAlreadyExists: boolean = foundDiagram !== undefined;
-
-    if (diagramWithIdAlreadyExists) {
-      throw new Error('A diagram with that name already exists.');
-    }
-
-    const processXML: string = this._getInitialProcessXML(processModelId);
+    const processName: string = withName.trim();
+    const diagramUri: string = `${solutionBaseUri}/${processName}.bpmn`;
+    const processXML: string = this._getInitialProcessXML(processName);
 
     const diagram: IDiagram = {
-      id: processModelId,
-      name: processModelId,
+      id: processName,
+      name: processName,
       uri: diagramUri,
       xml: processXML,
     };
@@ -71,13 +55,5 @@ export class DiagramCreationService implements IDiagramCreationService {
             </bpmndi:BPMNPlane>
         </bpmndi:BPMNDiagram>
     </bpmn:definitions>`;
-  }
-
-  private _findURIObject<T extends {uri: string}>(objects: Array<T>, targetURI: string): T {
-    const foundObject: T = objects.find((object: T): boolean => {
-      return object.uri.toLowerCase() === targetURI.toLowerCase();
-    });
-
-    return foundObject;
   }
 }

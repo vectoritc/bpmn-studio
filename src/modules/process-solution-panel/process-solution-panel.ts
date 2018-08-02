@@ -328,27 +328,12 @@ export class ProcessSolutionPanel {
   private async _onCreateNewDiagramClickEvent(solution: IViewModelSolution, event: MouseEvent): Promise<void> {
 
     const inputWasClicked: boolean = event.target === solution.createNewDiagramInput;
-
     if (inputWasClicked) {
       return;
     }
 
-    const inputHasNoValue: boolean = !this._hasNonEmptyValue(solution.createNewDiagramInput);
-    if (inputHasNoValue) {
-      this._resetDiagramCreation(solution);
-
-      return;
-    }
-
-    const emptyDiagram: IDiagram = this._diagramCreationService
-      .createNewDiagram(solution.uri, solution.diagrams, solution.currentDiagramInputValue);
-
-    try {
-      // TODO: uri is kinda useless, cause the diagram contains its uri... but we fix this later.
-      await this._solutionExplorerServiceFileSystem.saveDiagram(emptyDiagram, emptyDiagram.uri);
-    } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, error.message);
-
+    const emptyDiagram: IDiagram = await this._createNewDiagram(solution);
+    if (emptyDiagram === undefined) {
       return;
     }
 
@@ -363,20 +348,8 @@ export class ProcessSolutionPanel {
 
     if (pressedKey === ENTER_KEY) {
 
-      const inputHasNoValue: boolean = !this._hasNonEmptyValue(solution.createNewDiagramInput);
-      if (inputHasNoValue) {
-        return;
-      }
-
-      const emptyDiagram: IDiagram = this._diagramCreationService
-        .createNewDiagram(solution.uri, solution.diagrams, solution.currentDiagramInputValue);
-
-      try {
-        // TODO: uri is kinda useless, cause the diagram contains its uri... but we fix this later.
-        await this._solutionExplorerServiceFileSystem.saveDiagram(emptyDiagram, emptyDiagram.uri);
-      } catch (error) {
-        this._notificationService.showNotification(NotificationType.ERROR, error.message);
-
+      const emptyDiagram: IDiagram = await this._createNewDiagram(solution);
+      if (emptyDiagram === undefined) {
         return;
       }
 
@@ -397,6 +370,50 @@ export class ProcessSolutionPanel {
                                 && inputValue !== '';
 
     return inputHasValue;
+  }
+
+  private async _createNewDiagram(solution: IViewModelSolution): Promise<IDiagram> {
+    const inputHasNoValue: boolean = !this._hasNonEmptyValue(solution.createNewDiagramInput);
+    if (inputHasNoValue) {
+      this._resetDiagramCreation(solution);
+
+      return;
+    }
+
+    const processName: string = solution.currentDiagramInputValue.trim();
+
+    const processNameIsEmpty: boolean = processName.length === 0;
+    if (processNameIsEmpty) {
+      this._notificationService.showNotification(NotificationType.ERROR, 'Process model name cannot be empty.');
+
+      return;
+    }
+
+    const diagramUri: string = `${solution.uri}/${processName}.bpmn`;
+
+    const foundDiagram: IDiagram = this
+    ._findURIObject(solution.diagrams, diagramUri);
+
+    const diagramWithIdAlreadyExists: boolean = foundDiagram !== undefined;
+    if (diagramWithIdAlreadyExists) {
+      this._notificationService.showNotification(NotificationType.ERROR, 'A diagram with that name already exists.');
+
+      return;
+    }
+
+    const emptyDiagram: IDiagram = this._diagramCreationService
+      .createNewDiagram(solution.uri, solution.currentDiagramInputValue);
+
+    try {
+      // TODO: uri is kinda useless, cause the diagram contains its uri... but we fix this later.
+      await this._solutionExplorerServiceFileSystem.saveDiagram(emptyDiagram, emptyDiagram.uri);
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR, error.message);
+
+      return;
+    }
+
+    return emptyDiagram;
   }
 
   private _resetDiagramCreation(solution: IViewModelSolution): void {
