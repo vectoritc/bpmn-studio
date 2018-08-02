@@ -340,6 +340,7 @@ export class ProcessSolutionPanel {
       .createNewDiagram(solution, solution.currentDiagramInputValue);
 
     try {
+      // TODO: uri is kinda useless, cause the diagram contains its uri... but we fix this later.
       await this._solutionExplorerServiceFileSystem.saveDiagram(emptyDiagram, emptyDiagram.uri);
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, error.message);
@@ -366,6 +367,7 @@ export class ProcessSolutionPanel {
         .createNewDiagram(solution, solution.currentDiagramInputValue);
 
       try {
+        // TODO: uri is kinda useless, cause the diagram contains its uri... but we fix this later.
         await this._solutionExplorerServiceFileSystem.saveDiagram(emptyDiagram, emptyDiagram.uri);
       } catch (error) {
         this._notificationService.showNotification(NotificationType.ERROR, error.message);
@@ -377,7 +379,6 @@ export class ProcessSolutionPanel {
       this.navigateToDiagramDetail(emptyDiagram);
 
     } else if (pressedKey === ESCAPE_KEY) {
-
       this._resetDiagramCreation(solution);
     }
   }
