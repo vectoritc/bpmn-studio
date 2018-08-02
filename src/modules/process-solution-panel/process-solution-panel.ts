@@ -379,7 +379,6 @@ export class ProcessSolutionPanel {
     } else if (pressedKey === ESCAPE_KEY) {
 
       this._resetDiagramCreation(solution);
-
     }
   }
 
