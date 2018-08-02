@@ -38,7 +38,7 @@ export class ProcessSolutionPanel {
   public fileSystemIndexCardIsActive: boolean = false;
   public processEngineIndexCardIsActive: boolean = true;
 
-  private _subscriptions: Array<Subscription>;
+  private _subscriptions: Array<Subscription> = [];
   private _eventAggregator: EventAggregator;
   private _router: Router;
   private _notificationService: NotificationService;
