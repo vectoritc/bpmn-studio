@@ -20,6 +20,12 @@
   width: 400px;
 }
 
+.select-start-event-modal__dialog {
+  position: relative;
+  top: 20%;
+  width: 400px;
+}
+
 .show-modal {
   display: block;
 }
@@ -42,6 +48,10 @@
 
 .process-start-event-modal-dialog__content {
   height: 250px;
+}
+
+.save-diagram-modal-dialog__content {
+  height: inherit;
 }
 
 .process-start-event-modal-dialog__header-headline {
