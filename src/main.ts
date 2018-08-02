@@ -23,17 +23,23 @@ export function configure(aurelia: Aurelia): void {
      */
     const processEngineBaseRouteWithProtocol: string = `http://${newHost}`;
 
-    if (!window.localStorage.getItem('processEngineRoute')) {
-      localStorage.setItem('processEngineRoute', processEngineBaseRouteWithProtocol);
-    }
+    localStorage.setItem('InternalProcessEngineRoute', processEngineBaseRouteWithProtocol);
 
     aurelia.container.registerInstance('InternalProcessEngineBaseRoute', processEngineBaseRouteWithProtocol);
   } else {
     aurelia.container.registerInstance('InternalProcessEngineBaseRoute', null);
   }
 
-  if (window.localStorage.getItem('processEngineRoute')) {
-    const processEngineRoute: string = window.localStorage.getItem('processEngineRoute');
+  const customProcessEngineRoute: string = window.localStorage.getItem('processEngineRoute');
+  const isCustomProcessEngineRouteSet: boolean = customProcessEngineRoute !== ''
+                                              && customProcessEngineRoute !== null;
+
+  const processEngineRoute: string = isCustomProcessEngineRouteSet
+  ? customProcessEngineRoute
+  : window.localStorage.getItem('InternalProcessEngineRoute');
+
+  const processEngineRouteExists: boolean = processEngineRoute !== null && processEngineRoute !== '';
+  if (processEngineRouteExists) {
     environment.bpmnStudioClient.baseRoute = processEngineRoute;
     environment.processengine.routes.processes = `${processEngineRoute}/datastore/ProcessDef`;
     environment.processengine.routes.iam = `${processEngineRoute}/iam`;
