@@ -70,9 +70,9 @@ pipeline {
       }
     }
     stage('build electron') {
-      // when {
-      //   expression { branch_is_master || branch_is_develop }
-      // }
+      when {
+        expression { branch_is_master || branch_is_develop }
+      }
       parallel {
         stage('Build on Linux') {
           agent {
@@ -134,22 +134,11 @@ pipeline {
             unstash('post_build')
             bat('node --version')
 
-            // script {
-            //   try {
-            //     timeout(time: 5, unit: 'MINUTES') {
-            //       powershell('npm install --global windows-build-tools');
-            //     }
-            //   } catch (error) {
-            //     echo('Unable to install windows-build-tools, trying to continue with jobs execution.')
-            //   }
-            // }
-
             // we copy the node_modules folder from the main slave
             // which runs linux. Some dependencies may not be installed
             // if they have a os restriction in their package.json
             bat('npm install --prefer-offline')
 
-           // bat('npm run jenkins-electron-install-app-deps')
             bat('npm run jenkins-electron-rebuild-native')
             bat('npm run jenkins-electron-build-windows')
 
