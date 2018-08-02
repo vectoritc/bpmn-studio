@@ -1,7 +1,13 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import {FluentRuleCustomizer, ValidateEvent, ValidateResult, ValidationController, ValidationRules} from 'aurelia-validation';
+import {
+  FluentRuleCustomizer,
+  ValidateEvent,
+  ValidateResult,
+  ValidationController,
+  ValidationRules,
+} from 'aurelia-validation';
 
 import {IIdentity} from '@essential-projects/core_contracts';
 import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/errors_ts';
