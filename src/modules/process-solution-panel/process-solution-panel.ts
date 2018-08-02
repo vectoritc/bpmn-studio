@@ -336,11 +336,11 @@ export class ProcessSolutionPanel {
       return;
     }
 
-    const diagram: IDiagram = this._diagramCreationService
+    const emptyDiagram: IDiagram = this._diagramCreationService
       .createNewDiagram(solution, solution.currentDiagramInputValue);
 
     try {
-      await this._solutionExplorerServiceFileSystem.saveDiagram(diagram, diagram.uri);
+      await this._solutionExplorerServiceFileSystem.saveDiagram(emptyDiagram, emptyDiagram.uri);
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, error.message);
       return;
@@ -348,7 +348,7 @@ export class ProcessSolutionPanel {
 
     this.refreshSolutions();
     this._resetDiagramCreation(solution);
-    this.navigateToDiagramDetail(diagram);
+    this.navigateToDiagramDetail(emptyDiagram);
   }
 
   private async _onCreateNewDiagramKeyupEvent(solution: IViewModelSolution, event: KeyboardEvent): Promise<void> {
@@ -362,11 +362,11 @@ export class ProcessSolutionPanel {
         return;
       }
 
-      const diagram: IDiagram = this._diagramCreationService
-      .createNewDiagram(solution, solution.currentDiagramInputValue);
+      const emptyDiagram: IDiagram = this._diagramCreationService
+        .createNewDiagram(solution, solution.currentDiagramInputValue);
 
       try {
-        await this._solutionExplorerServiceFileSystem.saveDiagram(diagram, diagram.uri);
+        await this._solutionExplorerServiceFileSystem.saveDiagram(emptyDiagram, emptyDiagram.uri);
       } catch (error) {
         this._notificationService.showNotification(NotificationType.ERROR, error.message);
         return;
@@ -374,7 +374,7 @@ export class ProcessSolutionPanel {
 
       this.refreshSolutions();
       this._resetDiagramCreation(solution);
-      this.navigateToDiagramDetail(diagram);
+      this.navigateToDiagramDetail(emptyDiagram);
 
     } else if (pressedKey === ESCAPE_KEY) {
 
