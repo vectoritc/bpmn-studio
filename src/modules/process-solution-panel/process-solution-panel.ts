@@ -98,8 +98,7 @@ export class ProcessSolutionPanel {
               notificationService: NotificationService,
               diagramValidationService: IDiagramValidationService,
               authenticationService: IAuthenticationService,
-              diagramCreationService: IDiagramCreationService,
-            ) {
+              diagramCreationService: IDiagramCreationService) {
 
     this._eventAggregator = eventAggregator;
     this._router = router;
