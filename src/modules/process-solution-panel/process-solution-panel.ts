@@ -336,11 +336,11 @@ export class ProcessSolutionPanel {
       return;
     }
 
-    const diagramUri: string = `${solution.uri}/${solution.currentDiagramInputValue}.bpmn`;
+    const diagram: IDiagram = this._diagramCreationService
+      .createNewDiagram(solution, solution.currentDiagramInputValue);
 
     try {
-      await this._diagramCreationService
-        .createNewDiagram(this._solutionExplorerServiceFileSystem, solution, solution.currentDiagramInputValue);
+      await this._solutionExplorerServiceFileSystem.saveDiagram(diagram, diagram.uri);
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, error.message);
       return;
@@ -348,10 +348,7 @@ export class ProcessSolutionPanel {
 
     this.refreshSolutions();
     this._resetDiagramCreation(solution);
-
-    this._router.navigateToRoute('diagram-detail', {
-      diagramUri: diagramUri,
-    });
+    this.navigateToDiagramDetail(diagram);
   }
 
   private async _onCreateNewDiagramKeyupEvent(solution: IViewModelSolution, event: KeyboardEvent): Promise<void> {
@@ -365,13 +362,11 @@ export class ProcessSolutionPanel {
         return;
       }
 
-      const solutionPath: string = solution.uri;
-      const fileName: string = solution.currentDiagramInputValue;
-      const diagramUri: string = `${solutionPath}/${fileName}.bpmn`;
+      const diagram: IDiagram = this._diagramCreationService
+      .createNewDiagram(solution, solution.currentDiagramInputValue);
 
       try {
-        await this._diagramCreationService
-          .createNewDiagram(this._solutionExplorerServiceFileSystem, solution, solution.currentDiagramInputValue);
+        await this._solutionExplorerServiceFileSystem.saveDiagram(diagram, diagram.uri);
       } catch (error) {
         this._notificationService.showNotification(NotificationType.ERROR, error.message);
         return;
@@ -379,10 +374,7 @@ export class ProcessSolutionPanel {
 
       this.refreshSolutions();
       this._resetDiagramCreation(solution);
-
-      this._router.navigateToRoute('diagram-detail', {
-        diagramUri: diagramUri,
-      });
+      this.navigateToDiagramDetail(diagram);
 
     } else if (pressedKey === ESCAPE_KEY) {
 

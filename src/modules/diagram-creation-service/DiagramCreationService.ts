@@ -1,10 +1,9 @@
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
-import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 import {IDiagramCreationService} from '../../contracts';
 
 export class DiagramCreationService implements IDiagramCreationService {
 
-  public async createNewDiagram(solutionExplorerService: ISolutionExplorerService, insideSolution: ISolution, withName: string): Promise<void> {
+  public createNewDiagram(insideSolution: ISolution, withName: string): IDiagram {
 
     const processModelId: string = withName.trim();
     const processModelIdIsEmpty: boolean = processModelId.length === 0;
@@ -33,7 +32,7 @@ export class DiagramCreationService implements IDiagramCreationService {
       xml: processXML,
     };
 
-    return solutionExplorerService.saveDiagram(diagram, diagramUri);
+    return diagram;
   }
 
   private _getInitialProcessXML(processModelId: string): string {
