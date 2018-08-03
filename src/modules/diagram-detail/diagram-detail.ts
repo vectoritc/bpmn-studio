@@ -21,6 +21,7 @@ export class DiagramDetail {
 
   public diagram: IDiagram;
   public bpmnio: BpmnIo;
+  public showUnsavedChangesModal: boolean = false;
   public showSaveBeforeDeployModal: boolean = false;
 
   private _solutionExplorerService: ISolutionExplorerService;
@@ -84,24 +85,24 @@ export class DiagramDetail {
       if (!this._diagramHasChanged) {
         resolve(true);
       } else {
-
-        const modal: HTMLElement = document.getElementById('saveModalLeaveView');
-        modal.classList.add('show-modal');
+        this.showUnsavedChangesModal = true;
+        /*const modal: HTMLElement = document.getElementById('saveModalLeaveView');
+        modal.classList.add('show-modal');*/
 
         // register onClick handler
         document.getElementById('dontSaveButtonLeaveView').addEventListener('click', () => {
-          modal.classList.remove('show-modal');
+          this.showUnsavedChangesModal = false;
           this._diagramHasChanged = false;
           resolve(true);
         });
         document.getElementById('saveButtonLeaveView').addEventListener('click', () => {
+          this.showUnsavedChangesModal = false;
           this._saveDiagram();
-          modal.classList.remove('show-modal');
           this._diagramHasChanged = false;
           resolve(true);
         });
         document.getElementById('cancelButtonLeaveView').addEventListener('click', () => {
-          modal.classList.remove('show-modal');
+          this.showUnsavedChangesModal = false;
           resolve(false);
         });
       }
