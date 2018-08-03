@@ -487,16 +487,12 @@ export class ProcessSolutionPanel {
     this.openedFileSystemSolutions.splice(index, 1, solution);
   }
 
-  private async _createIdentityForSolutionExplorer(): Promise<IIdentity> {
-    const solutionExplorerIdentity: IIdentity = await this._authenticationService.getIdentity() || {} as IIdentity;
-
+  private async _createIdentityForSolutionExplorer(): {accessToken: string} {
     const solutionExplorerAccessToken: {accessToken: string} = {
       accessToken: this._authenticationService.getAccessToken(),
     };
 
-    Object.assign(solutionExplorerIdentity, solutionExplorerAccessToken);
-
-    return solutionExplorerIdentity;
+    return solutionExplorerAccessToken;
   }
 
   private _createViewModelSolutionFromSolution(solution: ISolution): IViewModelSolution {
