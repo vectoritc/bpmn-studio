@@ -145,6 +145,9 @@ export class DiagramDetail {
     this.showSaveBeforeDeployModal = false;
   }
 
+  /**
+   * Uploads the current diagram to the connected ProcessEngine.
+   */
   public async uploadProcess(): Promise<void> {
     const rootElements: Array<IModdleElement> = this.bpmnio.modeler._definitions.rootElements;
     const payload: ProcessModelExecution.UpdateProcessModelRequestPayload = {
