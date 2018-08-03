@@ -86,8 +86,6 @@ export class DiagramDetail {
         resolve(true);
       } else {
         this.showUnsavedChangesModal = true;
-        /*const modal: HTMLElement = document.getElementById('saveModalLeaveView');
-        modal.classList.add('show-modal');*/
 
         // register onClick handler
         document.getElementById('dontSaveButtonLeaveView').addEventListener('click', () => {
