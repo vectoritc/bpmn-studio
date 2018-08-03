@@ -1,6 +1,7 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {Redirect, Router} from 'aurelia-router';
+import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
 import {IManagementApiService, ManagementContext} from '@process-engine/management_api_contracts';
 import {ProcessModelExecution} from '@process-engine/management_api_contracts';
@@ -16,7 +17,7 @@ interface RouteParameters {
   diagramUri: string;
 }
 
-@inject('SolutionExplorerServiceFileSystem', 'ManagementApiClientService', 'AuthenticationService', 'NotificationService', EventAggregator, Router)
+@inject('SolutionExplorerServiceFileSystem', 'ManagementApiClientService', 'AuthenticationService', 'NotificationService', EventAggregator, Router, ValidationController)
 export class DiagramDetail {
 
   public diagram: IDiagram;
@@ -32,6 +33,8 @@ export class DiagramDetail {
   private _subscriptions: Array<Subscription>;
   private _router: Router;
   private _diagramHasChanged: boolean;
+  private _diagramIsInvalid: boolean = false;
+  private _validationController: ValidationController;
 
   // This identity is used for the filesystem actions. Needs to be refactored.
   private _identity: any;
@@ -41,13 +44,15 @@ export class DiagramDetail {
               authenticationService: IAuthenticationService,
               notificationService: NotificationService,
               eventAggregator: EventAggregator,
-              router: Router) {
+              router: Router,
+              validationController: ValidationController) {
     this._solutionExplorerService = solutionExplorerService;
     this._managementClient = managementClient;
     this._authenticationService = authenticationService;
     this._notificationService = notificationService;
     this._eventAggregator = eventAggregator;
     this._router = router;
+    this._validationController = validationController;
   }
 
   public determineActivationStrategy(): string {
@@ -67,6 +72,9 @@ export class DiagramDetail {
     this._eventAggregator.publish(environment.events.statusBar.showDiagramViewButtons);
 
     this._subscriptions = [
+      this._validationController.subscribe((event: ValidateEvent) => {
+        this._handleFormValidateEvents(event);
+      }),
       this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
         this._saveDiagram();
       }),
@@ -149,6 +157,17 @@ export class DiagramDetail {
    * Uploads the current diagram to the connected ProcessEngine.
    */
   public async uploadProcess(): Promise<void> {
+
+    if (this._diagramIsInvalid) {
+      this
+        ._notificationService
+        .showNotification(
+          NotificationType.WARNING,
+          'Unable to upload the process, because it is not valid. This could have something to do with your latest changes. Try to undo them.',
+        );
+      return;
+    }
+
     const rootElements: Array<IModdleElement> = this.bpmnio.modeler._definitions.rootElements;
     const payload: ProcessModelExecution.UpdateProcessModelRequestPayload = {
       xml: this.diagram.xml,
@@ -181,6 +200,17 @@ export class DiagramDetail {
    * Saves the current diagram to disk.
    */
   private async _saveDiagram(): Promise<void> {
+
+    if (this._diagramIsInvalid) {
+      this
+        ._notificationService
+        .showNotification(
+          NotificationType.WARNING,
+          'Unable to save the process, because it is not valid. This could have something to do with your latest changes. Try to undo them.',
+        );
+      return;
+    }
+
     try {
       this.diagram.xml = await this.bpmnio.getXML();
       this._solutionExplorerService.saveSingleDiagram(this.diagram, this._identity);
@@ -213,5 +243,30 @@ export class DiagramDetail {
     };
 
     return context;
+  }
+
+  private _handleFormValidateEvents(event: ValidateEvent): void {
+    const eventIsValidateEvent: boolean = event.type !== 'validate';
+
+    if (eventIsValidateEvent) {
+      return;
+    }
+
+    for (const result of event.results) {
+      const resultIsNotValid: boolean = result.valid === false;
+
+      if (resultIsNotValid) {
+        this._diagramIsInvalid = true;
+        this._eventAggregator
+          .publish(environment.events.navBar.disableSaveButton);
+
+        return;
+      }
+    }
+
+    this._eventAggregator
+      .publish(environment.events.navBar.enableSaveButton);
+
+    this._diagramIsInvalid = false;
   }
 }
