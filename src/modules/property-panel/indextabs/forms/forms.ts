@@ -5,6 +5,7 @@ export class Forms implements IIndextab {
   public title: string = 'Forms';
   public path: string = '/indextabs/forms/forms';
   public elementInPanel: IShape;
+  public modeler: any;
   public canHandleElement: boolean = false;
   public sections: Array<ISection>;
 
@@ -16,6 +17,7 @@ export class Forms implements IIndextab {
 
   public activate(model: IPageModel): void {
     this.elementInPanel = model.elementInPanel;
+    this.modeler = model.modeler;
   }
 
   public isSuitableForElement(element: IShape): boolean {
