@@ -17,7 +17,13 @@ interface RouteParameters {
   diagramUri: string;
 }
 
-@inject('SolutionExplorerServiceFileSystem', 'ManagementApiClientService', 'AuthenticationService', 'NotificationService', EventAggregator, Router, ValidationController)
+@inject('SolutionExplorerServiceFileSystem',
+        'ManagementApiClientService',
+        'AuthenticationService',
+        'NotificationService',
+        EventAggregator,
+        Router,
+        ValidationController)
 export class DiagramDetail {
 
   public diagram: IDiagram;
