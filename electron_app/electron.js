@@ -50,6 +50,7 @@ Main._initializeApplication = function () {
 
   const platformIsNotWindows = process.platform !== 'win32';
   // The AutoUpdater gets not initialized on windows, because it is broken currently
+  // See https://github.com/process-engine/bpmn-studio/issues/715
   if (platformIsNotWindows) {
     initializeAutoUpdater();
   } else {
