@@ -47,7 +47,17 @@ Main._initializeApplication = function () {
   });
 
   initializeDeepLinking();
-  initializeAutoUpdater();
+
+  const platformIsNotWindows = process.platform !== 'win32';
+  // The AutoUpdater gets not initialized on windows, because it is broken currently
+  if (platformIsNotWindows) {
+    initializeAutoUpdater();
+  } else {
+    electron.ipcMain.on('add_autoupdater_listener', (event) => {
+      event.sender.send('autoupdater_windows_notification');
+    });
+  }
+
   initializeFileOpenFeature();
 
   function initializeDeepLinking() {
