@@ -75,27 +75,27 @@ pipeline {
         expression { branch_is_master || branch_is_develop }
       }
       parallel {
-        stage('Build on Linux') {
-          agent {
-            label "linux"
-          }
-          steps {
-            unstash('post_build')
-            unstash('post_build_node_modules')
+        // stage('Build on Linux') {
+        //   agent {
+        //     label "linux"
+        //   }
+        //   steps {
+        //     unstash('post_build')
+        //     unstash('post_build_node_modules')
 
-            sh('node --version')
+        //     sh('node --version')
 
-            sh('npm run jenkins-electron-install-app-deps')
-            sh('npm run jenkins-electron-rebuild-native')
-            sh('npm run jenkins-electron-build-linux')
-            stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml', name: 'linux_results')
-          }
-          post {
-            always {
-              cleanup_workspace()
-            }
-          }
-        }
+        //     sh('npm run jenkins-electron-install-app-deps')
+        //     sh('npm run jenkins-electron-rebuild-native')
+        //     sh('npm run jenkins-electron-build-linux')
+        //     stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml', name: 'linux_results')
+        //   }
+        //   post {
+        //     always {
+        //       cleanup_workspace()
+        //     }
+        //   }
+        // }
         stage('Build on MacOS') {
           agent {
             label "macos"
@@ -127,31 +127,31 @@ pipeline {
             }
           }
         }
-        stage('Build on Windows') {
-          agent {
-            label "windows"
-          }
-          steps {
-            unstash('post_build')
-            bat('node --version')
+        // stage('Build on Windows') {
+        //   agent {
+        //     label "windows"
+        //   }
+        //   steps {
+        //     unstash('post_build')
+        //     bat('node --version')
 
-            // we copy the node_modules folder from the main slave
-            // which runs linux. Some dependencies may not be installed
-            // if they have a os restriction in their package.json
-            bat('npm run reset')
-            bat('npm install')
+        //     // we copy the node_modules folder from the main slave
+        //     // which runs linux. Some dependencies may not be installed
+        //     // if they have a os restriction in their package.json
+        //     bat('npm run reset')
+        //     bat('npm install')
 
-            bat('npm run jenkins-electron-rebuild-native')
-            bat('npm run jenkins-electron-build-windows')
+        //     bat('npm run jenkins-electron-rebuild-native')
+        //     bat('npm run jenkins-electron-build-windows')
 
-            stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml', name: 'windows_results')
-          }
-          post {
-            always {
-              cleanup_workspace()
-            }
-          }
-        }
+        //     stash(includes: 'dist/*.*', excludes: 'electron-builder-effective-config.yaml', name: 'windows_results')
+        //   }
+        //   post {
+        //     always {
+        //       cleanup_workspace()
+        //     }
+        //   }
+        // }
       }
     }
     stage('test') {
@@ -212,9 +212,9 @@ pipeline {
         expression { branch_is_master || branch_is_develop }
       }
       steps {
-        unstash('linux_results')
+        // unstash('linux_results')
         unstash('macos_results')
-        unstash('windows_results')
+        // unstash('windows_results')
         nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
           dir('.ci-tools') {
             sh('npm run reset')
