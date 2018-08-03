@@ -21,6 +21,7 @@ export class DiagramDetail {
 
   public diagram: IDiagram;
   public bpmnio: BpmnIo;
+  public showSaveBeforeDeployModal: boolean = false;
 
   private _solutionExplorerService: ISolutionExplorerService;
   private _managementClient: IManagementApiService;
@@ -71,8 +72,8 @@ export class DiagramDetail {
       this._eventAggregator.subscribe(environment.events.diagramChange, () => {
         this._diagramHasChanged = true;
       }),
-      this._eventAggregator.subscribe(environment.events.processDefDetail.uploadProcess, () => {
-        this._uploadProcess();
+      this._eventAggregator.subscribe(environment.events.processDefDetail.uploadProcess, async() => {
+        await this._checkIfDiagramIsSavedBeforeDeploy();
       }),
     ];
   }
@@ -141,7 +142,33 @@ export class DiagramDetail {
     }
   }
 
-  private async _uploadProcess(): Promise<void> {
+  /**
+   * Checks, if the diagram is saved before it can be deployed.
+   *
+   * If not, the user will be ask to save the diagram.
+   */
+  private async _checkIfDiagramIsSavedBeforeDeploy(): Promise<void> {
+    if (this._diagramHasChanged) {
+      this.showSaveBeforeDeployModal = true;
+    } else {
+      await this.uploadProcess();
+    }
+  }
+
+  public async saveDiagramAndDeploy(): Promise<void> {
+    this.showSaveBeforeDeployModal = false;
+    await this._saveDiagram();
+    await this.uploadProcess();
+  }
+
+  /**
+   * Dismisses the saveBeforeDeploy modal.
+   */
+  public cancelModal(): void {
+    this.showSaveBeforeDeployModal = false;
+  }
+
+  public async uploadProcess(): Promise<void> {
     const rootElements: Array<IModdleElement> = this.bpmnio.modeler._definitions.rootElements;
     const payload: ProcessModelExecution.UpdateProcessModelRequestPayload = {
       xml: this.diagram.xml,

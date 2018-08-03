@@ -27,4 +27,25 @@
       </div>
     </div>
     <!-- }}} Save On Leave Modal -->
+    <!-- Save Before Deploy Modal {{{ -->
+    <div show.bind="showSaveBeforeDeployModal">
+      <div class="modal show-modal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Save Diagram before deploy</h4>
+            </div>
+            <div class="modal-body">
+              In order to deploy your Diagram, you have to save your recent changes.
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="custom-button" data-dismiss="modal" id="saveButtonDeploy" click.delegate="saveDiagramAndDeploy()"> Save and deploy</button>
+              <button type="button" class="custom-button" data-dismiss="modal" id="cancelDeploy" click.delegate="cancelModal()"> Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fade in"></div>
+    </div>
+    <!-- }}} Save On Leave Modal -->
 </template>
