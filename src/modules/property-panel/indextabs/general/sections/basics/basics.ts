@@ -167,6 +167,9 @@ export class BasicsSection implements ISection {
       return rootElement.id;
     });
 
+    const currentId: number = elementIds.indexOf(id);
+    elementIds.splice(currentId, 1);
+
     return !elementIds.includes(id);
   }
 

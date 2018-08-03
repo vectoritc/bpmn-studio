@@ -86,7 +86,6 @@ export class ConfigPanel {
       window.localStorage.setItem('processEngineRoute', '');
     } else {
       window.localStorage.setItem('processEngineRoute', this.baseRoute);
-
     }
 
     oidcConfig.userManagerSettings.authority = this.config.openIdConnect.authority;

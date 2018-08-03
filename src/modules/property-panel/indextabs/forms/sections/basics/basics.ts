@@ -404,11 +404,6 @@ export class BasicsSection implements ISection {
     return randomId;
   }
 
-  private _deleteExtensions(): void {
-    delete this.businessObjInPanel.extensionElements;
-    delete this.businessObjInPanel.formKey;
-  }
-
   private _validateFormId(event: ValidateEvent): void {
     if (event.type !== 'validate') {
       return;
