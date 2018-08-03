@@ -51,12 +51,11 @@ export class Dashboard {
 
   private async _hasClaimsForTaskList(managementContext: ManagementContext): Promise<boolean> {
     try {
+      // TODO: Refactor; this is not how we want to do our claim checks.
+      // Talk to Sebastian or Christoph first.
 
       await this._managementApiService.getProcessModels(managementContext);
-      await this._managementApiService.getUserTasksForProcessModel(managementContext, undefined);
-      await this._managementApiService.getUserTasksForCorrelation(managementContext, undefined);
       await this._managementApiService.getAllActiveCorrelations(managementContext);
-      await this._managementApiService.getProcessModelById(managementContext, undefined);
 
     } catch (error) {
       const errorIsForbiddenError: boolean = isError(error, ForbiddenError);

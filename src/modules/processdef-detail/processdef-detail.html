@@ -29,30 +29,32 @@
   <!-- #endregion -->
 
   <!-- #region Save Modal for Process Start -->
-  <div class="modal" tabindex="-1" role="dialog" id="saveModalProcessStart">
-    <div class="modal-dialog save-modal__dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h4 class="modal-title">Document Contains Changes</h4>
-        </div>
-        <div class="modal-body">
-          Your process has unsaved changes. Save changes to diagram before starting the process?
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="custom-button" data-dismiss="modal" id="cancelButtonProcessStart">Cancel</button>
-          <button type="button" class="custom-button" data-dismiss="modal" id="saveButtonProcessStart">Save and start process</button>
+  <div show.bind="showSaveForStartModal">
+    <div class="modal show show-modal" tabindex="-1" role="dialog" id="saveModalProcessStart">
+      <div class="modal-dialog save-modal__dialog" role="document">
+        <div class="modal-content save-diagram-modal-dialog__content">
+          <div class="modal-header">
+            <h4 class="modal-title">Document Contains Changes</h4>
+          </div>
+          <div class="modal-body">
+            Your process has unsaved changes. Save changes to diagram before starting the process?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="custom-button" data-dismiss="modal" id="cancelButtonProcessStart" click.delegate="cancelDialog()">Cancel</button>
+            <button type="button" class="custom-button" data-dismiss="modal" id="saveButtonProcessStart" click.delegate="saveChangesBeforeStart()" >Save and start process</button>
+          </div>
         </div>
       </div>
     </div>
+    <div class="modal-backdrop fade in"></div>
   </div>
   <!-- #endregion -->
 
   <!-- #region Select Start Event Modal for Process Start -->
-  <div show.bind="showModal">
-    <div class="modal fade in show" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content process-start-event-modal-dialog__content">
-
+  <div show.bind="showStartEventModal">
+    <div class="modal show" tabindex="-1" role="dialog">
+      <div class="modal-dialog select-start-event-modal__dialog" role="document">
+        <div class="modal-content">
           <div class="modal-header process-start-event-modal-dialog__header">
             <h3 class="process-start-event-modal-dialog__header-headline">Select initial StartEvent</h3>
           </div>
@@ -68,7 +70,7 @@
           </div>
 
           <div class="modal-footer process-start-event-modal-dialog__footer">
-            <button type="button" class="custom-button" data-dismiss="modal" id="cancelStartEventSelection" click.delegate="cancelStartDialog()">Cancel</button>
+            <button type="button" class="custom-button" data-dismiss="modal" id="cancelStartEventSelection" click.delegate="cancelDialog()">Cancel</button>
             <button type="button" class="custom-button" data-dismiss="modal" id="startProcessWithSelectedStartEvent" click.delegate="startProcess()" disabled.bind="!selectedStartEventId">Start Process</button>
           </div>
 

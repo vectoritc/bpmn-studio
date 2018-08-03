@@ -48,7 +48,8 @@ pipeline {
         }
         nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
           sh('node --version')
-          sh('npm install --prefer-offline')
+          sh('npm run reset')
+          sh('npm install')
           sh('npm rebuild node-sass')
         }
       }
@@ -107,7 +108,8 @@ pipeline {
             // we copy the node_modules folder from the main slave
             // which runs linux. Some dependencies may not be installed
             // if they have a os restriction in their package.json
-            sh('npm install --prefer-offline')
+            sh('npm run reset')
+            sh('npm install')
 
             sh('npm run jenkins-electron-install-app-deps')
             sh('npm run jenkins-electron-rebuild-native')
@@ -133,22 +135,11 @@ pipeline {
             unstash('post_build')
             bat('node --version')
 
-            script {
-              try {
-                timeout(time: 5, unit: 'MINUTES') {
-                  powershell('npm install --global windows-build-tools');
-                }
-              } catch (error) {
-                echo('Unable to install windows-build-tools, trying to continue with jobs execution.')
-              }
-            }
-
             // we copy the node_modules folder from the main slave
             // which runs linux. Some dependencies may not be installed
             // if they have a os restriction in their package.json
-            bat('npm install --prefer-offline')
+            bat('npm install')
 
-            bat('npm run jenkins-electron-install-app-deps')
             bat('npm run jenkins-electron-rebuild-native')
             bat('npm run jenkins-electron-build-windows')
 
@@ -225,7 +216,7 @@ pipeline {
         unstash('windows_results')
         nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
           dir('.ci-tools') {
-            sh('npm install --prefer-offline')
+            sh('npm install')
           }
           withCredentials([
             string(credentialsId: 'process-engine-ci_token', variable: 'RELEASE_GH_TOKEN')

@@ -1,7 +1,7 @@
 {
   "name": "bpmn-studio",
   "description": "An Aurelia application for designing BPMN diagrams, which can also be connected to a process engine to execute these diagrams.",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "author": {
     "name": "process-engine",
     "email": "hello@process-engine.io",
@@ -10,9 +10,10 @@
   "main": "electron_app/electron.js",
   "scripts": {
     "start": "./bin/bpmn-studio.js",
-    "postinstall": "npm rebuild node-sass && node_modules/.bin/install-app-deps",
+    "postinstall": "npm rebuild node-sass && electron-builder install-app-deps",
     "start_dev": "au run --watch",
     "build": "au build --prod",
+    "reset": "bash dev_tooling/scripts/build_clean_setup.bash",
     "deploy": "npm run build && npm publish",
     "integration-test-init": "webdriver-manager update && webdriver-manager start",
     "integration-test": "au e2e",
@@ -85,7 +86,7 @@
     "@process-engine/consumer_api_contracts": "^0.14.2",
     "@process-engine/management_api_client": "^0.6.0",
     "@process-engine/management_api_contracts": "0.7.0",
-    "@process-engine/skeleton-electron": "6.0.7",
+    "@process-engine/skeleton-electron": "6.0.8",
     "@process-engine/solutionexplorer.contracts": "1.0.0",
     "@process-engine/solutionexplorer.repository.contracts": "1.0.0",
     "@process-engine/solutionexplorer.repository.filesystem": "1.0.0",
@@ -128,7 +129,7 @@
     "aurelia-cli": "^0.30.1",
     "aurelia-fetch-client": "^1.1.2",
     "aurelia-protractor-plugin": "^1.0.6",
-    "aurelia-templating-resources": "1.4.0",
+    "aurelia-templating-resources": "1.7.1",
     "aurelia-testing": "^1.0.0-beta.3.0.1",
     "aurelia-tools": "^1.0.0",
     "bluebird": "^3.5.1",

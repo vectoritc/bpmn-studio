@@ -39,7 +39,9 @@ export class ProcessDefDetail {
 
   public bpmnio: BpmnIo;
   public process: ProcessModelExecution.ProcessModel;
-  public showModal: boolean = false;
+  public showStartEventModal: boolean = false;
+  public showSaveForStartModal: boolean = false;
+  public saveForStartModal: HTMLElement;
 
   public processesStartEvents: Array<Event> = [];
   public selectedStartEventId: string;
@@ -271,6 +273,7 @@ export class ProcessDefDetail {
 
       this._router.navigateToRoute('waiting-room', {
         correlationId: correlationId,
+        processModelId: this.process.id,
       });
     } catch (error) {
       this.
@@ -282,25 +285,48 @@ export class ProcessDefDetail {
     }
   }
 
-  public cancelStartDialog(): void {
-    this.showModal = false;
+  public cancelDialog(): void {
+    this.showStartEventModal = false;
+    this.showSaveForStartModal = false;
+  }
+
+  public async saveChangesBeforeStart(): Promise<void> {
+    this._saveDiagram();
+    await this.showSelectStartEventDialog();
   }
 
   /**
    * Opens a modal dialog to ask the user, which StartEvent he want's to
    * use to start the process.
    *
-   * If there is only one startevent this method will select this startevent by
+   * If there is only one StartEvent this method will select this StartEvent by
    * default.
    */
-  private async _showStartDialog(): Promise<void> {
+  public async showSelectStartEventDialog(): Promise<void> {
     await this._updateProcessStartEvents();
 
     if (this.processesStartEvents.length === 1) {
       this.selectedStartEventId = this.processesStartEvents[0].id;
     }
 
-    this.showModal = true;
+    this.showStartEventModal = true;
+    this.showSaveForStartModal = false;
+
+  }
+
+  /**
+   * Opens a modal, if the diagram has unsaved changes and ask the user,
+   * if he wants to save his changes. This is necessary to
+   * execute the Process.
+   *
+   * If there are no unsaved changes, no modal will be displayed.
+   */
+  private async _showStartDialog(): Promise<void> {
+    if (this._diagramHasChanged) {
+      this.showSaveForStartModal = true;
+    } else {
+      await this.showSelectStartEventDialog();
+    }
   }
 
   private async _refreshProcess(): Promise<ProcessModelExecution.ProcessModel> {

@@ -47,7 +47,18 @@ Main._initializeApplication = function () {
   });
 
   initializeDeepLinking();
-  initializeAutoUpdater();
+
+  const platformIsNotWindows = process.platform !== 'win32';
+  // The AutoUpdater gets not initialized on windows, because it is broken currently
+  // See https://github.com/process-engine/bpmn-studio/issues/715
+  if (platformIsNotWindows) {
+    initializeAutoUpdater();
+  } else {
+    electron.ipcMain.on('add_autoupdater_listener', (event) => {
+      event.sender.send('autoupdater_windows_notification');
+    });
+  }
+
   initializeFileOpenFeature();
 
   function initializeDeepLinking() {
@@ -104,7 +115,7 @@ Main._initializeApplication = function () {
         // we need to navigate to the start page to activate the Aurelia
         // application again. Due to the bug referenced above, the login page of
         // the IdentityServer is opened in the same window, so that the Aurelia
-        // application closes down. 
+        // application closes down.
 
         Main._window.loadURL(`file://${__dirname}/../index.html`);
 
@@ -181,11 +192,8 @@ Main._initializeApplication = function () {
   }
 
   function initializeFileOpenFeature() {
-
     app.on('window-all-closed', () => {
-      if (process.platform !== 'darwin') {
-        app.quit();
-      }
+      app.quit();
       filePath = undefined;
     });
 
@@ -199,6 +207,21 @@ Main._initializeApplication = function () {
       app.on('open-file', (event, path) => {
         filePath = path;
       });
+    });
+
+    /**
+     * Wait for the "waiting"-event signalling the app has started and the
+     * component is ready to handle events.
+     *
+     * Register an "open-file"-listener to get the path to file which has been
+     * clicked on.
+     *
+     * "open-file" gets fired when someone double clicks a .bpmn file.
+     */
+    electron.ipcMain.on('waiting-for-double-file-click', (mainEvent) => {
+      app.on('open-file', (event, path) => {
+        mainEvent.sender.send('double-click-on-file', path);
+      })
     });
 
     electron.ipcMain.on('get_opened_file', (event) => {

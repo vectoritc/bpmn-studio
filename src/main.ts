@@ -23,17 +23,23 @@ export function configure(aurelia: Aurelia): void {
      */
     const processEngineBaseRouteWithProtocol: string = `http://${newHost}`;
 
-    if (!window.localStorage.getItem('processEngineRoute')) {
-      localStorage.setItem('processEngineRoute', processEngineBaseRouteWithProtocol);
-    }
+    localStorage.setItem('InternalProcessEngineRoute', processEngineBaseRouteWithProtocol);
 
     aurelia.container.registerInstance('InternalProcessEngineBaseRoute', processEngineBaseRouteWithProtocol);
   } else {
     aurelia.container.registerInstance('InternalProcessEngineBaseRoute', null);
   }
 
-  if (window.localStorage.getItem('processEngineRoute')) {
-    const processEngineRoute: string = window.localStorage.getItem('processEngineRoute');
+  const customProcessEngineRoute: string = window.localStorage.getItem('processEngineRoute');
+  const isCustomProcessEngineRouteSet: boolean = customProcessEngineRoute !== ''
+                                              && customProcessEngineRoute !== null;
+
+  const processEngineRoute: string = isCustomProcessEngineRouteSet
+  ? customProcessEngineRoute
+  : window.localStorage.getItem('InternalProcessEngineRoute');
+
+  const processEngineRouteExists: boolean = processEngineRoute !== null && processEngineRoute !== '';
+  if (processEngineRouteExists) {
     environment.bpmnStudioClient.baseRoute = processEngineRoute;
     environment.processengine.routes.processes = `${processEngineRoute}/datastore/ProcessDef`;
     environment.processengine.routes.iam = `${processEngineRoute}/iam`;
@@ -72,6 +78,8 @@ export function configure(aurelia: Aurelia): void {
       const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
       // subscribe to processengine status
       ipcRenderer.send('add_internal_processengine_status_listener');
+      ipcRenderer.send('add_autoupdater_listener');
+
       // wait for status to be reported
 
       ipcRenderer.on('internal_processengine_status', (event: any, status: string, error: string) => {
@@ -90,6 +98,17 @@ export function configure(aurelia: Aurelia): void {
         const notificationService: NotificationService = aurelia.container.get('NotificationService');
 
         notificationService.showNonDisappearingNotification(NotificationType.ERROR, errorMessage);
+      });
+
+      ipcRenderer.on('autoupdater_windows_notification', () => {
+        // tslint:disable-next-line: max-line-length
+        const targetHref: string = `<a href="javascript:nodeRequire('open')('https://github.com/process-engine/bpmn-studio/issues/715')">click here</a>`;
+
+        const infoMessage: string = `The autoupdater is currently unavailable for the Windows platform.
+         There is more information about this here: ${targetHref}.`;
+        const notificationService: NotificationService = aurelia.container.get('NotificationService');
+
+        notificationService.showNonDisappearingNotification(NotificationType.INFO, infoMessage);
       });
     }
   });
