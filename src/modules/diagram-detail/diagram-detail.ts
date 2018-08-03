@@ -129,6 +129,8 @@ export class DiagramDetail {
   }
 
   /**
+   * Saves the current diagram to disk and deploys it to the
+   * process engine.
    */
   public async saveDiagramAndDeploy(): Promise<void> {
     this.showSaveBeforeDeployModal = false;
@@ -172,6 +174,9 @@ export class DiagramDetail {
     }
   }
 
+  /**
+   * Saves the current diagram to disk.
+   */
   private async _saveDiagram(): Promise<void> {
     try {
       this.diagram.xml = await this.bpmnio.getXML();
