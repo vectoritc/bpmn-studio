@@ -290,21 +290,6 @@ export class ProcessDefDetail {
     this.showSaveForStartModal = false;
   }
 
-  /**
-   * Opens a modal, if the diagram has unsaved changes and ask the user,
-   * if he wants to save his changes. This is necessary to
-   * execute the Process.
-   *
-   * If there are no unsaved changes, no modal will be displayed.
-   */
-  private async _showStartDialog(): Promise<void> {
-    if (this._diagramHasChanged) {
-      this.showSaveForStartModal = true;
-    } else {
-      await this.showSelectStartEventDialog();
-    }
-  }
-
   public async saveChangesBeforeStart(): Promise<void> {
     this._saveDiagram();
     await this.showSelectStartEventDialog();
@@ -327,6 +312,21 @@ export class ProcessDefDetail {
     this.showStartEventModal = true;
     this.showSaveForStartModal = false;
 
+  }
+
+  /**
+   * Opens a modal, if the diagram has unsaved changes and ask the user,
+   * if he wants to save his changes. This is necessary to
+   * execute the Process.
+   *
+   * If there are no unsaved changes, no modal will be displayed.
+   */
+  private async _showStartDialog(): Promise<void> {
+    if (this._diagramHasChanged) {
+      this.showSaveForStartModal = true;
+    } else {
+      await this.showSelectStartEventDialog();
+    }
   }
 
   private async _refreshProcess(): Promise<ProcessModelExecution.ProcessModel> {
