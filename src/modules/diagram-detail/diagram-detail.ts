@@ -85,7 +85,7 @@ export class DiagramDetail {
         this._saveDiagram();
       }),
       this._eventAggregator.subscribe(environment.events.processDefDetail.uploadProcess, () => {
-        this._uploadProcess();
+        this._checkIfDiagramIsSavedBeforeDeploy();
       }),
       this._eventAggregator.subscribe(environment.events.differsFromOriginal, (savingNeeded: boolean) => {
         this._diagramHasChanged = savingNeeded;
