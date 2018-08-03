@@ -107,7 +107,7 @@ export function configure(aurelia: Aurelia): void {
         const infoMessage: string = `The autoupdater is currently unavailable for the Windows platform. There is more information about this here: ${targetHref}.`;
         const notificationService: NotificationService = aurelia.container.get('NotificationService');
 
-        notificationService.showNonDisappearingNotification(NotificationType.Info, infoMessage);
+        notificationService.showNonDisappearingNotification(NotificationType.INFO, infoMessage);
       });
     }
   });
