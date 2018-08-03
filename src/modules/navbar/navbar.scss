@@ -1,5 +1,5 @@
 .bpmn-studio-navbar {
-  display: flex;  
+  display: flex;
   height: 42px;
   background-color: #f7f7f7;
   border-bottom: 2px solid #dcdbdb;
@@ -49,6 +49,7 @@ button {
 }
 
 .menu__menu-tabbed-link {
+  text-decoration: none;
   display: flex;
   margin: 0 8px;
   align-items: stretch;
@@ -59,6 +60,7 @@ button {
 }
 
 .menu__menu-tabbed-link--active .menu-tabbed-link {
+  text-decoration: none;
   font-weight: bold;
   color: #5c5c5c;
 }
@@ -73,7 +75,7 @@ button {
 .menu-tabbed-link:hover {
   cursor: default;
   color: #5e5e5e;
-  text-decoration: none;
+  text-decoration: inherit;
 }
 
 .menu-tabbed-link--disabled:hover {
