@@ -27,6 +27,7 @@ export class DiagramCreationService implements IDiagramCreationService {
       xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
       xmlns:camunda="http://camunda.org/schema/1.0/bpmn"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
       id="Definition_1"
       targetNamespace="http://bpmn.io/schema/bpmn"
       exporter="BPMN Studio"
@@ -39,10 +40,29 @@ export class DiagramCreationService implements IDiagramCreationService {
                 <camunda:executionListener class="" event="" />
                 <camunda:properties />
                 <camunda:properties />
+                <camunda:properties />
             </bpmn:extensionElements>
             <bpmn:laneSet>
-                <bpmn:lane id="Lane_1xzf0d3" name="Lane" />
+                <bpmn:lane id="Lane_1xzf0d3" name="Lane">
+                    <bpmn:flowNodeRef>
+                        StartEvent_1mox3jl
+                    </bpmn:flowNodeRef>
+                    <bpmn:flowNodeRef>
+                        EndEvent_0eie6q6
+                    </bpmn:flowNodeRef>
+                </bpmn:lane>
             </bpmn:laneSet>
+            <bpmn:startEvent id="StartEvent_1mox3jl" name="Start Event">
+                <bpmn:outgoing>
+                    SequenceFlow_1jdocur
+                </bpmn:outgoing>
+            </bpmn:startEvent>
+            <bpmn:sequenceFlow id="SequenceFlow_1jdocur" sourceRef="StartEvent_1mox3jl" targetRef="EndEvent_0eie6q6" />
+            <bpmn:endEvent id="EndEvent_0eie6q6" name="End Event">
+                <bpmn:incoming>
+                    SequenceFlow_1jdocur
+                </bpmn:incoming>
+            </bpmn:endEvent>
         </bpmn:process>
         <bpmndi:BPMNDiagram id="BPMNDiagram_1">
             <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1cidyxu">
@@ -52,6 +72,16 @@ export class DiagramCreationService implements IDiagramCreationService {
                 <bpmndi:BPMNShape id="Lane_1xzf0d3_di" bpmnElement="Lane_1xzf0d3">
                     <dc:Bounds x="35" y="4" width="551" height="170" />
                 </bpmndi:BPMNShape>
+                <bpmndi:BPMNShape id="StartEvent_1mox3jl_di" bpmnElement="StartEvent_1mox3jl">
+                    <dc:Bounds x="83" y="69" width="36" height="36" />
+                </bpmndi:BPMNShape>
+                <bpmndi:BPMNShape id="EndEvent_0eie6q6_di" bpmnElement="EndEvent_0eie6q6">
+                    <dc:Bounds x="503" y="69" width="36" height="36" />
+                </bpmndi:BPMNShape>
+                <bpmndi:BPMNEdge id="SequenceFlow_1jdocur_di" bpmnElement="SequenceFlow_1jdocur">
+                    <di:waypoint x="119" y="87" />
+                    <di:waypoint x="503" y="87" />
+                </bpmndi:BPMNEdge>
             </bpmndi:BPMNPlane>
         </bpmndi:BPMNDiagram>
     </bpmn:definitions>`;
