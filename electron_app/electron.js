@@ -47,7 +47,18 @@ Main._initializeApplication = function () {
   });
 
   initializeDeepLinking();
-  initializeAutoUpdater();
+
+  const platformIsNotWindows = process.platform !== 'win32';
+  // The AutoUpdater gets not initialized on windows, because it is broken currently
+  // See https://github.com/process-engine/bpmn-studio/issues/715
+  if (platformIsNotWindows) {
+    initializeAutoUpdater();
+  } else {
+    electron.ipcMain.on('add_autoupdater_listener', (event) => {
+      event.sender.send('autoupdater_windows_notification');
+    });
+  }
+
   initializeFileOpenFeature();
 
   function initializeDeepLinking() {
@@ -183,9 +194,7 @@ Main._initializeApplication = function () {
   function initializeFileOpenFeature() {
 
     app.on('window-all-closed', () => {
-      if (process.platform !== 'darwin') {
-        app.quit();
-      }
+      app.quit();
       filePath = undefined;
     });
 
