@@ -49,6 +49,7 @@ pipeline {
         nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
           sh('node --version')
           sh('npm run reset')
+          sh('npm install')
           sh('npm rebuild node-sass')
         }
       }
@@ -108,6 +109,7 @@ pipeline {
             // which runs linux. Some dependencies may not be installed
             // if they have a os restriction in their package.json
             sh('npm run reset')
+            sh('npm install')
 
             sh('npm run jenkins-electron-install-app-deps')
             sh('npm run jenkins-electron-rebuild-native')
@@ -137,6 +139,7 @@ pipeline {
         //     // which runs linux. Some dependencies may not be installed
         //     // if they have a os restriction in their package.json
         //     bat('npm run reset')
+        //     bat('npm install')
 
         //     bat('npm run jenkins-electron-rebuild-native')
         //     bat('npm run jenkins-electron-build-windows')
@@ -214,7 +217,7 @@ pipeline {
         // unstash('windows_results')
         nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
           dir('.ci-tools') {
-            sh('npm run reset')
+            sh('npm install')
           }
           withCredentials([
             string(credentialsId: 'process-engine-ci_token', variable: 'RELEASE_GH_TOKEN')
