@@ -13,6 +13,7 @@ import {NotificationService} from '../notification/notification.service';
 
 interface RouteParameters {
   correlationId: string;
+  processModelId: string;
 }
 
 @inject(Router, 'NotificationService', 'AuthenticationService', 'ManagementApiClientService')
@@ -24,6 +25,7 @@ export class WaitingRoom {
   private _authenticationService: IAuthenticationService;
   private _managementApiClient: IManagementApiService;
   private _pollingTimer: NodeJS.Timer;
+  private _processModelId: string;
 
   constructor(router: Router,
               notificationService: NotificationService,
@@ -38,6 +40,7 @@ export class WaitingRoom {
 
   public activate(routeParameters: RouteParameters): void {
     this._correlationId = routeParameters.correlationId;
+    this._processModelId = routeParameters.processModelId;
   }
 
   public attached(): void {
@@ -52,9 +55,9 @@ export class WaitingRoom {
     return activationStrategy.replace;
   }
 
-  public navigateToTaskList(): void {
-    this._router.navigateToRoute('task-list-correlation', {
-      correlationId: this._correlationId,
+  public navigateToDetailView(): void {
+    this._router.navigateToRoute('processdef-detail', {
+      processModelId: this._processModelId,
     });
   }
 
