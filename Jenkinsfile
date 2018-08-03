@@ -138,7 +138,6 @@ pipeline {
             // we copy the node_modules folder from the main slave
             // which runs linux. Some dependencies may not be installed
             // if they have a os restriction in their package.json
-            bat('npm run reset')
             bat('npm install')
 
             bat('npm run jenkins-electron-rebuild-native')
