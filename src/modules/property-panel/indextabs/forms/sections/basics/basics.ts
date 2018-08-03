@@ -216,7 +216,8 @@ export class BasicsSection implements ISection {
   }
 
   public updateDefaultValue(): void {
-    if (this.selectedType === FormfieldTypes.boolean) {
+    const isFormFieldBoolean: boolean = this.selectedType === FormfieldTypes.boolean;
+    if (isFormFieldBoolean) {
       this._formElement.fields[this._selectedIndex].defaultValue = `${this.booleanDefaultValue}`;
     } else {
       this._formElement.fields[this._selectedIndex].defaultValue = this.selectedForm.defaultValue;
@@ -477,7 +478,8 @@ export class BasicsSection implements ISection {
       return this._hasFormSameIdAsSelected(forms);
     });
 
-    if (this.selectedType === FormfieldTypes.boolean) {
+    const isFormFieldBoolean: boolean = this.selectedType === FormfieldTypes.boolean;
+    if (isFormFieldBoolean) {
       this.booleanDefaultValue = this.selectedForm.defaultValue === 'true'
                               || this.selectedForm.defaultValue === '1';
     }
