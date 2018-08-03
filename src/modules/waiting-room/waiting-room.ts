@@ -60,7 +60,7 @@ export class WaitingRoom {
 
   private async _startPolling(): Promise<void> {
     this._pollingTimer = setTimeout(async() => {
-      const noUserTaskFound: boolean = await this._pollUserTasksForCorrelation();
+      const noUserTaskFound: boolean = !(await this._pollUserTasksForCorrelation());
       const correlationIsStillActive: boolean = await this._pollIsCorrelationStillActive();
 
       if (noUserTaskFound && correlationIsStillActive) {
