@@ -183,9 +183,7 @@ Main._initializeApplication = function () {
   function initializeFileOpenFeature() {
 
     app.on('window-all-closed', () => {
-      if (process.platform !== 'darwin') {
-        app.quit();
-      }
+      app.quit();
       filePath = undefined;
     });
 
