@@ -76,7 +76,8 @@
         <tr>
           <th>Default Value</th>
           <td>
-            <input type="text" class="props-input" value.bind="selectedForm.defaultValue"  placeholder="Default Value" change.delegate="updateDefaultValue()">
+            <input if.bind="selectedType === FormfieldTypes.boolean" type="checkbox" class="props-input" checked.bind="booleanDefaultValue" change.delegate="updateDefaultValue()">
+            <input else type="text" class="props-input" value.bind="selectedForm.defaultValue"  placeholder="Default Value" change.delegate="updateDefaultValue()">
           </td>
         </tr>
       </table>

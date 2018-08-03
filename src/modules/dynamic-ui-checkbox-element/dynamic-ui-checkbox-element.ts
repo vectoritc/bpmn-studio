@@ -12,7 +12,8 @@ export class DynamicUiCheckboxElement {
     const fieldHasNoValue: boolean = this.field.value === undefined;
 
     if (fieldHasNoValue) {
-      this.field.value = Boolean(this.field.defaultValue);
+      this.field.value = this.field.defaultValue === 'true'
+                      || this.field.defaultValue === '1';
     }
   }
 }

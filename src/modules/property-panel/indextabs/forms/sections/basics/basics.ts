@@ -43,6 +43,7 @@ export class BasicsSection implements ISection {
   public enumValues: Array<IEnumValue> = [];
   public newEnumValueIds: Array<string> = [];
   public newEnumValueNames: Array<string> = [];
+  public booleanDefaultValue: boolean;
 
   private _bpmnModdle: IBpmnModdle;
   private _modeler: IBpmnModeler;
@@ -50,7 +51,6 @@ export class BasicsSection implements ISection {
   private _formElement: IFormElement;
   private _previousFormId: string;
   private _previousForm: IForm;
-  private _activeListElementId: string;
   private _eventAggregator: EventAggregator;
 
   constructor(controller?: ValidationController, eventAggregator?: EventAggregator) {
@@ -216,7 +216,13 @@ export class BasicsSection implements ISection {
   }
 
   public updateDefaultValue(): void {
-    this._formElement.fields[this._selectedIndex].defaultValue = this.selectedForm.defaultValue;
+    const selectedTypeIsBoolean: boolean = this.selectedType === FormfieldTypes.boolean;
+    if (selectedTypeIsBoolean) {
+      this._formElement.fields[this._selectedIndex].defaultValue = `${this.booleanDefaultValue}`;
+    } else {
+      this._formElement.fields[this._selectedIndex].defaultValue = this.selectedForm.defaultValue;
+    }
+
     this._publishDiagramChange();
   }
 
@@ -471,6 +477,12 @@ export class BasicsSection implements ISection {
 
       return this._hasFormSameIdAsSelected(forms);
     });
+
+    const selectedTypeIsBoolean: boolean = this.selectedType === FormfieldTypes.boolean;
+    if (selectedTypeIsBoolean) {
+      this.booleanDefaultValue = this.selectedForm.defaultValue === 'true'
+                              || this.selectedForm.defaultValue === '1';
+    }
 
     return formsWithId;
   }
