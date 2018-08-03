@@ -271,6 +271,7 @@ export class ProcessDefDetail {
 
       this._router.navigateToRoute('waiting-room', {
         correlationId: correlationId,
+        processModelId: this.process.id,
       });
     } catch (error) {
       this.

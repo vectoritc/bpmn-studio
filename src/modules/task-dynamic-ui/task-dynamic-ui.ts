@@ -86,6 +86,7 @@ export class TaskDynamicUi {
   private _finishTask(action: string): void {
     this._router.navigateToRoute('waiting-room', {
       correlationId: this._userTask.correlationId,
+      processModelId: this._userTask.processModelId,
     });
   }
 
