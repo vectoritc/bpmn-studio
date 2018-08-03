@@ -173,10 +173,12 @@ export class ProcessSolutionPanel {
     window.localStorage.setItem('processSolutionExplorerHideState', 'show');
 
     this._subscriptions = [
-      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, async() => {
+        this._solutionExplorerIdentity = await this._createIdentityForSolutionExplorer();
         this._refreshProcesslist();
       }),
-      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, async() => {
+        this._solutionExplorerIdentity = await this._createIdentityForSolutionExplorer();
         this._refreshProcesslist();
       }),
       this._eventAggregator.subscribe(environment.events.refreshProcessDefs, () => {
