@@ -1,11 +1,11 @@
-import {IIndextab, IPageModel, ISection, IShape} from '../../../../contracts';
+import {IBpmnModeler, IIndextab, IPageModel, ISection, IShape} from '../../../../contracts';
 import {BasicsSection} from './sections/basics/basics';
 
 export class Forms implements IIndextab {
   public title: string = 'Forms';
   public path: string = '/indextabs/forms/forms';
   public elementInPanel: IShape;
-  public modeler: any;
+  public modeler: IBpmnModeler;
   public canHandleElement: boolean = false;
   public sections: Array<ISection>;
 
