@@ -10,11 +10,11 @@ echo Removing Node Modules....
 rm -rf node_modules/
 
 # Remove package lock
-echo Removing package lock file
+echo Removing package lock file...
 rm package-lock.json
 
 # Clear the npm cache
-echo Clearing npm cache
+echo Clearing npm cache...
 npm cache clean --force
 
 # Install Node Modules
