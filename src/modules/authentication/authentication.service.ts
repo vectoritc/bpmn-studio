@@ -12,6 +12,7 @@ import {NotificationService} from './../notification/notification.service';
 
 const UNAUTHORIZED_STATUS_CODE: number = 401;
 const LOGOUT_SUCCESS_STATUS_CODE: number = 200;
+const IDENTITY_SERVER_AVAILABLE_SUCCESS_STATUS_CODE: number = 200;
 
 @inject(EventAggregator, 'NotificationService', OpenIdConnect, Router)
 export class AuthenticationService implements IAuthenticationService {
@@ -205,7 +206,7 @@ export class AuthenticationService implements IAuthenticationService {
       }
     }
 
-    if (response.status === 200) {
+    if (response.status === IDENTITY_SERVER_AVAILABLE_SUCCESS_STATUS_CODE) {
       return true;
     }
 
