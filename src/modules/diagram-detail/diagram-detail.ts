@@ -139,7 +139,7 @@ export class DiagramDetail {
   /**
    * Dismisses the saveBeforeDeploy modal.
    */
-  public cancelModal(): void {
+  public cancelSaveBeforeDeployModal(): void {
     this.showSaveBeforeDeployModal = false;
   }
 
