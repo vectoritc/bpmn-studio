@@ -128,32 +128,8 @@ export class DiagramDetail {
     this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
   }
 
-  private async _saveDiagram(): Promise<void> {
-    try {
-      this.diagram.xml = await this.bpmnio.getXML();
-      this._solutionExplorerService.saveSingleDiagram(this.diagram, this._identity);
-      this._diagramHasChanged = false;
-      this._notificationService
-          .showNotification(NotificationType.SUCCESS, `File saved!`);
-    } catch (error) {
-      this._notificationService
-          .showNotification(NotificationType.ERROR, `Unable to save the file: ${error}.`);
-    }
-  }
-
   /**
-   * Checks, if the diagram is saved before it can be deployed.
-   *
-   * If not, the user will be ask to save the diagram.
    */
-  private async _checkIfDiagramIsSavedBeforeDeploy(): Promise<void> {
-    if (this._diagramHasChanged) {
-      this.showSaveBeforeDeployModal = true;
-    } else {
-      await this.uploadProcess();
-    }
-  }
-
   public async saveDiagramAndDeploy(): Promise<void> {
     this.showSaveBeforeDeployModal = false;
     await this._saveDiagram();
@@ -193,6 +169,32 @@ export class DiagramDetail {
     } catch (error) {
       this._notificationService
           .showNotification(NotificationType.ERROR, `Unable to update diagram: ${error}.`);
+    }
+  }
+
+  private async _saveDiagram(): Promise<void> {
+    try {
+      this.diagram.xml = await this.bpmnio.getXML();
+      this._solutionExplorerService.saveSingleDiagram(this.diagram, this._identity);
+      this._diagramHasChanged = false;
+      this._notificationService
+          .showNotification(NotificationType.SUCCESS, `File saved!`);
+    } catch (error) {
+      this._notificationService
+          .showNotification(NotificationType.ERROR, `Unable to save the file: ${error}.`);
+    }
+  }
+
+  /**
+   * Checks, if the diagram is saved before it can be deployed.
+   *
+   * If not, the user will be ask to save the diagram.
+   */
+  private async _checkIfDiagramIsSavedBeforeDeploy(): Promise<void> {
+    if (this._diagramHasChanged) {
+      this.showSaveBeforeDeployModal = true;
+    } else {
+      await this.uploadProcess();
     }
   }
 
