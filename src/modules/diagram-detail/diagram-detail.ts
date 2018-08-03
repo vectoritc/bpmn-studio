@@ -21,6 +21,8 @@ export class DiagramDetail {
 
   public diagram: IDiagram;
   public bpmnio: BpmnIo;
+  public showUnsavedChangesModal: boolean = false;
+  public showSaveBeforeDeployModal: boolean = false;
 
   private _solutionExplorerService: ISolutionExplorerService;
   private _managementClient: IManagementApiService;
@@ -71,8 +73,8 @@ export class DiagramDetail {
       this._eventAggregator.subscribe(environment.events.diagramChange, () => {
         this._diagramHasChanged = true;
       }),
-      this._eventAggregator.subscribe(environment.events.processDefDetail.uploadProcess, () => {
-        this._uploadProcess();
+      this._eventAggregator.subscribe(environment.events.processDefDetail.uploadProcess, async() => {
+        await this._checkIfDiagramIsSavedBeforeDeploy();
       }),
     ];
   }
@@ -83,24 +85,22 @@ export class DiagramDetail {
       if (!this._diagramHasChanged) {
         resolve(true);
       } else {
-
-        const modal: HTMLElement = document.getElementById('saveModalLeaveView');
-        modal.classList.add('show-modal');
+        this.showUnsavedChangesModal = true;
 
         // register onClick handler
         document.getElementById('dontSaveButtonLeaveView').addEventListener('click', () => {
-          modal.classList.remove('show-modal');
+          this.showUnsavedChangesModal = false;
           this._diagramHasChanged = false;
           resolve(true);
         });
         document.getElementById('saveButtonLeaveView').addEventListener('click', () => {
+          this.showUnsavedChangesModal = false;
           this._saveDiagram();
-          modal.classList.remove('show-modal');
           this._diagramHasChanged = false;
           resolve(true);
         });
         document.getElementById('cancelButtonLeaveView').addEventListener('click', () => {
-          modal.classList.remove('show-modal');
+          this.showUnsavedChangesModal = false;
           resolve(false);
         });
       }
@@ -128,20 +128,27 @@ export class DiagramDetail {
     this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
   }
 
-  private async _saveDiagram(): Promise<void> {
-    try {
-      this.diagram.xml = await this.bpmnio.getXML();
-      this._solutionExplorerService.saveSingleDiagram(this.diagram, this._identity);
-      this._diagramHasChanged = false;
-      this._notificationService
-          .showNotification(NotificationType.SUCCESS, `File saved!`);
-    } catch (error) {
-      this._notificationService
-          .showNotification(NotificationType.ERROR, `Unable to save the file: ${error}.`);
-    }
+  /**
+   * Saves the current diagram to disk and deploys it to the
+   * process engine.
+   */
+  public async saveDiagramAndDeploy(): Promise<void> {
+    this.showSaveBeforeDeployModal = false;
+    await this._saveDiagram();
+    await this.uploadProcess();
   }
 
-  private async _uploadProcess(): Promise<void> {
+  /**
+   * Dismisses the saveBeforeDeploy modal.
+   */
+  public cancelSaveBeforeDeployModal(): void {
+    this.showSaveBeforeDeployModal = false;
+  }
+
+  /**
+   * Uploads the current diagram to the connected ProcessEngine.
+   */
+  public async uploadProcess(): Promise<void> {
     const rootElements: Array<IModdleElement> = this.bpmnio.modeler._definitions.rootElements;
     const payload: ProcessModelExecution.UpdateProcessModelRequestPayload = {
       xml: this.diagram.xml,
@@ -160,13 +167,42 @@ export class DiagramDetail {
         .updateProcessModelById(managementContext, processModelId, payload);
 
       this._notificationService
-          .showNotification(NotificationType.SUCCESS, 'Diagram was sucessfully uploaded to the connected ProcessEngine.');
+          .showNotification(NotificationType.SUCCESS, 'Diagram was successfully uploaded to the connected ProcessEngine.');
 
       // Since a new processmodel was uploaded, we need to refresh any processmodel lists.
       this._eventAggregator.publish(environment.events.refreshProcessDefs);
     } catch (error) {
       this._notificationService
           .showNotification(NotificationType.ERROR, `Unable to update diagram: ${error}.`);
+    }
+  }
+
+  /**
+   * Saves the current diagram to disk.
+   */
+  private async _saveDiagram(): Promise<void> {
+    try {
+      this.diagram.xml = await this.bpmnio.getXML();
+      this._solutionExplorerService.saveSingleDiagram(this.diagram, this._identity);
+      this._diagramHasChanged = false;
+      this._notificationService
+          .showNotification(NotificationType.SUCCESS, `File saved!`);
+    } catch (error) {
+      this._notificationService
+          .showNotification(NotificationType.ERROR, `Unable to save the file: ${error}.`);
+    }
+  }
+
+  /**
+   * Checks, if the diagram is saved before it can be deployed.
+   *
+   * If not, the user will be ask to save the diagram.
+   */
+  private async _checkIfDiagramIsSavedBeforeDeploy(): Promise<void> {
+    if (this._diagramHasChanged) {
+      this.showSaveBeforeDeployModal = true;
+    } else {
+      await this.uploadProcess();
     }
   }
 
