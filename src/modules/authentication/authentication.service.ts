@@ -5,24 +5,30 @@ import {User} from 'oidc-client';
 import {SigninResponse} from './open-id/open-id-signin-response';
 
 import { Router } from 'aurelia-router';
-import {AuthenticationStateEvent, IAuthenticationService, IIdentity} from '../../contracts/index';
+import {AuthenticationStateEvent, IAuthenticationService, IIdentity, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {oidcConfig} from '../../open-id-connect-configuration';
+import {NotificationService} from './../notification/notification.service';
 
 const UNAUTHORIZED_STATUS_CODE: number = 401;
 const LOGOUT_SUCCESS_STATUS_CODE: number = 200;
 
-@inject(EventAggregator, OpenIdConnect, Router)
+@inject(EventAggregator, 'NotificationService', OpenIdConnect, Router)
 export class AuthenticationService implements IAuthenticationService {
 
   private _eventAggregator: EventAggregator;
   private _openIdConnect: OpenIdConnect;
+  private _notificationService: NotificationService;
   private _router: Router;
   private _user: User;
   private _logoutWindow: Window = null;
 
-  constructor(eventAggregator: EventAggregator, openIdConnect: OpenIdConnect, router: Router) {
+  constructor(eventAggregator: EventAggregator,
+              notificationService: NotificationService,
+              openIdConnect: OpenIdConnect,
+              router: Router) {
     this._eventAggregator = eventAggregator;
+    this._notificationService = notificationService;
     this._openIdConnect = openIdConnect;
     this._router = router;
 
@@ -40,6 +46,14 @@ export class AuthenticationService implements IAuthenticationService {
   }
 
   public async login(): Promise<void> {
+
+    const isIdentityServerReachable: boolean = await this._isIdentityServerReachable();
+
+    if (!isIdentityServerReachable) {
+      this._notificationService.showNotification(NotificationType.ERROR, 'IdentityServer is offline');
+      return;
+    }
+
     await this._openIdConnect.login();
     const identity: IIdentity = await this.getIdentity();
     this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
@@ -158,6 +172,7 @@ export class AuthenticationService implements IAuthenticationService {
         Authorization: `Bearer ${accessToken}`,
       },
     });
+
     const response: Response = await fetch(request);
 
     if (response.status === UNAUTHORIZED_STATUS_CODE) {
@@ -165,5 +180,35 @@ export class AuthenticationService implements IAuthenticationService {
     }
 
     return response.json();
+  }
+
+  private async _isIdentityServerReachable(): Promise<boolean> {
+
+    const request: Request = new Request(`${environment.openIdConnect.authority}/.well-known/openid-configuration`, {
+      method: 'GET',
+      mode: 'cors',
+      referrer: 'no-referrer',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json',
+      },
+    });
+
+    let response: Response;
+
+    try {
+
+     response = await fetch(request);
+    } catch (error) {
+      if (error.message === 'Failed to fetch') {
+        return false;
+      }
+    }
+
+    if (response.status === 200) {
+      return true;
+    }
+
+    return false;
   }
 }
