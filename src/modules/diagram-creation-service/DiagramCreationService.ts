@@ -36,12 +36,6 @@ export class DiagramCreationService implements IDiagramCreationService {
             <bpmn:participant id="Participant_0px403d" name="${processModelId}" processRef="${processModelId}" />
         </bpmn:collaboration>
         <bpmn:process id="${processModelId}" name="${processModelId}" isExecutable="false">
-            <bpmn:extensionElements>
-                <camunda:executionListener class="" event="" />
-                <camunda:properties />
-                <camunda:properties />
-                <camunda:properties />
-            </bpmn:extensionElements>
             <bpmn:laneSet>
                 <bpmn:lane id="Lane_1xzf0d3" name="Lane">
                     <bpmn:flowNodeRef>
