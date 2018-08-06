@@ -49,10 +49,11 @@ button {
 }
 
 .menu__menu-tabbed-link {
-  text-decoration: none;
   display: flex;
   margin: 0 8px;
   align-items: stretch;
+  font-weight: bold;
+  text-decoration: none;
 }
 
 .menu__menu-tabbed-link--active {
@@ -60,9 +61,8 @@ button {
 }
 
 .menu__menu-tabbed-link--active .menu-tabbed-link {
-  text-decoration: none;
-  font-weight: bold;
   color: #5c5c5c;
+  text-decoration: none;
 }
 
 .menu-tabbed-link {
