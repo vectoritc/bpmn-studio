@@ -9,7 +9,7 @@ export class App {
   private _authenticationService: AuthenticationService;
   private _router: Router;
 
-  private _preventDefaultFunction: EventListener;
+  private _preventDefaultBehaviour: EventListener;
 
   constructor(openIdConnect: OpenIdConnect, authenticationService: AuthenticationService) {
     this._openIdConnect = openIdConnect;
@@ -17,7 +17,7 @@ export class App {
   }
 
   public activate(): void {
-    this._preventDefaultFunction = (event: Event): boolean => {
+    this._preventDefaultBehaviour = (event: Event): boolean => {
       event.preventDefault();
       return false;
     };
@@ -28,13 +28,13 @@ export class App {
     *
     * TODO: Import the dropped filed when it is a valid BPMN File
     */
-    document.addEventListener('dragover', this._preventDefaultFunction);
-    document.addEventListener('drop', this._preventDefaultFunction);
+    document.addEventListener('dragover', this._preventDefaultBehaviour);
+    document.addEventListener('drop', this._preventDefaultBehaviour);
   }
 
   public deactivate(): void {
-    document.removeEventListener('dragover', this._preventDefaultFunction);
-    document.removeEventListener('drop', this._preventDefaultFunction);
+    document.removeEventListener('dragover', this._preventDefaultBehaviour);
+    document.removeEventListener('drop', this._preventDefaultBehaviour);
   }
 
   private _parseDeepLinkingUrl(url: string): string {
