@@ -162,10 +162,17 @@ export class ProcessSolutionPanel {
         const loadedFiles: FileList = event.dataTransfer.files;
 
         try {
+          const diagramPromises: Array<Promise<IDiagram>> = [];
           Array.from(loadedFiles).forEach(async(currentFile: IFile) => {
-            const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(currentFile.path, this._identity);
-            await this._openSingleDiagram(diagram);
+            const diagramPromise: Promise<IDiagram> = this._solutionExplorerServiceFileSystem.openSingleDiagram(currentFile.path, this._identity);
+            diagramPromises.push(diagramPromise);
           });
+
+          const openedDiagrams: Array<IDiagram> = await Promise.all(diagramPromises);
+
+          for (const diagram of openedDiagrams) {
+            this._openSingleDiagram(diagram);
+          }
         } catch (error) {
           this._notificationService.showNotification(NotificationType.ERROR, error.message);
         }
