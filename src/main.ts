@@ -27,6 +27,7 @@ export function configure(aurelia: Aurelia): void {
 
     aurelia.container.registerInstance('InternalProcessEngineBaseRoute', processEngineBaseRouteWithProtocol);
   } else {
+    localStorage.setItem('InternalProcessEngineRoute', environment.bpmnStudioClient.baseRoute);
     aurelia.container.registerInstance('InternalProcessEngineBaseRoute', null);
   }
 
