@@ -156,6 +156,22 @@ export class ProcessSolutionPanel {
 
         this.openFileSystemIndexCard();
       }
+
+      const dropBehaviour: EventListener = async(event: DragEvent): Promise<void> => {
+        event.preventDefault();
+        const loadedFiles: FileList = event.dataTransfer.files;
+
+        try {
+          Array.from(loadedFiles).forEach(async(currentFile: IFile) => {
+            const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(currentFile.path, this._identity);
+            await this._openSingleDiagram(diagram);
+          });
+        } catch (error) {
+          this._notificationService.showNotification(NotificationType.ERROR, error.message);
+        }
+       };
+
+      document.addEventListener('drop', dropBehaviour);
     }
 
     this._solutionExplorerIdentity = await this._createIdentityForSolutionExplorer();
