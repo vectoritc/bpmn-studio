@@ -18,6 +18,11 @@
   height: 100%;
   background: rgb(220, 219, 219);
   overflow-y: auto;
+  -ms-overflow-style: none;
+}
+
+.properties::-webkit-scrollbar {
+  display: none;
 }
 
 .modeler .label {
@@ -77,6 +82,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   border-right: 2px solid #dcdbdb;
+  -ms-overflow-style: none;
 }
 
 .bpmn-io-layout__tools-left::-webkit-scrollbar {
