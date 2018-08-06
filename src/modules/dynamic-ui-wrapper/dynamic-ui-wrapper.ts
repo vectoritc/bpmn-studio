@@ -6,6 +6,7 @@ import {
   ManagementContext,
   UserTask,
   UserTaskFormField,
+  UserTaskFormFieldType,
   UserTaskResult,
 } from '@process-engine/management_api_contracts';
 

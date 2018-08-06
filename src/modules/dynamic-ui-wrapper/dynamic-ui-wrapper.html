@@ -3,7 +3,8 @@
   <require from="../form-widget/form-widget"></require>
 
   <div>
-    <form-widget userTaskConfig.bind="currentUserTask.data"></form-widget>
+    <confirm-widget if.bind="currentUserTask.preferredControl === 'confirm'" userTaskConfig.bind="currentUserTask.data"></confirm-widget>
+    <form-widget else userTaskConfig.bind="currentUserTask.data"></form-widget>
 
     <div if.bind="currentUserTask" class="btn-group dynamic-ui-btn-group" role="group">
       <button if.bind="declineButtonText" class="btn btn-danger" click.delegate="handleButtonClick('cancel')">${declineButtonText}</button>
