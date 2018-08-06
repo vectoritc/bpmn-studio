@@ -22,6 +22,12 @@ export class App {
       return false;
     };
 
+    /*
+    * These EventListeners are used to prevent the BPMN-Studio from redirecting after
+    * trying to drop a file to the BPMN-Studio
+    *
+    * TODO: Import the dropped filed when it is a valid BPMN File
+    */
     document.addEventListener('dragover', this._preventDefaultFunction);
     document.addEventListener('drop', this._preventDefaultFunction);
   }
