@@ -27,7 +27,7 @@ export function configure(aurelia: Aurelia): void {
 
     aurelia.container.registerInstance('InternalProcessEngineBaseRoute', processEngineBaseRouteWithProtocol);
   } else {
-    localStorage.setItem('InternalProcessEngineRoute', environment.bpmnStudioClient.baseRoute);
+    localStorage.setItem('InternalProcessEngineRoute', environment.baseRoute);
     aurelia.container.registerInstance('InternalProcessEngineBaseRoute', null);
   }
 
@@ -41,7 +41,7 @@ export function configure(aurelia: Aurelia): void {
 
   const processEngineRouteExists: boolean = processEngineRoute !== null && processEngineRoute !== '';
   if (processEngineRouteExists) {
-    environment.bpmnStudioClient.baseRoute = processEngineRoute;
+    environment.baseRoute = processEngineRoute;
     environment.processengine.routes.processes = `${processEngineRoute}/datastore/ProcessDef`;
     environment.processengine.routes.iam = `${processEngineRoute}/iam`;
     environment.processengine.routes.startProcess = `${processEngineRoute}/processengine/start`;
