@@ -64,9 +64,7 @@ export default {
       toggleProcessSolutionExplorer: 'processSolutionPanel:processsolutionexplorer:toggle',
     },
   },
-  bpmnStudioClient: {
-    baseRoute: processEngineRoute,
-  },
+  baseRoute: processEngineRoute,
   propertyPanel: {
     defaultWidth: 250,
   },

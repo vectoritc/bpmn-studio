@@ -41,7 +41,7 @@ export class ConfigPanel {
   }
 
   public attached(): void {
-    this.baseRoute = this.config.bpmnStudioClient.baseRoute;
+    this.baseRoute = this.config.baseRoute;
 
     // If there is a route set in the localstorage, we prefer this setting.
     const customProcessEngineRoute: string = window.localStorage.getItem('processEngineRoute');
