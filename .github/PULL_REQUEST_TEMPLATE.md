@@ -28,17 +28,19 @@ Please check the boxes in this list after submitting your PR:
 <b>Merge information</b>
 </summary>
 
-<pre>
 Please use `:twisted_rightwards_arrows:` at the beginning of your commit title.
 
 Example: 
+<pre>
 <code>
 :twisted_rightwards_arrows: :bug: Fix Wrong Text Decoration at ...
 </code>
+</pre>
 
 To get your commit message, just copy the first part of this pull request.
 
 Example:
+<pre>
 <code>
 **Changes:**
 
@@ -50,4 +52,5 @@ Fixes: #NumberOfFixedIssue
 PR: #NumberOfThisPR
 </code>
 </pre>
+
 </details>
