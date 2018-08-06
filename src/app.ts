@@ -9,19 +9,26 @@ export class App {
   private _authenticationService: AuthenticationService;
   private _router: Router;
 
+  private _preventDefaultFunction: EventListener;
+
   constructor(openIdConnect: OpenIdConnect, authenticationService: AuthenticationService) {
     this._openIdConnect = openIdConnect;
     this._authenticationService = authenticationService;
   }
 
   public activate(): void {
-    const preventDefaultFunction: EventListener =  (event: Event): boolean => {
+    this._preventDefaultFunction = (event: Event): boolean => {
       event.preventDefault();
       return false;
     };
 
-    document.addEventListener('dragover', preventDefaultFunction);
-    document.addEventListener('drop', preventDefaultFunction);
+    document.addEventListener('dragover', this._preventDefaultFunction);
+    document.addEventListener('drop', this._preventDefaultFunction);
+  }
+
+  public deactivate(): void {
+    document.removeEventListener('dragover', this._preventDefaultFunction);
+    document.removeEventListener('drop', this._preventDefaultFunction);
   }
 
   private _parseDeepLinkingUrl(url: string): string {
