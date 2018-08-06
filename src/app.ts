@@ -14,6 +14,16 @@ export class App {
     this._authenticationService = authenticationService;
   }
 
+  public activate(): void {
+    const preventDefaultFunction: EventListener =  (event: Event): boolean => {
+      event.preventDefault();
+      return false;
+    };
+
+    document.addEventListener('dragover', preventDefaultFunction);
+    document.addEventListener('drop', preventDefaultFunction);
+  }
+
   private _parseDeepLinkingUrl(url: string): string {
     const customProtocolPrefix: string = 'bpmn-studio://';
     const urlFragment: string = url.substring(customProtocolPrefix.length);
