@@ -24,7 +24,7 @@ export class App {
 
     /*
     * These EventListeners are used to prevent the BPMN-Studio from redirecting after
-    * trying to drop a file to the BPMN-Studio
+    * trying to drop a file to the BPMN-Studio.
     *
     * TODO: Import the dropped filed when it is a valid BPMN File
     */
