@@ -1,3 +1,5 @@
+ #!/bin/bash
+
 if [[ -z "$GITHUB_AUTH" ]]; then
   echo "Please supply GitHub authorization in form of:"
   echo "GITHUB_AUTH=\"USERNAME:TOKEN\" $0 $@"

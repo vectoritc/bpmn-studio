@@ -1,3 +1,5 @@
+ #!/bin/bash
+
 INPUT=merge_commits_of_release
 
 if [[ ! -e "$INPUT" ]]; then
