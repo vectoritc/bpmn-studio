@@ -76,6 +76,7 @@ export class ProcessSolutionPanel {
   private _diagramCreationService: IDiagramCreationService;
   private _identity: IIdentity;
   private _solutionExplorerIdentity: IIdentity;
+  private _dropBehaviour: EventListener;
   private _newDiagramNameValidator: FluentRuleCustomizer<IViewModelSolution, IViewModelSolution> = ValidationRules
       .ensure((solution: IViewModelSolution) => solution.currentDiagramInputValue)
       .displayName('Diagram name')
@@ -157,7 +158,7 @@ export class ProcessSolutionPanel {
         this.openFileSystemIndexCard();
       }
 
-      const dropBehaviour: EventListener = async(event: DragEvent): Promise<void> => {
+      this._dropBehaviour = async(event: DragEvent): Promise<void> => {
         event.preventDefault();
         const loadedFiles: FileList = event.dataTransfer.files;
 
@@ -178,7 +179,7 @@ export class ProcessSolutionPanel {
         }
        };
 
-      document.addEventListener('drop', dropBehaviour);
+      document.addEventListener('drop', this._dropBehaviour);
     }
 
     this._solutionExplorerIdentity = await this._createIdentityForSolutionExplorer();
@@ -217,6 +218,7 @@ export class ProcessSolutionPanel {
     this._eventAggregator.publish(environment.events.processSolutionPanel.toggleProcessSolutionExplorer);
 
     window.localStorage.setItem('processSolutionExplorerHideState', 'hide');
+    document.removeEventListener('drop', this._dropBehaviour);
   }
 
   /**
