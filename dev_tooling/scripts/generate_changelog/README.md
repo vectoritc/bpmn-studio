@@ -2,11 +2,11 @@
 
 To generate the changelog for a new BPMN-Studio release, follow this guide.
 
-## Create a new markdown file to the release:
+## Create a new markdown file to the release
 
 TODO
 
-## Get the merge commits for the release:
+## Get the merge commits for the release
 
 This will create a `merge_commits_of_release` file in your current working
 directory.
@@ -45,10 +45,10 @@ This script will read from the `merge_commits_of_release` file. The script will
 copy a sorted and formated list of the commits into your clipboard.
 
 ```bash
-sort_and_format_merge_commits.sh
+bash sort_and_format_merge_commits.sh
 ```
 
-Paste the contents of your clipboard into the section `Full Changeog` of
+Paste the contents of your clipboard into the section `Full Changelog` of
 release markdown file.
 
 ## Get fixed issues
