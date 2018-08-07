@@ -7,16 +7,14 @@ export class ConfirmWidget {
   public userTaskConfig: UserTaskConfig;
   public confirmMessage: string;
 
-  public activate(userTaskConfig: UserTaskConfig): void {
-    this.userTaskConfig = userTaskConfig;
-
+  public attached(): void {
     const booleanFormField: UserTaskFormField = this._getBooleanFormField();
     const hasUserTaskBooleanFormField: boolean = booleanFormField !== undefined;
+
     if (hasUserTaskBooleanFormField) {
       this.confirmMessage = booleanFormField.label;
     }
   }
-
   private _getBooleanFormField(): UserTaskFormField {
     const formFields: Array<UserTaskFormField> = this.userTaskConfig.formFields;
 
