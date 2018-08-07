@@ -44,6 +44,20 @@ export class DynamicUiWrapper {
   public async handleButtonClick(action: 'cancel' | 'proceed'): Promise<void> {
     const actionCanceled: boolean = action === 'cancel';
 
+    if (this.currentControlType === 'confirm') {
+      const formFields: Array<UserTaskFormField> = this.currentUserTask.data.formFields;
+
+      const booleanFormFieldIndex: number = formFields.findIndex((formField: UserTaskFormField) => {
+        return formField.type === UserTaskFormFieldType.boolean;
+      });
+
+      const hasBooleanFormField: boolean = formFields[booleanFormFieldIndex] !== undefined;
+
+      if (hasBooleanFormField) {
+        (formFields[booleanFormFieldIndex] as IBooleanFormField).value = action === 'proceed';
+      }
+    }
+
     if (actionCanceled) {
       this._cancelUserTask();
       return;
