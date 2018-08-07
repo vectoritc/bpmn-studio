@@ -120,6 +120,7 @@ export class ProcessSolutionPanel {
 
       // Show the FileSystemSolutionExplorer.
       this.enableFileSystemSolutions = true;
+      this.openFileSystemIndexCard();
 
       const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
 
