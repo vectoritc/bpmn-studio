@@ -34,7 +34,7 @@ bash get_merge_commits.sh v4.0.0 v4.0.1
 
 ## Cleanup merge commits
 
-Edit `merge_commits_of_release` in a editor for you choice:
+Edit `merge_commits_of_release` in an editor for you choice:
 
 - Replace any encoded emojis with their text variant.
 - Remove any `:twisted_rightwards_arrows:` emojis.
@@ -53,7 +53,7 @@ Edit `merge_commits_of_release` in a editor for you choice:
 ## Sort and format merge commits
 
 This script will read from the `merge_commits_of_release` file. The script will
-copy a sorted and formated list of the commits into your clipboard.
+copy a sorted and formatted list of the commits into your clipboard.
 
 ```bash
 bash sort_and_format_merge_commits.sh
@@ -66,7 +66,7 @@ release markdown file.
 
 This script will read from the `merge_commits_of_release` file. It will extract
 all issues fixed in the release. It will also generate a neat looking issue list
-using the issue title. To fullfill this task the script needs access to the
+using the issue title. To fulfill this task the script needs access to the
 GitHub API. The result of the will be saved to `closed_issues` in your current
 working directory.
 
@@ -76,7 +76,7 @@ GITHUB_AUTH="USERNAME:TOKEN" bash get_fixed_issues.sh
 
 ## Cleanup fixed issues
 
-Edit `closed_issues` in a editor for you choice. Perform the same cleanup steps
+Edit `closed_issues` in an editor for you choice. Perform the same cleanup steps
 as described in [Cleanup merge commits](#cleanup-merge-commits).
 
 After this step paste the contents of `closed_issues` into the section `Fixed
