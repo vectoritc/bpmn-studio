@@ -27,7 +27,7 @@ export class App {
       const isRunningInBrowser: boolean = Boolean(!(window as any).nodeRequire);
 
       if (isRunningInBrowser) {
-        this._notificationService.showNotification(NotificationType.INFO, 'Drag and drop is only supported for the electron application.');
+        this._notificationService.showNotification(NotificationType.INFO, 'Drag-and-Drop is currently only available for the Electron application.');
       }
 
       return false;
