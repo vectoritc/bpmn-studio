@@ -1,5 +1,4 @@
-import {UserTaskConfig, UserTaskFormFieldType} from '@process-engine/consumer_api_contracts';
-import { UserTaskFormField } from '@process-engine/management_api_contracts';
+import {UserTaskConfig, UserTaskFormField, UserTaskFormFieldType} from '@process-engine/management_api_contracts';
 import {bindable} from 'aurelia-framework';
 
 export class ConfirmWidget {
