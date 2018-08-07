@@ -1,6 +1,7 @@
 <template>
   <require from="./dynamic-ui-wrapper.css"></require>
   <require from="../form-widget/form-widget"></require>
+  <require from="../confirm-widget/confirm-widget"></require>
 
   <div>
     <confirm-widget if.bind="currentUserTask.preferredControl === 'confirm'" userTaskConfig.bind="currentUserTask.data"></confirm-widget>
