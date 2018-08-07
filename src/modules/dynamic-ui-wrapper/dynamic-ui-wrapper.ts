@@ -25,7 +25,7 @@ export class DynamicUiWrapper {
   public confirmButtonText: string = 'Continue';
   public onButtonClick: (action: 'cancel' | 'proceed') => void;
   @bindable({changeHandler: 'userTaskChanged'}) public currentUserTask: UserTask;
-  private _currentControlType: string;
+  @bindable() public currentControlType: string;
 
   private _router: Router;
 
@@ -53,7 +53,7 @@ export class DynamicUiWrapper {
   }
 
   public userTaskChanged(newUserTask: UserTask): void {
-    this._currentControlType = newUserTask.preferredControl;
+    this.currentControlType = newUserTask.preferredControl;
   }
 
   private _cancelUserTask(): void {
