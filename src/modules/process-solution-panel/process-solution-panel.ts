@@ -165,6 +165,7 @@ export class ProcessSolutionPanel {
         try {
           const diagramPromises: Array<Promise<IDiagram>> = [];
           Array.from(loadedFiles).forEach(async(currentFile: IFile) => {
+
             const diagramPromise: Promise<IDiagram> = this._solutionExplorerServiceFileSystem.openSingleDiagram(currentFile.path, this._identity);
             diagramPromises.push(diagramPromise);
           });
