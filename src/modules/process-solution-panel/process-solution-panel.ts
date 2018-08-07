@@ -172,7 +172,18 @@ export class ProcessSolutionPanel {
           const openedDiagrams: Array<IDiagram> = await Promise.all(diagramPromises);
 
           for (const diagram of openedDiagrams) {
-            this._openSingleDiagram(diagram);
+            try {
+              await this._diagramValidationService
+              .validate(diagram.xml)
+              .isXML()
+              .isBPMN()
+              .throwIfError();
+
+              this._openSingleDiagram(diagram);
+            } catch (validationError) {
+              const errorMessage: string = `Could not open ${diagram.name}: The file is not a valid BPMN or XML File.`;
+              this._notificationService.showNotification(NotificationType.ERROR, errorMessage);
+            }
           }
         } catch (error) {
           this._notificationService.showNotification(NotificationType.ERROR, error.message);
