@@ -23,7 +23,13 @@ export class App {
   public activate(): void {
     this._preventDefaultBehaviour = (event: Event): boolean => {
       event.preventDefault();
-      this._notificationService.showNotification(NotificationType.INFO, 'Drag and drop is currently not supported.');
+
+      const isRunningInBrowser: boolean = Boolean(!(window as any).nodeRequire);
+
+      if (isRunningInBrowser) {
+        this._notificationService.showNotification(NotificationType.INFO, 'Drag and drop is only supported for the electron application.');
+      }
+
       return false;
     };
 
