@@ -4,6 +4,7 @@ if [[ ! $# -eq 2 ]]; then
   echo "Insufficient arguments."
   echo "Usage: $0 <release before this release> <this release>"
   echo "Both arguments are git tags."
+  exit 1
 fi
 
 RELEASE_BEFORE_THIS_RELEASE=$1

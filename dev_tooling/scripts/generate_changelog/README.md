@@ -1,10 +1,21 @@
 # Generate Release Changelog
 
-To generate the changelog for a new BPMN-Studio release, follow this guide.
+Follow this guide to generate the changelog for a new BPMN-Studio release.
 
 ## Create a new markdown file to the release
 
-TODO
+This will create a `release_markdown_file.md` file in your current working
+directory.
+
+```bash
+bash generate_release_markdown_file.sh <release before this release> <this release>
+```
+
+Example:
+
+```bash
+bash generate_release_markdown_file.sh v4.0.0 v4.0.1
+```
 
 ## Get the merge commits for the release
 
@@ -70,3 +81,9 @@ as described in [Cleanup merge commits](#cleanup-merge-commits).
 
 After this step paste the contents of `closed_issues` into the section `Fixed
 Issues` of the release markdown file.
+
+## Update other sections
+
+Now go ahead and update the other sections of the release markdown file. Once
+you are done, copy and paste the contents of the file into the GitHub release
+editor.
