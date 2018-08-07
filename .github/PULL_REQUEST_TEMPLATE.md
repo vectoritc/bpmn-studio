@@ -1,7 +1,16 @@
-<!--
-Thanks for submitting this Pull Request.
+:tada: **Thanks for submitting this Pull Request.**
+
 Please provide a list including your changes.
--->
+
+To help us to create a meaningful Changelog, we agreed 
+to use an emoji-based commit-style. Use the [Emojis](Emojis)
+we provided below.
+
+Fill out the following, provide reference to issues
+and this PR- we will use this as merge commit message-body
+and the title of this PR as commit-headline:
+
+---
 
 **Changes:**
 
@@ -19,7 +28,8 @@ Closes (...)
 PR: #PullRequest
 
 ---
-[Examples](#example)
+
+See the [examples](#example) for inspiration.
 
 ## How can others test the changes?
 
@@ -41,13 +51,14 @@ Please check the boxes in this list after submitting your PR:
 
 <details>
 <summary>
-:warning: <i>Before merging please click here to expand and follow the guide.</i>
+:warning: Before merging please click here to expand and follow the guide.
 </summary>
 <br>
 
 Please use `:twisted_rightwards_arrows:` at the beginning of your merge commit title.
 
 Example:
+
 <pre>
 <code>
 :twisted_rightwards_arrows: :bug: Fix Wrong Text Decoration at ...
@@ -72,13 +83,14 @@ PR: #NumberOfThisPR
 </details>
 
 ## Emojis
+
 <details>
 <summary>
-<i>Expand for a list of most used emojis</i>
+Expand for a list of most used emojis
 </summary>
 <br>
 
-Please prefix your commit messages with an emoji.
+Please prefix your commit messages with an Emoji.
 
 Ref: https://gitmoji.carloscuesta.me/
 
