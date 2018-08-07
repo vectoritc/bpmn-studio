@@ -1,24 +1,29 @@
 import {inject} from 'aurelia-framework';
 import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {Router, RouterConfiguration} from 'aurelia-router';
+import {NotificationType} from './contracts/index';
 import {AuthenticationService} from './modules/authentication/authentication.service';
+import {NotificationService} from './modules/notification/notification.service';
 
-@inject(OpenIdConnect, 'AuthenticationService')
+@inject(OpenIdConnect, 'AuthenticationService', 'NotificationService')
 export class App {
   private _openIdConnect: OpenIdConnect;
   private _authenticationService: AuthenticationService;
   private _router: Router;
+  private _notificationService: NotificationService;
 
   private _preventDefaultBehaviour: EventListener;
 
-  constructor(openIdConnect: OpenIdConnect, authenticationService: AuthenticationService) {
+  constructor(openIdConnect: OpenIdConnect, authenticationService: AuthenticationService, notificationService: NotificationService) {
     this._openIdConnect = openIdConnect;
     this._authenticationService = authenticationService;
+    this._notificationService = notificationService;
   }
 
   public activate(): void {
     this._preventDefaultBehaviour = (event: Event): boolean => {
       event.preventDefault();
+      this._notificationService.showNotification(NotificationType.INFO, 'Drag and drop is currently not supported.');
       return false;
     };
 
