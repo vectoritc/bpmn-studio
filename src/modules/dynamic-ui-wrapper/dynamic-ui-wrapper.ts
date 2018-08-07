@@ -68,6 +68,12 @@ export class DynamicUiWrapper {
 
   public userTaskChanged(newUserTask: UserTask): void {
     this.currentControlType = newUserTask.data.preferredControl;
+
+    if (this.currentControlType === 'confirm') {
+      this.confirmButtonText = 'Confirm';
+    } else {
+      this.confirmButtonText = 'Continue';
+    }
   }
 
   private _cancelUserTask(): void {
