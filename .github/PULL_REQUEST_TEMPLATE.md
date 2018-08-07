@@ -1,9 +1,9 @@
-:tada: **Thanks for submitting this Pull Request.**
+:tada: **Thanks for submitting this Pull Request**
 
 Please provide a list including your changes.
 
 To help us to create a meaningful Changelog, we agreed 
-to use an emoji-based commit-style. Use the [Emojis](Emojis)
+to use an emoji-based commit-style. Use the [Emojis](emojis)
 we provided below.
 
 Fill out the following, provide reference to issues
