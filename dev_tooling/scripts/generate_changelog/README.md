@@ -34,7 +34,7 @@ bash get_merge_commits.sh v4.0.0 v4.0.1
 
 ## Cleanup merge commits
 
-Edit `merge_commits_of_release` in an editor for you choice:
+Edit `merge_commits_of_release` in an editor for your choice:
 
 - Replace any encoded emojis with their text variant.
 - Remove any `:twisted_rightwards_arrows:` emojis.
@@ -76,7 +76,7 @@ GITHUB_AUTH="USERNAME:TOKEN" bash get_fixed_issues.sh
 
 ## Cleanup fixed issues
 
-Edit `closed_issues` in an editor for you choice. Perform the same cleanup steps
+Edit `closed_issues` in an editor for your choice. Perform the same cleanup steps
 as described in [Cleanup merge commits](#cleanup-merge-commits).
 
 After this step paste the contents of `closed_issues` into the section `Fixed
