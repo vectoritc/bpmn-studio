@@ -7,6 +7,8 @@ import {NotificationService} from './modules/notification/notification.service';
 
 @inject(OpenIdConnect, 'AuthenticationService', 'NotificationService')
 export class App {
+  public showSolutionExplorer: boolean = true;
+
   private _openIdConnect: OpenIdConnect;
   private _authenticationService: AuthenticationService;
   private _router: Router;
