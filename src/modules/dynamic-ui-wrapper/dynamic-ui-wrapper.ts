@@ -67,7 +67,7 @@ export class DynamicUiWrapper {
   }
 
   public userTaskChanged(newUserTask: UserTask): void {
-    this.currentControlType = newUserTask.preferredControl;
+    this.currentControlType = newUserTask.data.preferredControl;
   }
 
   private _cancelUserTask(): void {
