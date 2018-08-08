@@ -6,8 +6,9 @@
     <confirm-widget if.bind="currentControlType == 'confirm'" user-task-config.bind="currentUserTask.data"></confirm-widget>
     <form-widget else user-task-config.bind="currentUserTask.data"></form-widget>
     <div if.bind="currentUserTask" class="btn-group dynamic-ui-btn-group" role="group">
-      <button if.bind="declineButtonText" class="btn btn-danger" click.delegate="handleButtonClick('cancel')">${declineButtonText}</button>
+      <button if.bind="cancelButtonText" class="btn btn-danger" click.delegate="handleButtonClick('cancel')">${cancelButtonText}</button>
       <button if.bind="confirmButtonText" class="btn btn-success" click.delegate="handleButtonClick('proceed')">${confirmButtonText}</button>
+      <button if.bind="declineButtonText" class="btn btn-danger" click.delegate="handleButtonClick('decline')">${declineButtonText}</button>
     </div>
   </div>
 </template>

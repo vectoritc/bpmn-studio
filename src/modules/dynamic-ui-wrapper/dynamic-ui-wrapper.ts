@@ -21,9 +21,10 @@ import {AuthenticationService} from '../authentication/authentication.service';
 @inject('DynamicUiService', 'AuthenticationService', Router)
 export class DynamicUiWrapper {
 
-  public declineButtonText: string = 'Cancel';
+  public cancelButtonText: string = 'Cancel';
   public confirmButtonText: string = 'Continue';
-  public onButtonClick: (action: 'cancel' | 'proceed') => void;
+  public declineButtonText: string = 'Decline';
+  public onButtonClick: (action: 'cancel' | 'proceed' | 'decline') => void;
   @bindable({changeHandler: 'userTaskChanged'}) public currentUserTask: UserTask;
   @bindable() public currentControlType: string;
 
