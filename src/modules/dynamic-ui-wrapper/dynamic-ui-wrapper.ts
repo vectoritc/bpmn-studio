@@ -67,6 +67,11 @@ export class DynamicUiWrapper {
   }
 
   public userTaskChanged(newUserTask: UserTask): void {
+    const isUserTaskEmpty: boolean = newUserTask === undefined;
+    if (isUserTaskEmpty) {
+      return;
+    }
+
     this.currentControlType = newUserTask.data.preferredControl;
 
     if (this.currentControlType === 'confirm') {
