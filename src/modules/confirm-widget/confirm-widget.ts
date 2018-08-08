@@ -55,5 +55,4 @@ export class ConfirmWidget {
       return formField.type === UserTaskFormFieldType.boolean;
     });
   }
-
 }
