@@ -45,7 +45,14 @@ export class DynamicUiWrapper {
   public async handleButtonClick(action: 'cancel' | 'proceed'): Promise<void> {
     const actionCanceled: boolean = action === 'cancel';
 
-    if (this.currentControlType === 'confirm') {
+    if (actionCanceled) {
+      this._cancelUserTask();
+      return;
+    }
+
+    const continueConfirmTask: boolean = this.currentControlType === 'confirm';
+
+    if (continueConfirmTask) {
       const formFields: Array<UserTaskFormField> = this.currentUserTask.data.formFields;
 
       const booleanFormFieldIndex: number = formFields.findIndex((formField: UserTaskFormField) => {
@@ -57,11 +64,6 @@ export class DynamicUiWrapper {
       if (hasBooleanFormField) {
         (formFields[booleanFormFieldIndex] as IBooleanFormField).value = action === 'proceed';
       }
-    }
-
-    if (actionCanceled) {
-      this._cancelUserTask();
-      return;
     }
 
     this._finishUserTask(action);
@@ -77,8 +79,10 @@ export class DynamicUiWrapper {
 
     if (this.currentControlType === 'confirm') {
       this.confirmButtonText = 'Confirm';
+      this.declineButtonText = 'Decline';
     } else {
       this.confirmButtonText = 'Continue';
+      this.declineButtonText = '';
     }
   }
 
@@ -88,7 +92,7 @@ export class DynamicUiWrapper {
     });
   }
 
-  private _finishUserTask(action: 'cancel' | 'proceed'): void {
+  private _finishUserTask(action: 'cancel' | 'proceed' | 'decline'): void {
     const hasNoCurrentUserTask: boolean = this.currentUserTask === undefined;
 
     if (hasNoCurrentUserTask) {
