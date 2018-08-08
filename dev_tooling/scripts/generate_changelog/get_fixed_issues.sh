@@ -6,14 +6,14 @@ if [[ -z "$GITHUB_AUTH" ]]; then
   exit 1
 fi
 
-INPUT=merge_commits_of_release
+INPUT="merge_commits_of_release.txt"
 
 if [[ ! -e "$INPUT" ]]; then
   echo "Input file $INPUT does not exist."
   exit 1
 fi
 
-egrep -o "^[a-z0-9]{8} " merge_commits_of_release | \
+egrep -o "^[a-z0-9]{8} " $INPUT | \
 xargs git show | \
 egrep "(Issue|Clos|Fix)(es|s)?" | \
 egrep -o "#\d+" | \

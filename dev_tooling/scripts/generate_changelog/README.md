@@ -19,7 +19,7 @@ bash generate_release_markdown_file.sh v4.0.0 v4.0.1
 
 ## Get the merge commits for the release
 
-This will create a `merge_commits_of_release` file in your current working
+This will create a `merge_commits_of_release.txt` file in your current working
 directory.
 
 ```bash
@@ -34,7 +34,7 @@ bash get_merge_commits.sh v4.0.0 v4.0.1
 
 ## Cleanup merge commits
 
-Edit `merge_commits_of_release` in an editor for your choice:
+Edit `merge_commits_of_release.txt` in an editor for your choice:
 
 - Replace any encoded emojis with their text variant.
 - Remove any `:twisted_rightwards_arrows:` emojis.
@@ -52,7 +52,7 @@ Edit `merge_commits_of_release` in an editor for your choice:
 
 ## Sort and format merge commits
 
-This script will read from the `merge_commits_of_release` file. The script will
+This script will read from the `merge_commits_of_release.txt` file. The script will
 copy a sorted and formatted list of the commits into your clipboard.
 
 ```bash
@@ -64,7 +64,7 @@ release markdown file.
 
 ## Get fixed issues
 
-This script will read from the `merge_commits_of_release` file. It will extract
+This script will read from the `merge_commits_of_release.txt` file. It will extract
 all issues fixed in the release. It will also generate a neat looking issue list
 using the issue title. To fulfill this task the script needs access to the
 GitHub API. The result of the will be saved to `closed_issues` in your current

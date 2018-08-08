@@ -1,6 +1,6 @@
  #!/bin/bash
 
-INPUT=merge_commits_of_release
+INPUT="merge_commits_of_release.txt"
 
 if [[ ! -e "$INPUT" ]]; then
   echo "Input file $INPUT does not exist."
