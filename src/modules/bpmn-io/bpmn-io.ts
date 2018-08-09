@@ -106,13 +106,12 @@ export class BpmnIo {
      */
     const handlerPriority: number = 1000;
 
-    this.modeler.on('commandStack.changed', async() => {
+    this.modeler.on('commandStack.changed', () => {
       this._eventAggregator.publish(environment.events.diagramChange);
-      }, handlerPriority);
+    }, handlerPriority);
 
     this._diagramPrintService = new DiagramPrintService();
     this._diagramExportService = new DiagramExportService();
-
   }
 
   public async attached(): Promise<void> {
