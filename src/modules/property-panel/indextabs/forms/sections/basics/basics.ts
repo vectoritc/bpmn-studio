@@ -191,13 +191,6 @@ export class BasicsSection implements ISection {
     this.isFormSelected = true;
 
     const selectedFormHasType: boolean = this.selectedForm.type !== undefined;
-
-    /*
-     * If the Form type is not defined, we can set it to null. If it is defined,
-     * assign the correct form type.
-     *
-     * TODO: Find out if this is the proper way to handle such case.
-     */
     this.selectedType = selectedFormHasType
                     ? this._getTypeAndHandleCustomType(this.selectedForm.type)
                     : null;
