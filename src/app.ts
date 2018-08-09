@@ -23,15 +23,19 @@ export class App {
   public activate(): void {
     this._preventDefaultBehaviour = (event: Event): boolean => {
       event.preventDefault();
-      this._notificationService.showNotification(NotificationType.INFO, 'Drag and drop is currently not supported.');
+
+      const isRunningInBrowser: boolean = Boolean(!(window as any).nodeRequire);
+
+      if (isRunningInBrowser) {
+        this._notificationService.showNotification(NotificationType.INFO, 'Drag-and-Drop is currently only available for the Electron application.');
+      }
+
       return false;
     };
 
     /*
     * These EventListeners are used to prevent the BPMN-Studio from redirecting after
     * trying to drop a file to the BPMN-Studio.
-    *
-    * TODO: Import the dropped file when it is a valid BPMN file
     */
     document.addEventListener('dragover', this._preventDefaultBehaviour);
     document.addEventListener('drop', this._preventDefaultBehaviour);

@@ -76,6 +76,7 @@ export class ProcessSolutionPanel {
   private _diagramCreationService: IDiagramCreationService;
   private _identity: IIdentity;
   private _solutionExplorerIdentity: IIdentity;
+  private _dropBehaviour: EventListener;
   private _newDiagramNameValidator: FluentRuleCustomizer<IViewModelSolution, IViewModelSolution> = ValidationRules
       .ensure((solution: IViewModelSolution) => solution.currentDiagramInputValue)
       .displayName('Diagram name')
@@ -156,6 +157,41 @@ export class ProcessSolutionPanel {
 
         this.openFileSystemIndexCard();
       }
+
+      this._dropBehaviour = async(event: DragEvent): Promise<void> => {
+        event.preventDefault();
+        const loadedFiles: FileList = event.dataTransfer.files;
+
+        try {
+          const diagramPromises: Array<Promise<IDiagram>> = [];
+          Array.from(loadedFiles).forEach(async(currentFile: IFile) => {
+
+            const diagramPromise: Promise<IDiagram> = this._solutionExplorerServiceFileSystem.openSingleDiagram(currentFile.path, this._identity);
+            diagramPromises.push(diagramPromise);
+          });
+
+          const openedDiagrams: Array<IDiagram> = await Promise.all(diagramPromises);
+
+          for (const diagram of openedDiagrams) {
+            try {
+              await this._diagramValidationService
+              .validate(diagram.xml)
+              .isXML()
+              .isBPMN()
+              .throwIfError();
+
+              this._openSingleDiagram(diagram);
+            } catch (validationError) {
+              const errorMessage: string = `Could not open ${diagram.name}: The file is not a valid BPMN or XML File.`;
+              this._notificationService.showNotification(NotificationType.ERROR, errorMessage);
+            }
+          }
+        } catch (error) {
+          this._notificationService.showNotification(NotificationType.ERROR, error.message);
+        }
+       };
+
+      document.addEventListener('drop', this._dropBehaviour);
     }
 
     this._solutionExplorerIdentity = await this._createIdentityForSolutionExplorer();
@@ -194,6 +230,7 @@ export class ProcessSolutionPanel {
     this._eventAggregator.publish(environment.events.processSolutionPanel.toggleProcessSolutionExplorer);
 
     window.localStorage.setItem('processSolutionExplorerHideState', 'hide');
+    document.removeEventListener('drop', this._dropBehaviour);
   }
 
   /**
