@@ -205,7 +205,11 @@ export class BasicsSection implements ISection {
     let type: string;
 
     if (this.selectedType === FormfieldTypes.custom_type) {
-      type = this.customType;
+      const customTypeIsDefined: boolean = this.customType !== undefined;
+      type = customTypeIsDefined
+                ? this.customType
+                : '';
+
     } else {
       type = this.selectedType;
     }
