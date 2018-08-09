@@ -45,7 +45,7 @@ Please check the boxes in this list after submitting your PR:
 - [ ] I've rebased the `develop` branch with my branch before finishing this PR.
 - [ ] I've **summarized all changes** in a list above.
 - [ ] I've mentioned all **PRs, which relate to this one**.
-- [ ] My Pull Request title is prefixed according to [gitmoji guide](https://gitmoji.carloscuesta.me/).
+- [ ] I've prefixed my Pull Request title is according to [gitmoji guide](https://gitmoji.carloscuesta.me/).
 
 ## Example
 
