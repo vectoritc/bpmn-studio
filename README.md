@@ -202,16 +202,16 @@ Die Tests starten:
 npm run integration-test
 ```
 
-## Shortcut scripts
+## Shortcut Skripte
 
-Es sind bereits einige Script in der `package.json` - Datei vordefiniert, welche
+Es sind bereits einige Skripte in der `package.json` - Datei vordefiniert, welche
 sich einfach durch `npm run <name>` ausführen lassen.
 
 Die folgenden vordefinierten Skripte könnten hilfreich sein:
 * `build`: Baut das Aurelia Bundle
-* `start`: Startet die BPMN - Studio Webanwendung
-* `start_dev`: Startet die BPMN - Studio Webanwendung und trackt die Quelldatein (geänderte Quelltextdatein werden neu transpiliert und die Webanwendung wird neu geladen)
-* `electron-start-dev`: Baut das Aurelia bundle und startet die Electron Anwendung
+* `start`: Startet die BPMN-Studio Webanwendung
+* `start_dev`: Startet die BPMN-Studio Webanwendung und trackt die Quelldatein (geänderte Quelltextdatein werden neu transpiliert und die Webanwendung wird neu geladen)
+* `electron-start-dev`: Baut das Aurelia Bundle und startet die Electron Anwendung
 * `reset`: Entfernt alle node_modules, die `package-lock.json` Datei und bereinigt den NPM - Cache
 * `lint`: Startet `tslint` für das gesamte Projekt
 * `electron-build-macos`: Baut die Electron - Anwendung für MacOS
