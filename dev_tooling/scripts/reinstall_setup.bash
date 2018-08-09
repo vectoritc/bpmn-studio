@@ -2,12 +2,12 @@
 _VERSION="0.0.1"
 
 ############
-# This script reinstalls the current developement Setup by:
+# This script reinstalls the current developement setup by:
 #   * Resetting your configuration by calling the npm reset script
 #     that:
-#       * Deletes your node_modules
-#       * Deletes your package-lock file (if it exists)
-#       * Clears your NPM - Cache
+#       * Deletes the node_modules directory
+#       * Deletes the package-lock file (if it exists)
+#       * Clears the NPM - Cache
 #   * Reinstalling all required node modules
 #   * Rebuilding
 #
