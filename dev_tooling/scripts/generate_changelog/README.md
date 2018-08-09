@@ -39,7 +39,7 @@ Edit `merge_commits_of_release.txt` in an editor for your choice:
 - Replace any encoded emojis with their text variant.
 - Remove any `:twisted_rightwards_arrows:` emojis.
 - Remove any merge commits into feature branches.
-- Remove useless commits.
+- Remove empty, reverted and version bump commits.
 - For generic merge commits use the PR title.
 
 **Cleanup Examples:**
