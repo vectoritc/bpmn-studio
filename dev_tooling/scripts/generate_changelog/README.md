@@ -61,8 +61,9 @@ copy a sorted and formatted list of the commits into your clipboard.
 bash sort_and_format_merge_commits.sh
 ```
 
-Paste the contents of your clipboard into the section `Full Changelog` of
-release markdown file.
+The script will leave it's result in your clipboard; paste (CMD+v) the
+contents of your clipboard into the section `Full Changelog` of the release
+notes file.
 
 ## Get Fixed Issues
 
