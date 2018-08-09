@@ -198,11 +198,9 @@ export class BasicsSection implements ISection {
      *
      * TODO: Find out if this is the proper way to handle such case.
      */
-    if (selectedFormHasType) {
-      this.selectedType = this._getTypeAndHandleCustomType(this.selectedForm.type);
-    } else {
-      this.selectedType = null;
-    }
+    this.selectedType = selectedFormHasType
+                    ? this._getTypeAndHandleCustomType(this.selectedForm.type)
+                    : null;
 
     this._selectedIndex = this._getSelectedIndex();
 
