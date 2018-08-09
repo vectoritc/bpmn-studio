@@ -42,6 +42,8 @@ Edit `merge_commits_of_release.txt` in an editor for your choice:
 - Remove useless commits.
 - For generic merge commits use the PR title.
 
+**Cleanup Examples:**
+
 | Before                                                                                          | After                                                               |
 |-------------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
 | `55c55303 :twisted_rightwards_arrows: :sparkles: Add Create Diagram Input to Solution Explorer` | `55c55303 :sparkles: Add Create Diagram Input to Solution Explorer` |
