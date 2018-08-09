@@ -83,10 +83,10 @@ Edit `closed_issues` in an editor for your choice. Perform the same cleanup step
 as described in [Cleanup merge commits](#cleanup-merge-commits).
 
 After this step paste the contents of `closed_issues` into the section `Fixed
-Issues` of the release markdown file.
+Issues` of the release notes file.
 
 ## Update Other Sections
 
-Now go ahead and update the other sections of the release markdown file. Once
+Now go ahead and update the other sections of the release notes file. Once
 you are done, copy and paste the contents of the file into the GitHub release
 editor.
