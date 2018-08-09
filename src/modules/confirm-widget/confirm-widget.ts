@@ -27,8 +27,8 @@ export class ConfirmWidget {
       this._notificationService.showNotification(NotificationType.ERROR, errorMessage);
     }
 
-    this.formFields = this.userTaskConfig.formFields.slice(1);
     this.confirmMessage = booleanFormField.label;
+    this.formFields = this._getAllOtherFormFields(booleanFormField);
   }
 
   public getFieldControl(field: UserTaskFormField): string {
@@ -49,6 +49,15 @@ export class ConfirmWidget {
         this._notificationService.showNotification(NotificationType.ERROR, errorMessage);
         return null;
     }
+  }
+
+  private _getAllOtherFormFields(formField: UserTaskFormField): Array<UserTaskFormField> {
+    const booleanFormFieldIndex: number = this.userTaskConfig.formFields.indexOf(formField);
+
+    const otherFormFields: Array<UserTaskFormField> = this.userTaskConfig.formFields.slice();
+    otherFormFields.splice(booleanFormFieldIndex, 1);
+
+    return otherFormFields;
   }
 
   private _getBooleanFormField(): UserTaskFormField {
