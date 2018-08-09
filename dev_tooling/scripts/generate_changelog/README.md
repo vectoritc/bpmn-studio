@@ -2,7 +2,7 @@
 
 Follow this guide to generate the changelog for a new BPMN-Studio release.
 
-## Create a new markdown file to the release
+## Create a New Markdown File to the Release
 
 This will create a `release_markdown_file.md` file in your current working
 directory.
@@ -17,7 +17,7 @@ Example:
 bash generate_release_markdown_file.sh v4.0.0 v4.0.1
 ```
 
-## Get the merge commits for the release
+## Get the Merge Commits for the Release
 
 This will create a `merge_commits_of_release.txt` file in your current working
 directory.
@@ -32,7 +32,7 @@ Example:
 bash get_merge_commits.sh v4.0.0 v4.0.1
 ```
 
-## Cleanup merge commits
+## Cleanup Merge Commits
 
 Edit `merge_commits_of_release.txt` in an editor for your choice:
 
@@ -50,7 +50,7 @@ Edit `merge_commits_of_release.txt` in an editor for your choice:
 | `07fdf3a9 Merge branch 'develop' into feature/fix_undefined_route_params`                       | -                                                                   |
 | `40539005 Merge pull request #719 from process-engine/feature/fix_undefined_route_params`       | `:bug: Fix undefined route params` (PR title is used)               |
 
-## Sort and format merge commits
+## Sort and Format Merge Commits
 
 This script will read from the `merge_commits_of_release.txt` file. The script will
 copy a sorted and formatted list of the commits into your clipboard.
@@ -62,7 +62,7 @@ bash sort_and_format_merge_commits.sh
 Paste the contents of your clipboard into the section `Full Changelog` of
 release markdown file.
 
-## Get fixed issues
+## Get Fixed Issues
 
 This script will read from the `merge_commits_of_release.txt` file. It will extract
 all issues fixed in the release. It will also generate a neat looking issue list
@@ -74,7 +74,7 @@ working directory.
 GITHUB_AUTH="USERNAME:TOKEN" bash get_fixed_issues.sh
 ```
 
-## Cleanup fixed issues
+## Cleanup Fixed Issues
 
 Edit `closed_issues` in an editor for your choice. Perform the same cleanup steps
 as described in [Cleanup merge commits](#cleanup-merge-commits).
@@ -82,7 +82,7 @@ as described in [Cleanup merge commits](#cleanup-merge-commits).
 After this step paste the contents of `closed_issues` into the section `Fixed
 Issues` of the release markdown file.
 
-## Update other sections
+## Update Other Sections
 
 Now go ahead and update the other sections of the release markdown file. Once
 you are done, copy and paste the contents of the file into the GitHub release
