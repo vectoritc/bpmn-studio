@@ -202,17 +202,24 @@ export class BasicsSection implements ISection {
   }
 
   public updateType(): void {
-    let type: string;
+    /*
+     * Evaluates the type of the form field.
+     *
+     * If the user selected a custom type, find out what type the user provided.
+     */
+    const type: string = ((): string => {
+      const selectedTypeIsNotCustomType: boolean =
+        this.selectedType !== FormfieldTypes.custom_type;
 
-    if (this.selectedType === FormfieldTypes.custom_type) {
+      if (selectedTypeIsNotCustomType) {
+          return this.selectedType;
+        }
+
       const customTypeIsDefined: boolean = this.customType !== undefined;
-      type = customTypeIsDefined
-                ? this.customType
-                : '';
-
-    } else {
-      type = this.selectedType;
-    }
+      return customTypeIsDefined
+                  ? this.customType
+                  : '';
+    })();
 
     this._formElement.fields[this._selectedIndex].type = type;
     this._reloadEnumValues();
