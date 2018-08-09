@@ -24,11 +24,14 @@ package-lock.json
 node_modules
 
 # Compiled files
-scripts
+scripts/*
 dist
 src/environment.ts
 @fortawesome
 bootstrap
+
+# Allow scripts from dev_tooling
+!dev_tooling/scripts/*
 
 process-engine_local_db
 userData
