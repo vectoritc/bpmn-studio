@@ -57,7 +57,7 @@ Please check the boxes in this list after submitting your PR:
 
 Please use `:twisted_rightwards_arrows:` at the beginning of your merge commit title.
 
-Example:
+Example 1:
 
 <pre>
 <code>
@@ -67,7 +67,7 @@ Example:
 
 To get your commit message, just copy the first part of this pull request.
 
-Example:
+Example 2:
 <pre>
 <code>
 **Changes:**
@@ -76,7 +76,10 @@ Example:
 - Fixes some typos
 - ...
 
-Closes: #NumberOfFixedIssue
+**Issues:**
+
+Closes #NumberOfFixedIssue
+
 PR: #NumberOfThisPR
 </code>
 </pre>
@@ -86,7 +89,7 @@ PR: #NumberOfThisPR
 
 <details>
 <summary>
-Expand for a list of most used emojis
+Expand for a list of most used Emojis.
 </summary>
 <br>
 
