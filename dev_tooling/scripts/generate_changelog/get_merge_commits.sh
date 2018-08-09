@@ -1,6 +1,6 @@
  #!/bin/bash
 
-if [[ ! $# -eq 2 ]]; then
+if [[ $# -ne 2 ]]; then
   echo "Insufficient arguments."
   echo "Usage: $0 <release before this release> <this release>"
   echo "Both arguments are git tags."
