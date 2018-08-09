@@ -4,8 +4,8 @@ Follow this guide to generate the changelog for a new BPMN-Studio release.
 
 ## Create a New Markdown File to the Release
 
-This will create a `release_markdown_file.md` file in your current working
-directory.
+This will create a `releasenotes_<this release>.md` file in your current
+working directory.
 
 ```bash
 bash generate_release_markdown_file.sh <release before this release> <this release>

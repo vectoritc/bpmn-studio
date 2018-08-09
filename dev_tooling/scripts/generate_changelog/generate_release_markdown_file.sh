@@ -10,7 +10,7 @@ fi
 RELEASE_BEFORE_THIS_RELEASE=$1
 THIS_RELEASE=$2
 
-OUTPUT=release_markdown_file.md
+OUTPUT="releasenotes_$THIS_RELEASE.md"
 
 cat <<EOF > $OUTPUT
 # Release Notes BPMN-Studio $THIS_RELEASE
