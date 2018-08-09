@@ -189,7 +189,21 @@ export class BasicsSection implements ISection {
     this.validationController.validate();
 
     this.isFormSelected = true;
-    this.selectedType = this._getTypeAndHandleCustomType(this.selectedForm.type);
+
+    const selectedFormHasType: boolean = this.selectedForm.type !== undefined;
+
+    /*
+     * If the Form type is not defined, we can set it to null. If it is defined,
+     * assign the correct form type.
+     *
+     * TODO: Find out if this is the proper way to handle such case.
+     */
+    if (selectedFormHasType) {
+      this.selectedType = this._getTypeAndHandleCustomType(this.selectedForm.type);
+    } else {
+      this.selectedType = null;
+    }
+
     this._selectedIndex = this._getSelectedIndex();
 
     this._setValidationRules();
@@ -321,6 +335,7 @@ export class BasicsSection implements ISection {
                                     || this._formElement.fields === undefined
                                     || this._formElement.fields === null
                                     || this._formElement.fields.length === 0;
+
     if (noFormFieldsExist) {
       return;
     }
