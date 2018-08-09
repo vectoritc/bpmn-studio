@@ -11,13 +11,13 @@ _VERSION="0.0.1"
 #   * Reinstalling all required node modules
 #   * Rebuilding
 #
-# Note: Please DO NOT ADD THIS SCRIPT TO THE JENKINSFILE!
+# Note: Please DO NOT ADD THIS SCRIPT TO THE Jenkinsfile!
 #
 # This script is meant to give you, the human developer, a convenient way, to
 # reinstall your setup. Adding this script to the jenkinsfile would not make
 # that much sense, because:
-#   * The jenkins *should* offer a clean setup anyway
-#   * The jenkins already executes npm install (Since npm does not seems to that
+#   * The Jenkins *should* offer a clean setup anyway
+#   * The Jenkins already executes npm install (Since npm does not seems to that
 #     consistent, a multiple execution of npm install may lead to an undefined
 #     behavior and is pointless anyways.
 ############
