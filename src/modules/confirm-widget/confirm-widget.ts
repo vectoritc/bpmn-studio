@@ -19,13 +19,16 @@ export class ConfirmWidget {
 
   public attached(): void {
     const booleanFormField: UserTaskFormField = this._getBooleanFormField();
-    const hasUserTaskBooleanFormField: boolean = booleanFormField !== undefined;
+    const userTaskHasNoBooleanFormField: boolean = booleanFormField === undefined;
 
-    if (hasUserTaskBooleanFormField) {
-      this.confirmMessage = booleanFormField.label;
+    if (userTaskHasNoBooleanFormField) {
+      const errorMessage: string = 'Confirm User Tasks must have a form field of type boolean that should get confirmed.';
+
+      this._notificationService.showNotification(NotificationType.ERROR, errorMessage);
     }
 
     this.formFields = this.userTaskConfig.formFields.slice(1);
+    this.confirmMessage = booleanFormField.label;
   }
 
   public getFieldControl(field: UserTaskFormField): string {
