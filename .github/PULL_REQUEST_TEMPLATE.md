@@ -39,13 +39,13 @@ See the [examples](#example) for inspiration.
 
 Please check the boxes in this list after submitting your PR:
 
-- [ ] You can merge this PR **right now** (if not, please prefix the title with "WIP: ")
-- [ ] I've tested **all** changes included in this PR.
-- [ ] I've also reviewed this PR myself before submitting (e.g. for scrambled letters, typos, etc.).
-- [ ] I've rebased the `develop` branch with my branch before finishing this PR.
-- [ ] I've **summarized all changes** in a list above.
-- [ ] I've mentioned all **PRs, which relate to this one**.
-- [ ] I've prefixed my Pull Request title is according to [gitmoji guide](https://gitmoji.carloscuesta.me/).
+- [x] You can merge this PR **right now** (if not, please prefix the title with "WIP: ")
+- [x] I've tested **all** changes included in this PR.
+- [x] I've also reviewed this PR myself before submitting (e.g. for scrambled letters, typos, etc.).
+- [x] I've rebased the `develop` branch with my branch before finishing this PR.
+- [x] I've **summarized all changes** in a list above.
+- [x] I've mentioned all **PRs, which relate to this one**.
+- [x] I've prefixed my Pull Request title is according to [gitmoji guide](https://gitmoji.carloscuesta.me/).
 
 ## Example
 
