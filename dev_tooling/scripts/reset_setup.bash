@@ -11,7 +11,7 @@ _VERSION="0.0.1"
 # Note: Please DO NOT ADD THIS SCRIPT TO THE Jenkinsfile!
 #
 # This script is meant to give you, the human developer, a convenient way, to
-# reinstall your setup. Adding this script to the jenkinsfile would not make
+# reset your setup. Adding this script to the jenkinsfile would not make
 # that much sense, because:
 #   * The Jenkins *should* offer a clean setup anyway
 ############
