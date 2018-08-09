@@ -1,6 +1,6 @@
 #!/bin/bash
 
-_VERSION="0.0.2"
+_VERSION="0.0.1"
 
 ############
 # This script resets the current setup by deleting the Node Modules,
