@@ -97,19 +97,23 @@ Please prefix your commit messages with an Emoji.
 
 Ref: https://gitmoji.carloscuesta.me/
 
-| Description            | Glyphe             | Emoji  |
-|------------------------|--------------------|--------|
-| New Feature            | `:sparkles:`       | ✨     |
-| Bugfix                 | `:bug:`            | 🐛     |
-| Performance            | `:racehorse:`      | 🐎     |
-| Cosmetic               | `:lipstick:`       | 💄     |
-| Tooling                | `:wrench:`         | 🔧     |
-| Tests                  | `:rotating_light:` | 🚨     |
-| Removing Stuff         | `:fire:`           | 🔥     |
-| Work In Progress (WIP) | `:construction:`   | 🚧     |
-| Routen                 | `:busstop:`        | 🚏     |
-| Formatting             | `:art:`            | 🎨     |
-| Dependencies Upgrade   | `:arrow_up:`       | ⬆️      |
-| Dependencies Downgrade | `:arrow_down:`     | ⬇️      |
+| Description              | Glyphe               | Emoji  |
+|--------------------------|----------------------|--------|
+| Bugfix                   | `:bug:`              | 🐛     |
+| Configuration releated   | `:wrench:`           | 🔧     |
+| Cosmetic                 | `:lipstick:`         | 💄     |
+| Dependencies Downgrade   | `:arrow_down:`       | ⬇️     |
+| Dependencies Upgrade     | `:arrow_up:`         | ⬆️     |
+| Formatting               | `:art:`              | 🎨     |
+| Improving Performance    | `:zap:`              | ⚡️     |
+| Initial commit           | `:tada:`             | 🎉     |
+| Linter                   | `:rotating_light:`   | 🚨     |
+| Miscellaneous            | `:package:`          | 📦     |
+| New Feature              | `:sparkles:`         | ✨     |
+| Refactoring Code         | `:recycle:`          | ♻️     |
+| Releasing / Version tags | `:bookmark:`         | 🔖     |
+| Removing Stuff           | `:fire:`             | 🔥     |
+| Tests                    | `:white_check_mark:` | ✅     |
+| Work In Progress (WIP)   | `:construction:`     | 🚧     |
 
 </details>
