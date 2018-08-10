@@ -90,6 +90,16 @@ Das startet das BPMN-Studio auf Port 9000.
 
 Der Port muss aus technischen Gründen zwischen 1000 und 65535 liegen.
 
+**Erreichbarkeit**
+
+Es ist möglich eine andere IP-Adresse als 127.0.0.1 zu spezifizieren:
+
+```shell
+npm start -- --host 0.0.0.0
+```
+
+Damit ist das BPMN Studio auch von aussen erreichbar.
+
 **Zum starten (Entwicklung)**
 
 ```shell
