@@ -189,7 +189,12 @@ export class BasicsSection implements ISection {
     this.validationController.validate();
 
     this.isFormSelected = true;
-    this.selectedType = this._getTypeAndHandleCustomType(this.selectedForm.type);
+
+    const selectedFormHasType: boolean = this.selectedForm.type !== undefined;
+    this.selectedType = selectedFormHasType
+                    ? this._getTypeAndHandleCustomType(this.selectedForm.type)
+                    : null;
+
     this._selectedIndex = this._getSelectedIndex();
 
     this._setValidationRules();
@@ -197,13 +202,24 @@ export class BasicsSection implements ISection {
   }
 
   public updateType(): void {
-    let type: string;
+    /*
+     * Evaluates the type of the form field.
+     *
+     * If the user selected a custom type, find out what type the user provided.
+     */
+    const type: string = ((): string => {
+      const selectedTypeIsNotCustomType: boolean =
+        this.selectedType !== FormfieldTypes.custom_type;
 
-    if (this.selectedType === FormfieldTypes.custom_type) {
-      type = this.customType;
-    } else {
-      type = this.selectedType;
-    }
+      if (selectedTypeIsNotCustomType) {
+        return this.selectedType;
+      }
+
+      const customTypeIsDefined: boolean = this.customType !== undefined;
+      return customTypeIsDefined
+                  ? this.customType
+                  : '';
+    })();
 
     this._formElement.fields[this._selectedIndex].type = type;
     this._reloadEnumValues();
@@ -321,6 +337,7 @@ export class BasicsSection implements ISection {
                                     || this._formElement.fields === undefined
                                     || this._formElement.fields === null
                                     || this._formElement.fields.length === 0;
+
     if (noFormFieldsExist) {
       return;
     }
