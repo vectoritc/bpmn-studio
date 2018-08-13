@@ -151,6 +151,35 @@ Die Releases des BPMN-Studios lassen sich alternativ auch
 [hier](https://github.com/process-engine/bpmn-studio/releases)
 herunterladen.
 
+### Docker image
+
+#### Container starten
+
+Der Container lässt sich mit folgendem Befehl starten:
+
+```shell
+docker run -p 17290:17290 bpmn:v0.1
+```
+
+Anschließend lässt sich das BPMN-Studio unter URL `http://localhost:17290` aufrufen.
+
+#### Container bauen
+
+Das Image lässt sich wie folgt bauen:
+
+```shell
+docker build -t bpmn:v0.1 .
+```
+
+Es ist möglich, das base image, sowie die Paketversionen anzupassen:
+
+* `node_version`: Base image version mit NodeJS und Alpine Linux
+
+```shell
+docker build --build-arg node_version=10-alpine \
+             -t bpmn:v0.1 .
+```
+
 ### End-to-End-Tests
 
 Start des Webservers:
