@@ -1,5 +1,7 @@
-import {UserTaskConfig, UserTaskFormField, UserTaskFormFieldType} from '@process-engine/management_api_contracts';
 import {bindable, inject} from 'aurelia-framework';
+
+import {UserTaskConfig, UserTaskFormField, UserTaskFormFieldType} from '@process-engine/management_api_contracts';
+
 import {NotificationType} from '../../contracts/index';
 import {NotificationService} from '../notification/notification.service';
 
