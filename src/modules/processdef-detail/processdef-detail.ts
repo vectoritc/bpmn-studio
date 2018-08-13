@@ -377,11 +377,11 @@ export class ProcessDefDetail {
 
       const context: ManagementContext = this._getManagementContext();
 
-      const payload: ProcessModelExecution.UpdateProcessModelRequestPayload = {
+      const payload: ProcessModelExecution.UpdateProcessDefinitionsRequestPayload = {
         xml: xml,
       };
 
-      await this._managementApiClient.updateProcessModelById(context, this.process.id, payload);
+      await this._managementApiClient.updateProcessDefinitionsByName(context, this.process.id, payload);
       this._notificationService.showNotification(NotificationType.SUCCESS, 'File saved.');
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, `Error while saving diagram: ${error.message}`);
