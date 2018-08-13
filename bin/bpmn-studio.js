@@ -7,7 +7,7 @@ const pushserve = require('pushserve');
 const defaultPort = 17290;
 const defaultHost = '127.0.0.1';
 const portUsed = _applicationPortIsValid(argv.port) ? argv.port : defaultPort;
-const hostUsed = _applicationHostIstValid(argv.host) ? argv.host : defaultHost;
+const hostUsed = _applicationHostIsValid(argv.host) ? argv.host : defaultHost;
 
 const httpServerOptions = {
   noCors: false,
@@ -52,12 +52,12 @@ function _applicationPortIsValid(port) {
   return true;
 }
 
-function _applicationHostIstValid(host) {
+function _applicationHostIsValid(host) {
   if (host === null || host === undefined) {
     return false;
   }
-  host_array = host.split('.');
-  if (host_array.length !== 4) {
+  const addressHasNotFourOctetts = host_array.length !== 4;
+  if (addressHasNotFourOctetts) {
     console.log("Host is not a valid ip address [0.0.0.0].\n");
     return false;
   }
