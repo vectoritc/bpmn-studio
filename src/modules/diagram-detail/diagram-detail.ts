@@ -175,7 +175,7 @@ export class DiagramDetail {
     }
 
     const rootElements: Array<IModdleElement> = this.bpmnio.modeler._definitions.rootElements;
-    const payload: ProcessModelExecution.UpdateProcessModelRequestPayload = {
+    const payload: ProcessModelExecution.UpdateProcessDefinitionsRequestPayload = {
       xml: this.diagram.xml,
     };
 
@@ -189,7 +189,7 @@ export class DiagramDetail {
     try {
       await this
         ._managementClient
-        .updateProcessModelById(managementContext, processModelId, payload);
+        .updateProcessDefinitionsByName(managementContext, processModelId, payload);
 
       this._notificationService
           .showNotification(NotificationType.SUCCESS, 'Diagram was successfully uploaded to the connected ProcessEngine.');
