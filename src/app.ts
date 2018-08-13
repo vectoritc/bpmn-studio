@@ -1,25 +1,33 @@
+import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {Router, RouterConfiguration} from 'aurelia-router';
 import {NotificationType} from './contracts/index';
+import environment from './environment';
 import {AuthenticationService} from './modules/authentication/authentication.service';
 import {NotificationService} from './modules/notification/notification.service';
 
-@inject(OpenIdConnect, 'AuthenticationService', 'NotificationService')
+@inject(OpenIdConnect, 'AuthenticationService', 'NotificationService', EventAggregator)
 export class App {
-  public showSolutionExplorer: boolean = true;
+  public showSolutionExplorer: boolean = false;
 
   private _openIdConnect: OpenIdConnect;
   private _authenticationService: AuthenticationService;
   private _router: Router;
   private _notificationService: NotificationService;
+  private _eventAggregator: EventAggregator;
+  private _subscriptions: Array<Subscription>;
 
   private _preventDefaultBehaviour: EventListener;
 
-  constructor(openIdConnect: OpenIdConnect, authenticationService: AuthenticationService, notificationService: NotificationService) {
+  constructor(openIdConnect: OpenIdConnect,
+              authenticationService: AuthenticationService,
+              notificationService: NotificationService,
+              eventAggregator: EventAggregator) {
     this._openIdConnect = openIdConnect;
     this._authenticationService = authenticationService;
     this._notificationService = notificationService;
+    this._eventAggregator = eventAggregator;
   }
 
   public activate(): void {
@@ -34,6 +42,12 @@ export class App {
 
       return false;
     };
+
+    this._subscriptions = [
+      this._eventAggregator.subscribe(environment.events.processSolutionPanel.toggleProcessSolutionExplorer, () => {
+        this.showSolutionExplorer = !this.showSolutionExplorer;
+      }),
+    ];
 
     /*
     * These EventListeners are used to prevent the BPMN-Studio from redirecting after
