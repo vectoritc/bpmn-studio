@@ -1,6 +1,8 @@
-import * as bundle from '@process-engine/bpmn-js-custom-bundle';
+
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
+
+import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {diff} from 'bpmn-js-differ';
 
 import {IBpmnModdle,
@@ -13,7 +15,6 @@ import {IBpmnModdle,
         IKeyboard,
         NotificationType,
       } from '../../contracts/index';
-
 import environment from '../../environment';
 import {NotificationService} from './../notification/notification.service';
 import {DiagramExportService, DiagramPrintService} from './services/index';
@@ -85,6 +86,15 @@ export class BpmnIo {
       keyboard: {
         bindTo: document,
       },
+    });
+
+    /**
+     * Subscribe to the "elements.paste.rejected"-event to show a helpful
+     * message to the user.
+     */
+    this.modeler.on('elements.paste.rejected', () => {
+      this._notificationService
+        .showNotification(NotificationType.INFO, 'In order to paste an element you have to place your cursor outside of the element.');
     });
 
     this._addRemoveWithBackspaceKeyboardListener();
