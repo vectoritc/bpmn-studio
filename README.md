@@ -90,6 +90,16 @@ Das startet das BPMN-Studio auf Port 9000.
 
 Der Port muss aus technischen Gründen zwischen 1000 und 65535 liegen.
 
+**Erreichbarkeit**
+
+Es ist möglich eine andere IP-Adresse als 127.0.0.1 zu spezifizieren:
+
+```shell
+npm start -- --host 0.0.0.0
+```
+
+Damit ist das BPMN Studio auch von außen erreichbar.
+
 **Zum starten (Entwicklung)**
 
 ```shell
@@ -140,6 +150,37 @@ Beispiel:
 Die Releases des BPMN-Studios lassen sich alternativ auch
 [hier](https://github.com/process-engine/bpmn-studio/releases)
 herunterladen.
+
+### Docker image
+
+#### Container bauen
+
+Das Image lässt sich wie folgt bauen:
+
+```shell
+docker build --tag bpmn:v0.1 .
+```
+
+#### Container bauen mit optionalen Parametern
+
+Es ist möglich, das base image, sowie die Paketversionen anzupassen:
+
+* `node_version`: Base image version mit NodeJS und Alpine Linux
+
+```shell
+docker build --build-arg node_version=10-alpine \
+             --tag bpmn:v0.1 .
+```
+
+#### Container starten
+
+Der Container lässt sich mit folgendem Befehl starten:
+
+```shell
+docker run -p 17290:17290 bpmn:v0.1
+```
+
+Anschließend lässt sich das BPMN-Studio unter URL `http://localhost:17290` aufrufen.
 
 ### End-to-End-Tests
 

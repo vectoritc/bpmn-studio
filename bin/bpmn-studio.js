@@ -5,19 +5,21 @@ const argv = require('minimist')(process.argv.slice(2));
 const pushserve = require('pushserve');
 
 const defaultPort = 17290;
+const defaultHost = '127.0.0.1';
 const portUsed = _applicationPortIsValid(argv.port) ? argv.port : defaultPort;
+const hostUsed = _applicationHostIsValid(argv.host) ? argv.host : defaultHost;
 
 const httpServerOptions = {
   noCors: false,
   noPushstate: false,
-  hostname: 'localhost',
+  hostname: hostUsed,
   port: portUsed,
   path: __dirname + './..',
   indexPath: 'index.html',
 };
 
 pushserve(httpServerOptions);
-open(`http://localhost:${portUsed}`);
+open(`http://${hostUsed}:${portUsed}`);
 
 /*
  * Check if a given port is okay.
@@ -47,5 +49,17 @@ function _applicationPortIsValid(port) {
     return false;
   }
 
+  return true;
+}
+
+function _applicationHostIsValid(host) {
+  if (host === null || host === undefined) {
+    return false;
+  }
+  const addressHasNotFourOctetts = host_array.length !== 4;
+  if (addressHasNotFourOctetts) {
+    console.log("Host is not a valid ip address [0.0.0.0].\n");
+    return false;
+  }
   return true;
 }
