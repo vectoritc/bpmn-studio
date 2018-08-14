@@ -8,7 +8,6 @@ import environment from '../../environment';
 @inject(Router, EventAggregator)
 export class NavBar {
 
-  @bindable() public showSolutionExplorer: boolean;
   @bindable() public activeRouteName: string;
   public process: IDiagram;
   public diagramInfo: HTMLElement;
@@ -30,10 +29,6 @@ export class NavBar {
     this._dertermineActiveRoute();
 
     document.addEventListener('click', this.dropdownClickListener);
-
-    const processSolutionExplorerHideState: string = window.localStorage.getItem('processSolutionExplorerHideState');
-    const wasProcessSolutionExplorerVisible: boolean = processSolutionExplorerHideState === 'show';
-    this.showSolutionExplorer = wasProcessSolutionExplorerVisible;
 
     this._eventAggregator.subscribe('router:navigation:complete', () => {
       this._dertermineActiveRoute();
