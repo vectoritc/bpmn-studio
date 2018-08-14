@@ -16,8 +16,14 @@ exports.config = {
     package: 'aurelia-protractor-plugin',
   }],
 
+  params: {
+    aureliaUrl: string = 'http://localhost:9000',
+    defaultTimeoutMS: number = 5000
+  },
+
   jasmineNodeOpts: {
     showColors: true,
     defaultTimeoutInterval: 30000
-  }
+  },
+
 };
