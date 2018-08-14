@@ -35,3 +35,6 @@ bootstrap
 
 process-engine_local_db
 userData
+
+# Personal integration-test settings
+integration-test.sh
