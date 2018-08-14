@@ -1,6 +1,8 @@
-import * as bundle from '@process-engine/bpmn-js-custom-bundle';
+
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
+
+import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {diff} from 'bpmn-js-differ';
 
 import {IBpmnModdle,
@@ -9,12 +11,10 @@ import {IBpmnModdle,
         IDiagramExportService,
         IDiagramPrintService,
         IEditorActions,
-        IEventBus,
         IEventFunction,
         IKeyboard,
         NotificationType,
       } from '../../contracts/index';
-
 import environment from '../../environment';
 import {NotificationService} from './../notification/notification.service';
 import {DiagramExportService, DiagramPrintService} from './services/index';
