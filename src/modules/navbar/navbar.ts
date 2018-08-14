@@ -86,7 +86,7 @@ export class NavBar {
   }
 
   public toggleSolutionExplorer(): void {
-    this.showSolutionExplorer = !this.showSolutionExplorer;
+    this._eventAggregator.publish(environment.events.processSolutionPanel.toggleProcessSolutionExplorer);
   }
 
   public saveDiagram(): void {
