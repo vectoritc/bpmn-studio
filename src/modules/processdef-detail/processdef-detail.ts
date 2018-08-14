@@ -41,6 +41,7 @@ export class ProcessDefDetail {
   public process: ProcessModelExecution.ProcessModel;
   public showStartEventModal: boolean = false;
   public showSaveForStartModal: boolean = false;
+  public showSaveOnLeaveModal: boolean = false;
   public saveForStartModal: HTMLElement;
 
   public processesStartEvents: Array<Event> = [];
@@ -155,14 +156,8 @@ export class ProcessDefDetail {
 
       if (!this._diagramHasChanged) {
         resolve(true);
-
       } else {
-
-        const modal: HTMLElement = this._startButtonPressed
-          ? document.getElementById('saveModalProcessStart')
-          : document.getElementById('saveModalLeaveView');
-
-        modal.classList.add('show-modal');
+        this.showSaveOnLeaveModal = true;
 
         //#region register onClick handler
         /* Do not save and leave */
@@ -170,18 +165,13 @@ export class ProcessDefDetail {
         document
           .getElementById(dontSaveButtonId)
           .addEventListener('click', () => {
-
-            modal.classList.remove('show-modal');
-
+            this.showSaveOnLeaveModal = false;
             this._diagramHasChanged = false;
-
             resolve(true);
           });
 
         /* Save and leave */
-        const saveButtonId: string = this._startButtonPressed
-          ? 'saveButtonProcessStart'
-          : 'saveButtonLeaveView';
+        const saveButtonId: string = 'saveButtonLeaveView';
 
         document
           .getElementById(saveButtonId)
@@ -193,8 +183,7 @@ export class ProcessDefDetail {
                 this._notificationService.showNotification(NotificationType.ERROR, `Unable to save the diagram: ${error.message}`);
               });
 
-            modal.classList.remove('show-modal');
-
+            this.showSaveOnLeaveModal = false;
             this._diagramHasChanged = false;
             this._startButtonPressed = false;
 
@@ -202,15 +191,12 @@ export class ProcessDefDetail {
           });
 
         /* Stay, do not save */
-        const cancelButtonId: string = this._startButtonPressed
-          ? 'cancelButtonProcessStart'
-          : 'cancelButtonLeaveView';
+        const cancelButtonId: string = 'cancelButtonLeaveView';
 
         document
           .getElementById(cancelButtonId)
           .addEventListener('click', () => {
-            modal.classList.remove('show-modal');
-
+            this.showSaveOnLeaveModal = false;
             this._startButtonPressed = false;
 
             resolve(false);
