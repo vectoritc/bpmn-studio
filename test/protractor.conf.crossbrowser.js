@@ -5,9 +5,8 @@ exports.config = {
   
     capabilities : {
   
-      name : 'BPMN Studio test', // this will show up in the UI
-      
-      // these are important :)
+      name : 'BPMN Studio test',
+
       build: '1.0',
       browserName: 'Chrome',
       version: '68x64',

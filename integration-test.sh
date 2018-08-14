@@ -4,4 +4,4 @@ export CB_USER=
 export CB_KEY=
 export aureliaUrl=
 
-# HOW-TO: source integration-test.sh
+# Run this command to apply environment variables: source integration-test.sh
