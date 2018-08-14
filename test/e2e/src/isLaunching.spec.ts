@@ -8,7 +8,7 @@ describe('isLaunching', () => {
   browser.driver.manage().deleteAllCookies();
   browser.get(aureliaUrl);
 
-  it('should display the satusbar', () => {
+  it('basic_layout_tests', () => {
     browser.get(aureliaUrl);
     browser.sleep(defaultTimeoutMS);
     expect(element.all(by.tagName('status-bar')).count()).toBeGreaterThan(0);
