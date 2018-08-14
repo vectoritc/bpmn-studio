@@ -9,6 +9,7 @@ import {IBpmnModdle,
         IDiagramExportService,
         IDiagramPrintService,
         IEditorActions,
+        IEventBus,
         IEventFunction,
         IKeyboard,
         NotificationType,
@@ -85,6 +86,15 @@ export class BpmnIo {
       keyboard: {
         bindTo: document,
       },
+    });
+
+    /**
+     * Subscribe to the "elements.paste.rejected"-event to show a helpful
+     * message to the user.
+     */
+    this.modeler.on('elements.paste.rejected', () => {
+      this._notificationService
+        .showNotification(NotificationType.INFO, 'In order to paste an element you have to place your cursor outside of the element.');
     });
 
     this._addRemoveWithBackspaceKeyboardListener();
