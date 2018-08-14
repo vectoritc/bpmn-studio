@@ -42,14 +42,11 @@ export class App {
 
       return false;
     };
-    console.log(window.localStorage.getItem('SolutionExplorerVisibility') === 'true');
-    console.log(window.localStorage.getItem('SolutionExplorerVisibility'));
 
     this.showSolutionExplorer = window.localStorage.getItem('SolutionExplorerVisibility') === 'true';
 
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.processSolutionPanel.toggleProcessSolutionExplorer, () => {
-        console.log('event fired', this.showSolutionExplorer);
         this.showSolutionExplorer = !this.showSolutionExplorer;
         if (this.showSolutionExplorer) {
           window.localStorage.setItem('SolutionExplorerVisibility', 'true');
