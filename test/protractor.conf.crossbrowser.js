@@ -1,5 +1,5 @@
 exports.config = {
-    
+
     seleniumAddress: 'http://' + process.env.CB_USER +':'+ process.env.CB_KEY +'@hub.crossbrowsertesting.com:80/wd/hub',
 
     capabilities : {
@@ -31,4 +31,3 @@ exports.config = {
         defaultTimeoutInterval: 30000
     }
     };
-  
