@@ -70,9 +70,11 @@ export class App {
     document.removeEventListener('dragover', this._preventDefaultBehaviour);
     document.removeEventListener('drop', this._preventDefaultBehaviour);
 
-    for (const subscription of this._subscriptions) {
-      subscription.dispose();
-    }
+    this._disposeAllSubscriptions();
+  }
+
+  private _disposeAllSubscriptions(): void {
+    this._subscriptions.forEach( s => s.dispose() );
   }
 
   private _parseDeepLinkingUrl(url: string): string {
