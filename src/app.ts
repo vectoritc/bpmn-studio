@@ -4,10 +4,10 @@ import {Router, RouterConfiguration} from 'aurelia-router';
 
 import {OpenIdConnect} from 'aurelia-open-id-connect';
 
+import {NotificationType} from './contracts/index';
 import environment from './environment';
 import {AuthenticationService} from './modules/authentication/authentication.service';
 import {NotificationService} from './modules/notification/notification.service';
-import {NotificationType} from './contracts/index';
 
 @inject(OpenIdConnect, 'AuthenticationService', 'NotificationService', EventAggregator)
 export class App {
@@ -74,7 +74,9 @@ export class App {
   }
 
   private _disposeAllSubscriptions(): void {
-    this._subscriptions.forEach( s => s.dispose() );
+    this._subscriptions.forEach((subscription: Subscription) => {
+      subscription.dispose();
+    });
   }
 
   private _parseDeepLinkingUrl(url: string): string {
