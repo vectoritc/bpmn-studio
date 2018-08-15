@@ -1,9 +1,11 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
-import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {Router, RouterConfiguration} from 'aurelia-router';
+
+import {OpenIdConnect} from 'aurelia-open-id-connect';
+
 import {NotificationType} from './contracts/index';
-import environment from './environment';
+import {environment} from './environment';
 import {AuthenticationService} from './modules/authentication/authentication.service';
 import {NotificationService} from './modules/notification/notification.service';
 
