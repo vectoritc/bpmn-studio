@@ -1,23 +1,47 @@
-import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/errors_ts';
-import {IManagementApiService, ManagementContext} from '@process-engine/management_api_contracts';
+import {
+  ForbiddenError,
+  isError,
+  NotFoundError,
+  UnauthorizedError,
+} from '@essential-projects/errors_ts';
+import {
+  IManagementApiService,
+  ManagementContext,
+  ProcessModelExecution,
+  UserTask,
+  UserTaskList,
+} from '@process-engine/management_api_contracts';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {
   IAuthenticationService,
   NotificationType,
 } from '../../contracts/index';
+import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
+
+interface IUserTaskWithProcessModel {
+  userTask: UserTask;
+  processModel: ProcessModelExecution.ProcessModel;
+}
 
 @inject('ManagementApiClientService', 'NotificationService', 'AuthenticationService', Router)
 export class Dashboard {
 
   public showTaskList: boolean = false;
   public showProcessList: boolean = false;
+  public currentPage: number = 0;
+  public pageSize: number = 10;
+  public totalItems: number;
+  public succesfullRequested: boolean = false;
 
   private _managementApiService: IManagementApiService;
   private _notificationService: NotificationService;
   private _authenticationService: IAuthenticationService;
   private _router: Router;
+  private _userTasks: Array<IUserTaskWithProcessModel>;
+  private _getUserTasksIntervalId: number;
+  private _getUserTasks: () => Promise<Array<IUserTaskWithProcessModel>>;
 
   constructor(managementApiService: IManagementApiService,
               notificationService: NotificationService,
@@ -47,6 +71,45 @@ export class Dashboard {
     this.showProcessList = hasClaimsForProcessList;
 
     return true;
+  }
+
+  public async activate(): Promise<void> {
+    this._getUserTasks = this._getAllUserTasks;
+    this._updateUserTasks();
+  }
+
+  public attached(): void {
+    this._getUserTasksIntervalId = window.setInterval(() => {
+      this._updateUserTasks();
+    }, environment.processengine.pollingIntervalInMs);
+  }
+
+  public get shownTasks(): Array<IUserTaskWithProcessModel> {
+    return this.tasks.slice((this.currentPage - 1) * this.pageSize, this.pageSize * this.currentPage);
+  }
+
+  public get tasks(): Array<IUserTaskWithProcessModel> {
+    if (this._userTasks === undefined) {
+      return [];
+    }
+    // TODO: Reimplement filtering
+    // return this._userTasks.filter((entry: UserTask): boolean => {
+    //   return entry.state === 'wait';
+    // });
+    return this._userTasks;
+  }
+
+  public continueUserTask(userTaskWithProcessModel: IUserTaskWithProcessModel): void {
+    const userTask: UserTask = userTaskWithProcessModel.userTask;
+    const processModel: ProcessModelExecution.ProcessModel = userTaskWithProcessModel.processModel;
+
+    const processModelId: string = processModel.id;
+    const userTaskId: string = userTask.id;
+
+    this._router.navigateToRoute('task-dynamic-ui', {
+      processModelId: processModelId,
+      userTaskId: userTaskId,
+    });
   }
 
   private async _hasClaimsForTaskList(managementContext: ManagementContext): Promise<boolean> {
@@ -95,4 +158,66 @@ export class Dashboard {
 
     return context;
   }
+
+  private async _getAllUserTasks(): Promise<Array<IUserTaskWithProcessModel>> {
+    const managementApiContext: ManagementContext = this._getManagementContext();
+
+    const allProcessModels: ProcessModelExecution.ProcessModelList = await this._managementApiService.getProcessModels(managementApiContext);
+
+    // TODO (ph): This will create 1 + n http reqeusts, where n is the number of process models in the processengine.
+    const promisesForAllUserTasks: Array<Promise<Array<IUserTaskWithProcessModel>>> = allProcessModels.processModels
+      .map(async(processModel: ProcessModelExecution.ProcessModel): Promise<Array<IUserTaskWithProcessModel>> => {
+        try {
+          const userTaskList: UserTaskList = await this._managementApiService.getUserTasksForProcessModel(managementApiContext, processModel.id);
+
+          const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = this._addProcessModelToUserTasks(userTaskList, processModel);
+
+          return userTasksAndProcessModels;
+
+        } catch (error) {
+          if (isError(error, NotFoundError)) {
+            // the management api returns a 404 if there is no instance of a process model running.
+            return Promise.resolve([]);
+          }
+          throw error;
+        }
+      });
+
+    const userTaskListArray: Array<Array<IUserTaskWithProcessModel>> = await Promise.all(promisesForAllUserTasks);
+
+    const flattenedUserTasks: Array<IUserTaskWithProcessModel> = [].concat(...userTaskListArray);
+
+    return flattenedUserTasks;
+  }
+
+  private _addProcessModelToUserTasks(
+    userTaskList: UserTaskList,
+    processModel: ProcessModelExecution.ProcessModel,
+  ): Array<IUserTaskWithProcessModel> {
+
+    const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = userTaskList.userTasks
+      .map((userTask: UserTask): IUserTaskWithProcessModel => ({
+          processModel: processModel,
+          userTask: userTask,
+      }));
+
+    return userTasksAndProcessModels;
+  }
+
+  private async _updateUserTasks(): Promise<void> {
+    try {
+      this._userTasks = await this._getUserTasks();
+      this.succesfullRequested = true;
+    } catch (error) {
+      if (isError(error, UnauthorizedError)) {
+        this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have permission to view the task list.');
+        this._router.navigateToRoute('start-page');
+      } else {
+        this._notificationService.showNotification(NotificationType.ERROR, `Error receiving task list: ${error.message}`);
+      }
+    }
+
+    this.totalItems = this.tasks.length;
+  }
+
 }

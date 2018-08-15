@@ -5,7 +5,38 @@
 
   <div class="dashboard-container">
     <process-list show.bind="showProcessList"></process-list>
-    <task-list show.bind="showTaskList"></task-list>
+    <div show.bind="showTaskList" class="task-list-container">
+      <div show.bind="tasks && tasks.length > 0">
+        <h3>Tasks waiting</h3>
+        <table class="table table-striped table-bordered">
+          <tr>
+            <th>Process Model Id</th>
+            <th>User Task Id</th>
+            <th></th>
+          </tr>
+          <tr repeat.for="entry of shownTasks">
+            <td>
+              <a route-href="route: processdef-detail; params.bind: { processModelId: entry.processModel.id }">${entry.processModel.id}</a>
+            </td>
+            <td>${entry.userTask.id}</td>
+            <td>
+              <a class="btn btn-success" click.delegate="continueUserTask(entry)">Continue</a>
+            </td>
+          </tr>
+        </table>
+        <div class="col-md-12 col-xs-12 pagination">
+          <aubs-pagination page-size.bind="pageSize" total-items.bind="totalItems" current-page.bind="currentPage"
+            boundary-links.bind="true" click.delegate="updateUserTasks()">
+          </aubs-pagination>
+        </div>
+      </div>
+      <template if.bind="succesfullRequested && (!tasks || tasks.length === 0)">
+        <h3>No tasks found</h3>
+      </template>
+      <div show.bind="!succesfullRequested" class="container">
+        <img src="src/resources/images/gears.svg" class="loading-spinner">
+      </div>
+    </div>
   </div>
 
 </template>
