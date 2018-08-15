@@ -78,7 +78,19 @@ export class BasicsSection implements ISection {
   }
 
   public removeProperty(index: number): void {
-    this._propertiesElement.values.splice(index, 1);
+    const propertyIsLast: boolean = this._propertiesElement.values.length === 1;
+
+    const deleteExtensionElements: (() => void) = (): void =>
+      this._businessObjInPanel
+        .extensionElements = undefined;
+
+    const removeSingleProperty: (() => Array<IProperty>) = (): Array<IProperty> =>
+      this._propertiesElement
+        .values
+        .splice(index, 1);
+
+    propertyIsLast ? deleteExtensionElements() : removeSingleProperty();
+
     this._reloadProperties();
     this._publishDiagramChange();
   }
