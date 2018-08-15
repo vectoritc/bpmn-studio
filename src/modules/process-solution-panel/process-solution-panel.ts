@@ -120,6 +120,7 @@ export class ProcessSolutionPanel {
 
       // Show the FileSystemSolutionExplorer.
       this.enableFileSystemSolutions = true;
+      this.openFileSystemIndexCard();
 
       const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
 
@@ -197,7 +198,6 @@ export class ProcessSolutionPanel {
     this._solutionExplorerIdentity = await this._createIdentityForSolutionExplorer();
 
     this._refreshProcesslist();
-    this._eventAggregator.publish(environment.events.processSolutionPanel.toggleProcessSolutionExplorer);
 
     /**
      * Set Interval to get the deployed processes of the currently connected ProcessEngine.
@@ -227,7 +227,6 @@ export class ProcessSolutionPanel {
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
-    this._eventAggregator.publish(environment.events.processSolutionPanel.toggleProcessSolutionExplorer);
 
     window.localStorage.setItem('processSolutionExplorerHideState', 'hide');
     document.removeEventListener('drop', this._dropBehaviour);
