@@ -7,7 +7,7 @@ import {NotificationService} from '../notification/notification.service';
 export class FormWidget {
 
   @bindable()
-  public widget: UserTaskConfig;
+  public userTaskConfig: UserTaskConfig;
   private _notificationService: NotificationService;
 
   constructor(notificationService: NotificationService) {

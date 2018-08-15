@@ -6,6 +6,7 @@ import {
   ManagementContext,
   UserTask,
   UserTaskFormField,
+  UserTaskFormFieldType,
   UserTaskResult,
 } from '@process-engine/management_api_contracts';
 
@@ -20,10 +21,12 @@ import {AuthenticationService} from '../authentication/authentication.service';
 @inject('DynamicUiService', 'AuthenticationService', Router)
 export class DynamicUiWrapper {
 
-  public declineButtonText: string = 'Cancel';
+  public cancelButtonText: string = 'Cancel';
   public confirmButtonText: string = 'Continue';
-  public onButtonClick: (action: 'cancel' | 'proceed') => void;
-  @bindable() public currentUserTask: UserTask;
+  public declineButtonText: string = 'Decline';
+  public onButtonClick: (action: 'cancel' | 'proceed' | 'decline') => void;
+  @bindable({changeHandler: 'userTaskChanged'}) public currentUserTask: UserTask;
+  @bindable() public currentControlType: string;
 
   private _router: Router;
 
@@ -47,7 +50,40 @@ export class DynamicUiWrapper {
       return;
     }
 
+    const continueConfirmTask: boolean = this.currentControlType === 'confirm';
+
+    if (continueConfirmTask) {
+      const formFields: Array<UserTaskFormField> = this.currentUserTask.data.formFields;
+
+      const booleanFormFieldIndex: number = formFields.findIndex((formField: UserTaskFormField) => {
+        return formField.type === UserTaskFormFieldType.boolean;
+      });
+
+      const hasBooleanFormField: boolean = formFields[booleanFormFieldIndex] !== undefined;
+
+      if (hasBooleanFormField) {
+        (formFields[booleanFormFieldIndex] as IBooleanFormField).value = action === 'proceed';
+      }
+    }
+
     this._finishUserTask(action);
+  }
+
+  public userTaskChanged(newUserTask: UserTask): void {
+    const isUserTaskEmpty: boolean = newUserTask === undefined;
+    if (isUserTaskEmpty) {
+      return;
+    }
+
+    this.currentControlType = newUserTask.data.preferredControl;
+
+    if (this.currentControlType === 'confirm') {
+      this.confirmButtonText = 'Confirm';
+      this.declineButtonText = 'Decline';
+    } else {
+      this.confirmButtonText = 'Continue';
+      this.declineButtonText = '';
+    }
   }
 
   private _cancelUserTask(): void {
@@ -56,7 +92,7 @@ export class DynamicUiWrapper {
     });
   }
 
-  private _finishUserTask(action: 'cancel' | 'proceed'): void {
+  private _finishUserTask(action: 'cancel' | 'proceed' | 'decline'): void {
     const hasNoCurrentUserTask: boolean = this.currentUserTask === undefined;
 
     if (hasNoCurrentUserTask) {
