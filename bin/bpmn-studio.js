@@ -56,9 +56,10 @@ function _applicationHostIsValid(host) {
   if (host === null || host === undefined) {
     return false;
   }
+  const host_array = host.split('.');
   const addressHasNotFourOctetts = host_array.length !== 4;
   if (addressHasNotFourOctetts) {
-    console.log("Host is not a valid ip address [0.0.0.0].\n");
+    console.log(host + " is not a valid ip address [0.0.0.0].\n");
     return false;
   }
   return true;
