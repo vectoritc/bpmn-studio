@@ -1,7 +1,7 @@
 import * as path from 'path';
-import { browser, by, element, ElementFinder, protractor, ProtractorExpectedConditions } from 'protractor';
+import {browser, by, element, ElementFinder, protractor, ProtractorExpectedConditions} from 'protractor';
 
-describe('status-bar', () => {
+fdescribe('status-bar', () => {
   const aureliaUrl: string = browser.params.aureliaUrl;
   const defaultTimeoutMS: number = browser.params.defaultTimeoutMS;
 
@@ -19,7 +19,9 @@ describe('status-bar', () => {
   });
 
   it('should display', () => {
-    expect(statusBar).not.toBeUndefined();
+    statusBar.isDisplayed().then((result: boolean) => {
+      expect(result).toBeTruthy();
+    });
   });
 
   it('should contain root and 3 elements (left-bar, center-bar, right bar)', () => {
@@ -30,15 +32,25 @@ describe('status-bar', () => {
   });
 
   it('should contain settings button', () => {
-    const settingsButton: ElementFinder = statusBar.element(by.className('status-bar__element')).element(by.tagName('a'));
-    expect(settingsButton.element.length).toBe(1);
+    const statusBarSettingsButton: ElementFinder = statusBar.element(by.id('statusBarSettingsButton'));
+
+    statusBarSettingsButton.isDisplayed().then((result: boolean) => {
+      expect(result).toBeTruthy();
+    });
   });
 
   it('should be possible to click settings button and get redirected', () => {
-    const settingsButton: ElementFinder = statusBar.element(by.className('status-bar__element'));
-    settingsButton.click();
+    const statusBarSettingsButton: ElementFinder = statusBar.element(by.id('statusBarSettingsButton'));
+
+    statusBarSettingsButton.click();
     browser.getCurrentUrl().then((url: string) => {
       expect(url).toMatch('configuration');
     });
+  });
+
+  afterEach(() => {
+    browser.executeScript('window.localStorage.clear();');
+    browser.executeScript('window.sessionStorage.clear();');
+    browser.driver.manage().deleteAllCookies();
   });
 });
