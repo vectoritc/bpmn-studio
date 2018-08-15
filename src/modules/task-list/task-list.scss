@@ -16,10 +16,9 @@ tr td:last-child {
 
 .task-list-container {
   flex: 1;
-  padding: 20px 60px;
 }
 
 .task-list {
-  display: flex;
-  align-items: stretch;
+  height: 100%;
+  padding: 20px 60px;
 }
