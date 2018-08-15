@@ -67,6 +67,10 @@ export class App {
   public deactivate(): void {
     document.removeEventListener('dragover', this._preventDefaultBehaviour);
     document.removeEventListener('drop', this._preventDefaultBehaviour);
+
+    for (const subscription of this._subscriptions) {
+      subscription.dispose();
+    }
   }
 
   private _parseDeepLinkingUrl(url: string): string {
