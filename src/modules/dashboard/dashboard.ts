@@ -1,3 +1,6 @@
+import {inject} from 'aurelia-framework';
+import {Router} from 'aurelia-router';
+
 import {
   ForbiddenError,
   isError,
@@ -11,8 +14,7 @@ import {
   UserTask,
   UserTaskList,
 } from '@process-engine/management_api_contracts';
-import {inject} from 'aurelia-framework';
-import {Router} from 'aurelia-router';
+
 import {
   IAuthenticationService,
   NotificationType,
