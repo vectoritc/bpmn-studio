@@ -1,7 +1,6 @@
-import * as path from 'path';
 import {browser, by, element, ElementFinder, protractor, ProtractorExpectedConditions} from 'protractor';
 
-fdescribe('status-bar', () => {
+describe('status-bar', () => {
   const aureliaUrl: string = browser.params.aureliaUrl;
   const defaultTimeoutMS: number = browser.params.defaultTimeoutMS;
 
