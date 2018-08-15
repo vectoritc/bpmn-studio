@@ -32,6 +32,8 @@ export class Dashboard {
 
   public showTaskList: boolean = false;
   public showProcessList: boolean = false;
+  // TODO: Refactor this into a dashboard config in the environment.
+  // https://github.com/process-engine/bpmn-studio/issues/798
   public currentPage: number = 0;
   public pageSize: number = 10;
   public totalItems: number;
@@ -212,7 +214,7 @@ export class Dashboard {
       this.succesfullRequested = true;
     } catch (error) {
       if (isError(error, UnauthorizedError)) {
-        this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have permission to view the task list.');
+        this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have the permission to view the task list.');
         this._router.navigateToRoute('start-page');
       } else {
         this._notificationService.showNotification(NotificationType.ERROR, `Error receiving task list: ${error.message}`);
