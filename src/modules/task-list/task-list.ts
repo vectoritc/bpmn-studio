@@ -123,8 +123,7 @@ export class TaskList {
   }
 
   public continueUserTask(userTaskWithProcessModel: IUserTaskWithProcessModel): void {
-    const userTask: UserTask = userTaskWithProcessModel.userTask;
-    const processModel: ProcessModelExecution.ProcessModel = userTaskWithProcessModel.processModel;
+    const {userTask, processModel} = userTaskWithProcessModel;
 
     const processModelId: string = processModel.id;
     const userTaskId: string = userTask.id;
