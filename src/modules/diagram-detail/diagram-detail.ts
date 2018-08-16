@@ -84,11 +84,11 @@ export class DiagramDetail {
       this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
         this._saveDiagram();
       }),
-      this._eventAggregator.subscribe(environment.events.diagramChange, () => {
-        this._diagramHasChanged = true;
+      this._eventAggregator.subscribe(environment.events.processDefDetail.uploadProcess, () => {
+        this._checkIfDiagramIsSavedBeforeDeploy();
       }),
-      this._eventAggregator.subscribe(environment.events.processDefDetail.uploadProcess, async() => {
-        await this._checkIfDiagramIsSavedBeforeDeploy();
+      this._eventAggregator.subscribe(environment.events.differsFromOriginal, (savingNeeded: boolean) => {
+        this._diagramHasChanged = savingNeeded;
       }),
     ];
   }
@@ -175,7 +175,7 @@ export class DiagramDetail {
     }
 
     const rootElements: Array<IModdleElement> = this.bpmnio.modeler._definitions.rootElements;
-    const payload: ProcessModelExecution.UpdateProcessModelRequestPayload = {
+    const payload: ProcessModelExecution.UpdateProcessDefinitionsRequestPayload = {
       xml: this.diagram.xml,
     };
 
@@ -189,7 +189,7 @@ export class DiagramDetail {
     try {
       await this
         ._managementClient
-        .updateProcessModelById(managementContext, processModelId, payload);
+        .updateProcessDefinitionsByName(managementContext, processModelId, payload);
 
       this._notificationService
           .showNotification(NotificationType.SUCCESS, 'Diagram was successfully uploaded to the connected ProcessEngine.');

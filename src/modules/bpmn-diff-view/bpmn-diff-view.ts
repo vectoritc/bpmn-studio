@@ -90,6 +90,9 @@ export class BpmnDiffView {
         this.showChangeList = !this.showChangeList;
       }),
     ];
+
+    this.currentDiffMode = DiffMode.AfterVsBefore;
+    this._updateDiffView();
   }
 
   public detached(): void {

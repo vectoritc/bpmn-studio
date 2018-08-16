@@ -1,4 +1,4 @@
-import {UserTaskFormField, UserTaskFormFieldType} from '@process-engine/management_api_contracts';
+import {UserTaskConfig, UserTaskFormField, UserTaskFormFieldType} from '@process-engine/management_api_contracts';
 import {bindable, inject} from 'aurelia-framework';
 import {NotificationType} from '../../contracts/index';
 import {NotificationService} from '../notification/notification.service';
@@ -7,7 +7,7 @@ import {NotificationService} from '../notification/notification.service';
 export class FormWidget {
 
   @bindable()
-  public widget: UserTaskFormField;
+  public userTaskConfig: UserTaskConfig;
   private _notificationService: NotificationService;
 
   constructor(notificationService: NotificationService) {

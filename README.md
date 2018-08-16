@@ -35,13 +35,16 @@ Engine verbunden werden, um diese Diagramme auszuführen.
 **Notizen:**
 
 1. Für `npm run electron-build-<OS>` gilt:
-  Für den Platzhalter `<OS>` können folgende Werte eingesetzt werden:
-  - `linux` für Linux
-  - `macos` für MacOS
-  - `windows` für Windows
 
-  Beispiel:
-  `npm run electron-build-macos`
+   Für den Platzhalter `<OS>` können folgende Werte eingesetzt werden:
+
+   - `linux` für Linux
+   - `macos` für MacOS
+   - `windows` für Windows
+
+   Beispiel:
+
+   `npm run electron-build-macos`
 
 **TL;DR Tests**
 
@@ -89,6 +92,16 @@ Das startet das BPMN-Studio auf Port 9000.
 **Anmerkung**
 
 Der Port muss aus technischen Gründen zwischen 1000 und 65535 liegen.
+
+**Erreichbarkeit**
+
+Es ist möglich eine andere IP-Adresse als 127.0.0.1 zu spezifizieren:
+
+```shell
+npm start -- --host 0.0.0.0
+```
+
+Damit ist das BPMN Studio auch von außen erreichbar.
 
 **Zum starten (Entwicklung)**
 
@@ -141,6 +154,37 @@ Die Releases des BPMN-Studios lassen sich alternativ auch
 [hier](https://github.com/process-engine/bpmn-studio/releases)
 herunterladen.
 
+### Docker image
+
+#### Container bauen
+
+Das Image lässt sich wie folgt bauen:
+
+```shell
+docker build --tag bpmn:v0.1 .
+```
+
+#### Container bauen mit optionalen Parametern
+
+Es ist möglich, das base image, sowie die Paketversionen anzupassen:
+
+* `node_version`: Base image version mit NodeJS und Alpine Linux
+
+```shell
+docker build --build-arg node_version=10-alpine \
+             --tag bpmn:v0.1 .
+```
+
+#### Container starten
+
+Der Container lässt sich mit folgendem Befehl starten:
+
+```shell
+docker run -p 17290:17290 bpmn:v0.1
+```
+
+Anschließend lässt sich das BPMN-Studio unter URL `http://localhost:17290` aufrufen.
+
 ### End-to-End-Tests
 
 Start des Webservers:
@@ -160,6 +204,51 @@ Die Tests starten:
 ```shell
 npm run integration-test
 ```
+
+## Shortcut Skripte
+
+Es sind Skripte in der `package.json` vordefiniert, welche
+sich durch `npm run <script name>` ausführen lassen.
+
+Die folgenden Skripte, werden in unserem Tooling verwendet:
+
+* `build`
+
+   Baut das Aurelia Bundle.
+
+* `start`
+
+   Startet die BPMN-Studio Webanwendung
+
+* `start_dev`
+
+   Startet die BPMN-Studio Webanwendung und trackt die Quelldatein
+   (geänderte Quelltextdatein werden neu transpiliert und die
+   Webanwendung wird neu geladen).
+
+* `electron-start-dev`
+
+   Baut das Aurelia Bundle und startet die Electron Anwendung.
+
+* `reset`
+
+   Entfernt alle node_modules, die `package-lock.json` Datei und bereinigt den NPM-Cache.
+
+* `lint`
+
+   Startet `tslint` für das gesamte Projekt.
+
+* `electron-build-macos`
+
+   Baut die Electron-Anwendung für macOS.
+
+* `electron-build-linux`
+
+   Baut die Electron-Anwendung für Linux.
+
+* `electron-build-windows`
+
+   Baut die Electron-Anwendung für Windows.
 
 ## Was muss ich sonst noch wissen?
 

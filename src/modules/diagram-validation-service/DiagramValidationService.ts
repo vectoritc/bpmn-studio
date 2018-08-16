@@ -33,7 +33,7 @@ export class DiagramValidationService implements IDiagramValidationService {
     },
     isBPMN: {
       rules: [
-        this._containsBPMNDefinitions,
+        this._containsBPMN,
       ],
       errorMessage: 'Diagram is not a valid BPMN file.',
     },
@@ -51,11 +51,11 @@ export class DiagramValidationService implements IDiagramValidationService {
     return Promise.resolve(startsWithSignature);
   }
 
-  private _containsBPMNDefinitions(content: string): Promise<boolean> {
-    const bpmnDefinitions: string = 'bpmn:definitions';
-    const containsBPMNDefinitions: boolean = content.indexOf(bpmnDefinitions) !== -1;
+  private _containsBPMN(content: string): Promise<boolean> {
+    const bpmn: string = 'bpmn';
+    const containsBPMN: boolean = content.indexOf(bpmn) !== -1;
 
-    return Promise.resolve(containsBPMNDefinitions);
+    return Promise.resolve(containsBPMN);
   }
   // }}} Business Rules
 }

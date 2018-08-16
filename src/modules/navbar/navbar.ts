@@ -8,11 +8,11 @@ import environment from '../../environment';
 @inject(Router, EventAggregator)
 export class NavBar {
 
-  @bindable() public showSolutionExplorer: boolean;
   @bindable() public activeRouteName: string;
   public process: IDiagram;
   public diagramInfo: HTMLElement;
   public dropdown: HTMLElement;
+  public solutionExplorerIsActive: boolean = true;
   public showTools: boolean = false;
   public showStartButton: boolean = false;
   public disableSaveButton: boolean = false;
@@ -29,11 +29,9 @@ export class NavBar {
   public attached(): void {
     this._dertermineActiveRoute();
 
-    document.addEventListener('click', this.dropdownClickListener);
+    this.solutionExplorerIsActive = window.localStorage.getItem('SolutionExplorerVisibility') === 'true';
 
-    const processSolutionExplorerHideState: string = window.localStorage.getItem('processSolutionExplorerHideState');
-    const wasProcessSolutionExplorerVisible: boolean = processSolutionExplorerHideState === 'show';
-    this.showSolutionExplorer = wasProcessSolutionExplorerVisible;
+    document.addEventListener('click', this.dropdownClickListener);
 
     this._eventAggregator.subscribe('router:navigation:complete', () => {
       this._dertermineActiveRoute();
@@ -86,7 +84,8 @@ export class NavBar {
   }
 
   public toggleSolutionExplorer(): void {
-    this.showSolutionExplorer = !this.showSolutionExplorer;
+    this.solutionExplorerIsActive = !this.solutionExplorerIsActive;
+    this._eventAggregator.publish(environment.events.processSolutionPanel.toggleProcessSolutionExplorer);
   }
 
   public saveDiagram(): void {

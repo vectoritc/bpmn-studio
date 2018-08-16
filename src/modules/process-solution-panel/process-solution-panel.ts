@@ -76,6 +76,7 @@ export class ProcessSolutionPanel {
   private _diagramCreationService: IDiagramCreationService;
   private _identity: IIdentity;
   private _solutionExplorerIdentity: IIdentity;
+  private _dropBehaviour: EventListener;
   private _newDiagramNameValidator: FluentRuleCustomizer<IViewModelSolution, IViewModelSolution> = ValidationRules
       .ensure((solution: IViewModelSolution) => solution.currentDiagramInputValue)
       .displayName('Diagram name')
@@ -119,6 +120,7 @@ export class ProcessSolutionPanel {
 
       // Show the FileSystemSolutionExplorer.
       this.enableFileSystemSolutions = true;
+      this.openFileSystemIndexCard();
 
       const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
 
@@ -156,12 +158,46 @@ export class ProcessSolutionPanel {
 
         this.openFileSystemIndexCard();
       }
+
+      this._dropBehaviour = async(event: DragEvent): Promise<void> => {
+        event.preventDefault();
+        const loadedFiles: FileList = event.dataTransfer.files;
+
+        try {
+          const diagramPromises: Array<Promise<IDiagram>> = [];
+          Array.from(loadedFiles).forEach(async(currentFile: IFile) => {
+
+            const diagramPromise: Promise<IDiagram> = this._solutionExplorerServiceFileSystem.openSingleDiagram(currentFile.path, this._identity);
+            diagramPromises.push(diagramPromise);
+          });
+
+          const openedDiagrams: Array<IDiagram> = await Promise.all(diagramPromises);
+
+          for (const diagram of openedDiagrams) {
+            try {
+              await this._diagramValidationService
+              .validate(diagram.xml)
+              .isXML()
+              .isBPMN()
+              .throwIfError();
+
+              this._openSingleDiagram(diagram);
+            } catch (validationError) {
+              const errorMessage: string = `Could not open ${diagram.name}: The file is not a valid BPMN or XML File.`;
+              this._notificationService.showNotification(NotificationType.ERROR, errorMessage);
+            }
+          }
+        } catch (error) {
+          this._notificationService.showNotification(NotificationType.ERROR, error.message);
+        }
+       };
+
+      document.addEventListener('drop', this._dropBehaviour);
     }
 
     this._solutionExplorerIdentity = await this._createIdentityForSolutionExplorer();
 
     this._refreshProcesslist();
-    this._eventAggregator.publish(environment.events.processSolutionPanel.toggleProcessSolutionExplorer);
 
     /**
      * Set Interval to get the deployed processes of the currently connected ProcessEngine.
@@ -191,9 +227,9 @@ export class ProcessSolutionPanel {
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
-    this._eventAggregator.publish(environment.events.processSolutionPanel.toggleProcessSolutionExplorer);
 
     window.localStorage.setItem('processSolutionExplorerHideState', 'hide');
+    document.removeEventListener('drop', this._dropBehaviour);
   }
 
   /**
@@ -269,19 +305,18 @@ export class ProcessSolutionPanel {
   }
 
   public async refreshSolutions(): Promise<void> {
-    this.openedFileSystemSolutions.forEach(async(solution: IViewModelSolution) => {
+    for (const solution of this.openedFileSystemSolutions) {
       try {
         await this._solutionExplorerServiceFileSystem.openSolution(solution.uri, this._identity);
         const updatetSolution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
-
-        const viewModelSolution: IViewModelSolution = this
+        const viewModelSolution: IViewModelSolution = await this
           ._createViewModelSolutionFromSolution(updatetSolution);
 
         this._updateSolution(solution, viewModelSolution);
       } catch (e) {
         this.closeFileSystemSolution(solution);
       }
-    });
+    }
   }
 
   public async navigateToDiagramDetail(diagram: IDiagram): Promise<void> {

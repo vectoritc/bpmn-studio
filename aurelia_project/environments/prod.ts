@@ -27,6 +27,7 @@ export default {
     },
   },
   events: {
+    differsFromOriginal: 'differsFromOriginal',
     xmlChanged: 'xmlChanged',
     refreshProcessDefs: 'processdefs:refresh',
     statusBar: {
@@ -68,9 +69,7 @@ export default {
       toggleProcessSolutionExplorer: 'processSolutionPanel:processsolutionexplorer:toggle',
     },
   },
-  bpmnStudioClient: {
-    baseRoute: processEngineRoute,
-  },
+  baseRoute: processEngineRoute,
   propertyPanel: {
     defaultWidth: 250,
   },
