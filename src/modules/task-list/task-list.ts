@@ -35,7 +35,7 @@ export class TaskList {
   public pageSize: number = 10;
   public totalItems: number;
 
-  public succesfullRequested: boolean = false;
+  public successfullyRequested: boolean = false;
 
   private _eventAggregator: EventAggregator;
   private _managementApiService: IManagementApiService;
@@ -64,7 +64,7 @@ export class TaskList {
   private async updateUserTasks(): Promise<void> {
     try {
       this._userTasks = await this._getUserTasks();
-      this.succesfullRequested = true;
+      this.successfullyRequested = true;
     } catch (error) {
       if (isError(error, UnauthorizedError)) {
         this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have permission to view the task list.');
