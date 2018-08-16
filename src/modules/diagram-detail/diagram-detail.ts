@@ -84,11 +84,11 @@ export class DiagramDetail {
       this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
         this._saveDiagram();
       }),
-      this._eventAggregator.subscribe(environment.events.diagramChange, () => {
-        this._diagramHasChanged = true;
+      this._eventAggregator.subscribe(environment.events.processDefDetail.uploadProcess, () => {
+        this._checkIfDiagramIsSavedBeforeDeploy();
       }),
-      this._eventAggregator.subscribe(environment.events.processDefDetail.uploadProcess, async() => {
-        await this._checkIfDiagramIsSavedBeforeDeploy();
+      this._eventAggregator.subscribe(environment.events.differsFromOriginal, (savingNeeded: boolean) => {
+        this._diagramHasChanged = savingNeeded;
       }),
     ];
   }

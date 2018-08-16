@@ -10,6 +10,7 @@ import {IBpmnModdle,
         IDefinition,
         IDiagramExportService,
         IDiagramPrintService,
+        IDiffChanges,
         IEditorActions,
         IEventFunction,
         IKeyboard,
@@ -38,7 +39,7 @@ export class BpmnIo {
   public initialLoadingFinished: boolean = false;
   public showXMLView: boolean = false;
   public showDiffView: boolean = false;
-  public xmlChanges: Object;
+  public xmlChanges: IDiffChanges;
   public colorPickerLoaded: boolean = false;
   @observable public propertyPanelWidth: number;
   public minCanvasWidth: number = 100;
@@ -111,7 +112,6 @@ export class BpmnIo {
 
     this._diagramPrintService = new DiagramPrintService();
     this._diagramExportService = new DiagramExportService();
-
   }
 
   public async attached(): Promise<void> {
@@ -231,6 +231,22 @@ export class BpmnIo {
 
       this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, async() => {
         this.savedXml = await this.getXML();
+      }),
+
+      this._eventAggregator.subscribe(environment.events.diagramChange, async() => {
+        /*
+        * This Regex removes all newlines and spaces to make sure that both xml
+        * are not formatted.
+        */
+        const whitespaceAndNewLineRegex: RegExp = /\r?\n|\r|\s/g;
+
+        const currentXml: string = await this.getXML();
+        const unformattedXml: string = currentXml.replace(whitespaceAndNewLineRegex, '');
+        const unformattedSaveXml: string = this.savedXml.replace(whitespaceAndNewLineRegex, '');
+
+        const diagramIsChanged: boolean = unformattedSaveXml !== unformattedXml;
+
+        this._eventAggregator.publish(environment.events.differsFromOriginal, diagramIsChanged);
       }),
     ];
 

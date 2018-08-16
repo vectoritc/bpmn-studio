@@ -23,6 +23,7 @@ export default {
     },
   },
   events: {
+    differsFromOriginal: 'differsFromOriginal',
     xmlChanged: 'xmlChanged',
     refreshProcessDefs: 'processdefs:refresh',
     statusBar: {

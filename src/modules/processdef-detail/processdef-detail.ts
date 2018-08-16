@@ -121,9 +121,9 @@ export class ProcessDefDetail {
 
       //#endregion
 
-      //#region General Event Subscritions
-      this._eventAggregator.subscribe(environment.events.diagramChange, () => {
-        this._diagramHasChanged = true;
+      //#region Differs from Original Subscription
+      this._eventAggregator.subscribe(environment.events.differsFromOriginal, (savingNeeded: boolean) => {
+        this._diagramHasChanged = savingNeeded;
       }),
       //#endregion
 
