@@ -66,6 +66,7 @@ export class ProcessSection {
     }
 
     this._propertiesElement = this._getPropertiesElement();
+
     const propertiesElementIsUndefined: boolean = this._propertiesElement === undefined;
 
     if (propertiesElementIsUndefined) {
@@ -138,7 +139,9 @@ export class ProcessSection {
 
     const properties: Array<IProperty> = extensionsPropertiesElement.values;
     for (const property of properties) {
-      if (property.$type !== 'camunda:Property') {
+      const propertyTypeIsNotCamunda: boolean = property.$type !== 'camunda:Property';
+
+      if (propertyTypeIsNotCamunda) {
         continue;
       }
       this.newNames.push(property.name);
@@ -154,10 +157,10 @@ export class ProcessSection {
       .extensionElements
       .values
       .find((extensionValue: IExtensionElement) => {
-      const extensionIsPropertiesElement: boolean = extensionValue.$type === 'camunda:Properties';
+        const extensionIsPropertiesElement: boolean = extensionValue.$type === 'camunda:Properties';
 
-      return extensionIsPropertiesElement;
-    });
+        return extensionIsPropertiesElement;
+      });
 
     return propertiesElement;
   }
@@ -171,6 +174,7 @@ export class ProcessSection {
 
     const extensionValues: Array<IModdleElement> = [];
     const propertiesElement: IPropertiesElement = this._moddle.create('camunda:Properties', {values: []});
+
     extensionValues.push(bpmnExecutionListener);
     extensionValues.push(propertiesElement);
 
