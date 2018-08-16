@@ -88,6 +88,10 @@ export class Dashboard {
     }, environment.processengine.pollingIntervalInMs);
   }
 
+  public detached(): void {
+    clearInterval(this._getUserTasksIntervalId);
+  }
+
   public get shownTasks(): Array<IUserTaskWithProcessModel> {
     return this.tasks.slice((this.currentPage - 1) * this.pageSize, this.pageSize * this.currentPage);
   }
