@@ -3,13 +3,13 @@
   <!--
     STATUS BAR
   -->
-  <div class="status-bar status-bar--system-macos">
-    <div class="status-bar__left-bar">
+  <div class="status-bar status-bar--system-macos" id="statusBarContainer">
+    <div class="status-bar__left-bar" id="statusBarLeftBar">
       <span>
         <i class="fas baseroute__lock-icon" class.bind="isEncryptedCommunication ? 'fa-lock' : 'fa-unlock'"></i> ${processEngineRoute}
       </span>
     </div>
-    <div class="status-bar__center-bar">
+    <div class="status-bar__center-bar" id="statusBarCenterBar">
       <div class="center-bar__diff-view-buttons" if.bind="diffIsShown">
         <a class="status-bar__element" class.bind="currentDiffMode === DiffMode.BeforeVsAfter ? 'status-bar__element--active' : ''" click.delegate="changeDiffMode(DiffMode.BeforeVsAfter)" title="Compare the last saved diagram with the current diagram">
           Before vs. After <i class="fa fa-arrow-right"></i>
@@ -22,7 +22,7 @@
         </a>
       </div>
     </div>
-    <div class="status-bar__right-bar">
+    <div class="status-bar__right-bar" id="statusBarRightBar">
       <template if.bind="showDiagramViewButtons">
         <a class="status-bar__element" click.delegate="toggleXMLView()" if.bind="!xmlIsShown">
           <i class="fas fa-file-code"></i> Show XML

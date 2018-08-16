@@ -28,4 +28,11 @@ exports.config = {
     defaultTimeoutInterval: 30000
   },
 
+  onPrepare: function() {
+    afterEach(() => {
+      browser.executeScript('window.localStorage.clear();');
+      browser.executeScript('window.sessionStorage.clear();');
+      browser.driver.manage().deleteAllCookies();
+    });
+  }
 };
