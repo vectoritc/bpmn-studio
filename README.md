@@ -35,13 +35,16 @@ Engine verbunden werden, um diese Diagramme auszuführen.
 **Notizen:**
 
 1. Für `npm run electron-build-<OS>` gilt:
-  Für den Platzhalter `<OS>` können folgende Werte eingesetzt werden:
-  - `linux` für Linux
-  - `macos` für MacOS
-  - `windows` für Windows
 
-  Beispiel:
-  `npm run electron-build-macos`
+   Für den Platzhalter `<OS>` können folgende Werte eingesetzt werden:
+
+   - `linux` für Linux
+   - `macos` für MacOS
+   - `windows` für Windows
+
+   Beispiel:
+
+   `npm run electron-build-macos`
 
 **TL;DR Tests**
 
@@ -201,6 +204,51 @@ Die Tests starten:
 ```shell
 npm run integration-test
 ```
+
+## Shortcut Skripte
+
+Es sind Skripte in der `package.json` vordefiniert, welche
+sich durch `npm run <script name>` ausführen lassen.
+
+Die folgenden Skripte, werden in unserem Tooling verwendet:
+
+* `build`
+
+   Baut das Aurelia Bundle.
+
+* `start`
+
+   Startet die BPMN-Studio Webanwendung
+
+* `start_dev`
+
+   Startet die BPMN-Studio Webanwendung und trackt die Quelldatein
+   (geänderte Quelltextdatein werden neu transpiliert und die
+   Webanwendung wird neu geladen).
+
+* `electron-start-dev`
+
+   Baut das Aurelia Bundle und startet die Electron Anwendung.
+
+* `reset`
+
+   Entfernt alle node_modules, die `package-lock.json` Datei und bereinigt den NPM-Cache.
+
+* `lint`
+
+   Startet `tslint` für das gesamte Projekt.
+
+* `electron-build-macos`
+
+   Baut die Electron-Anwendung für macOS.
+
+* `electron-build-linux`
+
+   Baut die Electron-Anwendung für Linux.
+
+* `electron-build-windows`
+
+   Baut die Electron-Anwendung für Windows.
 
 ## Was muss ich sonst noch wissen?
 
