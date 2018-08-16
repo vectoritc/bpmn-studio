@@ -1,5 +1,7 @@
-import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
+
+import {EventAggregator} from 'aurelia-event-aggregator';
+
 import {
   IBpmnModdle,
   IExtensionElement,
@@ -9,6 +11,7 @@ import {
   IProperty,
   IShape,
 } from '../../../../../../contracts';
+
 import environment from '../../../../../../environment';
 
 @inject(EventAggregator)
