@@ -12,6 +12,7 @@ export class NavBar {
   public process: IDiagram;
   public diagramInfo: HTMLElement;
   public dropdown: HTMLElement;
+  public solutionExplorerIsActive: boolean = true;
   public showTools: boolean = false;
   public showStartButton: boolean = false;
   public disableSaveButton: boolean = false;
@@ -27,6 +28,8 @@ export class NavBar {
 
   public attached(): void {
     this._dertermineActiveRoute();
+
+    this.solutionExplorerIsActive = window.localStorage.getItem('SolutionExplorerVisibility') === 'true';
 
     document.addEventListener('click', this.dropdownClickListener);
 
@@ -81,6 +84,7 @@ export class NavBar {
   }
 
   public toggleSolutionExplorer(): void {
+    this.solutionExplorerIsActive = !this.solutionExplorerIsActive;
     this._eventAggregator.publish(environment.events.processSolutionPanel.toggleProcessSolutionExplorer);
   }
 
