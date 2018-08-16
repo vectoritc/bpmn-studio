@@ -305,19 +305,18 @@ export class ProcessSolutionPanel {
   }
 
   public async refreshSolutions(): Promise<void> {
-    this.openedFileSystemSolutions.forEach(async(solution: IViewModelSolution) => {
+    for (const solution of this.openedFileSystemSolutions) {
       try {
         await this._solutionExplorerServiceFileSystem.openSolution(solution.uri, this._identity);
         const updatetSolution: ISolution = await this._solutionExplorerServiceFileSystem.loadSolution();
-
-        const viewModelSolution: IViewModelSolution = this
+        const viewModelSolution: IViewModelSolution = await this
           ._createViewModelSolutionFromSolution(updatetSolution);
 
         this._updateSolution(solution, viewModelSolution);
       } catch (e) {
         this.closeFileSystemSolution(solution);
       }
-    });
+    }
   }
 
   public async navigateToDiagramDetail(diagram: IDiagram): Promise<void> {
