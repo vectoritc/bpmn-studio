@@ -76,6 +76,11 @@ button {
   cursor: default;
   color: #5e5e5e;
   text-decoration: inherit;
+
+  /*
+   * Prevent the user from dragging the Element.
+   */
+   -webkit-user-drag: none;
 }
 
 .menu-tabbed-link--disabled:hover {
