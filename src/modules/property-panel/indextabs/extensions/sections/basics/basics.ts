@@ -78,7 +78,17 @@ export class BasicsSection implements ISection {
   }
 
   public removeProperty(index: number): void {
-    this._propertiesElement.values.splice(index, 1);
+    const propertyIsLast: boolean = this._propertiesElement.values.length === 1;
+
+    if (propertyIsLast) {
+      this._businessObjInPanel
+        .extensionElements = undefined;
+    } else {
+      this._propertiesElement
+        .values
+        .splice(index, 1);
+    }
+
     this._reloadProperties();
     this._publishDiagramChange();
   }
@@ -118,8 +128,7 @@ export class BasicsSection implements ISection {
           return extensionIsPropertyElement;
         });
 
-    const extensionElementHasNoPropertyElement: boolean = extensionsPropertiesElement === undefined
-                                                       || extensionsPropertiesElement === null;
+    const extensionElementHasNoPropertyElement: boolean = extensionsPropertiesElement === undefined;
 
     if (extensionElementHasNoPropertyElement) {
       return;
@@ -139,9 +148,9 @@ export class BasicsSection implements ISection {
   private _getPropertiesElement(): IPropertiesElement {
 
     const propertiesElement: IPropertiesElement  = this._businessObjInPanel.extensionElements.values.find((extensionValue: IExtensionElement) => {
-      const extensionIsPropertyElement: boolean = extensionValue.$type === 'camunda:Properties';
+      const extensionIsPropertiesElement: boolean = extensionValue.$type === 'camunda:Properties';
 
-      return extensionIsPropertyElement;
+      return extensionIsPropertiesElement;
     });
 
     return propertiesElement;
