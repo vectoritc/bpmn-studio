@@ -15,11 +15,6 @@
             <td class="process-name-table-entry" title="${process.id}" click.delegate="showDetails(process.id)">${process.id}</td>
           </tr>
         </table>
-        <div class="col-md-12 col-xs-12 pagination">
-          <aubs-pagination page-size.bind="pageSize" total-items.bind="totalItems" current-page.bind="currentPage"
-            boundary-links.bind="true">
-          </aubs-pagination>
-        </div>
       </div>
       <div show.bind="!allProcessModels" class="container">
         <img src="src/resources/images/gears.svg" class="loading-spinner">
