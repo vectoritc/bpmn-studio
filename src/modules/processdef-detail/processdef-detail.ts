@@ -14,6 +14,7 @@ import {
 import {
   AuthenticationStateEvent,
   IAuthenticationService,
+  IElementRegistry,
   IExtensionElement,
   IFormElement,
   IModdleElement,
@@ -417,7 +418,7 @@ export class ProcessDefDetail {
      * use the getAll() method which is defined by the return type of
      * this.bpmnio.modeler.get().
      */
-    const registry: any = this.bpmnio.modeler.get('elementRegistry');
+    const registry: IElementRegistry = this.bpmnio.modeler.get('elementRegistry');
 
     registry.forEach((element: IShape) => {
       if (element.type === 'bpmn:UserTask') {
