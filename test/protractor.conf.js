@@ -7,7 +7,7 @@ exports.config = {
     },
   ],
 
-  maxSessions: 1,
+  maxSessions: 4,
 
   seleniumAddress: 'http://0.0.0.0:4444/wd/hub',
   specs: ['test/e2e/dist/*.js'],
@@ -16,8 +16,23 @@ exports.config = {
     package: 'aurelia-protractor-plugin',
   }],
 
+  params: {
+    aureliaUrl: string = 'http://localhost:9000',
+    defaultTimeoutMS: number = 5000
+  },
+
+  framework: 'jasmine',
+
   jasmineNodeOpts: {
     showColors: true,
     defaultTimeoutInterval: 30000
+  },
+
+  onPrepare: function() {
+    afterEach(() => {
+      browser.executeScript('window.localStorage.clear();');
+      browser.executeScript('window.sessionStorage.clear();');
+      browser.driver.manage().deleteAllCookies();
+    });
   }
 };
