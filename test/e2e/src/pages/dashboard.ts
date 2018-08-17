@@ -7,5 +7,7 @@ export class Dashboard {
 
   // Define Class method call forwarding
 
-   // Define Elements
+  // Define Elements
+
+  // Define Functions
 }

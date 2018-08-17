@@ -25,26 +25,21 @@ describe('Process definition list', () => {
     expect(processDefListPage.postProcessModel).not.toBeDefined();
   });
 
-  it('should display process definitions.', () => {
-
-    // Count items and expect at least one
+  it('should contain at least process definitions.', () => {
     processDefListPage.processDefinitionListItems.count().then((numberOfProcessDefinitions: number) => {
       expect(numberOfProcessDefinitions).toBeGreaterThan(0);
     });
+  });
 
-    // Search for the process diagram created in this test
+  it('should contain just created process definition.', () => {
     processDefListPage.processDefinitionListItemIDs.count().then((numberOfProcessDefinitionsById: number) => {
       expect(numberOfProcessDefinitionsById).toBe(1);
     });
   });
 
   it('should be possible to open a process diagram.', () => {
-
-    // Click on a process definition
     processDefListPage.processModellDiagram.click().then(() => {
       browser.getCurrentUrl().then((currentBrowserUrl: string) => {
-
-        // Check if diagram showed up
         expect(currentBrowserUrl).toContain(processDefListPage.processModelUrl);
       });
     });

@@ -8,8 +8,6 @@ describe('Status bar', () => {
   const expectedConditions: ProtractorExpectedConditions = protractor.ExpectedConditions;
   const statusBar: StatusBar = new StatusBar();
 
-  browser.driver.manage().deleteAllCookies();
-
   beforeEach(() => {
     browser.get(aureliaUrl);
     browser.driver.wait(() => {

@@ -2,14 +2,13 @@ import {NavBar} from './pages/navBar';
 
 import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
 
-fdescribe('Navigation bar', () => {
+describe('Navigation bar', () => {
+  const navBar: NavBar = new NavBar();
+
   const aureliaUrl: string = browser.params.aureliaUrl;
   const defaultTimeoutMS: number = browser.params.defaultTimeoutMS;
 
   const expectedConditions: ProtractorExpectedConditions = protractor.ExpectedConditions;
-
-  const navBar: NavBar = new NavBar();
-  browser.driver.manage().deleteAllCookies();
 
   beforeEach(() => {
     browser.get(aureliaUrl);

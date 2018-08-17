@@ -33,4 +33,5 @@ export class NavBar {
   public navBarPublishLink: ElementFinder = this.navBarTag.element(by.id('navbarPublishLink'));
   public navBarDashboardLink: ElementFinder = this.navBarTag.element(by.id('navbarDashboardLink'));
 
+  // Define Functions
 }
