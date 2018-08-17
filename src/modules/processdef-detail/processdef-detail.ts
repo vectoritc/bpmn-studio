@@ -402,7 +402,22 @@ export class ProcessDefDetail {
    * in the Property Panel, also split this into two methods and name them right.
    */
   private _dropInvalidFormData(): void {
-    const registry: Array<IShape> = this.bpmnio.modeler.get('elementRegistry');
+
+    /*
+     * The result from this.bpmnio.modeler.get() actually defines its own forEach
+     * method which returns an iterator like object over all elements of the
+     * current diagram. Thats why the type here is NOT AN ARRAY!
+     *
+     * The problem here is, that this seems kinda buggy when the diagram
+     * contains a UserTask without any defined form field (its also working when
+     * you remove the FormField again). This seems to be an internal problem
+     * of the bpmn-js component.
+     *
+     * TODO: See, if we can find a correct type for this. Alternatively we could
+     * use the getAll() method which is defined by the return type of
+     * this.bpmnio.modeler.get().
+     */
+    const registry: any = this.bpmnio.modeler.get('elementRegistry');
 
     registry.forEach((element: IShape) => {
       if (element.type === 'bpmn:UserTask') {
