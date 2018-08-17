@@ -1,10 +1,10 @@
-import {ProcessDefListPage} from './pages/processDefListPage';
+import {SolutionExplorer} from './pages/solutionExplorer';
 
 import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
 
-describe('Process definition list', () => {
+describe('Solution Explorer', () => {
 
-  const processDefListPage: ProcessDefListPage = new ProcessDefListPage();
+  const solutionExplorer: SolutionExplorer = new SolutionExplorer();
 
   const aureliaUrl: string = browser.params.aureliaUrl;
   const defaultTimeoutMS: number = browser.params.defaultTimeoutMS;
@@ -12,28 +12,28 @@ describe('Process definition list', () => {
   const expectedConditions: ProtractorExpectedConditions = protractor.ExpectedConditions;
 
   beforeEach(() => {
-    browser.get(aureliaUrl + processDefListPage.processModelLink);
+    browser.get(aureliaUrl);
     browser.driver.wait(() => {
-      browser.wait(expectedConditions.visibilityOf(processDefListPage.routerViewContainer), defaultTimeoutMS);
-      return processDefListPage.routerViewContainer;
+      browser.wait(expectedConditions.visibilityOf(solutionExplorer.solutionExplorerTag), defaultTimeoutMS);
+      return solutionExplorer.solutionExplorerTag;
     });
   });
 
   beforeAll(() => {
 
     // Create a new process definition by POST REST call
-    expect(processDefListPage.postProcessModel).not.toBeDefined();
+    expect(solutionExplorer.postProcessModel).not.toBeDefined();
   });
 
   it('should display process definitions.', () => {
 
     // Count items and expect at least one
-    processDefListPage.processDefinitionListItems.count().then((numberOfProcessDefinitions: number) => {
+    solutionExplorer.solutionExplorerListItems.count().then((numberOfProcessDefinitions: number) => {
       expect(numberOfProcessDefinitions).toBeGreaterThan(0);
     });
 
     // Search for the process diagram created in this test
-    processDefListPage.processDefinitionListItemIDs.count().then((numberOfProcessDefinitionsById: number) => {
+    solutionExplorer.solutionExplorerListItemsId.count().then((numberOfProcessDefinitionsById: number) => {
       expect(numberOfProcessDefinitionsById).toBe(1);
     });
   });
@@ -41,11 +41,11 @@ describe('Process definition list', () => {
   it('should be possible to open a process diagram.', () => {
 
     // Click on a process definition
-    processDefListPage.processModellDiagram.click().then(() => {
+    solutionExplorer.processModellDiagram.click().then(() => {
       browser.getCurrentUrl().then((currentBrowserUrl: string) => {
 
         // Check if diagram showed up
-        expect(currentBrowserUrl).toContain(processDefListPage.processModelUrl);
+        expect(currentBrowserUrl).toContain(solutionExplorer.processModelUrl);
       });
     });
   });

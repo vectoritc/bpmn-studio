@@ -1,4 +1,4 @@
-import {by, element, ElementArrayFinder, ElementFinder} from 'protractor';
+import {by, element, ElementFinder} from 'protractor';
 
 export class StatusBar {
 

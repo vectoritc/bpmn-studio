@@ -1,4 +1,3 @@
-import {promise} from 'protractor';
 import {HttpClient} from 'protractor-http-client';
 
 export class ProcessModel {

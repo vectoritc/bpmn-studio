@@ -1,7 +1,7 @@
-import {browser, by, element, ElementFinder, protractor, ProtractorExpectedConditions} from 'protractor';
-import { StatusBar } from './pages/statusBar';
+import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
+import {StatusBar} from './pages/statusBar';
 
-describe('status-bar', () => {
+describe('Status bar', () => {
   const aureliaUrl: string = browser.params.aureliaUrl;
   const defaultTimeoutMS: number = browser.params.defaultTimeoutMS;
 
@@ -18,37 +18,37 @@ describe('status-bar', () => {
     });
   });
 
-  it('should display', () => {
-    statusBar.statusBarTag.isDisplayed().then((result: boolean) => {
-      expect(result).toBeTruthy();
+  it('should display.', () => {
+    statusBar.statusBarTag.isDisplayed().then((statusBarIsDisplayed: boolean) => {
+      expect(statusBarIsDisplayed).toBeTruthy();
     });
   });
 
-  it('should contain root and 3 elements (left-bar, center-bar, right bar)', () => {
-    statusBar.statusBarContainer.isDisplayed().then((result: boolean) => {
-      expect(result).toBeTruthy();
+  it('should contain root and 3 elements (left-bar, center-bar, right bar).', () => {
+    statusBar.statusBarContainer.isDisplayed().then((statusBarContainerIsDisplayed: boolean) => {
+      expect(statusBarContainerIsDisplayed).toBeTruthy();
     });
-    statusBar.statusBarContainerLeft.isDisplayed().then((result: boolean) => {
-      expect(result).toBeTruthy();
+    statusBar.statusBarContainerLeft.isDisplayed().then((statusBarContainerLeftIsDisplayed: boolean) => {
+      expect(statusBarContainerLeftIsDisplayed).toBeTruthy();
     });
-    statusBar.statusBarContainerCenter.isDisplayed().then((result: boolean) => {
-      expect(result).toBeTruthy();
+    statusBar.statusBarContainerCenter.isDisplayed().then((statusBarContainerCenterIsDisplayed: boolean) => {
+      expect(statusBarContainerCenterIsDisplayed).toBeTruthy();
     });
-    statusBar.statusBarContainerRight.isDisplayed().then((result: boolean) => {
-      expect(result).toBeTruthy();
-    });
-  });
-
-  it('should contain settings button', () => {
-    statusBar.statusBarSettingsButton.isDisplayed().then((result: boolean) => {
-      expect(result).toBeTruthy();
+    statusBar.statusBarContainerRight.isDisplayed().then((statusBarContainerRightIsDisplayed: boolean) => {
+      expect(statusBarContainerRightIsDisplayed).toBeTruthy();
     });
   });
 
-  it('should be possible to click settings button and get redirected', () => {
+  it('should contain settings button.', () => {
+    statusBar.statusBarSettingsButton.isDisplayed().then((statusBarSettingsButtonIsDisplayed: boolean) => {
+      expect(statusBarSettingsButtonIsDisplayed).toBeTruthy();
+    });
+  });
+
+  it('should be possible to click settings button and get redirected.', () => {
     statusBar.statusBarSettingsButton.click();
-    browser.getCurrentUrl().then((url: string) => {
-      expect(url).toMatch(statusBar.statusBarSettingsLink);
+    browser.getCurrentUrl().then((currentBrowserUrl: string) => {
+      expect(currentBrowserUrl).toMatch(statusBar.statusBarSettingsLink);
     });
   });
 });

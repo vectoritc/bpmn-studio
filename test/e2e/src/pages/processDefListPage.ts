@@ -12,6 +12,6 @@ export class ProcessDefListPage {
 
   public routerViewContainer: ElementFinder = element(by.tagName('router-view'));
   public processDefinitionListItems: ElementArrayFinder = element.all(by.className('process-definition-list-item'));
-  public processModellDiagram: ElementFinder = element(by.id('processDef-' + this.processModelID));
   public processDefinitionListItemIDs: ElementArrayFinder = this.processDefinitionListItems.all(by.id('processDef-' + this.processModelID));
+  public processModellDiagram: ElementFinder = element(by.id('processDef-' + this.processModelID));
 }
