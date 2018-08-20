@@ -505,7 +505,7 @@ export class ProcessSolutionPanel {
     const processNameIsNotAlphanumeric: boolean = processName.match(alphanumericRegEx) === null;
 
     if (processNameIsNotAlphanumeric) {
-      this._notificationService.showNotification(NotificationType.INFO, 'The diagram name must be alphanumeric');
+      this._notificationService.showNotification(NotificationType.INFO, 'The diagram name must be alphanumeric.');
 
       return;
     }
