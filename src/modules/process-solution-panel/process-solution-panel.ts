@@ -78,6 +78,10 @@ export class ProcessSolutionPanel {
   private _identity: IIdentity;
   private _solutionExplorerIdentity: IIdentity;
   private _dropBehaviour: EventListener;
+  private _diagramValidationRegExpList: IUserInputValidationRule = {
+    alphanumeric: /^[a-z0-9]+$/i,
+    german: /^[äöüß]+$/i,
+  };
   private _newDiagramNameValidator: FluentRuleCustomizer<IViewModelSolution, IViewModelSolution> = ValidationRules
       .ensure((solution: IViewModelSolution) => solution.currentDiagramInputValue)
       .displayName('Diagram name')
@@ -92,16 +96,11 @@ export class ProcessSolutionPanel {
       })
       .withMessage('A diagram with that name already exists.')
       .satisfies((input: string) => {
-        const regExpList: IUserInputValidationRule = {
-          alphanumeric: /^[a-z0-9]+$/i,
-          german: /^[äöüß]+$/i,
-        };
-
         const inputAsCharArray: Array<string> = input.split('');
 
         const containsNoInvalidCharacter: boolean = !inputAsCharArray.some((letter: string) => {
-          for (const regEx in regExpList) {
-            if (letter.match(regExpList[regEx]) !== null) {
+          for (const regEx in this._diagramValidationRegExpList) {
+            if (letter.match(this._diagramValidationRegExpList[regEx]) !== null) {
               return false;
             }
           }
