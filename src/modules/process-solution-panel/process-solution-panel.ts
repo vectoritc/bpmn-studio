@@ -91,12 +91,12 @@ export class ProcessSolutionPanel {
       })
       .withMessage('A diagram with that name already exists.')
       .satisfies((input: string) => {
-        const inputDoesNotContainsEscapeCharacter: boolean = input.indexOf('"') === -1
-                                                          && input.indexOf('>') === -1;
+        const alphanumericRegEx: RegExp = /^[a-z0-9äöüÄÖÜß]+$/i;
+        const inputIsAlphanumeric: boolean = input.match(alphanumericRegEx) !== null;
 
-        return inputDoesNotContainsEscapeCharacter;
+        return inputIsAlphanumeric;
       })
-      .withMessage(`The diagram name can not contain '>' or '"'`);
+      .withMessage('The diagram name must be alphanumeric');
 
   constructor(eventAggregator: EventAggregator,
               router: Router,
@@ -445,11 +445,11 @@ export class ProcessSolutionPanel {
       return;
     }
 
-    const processNameContainsEscapeCharacter: boolean = processName.indexOf('"') !== -1
-                                                     || processName.indexOf('>') !== -1;
+    const alphanumericRegEx: RegExp = /^[a-z0-9äöüÄÖÜß]+$/i;
+    const processNameIsNotAlphanumeric: boolean = processName.match(alphanumericRegEx) === null;
 
-    if (processNameContainsEscapeCharacter) {
-      this._notificationService.showNotification(NotificationType.ERROR, `The diagram name can not contain '>' or '"'`);
+    if (processNameIsNotAlphanumeric) {
+      this._notificationService.showNotification(NotificationType.ERROR, 'The diagram name must be alphanumeric');
 
       return;
     }
