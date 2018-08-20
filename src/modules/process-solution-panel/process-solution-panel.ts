@@ -116,7 +116,8 @@ export class ProcessSolutionPanel {
 
         return true;
       })
-      .withMessage('The diagram name must be alphanumeric');
+      // TODO: Replace (LINK) with a link to the documentation, where the user can see how a valid name must look like
+      .withMessage('The diagram name did not pass the imput validation. Please consult the manual for valid names (LINK).');
 
   constructor(eventAggregator: EventAggregator,
               router: Router,
