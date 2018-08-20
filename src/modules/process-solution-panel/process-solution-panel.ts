@@ -92,7 +92,7 @@ export class ProcessSolutionPanel {
       })
       .withMessage('A diagram with that name already exists.')
       .satisfies((input: string) => {
-        const regExpList: any = {
+        const regExpList: IUserInputValidationRule = {
           alphanumeric: /^[a-z0-9]+$/i,
           dutch: /^[àéëïĳ]+$/i,
           afrikaans: /^[áêéèëïíîôóúû]+$/i,
