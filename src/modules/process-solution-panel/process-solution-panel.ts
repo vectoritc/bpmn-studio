@@ -93,6 +93,47 @@ export class ProcessSolutionPanel {
       .satisfies((input: string) => {
         const alphanumericRegEx: RegExp = /^[a-z0-9äöüÄÖÜß]+$/i;
         const inputIsAlphanumeric: boolean = input.match(alphanumericRegEx) !== null;
+        const regExpList: any = {
+          alphanumeric: /^[a-z0-9]+$/i,
+          dutch: /^[a-z0-9àéëïĳ]+$/i,
+          afrikaans: /^[a-z0-9áêéèëïíîôóúû]+$/i,
+          westFrisian: /^[a-z0-9êôúû]+$/i,
+          danish: /^[a-z0-9æøå]+$/i,
+          finish: /^[a-z0-9äö]+$/i,
+          swedish: /^[a-z0-9åäö]+$/i,
+          estonian: /^[a-z0-9äöõü]+$/i,
+          german: /^[a-z0-9äöüß]+$/i,
+          kurdish: /^[a-z0-9çêîşû]+$/i,
+          romanian: /^[a-z0-9ăîâşţ]+$/i,
+          welsish: /^[a-z0-9óúẃýàèìòùẁỳäëöüẅÿâêîôûŵŷáéíï]+$/i,
+          esperanto: /^[a-z0-9ĉĝĥĵŝŭ]+$/i,
+          turkish: /^[a-z0-9ğçıöşü]+$/i,
+          icelandic: /^[a-z0-9áðéíóúýþæö]+$/i,
+          hungarian: /^[a-z0-9áéíóöőúüű]+$/i,
+          catalan: /^[a-z0-9àçéèíóòúüï]+$/i,
+          french: /^[a-z0-9àâçéèêëîïôœùûüÿ]+$/i,
+          occitan: /^[a-z0-9áàçéèíóòúëüï·]+$/i,
+          portugese: /^[a-z0-9ãõçáéíóúâêôàü]+$/i,
+          spanish: /^[a-z0-9áéíñóúü]+$/i,
+          italian: /^[a-z0-9àéèìòù]+$/i,
+          guarani: /^[a-z0-9áéíóúýãẽĩõũỹñg̃]+$/i,
+          southernAthabaskan: /^[a-z0-9áąą́éęę́íįį́łń]+$/i,
+          westernApache: /^[a-z0-9āą̄ēę̄īį̄óōǫǫ́ǭúū]+$/i,
+          navajo: /^[a-z0-9'óǫǫ́]+$/i,
+          chiricahua: /^[a-z0-9’úųų́]+$/i,
+          polish: /^[a-z0-9ąłńóżćęśź]+$/i,
+          silesian: /^[a-z0-9ąłńóżćśůź]+$/i,
+          kashubian: /^[a-z0-9ąłńóżãéëòôù]+$/i,
+          slovene: /^[a-z0-9čšž]+$/i,
+          croatia: /^[a-z0-9čšžćđ]+$/i,
+          czech: /^[a-z0-9čšžáďéěňóřťúůý]+$/i,
+          slovak: /^[a-z0-9čšžáäďéíľĺňóôŕťúý]+$/i,
+          latvian: /^[a-z0-9čšžāēģīķļņōŗū]+$/i,
+          lithuanian: /^[a-z0-9ąęėįųūčšž]+$/i,
+          vietnamese: /^[a-z0-9đàảãáạăằẳẵắặâầẩẫấậèẻẽéẹêềểễếệìỉĩíịòỏõóọồổỗốơờởỡớợùủũúụưừửữứựỳỷỹýỵ]+$/i,
+          otherLatinLetters: /^[a-z0-9āēīōūéñ]+$/i,
+        };
+
 
         return inputIsAlphanumeric;
       })
