@@ -92,7 +92,7 @@ export class ProcessSolutionPanel {
       .withMessage('A diagram with that name already exists.')
       .satisfies((input: string) => {
         const inputDoesNotContainsEscapeCharacter: boolean = input.indexOf('"') === -1
-                                                        && input.indexOf('>') === -1;
+                                                          && input.indexOf('>') === -1;
 
         return inputDoesNotContainsEscapeCharacter;
       })
