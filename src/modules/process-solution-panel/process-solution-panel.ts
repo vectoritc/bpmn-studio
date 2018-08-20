@@ -89,7 +89,14 @@ export class ProcessSolutionPanel {
 
         return diagramWithIdDoesNotExists;
       })
-      .withMessage('A diagram with that name already exists.');
+      .withMessage('A diagram with that name already exists.')
+      .satisfies((input: string) => {
+        const inputDoesNotContainsEscapeCharacter: boolean = input.indexOf('"') === -1
+                                                        && input.indexOf('>') === -1;
+
+        return inputDoesNotContainsEscapeCharacter;
+      })
+      .withMessage(`The diagram name can not contain '>' or '"'`);
 
   constructor(eventAggregator: EventAggregator,
               router: Router,
@@ -434,6 +441,15 @@ export class ProcessSolutionPanel {
     const diagramWithIdAlreadyExists: boolean = foundDiagram !== undefined;
     if (diagramWithIdAlreadyExists) {
       this._notificationService.showNotification(NotificationType.ERROR, 'A diagram with that name already exists.');
+
+      return;
+    }
+
+    const processNameContainsEscapeCharacter: boolean = processName.indexOf('"') !== -1
+                                                     || processName.indexOf('>') !== -1;
+
+    if (processNameContainsEscapeCharacter) {
+      this._notificationService.showNotification(NotificationType.ERROR, `The diagram name can not contain '>' or '"'`);
 
       return;
     }
