@@ -13,4 +13,5 @@ export class ProcessDefListPage {
   public processModellDiagram(processModelID: string): ElementFinder {
     return element(by.id('processDef-' + processModelID));
   }
+
 }
