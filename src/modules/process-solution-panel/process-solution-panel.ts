@@ -21,6 +21,7 @@ import {
   IDiagramValidationService,
   IFile,
   IInputEvent,
+  IUserInputValidationRule,
   NotificationType,
 } from '../../contracts/index';
 import environment from '../../environment';
