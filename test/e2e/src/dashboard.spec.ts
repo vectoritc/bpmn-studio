@@ -27,7 +27,6 @@ describe('Dashboard view', () => {
   });
 
   it('should contain at least process definitions.', () => {
-      browser.sleep(10000);
       // @TODO EOB work continues here
   });
 
