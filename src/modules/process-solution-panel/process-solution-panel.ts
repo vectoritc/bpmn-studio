@@ -460,11 +460,21 @@ export class ProcessSolutionPanel {
       return;
     }
 
-    const alphanumericRegEx: RegExp = /^[a-z0-9äöüÄÖÜß]+$/i;
-    const processNameIsNotAlphanumeric: boolean = processName.match(alphanumericRegEx) === null;
+    const processNameAsCharArray: Array<string> = processName.split('');
 
-    if (processNameIsNotAlphanumeric) {
-      this._notificationService.showNotification(NotificationType.INFO, 'The diagram name is invalid. Please correct the name and save again.');
+    const containsInvalidCharacter: boolean = processNameAsCharArray.some((letter: string) => {
+      for (const regEx in this._diagramValidationRegExpList) {
+        if (letter.match(this._diagramValidationRegExpList[regEx]) !== null) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+
+    if (containsInvalidCharacter) {
+      const infoMessage: string = 'The diagram name contains invalid characters. Please correct the name and save again.';
+      this._notificationService.showNotification(NotificationType.INFO, infoMessage);
 
       return;
     }
