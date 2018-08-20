@@ -1,8 +1,8 @@
+import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
+
 import {Dashboard} from './pages/dashboard';
 import {NavBar} from './pages/navBar';
 import {ProcessModel} from './pages/processModel';
-
-import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
 
 describe('Navigation bar', () => {
   let dashboard: Dashboard;
@@ -49,14 +49,14 @@ describe('Navigation bar', () => {
     });
   });
 
-  // This section is about login button
+  // This section tests the login button
   it('should contain login button.', () => {
     navBar.navBarLogInButton.isDisplayed().then((navBarLogInButtonIsDisplayed: boolean) => {
       expect(navBarLogInButtonIsDisplayed).toBeTruthy();
     });
   });
 
-  // This section is about solution explorer button
+  // This section tests the solution explorer button
   it('should contain solution explorer button.', () => {
     navBar.navBarSolutionExplorerButton.isDisplayed().then((navBarSolutionExplorerButtonIsDisplayed: boolean) => {
       expect(navBarSolutionExplorerButtonIsDisplayed).toBeTruthy();
@@ -77,7 +77,7 @@ describe('Navigation bar', () => {
     });
   });
 
-  // This section is about plan button
+  // This section tests the plan button
   it('should contain plan button.', () => {
     navBar.navBarPlanLink.isDisplayed().then((navBarPlanLinkIsDisplayed: boolean) => {
       expect(navBarPlanLinkIsDisplayed).toBeTruthy();
@@ -98,33 +98,33 @@ describe('Navigation bar', () => {
     });
   });
 
-  // This section is about design button
+  // This section tests the design button
   it('should contain design button.', () => {
     navBar.navBarDesignLink.isDisplayed().then((navBarDesignLinkIsDisplayed: boolean) => {
       expect(navBarDesignLinkIsDisplayed).toBeTruthy();
     });
   });
 
-  it('should contain an disabled design view button.', () => {
+  it('should contain a disabled design view button.', () => {
     navBar.navBarDesignLink.getAttribute('class').then((classAttribute: string) => {
       expect(classAttribute).toContain(navBar.navBarDisabledClassName);
     });
   });
 
-  // This section is about publish button
+  // This section tests the publish button
   it('should contain publish button.', () => {
     navBar.navBarPublishLink.isDisplayed().then((navBarPublishLinkIsDisplayed: boolean) => {
       expect(navBarPublishLinkIsDisplayed).toBeTruthy();
     });
   });
 
-  it('should contain an disabled design view button.', () => {
+  it('should contain a disabled publish view button.', () => {
     navBar.navBarPublishLink.getAttribute('class').then((classAttribute: string) => {
       expect(classAttribute).toContain(navBar.navBarDisabledClassName);
     });
   });
 
-  // This section is about dashboard button
+  // This section tests the dashboard button
   it('should contain dashboard button.', () => {
     navBar.navBarDashboardLink.isDisplayed().then((navBarDashboardLinkIsDisplayed: boolean) => {
       expect(navBarDashboardLinkIsDisplayed).toBeTruthy();
@@ -137,7 +137,7 @@ describe('Navigation bar', () => {
     });
   });
 
-  it('should open dashboard view when dashboard button is clicked.', () => {
+  it('should open dashboard view when the dashboard button is clicked.', () => {
     navBar.navBarDashboardLink.click().then(() => {
       browser.getCurrentUrl().then((currentBrowserUrl: string) => {
         expect(currentBrowserUrl).toContain(dashboard.dashboardLink);

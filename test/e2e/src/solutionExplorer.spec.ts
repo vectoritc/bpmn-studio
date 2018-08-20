@@ -1,8 +1,8 @@
+import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
+
 import {NavBar} from './pages/navBar';
 import {ProcessModel} from './pages/processModel';
 import {SolutionExplorer} from './pages/solutionExplorer';
-
-import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
 
 describe('Solution Explorer', () => {
 
@@ -23,7 +23,6 @@ describe('Solution Explorer', () => {
     processModel = new ProcessModel();
     solutionExplorer = new SolutionExplorer();
 
-    // Get processModelId
     processModelId = processModel.getProcessModelID();
 
     // Create a new process definition by POST REST call

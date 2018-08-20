@@ -1,8 +1,8 @@
+import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
+
 import {Dashboard} from './pages/dashboard';
 import {General} from './pages/general';
 import {ProcessModel} from './pages/processModel';
-
-import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
 
 describe('Dashboard view', () => {
 
@@ -22,7 +22,6 @@ describe('Dashboard view', () => {
     general = new General();
     processModel = new ProcessModel();
 
-    // Get processModelId
     processModelId = processModel.getProcessModelID();
 
     // Create a new process definition by POST REST call
@@ -37,7 +36,7 @@ describe('Dashboard view', () => {
     });
   });
 
-  it('should contain at least process definitions.', () => {
+  it('should contain process definitions.', () => {
       processModel.startProcess(processModelId);
   });
 

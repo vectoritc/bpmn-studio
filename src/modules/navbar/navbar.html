@@ -2,7 +2,7 @@
   <require from="./navbar.css"></require>
   <require from="../user-login/user-login"></require>
   <div class="bpmn-studio-navbar bpmn-studio-navbar--macos" id="navBarContainer">
-    <div class="menu-bar__menu menu-bar__menu--left" id="navBarLeftBar">
+    <div class="menu-bar__menu menu-bar__menu--left" id="navBarLeft">
       <div class="menu__menu-tabbed-link">
         <button id="navbarSolutionExplorerButton" class="menu-tabbed-link action-button" class.bind="solutionExplorerIsActive ? 'solution-explorer--active' : ''" click.delegate="toggleSolutionExplorer()" title="Toggle visibility of the Solution Explorer">
           <i class="fas fa-project-diagram"></i>
@@ -22,14 +22,14 @@
         <a id="navbarDashboardLink" class="menu-tabbed-link" route-href="route: dashboard">Dashboard</a>
       </div>
     </div>
-    <div class="menu-bar__menu menu-bar__menu--center" id="navBarCenterBar">
+    <div class="menu-bar__menu menu-bar__menu--center" id="navBarCenter">
       <div class="menu__element menu__element--title btn-group" if.bind="showTools" ref="diagramInfo">
         <span if.bind="process.name === undefined" class="process-details-title">${process.id}</span>
         <span else class="process-details-title">${process.name}</span>
         <span if.bind="diagramContainsUnsavedChanges" class="edited-label">- edited</span>
       </div>
     </div>
-    <div class="menu-bar__menu menu-bar__menu--right" id="navBarRightBar">
+    <div class="menu-bar__menu menu-bar__menu--right" id="navBarRight">
       <template if.bind="showTools">
         <button class="menu-bar__menu-center--action-button menu-bar__menu-center--back-button back-button" click.delegate="navigateBack()" title="Navigate back">
           <i class="fas fa-arrow-circle-left"></i>

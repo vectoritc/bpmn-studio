@@ -1,8 +1,8 @@
+import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
+
 import {General} from './pages/general';
 import {ProcessDefListPage} from './pages/processDefListPage';
 import {ProcessModel} from './pages/processModel';
-
-import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
 
 describe('Process definition list', () => {
 
@@ -23,7 +23,6 @@ describe('Process definition list', () => {
     processDefListPage = new ProcessDefListPage();
     processModel = new ProcessModel();
 
-    // Get processModelId
     processModelId = processModel.getProcessModelID();
 
     // Create a new process definition by POST REST call
@@ -44,7 +43,7 @@ describe('Process definition list', () => {
     });
   });
 
-  it('should contain just created process definition.', () => {
+  it('should contain the just created process definition.', () => {
     processDefListPage.processDefinitionListItemIDs(processModelId).count().then((numberOfProcessDefinitionsById: number) => {
       expect(numberOfProcessDefinitionsById).toBe(1);
     });

@@ -2,8 +2,6 @@ import {by, element, ElementArrayFinder, ElementFinder} from 'protractor';
 
 export class ProcessDefListPage {
 
-  // Define Links, Urls, Classes
-
   // Define Elements
   public processDefinitionListItems: ElementArrayFinder = element.all(by.className('process-definition-list-item'));
 
@@ -14,4 +12,5 @@ export class ProcessDefListPage {
   public processModellDiagram(processModelID: string): ElementFinder {
     return element(by.id('processDef-' + processModelID));
   }
+
 }

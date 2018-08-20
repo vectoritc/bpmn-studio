@@ -1,7 +1,7 @@
+import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
+
 import {Settings} from './pages/settings';
 import {StatusBar} from './pages/statusBar';
-
-import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
 
 describe('Status bar', () => {
   let settings: Settings;

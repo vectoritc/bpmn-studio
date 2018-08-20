@@ -10,9 +10,9 @@ export class NavBar {
   public navBarTag: ElementFinder = element(by.tagName('nav-bar'));
   public navBarSettingsButton: ElementFinder = this.navBarTag.element(by.id('navBarSettingsButton'));
   public navBarContainer: ElementFinder = this.navBarTag.element(by.id('navBarContainer'));
-  public navBarContainerLeft: ElementFinder = this.navBarTag.element(by.id('navBarLeftBar'));
-  public navBarContainerCenter: ElementFinder = this.navBarTag.element(by.id('navBarCenterBar'));
-  public navBarContainerRight: ElementFinder = this.navBarTag.element(by.id('navBarRightBar'));
+  public navBarContainerLeft: ElementFinder = this.navBarTag.element(by.id('navBarLeft'));
+  public navBarContainerCenter: ElementFinder = this.navBarTag.element(by.id('navBarCenter'));
+  public navBarContainerRight: ElementFinder = this.navBarTag.element(by.id('navBarRight'));
   public navBarLogInButton: ElementFinder = this.navBarTag.element(by.id('userLoginButton'));
 
   public navBarSolutionExplorerButton: ElementFinder = this.navBarTag.element(by.id('navbarSolutionExplorerButton'));
@@ -27,4 +27,5 @@ export class NavBar {
   public openSolutionExplorerByButtonClick(): void {
     this.navBarSolutionExplorerButton.click();
   }
+
 }

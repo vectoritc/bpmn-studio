@@ -15,8 +15,6 @@ export class ProcessModel {
     return 'TA_' + Math.floor(Math.random() * 1000000);
   }
 
-  // Define Elements
-
   // Define Functions
   public processModelUrl(processModel: string): string {
     return 'processdef/' + processModel + '/detail';
