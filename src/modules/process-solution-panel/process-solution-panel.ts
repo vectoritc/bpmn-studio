@@ -99,22 +99,17 @@ export class ProcessSolutionPanel {
 
         const inputAsCharArray: Array<string> = input.split('');
 
-        for (const letter of inputAsCharArray) {
-          let letterIsInvalid: boolean = true;
-
+        const containsNoInvalidCharacter: boolean = !inputAsCharArray.some((letter: string) => {
           for (const regEx in regExpList) {
-            if (letter.match(regExpList[regEx])) {
-              letterIsInvalid = false;
-              break;
+            if (letter.match(regExpList[regEx]) !== null) {
+              return false;
             }
           }
 
-          if (letterIsInvalid) {
-            return false;
-          }
-        }
+          return true;
+        });
 
-        return true;
+        return containsNoInvalidCharacter;
       })
       // TODO: Replace (LINK) with a link to the documentation, where the user can see how a valid name must look like
       .withMessage('The diagram name did not pass the imput validation. Please consult the manual for valid names (LINK).');
