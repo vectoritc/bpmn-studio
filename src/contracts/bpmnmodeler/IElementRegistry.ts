@@ -76,7 +76,7 @@ export interface IElementRegistry {
  getGraphics(filter: string | IShape, secondary?: boolean): SVGElement;
 
   /**
-   * Validate the suitability of the given ID; throws an exception 
+   * Validate the suitability of the given ID; throws an exception
    * if there is a problem with the ID.
    *
    * @param id ID of the Element, that should be validated.
