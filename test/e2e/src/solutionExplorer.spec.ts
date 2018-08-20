@@ -1,37 +1,50 @@
+import {NavBar} from './pages/navBar';
+import {ProcessModel} from './pages/processModel';
 import {SolutionExplorer} from './pages/solutionExplorer';
 
 import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
 
 describe('Solution Explorer', () => {
 
-  const solutionExplorer: SolutionExplorer = new SolutionExplorer();
+  let navBar: NavBar;
+  let processModel: ProcessModel;
+  let solutionExplorer: SolutionExplorer;
+
+  let processModelId: string;
 
   const aureliaUrl: string = browser.params.aureliaUrl;
   const defaultTimeoutMS: number = browser.params.defaultTimeoutMS;
 
   const expectedConditions: ProtractorExpectedConditions = protractor.ExpectedConditions;
 
+  beforeAll(() => {
+
+    navBar = new NavBar();
+    processModel = new ProcessModel();
+    solutionExplorer = new SolutionExplorer();
+
+    // Get processModelId
+    processModelId = processModel.getProcessModelID();
+
+    // Create a new process definition by POST REST call
+    processModel.postProcessModel(processModelId);
+  });
+
   beforeEach(() => {
     browser.get(aureliaUrl);
     browser.driver.wait(() => {
-      browser.wait(expectedConditions.visibilityOf(solutionExplorer.navBarTag), defaultTimeoutMS);
-      return solutionExplorer.navBarTag;
+      browser.wait(expectedConditions.visibilityOf(navBar.navBarTag), defaultTimeoutMS);
+      return navBar.navBarTag;
     });
 
     // Click on solution explorer icon
-    solutionExplorer.navBarSolutionExplorerButton.click();
+    navBar.openSolutionExplorerByButtonClick();
 
     // Wait until solutions are loaded
     browser.driver.wait(() => {
-      browser.wait(expectedConditions.visibilityOf(solutionExplorer.solutionExplorerListItemsId), defaultTimeoutMS);
-      return solutionExplorer.solutionExplorerListItemsId;
+      browser.wait(expectedConditions.visibilityOf(solutionExplorer.solutionExplorerListItemsId(processModelId)), defaultTimeoutMS);
+      return solutionExplorer.solutionExplorerListItemsId(processModelId);
     });
-  });
-
-  beforeAll(() => {
-
-    // Create a new process definition by POST REST call
-    expect(solutionExplorer.postProcessModel).not.toBeDefined();
   });
 
   it('should display more than one process definitions.', () => {
@@ -41,15 +54,15 @@ describe('Solution Explorer', () => {
   });
 
   it('should display created solution.', () => {
-    solutionExplorer.solutionExplorerListItemsIds.count().then((numberOfProcessDefinitionsById: number) => {
+    solutionExplorer.solutionExplorerListItemsIds(processModelId).count().then((numberOfProcessDefinitionsById: number) => {
       expect(numberOfProcessDefinitionsById).toBe(1);
     });
   });
 
   it('should be possible to open a process diagram.', () => {
-    solutionExplorer.solutionExplorerListItemsId.click().then(() => {
+    solutionExplorer.solutionExplorerListItemsId(processModelId).click().then(() => {
       browser.getCurrentUrl().then((currentBrowserUrl: string) => {
-        expect(currentBrowserUrl).toContain(solutionExplorer.processModelUrl);
+        expect(currentBrowserUrl).toContain(processModel.getProcessModelLink());
       });
     });
   });

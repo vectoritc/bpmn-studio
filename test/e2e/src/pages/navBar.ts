@@ -1,21 +1,10 @@
-import {Dashboard} from './dashboard';
-import {ProcessModel} from './processModel';
-
 import {by, element, ElementArrayFinder, ElementFinder} from 'protractor';
 
 export class NavBar {
 
-  // Define Instances
-  private _processModel: ProcessModel = new ProcessModel();
-  private _dashboard: Dashboard = new Dashboard();
-
   // Define Links, Urls, Classes
   public navBarDisabledClassName: string = 'menu-tabbed-link--disabled';
   public navBarSolutionExplorerActiveClassName: string = 'solution-explorer--active';
-
-  // Define Class method call forwarding
-  public processModelLink: string = this._processModel.processModelLink;
-  public dashboardLink: string = this._dashboard.dashboardLink;
 
   // Define Elements
   public navBarTag: ElementFinder = element(by.tagName('nav-bar'));
@@ -35,4 +24,7 @@ export class NavBar {
   public navBarDashboardLink: ElementFinder = this.navBarTag.element(by.id('navbarDashboardLink'));
 
   // Define Functions
+  public openSolutionExplorerByButtonClick(): void {
+    this.navBarSolutionExplorerButton.click();
+  }
 }

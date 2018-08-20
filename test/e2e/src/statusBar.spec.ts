@@ -1,12 +1,22 @@
-import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
+import {Settings} from './pages/settings';
 import {StatusBar} from './pages/statusBar';
 
+import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
+
 describe('Status bar', () => {
+  let settings: Settings;
+  let statusBar: StatusBar;
+
   const aureliaUrl: string = browser.params.aureliaUrl;
   const defaultTimeoutMS: number = browser.params.defaultTimeoutMS;
 
   const expectedConditions: ProtractorExpectedConditions = protractor.ExpectedConditions;
-  const statusBar: StatusBar = new StatusBar();
+
+  beforeAll(() => {
+
+    settings = new Settings();
+    statusBar = new StatusBar();
+  });
 
   beforeEach(() => {
     browser.get(aureliaUrl);
@@ -46,7 +56,7 @@ describe('Status bar', () => {
   it('should be possible to click settings button and get redirected.', () => {
     statusBar.statusBarSettingsButton.click();
     browser.getCurrentUrl().then((currentBrowserUrl: string) => {
-      expect(currentBrowserUrl).toMatch(statusBar.statusBarSettingsLink);
+      expect(currentBrowserUrl).toMatch(settings.settingsLink);
     });
   });
 });

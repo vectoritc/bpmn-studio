@@ -1,13 +1,9 @@
 import {by, element, ElementFinder} from 'protractor';
 
 export class StatusBar {
-  // Define Instances
 
   // Define Links, Urls, Classes
   public statusBarLink: string = '/processdef';
-  public statusBarSettingsLink: string = 'configuration';
-
-  // Define Class method call forwarding
 
   // Define Elements
   public statusBarTag: ElementFinder = element(by.tagName('status-bar'));

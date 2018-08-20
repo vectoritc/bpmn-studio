@@ -1,14 +1,24 @@
+import {Dashboard} from './pages/dashboard';
 import {NavBar} from './pages/navBar';
+import {ProcessModel} from './pages/processModel';
 
 import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
 
 describe('Navigation bar', () => {
-  const navBar: NavBar = new NavBar();
+  let dashboard: Dashboard;
+  let navBar: NavBar;
+  let processModel: ProcessModel;
 
   const aureliaUrl: string = browser.params.aureliaUrl;
   const defaultTimeoutMS: number = browser.params.defaultTimeoutMS;
 
   const expectedConditions: ProtractorExpectedConditions = protractor.ExpectedConditions;
+
+  beforeAll(() => {
+    dashboard = new Dashboard();
+    navBar = new NavBar();
+    processModel = new ProcessModel();
+  });
 
   beforeEach(() => {
     browser.get(aureliaUrl);
@@ -83,7 +93,7 @@ describe('Navigation bar', () => {
   it('should open process list view when plan button is clicked.', () => {
     navBar.navBarPlanLink.click().then(() => {
       browser.getCurrentUrl().then((currentBrowserUrl: string) => {
-        expect(currentBrowserUrl).toContain(navBar.processModelLink);
+        expect(currentBrowserUrl).toContain(processModel.getProcessModelLink());
       });
     });
   });
@@ -130,7 +140,7 @@ describe('Navigation bar', () => {
   it('should open dashboard view when dashboard button is clicked.', () => {
     navBar.navBarDashboardLink.click().then(() => {
       browser.getCurrentUrl().then((currentBrowserUrl: string) => {
-        expect(currentBrowserUrl).toContain(navBar.dashboardLink);
+        expect(currentBrowserUrl).toContain(dashboard.dashboardLink);
       });
     });
   });

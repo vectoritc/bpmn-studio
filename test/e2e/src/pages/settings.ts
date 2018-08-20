@@ -1,7 +1,7 @@
-export class Dashboard {
+export class Settings {
 
   // Define Links, Urls, Classes
-  public dashboardLink: string = '/dashboard';
+  public settingsLink: string = '/configuration';
 
   // Define Elements
 
