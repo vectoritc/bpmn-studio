@@ -25,8 +25,8 @@ export class ProcessModel {
     if (processModel !== undefined) {
       currentModel = processModel;
     }
-
-    this._http.post('/api/management/v1/process_models/' + currentModel + '/update', {
+    const requestDestination: string = `/api/management/v1/process_models/${currentModel}/update`;
+    const requestPayload: any = {
       xml: '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" ' +
            'xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" ' +
            'xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" ' +
@@ -53,14 +53,17 @@ export class ProcessModel {
            'y=\"87\" /><di:waypoint x=\"169\" y=\"87\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape id=\"ScriptTask_188qtll_di\" ' +
            'bpmnElement=\"Task_0z3p6gi\"><dc:Bounds x=\"169\" y=\"47\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape>' +
            '</bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>',
-    }, {
+    };
+    const requestHeaders: any = {
       authorization: 'Bearer ZHVtbXlfdG9rZW4=',
       /* To debug post call please add following:
        *  .stringBody.then((respose: string) => {
        *    console.log(response);
        *  }
        */
-    });
+    };
+
+    this._http.post(requestDestination, requestPayload, requestHeaders);
   }
 
   public postProcessModelWithMessageIntermediateThrowEvent(processModel?: string): void {
@@ -69,7 +72,8 @@ export class ProcessModel {
       currentModel = processModel;
     }
 
-    this._http.post('/api/management/v1/process_models/' + currentModel + '/update', {
+    const requestDestination: string = `/api/management/v1/process_models/${currentModel}/update`;
+    const requestPayload: any = {
       xml: '<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<bpmn:definitions xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\"  ' +
       'xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\"  ' +
       'xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\"  ' +
@@ -105,14 +109,17 @@ export class ProcessModel {
       '<di:waypoint x=\"269\" y=\"87\" /><di:waypoint x=\"319\" y=\"87\" /></bpmndi:BPMNEdge><bpmndi:BPMNShape  ' +
       'id=\"IntermediateCatchEvent_0q2wvt3_di\" bpmnElement=\"IntermediateThrowEvent_0579cd8\"><dc:Bounds x=\"319\" y=\"69\"  ' +
       'width=\"36\" height=\"36\" /></bpmndi:BPMNShape></bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>',
-    }, {
+    };
+    const requestHeaders: any = {
       authorization: 'Bearer ZHVtbXlfdG9rZW4=',
       /* To debug post call please add following:
        *  .stringBody.then((respose: string) => {
        *    console.log(response);
        *  }
        */
-    });
+    };
+
+    this._http.post(requestDestination, requestPayload, requestHeaders);
   }
 
   public startProcess(processModel?: string): void {
