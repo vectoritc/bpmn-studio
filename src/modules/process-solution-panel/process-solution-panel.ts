@@ -484,7 +484,7 @@ export class ProcessSolutionPanel {
 
     const processNameIsEmpty: boolean = processName.length === 0;
     if (processNameIsEmpty) {
-      this._notificationService.showNotification(NotificationType.ERROR, 'Process model name cannot be empty.');
+      this._notificationService.showNotification(NotificationType.INFO, 'Process model name cannot be empty.');
 
       return;
     }
@@ -496,7 +496,7 @@ export class ProcessSolutionPanel {
 
     const diagramWithIdAlreadyExists: boolean = foundDiagram !== undefined;
     if (diagramWithIdAlreadyExists) {
-      this._notificationService.showNotification(NotificationType.ERROR, 'A diagram with that name already exists.');
+      this._notificationService.showNotification(NotificationType.INFO, 'A diagram with that name already exists.');
 
       return;
     }
@@ -505,7 +505,7 @@ export class ProcessSolutionPanel {
     const processNameIsNotAlphanumeric: boolean = processName.match(alphanumericRegEx) === null;
 
     if (processNameIsNotAlphanumeric) {
-      this._notificationService.showNotification(NotificationType.ERROR, 'The diagram name must be alphanumeric');
+      this._notificationService.showNotification(NotificationType.INFO, 'The diagram name must be alphanumeric');
 
       return;
     }
