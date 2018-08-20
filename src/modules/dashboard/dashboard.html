@@ -5,7 +5,7 @@
 
   <div class="dashboard-container">
     <process-list show.bind="showProcessList"></process-list>
-    <div show.bind="showTaskList" class="task-list-container">
+    <div class="task-list-container" id="taskListContainer">
       <div show.bind="tasks && tasks.length > 0">
         <h3>Tasks waiting</h3>
         <table class="table table-striped table-bordered">
@@ -14,13 +14,13 @@
             <th>User Task Id</th>
             <th></th>
           </tr>
-          <tr repeat.for="entry of shownTasks">
+          <tr repeat.for="entry of shownTasks" class="task-list-item" id="taskList-${entry.processModel.id}">
             <td>
               <a route-href="route: processdef-detail; params.bind: { processModelId: entry.processModel.id }">${entry.processModel.id}</a>
             </td>
             <td>${entry.userTask.id}</td>
-            <td class="dashboard__last-table-cell">
-              <a class="btn btn-success" click.delegate="continueUserTask(entry)">Continue</a>
+            <td class="task-list-continue-button dashboard__last-table-cell">
+              <a class="btn btn-success " click.delegate="continueUserTask(entry)">Continue</a>
             </td>
           </tr>
         </table>

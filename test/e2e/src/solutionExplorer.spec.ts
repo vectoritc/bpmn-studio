@@ -23,7 +23,8 @@ describe('Solution Explorer', () => {
     processModel = new ProcessModel();
     solutionExplorer = new SolutionExplorer();
 
-    processModelId = processModel.getProcessModelID();
+    // Get processModelId
+    processModelId = processModel.getProcessModelId();
 
     // Create a new process definition by POST REST call
     processModel.postProcessModel(processModelId);

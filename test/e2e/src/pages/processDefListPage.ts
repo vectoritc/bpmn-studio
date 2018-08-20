@@ -7,11 +7,11 @@ export class ProcessDefListPage {
   public processDefinitionListItem: ElementFinder = this.processDefinitionListItems.first();
 
   // Define Functions
-  public processDefinitionListItemIDs(processModelID: string): ElementArrayFinder {
-    return this.processDefinitionListItems.all(by.id('processDef-' + processModelID));
+  public processDefinitionListItemIds(processModelId: string): ElementArrayFinder {
+    return this.processDefinitionListItems.all(by.id('processDef-' + processModelId));
   }
-  public processModellDiagram(processModelID: string): ElementFinder {
-    return element(by.id('processDef-' + processModelID));
+  public processModellDiagram(processModelId: string): ElementFinder {
+    return element(by.id('processDef-' + processModelId));
   }
 
 }

@@ -7,14 +7,14 @@ export class SolutionExplorer {
   public solutionExplorerListItems: ElementArrayFinder = this.solutionExplorerTag.all(by.className('process-explorer__structure-item'));
 
   // Define Functions
-  public solutionExplorerListItemsId(processModelID: string): ElementFinder {
-    return this.solutionExplorerTag.element(by.id('processSolutionPanel-' + processModelID));
+  public solutionExplorerListItemsId(processModelId: string): ElementFinder {
+    return this.solutionExplorerTag.element(by.id('processSolutionPanel-' + processModelId));
   }
-  public solutionExplorerListItemsIds(processModelID: string): ElementArrayFinder {
-    return this.solutionExplorerListItems.all(by.id('processSolutionPanel-' + processModelID));
+  public solutionExplorerListItemsIds(processModelId: string): ElementArrayFinder {
+    return this.solutionExplorerListItems.all(by.id('processSolutionPanel-' + processModelId));
   }
-  public processModellDiagram(processModelID: string): ElementFinder {
-    return element(by.id('processSolutionPanel-' + processModelID));
+  public processModellDiagram(processModelId: string): ElementFinder {
+    return element(by.id('processSolutionPanel-' + processModelId));
   }
 
 }
