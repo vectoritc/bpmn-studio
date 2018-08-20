@@ -415,14 +415,14 @@ export class ProcessDefDetail {
           extensions.values = extensions.values.filter((value: IFormElement) => {
 
             const typeIsCamundaFormData: boolean = value.$type !== 'camunda:FormData';
-            const elementContainFields: boolean = ((): boolean => {
+            const elementContainsFields: boolean = ((): boolean => {
               const valueFieldsAreDefined: boolean = value.fields !== undefined;
               return (valueFieldsAreDefined)
                       ? (value.fields.length > 0)
                       : (false);
             })();
 
-            const keepThisValue: boolean = typeIsCamundaFormData || elementContainFields;
+            const keepThisValue: boolean = typeIsCamundaFormData || elementContainsFields;
             return keepThisValue;
           });
 
