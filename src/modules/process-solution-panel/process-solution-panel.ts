@@ -91,8 +91,6 @@ export class ProcessSolutionPanel {
       })
       .withMessage('A diagram with that name already exists.')
       .satisfies((input: string) => {
-        const alphanumericRegEx: RegExp = /^[a-z0-9äöüÄÖÜß]+$/i;
-        const inputIsAlphanumeric: boolean = input.match(alphanumericRegEx) !== null;
         const regExpList: any = {
           alphanumeric: /^[a-z0-9]+$/i,
           dutch: /^[àéëïĳ]+$/i,
@@ -134,8 +132,24 @@ export class ProcessSolutionPanel {
           otherLatinLetters: /^[āēīōūéñ]+$/i,
         };
 
+        const inputAsCharArray: Array<string> = input.split('');
 
-        return inputIsAlphanumeric;
+        for (const letter of inputAsCharArray) {
+          let letterIsInvalid: boolean = true;
+
+          for (const regEx in regExpList) {
+            if (letter.match(regExpList[regEx])) {
+              letterIsInvalid = false;
+              break;
+            }
+          }
+
+          if (letterIsInvalid) {
+            return false;
+          }
+        }
+
+        return true;
       })
       .withMessage('The diagram name must be alphanumeric');
 
