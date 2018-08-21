@@ -474,10 +474,12 @@ export class ProcessSolutionPanel {
     });
 
     if (containsInvalidCharacter) {
+      const documentationLink: string = 'https://www.process-engine.io/documentation/bpmn-studio/'
+                                      + 'components/solution-explorer/solution-explorer.html#valide-diagramm-namen';
+
       const infoMessage: string = 'The diagram name contains invalid characters. Please correct the name and try again.'
                                 + ` <a href="javascript:nodeRequire('open')`
-                                // tslint:disable-next-line
-                                + `('https://www.process-engine.io/documentation/bpmn-studio/components/solution-explorer/solution-explorer.html#valide-diagramm-namen')">`
+                                + `('${documentationLink}')">`
                                 +  'Click here to see which letters are valid.'
                                 +  '</a>';
       this._notificationService.showNotification(NotificationType.INFO, infoMessage);
