@@ -443,7 +443,7 @@ export class ProcessSolutionPanel {
 
     const processNameIsEmpty: boolean = processName.length === 0;
     if (processNameIsEmpty) {
-      this._notificationService.showNotification(NotificationType.INFO, 'Process model name cannot be empty.');
+      this._notificationService.showNotification(NotificationType.INFO, 'Process Model name must not be empty.');
 
       return;
     }
@@ -455,7 +455,8 @@ export class ProcessSolutionPanel {
 
     const diagramWithIdAlreadyExists: boolean = foundDiagram !== undefined;
     if (diagramWithIdAlreadyExists) {
-      this._notificationService.showNotification(NotificationType.INFO, 'A diagram with that name already exists.');
+      const infoMessage: string = 'A diagram with that name already exists, creating aborted. Please specify a different name.';
+      this._notificationService.showNotification(NotificationType.INFO, infoMessage);
 
       return;
     }
@@ -473,7 +474,7 @@ export class ProcessSolutionPanel {
     });
 
     if (containsInvalidCharacter) {
-      const infoMessage: string = 'The diagram name contains invalid characters. Please correct the name and save again.';
+      const infoMessage: string = 'The diagram name contains invalid characters. Please correct the name and try again.';
       this._notificationService.showNotification(NotificationType.INFO, infoMessage);
 
       return;
