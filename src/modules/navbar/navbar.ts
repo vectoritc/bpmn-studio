@@ -82,7 +82,6 @@ export class NavBar {
     this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
       this.containsUnsavedChanges = false;
     });
-
   }
 
   public detached(): void {
