@@ -80,6 +80,7 @@ export class ProcessSolutionPanel {
   private _dropBehaviour: EventListener;
   private _diagramValidationRegExpList: IUserInputValidationRule = {
     alphanumeric: /^[a-z0-9]/i,
+    specialCharacters: /^[._ -]/i,
     german: /^[äöüß]/i,
   };
   private _newDiagramNameValidator: FluentRuleCustomizer<IViewModelSolution, IViewModelSolution> = ValidationRules
