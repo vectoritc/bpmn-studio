@@ -76,7 +76,7 @@ export class AuthenticationService implements IAuthenticationService {
       this._logoutWindow.close();
       this._logoutWindow = null;
     }
-    this._user = null;
+    this._user = undefined;
     this._eventAggregator.publish(AuthenticationStateEvent.LOGOUT);
     this._router.navigate('/');
   }
