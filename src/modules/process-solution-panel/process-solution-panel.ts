@@ -99,8 +99,8 @@ export class ProcessSolutionPanel {
         const inputAsCharArray: Array<string> = input.split('');
 
         const containsNoInvalidCharacter: boolean = !inputAsCharArray.some((letter: string) => {
-          for (const regEx in this._diagramValidationRegExpList) {
-            if (letter.match(this._diagramValidationRegExpList[regEx]) !== null) {
+          for (const regExIndex in this._diagramValidationRegExpList) {
+            if (letter.match(this._diagramValidationRegExpList[regExIndex]) !== null) {
               return false;
             }
           }
@@ -464,8 +464,8 @@ export class ProcessSolutionPanel {
     const processNameAsCharArray: Array<string> = processName.split('');
 
     const containsInvalidCharacter: boolean = processNameAsCharArray.some((letter: string) => {
-      for (const regEx in this._diagramValidationRegExpList) {
-        if (letter.match(this._diagramValidationRegExpList[regEx]) !== null) {
+      for (const regExIndex in this._diagramValidationRegExpList) {
+        if (letter.match(this._diagramValidationRegExpList[regExIndex]) !== null) {
           return false;
         }
       }
