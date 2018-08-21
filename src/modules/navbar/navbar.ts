@@ -75,8 +75,8 @@ export class NavBar {
       this.showDiagramUploadButton = false;
     });
 
-    this._eventAggregator.subscribe(environment.events.diagramChange, () => {
-      this.containsUnsavedChanges = true;
+    this._eventAggregator.subscribe(environment.events.differsFromOriginal, (isDiagramChanged: boolean) => {
+      this.containsUnsavedChanges = isDiagramChanged;
     });
 
     this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
