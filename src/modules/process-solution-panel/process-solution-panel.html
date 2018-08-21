@@ -58,7 +58,7 @@
             <div class="solution-diagram-group__entry">
               <input ref="solution.createNewDiagramInput" type="text" value.bind="solution.currentDiagramInputValue & validateOnChange">
               <ul if.bind="solution.errors && solution.errors.length > 0">
-                <li class="solution-error-message" repeat.for="error of solution.errors">${error.message}</li>
+                <span class="solution-error-message" repeat.for="error of solution.errors">${error.message}</span>
               </ul>
             </div>
           </div>

@@ -111,8 +111,7 @@ export class ProcessSolutionPanel {
 
         return diagramNamePassesNameChecks;
       })
-      // TODO: Replace (LINK) with a link to the documentation, where the user can see how a valid name must look like
-      .withMessage('The diagram name did not pass the input validation. Please consult the manual for valid names (LINK).');
+      .withMessage('The diagram name did not pass the input validation. Please consult the manual for valid names.');
 
   constructor(eventAggregator: EventAggregator,
               router: Router,
@@ -475,7 +474,11 @@ export class ProcessSolutionPanel {
     });
 
     if (containsInvalidCharacter) {
-      const infoMessage: string = 'The diagram name contains invalid characters. Please correct the name and try again.';
+      const infoMessage: string = 'The diagram name contains invalid characters. Please correct the name and try again.'
+                                + ` <a href="javascript:nodeRequire('open')
+                                   ('https://www.process-engine.io/documentation/bpmn-studio/components/solution-explorer/solution-explorer.html')">
+                                   Click here to see which letters are valid.
+                                   </a>`;
       this._notificationService.showNotification(NotificationType.INFO, infoMessage);
 
       return;
