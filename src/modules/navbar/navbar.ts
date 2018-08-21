@@ -17,7 +17,7 @@ export class NavBar {
   public showStartButton: boolean = false;
   public disableSaveButton: boolean = false;
   public showDiagramUploadButton: boolean = false;
-  public containsUnsavedChanges: boolean = false;
+  public diagramContainsUnsavedChanges: boolean = false;
 
   private _router: Router;
   private _eventAggregator: EventAggregator;
@@ -78,11 +78,11 @@ export class NavBar {
       }),
 
       this._eventAggregator.subscribe(environment.events.differsFromOriginal, (isDiagramChanged: boolean) => {
-        this.containsUnsavedChanges = isDiagramChanged;
+        this.diagramContainsUnsavedChanges = isDiagramChanged;
       }),
 
       this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
-        this.containsUnsavedChanges = false;
+        this.diagramContainsUnsavedChanges = false;
       }),
     ];
   }
