@@ -143,6 +143,7 @@ export class AuthenticationService implements IAuthenticationService {
     if (isNotLoggedIn) {
       return this._getDummyAccessToken();
     }
+
     return this._user.access_token;
   }
 
