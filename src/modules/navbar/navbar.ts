@@ -1,7 +1,9 @@
-import {IDiagram} from '@process-engine/solutionexplorer.contracts';
-import {EventAggregator} from 'aurelia-event-aggregator';
+import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
 import {RouteConfig, Router} from 'aurelia-router';
+
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
+
 import {IEventFunction} from '../../contracts';
 import environment from '../../environment';
 
@@ -17,9 +19,11 @@ export class NavBar {
   public showStartButton: boolean = false;
   public disableSaveButton: boolean = false;
   public showDiagramUploadButton: boolean = false;
+  public diagramContainsUnsavedChanges: boolean = false;
 
   private _router: Router;
   private _eventAggregator: EventAggregator;
+  private _subscriptions: Array<Subscription>;
 
   constructor(router: Router, eventAggregator: EventAggregator) {
     this._router = router;
@@ -33,52 +37,69 @@ export class NavBar {
 
     document.addEventListener('click', this.dropdownClickListener);
 
-    this._eventAggregator.subscribe('router:navigation:complete', () => {
-      this._dertermineActiveRoute();
-    });
+    this._subscriptions = [
+      this._eventAggregator.subscribe('router:navigation:complete', () => {
+        this._dertermineActiveRoute();
+      }),
 
-    this._eventAggregator.subscribe(environment.events.navBar.showTools, (process: IDiagram) => {
-      this.showTools = true;
-      this.process = process;
-    });
+      this._eventAggregator.subscribe(environment.events.navBar.showTools, (process: IDiagram) => {
+        this.showTools = true;
+        this.process = process;
+      }),
 
-    this._eventAggregator.subscribe(environment.events.navBar.hideTools, () => {
-      this.showTools = false;
-    });
+      this._eventAggregator.subscribe(environment.events.navBar.hideTools, () => {
+        this.showTools = false;
+      }),
 
-    this._eventAggregator.subscribe(environment.events.navBar.updateProcess, (process: IDiagram) => {
-      this.process = process;
-    });
+      this._eventAggregator.subscribe(environment.events.navBar.updateProcess, (process: IDiagram) => {
+        this.process = process;
+      }),
 
-    this._eventAggregator.subscribe(environment.events.navBar.disableSaveButton, () => {
-      this.disableSaveButton = true;
-    });
+      this._eventAggregator.subscribe(environment.events.navBar.disableSaveButton, () => {
+        this.disableSaveButton = true;
+      }),
 
-    this._eventAggregator.subscribe(environment.events.navBar.enableSaveButton, () => {
-      this.disableSaveButton = false;
-    });
+      this._eventAggregator.subscribe(environment.events.navBar.enableSaveButton, () => {
+        this.disableSaveButton = false;
+      }),
 
-    this._eventAggregator.subscribe(environment.events.navBar.showStartButton, () => {
-      this.showStartButton = true;
-    });
+      this._eventAggregator.subscribe(environment.events.navBar.showStartButton, () => {
+        this.showStartButton = true;
+      }),
 
-    this._eventAggregator.subscribe(environment.events.navBar.hideStartButton, () => {
-      this.showStartButton = false;
-    });
+      this._eventAggregator.subscribe(environment.events.navBar.hideStartButton, () => {
+        this.showStartButton = false;
+      }),
 
-    this._eventAggregator.subscribe(environment.events.navBar.showDiagramUploadButton, () => {
-      this.showDiagramUploadButton = true;
-    });
+      this._eventAggregator.subscribe(environment.events.navBar.showDiagramUploadButton, () => {
+        this.showDiagramUploadButton = true;
+      }),
 
-    this._eventAggregator.subscribe(environment.events.navBar.hideDiagramUploadButton, () => {
-      this.showDiagramUploadButton = false;
-    });
+      this._eventAggregator.subscribe(environment.events.navBar.hideDiagramUploadButton, () => {
+        this.showDiagramUploadButton = false;
+      }),
+
+      this._eventAggregator.subscribe(environment.events.differsFromOriginal, (isDiagramChanged: boolean) => {
+        this.diagramContainsUnsavedChanges = isDiagramChanged;
+      }),
+
+      this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
+        this.diagramContainsUnsavedChanges = false;
+      }),
+    ];
   }
 
   public detached(): void {
     document.removeEventListener('click', this.dropdownClickListener);
+
+    this._disposeAllSubscriptions();
   }
 
+  private _disposeAllSubscriptions(): void {
+    this._subscriptions.forEach((subscription: Subscription) => {
+      subscription.dispose();
+    });
+  }
   public navigateBack(): void {
     this._router.navigateBack();
   }
