@@ -64,9 +64,9 @@ export class AuthenticationService implements IAuthenticationService {
     const signinResponse: Oidc.SigninResponse = new SigninResponse(urlFragment) as Oidc.SigninResponse;
     const user: User = new User(signinResponse);
 
-    const loginSuccessfull: boolean = user.access_token !== undefined;
+    const loginSuccessful: boolean = user.access_token !== undefined;
 
-    this._user = loginSuccessfull ? user : undefined;
+    this._user = loginSuccessful ? user : undefined;
 
     const identity: IIdentity = await this.getIdentity();
 
