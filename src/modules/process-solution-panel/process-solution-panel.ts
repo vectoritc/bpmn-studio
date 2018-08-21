@@ -476,7 +476,8 @@ export class ProcessSolutionPanel {
     if (containsInvalidCharacter) {
       const infoMessage: string = 'The diagram name contains invalid characters. Please correct the name and try again.'
                                 + ` <a href="javascript:nodeRequire('open')`
-                                + `('https://www.process-engine.io/documentation/bpmn-studio/components/solution-explorer/solution-explorer.html')">`
+                                // tslint:disable-next-line
+                                + `('https://www.process-engine.io/documentation/bpmn-studio/components/solution-explorer/solution-explorer.html#valide-diagramm-namen')">`
                                 +  'Click here to see which letters are valid.'
                                 +  '</a>';
       this._notificationService.showNotification(NotificationType.INFO, infoMessage);
