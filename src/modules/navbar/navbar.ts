@@ -1,7 +1,9 @@
-import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
 import {RouteConfig, Router} from 'aurelia-router';
+
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
+
 import {IEventFunction} from '../../contracts';
 import environment from '../../environment';
 
