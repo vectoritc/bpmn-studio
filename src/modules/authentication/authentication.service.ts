@@ -67,11 +67,7 @@ export class AuthenticationService implements IAuthenticationService {
     const loginSuccessfull: boolean = user !== undefined
                                    && user.access_token !== undefined;
 
-    if (loginSuccessfull) {
-      this._user = user;
-    } else {
-      this._user = undefined;
-    }
+    this._user = loginSuccessfull ? user : undefined;
 
     const identity: IIdentity = await this.getIdentity();
 
