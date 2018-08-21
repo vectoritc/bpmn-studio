@@ -99,7 +99,7 @@ export class ProcessSolutionPanel {
       .satisfies((input: string) => {
         const inputAsCharArray: Array<string> = input.split('');
 
-        const containsNoInvalidCharacter: boolean = !inputAsCharArray.some((letter: string) => {
+        const diagramNamePassesNameChecks: boolean = !inputAsCharArray.some((letter: string) => {
           for (const regExIndex in this._diagramValidationRegExpList) {
             if (letter.match(this._diagramValidationRegExpList[regExIndex]) !== null) {
               return false;
@@ -109,7 +109,7 @@ export class ProcessSolutionPanel {
           return true;
         });
 
-        return containsNoInvalidCharacter;
+        return diagramNamePassesNameChecks;
       })
       // TODO: Replace (LINK) with a link to the documentation, where the user can see how a valid name must look like
       .withMessage('The diagram name did not pass the input validation. Please consult the manual for valid names (LINK).');
