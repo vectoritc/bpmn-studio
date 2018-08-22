@@ -7,6 +7,7 @@ const isDev = require('electron-is-dev');
 const getPort = require('get-port');
 const fs = require('fs');
 const startProcessEngine = require('@process-engine/skeleton-electron');
+const {dialog} = require('electron');
 
 // If BPMN-Studio was opened by double-clicking a .bpmn file, then the
 // following code tells the frontend the name and content of that file;
@@ -267,6 +268,41 @@ Main._createMainWindow = function () {
 
   Main._window.on('closed', () => {
     Main._window = null;
+  });
+
+
+  Main._window.webContents.session.on('will-download', (event, downloadItem) => {
+    const defaultFilename = downloadItem.getFilename();
+
+    const fileTypeIndex = defaultFilename.lastIndexOf('.') + 1;
+    const fileExtension = defaultFilename.substring(fileTypeIndex);
+
+    const fileExtensionIsBPMN = fileExtension === 'bpmn';
+    const fileType = fileExtensionIsBPMN ? `BPMN (${fileExtension})` : `Image (${fileExtension})`;
+
+    const filename = dialog.showSaveDialog({
+      defaultPath: defaultFilename,
+      filters: [
+        {
+          name: fileType,
+          extensions: [fileExtension]
+        },
+        {
+          name: 'All Files',
+          extensions: ['*']
+        }
+      ]
+    });
+
+    const downloadCanceled = filename === undefined;
+
+    if (downloadCanceled) {
+      downloadItem.cancel();
+
+      return;
+    }
+
+    downloadItem.setSavePath(filename);
   });
 
   function setElectronMenubar() {
