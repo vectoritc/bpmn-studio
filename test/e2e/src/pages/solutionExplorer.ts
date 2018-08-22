@@ -49,4 +49,8 @@ export class SolutionExplorer {
     return solutionExplorerListItemsId.click();
   }
 
+  public openProcessModelByClick(processModelId: string): any {
+    return this.solutionExplorerListItemsId(processModelId).click();
+  }
+
 }
