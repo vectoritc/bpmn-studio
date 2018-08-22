@@ -37,7 +37,11 @@ export class AuthenticationService implements IAuthenticationService {
   }
 
   private async _initialize(): Promise<void> {
-    this._user = await this._openIdConnect.getUser();
+    const user: User = await this._openIdConnect.getUser();
+
+    const userIsNull: boolean = user === null;
+
+    this._user = userIsNull ? undefined : user;
   }
 
   public isLoggedIn(): boolean {
@@ -63,7 +67,11 @@ export class AuthenticationService implements IAuthenticationService {
   public async loginViaDeepLink(urlFragment: string): Promise<void> {
     const signinResponse: Oidc.SigninResponse = new SigninResponse(urlFragment) as Oidc.SigninResponse;
     const user: User = new User(signinResponse);
-    this._user = user;
+
+    const loginSuccessful: boolean = user.access_token !== undefined;
+
+    this._user = loginSuccessful ? user : undefined;
+
     const identity: IIdentity = await this.getIdentity();
 
     this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
@@ -76,7 +84,7 @@ export class AuthenticationService implements IAuthenticationService {
       this._logoutWindow.close();
       this._logoutWindow = null;
     }
-    this._user = null;
+    this._user = undefined;
     this._eventAggregator.publish(AuthenticationStateEvent.LOGOUT);
     this._router.navigate('/');
   }
@@ -139,9 +147,12 @@ export class AuthenticationService implements IAuthenticationService {
   }
 
   public getAccessToken(): string | null {
-    if (!this._user) {
+    const userIsNotLoggedIn: boolean = this._user === undefined;
+
+    if (userIsNotLoggedIn) {
       return this._getDummyAccessToken();
     }
+
     return this._user.access_token;
   }
 
