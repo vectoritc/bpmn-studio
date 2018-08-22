@@ -146,9 +146,8 @@ export class AuthenticationService implements IAuthenticationService {
   }
 
   public getAccessToken(): string | null {
-    const userIsNotLoggedIn: boolean = this._user === undefined
-                                || this._user === null
-                                || this._user.access_token === undefined;
+    const userIsNotLoggedIn: boolean = this._user === undefined;
+
     if (userIsNotLoggedIn) {
       return this._getDummyAccessToken();
     }
