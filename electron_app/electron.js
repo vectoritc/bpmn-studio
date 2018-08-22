@@ -273,7 +273,7 @@ Main._createMainWindow = function () {
 
   const platformIsWindows = process.platform === 'win32';
 
-  if(platformIsWindows) {
+  if (platformIsWindows) {
     Main._window.webContents.session.on('will-download', (event, downloadItem) => {
       const defaultFilename = downloadItem.getFilename();
 
