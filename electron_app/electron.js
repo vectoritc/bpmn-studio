@@ -298,7 +298,6 @@ Main._createMainWindow = function () {
       });
 
       const downloadCanceled = filename === undefined;
-
       if (downloadCanceled) {
         downloadItem.cancel();
 
