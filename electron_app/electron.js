@@ -271,39 +271,43 @@ Main._createMainWindow = function () {
   });
 
 
-  Main._window.webContents.session.on('will-download', (event, downloadItem) => {
-    const defaultFilename = downloadItem.getFilename();
+  const platformIsWindows = process.platform === 'win32';
 
-    const fileTypeIndex = defaultFilename.lastIndexOf('.') + 1;
-    const fileExtension = defaultFilename.substring(fileTypeIndex);
+  if(platformIsWindows) {
+    Main._window.webContents.session.on('will-download', (event, downloadItem) => {
+      const defaultFilename = downloadItem.getFilename();
 
-    const fileExtensionIsBPMN = fileExtension === 'bpmn';
-    const fileType = fileExtensionIsBPMN ? `BPMN (${fileExtension})` : `Image (${fileExtension})`;
+      const fileTypeIndex = defaultFilename.lastIndexOf('.') + 1;
+      const fileExtension = defaultFilename.substring(fileTypeIndex);
 
-    const filename = dialog.showSaveDialog({
-      defaultPath: defaultFilename,
-      filters: [
-        {
-          name: fileType,
-          extensions: [fileExtension]
-        },
-        {
-          name: 'All Files',
-          extensions: ['*']
-        }
-      ]
+      const fileExtensionIsBPMN = fileExtension === 'bpmn';
+      const fileType = fileExtensionIsBPMN ? `BPMN (${fileExtension})` : `Image (${fileExtension})`;
+
+      const filename = dialog.showSaveDialog({
+        defaultPath: defaultFilename,
+        filters: [
+          {
+            name: fileType,
+            extensions: [fileExtension]
+          },
+          {
+            name: 'All Files',
+            extensions: ['*']
+          }
+        ]
+      });
+
+      const downloadCanceled = filename === undefined;
+
+      if (downloadCanceled) {
+        downloadItem.cancel();
+
+        return;
+      }
+
+      downloadItem.setSavePath(filename);
     });
-
-    const downloadCanceled = filename === undefined;
-
-    if (downloadCanceled) {
-      downloadItem.cancel();
-
-      return;
-    }
-
-    downloadItem.setSavePath(filename);
-  });
+  }
 
   function setElectronMenubar() {
 
