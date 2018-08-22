@@ -39,7 +39,7 @@
       <!--Solutions-->
       <div class.bind="openedSingleDiagrams.length > 0 ? 'filesystem-solutions' : ''" if.bind="openedFileSystemSolutions.length > 0">
         <div class="process-explorer__heading">Opened Solutions</div>
-        <div repeat.for="solution of openedFileSystemSolutions">
+        <div repeat.for="solution of openedFileSystemSolutions" class="filesystem-solution">
           <div class="solution-group">
             <div class="solution-headline" title="${solution.name}">
               <i class="fa fa-folder-open"></i>
