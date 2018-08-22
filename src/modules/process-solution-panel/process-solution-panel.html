@@ -29,7 +29,7 @@
         </div>
       </div>
       <input class="single-diagram-input" ref="singleDiagramInput" type="file" change.delegate="onSingleDiagramInputChange($event)" id="singleFileInput" accept=".xml, application/xml, .bpmn, application/bpmn20-xml">
-      <div class="single-diagrams" if.bind="openedSingleDiagrams.length > 0">
+      <div if.bind="openedSingleDiagrams.length > 0">
         <div class="process-explorer__heading">Opened Diagrams</div>
         <div class="single-diagram-group" repeat.for="diagram of openedSingleDiagrams">
           <div class="single-diagram-group__link" click.delegate="navigateToDiagramDetail(diagram)" title="${diagram.name}">${diagram.name}</div>
