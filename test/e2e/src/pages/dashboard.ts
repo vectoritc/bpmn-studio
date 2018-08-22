@@ -1,4 +1,4 @@
-import {by, element, ElementArrayFinder, ElementFinder, promise} from 'protractor';
+import {by, element, ElementArrayFinder, ElementFinder} from 'protractor';
 
 export class Dashboard {
 
