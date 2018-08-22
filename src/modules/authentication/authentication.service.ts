@@ -40,6 +40,7 @@ export class AuthenticationService implements IAuthenticationService {
     const user: User = await this._openIdConnect.getUser();
 
     const userIsNull: boolean = user === null;
+
     this._user = userIsNull ? undefined : user;
   }
 
