@@ -78,7 +78,7 @@ export class ProcessSolutionPanel {
   private _identity: IIdentity;
   private _solutionExplorerIdentity: IIdentity;
   private _dropBehaviour: EventListener;
-  private _diagramValidationRegExpList: IUserInputValidationRuleset = {
+  private _diagramValidationRuleset: IUserInputValidationRuleset = {
     alphanumeric: /^[a-z0-9]/i,
     specialCharacters: /^[._ -]/i,
     german: /^[äöüß]/i,
@@ -100,8 +100,8 @@ export class ProcessSolutionPanel {
         const inputAsCharArray: Array<string> = input.split('');
 
         const diagramNamePassesNameChecks: boolean = !inputAsCharArray.some((letter: string) => {
-          for (const regExIndex in this._diagramValidationRegExpList) {
-            if (letter.match(this._diagramValidationRegExpList[regExIndex]) !== null) {
+          for (const regExIndex in this._diagramValidationRuleset) {
+            if (letter.match(this._diagramValidationRuleset[regExIndex]) !== null) {
               return false;
             }
           }
@@ -464,8 +464,8 @@ export class ProcessSolutionPanel {
     const processNameAsCharArray: Array<string> = processName.split('');
 
     const containsInvalidCharacter: boolean = processNameAsCharArray.some((letter: string) => {
-      for (const regExIndex in this._diagramValidationRegExpList) {
-        if (letter.match(this._diagramValidationRegExpList[regExIndex]) !== null) {
+      for (const regExIndex in this._diagramValidationRuleset) {
+        if (letter.match(this._diagramValidationRuleset[regExIndex]) !== null) {
           return false;
         }
       }
