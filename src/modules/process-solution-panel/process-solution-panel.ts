@@ -21,7 +21,7 @@ import {
   IDiagramValidationService,
   IFile,
   IInputEvent,
-  IUserInputValidationRule,
+  IUserInputValidationRuleset,
   NotificationType,
 } from '../../contracts/index';
 import environment from '../../environment';
@@ -78,7 +78,7 @@ export class ProcessSolutionPanel {
   private _identity: IIdentity;
   private _solutionExplorerIdentity: IIdentity;
   private _dropBehaviour: EventListener;
-  private _diagramValidationRegExpList: IUserInputValidationRule = {
+  private _diagramValidationRegExpList: IUserInputValidationRuleset = {
     alphanumeric: /^[a-z0-9]/i,
     specialCharacters: /^[._ -]/i,
     german: /^[äöüß]/i,

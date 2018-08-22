@@ -1,1 +1,1 @@
-export * from './IUserInputValidationRule';
+export * from './IUserInputValidationRuleset';
