@@ -1,3 +1,3 @@
-export interface IUserInputValidationRule {
+export interface IUserInputValidationRuleset {
   [name: string]: RegExp;
 }
