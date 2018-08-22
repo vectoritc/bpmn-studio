@@ -37,7 +37,10 @@ export class AuthenticationService implements IAuthenticationService {
   }
 
   private async _initialize(): Promise<void> {
-    this._user = await this._openIdConnect.getUser();
+    const user: User = await this._openIdConnect.getUser();
+
+    const userIsNull: boolean = user === null;
+    this._user = userIsNull ? undefined : user;
   }
 
   public isLoggedIn(): boolean {
