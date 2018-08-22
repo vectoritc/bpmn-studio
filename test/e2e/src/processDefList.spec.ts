@@ -35,6 +35,10 @@ describe('Process definition list', () => {
       browser.wait(expectedConditions.visibilityOf(general.getRouterViewContainer), defaultTimeoutMS);
       return general.getRouterViewContainer;
     });
+    browser.driver.wait(() => {
+      browser.wait(expectedConditions.visibilityOf(processDefListPage.processDefinitionListItem), defaultTimeoutMS);
+      return processDefListPage.processDefinitionListItem;
+    });
   });
 
   it('should contain at least process definitions.', () => {

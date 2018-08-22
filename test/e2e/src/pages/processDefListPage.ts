@@ -4,6 +4,7 @@ export class ProcessDefListPage {
 
   // Define Elements
   public processDefinitionListItems: ElementArrayFinder = element.all(by.className('process-definition-list-item'));
+  public processDefinitionListItem: ElementFinder = this.processDefinitionListItems.first();
 
   // Define Functions
   public processDefinitionListItemIDs(processModelID: string): ElementArrayFinder {
@@ -12,5 +13,4 @@ export class ProcessDefListPage {
   public processModellDiagram(processModelID: string): ElementFinder {
     return element(by.id('processDef-' + processModelID));
   }
-
 }
