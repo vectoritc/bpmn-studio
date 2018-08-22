@@ -17,4 +17,8 @@ export class SolutionExplorer {
     return element(by.id('processSolutionPanel-' + processModelId));
   }
 
+  public openProcessModelByClick(processModelId: string): any {
+    return this.solutionExplorerListItemsId(processModelId).click();
+  }
+
 }

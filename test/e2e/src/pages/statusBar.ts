@@ -12,5 +12,6 @@ export class StatusBar {
   public statusBarContainerLeft: ElementFinder = this.statusBarTag.element(by.id('statusBarLeft'));
   public statusBarContainerCenter: ElementFinder = this.statusBarTag.element(by.id('statusBarCenter'));
   public statusBarContainerRight: ElementFinder = this.statusBarTag.element(by.id('statusBarRight'));
+  public statusBarXMLViewButton: ElementFinder = this.statusBarTag.element(by.id('statusBarXMLViewButton'));
 
 }

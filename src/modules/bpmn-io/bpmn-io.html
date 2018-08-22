@@ -28,7 +28,7 @@
     -->
     <div class="bpmn-io-layout__main js-main">
       <div class="modeler" show.bind="!showXMLView && !showDiffView">
-        <div class="diagram">
+        <div class="diagram" id="bpmnIoDiagram">
           <div ref="canvasModel" class="canvasModel"></div>
         </div>
         <div class="properties" ref="propertyPanel" css="width: ${propertyPanelWidth}px; display: ${propertyPanelDisplay}; max-width: calc(100% - ${minCanvasWidth}px); min-width: ${minPropertyPanelWidth}px;">

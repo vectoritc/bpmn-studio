@@ -60,7 +60,7 @@ describe('Solution Explorer', () => {
   });
 
   it('should be possible to open a process diagram.', () => {
-    solutionExplorer.solutionExplorerListItemsId(processModelId).click().then(() => {
+    solutionExplorer.openProcessModelByClick(processModelId).then(() => {
       browser.getCurrentUrl().then((currentBrowserUrl: string) => {
         expect(currentBrowserUrl).toContain(processModel.getProcessModelLink());
       });
