@@ -41,6 +41,10 @@
   border-bottom: 2px solid #dcdbdb;
 }
 
+.filesystem-solution:last-child {
+  border-bottom: none;
+}
+
 .control-buttons {
   float: right;
 }
