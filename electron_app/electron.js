@@ -281,7 +281,7 @@ Main._createMainWindow = function () {
       const fileExtension = defaultFilename.substring(fileTypeIndex);
 
       const fileExtensionIsBPMN = fileExtension === 'bpmn';
-      const fileType = fileExtensionIsBPMN ? `BPMN (.${fileExtension})` : `Image (.${fileExtension})`;
+      const fileType = fileExtensionIsBPMN ? 'BPMN (.bpmn)' : `Image (.${fileExtension})`;
 
       const filename = dialog.showSaveDialog({
         defaultPath: defaultFilename,
