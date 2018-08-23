@@ -53,6 +53,7 @@ export class NavBar {
 
       this._eventAggregator.subscribe(environment.events.navBar.updateProcess, (process: IDiagram) => {
         this.process = process;
+        this.diagramContainsUnsavedChanges = false;
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.disableSaveButton, () => {
