@@ -189,7 +189,7 @@ Anschließend lässt sich das BPMN-Studio unter URL `http://localhost:17290` auf
 
 Die End-to-End-Tests werden mit Hilfe des [Protractor Frameworks](https://www.protractortest.org/#/) durchgeführt.
 
-**Hinweis:** Alle Befehle müssen inm geklonten Repository ausgeführt werden.
+**Hinweis:** Alle Befehle müssen im geklonten Repository ausgeführt werden.
 
 **Hinweis:** Aktuell schlagen einige Test fehl aufgrund eines Bugs in der Process Engine Runtime [#9](https://github.com/process-engine/process_engine_runtime/issues/9)
 
