@@ -1,6 +1,6 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
-import {Router} from 'aurelia-router';
+import {PipelineResult, Router} from 'aurelia-router';
 import {
   FluentRuleCustomizer,
   ValidateEvent,
@@ -342,12 +342,15 @@ export class ProcessSolutionPanel {
   }
 
   public async navigateToDiagramDetail(diagram: IDiagram): Promise<void> {
-    // We use any here, because navigateToRoute returns an object even though a boolean should be returned
-    const navigationResult: any = await this._router.navigateToRoute('diagram-detail', {
+    const navigationResult: boolean = await this._router.navigateToRoute('diagram-detail', {
       diagramUri: diagram.uri,
     });
 
-    const navigationSuccessful: boolean = navigationResult.completed;
+    // This is needed, because navigateToRoute returns an object even though a boolean should be returned
+    const navigationSuccessful: boolean = (typeof(navigationResult) === 'boolean')
+                                          ? navigationResult
+                                          : (navigationResult as PipelineResult).completed;
+
     if (navigationSuccessful) {
       this._eventAggregator.publish(environment.events.navBar.updateProcess, diagram);
     }
