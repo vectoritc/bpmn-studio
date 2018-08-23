@@ -342,6 +342,7 @@ export class ProcessSolutionPanel {
   }
 
   public async navigateToDiagramDetail(diagram: IDiagram): Promise<void> {
+    // We use any here, because navigateToRoute returns an object even though a boolean should be returned
     const navigationResult: any = await this._router.navigateToRoute('diagram-detail', {
       diagramUri: diagram.uri,
     });
