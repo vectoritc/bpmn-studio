@@ -21,7 +21,7 @@ import {
   IDiagramValidationService,
   IFile,
   IInputEvent,
-  IUserInputValidationRule,
+  IUserInputValidationRuleset,
   NotificationType,
 } from '../../contracts/index';
 import environment from '../../environment';
@@ -78,10 +78,10 @@ export class ProcessSolutionPanel {
   private _identity: IIdentity;
   private _solutionExplorerIdentity: IIdentity;
   private _dropBehaviour: EventListener;
-  private _diagramValidationRegExpList: IUserInputValidationRule = {
-    alphanumeric: /^[a-z0-9]/i,
+  private _diagramValidationRuleset: IUserInputValidationRuleset = {
+    alphanumericCharacters: /^[a-z0-9]/i,
     specialCharacters: /^[._ -]/i,
-    german: /^[äöüß]/i,
+    germanCharacters: /^[äöüß]/i,
   };
   private _newDiagramNameValidator: FluentRuleCustomizer<IViewModelSolution, IViewModelSolution> = ValidationRules
       .ensure((solution: IViewModelSolution) => solution.currentDiagramInputValue)
@@ -100,8 +100,8 @@ export class ProcessSolutionPanel {
         const inputAsCharArray: Array<string> = input.split('');
 
         const diagramNamePassesNameChecks: boolean = !inputAsCharArray.some((letter: string) => {
-          for (const regExIndex in this._diagramValidationRegExpList) {
-            if (letter.match(this._diagramValidationRegExpList[regExIndex]) !== null) {
+          for (const regExIndex in this._diagramValidationRuleset) {
+            if (letter.match(this._diagramValidationRuleset[regExIndex]) !== null) {
               return false;
             }
           }
@@ -471,8 +471,8 @@ export class ProcessSolutionPanel {
     const processNameAsCharArray: Array<string> = processName.split('');
 
     const containsInvalidCharacter: boolean = processNameAsCharArray.some((letter: string) => {
-      for (const regExIndex in this._diagramValidationRegExpList) {
-        if (letter.match(this._diagramValidationRegExpList[regExIndex]) !== null) {
+      for (const regExIndex in this._diagramValidationRuleset) {
+        if (letter.match(this._diagramValidationRuleset[regExIndex]) !== null) {
           return false;
         }
       }
