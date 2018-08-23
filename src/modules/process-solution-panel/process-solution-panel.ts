@@ -347,8 +347,8 @@ export class ProcessSolutionPanel {
       diagramUri: diagram.uri,
     });
 
-    const navigationSucessful: boolean = navigationResult.completed;
-    if (navigationSucessful) {
+    const navigationSuccessful: boolean = navigationResult.completed;
+    if (navigationSuccessful) {
       this._eventAggregator.publish(environment.events.navBar.updateProcess, diagram);
     }
   }
