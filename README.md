@@ -187,6 +187,12 @@ Anschließend lässt sich das BPMN-Studio unter URL `http://localhost:17290` auf
 
 ## End-to-End-Tests
 
+Die End-to-End-Tests werden mit Hilfe des [Protractor Frameworks](https://www.protractortest.org/#/) durchgeführt.
+
+**Hinweis:** Alle Befehle müssen inm geklonten Repository ausgeführt werden.
+
+**Hinweis:** Aktuell schlagen einige Test fehl aufgrund eines Bugs in der Process Engine Runtime [#9](https://github.com/process-engine/process_engine_runtime/issues/9)
+
 ### Vorraussetzungen
 
 Es werden folgende Pakete benötigt:
@@ -253,7 +259,7 @@ Ein weiteres Terminal öffnen und folgenden Befehl eingeben um den Selenium Serv
 npm run integration-test-init
 ```
 
-Die End-to-End tests können in einem weiteren Terminal mit folgendem Befehl gestartet werdeb:
+Die End-to-End tests können in einem weiteren Terminal mit folgendem Befehl gestartet werden:
 
 ```shell
 npm run integration-test
@@ -262,13 +268,13 @@ npm run integration-test
 ### Crossbrowser tests mit Docker
 [<img src="https://crossbrowsertesting.com/design/images/brand/cbt-sb-logo.svg" width="250px">](https://crossbrowsertesting.com)
 
-Initial müssen Environment Variablen mit Ihren Daten belegt werden:
+Initial müssen folgende Environment Variablen gesetzt werden:
 
 ```shell
-export CB_USER=""           # CrossBrowserTesting E-Mail address
+export CB_USER=""           # CrossBrowserTesting E-Mail Adresse
 export CB_KEY=""            # CrossBrowserTesting API Key
-export aureliaUrl=""        # Url or IP of VM and BPMN-Studio port f.e. http://1.1.1.1:9000
-export processEngineUrl=""  # Url or IP of VM and Process Engine port f.e. http://1.1.1.1:8000
+export aureliaUrl=""        # URL oder IP der VM + Port des BPMN-Studio; z.B.: http://1.1.1.1:9000
+export processEngineUrl=""  # URL oder IP der VM + Port der Process Engine; z.B.: http://1.1.1.1:8000
 ```
 
 Ein Terminal öffnen und das BPMN Studio auf der VM mit folgendem Befehl starten:
