@@ -14,6 +14,7 @@ import {
 import {
   AuthenticationStateEvent,
   IAuthenticationService,
+  IElementRegistry,
   IExtensionElement,
   IFormElement,
   IModdleElement,
@@ -402,7 +403,7 @@ export class ProcessDefDetail {
    * in the Property Panel, also split this into two methods and name them right.
    */
   private _dropInvalidFormData(): void {
-    const registry: Array<IShape> = this.bpmnio.modeler.get('elementRegistry');
+    const registry: IElementRegistry = this.bpmnio.modeler.get('elementRegistry');
 
     registry.forEach((element: IShape) => {
       if (element.type === 'bpmn:UserTask') {
@@ -412,7 +413,10 @@ export class ProcessDefDetail {
           const extensions: IExtensionElement = businessObj.extensionElements;
 
           extensions.values = extensions.values.filter((value: IFormElement) => {
-            const keepThisValue: boolean = value.$type !== 'camunda:FormData' || value.fields.length > 0;
+            const typeIsNotCamundaFormData: boolean = value.$type !== 'camunda:FormData';
+            const elementContainsFields: boolean = (value.fields !== undefined) && (value.fields.length > 0);
+
+            const keepThisValue: boolean = typeIsNotCamundaFormData || elementContainsFields;
             return keepThisValue;
           });
 
