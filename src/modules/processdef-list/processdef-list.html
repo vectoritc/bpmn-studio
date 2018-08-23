@@ -11,8 +11,8 @@
           <tr>
             <th>Process Name</th>
           </tr>
-          <tr repeat.for="process of allProcessModels" id="processDef">
-            <td class="process-name-table-entry" title="${process.id}" click.delegate="showDetails(process.id)">${process.id}</td>
+          <tr repeat.for="process of allProcessModels" class="process-definition-list-item">
+            <td class="process-name-table-entry" id="processDef-${process.id}" title="${process.id}" click.delegate="showDetails(process.id)">${process.id}</td>
           </tr>
         </table>
       </div>
