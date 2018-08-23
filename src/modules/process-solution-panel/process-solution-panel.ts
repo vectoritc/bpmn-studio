@@ -342,11 +342,14 @@ export class ProcessSolutionPanel {
   }
 
   public async navigateToDiagramDetail(diagram: IDiagram): Promise<void> {
-    this._eventAggregator.publish(environment.events.navBar.updateProcess, diagram);
-
-    this._router.navigateToRoute('diagram-detail', {
+    const navigationResult: any = await this._router.navigateToRoute('diagram-detail', {
       diagramUri: diagram.uri,
     });
+
+    const navigationSucessful: boolean = navigationResult.completed;
+    if (navigationSucessful) {
+      this._eventAggregator.publish(environment.events.navBar.updateProcess, diagram);
+    }
   }
 
   public showCreateDiagramInput(solution: IViewModelSolution): void {
