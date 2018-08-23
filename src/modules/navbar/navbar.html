@@ -10,16 +10,13 @@
       </div>
       <div class="menu__menu-tabbed-link"
       class.bind="activeRouteName === 'processdef-list' ? 'menu__menu-tabbed-link--active' : ''">
-        <a id="navbarPlanLink" class="menu-tabbed-link" route-href="route: processdef-list">Plan</a>
+        <a id="navbarPlanLink" class="menu-tabbed-link" route-href="route: processdef-list">Think</a>
       </div>
       <div class="menu__menu-tabbed-link" class.bind="activeRouteName === 'processdef-detail' || activeRouteName === 'diagram-detail' ? 'menu__menu-tabbed-link--active' : ''">
         <a id="navbarDesignLink" class="menu-tabbed-link menu-tabbed-link--disabled">Design</a>
       </div>
-      <div class="menu__menu-tabbed-link" class.bind="activeRouteName === 'publish' ? 'menu__menu-tabbed-link--active' : ''">
-        <a id="navbarPublishLink" class="menu-tabbed-link menu-tabbed-link--disabled">Publish</a>
-      </div>
-      <div class="menu__menu-tabbed-link" class.bind="activeRouteName === 'dashboard' ? 'menu__menu-tabbed-link--active' : ''">
-        <a id="navbarDashboardLink" class="menu-tabbed-link" route-href="route: dashboard">Dashboard</a>
+      <div class="menu__menu-tabbed-link" class.bind="activeRouteName === 'dashboard' || activeRouteName === 'heatmap' ? 'menu__menu-tabbed-link--active' : ''">
+        <a id="navbarDashboardLink" class="menu-tabbed-link" route-href="route: dashboard">Inspect</a>
       </div>
     </div>
     <div class="menu-bar__menu menu-bar__menu--center" id="navBarCenter">
