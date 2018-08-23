@@ -1,27 +1,64 @@
-import * as path from 'path';
-import {browser} from 'protractor';
-import {ProcessDefListPage} from './pages/processdef-list-page';
+import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
 
-describe('processDefList', () => {
+import {General} from './pages/general';
+import {ProcessDefListPage} from './pages/processDefListPage';
+import {ProcessModel} from './pages/processModel';
 
-  const defaultTimeoutMS: number = 2000;
-  const aureliaUrl: string = 'http://localhost:9000';
+describe('Process definition list', () => {
 
-  browser.driver.manage().deleteAllCookies();
-  browser.get(aureliaUrl);
+  let general: General;
+  let processDefListPage: ProcessDefListPage;
+  let processModel: ProcessModel;
 
-  it('should display process definitions', () => {
-    const processDefListPage: ProcessDefListPage = new ProcessDefListPage();
-    browser.get(aureliaUrl);
-    browser.sleep(defaultTimeout);
-    expect(processDefListPage.processDefs.count()).toBeGreaterThan(0);
+  let processModelId: string;
+
+  const aureliaUrl: string = browser.params.aureliaUrl;
+  const defaultTimeoutMS: number = browser.params.defaultTimeoutMS;
+
+  const expectedConditions: ProtractorExpectedConditions = protractor.ExpectedConditions;
+
+  beforeAll(() => {
+
+    general = new General();
+    processDefListPage = new ProcessDefListPage();
+    processModel = new ProcessModel();
+
+    processModelId = processModel.getProcessModelID();
+
+    // Create a new process definition by POST REST call
+    processModel.postProcessModel(processModelId);
   });
 
-  it('should navigate to details-view', () => {
-    const processDefListPage: ProcessDefListPage = new ProcessDefListPage();
-    processDefListPage.detailsButtons.first().click();
-    browser.sleep(defaultTimeoutMS);
-    expect(browser.getCurrentUrl()).toContain('detail');
+  beforeEach(() => {
+    browser.get(aureliaUrl + processModel.getProcessModelLink());
+    browser.driver.wait(() => {
+      browser.wait(expectedConditions.visibilityOf(general.getRouterViewContainer), defaultTimeoutMS);
+      return general.getRouterViewContainer;
+    });
+    browser.driver.wait(() => {
+      browser.wait(expectedConditions.visibilityOf(processDefListPage.processDefinitionListItem), defaultTimeoutMS);
+      return processDefListPage.processDefinitionListItem;
+    });
+  });
+
+  it('should contain at least process definitions.', () => {
+    processDefListPage.processDefinitionListItems.count().then((numberOfProcessDefinitions: number) => {
+      expect(numberOfProcessDefinitions).toBeGreaterThan(0);
+    });
+  });
+
+  it('should contain the just created process definition.', () => {
+    processDefListPage.processDefinitionListItemIDs(processModelId).count().then((numberOfProcessDefinitionsById: number) => {
+      expect(numberOfProcessDefinitionsById).toBe(1);
+    });
+  });
+
+  it('should be possible to open a process diagram.', () => {
+    processDefListPage.processModellDiagram(processModelId).click().then(() => {
+      browser.getCurrentUrl().then((currentBrowserUrl: string) => {
+        expect(currentBrowserUrl).toContain(processModel.getProcessModelLink());
+      });
+    });
   });
 
 });

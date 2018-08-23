@@ -31,7 +31,7 @@ function build(): NodeJS.ReadWriteStream {
 function e2e(): NodeJS.ReadWriteStream {
   return gulp.src(`${project.e2eTestRunner.dist}/**/*.js`)
     .pipe(protractor({
-      configFile: 'protractor.conf.js',
+      configFile: 'test/protractor.conf.js',
       args: ['--baseUrl', 'http://127.0.0.1:9000'],
     }))
     .on('end', () => {

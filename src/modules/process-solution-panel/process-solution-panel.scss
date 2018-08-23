@@ -27,13 +27,17 @@
   color: #5e5e5e;
 }
 
-
-.single-diagrams {
-  margin-bottom: 20px;
-}
-
 .filesystem-solutions {
   border-top: 2px solid #dcdbdb;
+}
+
+.filesystem-solution {
+  margin-bottom: 3px;
+  border-bottom: 2px solid #dcdbdb;
+}
+
+.filesystem-solution:last-child {
+  border-bottom: none;
 }
 
 .control-buttons {
@@ -62,10 +66,13 @@
 
 .process-explorer__heading {
   padding: 8px;
-  margin-bottom: 10px;
   cursor: default;
-  font-weight: 400;
+  font-weight: 500;
   color: #a5a5a5;
+}
+
+.process-explorer__main-heading {
+  margin-bottom: 10px;
 }
 
 .process-explorer__structure-item {

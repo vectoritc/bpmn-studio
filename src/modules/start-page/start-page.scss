@@ -1,5 +1,6 @@
 .start-page__container {
   text-align: center;
+  user-select: none;
 }
 
 .start-page__title {
@@ -11,4 +12,5 @@
 
 .start-page__icon {
   opacity: 0.1;
+  -webkit-user-drag: none;
 }

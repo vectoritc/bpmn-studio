@@ -1,8 +1,8 @@
 // TODO: Refactor the Process Definition List entirely
 //       The big issue with this file is: it is the main
-//       anchor for the studio; but it is not aaparent why.
+//       anchor for the studio; but it is not apparent why.
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {inject, observable} from 'aurelia-framework';
+import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
 import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/errors_ts';
@@ -15,9 +15,6 @@ import {NotificationService} from '../notification/notification.service';
 @inject(EventAggregator, Router,  'AuthenticationService', 'ManagementApiClientService', 'NotificationService')
 export class ProcessDefList {
 
-  @observable public currentPage: number = 1;
-  public pageSize: number = 10;
-  public totalItems: number;
   public allProcessModels: Array<ProcessModelExecution.ProcessModel>;
 
   private _authenticationService: IAuthenticationService;
@@ -106,12 +103,8 @@ export class ProcessDefList {
   }
 
   private async _getAllProcessModels(): Promise<void> {
-
     const processModelExecution: ProcessModelExecution.ProcessModelList = await this._managementApiClient.getProcessModels(this._managementContext);
-
     this.allProcessModels = processModelExecution.processModels;
-    this.totalItems = this.allProcessModels.length;
-
   }
 
   private get _managementContext(): ManagementContext {

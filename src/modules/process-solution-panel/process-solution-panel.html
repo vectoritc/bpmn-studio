@@ -13,10 +13,10 @@
 
     <!--FileSystem-->
     <div class="solution-explorer__filesystem" show.bind="fileSystemIndexCardIsActive && enableFileSystemSolutions">
-      <!--Single Diagrams-->
-      <div class="process-explorer__heading">
+      <div class="process-explorer__heading process-explorer__main-heading">
         Solution Explorer
         <div class="control-buttons">
+          <!--Single Diagrams-->
           <button ref="openSingleDiagramButton" class="control-buttons__open-single-file" click.delegate="singleDiagramInput.click()" title="Open a diagram">
             <i class="fas fa-file"></i>
           </button>
@@ -29,17 +29,17 @@
         </div>
       </div>
       <input class="single-diagram-input" ref="singleDiagramInput" type="file" change.delegate="onSingleDiagramInputChange($event)" id="singleFileInput" accept=".xml, application/xml, .bpmn, application/bpmn20-xml">
-      <div class="single-diagrams" if.bind="openedSingleDiagrams.length > 0">
+      <template if.bind="openedSingleDiagrams.length > 0">
         <div class="process-explorer__heading">Opened Diagrams</div>
         <div class="single-diagram-group" repeat.for="diagram of openedSingleDiagrams">
           <div class="single-diagram-group__link" click.delegate="navigateToDiagramDetail(diagram)" title="${diagram.name}">${diagram.name}</div>
           <div class="single-diagram-group__close" title="Close diagram"><i class="fas fa-times" click.delegate="closeSingleDiagram(diagram)"></i></div>
         </div>
-      </div>
+      </template>
       <!--Solutions-->
       <div class.bind="openedSingleDiagrams.length > 0 ? 'filesystem-solutions' : ''" if.bind="openedFileSystemSolutions.length > 0">
         <div class="process-explorer__heading">Opened Solutions</div>
-        <div repeat.for="solution of openedFileSystemSolutions">
+        <div repeat.for="solution of openedFileSystemSolutions" class="filesystem-solution">
           <div class="solution-group">
             <div class="solution-headline" title="${solution.name}">
               <i class="fa fa-folder-open"></i>
@@ -76,7 +76,7 @@
     <div class="solution-explorer__process-engine" if.bind="processEngineIndexCardIsActive">
       <div class="process-explorer__heading">Solution Explorer</div>
       <div repeat.for="diagram of openedProcessEngineSolution.diagrams" class="process-explorer__structure-item">
-        <a route-href="route: processdef-detail; params.bind: { processModelId: diagram.id }" title="${diagram.name}">${diagram.name}</a>
+        <a route-href="route: processdef-detail; params.bind: { processModelId: diagram.id }" id="processSolutionPanel-${diagram.id}" title="${diagram.name}">${diagram.name}</a>
       </div>
     </div>
   </div>

@@ -1,6 +1,6 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
-import {Router} from 'aurelia-router';
+import {PipelineResult, Router} from 'aurelia-router';
 import {
   FluentRuleCustomizer,
   ValidateEvent,
@@ -21,6 +21,7 @@ import {
   IDiagramValidationService,
   IFile,
   IInputEvent,
+  IUserInputValidationRuleset,
   NotificationType,
 } from '../../contracts/index';
 import environment from '../../environment';
@@ -77,6 +78,11 @@ export class ProcessSolutionPanel {
   private _identity: IIdentity;
   private _solutionExplorerIdentity: IIdentity;
   private _dropBehaviour: EventListener;
+  private _diagramValidationRuleset: IUserInputValidationRuleset = {
+    alphanumericCharacters: /^[a-z0-9]/i,
+    specialCharacters: /^[._ -]/i,
+    germanCharacters: /^[äöüß]/i,
+  };
   private _newDiagramNameValidator: FluentRuleCustomizer<IViewModelSolution, IViewModelSolution> = ValidationRules
       .ensure((solution: IViewModelSolution) => solution.currentDiagramInputValue)
       .displayName('Diagram name')
@@ -89,7 +95,23 @@ export class ProcessSolutionPanel {
 
         return diagramWithIdDoesNotExists;
       })
-      .withMessage('A diagram with that name already exists.');
+      .withMessage('A diagram with that name already exists.')
+      .satisfies((input: string) => {
+        const inputAsCharArray: Array<string> = input.split('');
+
+        const diagramNamePassesNameChecks: boolean = !inputAsCharArray.some((letter: string) => {
+          for (const regExIndex in this._diagramValidationRuleset) {
+            if (letter.match(this._diagramValidationRuleset[regExIndex]) !== null) {
+              return false;
+            }
+          }
+
+          return true;
+        });
+
+        return diagramNamePassesNameChecks;
+      })
+      .withMessage('The diagram name did not pass the input validation. Please consult the manual for valid names.');
 
   constructor(eventAggregator: EventAggregator,
               router: Router,
@@ -320,11 +342,18 @@ export class ProcessSolutionPanel {
   }
 
   public async navigateToDiagramDetail(diagram: IDiagram): Promise<void> {
-    this._eventAggregator.publish(environment.events.navBar.updateProcess, diagram);
-
-    this._router.navigateToRoute('diagram-detail', {
+    const navigationResult: boolean = await this._router.navigateToRoute('diagram-detail', {
       diagramUri: diagram.uri,
     });
+
+    // This is needed, because navigateToRoute returns an object even though a boolean should be returned
+    const navigationSuccessful: boolean = (typeof(navigationResult) === 'boolean')
+                                          ? navigationResult
+                                          : (navigationResult as PipelineResult).completed;
+
+    if (navigationSuccessful) {
+      this._eventAggregator.publish(environment.events.navBar.updateProcess, diagram);
+    }
   }
 
   public showCreateDiagramInput(solution: IViewModelSolution): void {
@@ -421,7 +450,7 @@ export class ProcessSolutionPanel {
 
     const processNameIsEmpty: boolean = processName.length === 0;
     if (processNameIsEmpty) {
-      this._notificationService.showNotification(NotificationType.ERROR, 'Process model name cannot be empty.');
+      this._notificationService.showNotification(NotificationType.INFO, 'Process Model name must not be empty.');
 
       return;
     }
@@ -433,7 +462,34 @@ export class ProcessSolutionPanel {
 
     const diagramWithIdAlreadyExists: boolean = foundDiagram !== undefined;
     if (diagramWithIdAlreadyExists) {
-      this._notificationService.showNotification(NotificationType.ERROR, 'A diagram with that name already exists.');
+      const infoMessage: string = 'A diagram with that name already exists, creating aborted. Please specify a different name.';
+      this._notificationService.showNotification(NotificationType.INFO, infoMessage);
+
+      return;
+    }
+
+    const processNameAsCharArray: Array<string> = processName.split('');
+
+    const containsInvalidCharacter: boolean = processNameAsCharArray.some((letter: string) => {
+      for (const regExIndex in this._diagramValidationRuleset) {
+        if (letter.match(this._diagramValidationRuleset[regExIndex]) !== null) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+
+    if (containsInvalidCharacter) {
+      const documentationLink: string = 'https://www.process-engine.io/documentation/bpmn-studio/'
+                                      + 'components/solution-explorer/solution-explorer.html#valide-diagramm-namen';
+
+      const infoMessage: string = 'The diagram name contains invalid characters. Please correct the name and try again.'
+                                + ` <a href="javascript:nodeRequire('open')`
+                                + `('${documentationLink}')">`
+                                +  'Click here to see which letters are valid.'
+                                +  '</a>';
+      this._notificationService.showNotification(NotificationType.INFO, infoMessage);
 
       return;
     }
