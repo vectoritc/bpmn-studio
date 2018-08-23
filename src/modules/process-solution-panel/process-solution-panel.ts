@@ -79,9 +79,9 @@ export class ProcessSolutionPanel {
   private _solutionExplorerIdentity: IIdentity;
   private _dropBehaviour: EventListener;
   private _diagramValidationRuleset: IUserInputValidationRuleset = {
-    alphanumeric: /^[a-z0-9]/i,
+    alphanumericCharacters: /^[a-z0-9]/i,
     specialCharacters: /^[._ -]/i,
-    german: /^[äöüß]/i,
+    germanCharacters: /^[äöüß]/i,
   };
   private _newDiagramNameValidator: FluentRuleCustomizer<IViewModelSolution, IViewModelSolution> = ValidationRules
       .ensure((solution: IViewModelSolution) => solution.currentDiagramInputValue)
