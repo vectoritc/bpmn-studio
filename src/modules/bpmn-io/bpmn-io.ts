@@ -303,6 +303,8 @@ export class BpmnIo {
     document.removeEventListener('keydown', this._saveHotkeyEventHandler);
     document.removeEventListener('keydown', this._printHotkeyEventHandler);
 
+    this._eventAggregator.publish(environment.events.disableColorPicker);
+
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
