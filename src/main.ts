@@ -62,6 +62,7 @@ export function configure(aurelia: Aurelia): void {
      * EventAggregator and AuthenticationService.
      */
     .feature('modules/solution-explorer-services')
+    .feature('modules/inspect-correlation')
     .feature('modules/diagram-creation-service')
     .feature('modules/heatmap')
     .plugin('aurelia-bootstrap')

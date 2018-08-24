@@ -259,7 +259,6 @@ export class NavBar {
         diagramUri: this.process.uri,
       });
     }
-
   }
 
   public toggleSolutionExplorer(): void {
