@@ -73,7 +73,8 @@ export class DiagramDetail {
 
   public attached(): void {
     this._eventAggregator.publish(environment.events.navBar.showTools, this.diagram);
-    this._eventAggregator.publish(environment.events.navBar.showDiagramUploadButton);
+    this._eventAggregator.publish(environment.events.navBar.enableDiagramUploadButton);
+    this._eventAggregator.publish(environment.events.navBar.disableStartButton);
 
     this._eventAggregator.publish(environment.events.statusBar.showDiagramViewButtons);
 
@@ -137,7 +138,8 @@ export class DiagramDetail {
     }
 
     this._eventAggregator.publish(environment.events.navBar.hideTools);
-    this._eventAggregator.publish(environment.events.navBar.hideDiagramUploadButton);
+    this._eventAggregator.publish(environment.events.navBar.disableDiagramUploadButton);
+    this._eventAggregator.publish(environment.events.navBar.enableStartButton);
 
     this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
   }
