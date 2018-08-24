@@ -1,7 +1,7 @@
 import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
 
 import {BpmnIo} from './pages/bpmn-io';
-import {BpmnXmlView} from './pages/bpmn-xml-view';
+import {BpmnXmlView} from './pages/bpmnXmlView';
 import {General} from './pages/general';
 import {NavBar} from './pages/navbar';
 import {ProcessModel} from './pages/processModel';
