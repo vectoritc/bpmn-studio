@@ -40,13 +40,13 @@ export default {
     navBar: {
       showTools: 'navbar:tools:show',
       hideTools: 'navbar:tools:hide',
-      showStartButton: 'navbar:startButton:show',
-      hideStartButton: 'navbar:startButton:hide',
+      disableStartButton: 'navbar:startButton:disable',
+      enableStartButton: 'navbar:startButton:enable',
       updateProcess: 'navbar:process:update',
       disableSaveButton: 'navbar:saveButton:disable',
       enableSaveButton: 'navbar:saveButton:enable',
-      showDiagramUploadButton: 'navbar:diagramUploadButton:show',
-      hideDiagramUploadButton: 'navbar:diagramUploadButton:hide',
+      disableDiagramUploadButton: 'navbar:diagramUploadButton:disable',
+      enableDiagramUploadButton: 'navbar:diagramUploadButton:enable',
     },
     processDefDetail: {
       printDiagram: 'processdefdetail:diagram:print',
