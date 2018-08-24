@@ -3,7 +3,7 @@ import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
 import {Settings} from './pages/settings';
 import {StatusBar} from './pages/statusBar';
 
-describe('Status bar', () => {
+fdescribe('Status bar', () => {
   let settings: Settings;
   let statusBar: StatusBar;
 
@@ -26,7 +26,7 @@ describe('Status bar', () => {
     });
   });
 
-  it('should display.', () => {
+  fit('should display.', () => {
     statusBar.statusBarTag.isDisplayed().then((statusBarIsDisplayed: boolean) => {
       expect(statusBarIsDisplayed).toBeTruthy();
     });

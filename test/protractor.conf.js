@@ -4,10 +4,25 @@ exports.config = {
   multiCapabilities: [
     {
       browserName: 'chrome',
+      chromeOptions: { 
+        args: [ 
+          "--headless", 
+          "--disable-gpu", 
+          "--window-size=1920,1080"] }
+    }, {
+      browserName: 'chrome',
+      chromeOptions: { 
+        args: [ 
+          "--window-size=1920,1080"] }
+    }, {
+      browserName: 'safari',
+      safariOptions: { 
+        args: [ 
+          "--window-size=1920,1200"] }
     },
   ],
 
-  maxSessions: 4,
+  maxSessions: 1,
 
   seleniumAddress: 'http://0.0.0.0:4444/wd/hub',
   specs: ['test/e2e/dist/*.js'],
