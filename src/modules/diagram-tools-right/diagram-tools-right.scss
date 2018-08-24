@@ -23,6 +23,11 @@
   color: black;
 }
 
+.tool:disabled {
+  opacity: 0.2;
+  cursor: default;
+}
+
 .open .tool {
   color: black;
   box-shadow: none !important; //Overwrite Bootstrap btn-group class combination
