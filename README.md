@@ -191,7 +191,7 @@ Die End-to-End-Tests werden mit Hilfe des [Protractor Frameworks](https://www.pr
 
 **Hinweis:** Alle Befehle müssen im geklonten Repository ausgeführt werden.
 
-**Hinweis:** Aktuell schlagen einige Test fehl aufgrund eines Bugs in der Process Engine Runtime [#9](https://github.com/process-engine/process_engine_runtime/issues/9)
+**Hinweis:** Aktuell schlagen einige Tests fehl aufgrund eines Bugs in der ProcessEngine [#9](https://github.com/process-engine/process_engine_runtime/issues/9)
 
 ### Vorraussetzungen
 
@@ -201,18 +201,18 @@ Allgemein:
 * [Java Development Kit](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
 * [Chrome](https://www.google.com/intl/de_ALL/chrome/)
 
-Nur bei lokalen tests:
+Nur bei lokalen Tests:
 * [Process Engine](https://www.npmjs.com/package/@process-engine/process_engine_runtime)
 
-Nur bei lokalen tests mit Docker:
+Nur bei lokalen Tests mit Docker:
 * Docker
 
 Nur bei CrossBrowserTesting:
 * VM oder vergleichbares mit öffentlicher IP
 * Docker
-* CrossBrowserTesting account
+* CrossBrowserTesting Account
 
-### Lokale tests ohne Docker
+### Lokale Tests ohne Docker
 
 Initial müssen folgende Befehle in einem Terminal ausgeführt werden:
 
@@ -227,13 +227,13 @@ Der Webservice kann mit folgendem Befehl gestartet werden:
 npm start -- --port=9000
 ```
 
-Ein weiteres Terminal öffnen und folgenden Befehl eingeben um die Process Engine Runtime zu starten:
+Ein weiteres Terminal öffnen und folgenden Befehl eingeben, um die ProcessEngine zu starten:
 
 ```shell
 process-engine
 ```
 
-Ein weiteres Terminal öffnen und folgenden Befehl eingeben um den Selenium Server zu starten:
+Ein weiteres Terminal öffnen und folgenden Befehl eingeben, um den Selenium Server zu starten:
 
 ```shell
 npm run integration-test-init
@@ -245,21 +245,21 @@ Die End-to-End tests können in einem weiteren Terminal mit folgendem Befehl ges
 npm run integration-test
 ```
 
-### Lokale tests mit Docker
+### Lokale Tests mit Docker
 
-Ein Terminal öffnen und das BPMN Studio mit folgendem Befehl starten:
+Ein Terminal öffnen und das BPMN-Studio mit folgendem Befehl starten:
 
 ```shell
 docker run -p 8000:8000 -p 9000:9000 5minds/bpmn-studio-bundle:latest
 ```
 
-Ein weiteres Terminal öffnen und folgenden Befehl eingeben um den Selenium Server zu starten:
+Ein weiteres Terminal öffnen und folgenden Befehl eingeben, um den Selenium Server zu starten:
 
 ```shell
 npm run integration-test-init
 ```
 
-Die End-to-End tests können in einem weiteren Terminal mit folgendem Befehl gestartet werden:
+Die End-to-End Tests können in einem weiteren Terminal mit folgendem Befehl gestartet werden:
 
 ```shell
 npm run integration-test
@@ -268,22 +268,22 @@ npm run integration-test
 ### Crossbrowser tests mit Docker
 [<img src="https://crossbrowsertesting.com/design/images/brand/cbt-sb-logo.svg" width="250px">](https://crossbrowsertesting.com)
 
-Initial müssen folgende Environment Variablen gesetzt werden:
+Initial müssen folgende Umgebungsvariablen gesetzt werden:
 
 ```shell
 export CB_USER=""           # CrossBrowserTesting E-Mail Adresse
 export CB_KEY=""            # CrossBrowserTesting API Key
 export aureliaUrl=""        # URL oder IP der VM + Port des BPMN-Studio; z.B.: http://1.1.1.1:9000
-export processEngineUrl=""  # URL oder IP der VM + Port der Process Engine; z.B.: http://1.1.1.1:8000
+export processEngineUrl=""  # URL oder IP der VM + Port der ProcessEngine; z.B.: http://1.1.1.1:8000
 ```
 
-Ein Terminal öffnen und das BPMN Studio auf der VM mit folgendem Befehl starten:
+Ein Terminal öffnen und das BPMN-Studio auf der VM mit folgendem Befehl starten:
 
 ```shell
 docker run -p 8000:8000 -p 9000:9000 5minds/bpmn-studio-bundle:latest
 ```
 
-Ein Terminal auf dem lokalen Computer öffnen und mit folgenden Befehl die CrossBrowserTesting tests starten:
+Ein Terminal auf dem lokalen Computer öffnen und mit folgenden Befehl die CrossBrowserTesting Tests starten:
 
 ```shell
 npm run crossbrowser-test
