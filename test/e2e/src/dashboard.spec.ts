@@ -14,7 +14,8 @@ describe('Dashboard view', () => {
 
   const aureliaUrl: string = browser.params.aureliaUrl;
   const defaultTimeoutMS: number = browser.params.defaultTimeoutMS;
-  const taskListTimeoutMS: number = defaultTimeoutMS + defaultTimeoutMS;
+  // tslint:disable-next-line:no-magic-numbers
+  const taskListTimeoutMS: number = 2 * defaultTimeoutMS;
 
   const expectedConditions: ProtractorExpectedConditions = protractor.ExpectedConditions;
 
@@ -23,7 +24,6 @@ describe('Dashboard view', () => {
     general = new General();
     processModel = new ProcessModel();
 
-    // Get processModelId
     processModelId = processModel.getProcessModelId();
 
     // Create a new process definition by POST REST call
@@ -62,38 +62,44 @@ describe('Dashboard view', () => {
   });
 
   it('should contain recently started process in running section.', () => {
+    const correlationId: string = processModel.getCorrelationId();
+
     browser.driver.wait(() => {
-      browser.wait(expectedConditions.visibilityOf(dashboard.firstProcessRunningListItemsById(processModel.getCorrelationId())), defaultTimeoutMS);
-      return dashboard.firstProcessRunningListItemsById(processModel.getCorrelationId());
+      browser.wait(expectedConditions.visibilityOf(dashboard.firstProcessRunningListItemsById(correlationId)), defaultTimeoutMS);
+      return dashboard.firstProcessRunningListItemsById(correlationId);
     });
 
-    dashboard.countOfProcessRunningListItemsByCorrelationId(processModel.getCorrelationId()).then((countOfProcessRunningListItems: number) => {
+    dashboard.countOfProcessRunningListItemsByCorrelationId(correlationId).then((countOfProcessRunningListItems: number) => {
       expect(countOfProcessRunningListItems).toBe(1);
     });
   });
 
   it('should be possible to open process model by click on hyperlink in table.', () => {
+    const correlationId: string = processModel.getCorrelationId();
+
     browser.driver.wait(() => {
       browser.wait(expectedConditions.visibilityOf(
-        dashboard.hyperlinkOfProcessRunningListItemByCorrelationId(processModel.getCorrelationId())), defaultTimeoutMS);
-      return dashboard.hyperlinkOfProcessRunningListItemByCorrelationId(processModel.getCorrelationId());
+        dashboard.hyperlinkOfProcessRunningListItemByCorrelationId(correlationId)), defaultTimeoutMS);
+      return dashboard.hyperlinkOfProcessRunningListItemByCorrelationId(correlationId);
     });
-    dashboard.openProcessModelByClickOnModelIdInProcessRunningList(processModel.getCorrelationId()).then(() => {
+    dashboard.openProcessModelByClickOnModelIdInProcessRunningList(correlationId).then(() => {
       browser.getCurrentUrl().then((currentBrowserUrl: string) => {
-        expect(currentBrowserUrl).toContain(processModel.processModelUrl(processModel.getProcessModelId()));
+        expect(currentBrowserUrl).toContain(processModel.processModelUrl(correlationId));
       });
     });
   });
 
   it('should be possible to open user tasks by click on hyperlink in table.', () => {
+    const correlationId: string = processModel.getCorrelationId();
+
     browser.driver.wait(() => {
       browser.wait(expectedConditions.visibilityOf(
-        dashboard.hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId(processModel.getCorrelationId())), defaultTimeoutMS);
-      return dashboard.hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId(processModel.getCorrelationId());
+        dashboard.hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId(correlationId)), defaultTimeoutMS);
+      return dashboard.hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId(correlationId);
     });
-    dashboard.openUserTasksByClickOnModelIdInProcessRunningList(processModel.getCorrelationId()).then(() => {
+    dashboard.openUserTasksByClickOnModelIdInProcessRunningList(correlationId).then(() => {
       browser.getCurrentUrl().then((currentBrowserUrl: string) => {
-        expect(currentBrowserUrl).toContain(processModel.userTasksUrl(processModel.getProcessModelId()));
+        expect(currentBrowserUrl).toContain(processModel.userTasksUrl(processModelId));
       });
     });
   });
