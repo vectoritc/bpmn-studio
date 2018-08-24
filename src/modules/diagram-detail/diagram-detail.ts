@@ -198,6 +198,7 @@ export class DiagramDetail {
 
       // Since a new processmodel was uploaded, we need to refresh any processmodel lists.
       this._eventAggregator.publish(environment.events.refreshProcessDefs);
+      this._eventAggregator.publish(environment.events.processSolutionPanel.openProcessEngineIndexCard);
     } catch (error) {
       this._notificationService
           .showNotification(NotificationType.ERROR, `Unable to update diagram: ${error}.`);

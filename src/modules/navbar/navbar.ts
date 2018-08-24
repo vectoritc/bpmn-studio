@@ -101,6 +101,7 @@ export class NavBar {
       subscription.dispose();
     });
   }
+
   public navigateBack(): void {
     this._router.navigateBack();
   }

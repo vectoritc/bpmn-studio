@@ -242,6 +242,9 @@ export class ProcessSolutionPanel {
       this._eventAggregator.subscribe(environment.events.refreshProcessDefs, () => {
         this._refreshProcesslist();
       }),
+      this._eventAggregator.subscribe(environment.events.processSolutionPanel.openProcessEngineIndexCard, () => {
+        this.openProcessEngineIndexCard();
+      }),
     ];
   }
 
