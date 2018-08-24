@@ -191,7 +191,7 @@ Die End-to-End-Tests werden mit Hilfe des [Protractor Frameworks](https://www.pr
 
 **Hinweis:** Alle Befehle müssen im geklonten Repository ausgeführt werden.
 
-**Hinweis:** Aktuell schlagen einige Tests fehl aufgrund eines Bugs in der ProcessEngine [#9](https://github.com/process-engine/process_engine_runtime/issues/9)
+**Hinweis:** Aufgrund eines [Fehlers](https://github.com/process-engine/process_engine_runtime/issues/9) innerhalb der ProcessEngine Runtime, schlagen aktuell einige Tests fehl.
 
 ### Vorraussetzungen
 
