@@ -23,7 +23,13 @@
   color: black;
 }
 
-.tool:disabled {
+.tool--disabled {
+  opacity: 0.2;
+  cursor: default;
+}
+
+.tool--disabled:hover {
+  color: darkgray;
   opacity: 0.2;
   cursor: default;
 }
