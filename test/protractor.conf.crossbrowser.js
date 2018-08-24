@@ -1,6 +1,6 @@
 exports.config = {
 
-  seleniumAddress: 'http://' + process.env.CB_USER +':'+ process.env.CB_KEY +'@hub.crossbrowsertesting.com:80/wd/hub',
+  seleniumAddress: `http://${process.env.CB_USER}:${process.env.CB_KEY}@hub.crossbrowsertesting.com:80/wd/hub`,
   sessionId: null,
 
   multiCapabilities : [{
@@ -28,7 +28,7 @@ exports.config = {
   params: {
       aureliaUrl: process.env.aureliaUrl,
       processEngineUrl: process.env.processEngineUrl,
-      defaultTimeoutMS: number = 30000
+      defaultTimeoutMS: number = 30000,
   },
 
   specs: ['test/e2e/dist/*.js'],
@@ -41,15 +41,15 @@ exports.config = {
 
   jasmineNodeOpts: {
     showColors: true,
-    defaultTimeoutInterval: 30000
+    defaultTimeoutInterval: 30000,
   },
 
   onPrepare: function() {
     beforeAll(() => {
       browser.driver.getSession().then(function(session) {
         this.sessionId = session.id_; //need for API calls
-        console.log('Session ID: ', sessionId); 
-        console.log('See your test run at: https://app.crossbrowsertesting.com/selenium/' + sessionId);
+        console.log(`Session ID:  ${sessionId}`);
+        console.log(`See your test run at: https://app.crossbrowsertesting.com/selenium/${sessionId}`);
       });
     });
     afterEach(() => {

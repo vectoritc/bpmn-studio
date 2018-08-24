@@ -8,17 +8,20 @@ exports.config = {
         args: [ 
           "--headless", 
           "--disable-gpu", 
-          "--window-size=1920,1080"] }
+          "--window-size=1920,1080"
+        ] }
     }, {
       browserName: 'chrome',
       chromeOptions: { 
         args: [ 
-          "--window-size=1920,1080"] }
+          "--window-size=1920,1080"
+        ] }
     }, {
       browserName: 'safari',
       safariOptions: { 
         args: [ 
-          "--window-size=1920,1200"] }
+          "--window-size=1920,1200"
+        ] }
     },
   ],
 
