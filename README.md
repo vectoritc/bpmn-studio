@@ -265,7 +265,7 @@ Die End-to-End Tests können in einem weiteren Terminal mit folgendem Befehl ges
 npm run integration-test
 ```
 
-### Crossbrowser tests mit Docker
+### Crossbrowser Tests mit Docker
 [<img src="https://crossbrowsertesting.com/design/images/brand/cbt-sb-logo.svg" width="250px">](https://crossbrowsertesting.com)
 
 Initial müssen folgende Umgebungsvariablen gesetzt werden:
