@@ -69,7 +69,7 @@ export class WaitingRoom {
       if (noUserTaskFound && correlationIsStillActive) {
         this._startPolling();
       }
-    }, environment.processengine.pollingIntervalInMs);
+    }, environment.processengine.waitingRoomPollingIntervalInMs);
   }
 
   private _stopPolling(): void {

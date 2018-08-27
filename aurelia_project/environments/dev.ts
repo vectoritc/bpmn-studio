@@ -17,7 +17,8 @@ export default {
     authority: 'http://localhost:5000',
   },
   processengine: {
-    pollingIntervalInMs: 200,
+    waitingRoomPollingIntervalInMs: 200,
+    processModelPollingIntervalInMs: 1500,
     routes: {
       processes: `${processEngineRoute}/datastore/ProcessDef`,
       startProcess: `${processEngineRoute}/processengine/start`,
