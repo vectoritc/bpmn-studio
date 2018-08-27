@@ -121,8 +121,8 @@ export class BpmnIo {
     /**
      * Subscribe to the "commandStack.elements.move.postExecute" event.
      *
-     * This is needed because otherwise the colorpicker keeps disabled if
-     * the user directly drags around an element after he clicked at a Collaboration.
+     * This is needed because otherwise the colorpicker stays disabled if the
+     * user directly drags around an element after he clicked at a Collaboration.
      */
     this.modeler.on('commandStack.elements.move.postExecute', (event: IEvent) => {
       this._eventAggregator.publish(environment.events.enableColorPicker);
