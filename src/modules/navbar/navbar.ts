@@ -16,9 +16,9 @@ export class NavBar {
   public dropdown: HTMLElement;
   public solutionExplorerIsActive: boolean = true;
   public showTools: boolean = false;
-  public showStartButton: boolean = false;
+  public disableStartButton: boolean = true;
   public disableSaveButton: boolean = false;
-  public showDiagramUploadButton: boolean = false;
+  public disableDiagramUploadButton: boolean = true;
   public diagramContainsUnsavedChanges: boolean = false;
 
   private _router: Router;
@@ -64,20 +64,20 @@ export class NavBar {
         this.disableSaveButton = false;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.showStartButton, () => {
-        this.showStartButton = true;
+      this._eventAggregator.subscribe(environment.events.navBar.disableStartButton, () => {
+        this.disableStartButton = true;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.hideStartButton, () => {
-        this.showStartButton = false;
+      this._eventAggregator.subscribe(environment.events.navBar.enableStartButton, () => {
+        this.disableStartButton = false;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.showDiagramUploadButton, () => {
-        this.showDiagramUploadButton = true;
+      this._eventAggregator.subscribe(environment.events.navBar.disableDiagramUploadButton, () => {
+        this.disableDiagramUploadButton = true;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.hideDiagramUploadButton, () => {
-        this.showDiagramUploadButton = false;
+      this._eventAggregator.subscribe(environment.events.navBar.enableDiagramUploadButton, () => {
+        this.disableDiagramUploadButton = false;
       }),
 
       this._eventAggregator.subscribe(environment.events.differsFromOriginal, (isDiagramChanged: boolean) => {
@@ -101,6 +101,7 @@ export class NavBar {
       subscription.dispose();
     });
   }
+
   public navigateBack(): void {
     this._router.navigateBack();
   }
