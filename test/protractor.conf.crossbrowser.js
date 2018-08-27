@@ -30,7 +30,7 @@ exports.config = {
   params: {
     aureliaUrl: process.env.aureliaUrl,
     processEngineUrl: process.env.processEngineUrl,
-    defaultTimeoutMS: number = 30000
+    defaultTimeoutMS: number = 30000,
   },
 
   specs: ['test/e2e/dist/*.js'],
@@ -43,7 +43,7 @@ exports.config = {
 
   jasmineNodeOpts: {
     showColors: true,
-    defaultTimeoutInterval: 30000
+    defaultTimeoutInterval: 30000,
   },
 
   onPrepare: function() {

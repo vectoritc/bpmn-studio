@@ -4,24 +4,35 @@ exports.config = {
   multiCapabilities: [
     {
       browserName: 'chrome',
-      chromeOptions: { 
-        args: [ 
-          "--headless", 
-          "--disable-gpu", 
-          "--window-size=1920,1080"] }
+      chromeOptions: {
+        args: [
+          "--headless",
+          "--disable-gpu",
+          "--window-size=1920,1080",
+        ],
+      },
     }, {
       browserName: 'chrome',
-      chromeOptions: { 
-        args: [ 
-          "--window-size=1920,1080"] }
+      chromeOptions: {
+        args: [
+          "--window-size=1920,1080",
+        ],
+      },
     }, {
       browserName: 'safari',
-      safariOptions: { 
-        args: [ 
-          "--window-size=1920,1200"] }
+      safariOptions: {
+        args: [
+          "--window-size=1920,1200",
+        ],
+      },
     },
   ],
 
+  /**
+   * Maximum number of total browser sessions to run. Tests are queued in
+   * sequence if number of browser sessions is limited by this parameter.
+   * Use a number less than 1 to denote unlimited. Default is unlimited.
+   */
   maxSessions: 1,
 
   seleniumAddress: 'http://0.0.0.0:4444/wd/hub',
@@ -34,14 +45,14 @@ exports.config = {
   params: {
     aureliaUrl: string = 'http://localhost:9000',
     processEngineUrl: string = 'http://localhost:8000',
-    defaultTimeoutMS: number = 5000
+    defaultTimeoutMS: number = 5000,
   },
 
   framework: 'jasmine',
 
   jasmineNodeOpts: {
     showColors: true,
-    defaultTimeoutInterval: 30000
+    defaultTimeoutInterval: 30000,
   },
 
   onPrepare: function() {
