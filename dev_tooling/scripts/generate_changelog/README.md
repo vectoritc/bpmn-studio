@@ -2,6 +2,15 @@
 
 Follow this guide to generate the changelog for a new BPMN-Studio release.
 
+## Prerequisite
+
+In order to execute the `get_fixed_issues.sh` script, you need to
+install the tool `jq`. On macOS this can be done by running
+
+```bash
+brew install jq
+```
+
 ## Create a New Markdown File to the Release
 
 This will create a `releasenotes_<this release>.md` file in your current
