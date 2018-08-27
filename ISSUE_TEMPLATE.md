@@ -3,15 +3,18 @@
 > Describe the issue or ask your question regarding this module.
 > Provide as much relevant information as you can. If you're not sure if something
 > is relevant or not, include it as well!
-> 
+>
 > Logs and screenshots are very welcome!
 
 #### How can others reproduce the issue?
 
 > Describe how others can reproduce this issue as precisely as possible.
-> 
+>
+> Please provide the diagram if the error ocurred on specific actions on a
+> diagram.
+>
 > If you can't reproduce the issue, let us know what you tried!
-> 
+>
 > You can remove this section if the issue isn't something reproducable
 > (for example for certain questions or feature requests).
 
@@ -24,6 +27,7 @@
 
 #### What's your setup
 
+- BPMN-Studio Version (`4.x.x`):
 - OS (`Windows/OS X/Linux` + `version`):
 - Node (`node --version`):
 - NPM (`npm --version`):
