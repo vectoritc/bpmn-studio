@@ -128,7 +128,7 @@ und ausführen.
 
 **Windows:**
 
-Vor dem erstmaligen Builden müssen windows-build-tools installiert werden:
+Vor dem erstmaligen Builden müssen  die windows-build-tools installiert werden:
 
 ```shell
 npm install --global --production windows-build-tools
@@ -154,7 +154,7 @@ Die Releases des BPMN-Studios lassen sich alternativ auch
 [hier](https://github.com/process-engine/bpmn-studio/releases)
 herunterladen.
 
-### Docker image
+### Docker Image
 
 #### Container bauen
 
@@ -183,113 +183,137 @@ Der Container lässt sich mit folgendem Befehl starten:
 docker run -p 17290:17290 bpmn:v0.1
 ```
 
-Anschließend lässt sich das BPMN-Studio unter URL `http://localhost:17290` aufrufen.
+Anschließend lässt sich das BPMN-Studio unter URL `http://localhost:17290`
+aufrufen.
 
 ## End-to-End-Tests
 
-Die End-to-End-Tests werden mit Hilfe des [Protractor Frameworks](https://www.protractortest.org/#/) durchgeführt.
+Die End-to-End-Tests werden mit Hilfe des
+[Protractor Frameworks](https://www.protractortest.org/#/)
+durchgeführt.
 
-**Hinweis:** Alle Befehle müssen im geklonten Repository ausgeführt werden.
+Unser Ziel ist es, die Testabdeckung ausreichend auszubauen, um das Vertrauen
+in einen Release zu verbessern. Es wird keine 100% Abdeckung angestrebt, aber
+generelle Tests für alle unterstützten Plattformen sind gewünscht.
 
-**Hinweis:** Aufgrund eines [Fehlers](https://github.com/process-engine/process_engine_runtime/issues/9) innerhalb der ProcessEngine Runtime, schlagen aktuell einige Tests fehl.
+**Hinweis:**
 
-### Vorraussetzungen
+Alle Befehle müssen im geklonten Repository ausgeführt werden.
+
+**Hinweis:**
+
+Aufgrund eines
+[Fehlers](https://github.com/process-engine/process_engine_runtime/issues/9)
+bei der verwendeten Version der ProcessEngine-Runtime, schlagen aktuell einige
+Tests fehl.
+
+### Voraussetzungen
 
 Es werden folgende Pakete benötigt:
 
-Allgemein:
-* [Java Development Kit](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
-* [Chrome](https://www.google.com/intl/de_ALL/chrome/)
+1. Allgemein:
 
-Nur bei lokalen Tests:
-* [Process Engine](https://www.npmjs.com/package/@process-engine/process_engine_runtime)
+   * [Java Development Kit](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+   * [Chrome](https://www.google.com/intl/de_ALL/chrome/)
 
-Nur bei lokalen Tests mit Docker:
-* Docker
+1. Nur bei lokalen Tests:
 
-Nur bei CrossBrowserTesting:
-* VM oder vergleichbares mit öffentlicher IP
-* Docker
-* CrossBrowserTesting Account
+   * [Process Engine](https://www.npmjs.com/package/@process-engine/process_engine_runtime)
 
-### Lokale Tests ohne Docker
+1 .Nur bei lokalen Tests mit Docker:
 
-Initial müssen folgende Befehle in einem Terminal ausgeführt werden:
+   * Docker
 
-```shell
-npm install
-npm run build
-```
+1. Nur bei CrossBrowserTesting:
 
-Der Webservice kann mit folgendem Befehl gestartet werden:
+   * VM oder vergleichbares mit öffentlicher IP
+   * Docker
+   * CrossBrowserTesting Account
 
-```shell
-npm start -- --port=9000
-```
+### Lokale Tests ohne Docker ausführen
 
-Ein weiteres Terminal öffnen und folgenden Befehl eingeben, um die ProcessEngine zu starten:
+1. Initial müssen folgende Befehle in einem Terminal ausgeführt werden:
 
-```shell
-process-engine
-```
+   ```shell
+   npm install
+   npm run build
+   ```
 
-Ein weiteres Terminal öffnen und folgenden Befehl eingeben, um den Selenium Server zu starten:
+1. Der Webservice kann mit folgendem Befehl gestartet werden:
 
-```shell
-npm run integration-test-init
-```
+   ```shell
+   npm start -- --port=9000
+   ```
 
-Die End-to-End tests können in einem weiteren Terminal mit folgendem Befehl gestartet werden:
+1. Ein weiteres Terminal öffnen und folgenden Befehl eingeben, um die
+   ProcessEngine zu starten:
 
-```shell
-npm run integration-test
-```
+   ```shell
+   process-engine
+   ```
 
-### Lokale Tests mit Docker
+1. Ein weiteres Terminal öffnen und folgenden Befehl eingeben, um den Selenium
+   Server zu starten:
 
-Ein Terminal öffnen und das BPMN-Studio mit folgendem Befehl starten:
+   ```shell
+   npm run integration-test-init
+   ```
 
-```shell
-docker run -p 8000:8000 -p 9000:9000 5minds/bpmn-studio-bundle:latest
-```
+1. Die End-to-End tests können in einem weiteren Terminal mit folgendem Befehl
+   gestartet werden:
 
-Ein weiteres Terminal öffnen und folgenden Befehl eingeben, um den Selenium Server zu starten:
+   ```shell
+   npm run integration-test
+   ```
 
-```shell
-npm run integration-test-init
-```
+### Lokale Tests mit Docker ausführen
 
-Die End-to-End Tests können in einem weiteren Terminal mit folgendem Befehl gestartet werden:
+1. Ein Terminal öffnen und das BPMN-Studio mit folgendem Befehl starten:
 
-```shell
-npm run integration-test
-```
+   ```shell
+   docker run -p 8000:8000 -p 9000:9000 5minds/bpmn-studio-bundle:latest
+   ```
 
-### Crossbrowser Tests mit Docker
+1. Ein weiteres Terminal öffnen und folgenden Befehl eingeben, um den Selenium
+   Server zu starten:
+
+   ```shell
+   npm run integration-test-init
+   ```
+
+1. Die End-to-End Tests können in einem weiteren Terminal mit folgendem Befehl
+   gestartet werden:
+
+   ```shell
+   npm run integration-test
+   ```
+
+### Crossbrowser Tests mit Docker ausführen
+
 [<img src="https://crossbrowsertesting.com/design/images/brand/cbt-sb-logo.svg" width="250px">](https://crossbrowsertesting.com)
 
-Initial müssen folgende Umgebungsvariablen gesetzt werden:
+1. Initial müssen folgende Umgebungsvariablen gesetzt werden:
 
-```shell
-export CB_USER=""           # CrossBrowserTesting E-Mail Adresse
-export CB_KEY=""            # CrossBrowserTesting API Key
-export aureliaUrl=""        # URL oder IP der VM + Port des BPMN-Studio; z.B.: http://1.1.1.1:9000
-export processEngineUrl=""  # URL oder IP der VM + Port der ProcessEngine; z.B.: http://1.1.1.1:8000
-```
+   ```shell
+   export CB_USER=""           # CrossBrowserTesting E-Mail Adresse
+   export CB_KEY=""            # CrossBrowserTesting API Key
+   export aureliaUrl=""        # URL oder IP der VM + Port des BPMN-Studio; z.B.: http://1.1.1.1:9000
+   export processEngineUrl=""  # URL oder IP der VM + Port der ProcessEngine; z.B.: http://1.1.1.1:8000
+   ```
 
-Ein Terminal öffnen und das BPMN-Studio auf der VM mit folgendem Befehl starten:
+1. Ein Terminal öffnen und das BPMN-Studio auf der VM mit folgendem Befehl
+   starten:
 
-```shell
-docker run -p 8000:8000 -p 9000:9000 5minds/bpmn-studio-bundle:latest
-```
+   ```shell
+   docker run -p 8000:8000 -p 9000:9000 5minds/bpmn-studio-bundle:latest
+   ```
 
-Ein Terminal auf dem lokalen Computer öffnen und mit folgenden Befehl die CrossBrowserTesting Tests starten:
+1. Ein Terminal auf dem lokalen Computer öffnen und mit folgenden Befehl die
+   CrossBrowserTesting Tests starten:
 
-```shell
-npm run crossbrowser-test
-```
-
-
+   ```shell
+   npm run crossbrowser-test
+   ```
 
 ## Shortcut Skripte
 
