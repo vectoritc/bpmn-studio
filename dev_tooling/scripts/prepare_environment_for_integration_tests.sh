@@ -13,6 +13,6 @@ export processEngineUrl=""
 
 # Run this command to apply environment variables:
 #
-# source integration-test.sh
+# source prepare_environment_for_integration_tests.sh
 #
 # This will prepare the Environment for the integration tests.
