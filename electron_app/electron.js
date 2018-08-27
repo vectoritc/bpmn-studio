@@ -6,7 +6,7 @@ const notifier = require('electron-notifications');
 const isDev = require('electron-is-dev');
 const getPort = require('get-port');
 const fs = require('fs');
-const startProcessEngine = require('@process-engine/skeleton-electron');
+
 const {dialog} = require('electron');
 
 // If BPMN-Studio was opened by double-clicking a .bpmn file, then the
@@ -488,24 +488,25 @@ Main._startInternalProcessEngine = function () {
         event.returnValue = `localhost:${port}`;
       });
 
+
       // TODO: Check if the ProcessEngine instance is now run on the UI thread.
       // See issue https://github.com/process-engine/bpmn-studio/issues/312
-      return startProcessEngine()
-        .then((processengine) => {
+      try {
+        // Start the PE by just running the code of process_engine_runtime.
+        require('@process-engine/process_engine_runtime');
 
-          console.log('Internal ProcessEngine started successfully.');
-          internalProcessEngineStatus = 'success';
+        console.log('Internal ProcessEngine started successfully.');
+        internalProcessEngineStatus = 'success';
 
-          _publishProcessEngineStatus();
+        _publishProcessEngineStatus();
+      } catch (error) {
+        console.error('Failed to start internal ProcessEngine: ', error);
+        internalProcessEngineStatus = 'error';
+        internalProcessEngineStartupError = error;
 
-        }).catch((error) => {
+        _publishProcessEngineStatus();
+      }
 
-          console.error('Failed to start internal ProcessEngine: ', error);
-          internalProcessEngineStatus = 'error';
-          internalProcessEngineStartupError = error;
-
-          _publishProcessEngineStatus();
-        });
     });
 
 }
