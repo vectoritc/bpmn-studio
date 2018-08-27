@@ -77,21 +77,21 @@ describe('Navigation bar', () => {
     });
   });
 
-  // This section tests the plan button
-  it('should contain plan button.', () => {
-    navBar.navBarPlanLink.isDisplayed().then((navBarPlanLinkIsDisplayed: boolean) => {
-      expect(navBarPlanLinkIsDisplayed).toBeTruthy();
+  // This section tests the think button
+  it('should contain think button.', () => {
+    navBar.navBarThinkLink.isDisplayed().then((navBarThinkLinkIsDisplayed: boolean) => {
+      expect(navBarThinkLinkIsDisplayed).toBeTruthy();
     });
   });
 
-  it('should contain an enabled plan view button.', () => {
-    navBar.navBarPlanLink.getAttribute('class').then((classAttribute: string) => {
+  it('should contain an enabled think view button.', () => {
+    navBar.navBarThinkLink.getAttribute('class').then((classAttribute: string) => {
       expect(classAttribute).not.toContain(navBar.navBarDisabledClassName);
     });
   });
 
-  it('should open process list view when plan button is clicked.', () => {
-    navBar.navBarPlanLink.click().then(() => {
+  it('should open process list view when think button is clicked.', () => {
+    navBar.navBarThinkLink.click().then(() => {
       browser.getCurrentUrl().then((currentBrowserUrl: string) => {
         expect(currentBrowserUrl).toContain(processModel.getProcessModelLink());
       });
@@ -111,34 +111,21 @@ describe('Navigation bar', () => {
     });
   });
 
-  // This section tests the publish button
-  it('should contain publish button.', () => {
-    navBar.navBarPublishLink.isDisplayed().then((navBarPublishLinkIsDisplayed: boolean) => {
-      expect(navBarPublishLinkIsDisplayed).toBeTruthy();
+  // This section tests the inspect button
+  it('should contain inspect button.', () => {
+    navBar.navBarInspectLink.isDisplayed().then((navBarInspectLinkIsDisplayed: boolean) => {
+      expect(navBarInspectLinkIsDisplayed).toBeTruthy();
     });
   });
 
-  it('should contain a disabled publish view button.', () => {
-    navBar.navBarPublishLink.getAttribute('class').then((classAttribute: string) => {
-      expect(classAttribute).toContain(navBar.navBarDisabledClassName);
-    });
-  });
-
-  // This section tests the dashboard button
-  it('should contain dashboard button.', () => {
-    navBar.navBarDashboardLink.isDisplayed().then((navBarDashboardLinkIsDisplayed: boolean) => {
-      expect(navBarDashboardLinkIsDisplayed).toBeTruthy();
-    });
-  });
-
-  it('should contain an enabled dashboard view button.', () => {
-    navBar.navBarDashboardLink.getAttribute('class').then((classAttribute: string) => {
+  it('should contain an enabled inspect view button.', () => {
+    navBar.navBarInspectLink.getAttribute('class').then((classAttribute: string) => {
       expect(classAttribute).not.toContain(navBar.navBarDisabledClassName);
     });
   });
 
-  it('should open dashboard view when the dashboard button is clicked.', () => {
-    navBar.navBarDashboardLink.click().then(() => {
+  it('should open inspect view when the inspect button is clicked.', () => {
+    navBar.navBarInspectLink.click().then(() => {
       browser.getCurrentUrl().then((currentBrowserUrl: string) => {
         expect(currentBrowserUrl).toContain(dashboard.dashboardLink);
       });
