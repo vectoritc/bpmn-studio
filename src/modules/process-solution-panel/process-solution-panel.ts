@@ -226,7 +226,7 @@ export class ProcessSolutionPanel {
      */
     window.setInterval(async() => {
       this._refreshProcesslist();
-    }, environment.processengine.pollingIntervalInMs);
+    }, environment.processengine.processModelPollingIntervalInMs);
 
     window.localStorage.setItem('processSolutionExplorerHideState', 'show');
 

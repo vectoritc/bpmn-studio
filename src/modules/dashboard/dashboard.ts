@@ -85,7 +85,7 @@ export class Dashboard {
   public attached(): void {
     this._getUserTasksIntervalId = window.setInterval(() => {
       this._updateUserTasks();
-    }, environment.processengine.pollingIntervalInMs);
+    }, environment.processengine.processModelPollingIntervalInMs);
   }
 
   public detached(): void {
