@@ -23,7 +23,7 @@ export class DiagramToolsRight {
   @bindable()
   public modeler: IBpmnModeler;
 
-  public colorPickerDisabled: boolean = false;
+  public colorPickerEnabled: boolean = true;
   public colorPickerBorder: HTMLInputElement;
   public colorPickerFill: HTMLInputElement;
   public colorPickerLoaded: boolean = false;
@@ -42,10 +42,10 @@ export class DiagramToolsRight {
   public attached(): void {
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.disableColorPicker, () => {
-        this.colorPickerDisabled = true;
+        this.colorPickerEnabled = false;
       }),
       this._eventAggregator.subscribe(environment.events.enableColorPicker, () => {
-        this.colorPickerDisabled = false;
+        this.colorPickerEnabled = true;
       }),
     ];
   }
