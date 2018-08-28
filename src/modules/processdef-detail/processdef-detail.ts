@@ -297,6 +297,7 @@ export class ProcessDefDetail {
     if (this.processesStartEvents.length === 1) {
       this.selectedStartEventId = this.processesStartEvents[0].id;
       this.startProcess();
+
       return;
     }
 
