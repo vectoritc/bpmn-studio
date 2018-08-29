@@ -31,8 +31,8 @@ export class BpmnXmlView {
 
   public highlight(): void {
     this.newXML = beautify(this.xml);
-    highlightEngine.highlightBlock(this.codeElement);
     highlightEngine.lineNumbersBlock(this.codeElement);
+    highlightEngine.highlightBlock(this.codeElement);
   }
 
 }
