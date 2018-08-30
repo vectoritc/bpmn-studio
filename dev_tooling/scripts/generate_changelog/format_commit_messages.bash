@@ -60,6 +60,25 @@ while read line; do
   currentOutLine=${currentOutLine/🔖/":bookmark:"}
   currentOutLine=${currentOutLine/🔥/":fire:"}
   currentOutLine=${currentOutLine/✅/":white_check_mark:"}
+  currentOutLine=${currentOutLine/🚑/":ambulance:"}
+  currentOutLine=${currentOutLine/📝/":memo:"}
+  currentOutLine=${currentOutLine/🚀/":rocket:"}
+  currentOutLine=${currentOutLine/🔒/":lock:"}
+  currentOutLine=${currentOutLine/🍎/":apple:"}
+  currentOutLine=${currentOutLine/🐧/":penguin:"}
+  currentOutLine=${currentOutLine/🔒/":lock:"}
+  currentOutLine=${currentOutLine/🏁/":checkered_flag:"}
+  currentOutLine=${currentOutLine/💚/":green_heart:"}
+  currentOutLine=${currentOutLine/📌/":pushpin:"}
+  currentOutLine=${currentOutLine/👷‍/":construction_worker:"}
+  currentOutLine=${currentOutLine/➖/":heavy_minus_sign:"}
+  currentOutLine=${currentOutLine/🐳/":whale:"}
+  currentOutLine=${currentOutLine/➕/":heavy_plus_sign:"}
+  currentOutLine=${currentOutLine/🔧/":wrench:"}
+  currentOutLine=${currentOutLine/✏️/":pencil2:"}
+  currentOutLine=${currentOutLine/🚚/":truck:"}
+  currentOutLine=${currentOutLine//":rewind:"}
+  currentOutLine=${currentOutLine/⏪/":rewind:"}
 
   outLines+=("$currentOutLine")
 
