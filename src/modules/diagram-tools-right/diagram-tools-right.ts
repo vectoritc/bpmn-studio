@@ -11,10 +11,10 @@ import {defaultBpmnColors,
         IBpmnModeler,
         IColorPickerColor,
         IColorPickerSettings,
+        IEvent,
         IModdleElement,
         IModeling,
-        IShape,
-        NotificationType} from '../../contracts/index';
+        IShape, NotificationType} from '../../contracts/index';
 import {NotificationService} from '../notification/notification.service';
 
 @inject(EventAggregator, 'NotificationService')
@@ -23,6 +23,7 @@ export class DiagramToolsRight {
   @bindable()
   public modeler: IBpmnModeler;
 
+  public distributeElementsEnabled: boolean = true;
   public colorPickerEnabled: boolean = true;
   public colorPickerBorder: HTMLInputElement;
   public colorPickerFill: HTMLInputElement;
@@ -40,14 +41,25 @@ export class DiagramToolsRight {
   }
 
   public attached(): void {
-    this._subscriptions = [
-      this._eventAggregator.subscribe(environment.events.disableColorPicker, () => {
-        this.colorPickerEnabled = false;
-      }),
-      this._eventAggregator.subscribe(environment.events.enableColorPicker, () => {
+    this.modeler.on('element.click', (event: IEvent) => {
+      const selectedElements: Array<IShape> = this._getSelectedElements();
+      const userSelectedDiagramElement: boolean = selectedElements.length > 0;
+      console.log(selectedElements);
+
+      if (userSelectedDiagramElement) {
         this.colorPickerEnabled = true;
-      }),
-    ];
+
+        /**
+         * The distribute elements feature only can do it's thing, if the
+         * user selects more than two elements.
+         */
+        /* tslint:disable:no-magic-numbers*/
+        this.distributeElementsEnabled = selectedElements.length > 2;
+      } else {
+        this.colorPickerEnabled = false;
+        this.distributeElementsEnabled = false;
+      }
+    });
   }
 
   public detached(): void {
@@ -56,6 +68,10 @@ export class DiagramToolsRight {
 
     window.localStorage.removeItem('borderColors');
     window.localStorage.removeItem('fillColors');
+
+    for (const subscription of this._subscriptions) {
+      subscription.dispose();
+    }
   }
 
   public setColorRed(): void {
