@@ -7,9 +7,16 @@
 
 # If this script gets called without an argument, exit.
 if [[ $# -ne 1 ]]; then
-  echo 'Insufficient arguments.'
+  echo "Wrong arguments."
+  echo "Usage:"
+  printf "format_commit_messages.bash <filename>\n\n"
+  printf "Arguments:\n\tfilename: Name of the file that contains the commits"
+  printf " with their corresponding messages.\n"
   exit 1;
 fi
+
+# Get the name of the file that contains the commit messages.
+commitMessageFile="$1"
 
 # Declare an array to store the processed lines
 declare -a outLines
@@ -47,6 +54,7 @@ while read line; do
 
   outLines+=("$currentOutLine")
 
-done <$1
+done <"$commitMessageFile"
 
+# Write the ordered lines to a new file.
 printf "%s\n" "${outLines[@]}" > ordered_merge_commits.txt
