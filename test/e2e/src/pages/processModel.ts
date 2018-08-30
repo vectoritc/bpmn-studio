@@ -108,8 +108,9 @@ export class ProcessModel {
       currentModel = processModel;
     }
 
-    const requestDestination: string = '/api/management/v1/process_models/' + currentModel +
-                                       '/start_events/StartEvent_1mox3jl/start?start_callback_type=1';
+    const requestDestination: string =
+      `/api/management/v1/process_models/${currentModel}/start_events/StartEvent_1mox3jl/start?start_callback_type=1`;
+
     const requestPayload: any = {};
     const requestHeaders: any = {
       authorization: 'Bearer ZHVtbXlfdG9rZW4=',
