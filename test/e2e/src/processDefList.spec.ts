@@ -23,7 +23,8 @@ describe('Process definition list', () => {
     processDefListPage = new ProcessDefListPage();
     processModel = new ProcessModel();
 
-    processModelId = processModel.getProcessModelID();
+    // Get processModelId
+    processModelId = processModel.getProcessModelId();
 
     // Create a new process definition by POST REST call
     processModel.postProcessModel(processModelId);
@@ -47,8 +48,8 @@ describe('Process definition list', () => {
     });
   });
 
-  it('should contain the just created process definition.', () => {
-    processDefListPage.processDefinitionListItemIDs(processModelId).count().then((numberOfProcessDefinitionsById: number) => {
+  it('should contain just created process definition.', () => {
+    processDefListPage.processDefinitionListItemIds(processModelId).count().then((numberOfProcessDefinitionsById: number) => {
       expect(numberOfProcessDefinitionsById).toBe(1);
     });
   });

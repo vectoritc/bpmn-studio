@@ -1,6 +1,133 @@
+import {by, element, ElementArrayFinder, ElementFinder} from 'protractor';
+import {By, promise} from 'selenium-webdriver';
+
 export class Dashboard {
 
   // Define Links, Urls, Classes
   public dashboardLink: string = '/dashboard';
+  private _domProcessIdPrefix: string = 'processList-';
+  private _domProcessClassName: string = 'process-list-item';
 
+  private _domTaskIdPrefix: string = 'taskList-';
+  private _domTaskClassName: string = 'task-list-item';
+
+  // Define Elements
+  private byTagName: By = by.tagName('process-list');
+  private byDomProcessClassName: By = by.className(this._domProcessClassName);
+  private byDomTaskClassName: By = by.className(this._domTaskClassName);
+  private byIdTaskListContainer: By = by.id('taskListContainer');
+  private byIdDynamicUiWrapper: By = by.id('dynamic-ui-wrapper-continue-button');
+  private byProcessListItemModelId: By = by.className('process-list-item-model-id');
+  private byProcessListItemUserTasks: By = by.className('process-list-item-user-tasks');
+  private byTaskListContinueButton: By = by.className('task-list-continue-button');
+
+  public processListTag: ElementFinder = element(this.byTagName);
+  public taskListContainer: ElementFinder = element(this.byIdTaskListContainer);
+  public dynamicUiWrapperContinueButton: ElementFinder = element(this.byIdDynamicUiWrapper);
+
+  public processRunningListItems: ElementArrayFinder =
+    this.processListTag
+      .all(this.byDomProcessClassName);
+
+  public firstProcessRunningListItems: ElementFinder =
+    this.processRunningListItems
+      .first();
+
+  public firstTaskListItems: ElementFinder =
+    this.taskListContainer
+      .all(this.byDomTaskClassName)
+        .first();
+
+  // Define Functions
+  public processRunningListItemById(correlationId: string): ElementArrayFinder {
+    const id: string = this._domProcessIdPrefix + correlationId;
+    const byId: By = by.id(id);
+
+    return this.processListTag.all(byId);
+  }
+  public async countOfProcessRunningListItems(): Promise<number> {
+    return this.processListTag
+            .all(this.byDomProcessClassName)
+            .count();
+  }
+
+  public async countOfProcessRunningListItemsByCorrelationId(correlationId: string): Promise<number> {
+    const id: string = this._domProcessIdPrefix + correlationId;
+    const byId: By = by.id(id);
+
+    return await this.processListTag
+                  .all(byId)
+                  .count();
+  }
+  public firstProcessRunningListItemsById(correlationId: string): ElementFinder {
+    const id: string = this._domProcessIdPrefix + correlationId;
+    const byId: By = by.id(id);
+
+    return this.processListTag
+            .all(byId)
+            .first();
+  }
+
+  public hyperlinkOfProcessRunningListItemByCorrelationId(correlationId: string): ElementFinder {
+    const firstProcessRunningListItemsById: ElementFinder = this.firstProcessRunningListItemsById(correlationId);
+
+    return firstProcessRunningListItemsById
+            .element(this.byProcessListItemModelId);
+  }
+
+  public openProcessModelByClickOnModelIdInProcessRunningList(correlationId: string): promise.Promise<void> {
+    const hyperlinkOfProcessRunningListItemByCorrelationId: ElementFinder = this.hyperlinkOfProcessRunningListItemByCorrelationId(correlationId);
+
+    return hyperlinkOfProcessRunningListItemByCorrelationId.click();
+  }
+
+  public hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId(correlationId: string): ElementFinder {
+    const byClassName: By = this.byProcessListItemUserTasks;
+    const firstProcessRunningListItemsById: ElementFinder = this.firstProcessRunningListItemsById(correlationId);
+
+    return firstProcessRunningListItemsById
+            .element(byClassName);
+  }
+  public openUserTasksByClickOnModelIdInProcessRunningList(correlationId: string): promise.Promise<void> {
+    const hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId: ElementFinder
+          = this.hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId(correlationId);
+
+    return hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId.click();
+  }
+
+  // task list section
+  public firstTaskWaitingById(processId: string): ElementFinder {
+    const id: string = this._domTaskIdPrefix + processId;
+    const byId: By = by.id(id);
+
+    return this.taskListContainer
+            .all(byId)
+            .first();
+  }
+
+  public async countOfTasksWaitingListItems(): Promise<number> {
+    return this.taskListContainer
+            .all(this.byDomTaskClassName)
+            .count();
+  }
+  public async countOfTasksWaitingListItemsById(processModelId: string): Promise<number> {
+    const id: string = this._domTaskIdPrefix + processModelId;
+    const byId: By = by.id(id);
+
+    return this.taskListContainer
+            .all(byId)
+            .count();
+  }
+
+  public continueTaskByClickOnButton(processModelId: string): promise.Promise<void> {
+    const firstTaskWaitingById: ElementFinder = this.firstTaskWaitingById(processModelId);
+    const taskListContinueButton: ElementFinder = firstTaskWaitingById.element(this.byTaskListContinueButton);
+
+    return taskListContinueButton.click();
+  }
+
+  // user task section
+  public continueUserTaskByClickOnDynamicUiWrapperContinuButton(): promise.Promise<void> {
+    return this.dynamicUiWrapperContinueButton.click();
+  }
 }

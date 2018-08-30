@@ -7,21 +7,43 @@ export class ProcessModel {
   private _http: HttpClient = new HttpClient(this._processEngineUrl);
 
   // Define Links, Urls, Classes
+  // tslint:disable-next-line:no-magic-numbers
+  private _processModelId: string =  'TA_' + Math.floor(Math.random() * 1000000);
+  private _correlationId: string;
+
+  // Define Elements
+
+  // Define Functions
   public getProcessModelLink(): string {
     return '/processdef';
   }
-  public getProcessModelID(): string {
-    // tslint:disable-next-line:no-magic-numbers
-    return 'TA_' + Math.floor(Math.random() * 1000000);
+
+  public getProcessModelId(): string {
+    return this._processModelId;
   }
 
-  // Define Functions
+  public getCorrelationId(): string {
+    return this._correlationId;
+  }
+
   public processModelUrl(processModel: string): string {
-    return 'processdef/' + processModel + '/detail';
+    return '/processdef/' + processModel + '/detail';
+  }
+
+  public userTasksUrl(processModel: string): string {
+    return '/processdef/' + processModel + '/task';
+  }
+
+  public userTasksInputUrl(processModel: string): string {
+    return '/processdef/' + processModel + '/task/Task_0k8m2if/dynamic-ui';
+  }
+
+  public waitingroomUrl(processModelId: string, correlationId: string): string {
+    return '/waitingroom/' + correlationId + '/' + processModelId;
   }
 
   public postProcessModel(processModel?: string): void {
-    let currentModel: string = this.getProcessModelID();
+    let currentModel: string = this.getProcessModelId();
     if (processModel !== undefined) {
       currentModel = processModel;
     }
@@ -62,7 +84,7 @@ export class ProcessModel {
   }
 
   public postProcessModelWithUserTask(processModel?: string): void {
-    let currentModel: string = this.getProcessModelID();
+    let currentModel: string = this.getProcessModelId();
     if (processModel !== undefined) {
       currentModel = processModel;
     }
@@ -81,19 +103,22 @@ export class ProcessModel {
   }
 
   public startProcess(processModel?: string): void {
-    let currentModel: string = this.getProcessModelID();
+    let currentModel: string = this.getProcessModelId();
     if (processModel !== undefined) {
       currentModel = processModel;
     }
 
-    const requestDestination: string = `/api/management/v1/process_models/${currentModel}
-                                        /start_events/StartEvent_1mox3jl/start?start_callback_type=1`;
+    const requestDestination: string =
+      `/api/management/v1/process_models/${currentModel}/start_events/StartEvent_1mox3jl/start?start_callback_type=1`;
+
     const requestPayload: any = {};
     const requestHeaders: any = {
       authorization: 'Bearer ZHVtbXlfdG9rZW4=',
     };
 
-    this._http.post(requestDestination, requestPayload, requestHeaders);
+    this._http.post(requestDestination, requestPayload, requestHeaders).jsonBody.then((jsonBody: JSON) => {
+      this._correlationId = jsonBody['correlationId'];
+    });
 
   }
 }
