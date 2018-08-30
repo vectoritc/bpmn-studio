@@ -7,6 +7,7 @@ import {IManagementApiService, ManagementContext} from '@process-engine/manageme
 import {ProcessModelExecution} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
+import * as beautify from 'xml-beautifier';
 
 import {IAuthenticationService, IModdleElement, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
@@ -225,7 +226,10 @@ export class DiagramDetail {
     }
 
     try {
-      this.diagram.xml = await this.bpmnio.getXML();
+      const xml: string = await this.bpmnio.getXML();
+      const formattedXml: string = await beautify(xml);
+      this.diagram.xml = formattedXml;
+
       this._solutionExplorerService.saveSingleDiagram(this.diagram, this._identity);
       this._diagramHasChanged = false;
       this._notificationService
