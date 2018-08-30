@@ -5,14 +5,23 @@
 #   * Replacing all utf8 - Emoji Characters with their text variants
 #####
 
-# If this script gets called without an argument, exit.
-if [[ $# -ne 1 ]]; then
-  echo "Wrong arguments."
-  echo "Usage:"
+function print_help_message() {
+  printf "Usage:\n"
   printf "format_commit_messages.bash <filename>\n\n"
   printf "Arguments:\n\tfilename: Name of the file that contains the commits"
   printf " with their corresponding messages.\n"
-  exit 1;
+}
+
+# If this script gets called without an argument, exit.
+if [[ $# -ne 1 ]]; then
+  echo "Wrong arguments."
+  print_help_message
+  exit 1
+fi
+
+if [[ $1 == "help" ]]; then
+  print_help_message
+  exit 0
 fi
 
 # Get the name of the file that contains the commit messages.
