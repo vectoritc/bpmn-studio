@@ -11,8 +11,6 @@ import {protractor} from 'gulp-protractor';
 import * as typescript from 'gulp-typescript';
 import * as tsConfig from './../../tsconfig.json';
 import * as project from './../aurelia.json';
-import build from './build';
-import run from './run';
 
 function clean(): Promise<Array<string>> {
   return del(`${project.e2eTestRunner.dist}/*`);
@@ -29,7 +27,7 @@ function build_tests(): NodeJS.ReadWriteStream {
     .pipe(gulp.dest(project.e2eTestRunner.dist));
 }
 
-function e2e(): NodeJS.ReadWriteStream {
+function e2eDocker(): NodeJS.ReadWriteStream {
   return gulp.src(`${project.e2eTestRunner.dist}/**/*.js`)
     .pipe(protractor({
       configFile: 'test/protractor.conf.js',
@@ -46,7 +44,5 @@ function e2e(): NodeJS.ReadWriteStream {
 export default gulp.series(
   clean,
   build_tests,
-  build,
-  run,
-  e2e,
+  e2eDocker,
 );

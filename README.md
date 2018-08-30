@@ -216,11 +216,7 @@ Es werden folgende Pakete benötigt:
    * [Java Development Kit](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
    * [Chrome](https://www.google.com/intl/de_ALL/chrome/)
 
-1. Nur bei lokalen Tests:
-
-   * [Process Engine](https://www.npmjs.com/package/@process-engine/process_engine_runtime)
-
-1 .Nur bei lokalen Tests mit Docker:
+1. Nur bei lokalen Tests mit Docker:
 
    * Docker
 
@@ -236,56 +232,35 @@ Es werden folgende Pakete benötigt:
 
    ```shell
    npm install
-   npm run build
    ```
 
-1. Der Webservice kann mit folgendem Befehl gestartet werden:
+1. Anschließend folgenden Befehl eingeben, um den Selenium Server und die ProcessEngine zu starten:
 
    ```shell
-   npm start -- --port=9000
-   ```
-
-1. Ein weiteres Terminal öffnen und folgenden Befehl eingeben, um die
-   ProcessEngine zu starten:
-
-   ```shell
-   process-engine
-   ```
-
-1. Ein weiteres Terminal öffnen und folgenden Befehl eingeben, um den Selenium
-   Server zu starten:
-
-   ```shell
-   npm run integration-test-init
+   npm run test-init
    ```
 
 1. Die End-to-End tests können in einem weiteren Terminal mit folgendem Befehl
    gestartet werden:
 
    ```shell
-   npm run integration-test
+   npm run test
    ```
 
 ### Lokale Tests mit Docker ausführen
 
-1. Ein Terminal öffnen und das BPMN-Studio mit folgendem Befehl starten:
-
-   ```shell
-   docker run -p 8000:8000 -p 9000:9000 5minds/bpmn-studio-bundle:latest
-   ```
-
-1. Ein weiteres Terminal öffnen und folgenden Befehl eingeben, um den Selenium
+1. Ein Terminal öffnen und folgenden Befehl eingeben, um den Selenium
    Server zu starten:
 
    ```shell
-   npm run integration-test-init
+   npm run test-init-docker
    ```
 
 1. Die End-to-End Tests können in einem weiteren Terminal mit folgendem Befehl
    gestartet werden:
 
    ```shell
-   npm run integration-test
+   npm run test-docker
    ```
 
 ### Crossbrowser Tests mit Docker ausführen
@@ -312,7 +287,7 @@ Es werden folgende Pakete benötigt:
    CrossBrowserTesting Tests starten:
 
    ```shell
-   npm run crossbrowser-test
+   npm run test-crossbrowser
    ```
 
 ## Shortcut Skripte
