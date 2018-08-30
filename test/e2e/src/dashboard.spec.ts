@@ -103,7 +103,7 @@ describe('Dashboard view', () => {
   it('should be possible to open process model by click on hyperlink in table.', () => {
     const correlationId: string = processModel.getCorrelationId();
     const hyperlinkOfProcessRunningListItemByCorrelationId: ElementFinder = dashboard.hyperlinkOfProcessRunningListItemByCorrelationId(correlationId);
-    const visibilityOfHyperlinkOfProcessRunningListItemByCorrelationId: Function = 
+    const visibilityOfHyperlinkOfProcessRunningListItemByCorrelationId: Function =
       expectedConditions.visibilityOf(hyperlinkOfProcessRunningListItemByCorrelationId);
 
     browser.driver
