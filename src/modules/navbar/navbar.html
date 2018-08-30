@@ -54,12 +54,12 @@
         </button>
       </template>
       <template if.bind="showTools">
-        <button class="menu-bar__menu-center--action-button" click.delegate="uploadProcess()" disabled.bind="validationError || disableDiagramUploadButton" title.bind="disableDiagramUploadButton ? 'This process is already deployed' : 'Upload to ProcessEngine'">
+        <button class="menu-bar__menu-center--action-button" click.delegate="uploadProcess()" disabled.bind="validationError || disableDiagramUploadButton" title.bind="disableDiagramUploadButton ? 'This process is already deployed to the remote ProcessEngine' : 'Deploy to ProcessEngine'">
           <i class="fas fa-dolly-flatbed"></i>
         </button>
       </template>
       <template if.bind="showTools">
-          <button class="menu-bar__menu-center--action-button" click.delegate="startProcess()" disabled.bind="validationError || disableStartButton" title.bind="disableStartButton ? 'Before starting the process please upload it to the ProcessEngine' : 'Start Process'">
+          <button class="menu-bar__menu-center--action-button" click.delegate="startProcess()" disabled.bind="validationError || disableStartButton" title.bind="disableStartButton ? 'Before starting the process please deploy it to the ProcessEngine' : 'Start Process'">
             <i class="fas fa-play"></i>
           </button>
         </template>
