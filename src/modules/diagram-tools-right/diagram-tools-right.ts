@@ -1,4 +1,3 @@
-import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
 import environment from '../../environment';
 
@@ -17,7 +16,7 @@ import {defaultBpmnColors,
         IShape, NotificationType} from '../../contracts/index';
 import {NotificationService} from '../notification/notification.service';
 
-@inject(EventAggregator, 'NotificationService')
+@inject('NotificationService')
 export class DiagramToolsRight {
 
   @bindable()
@@ -32,11 +31,8 @@ export class DiagramToolsRight {
   public borderColor: string;
 
   private _notificationService: NotificationService;
-  private _eventAggregator: EventAggregator;
-  private _subscriptions: Array<Subscription>;
 
-  constructor(eventAggregator: EventAggregator, notificationService: NotificationService) {
-    this._eventAggregator = eventAggregator;
+  constructor(notificationService: NotificationService) {
     this._notificationService = notificationService;
   }
 
@@ -85,10 +81,6 @@ export class DiagramToolsRight {
 
     window.localStorage.removeItem('borderColors');
     window.localStorage.removeItem('fillColors');
-
-    for (const subscription of this._subscriptions) {
-      subscription.dispose();
-    }
   }
 
   public setColorRed(): void {
