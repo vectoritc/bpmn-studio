@@ -77,7 +77,6 @@ while read line; do
   currentOutLine=${currentOutLine/🔧/":wrench:"}
   currentOutLine=${currentOutLine/✏️/":pencil2:"}
   currentOutLine=${currentOutLine/🚚/":truck:"}
-  currentOutLine=${currentOutLine//":rewind:"}
   currentOutLine=${currentOutLine/⏪/":rewind:"}
 
   outLines+=("$currentOutLine")
