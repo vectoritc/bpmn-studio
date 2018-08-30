@@ -3,10 +3,10 @@
   <div class="process-explorer__solution-explorer">
 
     <div class="solution-explorer-index-cards">
-      <div class="index-card" title="Show filesystem view" class.bind="fileSystemIndexCardIsActive ? 'index-card--active' : ''" click.delegate="openFileSystemIndexCard()" if.bind="enableFileSystemSolutions">
+      <div class="index-card" title="Show Processes of local Solutions" class.bind="fileSystemIndexCardIsActive ? 'index-card--active' : ''" click.delegate="openFileSystemIndexCard()" if.bind="enableFileSystemSolutions">
         <i class="fa fa-folder"></i>
       </div>
-      <div class="index-card" title="Show database view" class.bind="processEngineIndexCardIsActive ? 'index-card--active' : ''" click.delegate="openProcessEngineIndexCard()">
+      <div class="index-card" title="Show Processes of the remote ProcessEngine" class.bind="processEngineIndexCardIsActive ? 'index-card--active' : ''" click.delegate="openProcessEngineIndexCard()">
         <i class="fa fa-server"></i>
       </div>
     </div>
