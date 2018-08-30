@@ -62,8 +62,6 @@ should name like _merge_commits_of_release.txt_.
 
 Edit `merge_commits_of_release.txt` in an editor for your choice:
 
-- Replace any encoded emojis with their text variant.
-- Remove any `:twisted_rightwards_arrows:` emojis.
 - Remove any merge commits into feature branches.
 - Remove empty, reverted and version bump commits.
 - For generic merge commits use the PR title.
@@ -72,9 +70,6 @@ Edit `merge_commits_of_release.txt` in an editor for your choice:
 
 | Before                                                                                          | After                                                               |
 |-------------------------------------------------------------------------------------------------|---------------------------------------------------------------------|
-| `55c55303 :twisted_rightwards_arrows: :sparkles: Add Create Diagram Input to Solution Explorer` | `55c55303 :sparkles: Add Create Diagram Input to Solution Explorer` |
-| `cb571aac 🔀🐛Make BPMN-Studio start with the correct route`                                    | `cb571aac :bug: Make BPMN-Studio start with the correct route`      |
-| `d1f866bd 🔥 Remove reset script from windows build`                                            | `d1f866bd :fire: Remove reset script from windows build`            |
 | `07fdf3a9 Merge branch 'develop' into feature/fix_undefined_route_params`                       | -                                                                   |
 | `40539005 Merge pull request #719 from process-engine/feature/fix_undefined_route_params`       | `:bug: Fix undefined route params` (PR title is used)               |
 
