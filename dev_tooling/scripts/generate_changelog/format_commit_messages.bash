@@ -5,7 +5,10 @@
 #   * Replacing all utf8 - Emoji Characters with their text variants
 #####
 
-function print_help_message() {
+#####
+# Print out a help message.
+#####
+function printHelpMessage() {
   printf "Usage:\n"
   printf "format_commit_messages.bash <filename>\n\n"
   printf "Arguments:\n\tfilename: Name of the file that contains the commits"
@@ -15,12 +18,12 @@ function print_help_message() {
 # If this script gets called without an argument, exit.
 if [[ $# -ne 1 ]]; then
   echo "Wrong arguments."
-  print_help_message
+  printHelpMessage
   exit 1
 fi
 
 if [[ $1 == "help" ]]; then
-  print_help_message
+  printHelpMessage
   exit 0
 fi
 
