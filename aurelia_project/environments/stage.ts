@@ -24,8 +24,6 @@ export default {
     },
   },
   events: {
-    enableColorPicker: 'enableColorPicker',
-    disableColorPicker: 'disableColorPicker',
     differsFromOriginal: 'differsFromOriginal',
     xmlChanged: 'xmlChanged',
     refreshProcessDefs: 'processdefs:refresh',
