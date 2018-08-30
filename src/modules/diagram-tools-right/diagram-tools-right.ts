@@ -41,10 +41,16 @@ export class DiagramToolsRight {
   }
 
   public attached(): void {
+    /**
+     * Subscribe to the "element.click" event to determine, if the ColorPicker
+     * should be enabled or not.
+     *
+     * The ColorPicker should only be enabled, if the user selects a Diagram
+     * Element inside a Collaboration.
+     */
     this.modeler.on('element.click', (event: IEvent) => {
       const selectedElements: Array<IShape> = this._getSelectedElements();
       const userSelectedDiagramElement: boolean = selectedElements.length > 0;
-      console.log(selectedElements);
 
       if (userSelectedDiagramElement) {
         this.colorPickerEnabled = true;
@@ -60,6 +66,17 @@ export class DiagramToolsRight {
         this.distributeElementsEnabled = false;
       }
     });
+
+    /**
+     * Subscribe to the "commandStack.elements.move.postExecute" event.
+     *
+     * This is needed because otherwise the colorpicker stays disabled if the
+     * user directly drags around an element after he clicked at a Collaboration.
+     */
+    this.modeler.on('commandStack.elements.move.postExecute', (event: IEvent) => {
+      this.colorPickerEnabled = true;
+    });
+
   }
 
   public detached(): void {
