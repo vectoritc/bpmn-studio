@@ -51,12 +51,16 @@ This will
 You can call this script like so:
 
 ```bash
-bash format_commit_messages <filename>
+bash format_commit_messages.bash <filename>
 ```
 
-Whereas `filename` is the name of the generatef file, which contains
+Whereas `filename` is the name of the generated file, which contains
 the merge commits and the corresponding messages. Per default, this file
-should name like _merge_commits_of_release.txt_.
+should be named like
+
+```bash
+merge_commits_of_release.txt
+```
 
 ## Cleanup Merge Commits
 
