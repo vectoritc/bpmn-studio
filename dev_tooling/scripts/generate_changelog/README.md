@@ -41,6 +41,23 @@ Example:
 bash get_merge_commits.sh v4.0.0 v4.0.1
 ```
 
+## Format Commit Messages
+
+This will
+* Remove all Merge Commit markers such as 🔀  or `:twisted_rightwards_arrows:`
+  inside the commit messages
+* Replace all emojis with their text variants (example: ✨ will be replaced to `:sparkles:`)
+
+You can call this script like so:
+
+```bash
+bash format_commit_messages <filename>
+```
+
+Whereas `filename` is the name of the generatef file, which contains
+the merge commits and the corresponding messages. Per default, this file
+should name like _merge_commits_of_release.txt_.
+
 ## Cleanup Merge Commits
 
 Edit `merge_commits_of_release.txt` in an editor for your choice:
