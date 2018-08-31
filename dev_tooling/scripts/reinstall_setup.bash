@@ -19,7 +19,7 @@ _VERSION="0.0.1"
 #   * The Jenkins *should* offer a clean setup anyway
 #   * The Jenkins already executes npm install (Since npm does not seems to that
 #     consistent, a multiple execution of npm install may lead to an undefined
-#     behavior and is pointless anyways).
+#     behavior and is pointless anyways.
 ############
 
 # Reset the current setup
@@ -28,20 +28,7 @@ npm run reset
 
 # Reinstalling your node modules
 echo "Installing node modules..."
-
-NPM_INSTALL_COMMAND="install --no-package-lock"
-NPM_NODE_MODULES="node_modules/npm/bin/npm-cli.js"
-NPM_NVM=$(ls -d ~/.nvm/versions/node/* | head -n 1)"/lib/$NPM_NODE_MODULES"
-NPM_GLOBAL="/usr/local/lib/$NPM_NODE_MODULES"
-
-if [[ -x "$NPM_NVM" ]]; then
-  "$NPM_NVM" $NPM_INSTALL_COMMAND
-elif [[ -x "$NPM_GLOBAL" ]]; then
-  "$NPM_GLOBAL" $NPM_INSTALL_COMMAND
-else
-  echo "No npm installation found"
-  exit 1
-fi
+npm install --no-package-lock
 
 # If npm install fails, its likely that also the build process would fail,
 # so we can exit here.
