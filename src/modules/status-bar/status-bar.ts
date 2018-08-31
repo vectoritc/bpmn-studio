@@ -13,10 +13,12 @@ export class StatusBar {
   public diffIsShown: boolean = false;
   public currentDiffMode: DiffMode;
   public xmlIsShown: boolean = false;
+  public showInspectViewButtons: boolean = false;
   public showChangeList: boolean = false;
   public isEncryptedCommunication: boolean = false;
   public currentXmlIdentifier: string;
   public previousXmlIdentifier: string;
+  public showInspectPanel: boolean = false;
 
   public DiffMode: typeof DiffMode = DiffMode;
 
@@ -59,6 +61,10 @@ export class StatusBar {
       [this.previousXmlIdentifier, this.currentXmlIdentifier] = xmlIdentifier;
     });
 
+    this._eventAggregator.subscribe(environment.events.statusBar.showInspectViewButtons, (showInspectViewButtons: boolean) => {
+      this.showInspectViewButtons = showInspectViewButtons;
+    });
+
     this.currentDiffMode = DiffMode.CurrentVsPrevious;
   }
 
@@ -88,6 +94,12 @@ export class StatusBar {
 
     this._eventAggregator.publish(environment.events.bpmnio.toggleDiffView);
     this.diffIsShown = !this.diffIsShown;
+  }
+
+  public toggleInspectPanel(): void {
+    this.showInspectPanel = !this.showInspectPanel;
+
+    this._eventAggregator.publish(environment.events.inspectView.showInspectPanel, this.showInspectPanel);
   }
 
   public navigateToSettings(): void {

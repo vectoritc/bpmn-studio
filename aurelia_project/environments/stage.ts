@@ -33,6 +33,7 @@ export default {
       showDiagramViewButtons: 'statusbar:diagramviewbuttons:show',
       hdieDiagramViewButtons: 'statusbar:diagramviewbuttons:hide',
       setXmlIdentifier: 'statusbar:xmlIdentifier',
+      showInspectViewButtons: 'statusbar:inspectviewbuttons',
     },
     configPanel: {
       processEngineRouteChanged: 'configpanel:processEngineRoute:changed',
@@ -82,6 +83,9 @@ export default {
       toggleProcessSolutionExplorer: 'processSolutionPanel:processsolutionexplorer:toggle',
       navigateToHeatmap: 'processSolutionPanel:processEngineLinks:navigateToHeatmap',
       navigateToDesigner: 'processSolutionPanel:processEngineLinks:navigateToDesigner',
+    },
+    inspectView: {
+      showInspectPanel: 'inspectView:inspectPanel:show',
     },
   },
   baseRoute: processEngineRoute,
