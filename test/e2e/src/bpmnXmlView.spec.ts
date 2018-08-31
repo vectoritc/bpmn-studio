@@ -1,4 +1,5 @@
-import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
+import {browser, ElementFinder, protractor, ProtractorExpectedConditions} from 'protractor';
+import {promise} from 'selenium-webdriver';
 
 import {BpmnIo} from './pages/bpmn-io';
 import {BpmnXmlView} from './pages/bpmnXmlView';
@@ -8,7 +9,7 @@ import {ProcessModel} from './pages/processModel';
 import {SolutionExplorer} from './pages/solutionExplorer';
 import {StatusBar} from './pages/statusBar';
 
-describe('bpmn-io XML view', () => {
+fdescribe('bpmn-io XML view', () => {
 
   let bpmnIo: BpmnIo;
   let bpmnXmlView: BpmnXmlView;
@@ -41,34 +42,53 @@ describe('bpmn-io XML view', () => {
   });
 
   beforeEach(() => {
+    const getRouterViewContainer: ElementFinder = general.getRouterViewContainer;
+    const visibilityOfRouterViewContainer: Function = expectedConditions.visibilityOf(getRouterViewContainer);
+
     browser.get(aureliaUrl);
-    browser.driver.wait(() => {
-      browser.wait(expectedConditions.visibilityOf(general.getRouterViewContainer), defaultTimeoutMS);
-      return general.getRouterViewContainer;
-    });
+    browser.driver
+      .wait(() => {
+        browser.wait(visibilityOfRouterViewContainer, defaultTimeoutMS);
+        return getRouterViewContainer;
+      });
 
     // You have to open solution explorer before click on link
     navBar.openSolutionExplorerByButtonClick();
     solutionExplorer.openProcessModelByClick(processModelId);
 
+    const bpmnIoTag: ElementFinder = bpmnIo.bpmnIoTag;
+    const visibilityOfBpmnIoTag: Function = expectedConditions.visibilityOf(bpmnIoTag);
+
     // Wait until diagram is loaded
-    browser.driver.wait(() => {
-      browser.wait(expectedConditions.visibilityOf(bpmnIo.bpmnIoTag), defaultTimeoutMS);
-      return bpmnIo.bpmnIoTag;
-    });
+    browser.driver
+      .wait(() => {
+        browser.wait(visibilityOfBpmnIoTag, defaultTimeoutMS);
+        return bpmnIoTag;
+      });
   });
 
   it('should contain `Show XML` button in status bar.', () => {
-    statusBar.statusBarXMLViewButton.isDisplayed().then((statusBarXMLViewButtonIsDisplayed: boolean) => {
-      expect(statusBarXMLViewButtonIsDisplayed).toBeTruthy();
-    });
+    const statusBarXMLViewButton: ElementFinder = statusBar.statusBarXMLViewButton;
+    const statusBarXMLViewButtonIsDisplayed: promise.Promise<boolean> = statusBarXMLViewButton.isDisplayed();
+
+    statusBarXMLViewButtonIsDisplayed
+      .then((itIsDisplayed: boolean) => {
+        expect(itIsDisplayed).toBeTruthy();
+      });
   });
 
   it('should be possbile to open xml view when click on `Show XML` button.', () => {
-    bpmnXmlView.openXMLViewByClickOnButton(statusBar.statusBarXMLViewButton).then(() => {
-      bpmnXmlView.bpmnXmlViewTag.isDisplayed().then((xmlViewIsDisplayed: boolean) => {
-        expect(xmlViewIsDisplayed).toBeTruthy();
+    const statusBarXMLViewButton: ElementFinder = statusBar.statusBarXMLViewButton;
+    const openXMLViewByClickOnButton: promise.Promise<void> = bpmnXmlView.openXMLViewByClickOnButton(statusBarXMLViewButton);
+    const bpmnXmlViewTag: ElementFinder = bpmnXmlView.bpmnXmlViewTag;
+    const bpmnXmlViewTagIsDisplayed: promise.Promise<boolean> = bpmnXmlViewTag.isDisplayed();
+
+    openXMLViewByClickOnButton
+      .then(() => {
+        bpmnXmlViewTagIsDisplayed
+          .then((xmlViewIsDisplayed: boolean) => {
+            expect(xmlViewIsDisplayed).toBeTruthy();
+          });
       });
-    });
   });
 });
