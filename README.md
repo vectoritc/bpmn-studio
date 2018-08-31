@@ -161,7 +161,7 @@ herunterladen.
 Das Image lässt sich wie folgt bauen:
 
 ```shell
-docker build --tag bpmn:v0.1 .
+docker build --tag bpmn-studio:latest .
 ```
 
 #### Container bauen mit optionalen Parametern
@@ -172,7 +172,7 @@ Es ist möglich, das base image, sowie die Paketversionen anzupassen:
 
 ```shell
 docker build --build-arg node_version=10-alpine \
-             --tag bpmn:v0.1 .
+             --tag bpmn-studio:latest.
 ```
 
 #### Container starten
@@ -180,7 +180,7 @@ docker build --build-arg node_version=10-alpine \
 Der Container lässt sich mit folgendem Befehl starten:
 
 ```shell
-docker run -p 17290:17290 bpmn:v0.1
+docker run -p 9000:9000 bpmn-studio:latest
 ```
 
 Anschließend lässt sich das BPMN-Studio unter URL `http://localhost:17290`
