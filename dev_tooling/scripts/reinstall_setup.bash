@@ -34,7 +34,6 @@ echo "Installing node modules..."
 # npm overrides the PATH - Variable and sets the path to npm to the current
 # working directories 'node_modules' directory.
 if [[ ! -z $OLD_PATH ]]; then
-  echo "Path is set"
   PATH=$OLD_PATH
 fi
 
