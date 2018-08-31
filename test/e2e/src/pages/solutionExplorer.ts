@@ -1,4 +1,5 @@
 import {by, element, ElementArrayFinder, ElementFinder} from 'protractor';
+import {By, promise} from 'selenium-webdriver';
 
 export class SolutionExplorer {
 
@@ -8,17 +9,28 @@ export class SolutionExplorer {
 
   // Define Functions
   public solutionExplorerListItemsId(processModelId: string): ElementFinder {
-    return this.solutionExplorerTag.element(by.id('processSolutionPanel-' + processModelId));
+    const id: string = 'processSolutionPanel-' + processModelId;
+    const byId: By = by.id(id);
+
+    return this.solutionExplorerTag.element(byId);
   }
   public solutionExplorerListItemsIds(processModelId: string): ElementArrayFinder {
-    return this.solutionExplorerListItems.all(by.id('processSolutionPanel-' + processModelId));
+    const id: string = 'processSolutionPanel-' + processModelId;
+    const byId: By = by.id(id);
+
+    return this.solutionExplorerListItems.all(byId);
   }
   public processModellDiagram(processModelId: string): ElementFinder {
-    return element(by.id('processSolutionPanel-' + processModelId));
+    const id: string = 'processSolutionPanel-' + processModelId;
+    const byId: By = by.id(id);
+
+    return element(byId);
   }
 
-  public openProcessModelByClick(processModelId: string): any {
-    return this.solutionExplorerListItemsId(processModelId).click();
+  public openProcessModelByClick(processModelId: string): promise.Promise<void> {
+    const solutionExplorerListItemsId: ElementFinder = this.solutionExplorerListItemsId(processModelId);
+
+    return solutionExplorerListItemsId.click();
   }
 
 }

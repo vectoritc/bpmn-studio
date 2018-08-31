@@ -9,7 +9,7 @@ import {ProcessModel} from './pages/processModel';
 import {SolutionExplorer} from './pages/solutionExplorer';
 import {StatusBar} from './pages/statusBar';
 
-fdescribe('bpmn-io XML view', () => {
+describe('bpmn-io XML view', () => {
 
   let bpmnIo: BpmnIo;
   let bpmnXmlView: BpmnXmlView;

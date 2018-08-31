@@ -1,7 +1,10 @@
 import {by, element, ElementFinder} from 'protractor';
+import {By} from 'selenium-webdriver';
 
 export class BpmnIo {
 
   // Define Elements
-  public bpmnIoTag: ElementFinder = element(by.tagName('bpmn-io'));
+  private byTagName: By = by.tagName('bpmn-io');
+
+  public bpmnIoTag: ElementFinder = element(this.byTagName);
 }
