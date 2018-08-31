@@ -4,7 +4,7 @@ import {Dashboard} from './pages/dashboard';
 import {NavBar} from './pages/navBar';
 import {ProcessModel} from './pages/processModel';
 
-fdescribe('Navigation bar', () => {
+describe('Navigation bar', () => {
   let dashboard: Dashboard;
   let navBar: NavBar;
   let processModel: ProcessModel;

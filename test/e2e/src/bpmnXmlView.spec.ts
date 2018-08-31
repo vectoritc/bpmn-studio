@@ -76,9 +76,11 @@ describe('bpmn-io XML view', () => {
   it('should be possbile to open xml view when click on `Show XML` button.', async() => {
     const statusBarXMLViewButton: ElementFinder = statusBar.statusBarXMLViewButton;
     const bpmnXmlViewTag: ElementFinder = bpmnXmlView.bpmnXmlViewTag;
-    const xmlViewIsDisplayed: boolean = await bpmnXmlViewTag.isDisplayed();
 
     await bpmnXmlView.openXMLViewByClickOnButton(statusBarXMLViewButton);
+
+    const xmlViewIsDisplayed: boolean = await bpmnXmlViewTag.isDisplayed();
+
     expect(xmlViewIsDisplayed).toBeTruthy();
   });
 });
