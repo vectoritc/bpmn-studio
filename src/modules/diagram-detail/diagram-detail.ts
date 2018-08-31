@@ -126,7 +126,7 @@ export class DiagramDetail {
     if (result === false) {
       /*
        * As suggested in https://github.com/aurelia/router/issues/302, we use
-       * the router directly to navgiate back, which results in staying on this
+       * the router directly to navigate back, which results in staying on this
        * component-- and this is the desired behaviour.
        */
       return new Redirect(this._router.currentInstruction.fragment, {trigger: false, replace: false});

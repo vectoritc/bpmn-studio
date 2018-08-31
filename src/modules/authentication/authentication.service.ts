@@ -135,7 +135,7 @@ export class AuthenticationService implements IAuthenticationService {
         throw new Error('Logout not successful');
       }
 
-      // If Identity Server replies with success, is has already invalidated the
+      // If Identity Server replies with success, it has already invalidated the
       // access_token. Now we can show the success dialog of the Identity Server
       // in a new window and finish the logout process once the "return to
       // application" link is clicked.

@@ -171,7 +171,7 @@ export class Dashboard {
 
     const allProcessModels: ProcessModelExecution.ProcessModelList = await this._managementApiService.getProcessModels(managementApiContext);
 
-    // TODO (ph): This will create 1 + n http reqeusts, where n is the number of process models in the processengine.
+    // TODO (ph): This will create 1 + n http requests, where n is the number of process models in the processengine.
     const promisesForAllUserTasks: Array<Promise<Array<IUserTaskWithProcessModel>>> = allProcessModels.processModels
       .map(async(processModel: ProcessModelExecution.ProcessModel): Promise<Array<IUserTaskWithProcessModel>> => {
         try {
