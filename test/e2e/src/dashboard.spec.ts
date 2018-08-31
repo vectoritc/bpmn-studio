@@ -1,5 +1,4 @@
 import {browser, ElementFinder, protractor, ProtractorExpectedConditions} from 'protractor';
-import {promise} from 'selenium-webdriver';
 
 import {Dashboard} from './pages/dashboard';
 import {General} from './pages/general';
@@ -51,17 +50,14 @@ describe('Dashboard view', () => {
 
   // process list section
 
-  it('should contain process list.', () => {
+  it('should contain process list.', async() => {
     const processListTag: ElementFinder = dashboard.processListTag;
+    const processListTagIsDisplayed: boolean = await processListTag.isDisplayed();
 
-    processListTag
-      .isDisplayed()
-      .then((dashboardProcessListTagIsDisplayed: boolean) => {
-        expect(dashboardProcessListTagIsDisplayed).toBeTruthy();
-     });
+    expect(processListTagIsDisplayed).toBeTruthy();
   });
 
-  it('should contain at least process definition in running section.', () => {
+  it('should contain at least process definition in running section.', async() => {
     const firstProcessRunningListItems: ElementFinder = dashboard.firstProcessRunningListItems;
     const visibilityOfFirstProcessRunningListItems: Function = expectedConditions.visibilityOf(firstProcessRunningListItems);
 
@@ -72,15 +68,12 @@ describe('Dashboard view', () => {
         return firstProcessRunningListItems;
       });
 
-    const countOfProcessRunningListItem: Promise<number> = dashboard.countOfProcessRunningListItems();
+    const countOfProcessRunningListItems: number = await dashboard.countOfProcessRunningListItems();
 
-    countOfProcessRunningListItem
-      .then((countOfProcessRunningListItems: number) => {
-        expect(countOfProcessRunningListItems).toBeGreaterThanOrEqual(1);
-      });
+    expect(countOfProcessRunningListItems).toBeGreaterThanOrEqual(1);
   });
 
-  it('should contain recently started process in running section.', () => {
+  it('should contain recently started process in running section.', async() => {
     const correlationId: string = processModel.getCorrelationId();
     const firstProcessRunningListItemsById: ElementFinder = dashboard.firstProcessRunningListItemsById(correlationId);
     const visibilityOfFirstProcessRunningListItemsById: Function = expectedConditions.visibilityOf(firstProcessRunningListItemsById);
@@ -92,15 +85,12 @@ describe('Dashboard view', () => {
         return firstProcessRunningListItemsById;
       });
 
-    const countOfProcessRunningListItemsByCorrelationId: Promise<number> = dashboard.countOfProcessRunningListItemsByCorrelationId(correlationId);
+    const countOfProcessRunningListItemsByCorrelationId: number = await dashboard.countOfProcessRunningListItemsByCorrelationId(correlationId);
 
-    countOfProcessRunningListItemsByCorrelationId
-      .then((countOfProcessRunningListItems: number) => {
-        expect(countOfProcessRunningListItems).toBe(1);
-      });
+    expect(countOfProcessRunningListItemsByCorrelationId).toBe(1);
   });
 
-  it('should be possible to open process model by click on hyperlink in table.', () => {
+  it('should be possible to open process model by click on hyperlink in table.', async() => {
     const correlationId: string = processModel.getCorrelationId();
     const hyperlinkOfProcessRunningListItemByCorrelationId: ElementFinder = dashboard.hyperlinkOfProcessRunningListItemByCorrelationId(correlationId);
     const visibilityOfHyperlinkOfProcessRunningListItemByCorrelationId: Function =
@@ -113,21 +103,16 @@ describe('Dashboard view', () => {
         return hyperlinkOfProcessRunningListItemByCorrelationId;
      });
 
-    const openProcessModelByClickOnModelIdInProcessRunningList: promise.Promise<void> =
-      dashboard.openProcessModelByClickOnModelIdInProcessRunningList(correlationId);
-    const processModelUrl: string = processModel.processModelUrl(processModelId);
+    await dashboard.openProcessModelByClickOnModelIdInProcessRunningList(correlationId);
 
-    openProcessModelByClickOnModelIdInProcessRunningList
-      .then(() => {
-        browser
-          .getCurrentUrl()
-          .then((currentBrowserUrl: string) => {
-            expect(currentBrowserUrl).toContain(processModelUrl);
-          });
-       });
+    const processModelUrl: string = processModel.processModelUrl(processModelId);
+    const currentBrowserUrl: string = await browser.getCurrentUrl();
+
+    expect(currentBrowserUrl).toContain(processModelUrl);
+
   });
 
-  it('should be possible to open user tasks by click on hyperlink in table.', () => {
+  it('should be possible to open user tasks by click on hyperlink in table.', async() => {
     const correlationId: string = processModel.getCorrelationId();
     const hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId: ElementFinder =
       dashboard.hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId(correlationId);
@@ -141,33 +126,24 @@ describe('Dashboard view', () => {
         return hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId;
       });
 
-    const openUserTasksByClickOnModelIdInProcessRunningList: promise.Promise<void> =
-      dashboard.openUserTasksByClickOnModelIdInProcessRunningList(correlationId);
-    const userTasksUrl: string = processModel.userTasksUrl(processModelId);
+    await dashboard.openUserTasksByClickOnModelIdInProcessRunningList(correlationId);
 
-    openUserTasksByClickOnModelIdInProcessRunningList
-      .then(() => {
-        browser
-          .getCurrentUrl()
-          .then((currentBrowserUrl: string) => {
-            expect(currentBrowserUrl).toContain(userTasksUrl);
-          });
-      });
+    const userTasksUrl: string = processModel.userTasksUrl(processModelId);
+    const currentBrowserUrl: string = await browser.getCurrentUrl();
+
+    expect(currentBrowserUrl).toContain(userTasksUrl);
   });
 
-  it('should contain task list.', () => {
+  it('should contain task list.', async() => {
     const taskListContainer: ElementFinder = dashboard.taskListContainer;
+    const taskListContainerIsDisplayed: boolean = await taskListContainer.isDisplayed();
 
-    taskListContainer
-      .isDisplayed()
-      .then((dashboardTaskListContainerIsDisplayed: boolean) => {
-        expect(dashboardTaskListContainerIsDisplayed).toBeTruthy();
-      });
+    expect(taskListContainerIsDisplayed).toBeTruthy();
   });
 
   // task list section
 
-  it('should contain at least task definition in tasks waiting section.', () => {
+  it('should contain at least task definition in tasks waiting section.', async() => {
     const firstTaskListItems: ElementFinder = dashboard.firstTaskListItems;
     const visibilityOfFirstTaskListItems: Function = expectedConditions.visibilityOf(firstTaskListItems);
 
@@ -178,15 +154,12 @@ describe('Dashboard view', () => {
         return firstTaskListItems;
       });
 
-    const countOfTasksWaitingListItem: Promise<number> = dashboard.countOfTasksWaitingListItems();
+    const countOfTasksWaitingListItems: number = await dashboard.countOfTasksWaitingListItems();
 
-    countOfTasksWaitingListItem
-      .then((countOfTasksWaitingListItems: number) => {
-        expect(countOfTasksWaitingListItems).toBeGreaterThanOrEqual(1);
-      });
+    expect(countOfTasksWaitingListItems).toBeGreaterThanOrEqual(1);
   });
 
-  it('should contain recently started task in tasks waiting section.', () => {
+  it('should contain recently started task in tasks waiting section.', async() => {
     const firstTaskWaitingById: ElementFinder = dashboard.firstTaskWaitingById(processModelId);
     const visibilityOfFirstTaskWaitingById: Function = expectedConditions.visibilityOf(firstTaskWaitingById);
 
@@ -197,15 +170,12 @@ describe('Dashboard view', () => {
         return firstTaskWaitingById;
       });
 
-    const countOfTasksWaitingListItemsById: Promise<number> = dashboard.countOfTasksWaitingListItemsById(processModelId);
+    const countOfTasksWaitingListItemsById: number = await dashboard.countOfTasksWaitingListItemsById(processModelId);
 
-    countOfTasksWaitingListItemsById
-      .then((countOfTasksWaitingListItemsByIds: number) => {
-        expect(countOfTasksWaitingListItemsByIds).toBe(1);
-      });
+    expect(countOfTasksWaitingListItemsById).toBe(1);
   });
 
-  it('should be possbible to click continue in task waiting section.', () => {
+  it('should be possbible to click continue in task waiting section.', async() => {
     const firstTaskWaitingById: ElementFinder = dashboard.firstTaskWaitingById(processModelId);
     const visibilityOfFirstTaskWaitingById: Function = expectedConditions.visibilityOf(firstTaskWaitingById);
 
@@ -216,17 +186,12 @@ describe('Dashboard view', () => {
         return firstTaskWaitingById;
       });
 
-    const continueTaskByClickOnButton: promise.Promise<void> = dashboard.continueTaskByClickOnButton(processModelId);
+    await dashboard.continueTaskByClickOnButton(processModelId);
+
     const userTasksInputUrl: string = processModel.userTasksInputUrl(processModelId);
+    const currentBrowserUrl: string = await browser.getCurrentUrl();
 
-    continueTaskByClickOnButton
-      .then(() => {
-        browser
-          .getCurrentUrl()
-          .then((currentBrowserUrl: string) => {
-            expect(currentBrowserUrl).toContain(userTasksInputUrl);
-          });
-      });
+    expect(currentBrowserUrl).toContain(userTasksInputUrl);
   });
 
   it('should be possbible to click continue in an opened user task.', () => {
@@ -254,7 +219,7 @@ describe('Dashboard view', () => {
       });
   });
 
-  it('should be in waiting room when click continue in an opened user task.', () => {
+  it('should be in waiting room when click continue in an opened user task.', async() => {
     const firstTaskWaitingById: ElementFinder = dashboard.firstTaskWaitingById(processModelId);
     const visibilityOfFirstTaskWaitingById: Function = expectedConditions.visibilityOf(firstTaskWaitingById);
 
@@ -278,19 +243,14 @@ describe('Dashboard view', () => {
         return dynamicUiWrapperContinueButton;
       });
 
+    await dashboard.continueUserTaskByClickOnDynamicUiWrapperContinuButton();
+
     const correlationId: string = processModel.getCorrelationId();
     const waitingroomUrl: string = processModel.waitingroomUrl(processModelId, correlationId);
+    const currentBrowserUrl: string = await browser.getCurrentUrl();
 
     // Should be in waiting room
-    dashboard
-      .continueUserTaskByClickOnDynamicUiWrapperContinuButton()
-      .then(() => {
-        browser
-          .getCurrentUrl()
-          .then((currentBrowserUrl: string) => {
-            expect(currentBrowserUrl).toContain(waitingroomUrl);
-          });
-      });
+    expect(currentBrowserUrl).toContain(waitingroomUrl);
 
     const dashboardLink: string = dashboard.dashboardLink;
     const urlContainsDashboardLink: Function = expectedConditions.urlContains(dashboardLink);

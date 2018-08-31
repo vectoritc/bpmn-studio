@@ -1,5 +1,4 @@
 import {browser, ElementFinder, protractor, ProtractorExpectedConditions} from 'protractor';
-import {promise} from 'selenium-webdriver';
 
 import {BpmnIo} from './pages/bpmn-io';
 import {BpmnXmlView} from './pages/bpmnXmlView';
@@ -67,28 +66,19 @@ describe('bpmn-io XML view', () => {
       });
   });
 
-  it('should contain `Show XML` button in status bar.', () => {
+  it('should contain `Show XML` button in status bar.', async() => {
     const statusBarXMLViewButton: ElementFinder = statusBar.statusBarXMLViewButton;
-    const statusBarXMLViewButtonIsDisplayed: promise.Promise<boolean> = statusBarXMLViewButton.isDisplayed();
+    const statusBarXMLViewButtonIsDisplayed: boolean = await statusBarXMLViewButton.isDisplayed();
 
-    statusBarXMLViewButtonIsDisplayed
-      .then((itIsDisplayed: boolean) => {
-        expect(itIsDisplayed).toBeTruthy();
-      });
+    expect(statusBarXMLViewButtonIsDisplayed).toBeTruthy();
   });
 
-  it('should be possbile to open xml view when click on `Show XML` button.', () => {
+  it('should be possbile to open xml view when click on `Show XML` button.', async() => {
     const statusBarXMLViewButton: ElementFinder = statusBar.statusBarXMLViewButton;
-    const openXMLViewByClickOnButton: promise.Promise<void> = bpmnXmlView.openXMLViewByClickOnButton(statusBarXMLViewButton);
     const bpmnXmlViewTag: ElementFinder = bpmnXmlView.bpmnXmlViewTag;
-    const bpmnXmlViewTagIsDisplayed: promise.Promise<boolean> = bpmnXmlViewTag.isDisplayed();
+    const xmlViewIsDisplayed: boolean = await bpmnXmlViewTag.isDisplayed();
 
-    openXMLViewByClickOnButton
-      .then(() => {
-        bpmnXmlViewTagIsDisplayed
-          .then((xmlViewIsDisplayed: boolean) => {
-            expect(xmlViewIsDisplayed).toBeTruthy();
-          });
-      });
+    await bpmnXmlView.openXMLViewByClickOnButton(statusBarXMLViewButton);
+    expect(xmlViewIsDisplayed).toBeTruthy();
   });
 });
