@@ -124,7 +124,6 @@
     "@fortawesome/fontawesome-free": "^5.1.0",
     "@process-engine/bpmn-js-custom-bundle": "^2.0.0",
     "@process-engine/process_engine_contracts": "^7.0.0",
-    "@process-engine/process_engine_runtime": "latest",
     "@types/jasmine": "^2.2.0",
     "@types/node": "^6.0.45",
     "@types/spectrum": "^1.5.29",
