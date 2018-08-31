@@ -240,7 +240,7 @@ Es werden folgende Pakete benötigt:
    npm run test-init
    ```
 
-1. Die End-to-End tests können in einem weiteren Terminal mit folgendem Befehl
+1. Die End-to-End Tests können in einem weiteren Terminal mit folgendem Befehl
    gestartet werden:
 
    ```shell
