@@ -28,6 +28,16 @@ npm run reset
 
 # Reinstalling your node modules
 echo "Installing node modules..."
+
+# If an old path is set, use it.
+# This is necessary because when executing this script from npm run ...,
+# npm overrides the PATH - Variable and sets the path to npm to the current
+# working directories 'node_modules' directory.
+if [[ ! -z $OLD_PATH ]]; then
+  echo "Path is set"
+  PATH=$OLD_PATH
+fi
+
 npm install --no-package-lock
 
 # If npm install fails, its likely that also the build process would fail,
