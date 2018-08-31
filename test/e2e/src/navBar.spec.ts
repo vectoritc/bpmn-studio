@@ -79,7 +79,8 @@ describe('Navigation bar', () => {
   });
 
   it('should contain an enabled solution explorer button.', async() => {
-    const navBarSolutionExplorerButtonAttributes: boolean = await navBar.navBarSolutionExplorerButtonIsDisabled();
+    const navBarSolutionExplorerButton: ElementFinder = navBar.navBarSolutionExplorerButton;
+    const navBarSolutionExplorerButtonAttributes: boolean = await navBar.navBarButtonIsDisabled(navBarSolutionExplorerButton);
 
     expect(navBarSolutionExplorerButtonAttributes).toBeTruthy();
   });
@@ -96,58 +97,80 @@ describe('Navigation bar', () => {
   });
 
   // This section tests the think button
-  it('should contain think button.', () => {
-    navBar.navBarThinkLink.isDisplayed().then((navBarThinkLinkIsDisplayed: boolean) => {
-      expect(navBarThinkLinkIsDisplayed).toBeTruthy();
-    });
+  it('should contain think button.', async() => {
+    const navBarThinkLink: ElementFinder = navBar.navBarThinkLink;
+    const navBarThinkLinkIsDisplayed: boolean = await navBarThinkLink.isDisplayed();
+
+    expect(navBarThinkLinkIsDisplayed).toBeTruthy();
+
   });
 
-  it('should contain an enabled think view button.', () => {
-    navBar.navBarThinkLink.getAttribute('class').then((classAttribute: string) => {
-      expect(classAttribute).not.toContain(navBar.navBarDisabledClassName);
-    });
+  it('should contain an enabled think view button.', async() => {
+    const navBarThinkLink: ElementFinder = navBar.navBarThinkLink;
+    const navBarThinkLinkAttributes: boolean = await navBar.navBarButtonIsDisabled(navBarThinkLink);
+
+    expect(navBarThinkLinkAttributes).toBeTruthy();
   });
 
-  it('should open process list view when think button is clicked.', () => {
-    navBar.navBarThinkLink.click().then(() => {
-      browser.getCurrentUrl().then((currentBrowserUrl: string) => {
-        expect(currentBrowserUrl).toContain(processModel.getProcessModelLink());
-      });
-    });
+  it('should open process list view when think button is clicked.', async() => {
+    const navBarThinkLink: ElementFinder = navBar.navBarThinkLink;
+
+    await navBarThinkLink.click();
+
+    const currentBrowserUrl: string = await browser.getCurrentUrl();
+    const processModelLink: string = processModel.getProcessModelLink();
+
+    expect(currentBrowserUrl).toContain(processModelLink);
   });
 
   // This section tests the design button
-  it('should contain design button.', () => {
-    navBar.navBarDesignLink.isDisplayed().then((navBarDesignLinkIsDisplayed: boolean) => {
-      expect(navBarDesignLinkIsDisplayed).toBeTruthy();
-    });
+  it('should contain design button.', async() => {
+    const navBarDesignLink: ElementFinder = navBar.navBarDesignLink;
+    const navBarDesignLinkIsDisplayed: boolean = await navBarDesignLink.isDisplayed();
+
+    expect(navBarDesignLinkIsDisplayed).toBeTruthy();
   });
 
-  it('should contain a disabled design view button.', () => {
-    navBar.navBarDesignLink.getAttribute('class').then((classAttribute: string) => {
-      expect(classAttribute).toContain(navBar.navBarDisabledClassName);
-    });
+  it('should contain a disabled design view button.', async() => {
+    const navBarDesignLink: ElementFinder = navBar.navBarDesignLink;
+    const navBarDesignLinkAttributes: boolean = await navBar.navBarButtonIsDisabled(navBarDesignLink);
+
+    expect(navBarDesignLinkAttributes).not.toBeTruthy();
   });
 
   // This section tests the inspect button
-  it('should contain inspect button.', () => {
-    navBar.navBarInspectLink.isDisplayed().then((navBarInspectLinkIsDisplayed: boolean) => {
-      expect(navBarInspectLinkIsDisplayed).toBeTruthy();
-    });
+  it('should contain inspect button.', async() => {
+    const navBarInspectLink: ElementFinder = navBar.navBarInspectLink;
+    const navBarInspectLinkIsDisplayed: boolean = await navBarInspectLink.isDisplayed();
+
+    expect(navBarInspectLinkIsDisplayed).toBeTruthy();
   });
 
-  it('should contain an enabled inspect view button.', () => {
-    navBar.navBarInspectLink.getAttribute('class').then((classAttribute: string) => {
-      expect(classAttribute).not.toContain(navBar.navBarDisabledClassName);
-    });
+  it('should contain an enabled inspect view button.', async() => {
+    const navBarInspectLink: ElementFinder = navBar.navBarInspectLink;
+    const navBarInspectLinkAttributes: boolean = await navBar.navBarButtonIsDisabled(navBarInspectLink);
+
+    expect(navBarInspectLinkAttributes).toBeTruthy();
   });
 
-  it('should open inspect view when the inspect button is clicked.', () => {
-    navBar.navBarInspectLink.click().then(() => {
-      browser.getCurrentUrl().then((currentBrowserUrl: string) => {
-        expect(currentBrowserUrl).toContain(dashboard.dashboardLink);
+  it('should open inspect view when the inspect button is clicked.', async() => {
+    const navBarInspectLink: ElementFinder = navBar.navBarInspectLink;
+
+    await navBarInspectLink.click();
+
+    const processListTag: ElementFinder = dashboard.processListTag;
+    const visibilityOfProcessListTag: Function = expectedConditions.visibilityOf(processListTag);
+
+    browser.driver
+      .wait(() => {
+        browser
+          .wait(visibilityOfProcessListTag, defaultTimeoutMS);
+        return processListTag;
       });
-    });
+
+    const currentBrowserUrl: string = await browser.getCurrentUrl();
+    const dashboardLink: string = dashboard.dashboardLink;
+    expect(currentBrowserUrl).toContain(dashboardLink);
   });
 
 });

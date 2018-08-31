@@ -28,9 +28,9 @@ export class NavBar {
     return this.navBarSolutionExplorerButton.click();
   }
 
-  public async navBarSolutionExplorerButtonIsDisabled(): Promise<boolean> {
-    const navBarSolutionExplorerButtonAttributes: string = await this.navBarSolutionExplorerButton.getAttribute('class');
-    const containsDisabledAttribute: boolean = navBarSolutionExplorerButtonAttributes.includes(this.navBarDisabledClassName);
+  public async navBarButtonIsDisabled(button: ElementFinder): Promise<boolean> {
+    const navBarButtonAttributes: string = await button.getAttribute('class');
+    const containsDisabledAttribute: boolean = navBarButtonAttributes.includes(this.navBarDisabledClassName);
 
     return !containsDisabledAttribute;
   }
