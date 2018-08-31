@@ -95,7 +95,7 @@
     "@process-engine/solutionexplorer.repository.management_api": "0.0.3",
     "@process-engine/solutionexplorer.service": "1.0.0",
     "@process-engine/solutionexplorer.service.contracts": "1.0.0",
-    "aurelia-open-id-connect": "^1.0.3",
+    "aurelia-open-id-connect": "1.0.3",
     "aurelia-validation": "^1.1.2",
     "bpmn-js-differ": "^1.2.0",
     "electron-is-dev": "^0.3.0",
