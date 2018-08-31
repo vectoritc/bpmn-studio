@@ -48,15 +48,13 @@ This will
   inside the commit messages
 * Replace all emojis with their text variants (example: ✨ will be replaced to `:sparkles:`)
 
-You can call this script like so:
+You can call this script like this:
 
 ```bash
 bash format_commit_messages.bash <filename>
 ```
 
-Whereas `filename` is the name of the generated file, which contains
-the merge commits and the corresponding messages. Per default, this file
-should be named like
+- `filename` The name of the generated file, example:
 
 ```bash
 merge_commits_of_release.txt
