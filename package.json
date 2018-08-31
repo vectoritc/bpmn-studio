@@ -19,7 +19,7 @@
     "test-init": "process-engine && webdriver-manager update && webdriver-manager start",
     "test-init-docker": "bash test/start_docker_bundle.sh && webdriver-manager update && webdriver-manager start",
     "test": "au e2e",
-    "test-docker": "au e2eDocker",
+    "test-docker": "bash test/start_docker_bundle.sh && au e2eDocker",
     "test-crossbrowser": "au e2eCrossbrowser",
     "lint": "tslint --project .",
     "electron-start-dev": "npm run build && electron electron_app/electron.js",
