@@ -4,7 +4,7 @@ import {General} from './pages/general';
 import {ProcessDefListPage} from './pages/processDefListPage';
 import {ProcessModel} from './pages/processModel';
 
-fdescribe('Process definition list', () => {
+describe('Process definition list', () => {
 
   let general: General;
   let processDefListPage: ProcessDefListPage;
