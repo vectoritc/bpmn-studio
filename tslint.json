@@ -4,7 +4,10 @@
     "no-any": false,
     "ban": [
       true,
-      {"name": ["fdescribe", "fit"], "message": "Do not focus tests."}
+      {
+        "name": ["fdescribe", "fit"], 
+        "message": "Do not focus tests."
+      }
     ]
   }
 }

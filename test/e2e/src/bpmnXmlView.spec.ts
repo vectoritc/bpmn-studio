@@ -51,14 +51,14 @@ describe('bpmn-io XML view', () => {
         return getRouterViewContainer;
       });
 
-    // You have to open solution explorer before click on link
+    // You have to open the solution explorer before clicking on a link
     navBar.openSolutionExplorerByButtonClick();
     solutionExplorer.openProcessModelByClick(processModelId);
 
     const bpmnIoTag: ElementFinder = bpmnIo.bpmnIoTag;
     const visibilityOfBpmnIoTag: Function = expectedConditions.visibilityOf(bpmnIoTag);
 
-    // Wait until diagram is loaded
+    // Wait until the diagram is loaded
     browser.driver
       .wait(() => {
         browser.wait(visibilityOfBpmnIoTag, defaultTimeoutMS);
