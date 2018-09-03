@@ -146,7 +146,7 @@ export class ProcessSolutionPanel {
 
       const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
 
-      // Register handler for double-click event fired from "elecron.js".
+      // Register handler for double-click event fired from "electron.js".
       ipcRenderer.on('double-click-on-file', async(event: Event, pathToFile: string) => {
         const diagram: IDiagram = await this._solutionExplorerServiceFileSystem.openSingleDiagram(pathToFile, this._identity);
 
@@ -284,7 +284,7 @@ export class ProcessSolutionPanel {
 
   /**
    * Handles the file input change event for the single file input.
-   * @param event A event that holds the files that were "uploaded" by the user.
+   * @param event An event that holds the files that were "uploaded" by the user.
    * Currently there is no type for this kind of event.
    */
   public async onSingleDiagramInputChange(event: IInputEvent): Promise<void> {

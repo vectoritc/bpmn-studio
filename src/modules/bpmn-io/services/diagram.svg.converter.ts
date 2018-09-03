@@ -38,7 +38,7 @@ export class DiagramSvgConverter implements ISvgConvertService {
     return new ExportService(mimeType, this._enqueuedPromises);
   }
 
-    /**
+  /**
    * Exports the current diagram as a PNG image.
    */
   private _pngExporter = async(): Promise<string> => {
@@ -49,7 +49,7 @@ export class DiagramSvgConverter implements ISvgConvertService {
    * Exports the current diagram as a jpeg image.
    */
   private _jpegExporter = async(): Promise<string> => {
-    return this._generateImageFromSVG('png', this._svgContent);
+    return this._generateImageFromSVG('jpeg', this._svgContent);
   }
 
   /**
