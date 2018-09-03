@@ -1,0 +1,13 @@
+{
+    "info": "This file is auto generated and required by the sequelize-cli. Please do not remove.",
+    "username": null,
+    "password": null,
+    "database": null,
+    "host": null,
+    "port": null,
+    "dialect": "sqlite",
+    "storage": "/Users/bastianschnittger/Library/Application Support/bpmn-studio/process_engine_databases/flow_node_instance.sqlite",
+    "supportBigNumbers": true,
+    "resetPasswordRequestTimeToLive": 12,
+    "logging": false
+  }
