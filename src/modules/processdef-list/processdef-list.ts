@@ -1,6 +1,6 @@
 // TODO: Refactor the Process Definition List entirely
 //       The big issue with this file is: it is the main
-//       anchor for the studio; but it is not apparent.
+//       anchor for the studio; but it is not apparent why.
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
