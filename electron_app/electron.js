@@ -387,55 +387,55 @@ Main._createMainWindow = function () {
 
 Main._startInternalProcessEngine = async function () {
 
-  async function runMigrations(sqlitePath) {
-    // Note:
-    // Migrations need to be run through the sequelize-cli.
-    // We can use the existing bash script `scripts/sequelize_migrations.sh` for this.
-    //
-    // Keep in mind that the BPMN studio starts the backend through a "require" and NOT "npm start",
-    // meaning we will not be able to access the runtimes own npm scripts!
+  // async function runMigrations(sqlitePath) {
+  //   // Note:
+  //   // Migrations need to be run through the sequelize-cli.
+  //   // We can use the existing bash script `scripts/sequelize_migrations.sh` for this.
+  //   //
+  //   // Keep in mind that the BPMN studio starts the backend through a "require" and NOT "npm start",
+  //   // meaning we will not be able to access the runtimes own npm scripts!
 
-    // const scriptFilePath = path.join('.', 'scripts', 'sequelize_migrations.sh');
-    const scriptFilePath = path.join('./scripts/sequelize_migrations.sh');
+  //   // const scriptFilePath = path.join('.', 'scripts', 'sequelize_migrations.sh');
+  //   const scriptFilePath = path.join('./scripts/sequelize_migrations.sh');
 
-    console.log('-- CURRENT WORKING DIRECTORY --')
-    console.log(`process.cwd(): ${process.cwd()}`);
-    console.log(`__dirname: ${__dirname}`);
-    console.log('-------------------------------')
+  //   console.log('-- CURRENT WORKING DIRECTORY --')
+  //   console.log(`process.cwd(): ${process.cwd()}`);
+  //   console.log(`__dirname: ${__dirname}`);
+  //   console.log('-------------------------------')
 
-    process.chdir(__dirname);
+  //   process.chdir(__dirname);
 
-    console.log('-- CURRENT WORKING DIRECTORY --')
-    console.log(`process.cwd(): ${process.cwd()}`);
-    console.log('-------------------------------')
+  //   console.log('-- CURRENT WORKING DIRECTORY --')
+  //   console.log(`process.cwd(): ${process.cwd()}`);
+  //   console.log('-------------------------------')
 
-    const repositories = [
-      'process_model',
-      'flow_node_instance',
-      'timer',
-    ];
+  //   const repositories = [
+  //     'process_model',
+  //     'flow_node_instance',
+  //     'timer',
+  //   ];
 
-    let performedSetup = false;
+  //   let performedSetup = false;
 
-    for (const repository of repositories) {
+  //   for (const repository of repositories) {
 
-      let baseCommand = `DB_STORAGE=${repository} NODE_ENV=sqlite `;
+  //     let baseCommand = `DB_STORAGE=${repository} NODE_ENV=sqlite `;
 
-      if (performedSetup) {
-        baseCommand = `SKIP_SETUP=true ${baseCommand} `
-      }
+  //     if (performedSetup) {
+  //       baseCommand = `SKIP_SETUP=true ${baseCommand} `
+  //     }
 
-      if (sqlitePath !== undefined) {
-        baseCommand = `SQLITE_PATH="${sqlitePath}" ${baseCommand} `
-      }
+  //     if (sqlitePath !== undefined) {
+  //       baseCommand = `SQLITE_PATH="${sqlitePath}" ${baseCommand} `
+  //     }
 
-      const command = `${baseCommand}sh ${scriptFilePath}`;
+  //     const command = `${baseCommand}sh ${scriptFilePath}`;
 
-      await runExec(command);
+  //     await runExec(command);
 
-      performedSetup = true;
-    }
-  }
+  //     performedSetup = true;
+  //   }
+  // }
 
   async function runExec(command) {
 
@@ -565,8 +565,8 @@ Main._startInternalProcessEngine = async function () {
         const userDataFolderPath = require('platform-folders').getConfigHome();
         const sqlitePath = `${userDataFolderPath}/bpmn-studio/process_engine_databases`;
         // Start the PE by just running the code of process_engine_runtime.
-        await runMigrations(sqlitePath);
-        require('@process-engine/process_engine_runtime');
+
+        require('@process-engine/process_engine_runtime')(sqlitePath);
 
         console.log('Internal ProcessEngine started successfully.');
         internalProcessEngineStatus = 'success';
