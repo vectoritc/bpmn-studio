@@ -35,7 +35,8 @@
   },
   "build": {
     "extraFiles": [
-      "config/**/*"
+      "config/**/*",
+      "node_modules/@process-engine/process_engine_runtime/sequelize/migrations/**/*"
     ],
     "nsis": {
       "perMachine": true,
