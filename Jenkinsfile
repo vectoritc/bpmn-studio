@@ -70,9 +70,9 @@ pipeline {
       }
     }
     stage('build electron') {
-      when {
-        expression { branch_is_master || branch_is_develop }
-      }
+      // when {
+      //   expression { branch_is_master || branch_is_develop }
+      // }
       parallel {
         stage('Build on Linux') {
           agent {
@@ -127,7 +127,7 @@ pipeline {
         }
         stage('Build on Windows') {
           agent {
-            label "windows"
+            label "windows-test"
           }
           steps {
             unstash('post_build')
@@ -205,9 +205,9 @@ pipeline {
       }
     }
     stage('publish electron') {
-      when {
-        expression { branch_is_master || branch_is_develop }
-      }
+      // when {
+      //   expression { branch_is_master || branch_is_develop }
+      // }
       steps {
         unstash('linux_results')
         unstash('macos_results')

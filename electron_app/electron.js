@@ -499,7 +499,7 @@ Main._startInternalProcessEngine = async function () {
         const sqlitePath = `${userDataFolderPath}/bpmn-studio/process_engine_databases`;
 
         // Start the PE by just running the code of process_engine_runtime.
-        require('@process-engine/process_engine_runtime')(sqlitePath);
+        await require('@process-engine/process_engine_runtime')(sqlitePath);
 
         console.log('Internal ProcessEngine started successfully.');
         internalProcessEngineStatus = 'success';
