@@ -113,8 +113,7 @@
     "proxy-polyfill": "^0.1.7",
     "pushserve": "^1.0.2",
     "spectrum-colorpicker": "^1.8.0",
-    "sqlite3": "^4.0.2",
-    "xml-beautifier": "^0.3.0"
+    "sqlite3": "^4.0.2"
   },
   "peerDependencies": {},
   "devDependencies": {

@@ -2,8 +2,6 @@ import {IXmlConvertService} from '../../../contracts/index';
 import {IExportService} from '../../../contracts/index';
 import {ExportService} from './export.service';
 
-import * as beautify from 'xml-beautifier';
-
 export class DiagramXmlConverter implements IXmlConvertService {
 
   private _xmlContent: string;
@@ -27,9 +25,8 @@ export class DiagramXmlConverter implements IXmlConvertService {
    */
   private _bpmnExporter = async(): Promise<string> => {
     const formatterPromise: Promise<string> = new Promise((resolve: Function): void => {
-      const formattedXml: string = beautify(this._xmlContent);
 
-      resolve(formattedXml);
+      resolve(this._xmlContent);
     });
 
     return formatterPromise;
