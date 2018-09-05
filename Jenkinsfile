@@ -127,7 +127,7 @@ pipeline {
         }
         stage('Build on Windows') {
           agent {
-            label "windows-test"
+            label "windows"
           }
           steps {
             unstash('post_build')
