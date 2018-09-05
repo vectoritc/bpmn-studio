@@ -356,7 +356,7 @@ export class BpmnDiffView {
 
   private async _getXmlFromModeler(): Promise<string> {
     const saveXmlPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void =>  {
-      this._diffModeler.saveXML({}, async(saveXmlError: Error, xml: string) => {
+      this._diffModeler.saveXML({ format: true }, async(saveXmlError: Error, xml: string) => {
         if (saveXmlError) {
           reject(saveXmlError);
 

@@ -359,7 +359,7 @@ export class BpmnIo {
 
   public async getXML(): Promise<string> {
     const returnPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void => {
-      this.modeler.saveXML({}, (error: Error, result: string) => {
+      this.modeler.saveXML({ format: true }, (error: Error, result: string) => {
         if (error) {
           reject(error);
         }
