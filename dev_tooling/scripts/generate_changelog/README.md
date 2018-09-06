@@ -107,7 +107,14 @@ GITHUB_AUTH="USERNAME:TOKEN" bash get_fixed_issues.sh
 Edit `closed_issues` in an editor for your choice. Perform the same cleanup steps
 as described in [Cleanup merge commits](#cleanup-merge-commits).
 
-You can also replace the emojis by calling `format_messages.bash`
+You can also replace the emojis by calling
+
+```bash
+bash format_messages.bash closed_issues
+```
+
+Keep in mind that this will **replace** the current `formatted_messages.txt` file
+so **run the `sort_and_format_merge_commits.sh` script first**.
 
 After this step paste the contents of `closed_issues` into the section `Fixed
 Issues` of the release notes file.
