@@ -1,4 +1,4 @@
-import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
+import {browser, ElementArrayFinder, ElementFinder, protractor, ProtractorExpectedConditions} from 'protractor';
 
 import {Dashboard} from './pages/dashboard';
 import {NavBar} from './pages/navBar';
@@ -21,60 +21,78 @@ describe('Navigation bar', () => {
   });
 
   beforeEach(() => {
+    const navBarTag: ElementFinder = navBar.navBarTag;
+    const visibilityOfNavBarTag: Function = expectedConditions.visibilityOf(navBarTag);
+
     browser.get(aureliaUrl);
-    browser.driver.wait(() => {
-      browser.wait(expectedConditions.visibilityOf(navBar.navBarTag), defaultTimeoutMS);
-      return navBar.navBarTag;
-    });
+    browser.driver
+      .wait(() => {
+        browser
+          .wait(visibilityOfNavBarTag, defaultTimeoutMS);
+        return navBarTag;
+      });
   });
 
-  it('should display.', () => {
-    navBar.navBarTag.isDisplayed().then((navBarIsDisplayed: boolean) => {
-      expect(navBarIsDisplayed).toBeTruthy();
-    });
+  it('should display.', async() => {
+    const navBarTag: ElementFinder = navBar.navBarTag;
+    const navBarTagIsDisplayed: boolean = await navBarTag.isDisplayed();
+
+    expect(navBarTagIsDisplayed).toBeTruthy();
   });
 
-  it('should contain root and 3 elements (left-bar, center-bar, right bar)', () => {
-    navBar.navBarContainer.isDisplayed().then((navBarContainerIsDisplayed: boolean) => {
-      expect(navBarContainerIsDisplayed).toBeTruthy();
-    });
-    navBar.navBarContainerLeft.isDisplayed().then((navBarContainerLeftIsDisplayed: boolean) => {
-      expect(navBarContainerLeftIsDisplayed).toBeTruthy();
-    });
-    navBar.navBarContainerCenter.isDisplayed().then((navBarContainerCenterIsDisplayed: boolean) => {
-      expect(navBarContainerCenterIsDisplayed).toBeTruthy();
-    });
-    navBar.navBarContainerRight.isDisplayed().then((navBarContainerRightIsDisplayed: boolean) => {
-      expect(navBarContainerRightIsDisplayed).toBeTruthy();
-    });
+  it('should contain root and 3 elements (left-bar, center-bar, right bar)', async() => {
+    const navBarContainer: ElementFinder = navBar.navBarContainer;
+    const navBarContainerIsDisplayed: boolean = await navBarContainer.isDisplayed();
+
+    expect(navBarContainerIsDisplayed).toBeTruthy();
+
+    const navBarContainerLeft: ElementFinder = navBar.navBarContainerLeft;
+    const navBarContainerLeftIsDisplayed: boolean = await navBarContainerLeft.isDisplayed();
+
+    expect(navBarContainerLeftIsDisplayed).toBeTruthy();
+
+    const navBarContainerCenter: ElementFinder = navBar.navBarContainerCenter;
+    const navBarContainerCenterIsDisplayed: boolean = await navBarContainerCenter.isDisplayed();
+
+    expect(navBarContainerCenterIsDisplayed).toBeTruthy();
+
+    const navBarContainerRight: ElementFinder = navBar.navBarContainerRight;
+    const navBarContainerRightIsDisplayed: boolean = await navBarContainerRight.isDisplayed();
+
+    expect(navBarContainerRightIsDisplayed).toBeTruthy();
   });
 
   // This section tests the login button
-  it('should contain login button.', () => {
-    navBar.navBarLogInButton.isDisplayed().then((navBarLogInButtonIsDisplayed: boolean) => {
-      expect(navBarLogInButtonIsDisplayed).toBeTruthy();
-    });
+  it('should contain login button.', async() => {
+    const navBarLogInButton: ElementFinder = navBar.navBarLogInButton;
+    const navBarLogInButtonIsDisplayed: boolean = await navBarLogInButton.isDisplayed();
+
+    expect(navBarLogInButtonIsDisplayed).toBeTruthy();
   });
 
   // This section tests the solution explorer button
-  it('should contain solution explorer button.', () => {
-    navBar.navBarSolutionExplorerButton.isDisplayed().then((navBarSolutionExplorerButtonIsDisplayed: boolean) => {
-      expect(navBarSolutionExplorerButtonIsDisplayed).toBeTruthy();
-    });
+  it('should contain solution explorer button.', async() => {
+    const navBarSolutionExplorerButton: ElementFinder = navBar.navBarSolutionExplorerButton;
+    const navBarSolutionExplorerButtonIsDisplayed: boolean = await navBarSolutionExplorerButton.isDisplayed();
+
+    expect(navBarSolutionExplorerButtonIsDisplayed).toBeTruthy();
   });
 
-  it('should contain an enabled solution explorer button.', () => {
-    navBar.navBarSolutionExplorerButton.getAttribute('class').then((classAttribute: string) => {
-      expect(classAttribute).not.toContain(navBar.navBarDisabledClassName);
-    });
+  it('should contain an enabled solution explorer button.', async() => {
+    const navBarSolutionExplorerButtonAttributes: boolean = await navBar.navBarSolutionExplorerButtonIsDisabled();
+
+    expect(navBarSolutionExplorerButtonAttributes).toBeTruthy();
   });
 
-  it('should contain an highlighted solution explorer button when clicked.', () => {
-    navBar.navBarSolutionExplorerButton.click().then(() => {
-      navBar.navBarActiveSolutionExplorer.count().then((numberOfActiveSolutionExplorers: number) => {
-        expect(numberOfActiveSolutionExplorers).toBe(1);
-      });
-    });
+  it('should contain an highlighted solution explorer button when clicked.', async() => {
+    const navBarSolutionExplorerButton: ElementFinder = navBar.navBarSolutionExplorerButton;
+
+    await navBarSolutionExplorerButton.click();
+
+    const navBarActiveSolutionExplorer: ElementArrayFinder = navBar.navBarActiveSolutionExplorer;
+    const numberOfActiveSolutionExplorers: number = await navBarActiveSolutionExplorer.count();
+
+    expect(numberOfActiveSolutionExplorers).toBe(1);
   });
 
   // This section tests the think button

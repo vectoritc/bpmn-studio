@@ -1,4 +1,5 @@
 import {by, element, ElementArrayFinder, ElementFinder} from 'protractor';
+import {By, promise} from 'selenium-webdriver';
 
 export class NavBar {
 
@@ -23,8 +24,15 @@ export class NavBar {
   public navBarInspectLink: ElementFinder = this.navBarTag.element(by.id('navbarInspectLink'));
 
   // Define Functions
-  public openSolutionExplorerByButtonClick(): void {
-    this.navBarSolutionExplorerButton.click();
+  public openSolutionExplorerByButtonClick(): promise.Promise<void> {
+    return this.navBarSolutionExplorerButton.click();
+  }
+
+  public async navBarSolutionExplorerButtonIsDisabled(): Promise<boolean> {
+    const navBarSolutionExplorerButtonAttributes: string = await this.navBarSolutionExplorerButton.getAttribute('class');
+    const containsDisabledAttribute: boolean = navBarSolutionExplorerButtonAttributes.includes(this.navBarDisabledClassName);
+
+    return !containsDisabledAttribute;
   }
 
 }
