@@ -51,13 +51,16 @@ This will
 You can call this script like this:
 
 ```bash
-bash format_messages.bash <filename>
+bash format_messages.bash <input file> <output file>
 ```
 
-- `filename` The name of the generated file, example:
+- `input file` The name of the file, that should be formatted.
+- `output file` The name of the new file that will be created.
+
+Example:
 
 ```bash
-merge_commits_of_release.txt
+format_messages.bash merge_commits_of_release.txt formatted_messages.txt
 ```
 
 All changes are written to a new file called `formatted_messages.txt`.
@@ -110,11 +113,8 @@ as described in [Cleanup merge commits](#cleanup-merge-commits).
 You can also replace the emojis by calling
 
 ```bash
-bash format_messages.bash closed_issues
+bash format_messages.bash closed_issues formatted_closed_issues.txt
 ```
-
-Keep in mind that this will **replace** the current `formatted_messages.txt` file
-so **run the `sort_and_format_merge_commits.sh` script first**.
 
 After this step paste the contents of `closed_issues` into the section `Fixed
 Issues` of the release notes file.

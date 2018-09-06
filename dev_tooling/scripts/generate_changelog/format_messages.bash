@@ -5,20 +5,19 @@
 #   * Replacing all utf8 - Emoji Characters with their text variants
 #####
 
-OUTFILE_NAME="formatted_messages.txt"
-
 #####
 # Print out a help message.
 #####
 function printHelpMessage() {
   printf "Usage:\n"
-  printf "format_commit_messages.bash <filename>\n\n"
+  printf "format_commit_messages.bash <filename> <outfilename>\n\n"
   printf "Arguments:\n\tfilename: Name of the file that contains the commits"
   printf " with their corresponding messages.\n"
+  printf "\toutfilename: Name of the file that should be written.\n"
 }
 
 # If this script gets called without an argument, exit.
-if [[ $# -ne 1 ]]; then
+if [[ $# -ne 2 ]]; then
   echo "Wrong arguments."
   printHelpMessage
   exit 1
@@ -31,6 +30,9 @@ fi
 
 # Get the name of the file that contains the commit messages.
 commitMessageFile="$1"
+
+# Get the name of the file that should be written
+outfileName="$2"
 
 # Declare an array to store the processed lines
 declare -a outLines
@@ -96,4 +98,4 @@ while read line; do
 done <"$commitMessageFile"
 
 # Write the ordered lines to a new file.
-printf "%s\n" "${outLines[@]}" > $OUTFILE_NAME
+printf "%s\n" "${outLines[@]}" > $outfileName
