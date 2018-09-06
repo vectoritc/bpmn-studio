@@ -22,7 +22,7 @@ export class DiagramToolsRight {
   @bindable()
   public modeler: IBpmnModeler;
 
-  public distributeElementsEnabled: boolean = true;
+  public distributeElementsEnabled: boolean = false;
   public colorPickerEnabled: boolean = true;
   public colorPickerBorder: HTMLInputElement;
   public colorPickerFill: HTMLInputElement;
@@ -73,6 +73,7 @@ export class DiagramToolsRight {
       this.colorPickerEnabled = true;
     });
 
+    this.distributeElementsEnabled = false;
   }
 
   public detached(): void {
