@@ -37,8 +37,8 @@
           <property-panel id="js-properties-panel" modeler.bind="modeler" xml.bind="xml"></property-panel>
         </div>
       </div>
-      <bpmn-xml-view if.bind="initialLoadingFinished" show.bind="showXMLView" xml.bind="xml"></bpmn-xml-view>
-      <bpmn-diff-view if.bind="showDiffView" changes.bind="xmlChanges" savedxml.bind="savedXml" xml.bind="xml"></bpmn-diff-view>
+      <bpmn-xml-view if.bind="initialLoadingFinished" show.bind="showXMLView" xml.bind="xmlForXmlView"></bpmn-xml-view>
+      <bpmn-diff-view if.bind="showDiffView" changes.bind="xmlChanges" savedxml.bind="savedXml" xml.bind="xmlForDiffView"></bpmn-diff-view>
     </div>
 
     <div class="bpmn-io-layout__tools-right">

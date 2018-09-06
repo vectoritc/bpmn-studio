@@ -47,6 +47,9 @@ export class BpmnIo {
   public minCanvasWidth: number = 100;
   public minPropertyPanelWidth: number = 200;
 
+  public xmlForXmlView: string;
+  public xmlForDiffView: string;
+
   private _propertyPanelShouldOpen: boolean = false;
   private _propertyPanelHiddenForSpaceReasons: boolean = false;
   private _propertyPanelHasNoSpace: boolean = false;
@@ -185,8 +188,9 @@ export class BpmnIo {
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, async() => {
         try {
           const exportName: string = `${this.name}.bpmn`;
+          const xmlToExport: string = await this.getXML();
           await this._diagramExportService
-            .loadXML(this.xml)
+            .loadXML(xmlToExport)
             .asBpmn()
             .export(exportName);
         } catch (error) {
@@ -340,7 +344,7 @@ export class BpmnIo {
   public async toggleXMLView(): Promise<void> {
     const shouldShowXmlView: boolean = !this.showXMLView;
     if (shouldShowXmlView) {
-      this.xml = await this.getXML();
+      this.xmlForXmlView = await this.getXML();
     }
 
     this.showXMLView = !this.showXMLView;
@@ -360,10 +364,10 @@ export class BpmnIo {
   }
 
   private async _updateXmlChanges(): Promise<void> {
-    this.xml = await this.getXML();
+    this.xmlForDiffView = await this.getXML();
 
     const previousDefinitions: IDefinition = await this._getDefintionsFromXml(this.savedXml);
-    const newDefinitions: IDefinition = await this._getDefintionsFromXml(this.xml);
+    const newDefinitions: IDefinition = await this._getDefintionsFromXml(this.xmlForDiffView);
 
     this.xmlChanges = diff(previousDefinitions, newDefinitions);
   }
