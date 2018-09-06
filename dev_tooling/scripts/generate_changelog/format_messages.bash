@@ -5,6 +5,8 @@
 #   * Replacing all utf8 - Emoji Characters with their text variants
 #####
 
+OUTFILE_NAME="formatted_messages.txt"
+
 #####
 # Print out a help message.
 #####
@@ -87,4 +89,4 @@ while read line; do
 done <"$commitMessageFile"
 
 # Write the ordered lines to a new file.
-printf "%s\n" "${outLines[@]}" > ordered_merge_commits.txt
+printf "%s\n" "${outLines[@]}" > $OUTFILE_NAME
