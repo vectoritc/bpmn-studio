@@ -22,7 +22,7 @@ export class DiagramToolsRight {
   @bindable()
   public modeler: IBpmnModeler;
 
-  public distributeElementsEnabled: boolean = false;
+  public distributeElementsEnabled: boolean;
   public colorPickerEnabled: boolean = true;
   public colorPickerBorder: HTMLInputElement;
   public colorPickerFill: HTMLInputElement;
@@ -37,6 +37,8 @@ export class DiagramToolsRight {
   }
 
   public attached(): void {
+    this.distributeElementsEnabled = false;
+
     /**
      * Subscribe to the "element.click" event to determine, if the ColorPicker
      * should be enabled or not.
@@ -48,19 +50,14 @@ export class DiagramToolsRight {
       const selectedElements: Array<IShape> = this._getSelectedElements();
       const userSelectedDiagramElement: boolean = selectedElements.length > 0;
 
-      if (userSelectedDiagramElement) {
-        this.colorPickerEnabled = true;
+      this.colorPickerEnabled = userSelectedDiagramElement;
 
-        /**
-         * The distribute elements feature only can do it's thing, if the
-         * user selects more than two elements.
-         */
-        /* tslint:disable:no-magic-numbers*/
-        this.distributeElementsEnabled = selectedElements.length > 2;
-      } else {
-        this.colorPickerEnabled = false;
-        this.distributeElementsEnabled = false;
-      }
+      /**
+       * The distribute elements feature only can do it's thing, if the
+       * user selects more than two elements.
+       */
+      /*tslint:disable:no-magic-numbers*/
+      this.distributeElementsEnabled = selectedElements.length > 2;
     });
 
     /**
@@ -73,7 +70,6 @@ export class DiagramToolsRight {
       this.colorPickerEnabled = true;
     });
 
-    this.distributeElementsEnabled = false;
   }
 
   public detached(): void {
