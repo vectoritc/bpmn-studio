@@ -3,7 +3,7 @@ import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
 import {Settings} from './pages/settings';
 import {StatusBar} from './pages/statusBar';
 
-fdescribe('Status bar', () => {
+describe('Status bar', () => {
   let settings: Settings;
   let statusBar: StatusBar;
 

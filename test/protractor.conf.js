@@ -18,14 +18,7 @@ exports.config = {
           "--window-size=1920,1080",
         ],
       },
-    }, {
-      browserName: 'safari',
-      safariOptions: {
-        args: [
-          "--window-size=1920,1200",
-        ],
-      },
-    },
+    }, 
   ],
 
   /**
@@ -56,6 +49,8 @@ exports.config = {
   },
 
   onPrepare: function() {
+    browser.manage().window().maximize();
+
     afterEach(() => {
       browser.executeScript('window.localStorage.clear();');
       browser.executeScript('window.sessionStorage.clear();');
