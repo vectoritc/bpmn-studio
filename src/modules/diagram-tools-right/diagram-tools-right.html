@@ -24,10 +24,10 @@
         <li><a click.delegate="removeColor()"><i class="fas fa-stop none"></i> None</a></li>
       </ul>
     </div>
-    <a class="tool" class.bind="distributeElementsEnabled ? '' : 'tool--disabled'" title="Distribute Elements Vertically" click.delegate="distributeElementsVertically()" disable.bind="!distributeElementsEnabled">
+    <a class="tool" class.bind="distributeElementsEnabled ? '' : 'tool--disabled'" title.bind="distributeElementsEnabled ? 'Distribute Elements Vertically' : 'Select at least three elements to distribute them vertically'" click.delegate="distributeElementsVertically()" disabled.bind="!distributeElementsEnabled">
       <i class="glyphicon glyphicon-object-align-vertical"></i>
     </a>
-    <a class="tool" class.bind="distributeElementsEnabled ? '' : 'tool--disabled'" title="Distribute Elements Horizontally" click.delegate="distributeElementsHorizontally()" disable.bind="!distributeElementsEnabled">
+    <a class="tool" class.bind="distributeElementsEnabled ? '' : 'tool--disabled'" title.bind="distributeElementsEnabled ? 'Distribute Elements Horizontally' : 'Select at least three elements to distribute them horizontally'" click.delegate="distributeElementsHorizontally()" disabled.bind="!distributeElementsEnabled">
       <i class="glyphicon glyphicon-object-align-horizontal"></i>
     </a>
     <div class="tool">
