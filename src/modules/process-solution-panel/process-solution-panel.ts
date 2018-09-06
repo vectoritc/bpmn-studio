@@ -568,7 +568,6 @@ export class ProcessSolutionPanel {
         this.openedProcessEngineSolution = openedSolution;
       }
     } catch (error) {
-      console.log(error);
       if (isError(error, UnauthorizedError)) {
         this._notificationService.showNotification(NotificationType.ERROR, 'You need to login to list process models.');
       } else if (isError(error, ForbiddenError)) {
