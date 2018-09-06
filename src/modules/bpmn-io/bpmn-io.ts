@@ -7,6 +7,7 @@ import {diff} from 'bpmn-js-differ';
 
 import {IBpmnModdle,
         IBpmnModeler,
+        IBpmnXmlSaveOptions,
         IDefinition,
         IDiagramExportService,
         IDiagramPrintService,
@@ -359,7 +360,11 @@ export class BpmnIo {
 
   public async getXML(): Promise<string> {
     const returnPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void => {
-      this.modeler.saveXML({format: true}, (error: Error, result: string) => {
+      const xmlSaveOptions: IBpmnXmlSaveOptions = {
+        format: true,
+      };
+
+      this.modeler.saveXML(xmlSaveOptions, (error: Error, result: string) => {
         if (error) {
           reject(error);
         }
