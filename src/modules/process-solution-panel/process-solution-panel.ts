@@ -563,9 +563,12 @@ export class ProcessSolutionPanel {
 
     try {
       await this._solutionExplorerServiceManagementApi.openSolution(processengineSolutionString, this._solutionExplorerIdentity);
-      this.openedProcessEngineSolution = await this._solutionExplorerServiceManagementApi.loadSolution();
-
+      const openedSolution: ISolution = await this._solutionExplorerServiceManagementApi.loadSolution();
+      if (JSON.stringify(openedSolution) !== JSON.stringify(this.openedProcessEngineSolution)) {
+        this.openedProcessEngineSolution = openedSolution;
+      }
     } catch (error) {
+      console.log(error);
       if (isError(error, UnauthorizedError)) {
         this._notificationService.showNotification(NotificationType.ERROR, 'You need to login to list process models.');
       } else if (isError(error, ForbiddenError)) {
