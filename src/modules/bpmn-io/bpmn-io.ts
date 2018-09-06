@@ -12,8 +12,10 @@ import {IBpmnModdle,
         IDiagramPrintService,
         IDiffChanges,
         IEditorActions,
+        IEvent,
         IEventFunction,
         IKeyboard,
+        IShape,
         NotificationType,
       } from '../../contracts/index';
 import environment from '../../environment';
@@ -96,6 +98,34 @@ export class BpmnIo {
     this.modeler.on('elements.paste.rejected', () => {
       this._notificationService
         .showNotification(NotificationType.INFO, 'In order to paste an element you have to place your cursor outside of the element.');
+    });
+
+    /**
+     * Subscribe to the "element.click" event to determine, if the ColorPicker
+     * should be enabled or not.
+     *
+     * The ColorPicker should only be enabled, if the user selects a Diagram
+     * Element inside a Collaboration.
+     */
+    this.modeler.on('element.click', (event: IEvent) => {
+      const clickedShape: IShape = event.element;
+      const colorPickerCanBeEnabled: boolean = clickedShape.type !== 'bpmn:Collaboration';
+
+      if (colorPickerCanBeEnabled) {
+        this._eventAggregator.publish(environment.events.enableColorPicker);
+      } else {
+        this._eventAggregator.publish(environment.events.disableColorPicker);
+      }
+    });
+
+    /**
+     * Subscribe to the "commandStack.elements.move.postExecute" event.
+     *
+     * This is needed because otherwise the colorpicker stays disabled if the
+     * user directly drags around an element after he clicked at a Collaboration.
+     */
+    this.modeler.on('commandStack.elements.move.postExecute', (event: IEvent) => {
+      this._eventAggregator.publish(environment.events.enableColorPicker);
     });
 
     this._addRemoveWithBackspaceKeyboardListener();
@@ -272,6 +302,8 @@ export class BpmnIo {
     window.removeEventListener('resize', this._resizeEventHandler);
     document.removeEventListener('keydown', this._saveHotkeyEventHandler);
     document.removeEventListener('keydown', this._printHotkeyEventHandler);
+
+    this._eventAggregator.publish(environment.events.disableColorPicker);
 
     for (const subscription of this._subscriptions) {
       subscription.dispose();

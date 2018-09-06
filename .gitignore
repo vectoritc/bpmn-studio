@@ -37,4 +37,4 @@ process-engine_local_db
 userData
 
 # Personal integration-test settings
-integration-test.sh
+dev_tooling/scripts/prepare_environment_for_integration_tests.sh

@@ -131,7 +131,8 @@ export class ProcessDefDetail {
     ];
 
     this._eventAggregator.publish(environment.events.navBar.showTools, this.process);
-    this._eventAggregator.publish(environment.events.navBar.showStartButton);
+    this._eventAggregator.publish(environment.events.navBar.enableStartButton);
+    this._eventAggregator.publish(environment.events.navBar.disableDiagramUploadButton);
     this._eventAggregator.publish(environment.events.statusBar.showDiagramViewButtons);
   }
 
@@ -225,7 +226,8 @@ export class ProcessDefDetail {
     }
 
     this._eventAggregator.publish(environment.events.navBar.hideTools);
-    this._eventAggregator.publish(environment.events.navBar.hideStartButton);
+    this._eventAggregator.publish(environment.events.navBar.disableStartButton);
+    this._eventAggregator.publish(environment.events.navBar.enableDiagramUploadButton);
     this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
   }
 
@@ -294,6 +296,9 @@ export class ProcessDefDetail {
 
     if (this.processesStartEvents.length === 1) {
       this.selectedStartEventId = this.processesStartEvents[0].id;
+      this.startProcess();
+
+      return;
     }
 
     this.showStartEventModal = true;

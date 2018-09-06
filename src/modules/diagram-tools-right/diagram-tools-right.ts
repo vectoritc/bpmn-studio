@@ -1,3 +1,4 @@
+import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
 import environment from '../../environment';
 
@@ -16,12 +17,13 @@ import {defaultBpmnColors,
         NotificationType} from '../../contracts/index';
 import {NotificationService} from '../notification/notification.service';
 
-@inject('NotificationService')
+@inject(EventAggregator, 'NotificationService')
 export class DiagramToolsRight {
 
   @bindable()
   public modeler: IBpmnModeler;
 
+  public colorPickerEnabled: boolean = true;
   public colorPickerBorder: HTMLInputElement;
   public colorPickerFill: HTMLInputElement;
   public colorPickerLoaded: boolean = false;
@@ -29,9 +31,23 @@ export class DiagramToolsRight {
   public borderColor: string;
 
   private _notificationService: NotificationService;
+  private _eventAggregator: EventAggregator;
+  private _subscriptions: Array<Subscription>;
 
-  constructor(notificationService: NotificationService) {
+  constructor(eventAggregator: EventAggregator, notificationService: NotificationService) {
+    this._eventAggregator = eventAggregator;
     this._notificationService = notificationService;
+  }
+
+  public attached(): void {
+    this._subscriptions = [
+      this._eventAggregator.subscribe(environment.events.disableColorPicker, () => {
+        this.colorPickerEnabled = false;
+      }),
+      this._eventAggregator.subscribe(environment.events.enableColorPicker, () => {
+        this.colorPickerEnabled = true;
+      }),
+    ];
   }
 
   public detached(): void {

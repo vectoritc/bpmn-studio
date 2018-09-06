@@ -40,12 +40,14 @@ export class FlowSection implements ISection {
         return false;
       }
 
-      const isDefaultFlow: boolean = element.sourceRef.default && element.sourceRef.default.id === element.id;
+      const isDefaultFlow: boolean = element.sourceRef !== null
+                                  && element.sourceRef.default
+                                  && element.sourceRef.default.id === element.id;
       if (isDefaultFlow) {
         return false;
       }
-      const flowPointsAtExclusiveGateway: boolean = element.targetRef.$type === 'bpmn:ExclusiveGateway';
-      const flowStartsAtExclusiveGateway: boolean = element.sourceRef.$type === 'bpmn:ExclusiveGateway';
+      const flowPointsAtExclusiveGateway: boolean = element.targetRef !== null && element.targetRef.$type === 'bpmn:ExclusiveGateway';
+      const flowStartsAtExclusiveGateway: boolean = element.sourceRef !== null && element.sourceRef.$type === 'bpmn:ExclusiveGateway';
 
       const flowHasCondition: boolean = flowPointsAtExclusiveGateway || flowStartsAtExclusiveGateway;
 

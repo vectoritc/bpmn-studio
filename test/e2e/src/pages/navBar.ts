@@ -18,10 +18,9 @@ export class NavBar {
   public navBarSolutionExplorerButton: ElementFinder = this.navBarTag.element(by.id('navbarSolutionExplorerButton'));
   public navBarActiveSolutionExplorer: ElementArrayFinder = this.navBarTag.all(by.className('solution-explorer--active'));
 
-  public navBarPlanLink: ElementFinder = this.navBarTag.element(by.id('navbarPlanLink'));
+  public navBarThinkLink: ElementFinder = this.navBarTag.element(by.id('navbarThinkLink'));
   public navBarDesignLink: ElementFinder = this.navBarTag.element(by.id('navbarDesignLink'));
-  public navBarPublishLink: ElementFinder = this.navBarTag.element(by.id('navbarPublishLink'));
-  public navBarDashboardLink: ElementFinder = this.navBarTag.element(by.id('navbarDashboardLink'));
+  public navBarInspectLink: ElementFinder = this.navBarTag.element(by.id('navbarInspectLink'));
 
   // Define Functions
   public openSolutionExplorerByButtonClick(): void {

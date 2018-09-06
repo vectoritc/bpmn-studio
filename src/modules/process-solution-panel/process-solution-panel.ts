@@ -226,7 +226,7 @@ export class ProcessSolutionPanel {
      */
     window.setInterval(async() => {
       this._refreshProcesslist();
-    }, environment.processengine.pollingIntervalInMs);
+    }, environment.processengine.processModelPollingIntervalInMs);
 
     window.localStorage.setItem('processSolutionExplorerHideState', 'show');
 
@@ -241,6 +241,9 @@ export class ProcessSolutionPanel {
       }),
       this._eventAggregator.subscribe(environment.events.refreshProcessDefs, () => {
         this._refreshProcesslist();
+      }),
+      this._eventAggregator.subscribe(environment.events.processSolutionPanel.openProcessEngineIndexCard, () => {
+        this.openProcessEngineIndexCard();
       }),
     ];
   }

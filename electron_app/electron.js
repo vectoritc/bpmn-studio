@@ -6,7 +6,8 @@ const notifier = require('electron-notifications');
 const isDev = require('electron-is-dev');
 const getPort = require('get-port');
 const fs = require('fs');
-const startProcessEngine = require('@process-engine/skeleton-electron');
+const exec = require('child_process');
+
 const {dialog} = require('electron');
 
 // If BPMN-Studio was opened by double-clicking a .bpmn file, then the
@@ -384,7 +385,7 @@ Main._createMainWindow = function () {
   }
 }
 
-Main._startInternalProcessEngine = function () {
+Main._startInternalProcessEngine = async function () {
 
   const devUserDataFolderPath = path.join(__dirname, '..', 'userData');
   const prodUserDataFolderPath = app.getPath('userData');
@@ -401,7 +402,7 @@ Main._startInternalProcessEngine = function () {
   };
 
   return getPort(getPortConfig)
-    .then((port) => {
+    .then(async (port) => {
 
       console.log(`Internal ProcessEngine starting on port ${port}.`);
 
@@ -488,24 +489,30 @@ Main._startInternalProcessEngine = function () {
         event.returnValue = `localhost:${port}`;
       });
 
+
       // TODO: Check if the ProcessEngine instance is now run on the UI thread.
       // See issue https://github.com/process-engine/bpmn-studio/issues/312
-      return startProcessEngine()
-        .then((processengine) => {
+      try {
 
-          console.log('Internal ProcessEngine started successfully.');
-          internalProcessEngineStatus = 'success';
+        // Create path for sqlite database in BPMN-Studio context.
+        const userDataFolderPath = require('platform-folders').getConfigHome();
+        const sqlitePath = `${userDataFolderPath}/bpmn-studio/process_engine_databases`;
 
-          _publishProcessEngineStatus();
+        // Start the PE by just running the code of process_engine_runtime.
+        await require('@process-engine/process_engine_runtime')(sqlitePath);
 
-        }).catch((error) => {
+        console.log('Internal ProcessEngine started successfully.');
+        internalProcessEngineStatus = 'success';
 
-          console.error('Failed to start internal ProcessEngine: ', error);
-          internalProcessEngineStatus = 'error';
-          internalProcessEngineStartupError = error;
+        _publishProcessEngineStatus();
+      } catch (error) {
+        console.error('Failed to start internal ProcessEngine: ', error);
+        internalProcessEngineStatus = 'error';
+        internalProcessEngineStartupError = error;
 
-          _publishProcessEngineStatus();
-        });
+        _publishProcessEngineStatus();
+      }
+
     });
 
 }

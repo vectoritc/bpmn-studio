@@ -17,7 +17,6 @@ function clean(): Promise<Array<string>> {
 }
 
 function build(): NodeJS.ReadWriteStream {
-  delete tsConfig.compilerOptions.lib;
 
   const typescriptCompiler: typescript.Project = typescript.createProject(Object.assign({}, tsConfig.compilerOptions, {
     module: 'commonjs',

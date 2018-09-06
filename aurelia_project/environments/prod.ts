@@ -17,7 +17,8 @@ export default {
     authority: 'http://localhost:5000',
   },
   processengine: {
-    pollingIntervalInMs: 200,
+    waitingRoomPollingIntervalInMs: 200,
+    processModelPollingIntervalInMs: 1500,
     routes: {
       processes: `${processEngineRoute}/datastore/ProcessDef`,
       startProcess: `${processEngineRoute}/processengine/start`,
@@ -27,6 +28,8 @@ export default {
     },
   },
   events: {
+    enableColorPicker: 'enableColorPicker',
+    disableColorPicker: 'disableColorPicker',
     differsFromOriginal: 'differsFromOriginal',
     xmlChanged: 'xmlChanged',
     refreshProcessDefs: 'processdefs:refresh',
@@ -40,13 +43,13 @@ export default {
     navBar: {
       showTools: 'navbar:tools:show',
       hideTools: 'navbar:tools:hide',
-      showStartButton: 'navbar:startButton:show',
-      hideStartButton: 'navbar:startButton:hide',
+      disableStartButton: 'navbar:startButton:disable',
+      enableStartButton: 'navbar:startButton:enable',
       updateProcess: 'navbar:process:update',
       disableSaveButton: 'navbar:saveButton:disable',
       enableSaveButton: 'navbar:saveButton:enable',
-      showDiagramUploadButton: 'navbar:diagramUploadButton:show',
-      hideDiagramUploadButton: 'navbar:diagramUploadButton:hide',
+      disableDiagramUploadButton: 'navbar:diagramUploadButton:disable',
+      enableDiagramUploadButton: 'navbar:diagramUploadButton:enable',
     },
     processDefDetail: {
       printDiagram: 'processdefdetail:diagram:print',
@@ -67,6 +70,7 @@ export default {
     diagramChange: 'diagram:change',
     processSolutionPanel: {
       toggleProcessSolutionExplorer: 'processSolutionPanel:processsolutionexplorer:toggle',
+      openProcessEngineIndexCard: 'processSolutionPanel:processEngineIndexCard:toggle',
     },
   },
   baseRoute: processEngineRoute,

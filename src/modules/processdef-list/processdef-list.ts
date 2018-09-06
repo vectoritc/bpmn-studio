@@ -62,7 +62,7 @@ export class ProcessDefList {
       this._getAllProcessModels();
       this._eventAggregator.publish(environment.events.refreshProcessDefs);
       // tslint:disable-next-line
-    }, environment.processengine.pollingIntervalInMs);
+    }, environment.processengine.processModelPollingIntervalInMs);
 
     this._subscriptions = [
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {

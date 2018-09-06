@@ -1,7 +1,7 @@
 {
   "name": "bpmn-studio",
   "description": "An Aurelia application for designing BPMN diagrams, which can also be connected to a process engine to execute these diagrams.",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "author": {
     "name": "process-engine",
     "email": "hello@process-engine.io",
@@ -36,6 +36,9 @@
   "build": {
     "extraFiles": [
       "config/**/*"
+    ],
+    "extraResources": [
+      "node_modules/@process-engine/process_engine_runtime/sequelize/migrations/**/*"
     ],
     "nsis": {
       "perMachine": true,
@@ -88,7 +91,7 @@
     "@process-engine/consumer_api_contracts": "^0.15.0",
     "@process-engine/management_api_client": "^0.7.0",
     "@process-engine/management_api_contracts": "^0.8.0",
-    "@process-engine/skeleton-electron": "6.4.2",
+    "@process-engine/process_engine_runtime": "2.0.4",
     "@process-engine/solutionexplorer.contracts": "1.0.0",
     "@process-engine/solutionexplorer.repository.contracts": "1.0.0",
     "@process-engine/solutionexplorer.repository.filesystem": "1.0.0",
@@ -106,7 +109,7 @@
     "highlightjs-line-numbers.js": "^2.2.0",
     "minimist": "^1.2.0",
     "open": "0.0.5",
-    "print-js": "^1.0.47",
+    "print-js": "1.0.47",
     "proxy-polyfill": "^0.1.7",
     "pushserve": "^1.0.2",
     "spectrum-colorpicker": "^1.8.0",
