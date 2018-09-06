@@ -47,6 +47,13 @@ export class BpmnIo {
   public minCanvasWidth: number = 100;
   public minPropertyPanelWidth: number = 200;
 
+  /**
+   * The following to variables are needed to fix a bug, where the command
+   * stack was reset when opening the bpmn-diff-view or the
+   * bpmn-xml-view component.
+   *
+   * todo: see https://github.com/process-engine/bpmn-studio/issues/912
+   */
   public xmlForXmlView: string;
   public xmlForDiffView: string;
 
