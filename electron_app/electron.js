@@ -6,6 +6,7 @@ const notifier = require('electron-notifications');
 const isDev = require('electron-is-dev');
 const getPort = require('get-port');
 const fs = require('fs');
+const exec = require('child_process');
 
 const {dialog} = require('electron');
 
@@ -384,7 +385,7 @@ Main._createMainWindow = function () {
   }
 }
 
-Main._startInternalProcessEngine = function () {
+Main._startInternalProcessEngine = async function () {
 
   const devUserDataFolderPath = path.join(__dirname, '..', 'userData');
   const prodUserDataFolderPath = app.getPath('userData');
@@ -401,7 +402,7 @@ Main._startInternalProcessEngine = function () {
   };
 
   return getPort(getPortConfig)
-    .then((port) => {
+    .then(async (port) => {
 
       console.log(`Internal ProcessEngine starting on port ${port}.`);
 
@@ -492,8 +493,13 @@ Main._startInternalProcessEngine = function () {
       // TODO: Check if the ProcessEngine instance is now run on the UI thread.
       // See issue https://github.com/process-engine/bpmn-studio/issues/312
       try {
+
+        // Create path for sqlite database in BPMN-Studio context.
+        const userDataFolderPath = require('platform-folders').getConfigHome();
+        const sqlitePath = `${userDataFolderPath}/bpmn-studio/process_engine_databases`;
+
         // Start the PE by just running the code of process_engine_runtime.
-        require('@process-engine/process_engine_runtime');
+        await require('@process-engine/process_engine_runtime')(sqlitePath);
 
         console.log('Internal ProcessEngine started successfully.');
         internalProcessEngineStatus = 'success';
