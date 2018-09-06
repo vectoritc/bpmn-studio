@@ -253,7 +253,7 @@ Es werden folgende Pakete benötigt:
    Server zu starten:
 
    ```shell
-   npm run test-init-docker
+   npm run test-init
    ```
 
 1. Die End-to-End Tests können in einem weiteren Terminal mit folgendem Befehl

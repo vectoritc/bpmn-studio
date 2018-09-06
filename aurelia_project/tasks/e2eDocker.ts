@@ -18,9 +18,10 @@ function clean(): Promise<Array<string>> {
 
 function build_tests(): NodeJS.ReadWriteStream {
 
-  const typescriptCompiler: typescript.Project = typescript.createProject(Object.assign({}, tsConfig.compilerOptions, {
+  const compilerOptionsCopy: any = Object.assign({}, tsConfig.compilerOptions, {
     module: 'commonjs',
-  }));
+  });
+  const typescriptCompiler: typescript.Project = typescript.createProject(compilerOptionsCopy);
 
   return gulp.src(project.e2eTestRunner.typingsSource.concat(project.e2eTestRunner.source))
     .pipe(typescriptCompiler())

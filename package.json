@@ -17,7 +17,6 @@
     "reinstall": "OLD_PATH=$PATH bash dev_tooling/scripts/reinstall_setup.bash && unset OLD_PATH",
     "deploy": "npm run build && npm publish",
     "test-init": "process-engine && webdriver-manager update && webdriver-manager start",
-    "test-init-docker": "bash test/start_docker_bundle.sh && webdriver-manager update && webdriver-manager start",
     "test": "au e2e",
     "test-docker": "bash test/start_docker_bundle.sh && au e2eDocker",
     "test-crossbrowser": "au e2eCrossbrowser",
