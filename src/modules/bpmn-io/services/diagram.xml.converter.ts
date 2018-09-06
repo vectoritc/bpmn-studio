@@ -24,11 +24,6 @@ export class DiagramXmlConverter implements IXmlConvertService {
    * Formats the current loaded xml.
    */
   private _bpmnExporter = async(): Promise<string> => {
-    const formatterPromise: Promise<string> = new Promise((resolve: Function): void => {
-
-      resolve(this._xmlContent);
-    });
-
-    return formatterPromise;
+    return Promise.resolve(this._xmlContent);
   }
 }
