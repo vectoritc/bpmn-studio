@@ -105,9 +105,9 @@ export class ProcessDefList {
   private async _getAllProcessModels(): Promise<void> {
     const processModelExecution: ProcessModelExecution.ProcessModelList = await this._managementApiClient.getProcessModels(this._managementContext);
 
-    const listWasUpdatet: boolean = JSON.stringify(processModelExecution.processModels) !== JSON.stringify(this.allProcessModels);
+    const listWasUpdated: boolean = JSON.stringify(processModelExecution.processModels) !== JSON.stringify(this.allProcessModels);
 
-    if (listWasUpdatet) {
+    if (listWasUpdated) {
       this.allProcessModels = processModelExecution.processModels;
     }
 

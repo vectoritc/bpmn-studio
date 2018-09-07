@@ -64,9 +64,9 @@ export class TaskList {
   private async updateUserTasks(): Promise<void> {
     try {
       const userTasks: Array<IUserTaskWithProcessModel> = await this._getUserTasks();
-      const userTaskListWasUpdatet: boolean = JSON.stringify(userTasks) !== JSON.stringify(this._userTasks);
+      const userTaskListWasUpdated: boolean = JSON.stringify(userTasks) !== JSON.stringify(this._userTasks);
 
-      if (userTaskListWasUpdatet) {
+      if (userTaskListWasUpdated) {
         this._userTasks = userTasks;
       }
 
