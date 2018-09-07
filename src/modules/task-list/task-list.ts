@@ -61,28 +61,6 @@ export class TaskList {
     this._authenticationService = authenticationService;
   }
 
-  private async updateUserTasks(): Promise<void> {
-    try {
-      const userTasks: Array<IUserTaskWithProcessModel> = await this._getUserTasks();
-      const userTaskListWasUpdated: boolean = JSON.stringify(userTasks) !== JSON.stringify(this._userTasks);
-
-      if (userTaskListWasUpdated) {
-        this._userTasks = userTasks;
-      }
-
-      this.successfullyRequested = true;
-    } catch (error) {
-      if (isError(error, UnauthorizedError)) {
-        this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have permission to view the task list.');
-        this._router.navigateToRoute('start-page');
-      } else {
-        this._notificationService.showNotification(NotificationType.ERROR, `Error receiving task list: ${error.message}`);
-      }
-    }
-
-    this.totalItems = this.tasks.length;
-  }
-
   public activate(routeParameters: ITaskListRouteParameters): void {
     if (routeParameters.processModelId) {
       this._getUserTasks = (): Promise<Array<IUserTaskWithProcessModel>> => {
@@ -95,24 +73,25 @@ export class TaskList {
     } else {
       this._getUserTasks = this._getAllUserTasks;
     }
-    this.updateUserTasks();
+    this._updateUserTasks();
   }
 
   public attached(): void {
     if (!this._getUserTasks) {
       this._getUserTasks = this._getAllUserTasks;
+      this._updateUserTasks();
     }
 
     this._getUserTasksIntervalId = window.setInterval(() => {
-      this.updateUserTasks();
+      this._updateUserTasks();
     }, environment.processengine.processModelPollingIntervalInMs);
 
     this._subscriptions = [
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
-        this.updateUserTasks();
+        this._updateUserTasks();
       }),
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
-        this.updateUserTasks();
+        this._updateUserTasks();
       }),
     ];
   }
@@ -259,5 +238,21 @@ export class TaskList {
     };
 
     return context;
+  }
+
+  private async _updateUserTasks(): Promise<void> {
+    try {
+      this._userTasks = await this._getUserTasks();
+      this.successfullyRequested = true;
+    } catch (error) {
+      if (isError(error, UnauthorizedError)) {
+        this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have permission to view the task list.');
+        this._router.navigateToRoute('start-page');
+      } else {
+        this._notificationService.showNotification(NotificationType.ERROR, `Error receiving task list: ${error.message}`);
+      }
+    }
+
+    this.totalItems = this.tasks.length;
   }
 }
