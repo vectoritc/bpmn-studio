@@ -1,0 +1,171 @@
+.process-explorer__solution-explorer {
+  width: 220px;  
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: #f7f7f7;
+  border-right: 2px solid #dcdbdb;
+  user-select: none;
+}
+
+.solution-explorer-index-cards {
+  display: flex;
+  border-bottom: 2px solid #dcdbdb;
+}
+
+.index-card {
+  padding: 8px 12px;
+  cursor: pointer;
+  color: darkgray;
+}
+
+.index-card:hover {
+  color: #5e5e5e;
+}
+
+.index-card--active {
+  color: #5e5e5e;
+}
+
+.filesystem-solutions {
+  border-top: 2px solid #dcdbdb;
+}
+
+.filesystem-solution {
+  margin-bottom: 3px;
+  border-bottom: 2px solid #dcdbdb;
+}
+
+.filesystem-solution:last-child {
+  border-bottom: none;
+}
+
+.control-buttons {
+  float: right;
+}
+
+.control-buttons button {
+  padding: 0 2px;
+  background: transparent;
+  border: none;
+}
+
+.single-diagram-input {
+  height: 0;
+  visibility: hidden;
+}
+
+.solution-input {
+  height: 0;
+  visibility: hidden;
+}
+
+.process-explorer__heading {
+  padding: 8px;
+  cursor: default;
+  font-weight: 500;
+  color: #a5a5a5;
+}
+
+.process-explorer__main-heading {
+  margin-bottom: 10px;
+}
+
+.process-explorer__structure-item {
+  padding: 2px 10px;
+  overflow: hidden;
+  cursor: pointer;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.process-explorer__structure-item a {
+  padding-left: 10px;
+  color: #5c5c5c;
+}
+
+.solution-group {
+  display: flex;
+  padding: 5px 10px;
+}
+
+.solution-headline {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: default;
+  color: darkgray;
+  white-space: nowrap;
+}
+
+.solution-group__action-buttons button {
+  padding: 0 2px;
+  background: transparent;
+  border: none;
+  color: darkgray;
+}
+
+.solution-group__action-buttons button:hover {
+  cursor: pointer;
+  color: #5e5e5e;
+}
+
+.solution-diagram-group {
+  display: flex;
+  padding: 5px 30px;
+}
+
+.solution-diagram-group__entry {
+  width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.solution-diagram-group__link:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.single-diagram-group {
+  display: flex;
+  padding: 5px 10px;
+}
+
+.single-diagram-group__link {
+  width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.single-diagram-group__link:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.single-diagram-group__close {
+  float: right;
+  color: darkgray;
+}
+
+.single-diagram-group__close:hover {
+  cursor: pointer;
+  color: black;
+  text-decoration: underline;
+}
+
+.solution-input-group {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.open-solution-button {
+  float: right;
+  margin-top: 2px;
+  cursor: pointer;
+}
+
+.solution-error-message {
+  white-space: normal;
+}
