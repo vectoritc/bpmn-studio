@@ -121,7 +121,7 @@ describe('Dashboard view', () => {
 
   });
 
-  it('sshould be possible to open user tasks by clicking on the hyperlink in the table.', async() => {
+  it('should be possible to open user tasks by clicking on the hyperlink in the table.', async() => {
     const correlationId: string = processModel.getCorrelationId();
     const hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId: ElementFinder =
       dashboard.hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId(correlationId);
