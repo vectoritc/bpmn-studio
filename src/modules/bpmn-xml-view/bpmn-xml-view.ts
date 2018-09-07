@@ -2,7 +2,6 @@ import {bindingMode} from 'aurelia-binding';
 import {bindable} from 'aurelia-framework';
 import * as hljs from 'highlight.js';
 import 'highlightjs-line-numbers.js';
-import * as beautify from 'xml-beautifier';
 
 const highlightEngine: {
   // tslint:disable-next-line:prefer-method-signature
@@ -30,7 +29,7 @@ export class BpmnXmlView {
   }
 
   public highlight(): void {
-    this.newXML = beautify(this.xml);
+    this.newXML = this.xml;
     highlightEngine.lineNumbersBlock(this.codeElement);
     highlightEngine.highlightBlock(this.codeElement);
   }

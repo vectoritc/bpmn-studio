@@ -7,6 +7,7 @@ import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {defaultBpmnColors,
   DiffMode,
   IBpmnModeler,
+  IBpmnXmlSaveOptions,
   ICanvas,
   IChangeListEntry,
   IColorPickerColor,
@@ -356,7 +357,11 @@ export class BpmnDiffView {
 
   private async _getXmlFromModeler(): Promise<string> {
     const saveXmlPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void =>  {
-      this._diffModeler.saveXML({}, async(saveXmlError: Error, xml: string) => {
+      const xmlSaveOptions: IBpmnXmlSaveOptions = {
+        format: true,
+      };
+
+      this._diffModeler.saveXML(xmlSaveOptions, async(saveXmlError: Error, xml: string) => {
         if (saveXmlError) {
           reject(saveXmlError);
 
