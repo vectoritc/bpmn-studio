@@ -1,4 +1,9 @@
-import {browser, ElementFinder, protractor, ProtractorExpectedConditions} from 'protractor';
+import {
+  browser,
+  ElementFinder,
+  protractor,
+  ProtractorExpectedConditions,
+} from 'protractor';
 
 import {Dashboard} from './pages/dashboard';
 import {General} from './pages/general';
@@ -40,6 +45,7 @@ describe('Dashboard view', () => {
       .wait(() => {
         browser
           .wait(visibilityOfRouterViewContainer, defaultTimeoutMS);
+
         return routerViewContainer;
       });
   });
@@ -65,6 +71,7 @@ describe('Dashboard view', () => {
       .wait(() => {
         browser
           .wait(visibilityOfFirstProcessRunningListItems, defaultTimeoutMS);
+
         return firstProcessRunningListItems;
       });
 
@@ -82,6 +89,7 @@ describe('Dashboard view', () => {
       .wait(() => {
         browser
           .wait(visibilityOfFirstProcessRunningListItemsById, defaultTimeoutMS);
+
         return firstProcessRunningListItemsById;
       });
 
@@ -100,6 +108,7 @@ describe('Dashboard view', () => {
       .wait(() => {
         browser
           .wait(visibilityOfHyperlinkOfProcessRunningListItemByCorrelationId, defaultTimeoutMS);
+
         return hyperlinkOfProcessRunningListItemByCorrelationId;
      });
 
@@ -112,7 +121,7 @@ describe('Dashboard view', () => {
 
   });
 
-  it('should be possible to open user tasks by click on hyperlink in table.', async() => {
+  it('should be possible to open user tasks by clicking on the hyperlink in the table.', async() => {
     const correlationId: string = processModel.getCorrelationId();
     const hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId: ElementFinder =
       dashboard.hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId(correlationId);
@@ -167,6 +176,7 @@ describe('Dashboard view', () => {
       .wait(() => {
         browser
           .wait(visibilityOfFirstTaskWaitingById, taskListTimeoutMS);
+
         return firstTaskWaitingById;
       });
 
@@ -183,6 +193,7 @@ describe('Dashboard view', () => {
       .wait(() => {
         browser
           .wait(visibilityOfFirstTaskWaitingById, taskListTimeoutMS);
+
         return firstTaskWaitingById;
       });
 
@@ -202,6 +213,7 @@ describe('Dashboard view', () => {
       .wait(() => {
         browser
           .wait(visibilityOfFirstTaskWaitingById, taskListTimeoutMS);
+
         return firstTaskWaitingById;
       });
 
@@ -215,6 +227,7 @@ describe('Dashboard view', () => {
       .wait(() => {
         browser
           .wait(visibilityOfDynamicUiWrapperContinueButton, taskListTimeoutMS);
+
         return dynamicUiWrapperContinueButton;
       });
   });
@@ -227,6 +240,7 @@ describe('Dashboard view', () => {
       .wait(() => {
         browser
           .wait(visibilityOfFirstTaskWaitingById, taskListTimeoutMS);
+
         return firstTaskWaitingById;
       });
 
@@ -240,17 +254,18 @@ describe('Dashboard view', () => {
       .wait(() => {
         browser
           .wait(visibilityOfDynamicUiWrapperContinueButton, taskListTimeoutMS);
+
         return dynamicUiWrapperContinueButton;
       });
 
     await dashboard.continueUserTaskByClickOnDynamicUiWrapperContinuButton();
 
     const correlationId: string = processModel.getCorrelationId();
-    const waitingroomUrl: string = processModel.waitingroomUrl(processModelId, correlationId);
+    const waitingRoomUrl: string = processModel.waitingroomUrl(processModelId, correlationId);
     const currentBrowserUrl: string = await browser.getCurrentUrl();
 
     // Should be in waiting room
-    expect(currentBrowserUrl).toContain(waitingroomUrl);
+    expect(currentBrowserUrl).toContain(waitingRoomUrl);
 
     const dashboardLink: string = dashboard.dashboardLink;
     const urlContainsDashboardLink: Function = expectedConditions.urlContains(dashboardLink);
@@ -260,6 +275,7 @@ describe('Dashboard view', () => {
     .wait(() => {
       browser
       .wait(urlContainsDashboardLink, taskListTimeoutMS);
+
       return dashboardLink;
     });
   });

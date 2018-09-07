@@ -1,5 +1,14 @@
-import {by, element, ElementArrayFinder, ElementFinder} from 'protractor';
-import {By, promise} from 'selenium-webdriver';
+import {
+  by,
+  element,
+  ElementArrayFinder,
+  ElementFinder,
+} from 'protractor';
+
+import {
+  By,
+  promise,
+} from 'selenium-webdriver';
 
 export class NavBar {
 
@@ -8,29 +17,40 @@ export class NavBar {
   public navBarSolutionExplorerActiveClassName: string = 'solution-explorer--active';
 
   // Define Elements
-  public navBarTag: ElementFinder = element(by.tagName('nav-bar'));
-  public navBarSettingsButton: ElementFinder = this.navBarTag.element(by.id('navBarSettingsButton'));
-  public navBarContainer: ElementFinder = this.navBarTag.element(by.id('navBarContainer'));
-  public navBarContainerLeft: ElementFinder = this.navBarTag.element(by.id('navBarLeft'));
-  public navBarContainerCenter: ElementFinder = this.navBarTag.element(by.id('navBarCenter'));
-  public navBarContainerRight: ElementFinder = this.navBarTag.element(by.id('navBarRight'));
-  public navBarLogInButton: ElementFinder = this.navBarTag.element(by.id('userLoginButton'));
+  private _byTagName: By = by.tagName('nav-bar');
+  private _byStatusBarContainer: By = by.id('navBarContainer');
+  private _byStatusBarLeft: By = by.id('navBarLeft');
+  private _byStatusBarCenter: By = by.id('navBarCenter');
+  private _byStatusBarRight: By = by.id('navBarRight');
+  private _byLoginButton: By = by.id('userLoginButton');
+  private _bySolutionExplorerButton: By = by.id('navbarSolutionExplorerButton');
+  private _byActiveSolutionExplorer: By = by.className('solution-explorer--active');
+  private _byThinkLink: By = by.id('navbarThinkLink');
+  private _byDesignLink: By = by.id('navbarDesignLink');
+  private _byInspectLink: By = by.id('navbarInspectLink');
 
-  public navBarSolutionExplorerButton: ElementFinder = this.navBarTag.element(by.id('navbarSolutionExplorerButton'));
-  public navBarActiveSolutionExplorer: ElementArrayFinder = this.navBarTag.all(by.className('solution-explorer--active'));
+  public navBarTag: ElementFinder = element(this._byTagName);
+  public navBarContainer: ElementFinder = this.navBarTag.element(this._byStatusBarContainer);
+  public navBarContainerLeft: ElementFinder = this.navBarTag.element(this._byStatusBarLeft);
+  public navBarContainerCenter: ElementFinder = this.navBarTag.element(this._byStatusBarCenter);
+  public navBarContainerRight: ElementFinder = this.navBarTag.element(this._byStatusBarRight);
+  public navBarLogInButton: ElementFinder = this.navBarTag.element(this._byLoginButton);
 
-  public navBarThinkLink: ElementFinder = this.navBarTag.element(by.id('navbarThinkLink'));
-  public navBarDesignLink: ElementFinder = this.navBarTag.element(by.id('navbarDesignLink'));
-  public navBarInspectLink: ElementFinder = this.navBarTag.element(by.id('navbarInspectLink'));
+  public navBarSolutionExplorerButton: ElementFinder = this.navBarTag.element(this._bySolutionExplorerButton);
+  public navBarActiveSolutionExplorer: ElementArrayFinder = this.navBarTag.all(this._byActiveSolutionExplorer);
+
+  public navBarThinkLink: ElementFinder = this.navBarTag.element(this._byThinkLink);
+  public navBarDesignLink: ElementFinder = this.navBarTag.element(this._byDesignLink);
+  public navBarInspectLink: ElementFinder = this.navBarTag.element(this._byInspectLink);
 
   // Define Functions
   public openSolutionExplorerByButtonClick(): promise.Promise<void> {
     return this.navBarSolutionExplorerButton.click();
   }
 
-  public async navBarSolutionExplorerButtonIsDisabled(): Promise<boolean> {
-    const navBarSolutionExplorerButtonAttributes: string = await this.navBarSolutionExplorerButton.getAttribute('class');
-    const containsDisabledAttribute: boolean = navBarSolutionExplorerButtonAttributes.includes(this.navBarDisabledClassName);
+  public async navBarButtonIsDisabled(button: ElementFinder): Promise<boolean> {
+    const navBarButtonAttributes: string = await button.getAttribute('class');
+    const containsDisabledAttribute: boolean = navBarButtonAttributes.includes(this.navBarDisabledClassName);
 
     return !containsDisabledAttribute;
   }

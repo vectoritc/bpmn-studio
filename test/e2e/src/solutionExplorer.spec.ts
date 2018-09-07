@@ -1,5 +1,10 @@
-import {browser, ElementArrayFinder, ElementFinder, protractor, ProtractorExpectedConditions} from 'protractor';
-import {promise} from 'selenium-webdriver';
+import {
+  browser,
+  ElementArrayFinder,
+  ElementFinder,
+  protractor,
+  ProtractorExpectedConditions,
+} from 'protractor';
 
 import {NavBar} from './pages/navBar';
 import {ProcessModel} from './pages/processModel';
@@ -38,6 +43,7 @@ describe('Solution Explorer', () => {
     browser.driver
       .wait(() => {
         browser.wait(visibilityOfNavBarTag, defaultTimeoutMS);
+
         return navBarTag;
       });
 
@@ -47,42 +53,33 @@ describe('Solution Explorer', () => {
     // Wait until solutions are loaded
     browser.driver.wait(() => {
       browser.wait(expectedConditions.visibilityOf(solutionExplorer.solutionExplorerListItemsId(processModelId)), defaultTimeoutMS);
+
       return solutionExplorer.solutionExplorerListItemsId(processModelId);
     });
   });
 
-  it('should display more than one process definitions.', () => {
+  it('should display more than one process definitions.', async() => {
     const solutionExplorerListItems: ElementArrayFinder = solutionExplorer.solutionExplorerListItems;
+    const numberOfProcessDefinitions: number = await solutionExplorerListItems.count();
 
-    solutionExplorerListItems
-      .count()
-      .then((numberOfProcessDefinitions: number) => {
-        expect(numberOfProcessDefinitions).toBeGreaterThan(0);
-     });
+    expect(numberOfProcessDefinitions).toBeGreaterThan(0);
   });
 
-  it('should display created solution.', () => {
+  it('should display created solution.', async() => {
     const solutionExplorerListItemsIds: ElementArrayFinder = solutionExplorer.solutionExplorerListItemsIds(processModelId);
+    const numberOfProcessDefinitionsById: number = await solutionExplorerListItemsIds.count();
 
-    solutionExplorerListItemsIds
-      .count()
-      .then((numberOfProcessDefinitionsById: number) => {
-        expect(numberOfProcessDefinitionsById).toBe(1);
-      });
+    expect(numberOfProcessDefinitionsById).toBe(1);
   });
 
-  it('should be possible to open a process diagram.', () => {
-    const openProcessModelByClick: promise.Promise<void> = solutionExplorer.openProcessModelByClick(processModelId);
+  it('should be possible to open a process diagram.', async() => {
     const getProcessModelLink: string = processModel.getProcessModelLink();
 
-    openProcessModelByClick
-      .then(() => {
-        browser
-          .getCurrentUrl()
-          .then((currentBrowserUrl: string) => {
-            expect(currentBrowserUrl).toContain(getProcessModelLink);
-          });
-      });
+    await solutionExplorer.openProcessModelByClick(processModelId);
+
+    const currentBrowserUrl: string = await browser.getCurrentUrl();
+
+    expect(currentBrowserUrl).toContain(getProcessModelLink);
   });
 
 });

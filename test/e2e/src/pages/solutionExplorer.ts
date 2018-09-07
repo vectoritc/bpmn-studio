@@ -1,5 +1,14 @@
-import {by, element, ElementArrayFinder, ElementFinder} from 'protractor';
-import {By, promise} from 'selenium-webdriver';
+import {
+  by,
+  element,
+  ElementArrayFinder,
+  ElementFinder,
+} from 'protractor';
+
+import {
+  By,
+  promise,
+} from 'selenium-webdriver';
 
 export class SolutionExplorer {
 

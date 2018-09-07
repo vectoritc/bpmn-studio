@@ -1,5 +1,13 @@
-import {by, element, ElementFinder} from 'protractor';
-import {By, promise} from 'selenium-webdriver';
+import {
+  by,
+  element,
+  ElementFinder,
+} from 'protractor';
+
+import {
+  By,
+  promise,
+} from 'selenium-webdriver';
 
 export class BpmnXmlView {
 
@@ -7,9 +15,9 @@ export class BpmnXmlView {
   public bpmnLineNumbersClass: string = 'hljs-ln-numbers';
 
   // Define Elements
-  private byTagName: By = by.tagName('bpmn-xml-view');
+  private _byTagName: By = by.tagName('bpmn-xml-view');
 
-  public bpmnXmlViewTag: ElementFinder = element(this.byTagName);
+  public bpmnXmlViewTag: ElementFinder = element(this._byTagName);
 
   // Define Functions
   public openXMLViewByClickOnButton(showXMLViewButton: ElementFinder): promise.Promise<void> {
