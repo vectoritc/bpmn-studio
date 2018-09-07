@@ -61,7 +61,7 @@ export class TaskList {
     this._authenticationService = authenticationService;
   }
 
-  public activate(routeParameters: ITaskListRouteParameters): void {
+  public initializeTaskList(routeParameters: ITaskListRouteParameters): void {
     if (routeParameters.processModelId) {
       this._getUserTasks = (): Promise<Array<IUserTaskWithProcessModel>> => {
         return this._getUserTasksForProcessModel(routeParameters.processModelId);
