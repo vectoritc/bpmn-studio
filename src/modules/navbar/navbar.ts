@@ -104,6 +104,15 @@ export class NavBar {
         this.validationError = true;
       }),
 
+      this._eventAggregator.subscribe(environment.events.navBar.clearProcessData, () => {
+        this.process = undefined;
+        this.processName = undefined;
+      }),
+
+      this._eventAggregator.subscribe(environment.events.navBar.disableSaveButton, () => {
+        this.disableSaveButton = true;
+      }),
+
       this._eventAggregator.subscribe(environment.events.navBar.noValidationError, () => {
         this.validationError = false;
       }),
@@ -156,7 +165,7 @@ export class NavBar {
       this._eventAggregator.subscribe(environment.events.navBar.disableDashboardAndEnableHeatmapButton, () => {
         this.disableHeatmapButton = false;
         this.disableDashboardButton = true;
-      }),
+      }), ,
     ];
   }
 

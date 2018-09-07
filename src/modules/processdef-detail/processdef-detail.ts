@@ -240,6 +240,7 @@ export class ProcessDefDetail {
     this._eventAggregator.publish(environment.events.navBar.enableDiagramUploadButton);
     this._eventAggregator.publish(environment.events.navBar.inspectNavigateToDashboard);
     this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
+    this._eventAggregator.publish(environment.events.navBar.clearProcessData);
   }
 
   public async startProcess(): Promise<void> {
