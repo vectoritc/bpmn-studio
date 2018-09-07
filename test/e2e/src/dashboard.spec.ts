@@ -121,7 +121,7 @@ describe('Dashboard view', () => {
 
   });
 
-  it('should be possible to open user tasks by click on hyperlink in table.', async() => {
+  it('sshould be possible to open user tasks by clicking on the hyperlink in the table.', async() => {
     const correlationId: string = processModel.getCorrelationId();
     const hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId: ElementFinder =
       dashboard.hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId(correlationId);
@@ -261,11 +261,11 @@ describe('Dashboard view', () => {
     await dashboard.continueUserTaskByClickOnDynamicUiWrapperContinuButton();
 
     const correlationId: string = processModel.getCorrelationId();
-    const waitingroomUrl: string = processModel.waitingroomUrl(processModelId, correlationId);
+    const waitingRoomUrl: string = processModel.waitingroomUrl(processModelId, correlationId);
     const currentBrowserUrl: string = await browser.getCurrentUrl();
 
     // Should be in waiting room
-    expect(currentBrowserUrl).toContain(waitingroomUrl);
+    expect(currentBrowserUrl).toContain(waitingRoomUrl);
 
     const dashboardLink: string = dashboard.dashboardLink;
     const urlContainsDashboardLink: Function = expectedConditions.urlContains(dashboardLink);
