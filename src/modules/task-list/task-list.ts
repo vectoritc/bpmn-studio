@@ -63,7 +63,13 @@ export class TaskList {
 
   private async updateUserTasks(): Promise<void> {
     try {
-      this._userTasks = await this._getUserTasks();
+      const userTasks: Array<IUserTaskWithProcessModel> = await this._getUserTasks();
+      const userTaskListWasUpdatet: boolean = JSON.stringify(userTasks) !== JSON.stringify(this._userTasks);
+
+      if (userTaskListWasUpdatet) {
+        this._userTasks = userTasks;
+      }
+
       this.successfullyRequested = true;
     } catch (error) {
       if (isError(error, UnauthorizedError)) {

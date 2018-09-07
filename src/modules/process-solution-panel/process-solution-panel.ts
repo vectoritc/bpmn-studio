@@ -564,9 +564,9 @@ export class ProcessSolutionPanel {
     try {
       await this._solutionExplorerServiceManagementApi.openSolution(processengineSolutionString, this._solutionExplorerIdentity);
       const openedSolution: ISolution = await this._solutionExplorerServiceManagementApi.loadSolution();
-      const solutionIsEqual: boolean = JSON.stringify(openedSolution) === JSON.stringify(this.openedProcessEngineSolution);
+      const solutionWasUpdatet: boolean = JSON.stringify(openedSolution) !== JSON.stringify(this.openedProcessEngineSolution);
 
-      if (!solutionIsEqual) {
+      if (solutionWasUpdatet) {
         this.openedProcessEngineSolution = openedSolution;
       }
 
