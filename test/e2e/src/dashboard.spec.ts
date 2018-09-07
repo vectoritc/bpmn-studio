@@ -1,4 +1,9 @@
-import {browser, ElementFinder, protractor, ProtractorExpectedConditions} from 'protractor';
+import {
+  browser,
+  ElementFinder,
+  protractor,
+  ProtractorExpectedConditions,
+} from 'protractor';
 
 import {Dashboard} from './pages/dashboard';
 import {General} from './pages/general';
@@ -40,6 +45,7 @@ describe('Dashboard view', () => {
       .wait(() => {
         browser
           .wait(visibilityOfRouterViewContainer, defaultTimeoutMS);
+
         return routerViewContainer;
       });
   });
@@ -65,6 +71,7 @@ describe('Dashboard view', () => {
       .wait(() => {
         browser
           .wait(visibilityOfFirstProcessRunningListItems, defaultTimeoutMS);
+
         return firstProcessRunningListItems;
       });
 
@@ -82,6 +89,7 @@ describe('Dashboard view', () => {
       .wait(() => {
         browser
           .wait(visibilityOfFirstProcessRunningListItemsById, defaultTimeoutMS);
+
         return firstProcessRunningListItemsById;
       });
 
@@ -100,6 +108,7 @@ describe('Dashboard view', () => {
       .wait(() => {
         browser
           .wait(visibilityOfHyperlinkOfProcessRunningListItemByCorrelationId, defaultTimeoutMS);
+
         return hyperlinkOfProcessRunningListItemByCorrelationId;
      });
 
@@ -167,6 +176,7 @@ describe('Dashboard view', () => {
       .wait(() => {
         browser
           .wait(visibilityOfFirstTaskWaitingById, taskListTimeoutMS);
+
         return firstTaskWaitingById;
       });
 
@@ -183,6 +193,7 @@ describe('Dashboard view', () => {
       .wait(() => {
         browser
           .wait(visibilityOfFirstTaskWaitingById, taskListTimeoutMS);
+
         return firstTaskWaitingById;
       });
 
@@ -202,6 +213,7 @@ describe('Dashboard view', () => {
       .wait(() => {
         browser
           .wait(visibilityOfFirstTaskWaitingById, taskListTimeoutMS);
+
         return firstTaskWaitingById;
       });
 
@@ -215,6 +227,7 @@ describe('Dashboard view', () => {
       .wait(() => {
         browser
           .wait(visibilityOfDynamicUiWrapperContinueButton, taskListTimeoutMS);
+
         return dynamicUiWrapperContinueButton;
       });
   });
@@ -227,6 +240,7 @@ describe('Dashboard view', () => {
       .wait(() => {
         browser
           .wait(visibilityOfFirstTaskWaitingById, taskListTimeoutMS);
+
         return firstTaskWaitingById;
       });
 
@@ -240,6 +254,7 @@ describe('Dashboard view', () => {
       .wait(() => {
         browser
           .wait(visibilityOfDynamicUiWrapperContinueButton, taskListTimeoutMS);
+
         return dynamicUiWrapperContinueButton;
       });
 
@@ -260,6 +275,7 @@ describe('Dashboard view', () => {
     .wait(() => {
       browser
       .wait(urlContainsDashboardLink, taskListTimeoutMS);
+
       return dashboardLink;
     });
   });

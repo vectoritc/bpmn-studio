@@ -1,4 +1,9 @@
-import {browser, ElementFinder, protractor, ProtractorExpectedConditions} from 'protractor';
+import {
+  browser,
+  ElementFinder,
+  protractor,
+  ProtractorExpectedConditions,
+} from 'protractor';
 
 import {BpmnIo} from './pages/bpmn-io';
 import {BpmnXmlView} from './pages/bpmnXmlView';
@@ -48,6 +53,7 @@ describe('bpmn-io XML view', () => {
     browser.driver
       .wait(() => {
         browser.wait(visibilityOfRouterViewContainer, defaultTimeoutMS);
+
         return getRouterViewContainer;
       });
 
@@ -62,6 +68,7 @@ describe('bpmn-io XML view', () => {
     browser.driver
       .wait(() => {
         browser.wait(visibilityOfBpmnIoTag, defaultTimeoutMS);
+
         return bpmnIoTag;
       });
   });

@@ -1,4 +1,9 @@
-import {browser, ElementFinder, protractor, ProtractorExpectedConditions} from 'protractor';
+import {
+  browser,
+  ElementFinder,
+  protractor,
+  ProtractorExpectedConditions,
+} from 'protractor';
 
 import {Settings} from './pages/settings';
 import {StatusBar} from './pages/statusBar';
@@ -26,6 +31,7 @@ describe('Status bar', () => {
     browser.driver
       .wait(() => {
         browser.wait(visibilityOfStatusBarTag, defaultTimeoutMS);
+
         return statusBar.statusBarTag;
     });
   });

@@ -1,4 +1,10 @@
-import {browser, ElementArrayFinder, ElementFinder, protractor, ProtractorExpectedConditions} from 'protractor';
+import {
+  browser,
+  ElementArrayFinder,
+  ElementFinder,
+  protractor,
+  ProtractorExpectedConditions,
+} from 'protractor';
 
 import {Dashboard} from './pages/dashboard';
 import {NavBar} from './pages/navBar';
@@ -29,6 +35,7 @@ describe('Navigation bar', () => {
       .wait(() => {
         browser
           .wait(visibilityOfNavBarTag, defaultTimeoutMS);
+
         return navBarTag;
       });
   });
@@ -165,11 +172,13 @@ describe('Navigation bar', () => {
       .wait(() => {
         browser
           .wait(visibilityOfProcessListTag, defaultTimeoutMS);
+
         return processListTag;
       });
 
     const currentBrowserUrl: string = await browser.getCurrentUrl();
     const dashboardLink: string = dashboard.dashboardLink;
+
     expect(currentBrowserUrl).toContain(dashboardLink);
   });
 

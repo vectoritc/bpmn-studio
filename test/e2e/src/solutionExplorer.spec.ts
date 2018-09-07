@@ -1,4 +1,10 @@
-import {browser, ElementArrayFinder, ElementFinder, protractor, ProtractorExpectedConditions} from 'protractor';
+import {
+  browser,
+  ElementArrayFinder,
+  ElementFinder,
+  protractor,
+  ProtractorExpectedConditions,
+} from 'protractor';
 
 import {NavBar} from './pages/navBar';
 import {ProcessModel} from './pages/processModel';
@@ -37,6 +43,7 @@ describe('Solution Explorer', () => {
     browser.driver
       .wait(() => {
         browser.wait(visibilityOfNavBarTag, defaultTimeoutMS);
+
         return navBarTag;
       });
 
@@ -46,6 +53,7 @@ describe('Solution Explorer', () => {
     // Wait until solutions are loaded
     browser.driver.wait(() => {
       browser.wait(expectedConditions.visibilityOf(solutionExplorer.solutionExplorerListItemsId(processModelId)), defaultTimeoutMS);
+
       return solutionExplorer.solutionExplorerListItemsId(processModelId);
     });
   });

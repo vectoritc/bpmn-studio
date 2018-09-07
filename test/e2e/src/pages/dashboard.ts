@@ -1,5 +1,14 @@
-import {by, element, ElementArrayFinder, ElementFinder} from 'protractor';
-import {By, promise} from 'selenium-webdriver';
+import {
+  by,
+  element,
+  ElementArrayFinder,
+  ElementFinder,
+} from 'protractor';
+
+import {
+  By,
+  promise,
+} from 'selenium-webdriver';
 
 export class Dashboard {
 
@@ -12,22 +21,22 @@ export class Dashboard {
   private _domTaskClassName: string = 'task-list-item';
 
   // Define Elements
-  private byTagName: By = by.tagName('process-list');
-  private byDomProcessClassName: By = by.className(this._domProcessClassName);
-  private byDomTaskClassName: By = by.className(this._domTaskClassName);
-  private byIdTaskListContainer: By = by.id('taskListContainer');
-  private byIdDynamicUiWrapper: By = by.id('dynamic-ui-wrapper-continue-button');
-  private byProcessListItemModelId: By = by.className('process-list-item-model-id');
-  private byProcessListItemUserTasks: By = by.className('process-list-item-user-tasks');
-  private byTaskListContinueButton: By = by.className('task-list-continue-button');
+  private _byTagName: By = by.tagName('process-list');
+  private _byDomProcessClassName: By = by.className(this._domProcessClassName);
+  private _byDomTaskClassName: By = by.className(this._domTaskClassName);
+  private _byIdTaskListContainer: By = by.id('taskListContainer');
+  private _byIdDynamicUiWrapper: By = by.id('dynamic-ui-wrapper-continue-button');
+  private _byProcessListItemModelId: By = by.className('process-list-item-model-id');
+  private _byProcessListItemUserTasks: By = by.className('process-list-item-user-tasks');
+  private _byTaskListContinueButton: By = by.className('task-list-continue-button');
 
-  public processListTag: ElementFinder = element(this.byTagName);
-  public taskListContainer: ElementFinder = element(this.byIdTaskListContainer);
-  public dynamicUiWrapperContinueButton: ElementFinder = element(this.byIdDynamicUiWrapper);
+  public processListTag: ElementFinder = element(this._byTagName);
+  public taskListContainer: ElementFinder = element(this._byIdTaskListContainer);
+  public dynamicUiWrapperContinueButton: ElementFinder = element(this._byIdDynamicUiWrapper);
 
   public processRunningListItems: ElementArrayFinder =
     this.processListTag
-      .all(this.byDomProcessClassName);
+      .all(this._byDomProcessClassName);
 
   public firstProcessRunningListItems: ElementFinder =
     this.processRunningListItems
@@ -35,7 +44,7 @@ export class Dashboard {
 
   public firstTaskListItems: ElementFinder =
     this.taskListContainer
-      .all(this.byDomTaskClassName)
+      .all(this._byDomTaskClassName)
         .first();
 
   // Define Functions
@@ -47,7 +56,7 @@ export class Dashboard {
   }
   public async countOfProcessRunningListItems(): Promise<number> {
     return this.processListTag
-            .all(this.byDomProcessClassName)
+            .all(this._byDomProcessClassName)
             .count();
   }
 
@@ -72,7 +81,7 @@ export class Dashboard {
     const firstProcessRunningListItemsById: ElementFinder = this.firstProcessRunningListItemsById(correlationId);
 
     return firstProcessRunningListItemsById
-            .element(this.byProcessListItemModelId);
+            .element(this._byProcessListItemModelId);
   }
 
   public openProcessModelByClickOnModelIdInProcessRunningList(correlationId: string): promise.Promise<void> {
@@ -82,7 +91,7 @@ export class Dashboard {
   }
 
   public hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId(correlationId: string): ElementFinder {
-    const byClassName: By = this.byProcessListItemUserTasks;
+    const byClassName: By = this._byProcessListItemUserTasks;
     const firstProcessRunningListItemsById: ElementFinder = this.firstProcessRunningListItemsById(correlationId);
 
     return firstProcessRunningListItemsById
@@ -107,7 +116,7 @@ export class Dashboard {
 
   public async countOfTasksWaitingListItems(): Promise<number> {
     return this.taskListContainer
-            .all(this.byDomTaskClassName)
+            .all(this._byDomTaskClassName)
             .count();
   }
   public async countOfTasksWaitingListItemsById(processModelId: string): Promise<number> {
@@ -121,7 +130,7 @@ export class Dashboard {
 
   public continueTaskByClickOnButton(processModelId: string): promise.Promise<void> {
     const firstTaskWaitingById: ElementFinder = this.firstTaskWaitingById(processModelId);
-    const taskListContinueButton: ElementFinder = firstTaskWaitingById.element(this.byTaskListContinueButton);
+    const taskListContinueButton: ElementFinder = firstTaskWaitingById.element(this._byTaskListContinueButton);
 
     return taskListContinueButton.click();
   }

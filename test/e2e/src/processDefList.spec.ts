@@ -1,4 +1,10 @@
-import {browser, ElementArrayFinder, ElementFinder, protractor, ProtractorExpectedConditions} from 'protractor';
+import {
+  browser,
+  ElementArrayFinder,
+  ElementFinder,
+  protractor,
+  ProtractorExpectedConditions,
+} from 'protractor';
 
 import {General} from './pages/general';
 import {ProcessDefListPage} from './pages/processDefListPage';
@@ -41,6 +47,7 @@ describe('Process definition list', () => {
       .wait(() => {
         browser
           .wait(visibilityOfRouterViewContainer, defaultTimeoutMS);
+
         return routerViewContainer;
      });
 
@@ -51,6 +58,7 @@ describe('Process definition list', () => {
       .wait(() => {
         browser
           .wait(visibilityOfProcessDefinitionListItem, defaultTimeoutMS);
+
         return processDefinitionListItem;
       });
   });
@@ -81,6 +89,7 @@ describe('Process definition list', () => {
       .wait(() => {
         browser
           .wait(visibilityOfRouterViewContainer, defaultTimeoutMS);
+
         return routerViewContainer;
      });
 

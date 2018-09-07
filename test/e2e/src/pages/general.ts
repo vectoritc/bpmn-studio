@@ -1,11 +1,16 @@
-import {by, element, ElementFinder} from 'protractor';
+import {
+  by,
+  element,
+  ElementFinder,
+} from 'protractor';
+
 import {By} from 'selenium-webdriver';
 
 export class General {
 
   // Define Elements
-  private byTagName: By = by.tagName('router-view');
+  private _byTagName: By = by.tagName('router-view');
 
-  public getRouterViewContainer: ElementFinder = element(this.byTagName);
+  public getRouterViewContainer: ElementFinder = element(this._byTagName);
 
 }

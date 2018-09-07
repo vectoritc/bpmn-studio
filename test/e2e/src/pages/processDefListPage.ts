@@ -1,12 +1,18 @@
-import {by, element, ElementArrayFinder, ElementFinder} from 'protractor';
+import {
+  by,
+  element,
+  ElementArrayFinder,
+  ElementFinder,
+} from 'protractor';
+
 import {By} from 'selenium-webdriver';
 
 export class ProcessDefListPage {
 
   // Define Elements
-  private byProcessDefinitionListItem: By = by.className('process-definition-list-item');
+  private _byProcessDefinitionListItem: By = by.className('process-definition-list-item');
 
-  public processDefinitionListItems: ElementArrayFinder = element.all(this.byProcessDefinitionListItem);
+  public processDefinitionListItems: ElementArrayFinder = element.all(this._byProcessDefinitionListItem);
   public processDefinitionListItem: ElementFinder = this.processDefinitionListItems.first();
 
   // Define Functions
