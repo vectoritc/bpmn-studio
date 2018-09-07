@@ -51,18 +51,23 @@ This will
 You can call this script like this:
 
 ```bash
-bash format_commit_messages.bash <filename>
+bash format_messages.bash <input file> <output file>
 ```
 
-- `filename` The name of the generated file, example:
+- `input file` The name of the file, that should be formatted.
+- `output file` The name of the new file that will be created.
+
+Example:
 
 ```bash
-merge_commits_of_release.txt
+format_messages.bash merge_commits_of_release.txt formatted_messages.txt
 ```
+
+All changes are written to a new file called `formatted_messages.txt`.
 
 ## Cleanup Merge Commits
 
-Edit `merge_commits_of_release.txt` in an editor for your choice:
+Edit `formatted_messages.txt` in an editor for your choice:
 
 - Remove any merge commits into feature branches.
 - Remove empty, reverted and version bump commits.
@@ -77,7 +82,7 @@ Edit `merge_commits_of_release.txt` in an editor for your choice:
 
 ## Sort and Format Merge Commits
 
-This script will read from the `merge_commits_of_release.txt` file. The script will
+This script will read from the `formatted_messages.txt` file. The script will
 copy a sorted and formatted list of the commits into your clipboard.
 
 ```bash
@@ -90,7 +95,7 @@ notes file.
 
 ## Get Fixed Issues
 
-This script will read from the `merge_commits_of_release.txt` file. It will extract
+This script will read from the `formatted_messages.txt` file. It will extract
 all issues fixed in the release. It will also generate a neat looking issue list
 using the issue title. To fulfill this task the script needs access to the
 GitHub API. The result of the will be saved to `closed_issues` in your current
@@ -104,6 +109,12 @@ GITHUB_AUTH="USERNAME:TOKEN" bash get_fixed_issues.sh
 
 Edit `closed_issues` in an editor for your choice. Perform the same cleanup steps
 as described in [Cleanup merge commits](#cleanup-merge-commits).
+
+You can also replace the emojis by calling
+
+```bash
+bash format_messages.bash closed_issues formatted_closed_issues.txt
+```
 
 After this step paste the contents of `closed_issues` into the section `Fixed
 Issues` of the release notes file.

@@ -6,7 +6,7 @@ if [[ -z "$GITHUB_AUTH" ]]; then
   exit 1
 fi
 
-INPUT="merge_commits_of_release.txt"
+INPUT="formatted_messages.txt"
 
 if [[ ! -e "$INPUT" ]]; then
   echo "Input file $INPUT does not exist."
