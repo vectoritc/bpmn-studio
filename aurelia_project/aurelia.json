@@ -267,11 +267,6 @@
             "resources": []
           },
           {
-            "name": "xml-beautifier",
-            "main": "index.js",
-            "path": "../node_modules/xml-beautifier/dist"
-          },
-          {
             "name": "repeat-string",
             "main": "index.js",
             "path": "../node_modules/repeat-string"
