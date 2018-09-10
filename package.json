@@ -35,7 +35,8 @@
   },
   "build": {
     "extraFiles": [
-      "config/**/*"
+      "config/**/*",
+      "build/**"
     ],
     "extraResources": [
       "node_modules/@process-engine/process_engine_runtime/sequelize/migrations/**/*"
@@ -99,6 +100,7 @@
     "@process-engine/solutionexplorer.repository.management_api": "0.0.3",
     "@process-engine/solutionexplorer.service": "1.0.0",
     "@process-engine/solutionexplorer.service.contracts": "1.0.0",
+    "about-window": "^1.12.1",
     "aurelia-open-id-connect": "1.0.3",
     "aurelia-validation": "^1.1.2",
     "bpmn-js-differ": "^1.2.0",
