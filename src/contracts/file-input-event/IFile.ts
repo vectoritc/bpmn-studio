@@ -4,5 +4,5 @@ export interface IFile {
   path?: string;
   size: number;
   type: string;
-  webkitRelativePath: string;
+  webkitRelativePath?: string;
 }

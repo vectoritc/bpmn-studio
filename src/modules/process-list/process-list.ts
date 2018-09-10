@@ -67,7 +67,13 @@ export class ProcessList {
 
   public async updateProcesses(): Promise<void> {
     try {
-      this._processes = await this._getProcesses();
+      const processes: Array<Correlation> = await this._getProcesses();
+      const processListWasUpdated: boolean = JSON.stringify(processes) !== JSON.stringify(this._getProcesses);
+
+      if (processListWasUpdated) {
+        this._processes = processes;
+      }
+
       this.succesfullRequested = true;
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, `Error receiving task list: ${error.message}`);
