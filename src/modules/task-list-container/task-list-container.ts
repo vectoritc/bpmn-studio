@@ -43,7 +43,7 @@ export class TaskListContainer {
     const hasClaimsForTaskList: boolean = await this._hasClaimsForTaskList(managementContext);
 
     if (!hasClaimsForTaskList) {
-      this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have the permission to use the dashboard features.');
+      this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have the permission to use the inspect features.');
       this._router.navigateToRoute('start-page');
 
       return false;
