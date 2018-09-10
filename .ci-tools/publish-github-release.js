@@ -28,8 +28,8 @@ const github_repo_name = process.env['RELEASE_GH_NAMESPACE'] || 'bpmn-studio';
 const version_tag = `v${version_to_release}`;
 
 const files_to_upload = [
-  `dist/bpmn-studio Setup ${version_for_filenames}.exe`,
-  `dist/bpmn-studio Setup ${version_for_filenames}.exe.blockmap`,
+  `dist/bpmn-studio-setup-${version_for_filenames}.exe`,
+  `dist/bpmn-studio-setup-${version_for_filenames}.exe.blockmap`,
   `dist/bpmn-studio-${version_for_filenames}-mac.zip`,
   `dist/bpmn-studio-${version_for_filenames}-x86_64.AppImage`,
   `dist/bpmn-studio-${version_for_filenames}.dmg`,

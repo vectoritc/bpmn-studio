@@ -54,7 +54,8 @@
           "name": "BPMN",
           "description": "BPMN diagram extension"
         }
-      ]
+      ],
+      "artifactName": "bpmn-studio-setup-${version}.${ext}"
     },
     "mac": {
       "target": [
