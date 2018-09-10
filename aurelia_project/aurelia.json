@@ -184,13 +184,6 @@
             ]
           },
           {
-            "name": "faye",
-            "path": "../node_modules/faye",
-            "main": "client/faye-browser-min",
-            "resources": [],
-            "exports": "Faye"
-          },
-          {
             "name": "@fortawesome/fontawesome-free",
             "path": "../node_modules/@fortawesome/fontawesome-free",
             "main": "css/all.css",
