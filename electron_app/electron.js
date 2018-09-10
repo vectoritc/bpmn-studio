@@ -70,6 +70,8 @@ Main.execute = function () {
       electron.ipcMain.once('deep-linking-ready', (event) => {
         Main._window.webContents.send('deep-linking-request', redirectUrl);
       });
+    } else if (isSignOutRefirect) {
+      Main._window.webContents.send('deep-linking-request', url);
     }
 
   });
