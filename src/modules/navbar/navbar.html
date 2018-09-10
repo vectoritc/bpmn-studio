@@ -51,7 +51,7 @@
         <button class="button menu-bar__menu-center--action-button" class.bind="validationError ? 'button--disabled' : ''" disabled.bind="validationError" click.delegate="printDiagram()" title="Print Diagram">
           <i class="fas fa-print"></i>
         </button>
-        <button class="menu-bar__menu-center--action-button" click.delegate="navigateToInspect()" title="Inspect">
+        <button class="menu-bar__menu-center--action-button" click.delegate="navigateToInspect()" disabled.bind="disableStartButton" title="Inspect">
           <i class="fas fa-search"></i>
         </button>
       </template>
