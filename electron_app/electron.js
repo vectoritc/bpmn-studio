@@ -28,7 +28,6 @@ let fileOpenMainEvent;
 Main._window = null;
 
 Main.execute = function () {
-
   /**
    * This method gets called when BPMN-Studio starts for the first time. When it
    * starts it's the first instance, therefore this functions returns "false"
@@ -50,11 +49,18 @@ Main.execute = function () {
 
     if (fileWasDoubleClicked) {
       const path = argv[1];
-
       Main._bringExistingInstanceToForeground();
 
       answerOpenFileEvent(path)
     }
+
+    const isSignInRedirect = argv[1].startsWith('bpmn-studio://signin-oidc')
+
+    if (isSignInRedirect) {
+      Main._window.loadURL(`file://${__dirname}/../index.html`);
+      Main._window.loadURL('/');
+    }
+
   });
 
   if (existingInstance) {
