@@ -44,21 +44,32 @@ Main.execute = function () {
    *
    */
   const existingInstance = app.makeSingleInstance((argv, workingDirectory) => {
+    const noArgumentsSet = argv[1] === undefined;
 
-    const fileWasDoubleClicked = argv[1].endsWith('.bpmn');
-
-    if (fileWasDoubleClicked) {
-      const path = argv[1];
-      Main._bringExistingInstanceToForeground();
-
-      answerOpenFileEvent(path)
+    if (noArgumentsSet) {
+      return;
     }
 
-    const isSignInRedirect = argv[1].startsWith('bpmn-studio://signin-oidc')
+    const argumentIsFilePath = argv[1].endsWith('.bpmn');
+    const argumentIsSignInRedirect = url.startsWith('bpmn-studio://signin-oidc');
+    const argumentIsSignOutRefirect = url.startsWith('bpmn-studio://signout-oidc');
 
-    if (isSignInRedirect) {
+    if (argumentIsFilePath) {
+      const filePath = argv[1];
+      Main._bringExistingInstanceToForeground();
+
+      answerOpenFileEvent(filePath)
+    }
+
+    if (argumentIsSignInRedirect || argumentIsSignOutRefirect) {
+      const redirectUrl = argv[1];
+
       Main._window.loadURL(`file://${__dirname}/../index.html`);
       Main._window.loadURL('/');
+
+      electron.ipcMain.once('deep-linking-ready', (event) => {
+        Main._window.webContents.send('deep-linking-request', redirectUrl);
+      });
     }
 
   });
