@@ -73,6 +73,7 @@ export class TaskList {
     } else {
       this._getUserTasks = this._getAllUserTasks;
     }
+
     this._updateUserTasks();
   }
 

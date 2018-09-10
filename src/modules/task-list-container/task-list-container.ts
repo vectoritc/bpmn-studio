@@ -40,16 +40,16 @@ export class TaskListContainer {
   public async canActivate(): Promise<boolean> {
     const managementContext: ManagementContext = this._getManagementContext();
 
-    const hasClaimsForTaskList: boolean = await this._hasClaimsForTaskList(managementContext);
+    const hasNoClaimsForTaskList: boolean = !(await this._hasClaimsForTaskList(managementContext));
 
-    if (!hasClaimsForTaskList) {
+    if (hasNoClaimsForTaskList) {
       this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have the permission to use the inspect features.');
       this._router.navigateToRoute('start-page');
 
       return false;
     }
 
-    this.showTaskList = hasClaimsForTaskList;
+    this.showTaskList = !hasNoClaimsForTaskList;
 
     return true;
   }
