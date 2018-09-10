@@ -77,7 +77,9 @@ export class TaskList {
   }
 
   public attached(): void {
-    if (!this._getUserTasks) {
+    const getUserTasksIsUndefined: boolean = this._getUserTasks === undefined;
+
+    if (getUserTasksIsUndefined) {
       this._getUserTasks = this._getAllUserTasks;
       this._updateUserTasks();
     }
