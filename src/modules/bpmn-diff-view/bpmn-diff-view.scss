@@ -91,6 +91,8 @@
 }
 
 .diff-change-list {
+  display: flex;
+  flex-direction: column;
   position: relative;
   z-index: 1;
   height: 99%;
@@ -117,12 +119,11 @@
 }
 
 .change-list-table-wrapper {
+  flex: 1;
   overflow: auto;
 }
 
 .diff-summary {
-  position: absolute;
-  bottom: 0;
   width: 100%;
   min-height: 18px;
   text-align: center;
