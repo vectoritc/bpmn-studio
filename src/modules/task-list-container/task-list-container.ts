@@ -17,7 +17,7 @@ interface ITaskListRouteParameters {
 export class TaskListContainer {
 
   public showTaskList: boolean = false;
-  public tasklist: TaskList;
+  public taskList: TaskList;
 
   private _routeParameters: ITaskListRouteParameters;
   private _notificationService: NotificationService;
@@ -59,7 +59,7 @@ export class TaskListContainer {
   }
 
   public attached(): void {
-    this.tasklist.initializeTaskList(this._routeParameters);
+    this.taskList.initializeTaskList(this._routeParameters);
   }
 
   private _getManagementContext(): ManagementContext {
