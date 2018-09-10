@@ -321,10 +321,14 @@ Main._createMainWindow = function () {
           openAboutWindow({
             icon_path: isDev ? path.join(__dirname, '..', 'build/icon.png') : path.join(__dirname, '../../../build/icon.png'),
             product_name: 'BPMN-Studio',
-            bug_report_url: 'https://github.com/process-engine/bpmn-studio/issues',
+            bug_report_url: 'https://github.com/process-engine/bpmn-studio/issues/new',
             homepage: 'www.process-engine.io',
-            description: 'An Aurelia application for designing BPMN diagrams, which can also be connected to a process engine to execute these diagrams.',
             copyright: 'Copyright © 2018 process-engine',
+            win_options: {
+              minimizable: false,
+              maximizable: false,
+              resizable: false,
+            },
             package_json_dir: __dirname,
           }),
         },
