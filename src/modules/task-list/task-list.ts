@@ -244,14 +244,21 @@ export class TaskList {
 
   private async _updateUserTasks(): Promise<void> {
     try {
+
       this._userTasks = await this._getUserTasks();
       this.successfullyRequested = true;
+
     } catch (error) {
+
       if (isError(error, UnauthorizedError)) {
+
         this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have permission to view the task list.');
         this._router.navigateToRoute('start-page');
+
       } else {
+
         this._notificationService.showNotification(NotificationType.ERROR, `Error receiving task list: ${error.message}`);
+
       }
     }
 
