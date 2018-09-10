@@ -43,9 +43,9 @@ Main.execute = function () {
    */
   const existingInstance = app.makeSingleInstance((argv, workingDirectory) => {
 
-    const pathIsSet = argv[1] !== undefined;
+    const isFileDoubleClick = argv[1].endsWith('.bpmn');
 
-    if (pathIsSet) {
+    if (isFileDoubleClick) {
       const path = argv[1];
 
       answerOpenFileEvent(path)
