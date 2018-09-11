@@ -35,8 +35,6 @@ export class NavBar {
 
     this.solutionExplorerIsActive = window.localStorage.getItem('SolutionExplorerVisibility') === 'true';
 
-    document.addEventListener('click', this.dropdownClickListener);
-
     this._subscriptions = [
       this._eventAggregator.subscribe('router:navigation:complete', () => {
         this._dertermineActiveRoute();
@@ -91,8 +89,6 @@ export class NavBar {
   }
 
   public detached(): void {
-    document.removeEventListener('click', this.dropdownClickListener);
-
     this._disposeAllSubscriptions();
   }
 
@@ -131,27 +127,6 @@ export class NavBar {
 
   public uploadProcess(): void {
     this._eventAggregator.publish(environment.events.processDefDetail.uploadProcess);
-  }
-
-  /**
-   * Checks if the user clicked inside of the dropdown, to prevent it from
-   * closing in that case.
-   *
-   * @param event: Mouse event
-   */
-  public dropdownClickListener: IEventFunction =  (event: MouseEvent): void => {
-    const eventTarget: Node = event.target as Node;
-
-    const hasNavbarNoPreviousDropdown: boolean = this.dropdown === undefined || this.dropdown === null;
-
-    if (hasNavbarNoPreviousDropdown) {
-      return;
-    }
-
-    const dropdownWasClicked: boolean = this.dropdown.contains(eventTarget);
-    if (dropdownWasClicked) {
-      this.diagramInfo.className += ' open';
-    }
   }
 
   private _isRouteActive(routeName: string): boolean {
