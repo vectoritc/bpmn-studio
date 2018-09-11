@@ -30,31 +30,32 @@ Main._window = null;
 Main.execute = function () {
 
   /**
-   * This method gets called when BPMN-Studio starts the first time. When it
-   * starts the first time it's the first instance, therefore this functions
-   * returns "false" and the following if-clause will start BPMN-Studio.
-   * If you double-click a .bpmn file now the call back will be called again,
+   * This method gets called when BPMN-Studio starts for the first time. When it
+   * starts it's the first instance, therefore this functions returns "false"
+   * and the following if-clause will start BPMN-Studio.
+   *
+   * If you double-click on a .bpmn file, the callback will be called again,
    * but this time "argv" will hold the command line arguments the second
    * instance would have been started with.
+   *
    * Since this would be the second instance the method in the second instance
-   * will return "true" and therefore quit the instance. But the callback of
-   * the firstinstance allows us to send the double-click event to the renderer
+   * will return "true" and therefore quit the instance. The callback of the 
+   * first instance allows us to send the double-click event to the renderer
    * process and finally open a file via double-click.
+   *
    */
   const existingInstance = app.makeSingleInstance((argv, workingDirectory) => {
 
-    const isFileDoubleClick = argv[1].endsWith('.bpmn');
+    const fileWasDoubleClicked = argv[1].endsWith('.bpmn');
 
-    if (isFileDoubleClick) {
+    if (fileWasDoubleClicked) {
       const path = argv[1];
 
       answerOpenFileEvent(path)
     }
-
-  })
+  });
 
   if (existingInstance) {
-
     // Quit the new instance if required
     app.quit();
 
