@@ -138,14 +138,14 @@ export class App {
         route: ['task', 'processdef/:processModelId/task'],
         title: 'Task List',
         name: 'task-list-processmodel',
-        moduleId: 'modules/task-list/task-list',
+        moduleId: 'modules/task-list-container/task-list-container',
         nav: false,
       },
       {
         route: ['correlation/:correlationId/task'],
         title: 'Task List',
         name: 'task-list-correlation',
-        moduleId: 'modules/task-list/task-list',
+        moduleId: 'modules/task-list-container/task-list-container',
         nav: false,
       },
       {
