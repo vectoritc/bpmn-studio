@@ -8,6 +8,8 @@ exports.config = {
         args: [
           "--headless",
           "--disable-gpu",
+          "--no-sandbox",
+          "--disable-dev-shm-usage",
           "--window-size=1920,1080",
         ],
       },
