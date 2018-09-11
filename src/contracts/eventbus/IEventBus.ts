@@ -1,5 +1,123 @@
+type EventName = 'attach'
+  | 'autoPlace.end'
+  | 'bendpoint.move.cancel'
+  | 'bendpoint.move.end'
+  | 'bendpoint.move.hover'
+  | 'bendpoint.move.move'
+  | 'bendpoint.move.start'
+  | 'bpmnElement.added'
+  | 'canvas.destroy'
+  | 'canvas.init'
+  | 'canvas.resized'
+  | 'canvas.viewbox.changed'
+  | 'canvas.viewbox.changing'
+  | 'commandStack.changed'
+  | 'commandStack.shape.replace.postExecute'
+  | 'connect.canceled'
+  | 'connect.cleanup'
+  | 'connect.end'
+  | 'connect.ended'
+  | 'connect.hover'
+  | 'connect.move'
+  | 'connect.out'
+  | 'connect.start'
+  | 'connection.added'
+  | 'connection.changed'
+  | 'connection.remove'
+  | 'connection.removed'
+  | 'connectionSegment.move.cleanup'
+  | 'connectionSegment.move.end'
+  | 'connectionSegment.move.hover'
+  | 'connectionSegment.move.move'
+  | 'connectionSegment.move.start'
+  | 'contextPad.close'
+  | 'contextPad.create'
+  | 'create.cleanup'
+  | 'create.end'
+  | 'create.move'
+  | 'create.out'
+  | 'create.rejected'
+  | 'create.start'
+  | 'detach'
+  | 'diagram.clear'
+  | 'diagram.destroy'
+  | 'diagram.init'
+  | 'directEditing.activate'
+  | 'directEditing.cancel'
+  | 'directEditing.complete'
+  | 'directEditing.resize'
+  | 'drag.cleanup'
+  | 'drag.move'
+  | 'drag.start'
+  | 'element.changed'
+  | 'element.click'
+  | 'element.click'
+  | 'element.dblclick'
+  | 'element.hover'
+  | 'element.marker.update'
+  | 'element.marker.update'
+  | 'element.mousedown'
+  | 'element.mousemove'
+  | 'element.out'
+  | 'element.paste'
+  | 'element.updateId'
+  | 'elements.changed'
+  | 'elements.delete'
+  | 'elements.paste.rejected'
+  | 'global-connect.cleanup'
+  | 'global-connect.ended'
+  | 'global-connect.hover'
+  | 'global-connect.out'
+  | 'hand.end'
+  | 'hand.ended'
+  | 'hand.move.end'
+  | 'hand.move.ended'
+  | 'hand.move.move'
+  | 'i18n.changed'
+  | 'lasso.cleanup'
+  | 'lasso.end'
+  | 'lasso.move'
+  | 'lasso.selection.end'
+  | 'lasso.selection.ended'
+  | 'lasso.start'
+  | 'mydrag.move'
+  | 'mydrag.start'
+  | 'palette.create'
+  | 'render.connection'
+  | 'render.getConnectionPath'
+  | 'render.getShapePath'
+  | 'render.shape'
+  | 'resize.cleanup'
+  | 'resize.end'
+  | 'resize.move'
+  | 'resize.start'
+  | 'selection.changed'
+  | 'shape.added'
+  | 'shape.changed'
+  | 'shape.move.cleanup'
+  | 'shape.move.end'
+  | 'shape.move.move'
+  | 'shape.move.out'
+  | 'shape.move.rejected'
+  | 'shape.move.start'
+  | 'shape.remove'
+  | 'shape.removed'
+  | 'spaceTool.cleanup'
+  | 'spaceTool.end'
+  | 'spaceTool.ended'
+  | 'spaceTool.move'
+  | 'spaceTool.selection.cleanup'
+  | 'spaceTool.selection.end'
+  | 'spaceTool.selection.ended'
+  | 'spaceTool.selection.move'
+  | 'spaceTool.selection.start'
+  | 'sum'
+  | 'tool-manager.update';
+
+type EventNameType = string | EventName;
+
 export interface IEventBus {
-  on(events: Array<string> | string,
+  on(events: Array<EventNameType> | EventNameType,
      priority: number,
      callback: Function,
      callbackScope?: any): void;
@@ -7,15 +125,15 @@ export interface IEventBus {
      callback: Function,
      callbackScope?: any): void;
 
-  once(events: Array<string> | string,
+  once(events: Array<EventNameType> | EventNameType,
        priority: number,
        callback: Function,
        callbackScope: any): void;
-  once(events: Array<string> | string,
+  once(events: Array<EventNameType> | EventNameType,
        callback: Function,
        callbackScope: any): void;
-  off(event: string,
+  off(event: EventNameType,
       callback?: Function): void;
-  fire(nameOrType: string | {type: string},
+  fire(nameOrType: EventNameType | {type: EventNameType},
        data?: any): any;
 }
