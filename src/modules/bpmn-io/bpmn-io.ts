@@ -135,6 +135,9 @@ export class BpmnIo {
       });
     }
 
+    this.xmlForXmlView = this.xml;
+    this.xmlForDiffView = this.xml;
+
     this.modeler.attachTo(this.canvasModel);
 
     window.addEventListener('resize', this._resizeEventHandler);
