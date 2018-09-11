@@ -10,6 +10,8 @@ const exec = require('child_process');
 
 const {dialog} = require('electron');
 
+const openAboutWindow = require('about-window').default;
+
 // If BPMN-Studio was opened by double-clicking a .bpmn file, then the
 // following code tells the frontend the name and content of that file;
 // this 'get_opened_file' request is emmitted in src/main.ts.
@@ -315,7 +317,20 @@ Main._createMainWindow = function () {
       label: "BPMN-Studio",
       submenu: [{
           label: "About BPMN-Studio",
-          selector: "orderFrontStandardAboutPanel:"
+          click: () =>
+          openAboutWindow({
+            icon_path: isDev ? path.join(__dirname, '..', 'build/icon.png') : path.join(__dirname, '../../../build/icon.png'),
+            product_name: 'BPMN-Studio',
+            bug_report_url: 'https://github.com/process-engine/bpmn-studio/issues/new',
+            homepage: 'www.process-engine.io',
+            copyright: 'Copyright © 2018 process-engine',
+            win_options: {
+              minimizable: false,
+              maximizable: false,
+              resizable: false,
+            },
+            package_json_dir: __dirname,
+          }),
         },
         {
           type: "separator"
