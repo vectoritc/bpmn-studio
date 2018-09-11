@@ -149,7 +149,6 @@
     "electron-rebuild": "^1.7.3",
     "event-stream": "^3.3.3",
     "eventemitter2": "^4.1.2",
-    "faye": "^1.2.4",
     "fetch-ponyfill": "^4.1.0",
     "gulp": "github:gulpjs/gulp#4.0",
     "gulp-changed-in-place": "^2.0.3",
