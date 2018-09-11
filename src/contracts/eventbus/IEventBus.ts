@@ -1,4 +1,4 @@
-type EventName = 'attach'
+export type EventName = 'attach'
   | 'autoPlace.end'
   | 'bendpoint.move.cancel'
   | 'bendpoint.move.end'
