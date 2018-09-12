@@ -27,6 +27,7 @@ let fileOpenMainEvent;
 
 Main._window = null;
 
+
 Main.execute = function () {
   /**
    * This method gets called when BPMN-Studio starts for the first time. When it
@@ -51,8 +52,8 @@ Main.execute = function () {
     }
 
     const argumentIsFilePath = argv[1].endsWith('.bpmn');
-    const argumentIsSignInRedirect = url.startsWith('bpmn-studio://signin-oidc');
-    const argumentIsSignOutRefirect = url.startsWith('bpmn-studio://signout-oidc');
+    const argumentIsSignInRedirect = argv[1].startsWith('bpmn-studio://signin-oidc');
+    const argumentIsSignOutRefirect = argv[1].startsWith('bpmn-studio://signout-oidc');
 
     if (argumentIsFilePath) {
       const filePath = argv[1];
