@@ -1,1 +1,1 @@
-export {IEventBus} from './IEventBus';
+export * from './IEventBus';
