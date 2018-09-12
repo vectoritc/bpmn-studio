@@ -19,30 +19,63 @@ let filePath;
 
 const Main = {};
 
+/**
+ * This variable gets set when BPMN-Studio is ready to work with Files that are
+ * openend via double click.
+ */
+let fileOpenMainEvent;
+
 Main._window = null;
 
 Main.execute = function () {
 
-  // All custom scheme notifications on Windows and Linux will try to create a new instance of the application
-  const existingInstance = app.makeSingleInstance((argv, workingDirectory) => {});
+  /**
+   * This method gets called when BPMN-Studio starts for the first time. When it
+   * starts it's the first instance, therefore this functions returns "false"
+   * and the following if-clause will start BPMN-Studio.
+   *
+   * If you double-click on a .bpmn file, the callback will be called again,
+   * but this time "argv" will hold the command line arguments the second
+   * instance would have been started with.
+   *
+   * Since this would be the second instance the method in the second instance
+   * will return "true" and therefore quit the instance. The callback of the
+   * first instance allows us to send the double-click event to the renderer
+   * process and finally open a file via double-click.
+   *
+   */
+  const existingInstance = app.makeSingleInstance((argv, workingDirectory) => {
+
+    const fileWasDoubleClicked = argv[1].endsWith('.bpmn');
+
+    if (fileWasDoubleClicked) {
+      const path = argv[1];
+
+      Main._bringExistingInstanceToForeground();
+
+      answerOpenFileEvent(path)
+    }
+  });
 
   if (existingInstance) {
-
     // Quit the new instance if required
     app.quit();
 
   } else {
-
     // If this is the first instance then start the application
     Main._startInternalProcessEngine();
 
     Main._initializeApplication();
+
   }
 }
 
+
 Main._initializeApplication = function () {
 
-  app.on('ready', Main._createMainWindow);
+  app.on('ready', () => {
+    Main._createMainWindow();
+  });
 
   app.on('activate', () => {
     if (Main._window === null) {
@@ -211,11 +244,16 @@ Main._initializeApplication = function () {
       app.on('open-file', (event, path) => {
         filePath = path;
       });
+
     });
+
 
     /**
      * Wait for the "waiting"-event signalling the app has started and the
      * component is ready to handle events.
+     *
+     * Set the fileOpenMainEvent variable to make it accesable by the sending
+     * function "answerOpenFileEvent".
      *
      * Register an "open-file"-listener to get the path to file which has been
      * clicked on.
@@ -223,8 +261,9 @@ Main._initializeApplication = function () {
      * "open-file" gets fired when someone double clicks a .bpmn file.
      */
     electron.ipcMain.on('waiting-for-double-file-click', (mainEvent) => {
+      this.fileOpenMainEvent = mainEvent;
       app.on('open-file', (event, path) => {
-        mainEvent.sender.send('double-click-on-file', path);
+        answerOpenFileEvent(path);
       })
     });
 
@@ -245,6 +284,10 @@ Main._initializeApplication = function () {
 
   }
 
+}
+
+function answerOpenFileEvent(filePath) {
+  this.fileOpenMainEvent.sender.send('double-click-on-file', filePath);
 }
 
 Main._createMainWindow = function () {
