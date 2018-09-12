@@ -39,7 +39,7 @@ Main.execute = function () {
    * instance would have been started with.
    *
    * Since this would be the second instance the method in the second instance
-   * will return "true" and therefore quit the instance. The callback of the 
+   * will return "true" and therefore quit the instance. The callback of the
    * first instance allows us to send the double-click event to the renderer
    * process and finally open a file via double-click.
    *
@@ -50,6 +50,8 @@ Main.execute = function () {
 
     if (fileWasDoubleClicked) {
       const path = argv[1];
+
+      Main._bringExistingInstanceToForeground();
 
       answerOpenFileEvent(path)
     }
@@ -72,12 +74,10 @@ Main.execute = function () {
 Main._initializeApplication = function () {
 
   app.on('ready', () => {
-    console.log('READY')
     Main._createMainWindow();
   });
 
   app.on('activate', () => {
-    console.log('ACTIVATE')
     if (Main._window === null) {
       Main._createMainWindow();
     }
