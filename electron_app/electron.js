@@ -27,8 +27,8 @@ let fileOpenMainEvent;
 
 Main._window = null;
 
-Main.execute = function () {
 
+Main.execute = function () {
   /**
    * This method gets called when BPMN-Studio starts for the first time. When it
    * starts it's the first instance, therefore this functions returns "false"
@@ -45,16 +45,34 @@ Main.execute = function () {
    *
    */
   const existingInstance = app.makeSingleInstance((argv, workingDirectory) => {
+    const noArgumentsSet = argv[1] === undefined;
 
-    const fileWasDoubleClicked = argv[1].endsWith('.bpmn');
+    if (noArgumentsSet) {
+      return;
+    }
 
-    if (fileWasDoubleClicked) {
-      const path = argv[1];
+    const argumentIsFilePath = argv[1].endsWith('.bpmn');
+    const argumentIsSignInRedirect = argv[1].startsWith('bpmn-studio://signin-oidc');
+    const argumentIsSignOutRefirect = argv[1].startsWith('bpmn-studio://signout-oidc');
 
+    if (argumentIsFilePath) {
+      const filePath = argv[1];
       Main._bringExistingInstanceToForeground();
 
-      answerOpenFileEvent(path)
+      answerOpenFileEvent(filePath)
     }
+
+    if (argumentIsSignInRedirect || argumentIsSignOutRefirect) {
+      const redirectUrl = argv[1];
+
+      Main._window.loadURL(`file://${__dirname}/../index.html`);
+      Main._window.loadURL('/');
+
+      electron.ipcMain.once('deep-linking-ready', (event) => {
+        Main._window.webContents.send('deep-linking-request', redirectUrl);
+      });
+    }
+
   });
 
   if (existingInstance) {
