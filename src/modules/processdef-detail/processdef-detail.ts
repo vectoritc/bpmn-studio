@@ -441,7 +441,7 @@ export class ProcessDefDetail {
    * Currently only form fields in the Property Panel are validated. This will cause
    * the following behaviour:
    *
-   * The user inserts an invalid string (e.g. he uses a already used Id for an element);
+   * The user inserts an invalid string (e.g. he uses a already used ID for an element);
    * The Aurelia validators will trigger; the validation event will arrive here;
    * if there are errors present, we will disable the tool buttons on the navbar.
    *
