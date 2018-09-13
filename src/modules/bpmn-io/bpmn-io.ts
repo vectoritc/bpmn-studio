@@ -36,7 +36,7 @@ export class BpmnIo {
   @bindable({changeHandler: 'nameChanged'}) public name: string;
 
   public savedXml: string;
-  public propertyPanelDisplay: string = 'inline';
+  public showPropertyPanel: boolean = false;
   public initialLoadingFinished: boolean = false;
   public showXMLView: boolean = false;
   public showDiffView: boolean = false;
@@ -324,13 +324,13 @@ export class BpmnIo {
       }
 
       this.toggleButtonPropertyPanel.classList.add('tool--active');
-      this.propertyPanelDisplay = 'inline';
+      this.showPropertyPanel = true;
       this._propertyPanelShouldOpen = false;
       window.localStorage.setItem('propertyPanelHideState', 'show');
     } else {
 
       this.toggleButtonPropertyPanel.classList.remove('tool--active');
-      this.propertyPanelDisplay = 'none';
+      this.showPropertyPanel = false;
       this._propertyPanelShouldOpen = true;
       window.localStorage.setItem('propertyPanelHideState', 'hide');
     }
