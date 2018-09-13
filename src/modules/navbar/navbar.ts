@@ -28,6 +28,7 @@ export class NavBar {
   public inspectView: string = 'dashboard';
   public disableDesignLink: boolean = false;
   public latestSource: string;
+  public processOpenedFromProcessEngine: boolean = false;
 
   private _router: Router;
   private _eventAggregator: EventAggregator;
@@ -69,6 +70,15 @@ export class NavBar {
         this.process = process;
         this.latestSource = processIdIsUndefined ? 'file-system' : 'process-engine';
         this.diagramContainsUnsavedChanges = false;
+
+        /**
+         * For some reason, the uri of the process is undefiend if the
+         * process is opened from the ProcessEngine.
+         * TODO: If this gets fixed, we have to check, if the uri starts
+         * with http in to check, if the diagram was opened from a
+         * connected ProcessEngine.
+         */
+        this.processOpenedFromProcessEngine = (process.uri === undefined);
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.hideProcessName, () => {

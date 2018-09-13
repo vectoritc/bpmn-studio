@@ -18,9 +18,10 @@
       <div class="menu__menu-tabbed-link" class.bind="activeRouteName === 'inspect' ? 'menu__menu-tabbed-link--active' : ''">
         <a id="navbarInspectLink" class="menu-tabbed-link" click.delegate="navigateToInspect()">Inspect</a>
       </div>
-    </div> 
+    </div>
     <div class="menu-bar__menu menu-bar__menu--center" id="navBarCenter">
-      <div class="menu__element menu__element--title btn-group" if.bind="showProcessName" ref="diagramInfo">
+      <div class="menu__element menu__element--title btn-group" if.bind="showTools" ref="diagramInfo">
+        <span class="fas menu__element--title__icon" class.bind="processOpenedFromProcessEngine ? 'fa-database' : 'fa-folder'"></span>
         <span if.bind="process.name === undefined" class="process-details-title">${process.id}</span>
         <span else class="process-details-title">${process.name}</span>
         <span if.bind="diagramContainsUnsavedChanges" class="edited-label">- edited</span>
