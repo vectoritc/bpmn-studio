@@ -14,12 +14,7 @@ export class SolutionExplorerList {
     this._solutionExplorerFactoryService = solutionExplorerFactoryService;
     this._authenticationService = authenticationService;
 
-    console.log(solutionExplorerFactoryService);
-
-    this.openSolution('').catch(console.log);
-    this.openSolution('').catch(console.log);
-    this.openSolution('').catch(console.log);
-
+    this.openSolution('http://localhost:8000').catch(console.log);
   }
 
   public get openedSolutions(): Array<ISolutionExplorerService> {
@@ -29,7 +24,8 @@ export class SolutionExplorerList {
   public async openSolution(uri: string): Promise<void> {
     const solutionExplorer: ISolutionExplorerService = await this._solutionExplorerFactoryService.newManagementApiSolutionExplorer();
 
-    await solutionExplorer.openSolution('http://localhost:8000', this._createIdentityForSolutionExplorer());
+    await solutionExplorer.openSolution(uri, this._createIdentityForSolutionExplorer());
+    await solutionExplorer.loadSolution();
 
     this._openedSolutions.push(solutionExplorer);
   }

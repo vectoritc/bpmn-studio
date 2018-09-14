@@ -4,6 +4,8 @@
   <div class="solution-explorer-solution">
     <h4>${solutionName}</h4>
 
+    <i if.bind="solutionIsNotLoaded" class="fa fa-spinner fa-spin"></i>
+
     <ul>
       
       <li repeat.for="diagram of openedDiagrams">${diagram.name}</li>
