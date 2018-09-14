@@ -14,7 +14,7 @@ export class SolutionExplorerList {
     this._solutionExplorerFactoryService = solutionExplorerFactoryService;
     this._authenticationService = authenticationService;
 
-    this.openSolution('http://localhost:8000').catch(console.log);
+    this.openSolution('http://localhost:57981').catch(console.log);
   }
 
   public get openedSolutions(): Array<ISolutionExplorerService> {
