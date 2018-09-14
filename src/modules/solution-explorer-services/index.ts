@@ -3,6 +3,7 @@ import {SolutionExplorerFileSystemRepository} from '@process-engine/solutionexpl
 import {SolutionExplorerManagementApiRepository} from '@process-engine/solutionexplorer.repository.management_api';
 import {SolutionExplorerService} from '@process-engine/solutionexplorer.service';
 import {Container, FrameworkConfiguration} from 'aurelia-framework';
+import {SolutionExplorerFactoryService} from './SolutionExplorerFactoryService';
 
 export async function configure(config: FrameworkConfiguration): Promise<void> {
   if ((window as any).nodeRequire) {
@@ -11,6 +12,8 @@ export async function configure(config: FrameworkConfiguration): Promise<void> {
   }
 
   registerManagementApi(config.container);
+
+  config.container.registerSingleton('SolutionExplorerFactoryService', SolutionExplorerFactoryService);
 }
 
 function registerFileSystem(container: Container): void {

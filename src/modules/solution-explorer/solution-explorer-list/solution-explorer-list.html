@@ -5,10 +5,11 @@
   <div class="solution-explorer-list">
     
     <div class="solutions">
+      <template repeat.for="solutionService of openedSolutions">
+
+        <solution-explorer-solution solution-service.bind="solutionService"></solution-explorer-solution>
       
-      <solution-explorer-solution></solution-explorer-solution>
-      <solution-explorer-solution></solution-explorer-solution>
-      
+      </template>
     </div>
 
 
