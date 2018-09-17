@@ -2,13 +2,42 @@
   <require from="./solution-explorer-solution.css"></require>
 
   <div class="solution-explorer-solution">
-    <h4>${solutionName}</h4>
 
-    <i if.bind="solutionIsNotLoaded" class="fa fa-spinner fa-spin"></i>
-
-    <ul>
+    <div class="solution-loading" if.bind="solutionIsNotLoaded">
+      <i class="fa fa-spinner fa-spin"></i>
+    </div>
+   
+    <ul class="diagram-list">
       
-      <li repeat.for="diagram of openedDiagrams">${diagram.name}</li>
+      <li
+        repeat.for="diagram of openedDiagrams"
+        class="diagram-entry"
+        title="${diagram.name}"
+        click.delegate="navigateToDetailView(diagram)">
+
+        <i class="diagram-entry__icon fa fa-cogs"></i>
+        <span class="diagram-entry__name">
+          ${diagram.name}
+        </span>
+        
+        <div class="diagram-entry__actions">
+          <button
+            if.bind="canRenameDiagram()"
+            click.delegate="alert()"
+            title="Rename the diagram">
+            
+            <i class="fa fa-pencil-alt"></i>
+          </button>
+          <button
+            if.bind="canDeleteDiagram()"
+            click.delegate="alert()"
+            title="Delete the diagram">
+
+            <i class="fa fa-trash"></i>
+          </button>
+        </div>
+
+      </li>
 
     </ul>
   </div>

@@ -1,5 +1,48 @@
 .solution-explorer-tab {
   position: relative;
   height: 100%;
-  background-color: green;
+}
+
+.solution-explorer-tab__header {
+  padding: 5px 5px;
+  display: flex;
+  color: #a5a5a5;
+}
+
+.solution-explorer-tab__header__name {
+  font-size: 16px;
+  flex: 1;
+}
+
+.solution-explorer-tab__actions {
+  display: flex;
+}
+
+.solution-explorer-tab__actions button {
+  padding: 0 2px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.solution-explorer-tab__actions button:hover {
+  color: #5e5e5e;
+}
+
+@keyframes flickerAnimation {
+  0%   {
+    opacity: 1;
+  }
+  50%  {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-flicker {
+    opacity:1;  
+    animation: flickerAnimation 1s infinite;
 }

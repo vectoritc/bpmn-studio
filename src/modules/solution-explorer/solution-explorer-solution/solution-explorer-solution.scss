@@ -1,0 +1,62 @@
+.solution-explorer-solution {
+
+}
+
+.diagram-list {
+  padding-right: 5px;
+  /* padding-left: 15px; */
+  padding-left: 15px;
+}
+
+.solution-loading {
+  text-align: center;
+}
+
+.diagram-entry {
+  display: flex;
+  padding: 2.5px 0px;
+  /* padding: 5px 0px; */
+  cursor: pointer;
+}
+
+.diagram-entry__icon {
+  flex: 0;
+  margin-top: 2px;
+  margin-right: 6px;
+}
+
+.diagram-entry__name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.diagram-entry:hover .diagram-entry__name {
+  text-decoration: underline;
+}
+
+.diagram-entry__actions {
+  display: none;
+}
+
+@media (any-hover: none) {
+  .diagram-entry__actions {
+    display: flex;
+  }
+}
+
+.diagram-entry:hover .diagram-entry__actions {
+  display: flex;
+}
+
+.diagram-entry__actions button {
+  padding: 0 2px;
+  background: transparent;
+  border: none;
+  color: darkgray;
+  cursor: pointer;
+}
+
+.diagram-entry__actions button:hover {
+  color: #5e5e5e;
+}

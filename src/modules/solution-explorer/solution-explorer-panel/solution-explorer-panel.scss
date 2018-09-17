@@ -1,9 +1,16 @@
 .solution-explorer-panel {
   padding-bottom: 60px;
 
-  width: 200px;
+  min-width: 200px;
+  width: 250px;
   height: 100%;
 
   display: block;
-  background-color: red;
+
+  background-color: #f7f7f7;
+  border-right: 2px solid #dcdbdb;
+}
+
+.solution-explorer-panel button {
+  min-width: 20px;
 }
