@@ -29,20 +29,3 @@
 .solution-explorer-tab__actions button:hover {
   color: #5e5e5e;
 }
-
-@keyframes flickerAnimation {
-  0%   {
-    opacity: 1;
-  }
-  50%  {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-.animate-flicker {
-    opacity:1;  
-    animation: flickerAnimation 1s infinite;
-}
