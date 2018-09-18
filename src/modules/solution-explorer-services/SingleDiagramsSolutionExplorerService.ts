@@ -6,9 +6,17 @@ export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerS
 
   private _proxied: ISolutionExplorerService;
   private _openedDiagrams: Array<IDiagram> = [];
+  private _uriOfSingleDiagramService: string;
+  private _nameOfSingleDiagramService: string;
 
-  constructor(proxied: ISolutionExplorerService) {
+  constructor(
+    proxied: ISolutionExplorerService,
+    uriOfSingleDiagramService: string,
+    nameOfSingleDiagramService: string,
+  ) {
     this._proxied = proxied;
+    this._uriOfSingleDiagramService = uriOfSingleDiagramService;
+    this._nameOfSingleDiagramService = nameOfSingleDiagramService;
   }
 
   public getOpenedDiagrams(): Array<IDiagram> {
@@ -22,8 +30,8 @@ export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerS
   public loadSolution(): Promise<ISolution> {
     const solution: ISolution = {
       diagrams: this._openedDiagrams,
-      name: 'Single Diagrams',
-      uri: 'Single Diagrams',
+      name: this._uriOfSingleDiagramService,
+      uri: this._nameOfSingleDiagramService,
     };
     return Promise.resolve(solution);
   }

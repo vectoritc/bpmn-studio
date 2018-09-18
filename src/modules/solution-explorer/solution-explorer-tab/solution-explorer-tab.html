@@ -27,7 +27,10 @@
         </button>    
       </div>
     </div>
-    
+
+    <input class="solution-explorer-tab__input" ref="solutionInput" type="file" change.delegate="onSolutionInputChange($event)" webkitdirectory>
+    <input class="solution-explorer-tab__input" ref="singleDiagramInput" type="file" change.delegate="onSingleDiagramInputChange($event)" accept=".xml, application/xml, .bpmn, application/bpmn20-xml">
+
     <solution-explorer-list view-model.ref="_solutionExplorerList"></solution-explorer-list>
 
   </div>

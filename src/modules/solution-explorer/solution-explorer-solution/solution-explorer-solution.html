@@ -8,14 +8,23 @@
     </div>
    
     <ul class="diagram-list">
-      
+
+      <li if.bind="_diagramCreationState.isCreateDiagramInputShown" class="diagram-create">
+        <div class="diagram-create__input-holder">
+          <input ref="createNewDiagramInput" class="diagram-create__input-holder__input diagram-create__input-holder__input--error" type="text" value.bind="_diagramCreationState.currentDiagramInputValue & validateOnChange">
+        </div>
+        <ul if.bind="_diagramCreationState.errors && _diagramCreationState.errors.length > 0" class="diagram-create__errors">
+          <li repeat.for="error of _diagramCreationState.errors" class="diagram-create__errors__error">${error.message}</li>
+        </ul>
+      </li>
+
       <li
         repeat.for="diagram of openedDiagrams"
         class="diagram-entry"
         title="${diagram.name}"
         click.delegate="navigateToDetailView(diagram)">
 
-        <i class="diagram-entry__icon fa fa-cogs"></i>
+        <i if.bind="shouldFileIconBeShown()" class="diagram-entry__icon fa fa-cogs"></i>
         <span class="diagram-entry__name">
           ${diagram.name}
         </span>
@@ -28,6 +37,15 @@
             
             <i class="fa fa-pencil-alt"></i>
           </button>
+
+          <button
+            if.bind="solutionIsSingleDiagrams"
+            click.delegate="closeDiagram(diagram)"
+            title="Close the diagram">
+
+            <i class="fa fa-times"></i>
+          </button>
+
           <button
             if.bind="canDeleteDiagram()"
             click.delegate="alert()"

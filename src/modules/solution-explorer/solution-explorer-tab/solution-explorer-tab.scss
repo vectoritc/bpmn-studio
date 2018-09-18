@@ -7,6 +7,7 @@
   padding: 5px 5px;
   display: flex;
   color: #a5a5a5;
+  border-bottom: 2px solid #dcdbdb;
 }
 
 .solution-explorer-tab__header__name {
@@ -28,4 +29,9 @@
 
 .solution-explorer-tab__actions button:hover {
   color: #5e5e5e;
+}
+
+.solution-explorer-tab__input {
+  visibility: hidden;
+  height: 0;
 }

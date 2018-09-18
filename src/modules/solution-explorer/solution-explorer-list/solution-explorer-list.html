@@ -9,19 +9,23 @@
 
         <div class="solution-entry__header" title="${solutionEntry.uri}">
           
-          <i class="fa ${getFontAwesomeIconForSolution(solutionEntry.uri)} solution-entry__header__icon"></i>
+          <i class="fa ${solutionEntry.fontAwesomeIconClass} solution-entry__header__icon"></i>
           
-          <span class="solution-entry__header__name">${solutionEntry.uri}</span>
+          <span click.delegate="solutionEntry.visible = !solutionEntry.visible" class="solution-entry__header__name">${solutionEntry.uri}</span>
       
           <div class="solution-entry__header__actions">
               <button
-                if.bind="canCreateNewDiagramsInSolution(solutionEntry)"
-                click.delegate="createDiagram()"
+                if.bind="solutionEntry.canCreateNewDiagramsInSolution"
+                click.delegate="createDiagram(solutionEntryViewModels[$index])"
                 title="Create a new diagram">
 
                 <i class="fa fa-file-medical"></i>
               </button>
-              <button click.delegate="closeSolution(uri)" title="Close the solution">
+              <button
+                if.bind="solutionEntry.canCloseSolution"
+                click.delegate="closeSolution(solutionEntry.uri)"
+                title="Close the solution">
+
                 <i class="fa fa-times"></i>
               </button>
           </div>
@@ -29,12 +33,13 @@
         </div>
 
         <solution-explorer-solution
+          if.bind="solutionEntry.visible"
           solution-service.bind="solutionEntry.service"
-          view-model.ref="solutionEntry.viewModel">
+          solution-is-single-diagrams.bind="solutionEntry.isSingleDiagramService"
+          view-model.ref="solutionEntryViewModels[$index]">
         </solution-explorer-solution>
       </div>
     </div>
-
 
   </div>
 </template>

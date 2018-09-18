@@ -4,18 +4,48 @@
 
 .diagram-list {
   padding-right: 5px;
-  /* padding-left: 15px; */
-  padding-left: 15px;
+  padding-left: 22px;
 }
 
 .solution-loading {
   text-align: center;
 }
 
+.diagram-create {
+  padding: 2.5px 0px;
+  list-style: none;
+}
+
+.diagram-create__input-holder {
+  flex: 1;
+  margin-right: 15px;
+}
+
+.diagram-create__input-holder__input {
+  width: 100%;
+}
+
+.diagram-create__input-holder__input--error {
+  border-color: red;
+}
+
+.diagram-create__errors {
+  padding: 2px;
+  padding-left: 25px;
+
+  margin-right: 15px;
+  border: 2px solid red;
+  color: red;
+  border-top: none;
+}
+
+.diagram-create__errors__error {
+  list-style-type: disc;
+}
+
 .diagram-entry {
   display: flex;
   padding: 2.5px 0px;
-  /* padding: 5px 0px; */
   cursor: pointer;
 }
 
