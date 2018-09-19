@@ -8,7 +8,7 @@
     <div class="inspect-correlation__panels">
       <div class="inspect-correlation__upper-panel" show.bind="!inspectPanelFullscreen" >
         <diagram-viewer class="inspect-correlation__diagram-viewer" correlation.bind="selectedCorrelation"></diagram-viewer>
-        <token-viewer class="inspect-correlation__token-viewer" token.bind="token" show.bind="showTokenViewer"></token-viewer>
+        <token-viewer class="inspect-correlation__token-viewer" correlation.bind="selectedCorrelation" show.bind="showTokenViewer"></token-viewer>
       </div>
       <div class="inspect-correlation__bottom-panel__resize-div" ref="bottomPanelResizeDiv" if.bind="!inspectPanelFullscreen"></div>
       <div class="inspect-correlation__bottom-panel" css="height: ${bottomPanelHeight}px;"
