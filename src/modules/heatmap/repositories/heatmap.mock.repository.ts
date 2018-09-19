@@ -1665,9 +1665,13 @@ export class HeatmapMockRepository implements IHeatmapRepository {
     });
   }
 
-  public getActiveTokensForProcessModel(processModelId: string): Promise<Array<ActiveToken>> {
+  public getActiveTokensForFlowNode(flowNodeId: string): Promise<Array<ActiveToken>> {
     return new Promise ((resolve: Function, reject: Function): void => {
-      resolve(this._mockDataForActiveTokens);
+      const newArray: Array<ActiveToken> = this._mockDataForActiveTokens.filter((element: ActiveToken) => {
+        const elementIs: boolean = element.flowNodeId === flowNodeId;
+        return elementIs;
+      });
+      resolve(newArray);
     });
   }
 

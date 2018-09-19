@@ -102,11 +102,9 @@ export class Heatmap {
 
     await this._pushXmlToBpmnModeler(xml, this._viewer);
 
-    const activeTokens: Array<ActiveToken> = await this._heatmapService.getActiveTokensForProcessModel(this.processmodelid);
-
     const overlays: IOverlay = this._viewer.get('overlays');
 
-    this._heatmapService.addOverlays(overlays, elementRegistry, activeTokens);
+    this._heatmapService.addOverlays(overlays, elementRegistry);
 
     const dashboardIsNotShown: boolean = !this.dashboardIsShown;
     if (dashboardIsNotShown) {

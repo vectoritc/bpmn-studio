@@ -12,6 +12,6 @@ export interface IHeatmapService {
     flowNodeRuntimeInformation: Array<FlowNodeRuntimeInformation>,
     modeler: IBpmnModeler,
    ): Promise<string>;
-  getActiveTokensForProcessModel(processModelId: string): Promise<Array<ActiveToken>>;
-  addOverlays(overlays: IOverlay, elementRegistry: IElementRegistry, activeTokens: Array<ActiveToken>): void;
+  getActiveTokensForFlowNode(flowNodeId: string): Promise<Array<ActiveToken>>;
+  addOverlays(overlays: IOverlay, elementRegistry: IElementRegistry): void;
 }

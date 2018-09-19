@@ -29,10 +29,10 @@ export class HeatmapRepository implements IHeatmapRepository {
     return this._managementApiClientService.getProcessModelById(context, processModelId);
   }
 
-  public getActiveTokensForProcessModel(processModelId: string): Promise<Array<ActiveToken>> {
+  public getActiveTokensForFlowNode(flowNodeId: string): Promise<Array<ActiveToken>> {
     const context: ManagementContext = this._getManagementContext();
 
-    return this._managementApiClientService.getActiveTokensForProcessModel(context, processModelId);
+    return this._managementApiClientService.getActiveTokensForFlowNode(context, flowNodeId);
   }
 
   private _getManagementContext(): ManagementContext {

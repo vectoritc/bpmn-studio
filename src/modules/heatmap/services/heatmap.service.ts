@@ -37,8 +37,8 @@ export class HeatmapService implements IHeatmapService {
     return this._heatmapRepository.getRuntimeInformationForProcessModel(processModelId);
   }
 
-  public getActiveTokensForProcessModel(processModelId: string): Promise<Array<ActiveToken>> {
-    return this._heatmapRepository.getActiveTokensForProcessModel(processModelId);
+  public getActiveTokensForFlowNode(flowNodeId: string): Promise<Array<ActiveToken>> {
+    return this._heatmapRepository.getActiveTokensForFlowNode(flowNodeId);
   }
 
   public addOverlays(overlays: IOverlay, elementRegistry: IElementRegistry, activeTokens: Array<ActiveToken>): void {
