@@ -1,7 +1,13 @@
+import {computedFrom, inject} from 'aurelia-framework';
+
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
-import {computedFrom, inject} from 'aurelia-framework';
-import {IAuthenticationService, IDiagramValidationService, IIdentity} from '../../../contracts';
+
+import {
+  IAuthenticationService,
+  IDiagramValidationService,
+  IIdentity,
+} from '../../../contracts';
 import {SingleDiagramsSolutionExplorerService} from '../../solution-explorer-services/SingleDiagramsSolutionExplorerService';
 import {SolutionExplorerFactoryService} from '../../solution-explorer-services/SolutionExplorerFactoryService';
 import {SolutionExplorerSolution} from '../solution-explorer-solution/solution-explorer-solution';

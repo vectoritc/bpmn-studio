@@ -1,23 +1,28 @@
-import { ForbiddenError, isError, UnauthorizedError } from '@essential-projects/errors_ts';
-import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
-import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {bindable, computedFrom, inject, NewInstance} from 'aurelia-framework';
+import {
+  bindable,
+  computedFrom,
+  inject,
+  NewInstance,
+} from 'aurelia-framework';
 import {PipelineResult, Router} from 'aurelia-router';
 import {
   ControllerValidateResult,
   FluentRuleCustomizer,
-  ValidateEvent,
   ValidateResult,
   ValidationController,
   ValidationRules,
 } from 'aurelia-validation';
+
+import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/errors_ts';
+import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
+import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
+
 import {IDiagramCreationService} from '../../../contracts';
 import {NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
-import { DiagramCreationService } from '../../diagram-creation-service/DiagramCreationService';
-import { NotificationService } from '../../notification/notification.service';
-import { SingleDiagramsSolutionExplorerService } from '../../solution-explorer-services/SingleDiagramsSolutionExplorerService';
+import {NotificationService} from '../../notification/notification.service';
+import {SingleDiagramsSolutionExplorerService} from '../../solution-explorer-services/SingleDiagramsSolutionExplorerService';
 
 const ENTER_KEY: string = 'Enter';
 const ESCAPE_KEY: string = 'Escape';
@@ -27,7 +32,13 @@ interface DiagramCreationState {
   currentDiagramInputValue: string;
 }
 
-@inject(Router, EventAggregator, NewInstance.of(ValidationController), 'NotificationService')
+@inject(
+  Router,
+  EventAggregator,
+  NewInstance.of(ValidationController),
+  'DiagramCreationService',
+  'NotificationService',
+)
 export class SolutionExplorerSolution {
 
   private _router: Router;

@@ -1,7 +1,8 @@
 import {IIdentity} from '@essential-projects/core_contracts';
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
-import { IDiagramValidationService } from '../../contracts';
+
+import {IDiagramValidationService} from '../../contracts';
 
 export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerService {
 

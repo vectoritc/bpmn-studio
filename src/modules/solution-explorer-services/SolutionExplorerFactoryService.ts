@@ -1,9 +1,10 @@
+import {inject} from 'aurelia-framework';
+
 import {IHttpClient} from '@essential-projects/http_contracts';
 import {SolutionExplorerFileSystemRepository} from '@process-engine/solutionexplorer.repository.filesystem';
 import {SolutionExplorerManagementApiRepository} from '@process-engine/solutionexplorer.repository.management_api';
 import {SolutionExplorerService} from '@process-engine/solutionexplorer.service';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
-import {inject} from 'aurelia-framework';
 
 @inject('HttpFetchClient')
 export class SolutionExplorerFactoryService {
