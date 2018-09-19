@@ -59,14 +59,28 @@ export class HeatmapService implements IHeatmapService {
         });
       });
 
+    const elementsForOverlays: Array<IShape> = this._getElementsForOverlays(elementRegistry);
+    const activeTokenListArray: Array<Array<ActiveToken>> = await this._getActiveTokenListArray(elementsForOverlays);
+    this._addShapeTypeToActiveToken(activeTokenListArray, elementsForOverlays);
+    const elementsWithoutToken: Array<IShape> = this._getElementsWithoutToken(elementsForOverlays, activeTokenListArray);
 
+    activeTokenListArray.forEach((activeTokenArray: Array<ActiveToken & { type: string }>) => {
+      const elementIsEvent: boolean = activeTokenArray[0].type === 'bpmn:StartEvent' || activeTokenArray[0].type === 'bpmn:EndEvent';
+      const elementIsGateway: boolean = activeTokenArray[0].type === 'bpmn:ExclusiveGateway';
 
+      if (elementIsGateway) {
+        addOverlay(activeTokenArray[0].flowNodeId, activeTokenArray.length, defaultOverlayPositions.gateways);
+      } else if (elementIsEvent) {
+        addOverlay(activeTokenArray[0].flowNodeId, activeTokenArray.length, defaultOverlayPositions.events);
       } else {
+        addOverlay(activeTokenArray[0].flowNodeId, activeTokenArray.length, defaultOverlayPositions.tasks);
       }
 
+      participantsTokenCount += activeTokenArray.length;
     });
 
     elementsWithoutToken.forEach((element: IShape) => {
+      const elementIsEvent: boolean = element.type === 'bpmn:StartEvent' || element.type === 'bpmn:EndEvent';
       const elementIsGateway: boolean = element.type === 'bpmn:ExclusiveGateway';
 
       if (elementIsGateway) {
@@ -239,16 +253,50 @@ export class HeatmapService implements IHeatmapService {
     return medianRunTimeInMs;
   }
 
+  private async _getActiveTokenListArray(elementsForOverlays: Array<IShape>): Promise<Array<Array<ActiveToken>>> {
+    const promisesForElements: Array<Promise<Array<ActiveToken>>> = elementsForOverlays.map(async(element: IShape) => {
+      const elementsActiveTokens: Array<ActiveToken> = await this.getActiveTokensForFlowNode(element.id);
 
+      return elementsActiveTokens;
     });
 
+    const activeTokenListArrayForAllElements: Array<Array<ActiveToken>> = await Promise.all(promisesForElements);
+
+    const filteredActiveTokenListArray: Array<Array<ActiveToken>> = activeTokenListArrayForAllElements.filter((element: Array<ActiveToken>) => {
+      const arrayIsEmpty: boolean = element.length !== 0;
+
+      return arrayIsEmpty;
+    });
+
+    return filteredActiveTokenListArray;
   }
 
+  private _addShapeTypeToActiveToken(activeTokenListArray: Array<Array<ActiveToken>>, elementsForOverlays: Array<IShape>): void {
+    activeTokenListArray.forEach((activeTokenArray: Array<ActiveToken & { type: string }>) => {
+      const elementOfActiveToken: IShape = elementsForOverlays.find((element: IShape) => {
+        const isCorrectElement: boolean = element.id === activeTokenArray[0].flowNodeId;
+
+        return isCorrectElement;
       });
 
-      } else {
-      }
+      activeTokenArray[0].type = elementOfActiveToken.type;
+    });
+  }
 
+  private _getElementsWithoutToken(elementsForOverlays: Array<IShape>, activeTokenListArray: Array<Array<ActiveToken>>): Array<IShape> {
+    const elementsWithoutToken: Array<IShape> = elementsForOverlays.filter((element: IShape) => {
+      const activeTokenForElement: Array<ActiveToken> = activeTokenListArray.find((activeTokenArray: Array<ActiveToken>) => {
+        return activeTokenArray[0].flowNodeId === element.id;
+      });
+
+      if (activeTokenForElement === undefined) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+
+    return elementsWithoutToken;
   }
 
 }
