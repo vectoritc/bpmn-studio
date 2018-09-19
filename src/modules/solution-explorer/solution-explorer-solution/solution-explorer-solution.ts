@@ -1,3 +1,4 @@
+import { ForbiddenError, isError, UnauthorizedError } from '@essential-projects/errors_ts';
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 import {EventAggregator} from 'aurelia-event-aggregator';
@@ -35,6 +36,7 @@ export class SolutionExplorerSolution {
   private _diagramCreationService: IDiagramCreationService;
   private _notificationService: NotificationService;
 
+  // Fields below are bound from the html view.
   @bindable
   public solutionService: ISolutionExplorerService;
   @bindable
@@ -46,6 +48,7 @@ export class SolutionExplorerSolution {
     currentDiagramInputValue: undefined,
     isCreateDiagramInputShown: false,
   };
+  private _refreshIntervalTask: any;
 
   private _diagramNameValidator: FluentRuleCustomizer<DiagramCreationState, DiagramCreationState> = ValidationRules
       .ensure((state: DiagramCreationState) => state.currentDiagramInputValue)
@@ -77,11 +80,16 @@ export class SolutionExplorerSolution {
     this._validationController = validationController;
     this._diagramCreationService = new DiagramCreationService(); // TODO IoC
     this._notificationService = notificationService;
+  }
 
-    // TODO (ph): Move this into attached / detached.
-    setInterval(async() =>  {
-      // this.updateSolution();
-    }, 1000); // TODO config
+  public attached(): void {
+    this._refreshIntervalTask = setInterval(async() =>  {
+      this.updateSolution();
+    }, environment.processengine.processModelPollingIntervalInMs);
+  }
+
+  public detached(): void {
+    clearInterval(this._refreshIntervalTask);
   }
 
   public solutionServiceChanged(newValue: ISolutionExplorerService, oldValue: ISolutionExplorerService): Promise<void> {
@@ -89,9 +97,16 @@ export class SolutionExplorerSolution {
   }
 
   public async updateSolution(): Promise<void> {
-    const solution: ISolution = await this.solutionService.loadSolution();
-
-    this._openedSolution = solution;
+    try {
+      this._openedSolution = await this.solutionService.loadSolution();
+    } catch (error) {
+      // In the future we can maybe display a small icon indicating the error.
+      if (isError(error, UnauthorizedError)) {
+        this._notificationService.showNotification(NotificationType.ERROR, 'You need to login to list process models.');
+      } else if (isError(error, ForbiddenError)) {
+        this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have the required permissions to list process models.');
+      }
+    }
   }
 
   /*
@@ -161,6 +176,7 @@ export class SolutionExplorerSolution {
     }
   }
 
+  // TODO: This method is copied all over the place.
   public async navigateToDetailView(diagram: IDiagram): Promise<void> {
     // TODO: Remove this if cause if we again have one detail view.
     const diagramIsOpenedFromRemote: boolean = diagram.uri.startsWith('http');
@@ -255,7 +271,6 @@ export class SolutionExplorerSolution {
       .createNewDiagram(this._openedSolution.uri, this._diagramCreationState.currentDiagramInputValue);
 
     try {
-      // TODO: uri is kinda useless, cause the diagram contains its uri... but we fix this later.
       await this.solutionService.saveDiagram(emptyDiagram, emptyDiagram.uri);
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, error.message);

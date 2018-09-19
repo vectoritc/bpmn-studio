@@ -1,7 +1,7 @@
-import {ISolution} from '@process-engine/solutionexplorer.contracts';
+import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 import {computedFrom, inject} from 'aurelia-framework';
-import {IAuthenticationService, IIdentity} from '../../../contracts';
+import {IAuthenticationService, IDiagramValidationService, IIdentity} from '../../../contracts';
 import {SingleDiagramsSolutionExplorerService} from '../../solution-explorer-services/SingleDiagramsSolutionExplorerService';
 import {SolutionExplorerFactoryService} from '../../solution-explorer-services/SolutionExplorerFactoryService';
 import {SolutionExplorerSolution} from '../solution-explorer-solution/solution-explorer-solution';
@@ -15,43 +15,70 @@ interface ISolutionEntry {
   canCreateNewDiagramsInSolution: boolean;
 }
 
-@inject('SolutionExplorerFactoryService', 'AuthenticationService')
+interface UriToViewModelMap {
+  [key: string]: SolutionExplorerSolution;
+}
+
+@inject('SolutionExplorerFactoryService', 'AuthenticationService', 'DiagramValidationService')
 export class SolutionExplorerList {
 
   private _solutionExplorerFactoryService: SolutionExplorerFactoryService;
   private _authenticationService: IAuthenticationService;
-  // TODO
+  // Contains all opened solutions.
   private _openedSolutions: Array<ISolutionEntry> = [];
-  // Keep a seperate array of all viewmodels. This array is used to update
-  // the solutions.
-  public solutionEntryViewModels: Array<SolutionExplorerSolution> = [];
+  // Keep a seperate map of all viewmodels for the solutions entries.
+  // The uri maps to the viewmodel.
+  public solutionEntryViewModels: UriToViewModelMap = {};
 
   // Reference on the service used to open single diagrams.
   // This service is also put inside the map.
   private _singleDiagramService: SingleDiagramsSolutionExplorerService;
 
-  constructor(solutionExplorerFactoryService: SolutionExplorerFactoryService, authenticationService: IAuthenticationService) {
+  constructor(
+    solutionExplorerFactoryService: SolutionExplorerFactoryService,
+    authenticationService: IAuthenticationService,
+    diagramValidationService: IDiagramValidationService,
+  ) {
     this._solutionExplorerFactoryService = solutionExplorerFactoryService;
     this._authenticationService = authenticationService;
 
-    // TODO(ph): Use configured url + refresh when url changes.
-    this.openSolution('http://localhost:8000').catch(console.log);
-    this.openSolution('http://127.0.0.1:8000').catch(console.log);
+    // Add entry for single file service.
+    solutionExplorerFactoryService.newFileSystemSolutionExplorer()
+      .then((service: ISolutionExplorerService): void => {
+        const uriOfSingleDiagramService: string = 'Single Diagrams';
+        const nameOfSingleDiagramService: string = 'Single Diagrams';
 
-    // TODO(ph): Extract
-    // Add entry single file service
-    solutionExplorerFactoryService.newFileSystemSolutionExplorer().then((service: ISolutionExplorerService): void => {
-      const uriOfSingleDiagramService: string = 'Single Diagrams';
-      const nameOfSingleDiagramService: string = 'Single Diagrams';
+        this._singleDiagramService = new SingleDiagramsSolutionExplorerService(
+          diagramValidationService,
+          service,
+          uriOfSingleDiagramService,
+          nameOfSingleDiagramService,
+        );
 
-      this._singleDiagramService = new SingleDiagramsSolutionExplorerService(service, uriOfSingleDiagramService, nameOfSingleDiagramService);
+        this._addSolutionEntry(uriOfSingleDiagramService, this._singleDiagramService, true);
+      });
 
-      this._addSolutionEntry(uriOfSingleDiagramService, this._singleDiagramService);
-    });
+    // Allows us to debug the solution explorer list.
+    (window as any).solutionList = this;
+  }
+
+  /**
+   * Reopen all currently opened solutions to reload the identity
+   * used to open the solution.
+   */
+  public async refreshSolutionsOnIdentityChange(): Promise<void> {
+    const openPromises: Array<Promise<void>> = this._openedSolutions
+      .map((entry: ISolutionEntry): Promise<void> => {
+        return entry.service.openSolution(entry.uri, this._createIdentityForSolutionExplorer());
+      });
+
+    await Promise.all(openPromises);
+
+    return this.refreshSolutions();
   }
 
   public async refreshSolutions(): Promise<void> {
-    const refreshPromises: Array<Promise<void>> = this.solutionEntryViewModels
+    const refreshPromises: Array<Promise<void>> = Object.values(this.solutionEntryViewModels)
       .filter((viewModel: SolutionExplorerSolution): boolean => {
         const viewModelExists: boolean = viewModel !== undefined && viewModel !== null;
         return viewModelExists;
@@ -63,12 +90,12 @@ export class SolutionExplorerList {
     await Promise.all(refreshPromises);
   }
 
-  public async openSingleDiagram(uri: string): Promise<void> {
-    // TODO (ph): Cleanup!
-    await this._singleDiagramService.openSingleDiagram(uri, this._createIdentityForSolutionExplorer());
+  public async openSingleDiagram(uri: string): Promise<IDiagram> {
+    const identity: IIdentity = this._createIdentityForSolutionExplorer();
+    return this._singleDiagramService.openSingleDiagram(uri, identity);
   }
 
-  public async openSolution(uri: string): Promise<void> {
+  public async openSolution(uri: string, insertAtBeginning: boolean = false): Promise<void> {
     const uriIsRemote: boolean = uri.startsWith('http');
 
     let solutionExplorer: ISolutionExplorerService;
@@ -78,7 +105,8 @@ export class SolutionExplorerList {
       solutionExplorer = await this._solutionExplorerFactoryService.newFileSystemSolutionExplorer();
     }
 
-    await solutionExplorer.openSolution(uri, this._createIdentityForSolutionExplorer());
+    const identity: IIdentity = this._createIdentityForSolutionExplorer();
+    await solutionExplorer.openSolution(uri, identity);
 
     const newOpenedSpluton: ISolution = await solutionExplorer.loadSolution();
     const solutionURI: string = newOpenedSpluton.uri;
@@ -86,19 +114,26 @@ export class SolutionExplorerList {
     const arrayAlreadyContainedURI: boolean = this._getIndexOfSolution(solutionURI) >= 0;
 
     if (arrayAlreadyContainedURI) {
-      throw new Error('URI already added ');
+      throw new Error('Solution is already opened.');
     }
 
-    this._addSolutionEntry(uri, solutionExplorer);
+    this._addSolutionEntry(uri, solutionExplorer, insertAtBeginning);
   }
 
   public async closeSolution(uri: string): Promise<void> {
     const indexOfSolutionToBeRemoved: number = this._getIndexOfSolution(uri);
+
+    const uriNotFound: boolean = indexOfSolutionToBeRemoved < 0;
+    if (uriNotFound) {
+      return;
+    }
+
     this._openedSolutions.splice(indexOfSolutionToBeRemoved, 1);
   }
 
-  public async createDiagram(viewModelOfSolution: SolutionExplorerSolution): Promise<void> {
-    return viewModelOfSolution.startCreationOfNewDiagram();
+  public async createDiagram(entry: ISolutionEntry): Promise<void> {
+    const viewModelOfEntry: SolutionExplorerSolution = this.solutionEntryViewModels[entry.uri];
+    return viewModelOfEntry.startCreationOfNewDiagram();
   }
 
   // Give aurelia a hint on what objects to observe.
@@ -107,7 +142,8 @@ export class SolutionExplorerList {
   // aurelia cannot see the business rules happening in this._shouldDisplaySolution().
   @computedFrom('_openedSolutions.length', '_singleDiagramService._openedDiagrams.length')
   public get openedSolutions(): Array<ISolutionEntry> {
-    const filteredEntries: Array<ISolutionEntry> = this._openedSolutions.filter(this._shouldDisplaySolution);
+    const filteredEntries: Array<ISolutionEntry> = this._openedSolutions
+      .filter(this._shouldDisplaySolution);
 
     return filteredEntries;
   }
@@ -166,7 +202,7 @@ export class SolutionExplorerList {
     return indexOfSolutionWithURI;
   }
 
-  private _addSolutionEntry(uri: string, service: ISolutionExplorerService): void {
+  private _addSolutionEntry(uri: string, service: ISolutionExplorerService, insertAtBeginning: boolean): void {
     const isSingleDiagramService: boolean = this._isSingleDiagramService(service);
 
     const entry: ISolutionEntry = {
@@ -182,7 +218,11 @@ export class SolutionExplorerList {
     entry.canCloseSolution = this._canCloseSolution(entry);
     entry.canCreateNewDiagramsInSolution = this._canCreateNewDiagramsInSolution(entry);
 
-    this._openedSolutions.push(entry);
+    if (insertAtBeginning) {
+      this._openedSolutions.splice(1, 0, entry);
+    } else {
+      this._openedSolutions.push(entry);
+    }
   }
 
   private _createIdentityForSolutionExplorer(): IIdentity {

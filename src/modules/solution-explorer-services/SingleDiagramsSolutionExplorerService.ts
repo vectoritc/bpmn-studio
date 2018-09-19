@@ -1,19 +1,23 @@
 import {IIdentity} from '@essential-projects/core_contracts';
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
+import { IDiagramValidationService } from '../../contracts';
 
 export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerService {
 
+  private _validationService: IDiagramValidationService;
   private _proxied: ISolutionExplorerService;
   private _openedDiagrams: Array<IDiagram> = [];
   private _uriOfSingleDiagramService: string;
   private _nameOfSingleDiagramService: string;
 
   constructor(
+    validationService: IDiagramValidationService,
     proxied: ISolutionExplorerService,
     uriOfSingleDiagramService: string,
     nameOfSingleDiagramService: string,
   ) {
+    this._validationService = validationService;
     this._proxied = proxied;
     this._uriOfSingleDiagramService = uriOfSingleDiagramService;
     this._nameOfSingleDiagramService = nameOfSingleDiagramService;
@@ -36,8 +40,20 @@ export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerS
     return Promise.resolve(solution);
   }
 
-  public async openSingleDiagram(pathToDiagram: string, identity: IIdentity): Promise<IDiagram> {
-    const diagram: IDiagram = await this._proxied.openSingleDiagram(pathToDiagram, identity);
+  public async openSingleDiagram(uri: string, identity: IIdentity): Promise<IDiagram> {
+    const uriAlreadyOpened: boolean = this._findOfDiagramWithURI(uri) >= 0;
+
+    if (uriAlreadyOpened) {
+      throw new Error('This diagram is already opened.');
+    }
+
+    const diagram: IDiagram = await this._proxied.openSingleDiagram(uri, identity);
+
+    await this._validationService
+      .validate(diagram.xml)
+      .isXML()
+      .isBPMN()
+      .throwIfError();
 
     this._openedDiagrams.push(diagram);
 
@@ -45,10 +61,7 @@ export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerS
   }
 
   public closeSingleDiagram(diagram: IDiagram): Promise<void> {
-    const index: number = this._openedDiagrams
-      .findIndex((alreadyOpenedDiagram: IDiagram): boolean => {
-        return alreadyOpenedDiagram.uri === diagram.uri;
-    });
+    const index: number = this._findOfDiagramWithURI(diagram.uri);
 
     this._openedDiagrams.splice(index, 1);
 
@@ -69,5 +82,14 @@ export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerS
 
   public saveDiagram(diagram: IDiagram): Promise<void> {
     throw new Error('Method not supported.');
+  }
+
+  private _findOfDiagramWithURI(uri: string): number {
+    const index: number = this._openedDiagrams
+      .findIndex((diagram: IDiagram): boolean => {
+        return diagram.uri === uri;
+    });
+
+    return index;
   }
 }

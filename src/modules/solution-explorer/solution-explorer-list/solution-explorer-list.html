@@ -16,7 +16,7 @@
           <div class="solution-entry__header__actions">
               <button
                 if.bind="solutionEntry.canCreateNewDiagramsInSolution"
-                click.delegate="createDiagram(solutionEntryViewModels[$index])"
+                click.delegate="createDiagram(solutionEntry)"
                 title="Create a new diagram">
 
                 <i class="fa fa-file-medical"></i>
@@ -35,7 +35,7 @@
         <solution-explorer-solution
           solution-service.bind="solutionEntry.service"
           solution-is-single-diagrams.bind="solutionEntry.isSingleDiagramService"
-          view-model.ref="solutionEntryViewModels[$index]">
+          view-model.ref="solutionEntryViewModels[solutionEntry.uri]">
         </solution-explorer-solution>
       </div>
     </div>
