@@ -153,6 +153,12 @@ export class HeatmapService implements IHeatmapService {
         return element.flowNodeId === association.sourceId;
       });
 
+      const elementToColorIsUndefined: boolean = elementToColor === undefined;
+
+      if (elementToColorIsUndefined) {
+        return;
+      }
+
       const shapeToColor: IShape = this._getShape(elementRegistry, elementToColor);
 
       if (elementToColor.medianRuntimeInMs > association.runtime_medianInMs) {
