@@ -84,12 +84,13 @@ export class SolutionExplorerSolution {
     router: Router,
     eventAggregator: EventAggregator,
     validationController: ValidationController,
+    diagramCreationService: IDiagramCreationService,
     notificationService: NotificationService,
   ) {
     this._router = router;
     this._eventAggregator = eventAggregator;
     this._validationController = validationController;
-    this._diagramCreationService = new DiagramCreationService(); // TODO IoC
+    this._diagramCreationService = diagramCreationService;
     this._notificationService = notificationService;
   }
 
