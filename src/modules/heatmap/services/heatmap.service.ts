@@ -25,7 +25,7 @@ import {
 // maximalTokenCount is used to sanitise the displayed number to "99+"
 const maximalTokenCount: number = 100;
 
-@inject('HeatmapMockRepository')
+@inject('HeatmapRepository')
 export class HeatmapService implements IHeatmapService {
   private _heatmapRepository: IHeatmapRepository;
 
