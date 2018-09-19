@@ -22,7 +22,6 @@ export class InspectCorrelation {
   @bindable({ changeHandler: 'selectedCorrelationChanged'}) public selectedCorrelation: Correlation;
   @bindable() public inspectPanelFullscreen: boolean = false;
   @observable public bottomPanelHeight: number = 250;
-  public xml: string;
   public token: string;
   public log: Array<ILogEntry>;
   public showInspectPanel: boolean = true;
