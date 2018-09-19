@@ -13,7 +13,6 @@ interface ISolutionEntry {
   isSingleDiagramService: boolean;
   canCloseSolution: boolean;
   canCreateNewDiagramsInSolution: boolean;
-  visible: boolean;
 }
 
 @inject('SolutionExplorerFactoryService', 'AuthenticationService')
@@ -177,7 +176,6 @@ export class SolutionExplorerList {
       canCloseSolution: undefined,
       canCreateNewDiagramsInSolution: undefined,
       isSingleDiagramService,
-      visible: true,
     };
 
     entry.fontAwesomeIconClass = this.getFontAwesomeIconForSolution(entry);

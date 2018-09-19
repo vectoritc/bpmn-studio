@@ -11,7 +11,7 @@
           
           <i class="fa ${solutionEntry.fontAwesomeIconClass} solution-entry__header__icon"></i>
           
-          <span click.delegate="solutionEntry.visible = !solutionEntry.visible" class="solution-entry__header__name">${solutionEntry.uri}</span>
+          <span class="solution-entry__header__name">${solutionEntry.uri}</span>
       
           <div class="solution-entry__header__actions">
               <button
@@ -33,7 +33,6 @@
         </div>
 
         <solution-explorer-solution
-          if.bind="solutionEntry.visible"
           solution-service.bind="solutionEntry.service"
           solution-is-single-diagrams.bind="solutionEntry.isSingleDiagramService"
           view-model.ref="solutionEntryViewModels[$index]">
