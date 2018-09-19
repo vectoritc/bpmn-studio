@@ -53,12 +53,12 @@ export class InspectCorrelation {
       }),
     ];
 
-    this.bottomPanelResizeDiv.addEventListener('mousedown', (e: Event) => {
-      const windowEvent: Event = e || window.event;
+    this.bottomPanelResizeDiv.addEventListener('mousedown', (mouseDownEvent: Event) => {
+      const windowEvent: Event = mouseDownEvent || window.event;
       windowEvent.cancelBubble = true;
 
-      const mousemoveFunction: IEventFunction = (event: MouseEvent): void => {
-        this.resize(event);
+      const mousemoveFunction: IEventFunction = (mouseMoveEvent: MouseEvent): void => {
+        this.resize(mouseMoveEvent);
         document.getSelection().empty();
       };
 
@@ -81,8 +81,8 @@ export class InspectCorrelation {
     }
   }
 
-  public resize(event: MouseEvent): void {
-    const mouseYPosition: number = event.clientY;
+  public resize(mouseEvent: MouseEvent): void {
+    const mouseYPosition: number = mouseEvent.clientY;
     const inspectPanelHeightWithStatusBar: number = this.bottomPanelResizeDiv.parentElement.parentElement.clientHeight + this._statusBarHeight;
     const newBottomPanelHeight: number = inspectPanelHeightWithStatusBar - mouseYPosition;
 
