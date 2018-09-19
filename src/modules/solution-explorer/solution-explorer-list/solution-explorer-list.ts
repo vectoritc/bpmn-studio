@@ -12,6 +12,11 @@ import {SingleDiagramsSolutionExplorerService} from '../../solution-explorer-ser
 import {SolutionExplorerFactoryService} from '../../solution-explorer-services/SolutionExplorerFactoryService';
 import {SolutionExplorerSolution} from '../solution-explorer-solution/solution-explorer-solution';
 
+/**
+ * This entry keeps information about an opened solution. Its used to support
+ * the html view and give an easy access to properties like the uri of the
+ * solution.
+ */
 interface ISolutionEntry {
   service: ISolutionExplorerService;
   uri: string;
@@ -32,13 +37,17 @@ export class SolutionExplorerList {
   private _authenticationService: IAuthenticationService;
   // Contains all opened solutions.
   private _openedSolutions: Array<ISolutionEntry> = [];
-  // Keep a seperate map of all viewmodels for the solutions entries.
-  // The uri maps to the viewmodel.
-  public solutionEntryViewModels: UriToViewModelMap = {};
-
-  // Reference on the service used to open single diagrams.
-  // This service is also put inside the map.
+  /**
+   * Reference on the service used to open single diagrams.
+   * This service is also put inside the map.
+   */
   private _singleDiagramService: SingleDiagramsSolutionExplorerService;
+  /*
+   * Keep a seperate map of all viewmodels for the solutions entries.
+   * The uri maps to the viewmodel. The contents of this map get set by aurelia
+   * in the html view.
+   */
+  public solutionEntryViewModels: UriToViewModelMap = {};
 
   constructor(
     solutionExplorerFactoryService: SolutionExplorerFactoryService,
@@ -86,6 +95,9 @@ export class SolutionExplorerList {
     return this.refreshSolutions();
   }
 
+  /**
+   * Refreshes all currently opened solutions.
+   */
   public async refreshSolutions(): Promise<void> {
     const refreshPromises: Array<Promise<void>> = Object.values(this.solutionEntryViewModels)
       .filter((viewModel: SolutionExplorerSolution): boolean => {
@@ -129,6 +141,12 @@ export class SolutionExplorerList {
     this._addSolutionEntry(uri, solutionExplorer, insertAtBeginning);
   }
 
+  /**
+   * Closes a solution, if the uri is currently not opened, nothing will
+   * happen.
+   *
+   * @param uri the uri of the solution to close.
+   */
   public async closeSolution(uri: string): Promise<void> {
     const indexOfSolutionToBeRemoved: number = this._getIndexOfSolution(uri);
 
@@ -140,15 +158,21 @@ export class SolutionExplorerList {
     this._openedSolutions.splice(indexOfSolutionToBeRemoved, 1);
   }
 
+  /**
+   * Starts the creation process of a new diagram inside the given solution
+   * entry.
+   */
   public async createDiagram(entry: ISolutionEntry): Promise<void> {
     const viewModelOfEntry: SolutionExplorerSolution = this.solutionEntryViewModels[entry.uri];
     return viewModelOfEntry.startCreationOfNewDiagram();
   }
 
-  // Give aurelia a hint on what objects to observe.
-  // If we dont do this, it falls back to active pooling which is slow.
-  // `_singleDiagramService._openedDiagrams.length` observed because
-  // aurelia cannot see the business rules happening in this._shouldDisplaySolution().
+  /*
+   * Give aurelia a hint on what objects to observe.
+   * If we dont do this, it falls back to active pooling which is slow.
+   * `_singleDiagramService._openedDiagrams.length` observed because
+   * aurelia cannot see the business rules happening in this._shouldDisplaySolution().
+   */
   @computedFrom('_openedSolutions.length', '_singleDiagramService._openedDiagrams.length')
   public get openedSolutions(): Array<ISolutionEntry> {
     const filteredEntries: Array<ISolutionEntry> = this._openedSolutions

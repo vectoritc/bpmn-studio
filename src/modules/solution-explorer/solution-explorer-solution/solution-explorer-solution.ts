@@ -47,20 +47,12 @@ export class SolutionExplorerSolution {
   private _diagramCreationService: IDiagramCreationService;
   private _notificationService: NotificationService;
 
-  // Fields below are bound from the html view.
-  @bindable
-  public solutionService: ISolutionExplorerService;
-  @bindable
-  public solutionIsSingleDiagrams: boolean;
-  public createNewDiagramInput: HTMLInputElement;
-
   private _openedSolution: ISolution;
   private _diagramCreationState: DiagramCreationState = {
     currentDiagramInputValue: undefined,
     isCreateDiagramInputShown: false,
   };
   private _refreshIntervalTask: any;
-
   private _diagramNameValidator: FluentRuleCustomizer<DiagramCreationState, DiagramCreationState> = ValidationRules
       .ensure((state: DiagramCreationState) => state.currentDiagramInputValue)
       .required()
@@ -79,6 +71,13 @@ export class SolutionExplorerSolution {
         return diagramWithIdDoesNotExists;
       })
       .withMessage('A diagram with that name already exists.');
+
+  // Fields below are bound from the html view.
+  @bindable
+  public solutionService: ISolutionExplorerService;
+  @bindable
+  public solutionIsSingleDiagrams: boolean;
+  public createNewDiagramInput: HTMLInputElement;
 
   constructor(
     router: Router,
@@ -104,10 +103,16 @@ export class SolutionExplorerSolution {
     clearInterval(this._refreshIntervalTask);
   }
 
+  /**
+   * Called by aurelia, if the value of the solutionService binding changes.
+   */
   public solutionServiceChanged(newValue: ISolutionExplorerService, oldValue: ISolutionExplorerService): Promise<void> {
     return this.updateSolution();
   }
 
+  /**
+   * Reload the solution by requesting it from the solution service.
+   */
   public async updateSolution(): Promise<void> {
     try {
       this._openedSolution = await this.solutionService.loadSolution();
@@ -216,6 +221,13 @@ export class SolutionExplorerSolution {
     }
   }
 
+  /**
+   * The event listener used to handle mouse clicks during the diagram
+   * creation.
+   *
+   * The listener will try to finish the diagram creation if the user clicks
+   * on another element then the input.
+   */
   private _onCreateNewDiagramClickEvent = async(event: MouseEvent): Promise<void> => {
     const inputWasClicked: boolean = event.target === this.createNewDiagramInput;
     if (inputWasClicked) {
@@ -232,6 +244,13 @@ export class SolutionExplorerSolution {
     this.navigateToDetailView(emptyDiagram);
   }
 
+  /**
+   * The event listener used to handle keyboard events during the diagram
+   * creation.
+   *
+   * The listener will try to finish the diagram creation if the user presses
+   * the enter key. It will abort the creation if the escape key is pressed.
+   */
   private _onCreateNewDiagramKeyupEvent = async(event: KeyboardEvent): Promise<void> => {
     const pressedKey: string = event.key;
 
@@ -251,6 +270,9 @@ export class SolutionExplorerSolution {
     }
   }
 
+  /**
+   * @return true, if the input has some non empty value.
+   */
   private _hasNonEmptyValue(input: HTMLInputElement): boolean {
     const inputValue: string = input.value;
 
@@ -261,6 +283,14 @@ export class SolutionExplorerSolution {
     return inputHasValue;
   }
 
+  /**
+   * Finishes the diagram creation. This method will again run the validation
+   * and ensures that all input is correct. Otherwise an error is displayed to
+   * the user.
+   *
+   * If no input element was empty, the diagram creation will be aborted.
+   * If the validation passes, the diagram will be created and returned.
+   */
   private async _finishDiagramCreation(): Promise<IDiagram> {
     const inputHasNoValue: boolean = !this._hasNonEmptyValue(this.createNewDiagramInput);
     if (inputHasNoValue) {
@@ -292,6 +322,10 @@ export class SolutionExplorerSolution {
     return emptyDiagram;
   }
 
+  /**
+   * Resets the diagram creation state to its default. Any listeners will be
+   * removed and input values will be cleared.
+   */
   private _resetDiagramCreation(): void {
     // Remove all used event listeners.
     document.removeEventListener('click', this._onCreateNewDiagramClickEvent);

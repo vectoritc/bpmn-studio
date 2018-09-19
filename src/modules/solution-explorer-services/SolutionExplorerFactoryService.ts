@@ -6,6 +6,9 @@ import {SolutionExplorerManagementApiRepository} from '@process-engine/solutione
 import {SolutionExplorerService} from '@process-engine/solutionexplorer.service';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
+/**
+ * This factory provides new instances of different solution explorer services.
+ */
 @inject('HttpFetchClient')
 export class SolutionExplorerFactoryService {
 

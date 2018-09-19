@@ -10,6 +10,15 @@ import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 import {SolutionExplorerList} from '../solution-explorer-list/solution-explorer-list';
 
+/**
+ * This component handels:
+ *  - Opening files via drag and drop
+ *  - Opening files via double click
+ *  - Opening solution/diagrams via input field
+ *  - Refreshing all opened solutions via button
+ *  - Refreshing on login/logout
+ *  - Updating the remote processengine uri if needed
+ */
 @inject(EventAggregator, 'NotificationService', Router)
 export class SolutionExplorerTab {
 

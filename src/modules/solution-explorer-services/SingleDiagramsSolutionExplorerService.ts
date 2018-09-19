@@ -4,13 +4,24 @@ import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service
 
 import {IDiagramValidationService} from '../../contracts';
 
+/**
+ * This service allows to keep all opened single diagrams inside a solution.
+ *
+ * This is needed because the default solution explorer does not keep state
+ * about single diagrams.
+ *
+ * With this service you can retrieve, all opened single diagrams inside a
+ * solution.
+ *
+ * To remove a diagram from the solution, call use #closeSingleDiagram().
+ */
 export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerService {
 
   private _validationService: IDiagramValidationService;
   private _proxied: ISolutionExplorerService;
-  private _openedDiagrams: Array<IDiagram> = [];
   private _uriOfSingleDiagramService: string;
   private _nameOfSingleDiagramService: string;
+  private _openedDiagrams: Array<IDiagram> = [];
 
   constructor(
     validationService: IDiagramValidationService,
