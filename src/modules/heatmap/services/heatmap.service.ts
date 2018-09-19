@@ -41,22 +41,8 @@ export class HeatmapService implements IHeatmapService {
     return this._heatmapRepository.getActiveTokensForFlowNode(flowNodeId);
   }
 
-  public addOverlays(overlays: IOverlay, elementRegistry: IElementRegistry, activeTokens: Array<ActiveToken>): void {
-    this._includeShapeTypeToActiveToken(elementRegistry, activeTokens);
-    const taskToken: Array<ActiveToken> = this._filterTasksfromActiveTokens(activeTokens);
-    const eventToken: Array<ActiveToken> = this._filterEventsfromActiveTokens(activeTokens);
-    const gatewayToken: Array<ActiveToken> = this._filterGatewaysfromActiveTokens(activeTokens);
+  public async addOverlays(overlays: IOverlay, elementRegistry: IElementRegistry): Promise<void> {
 
-    console.log(taskToken);
-    console.log(eventToken);
-    console.log(gatewayToken);
-
-    const tokenToCount: Array<ActiveToken> = this._getTokenToCount(activeTokens);
-
-    console.log(tokenToCount);
-
-    const tokenWithIdAndLength: Array<ITokenPositionAndCount> = this._getTokenWithIdAndCount(activeTokens, tokenToCount);
-    const elementsWithoutToken: Array<IShape> = this._getElementsWithoutToken(elementRegistry, tokenWithIdAndLength);
     let participantsTokenCount: number = 0;
 
     const addOverlay: ((elementId: string, count: number, position: IOverlayPosition) => void ) =
@@ -73,31 +59,15 @@ export class HeatmapService implements IHeatmapService {
         });
       });
 
-    tokenWithIdAndLength.forEach((token: ITokenPositionAndCount) => {
-      const tokenShape: IShape = this._getShape(elementRegistry, token);
-      const tokenShapeIsUndefined: boolean = tokenShape === undefined;
 
-      if (tokenShapeIsUndefined) {
-        return;
-      }
 
-      const tokenShapeIsGateway: boolean = tokenShape.type === 'bpmn:ExclusiveGateway';
-      const tokenShapeIsEvent: boolean = tokenShape.type === 'bpmn:EndEvent' || tokenShape.type === 'bpmn:StartEvent';
-
-      if (tokenShapeIsGateway) {
-        addOverlay(token.flowNodeId, token.count, defaultOverlayPositions.gateways);
-      } else if (tokenShapeIsEvent) {
-        addOverlay(token.flowNodeId, token.count, defaultOverlayPositions.events);
       } else {
-        addOverlay(token.flowNodeId, token.count, defaultOverlayPositions.tasks);
       }
 
-      participantsTokenCount += token.count;
     });
 
     elementsWithoutToken.forEach((element: IShape) => {
       const elementIsGateway: boolean = element.type === 'bpmn:ExclusiveGateway';
-      const elementIsEvent: boolean = element.type === 'bpmn:EndEvent' || element.type === 'bpmn:StartEvent';
 
       if (elementIsGateway) {
         addOverlay(element.id, 0, defaultOverlayPositions.gateways);
@@ -113,50 +83,6 @@ export class HeatmapService implements IHeatmapService {
       left: participantShape.width - defaultOverlayPositions.participants.left,
       top: participantShape.height - defaultOverlayPositions.participants.top,
     });
-  }
-
-  private _includeShapeTypeToActiveToken(elementRegistry: IElementRegistry, activeTokens: Array<ActiveToken>): void {
-    activeTokens.map((tokenElement: ActiveToken & { type: string }) => {
-      const shapeOfTokenElement: IShape = this._getShape(elementRegistry, tokenElement);
-
-      tokenElement.type = shapeOfTokenElement.type;
-    });
-  }
-
-  private _filterTasksfromActiveTokens(activeTokens: Array<ActiveToken>): Array<ActiveToken> {
-    const tokenOnTasks: Array<ActiveToken> =  activeTokens.filter((activeToken: ActiveToken & { type: string }) => {
-      // alle Task types nachschauen
-      const tokenElementIsTask: boolean = activeToken.type === 'bpmn:ScriptTask'
-                                || activeToken.type === 'bpmn:ServiceTask'
-                                || activeToken.type === 'bpmn:UserTask';
-
-      return tokenElementIsTask;
-    });
-
-    return tokenOnTasks;
-  }
-
-  private _filterGatewaysfromActiveTokens(activeTokens: Array<ActiveToken>): Array<ActiveToken> {
-    const tokenOnGateways: Array<ActiveToken> =  activeTokens.filter((activeToken: ActiveToken & { type: string }) => {
-      // alle gateway types nachschauen
-      const tokenElementIsGateway: boolean = activeToken.type === 'bpmn:ExclusiveGateway';
-
-      return tokenElementIsGateway;
-    });
-
-    return tokenOnGateways;
-  }
-
-  private _filterEventsfromActiveTokens(activeTokens: Array<ActiveToken>): Array<ActiveToken> {
-    const tokenOnEvents: Array<ActiveToken> =  activeTokens.filter((activeToken: ActiveToken & { type: string }) => {
-      // alle Task types nachschauen
-      const tokenElementIsEvent: boolean = activeToken.type === 'bpmn:EndEvent'
-                                || activeToken.type === 'bpmn:StartEvent';
-
-      return tokenElementIsEvent;
-    });
-
-    return tokenOnEvents;
   }
 
   public getProcess(processModelId: string): Promise<ProcessModelExecution.ProcessModel> {
@@ -268,18 +194,7 @@ export class HeatmapService implements IHeatmapService {
     return participantShape;
   }
 
-  /**
-   *
-   * @param elementRegistry Die Elementregistry des BPMN-Modelers
-   * @param tokenWithIdAndLength Array von flowNodeIds und deren ActiveToken Anzahl
-   *
-   * Diese Methode filtert alle Elemente des Diagramms nach Elementen, die ein Overlay
-   * bekommen sollen und nach den Elementen, die keinen Token besitzen.
-   */
-  private _getElementsWithoutToken(
-    elementRegistry: IElementRegistry,
-    tokenWithIdAndLength: Array<ITokenPositionAndCount>,
-  ): Array<IShape> {
+  private _getElementsForOverlays(elementRegistry: IElementRegistry): Array<IShape> {
     const allElements: Array<IShape> = elementRegistry.getAll();
     const filteredElements: Array<IShape> = allElements.filter((element: IShape) => {
       const condition: boolean = element.type !== 'bpmn:Association'
@@ -293,18 +208,7 @@ export class HeatmapService implements IHeatmapService {
       return condition;
     });
 
-    const filterWithActiveToken: Array<IShape> = filteredElements.filter((element: IShape) => {
-      const token: ITokenPositionAndCount = tokenWithIdAndLength.find((activeToken: ITokenPositionAndCount) => {
-        return activeToken.flowNodeId === element.id;
-      });
-      if (token === undefined) {
-        return true;
-      } else {
-        return false;
-      }
-    });
-
-    return filterWithActiveToken;
+    return filteredElements;
   }
 
   private async _getXmlFromModeler(modeler: IBpmnModeler): Promise<string> {
@@ -335,52 +239,16 @@ export class HeatmapService implements IHeatmapService {
     return medianRunTimeInMs;
   }
 
-  /**
-   *
-   * @param activeTokens Alle Token eines Prozessmodells.
-   * @param tokenToCount ActiveToken, dessen Anzahl ermittelt werden muss
-   *
-   * Diese Methode filtert die ActiveTokens nach den Token, die gezählt werden müssen
-   * und gibt dessen flowNodeId und die Anzahl in einem Array zurück.
-   */
-  private _getTokenWithIdAndCount(activeTokens: Array<ActiveToken>, tokenToCount: Array<ActiveToken>): Array<ITokenPositionAndCount> {
-    const tokenWithIdAndLength: Array<ITokenPositionAndCount> = [];
-    tokenToCount.forEach((token: ActiveToken) => {
-      const tokenOfAnElement: Array<ActiveToken> =  activeTokens.filter((activeToken: ActiveToken) => {
-        return activeToken.flowNodeId === token.flowNodeId;
-      });
 
-      tokenWithIdAndLength.push({
-        flowNodeId: token.flowNodeId,
-        count: tokenOfAnElement.length,
-      });
     });
 
-    return tokenWithIdAndLength;
   }
 
-  /**
-   * Diese Methode findet die ActiveToken Objecte, welche die gleiche flowNodeId haben
-   * und speichert diese im Array tokenToCount.
-   * Anschließend können in der _getTokenWithIdAndCount Methode die ActiveTokens nach
-   * den tokenToCount gefiltert werden und die Anzahl ermittelt werden.
-   */
-  private _getTokenToCount(activeTokens: Array<ActiveToken>): Array<ActiveToken> {
-    const tokenToCount: Array<ActiveToken> = [];
-
-    for (const token of activeTokens) {
-      const tokenIsInArray: ActiveToken = tokenToCount.find((element: ActiveToken) => {
-        return element.flowNodeId === token.flowNodeId;
       });
 
-      if (tokenIsInArray !== undefined) {
-        continue;
       } else {
-        tokenToCount.push(token);
       }
-    }
 
-    return tokenToCount;
   }
 
 }
