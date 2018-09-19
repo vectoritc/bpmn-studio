@@ -48,21 +48,24 @@ export class SolutionExplorerList {
     this._solutionExplorerFactoryService = solutionExplorerFactoryService;
     this._authenticationService = authenticationService;
 
-    // Add entry for single file service.
-    solutionExplorerFactoryService.newFileSystemSolutionExplorer()
-      .then((service: ISolutionExplorerService): void => {
-        const uriOfSingleDiagramService: string = 'Single Diagrams';
-        const nameOfSingleDiagramService: string = 'Single Diagrams';
+    const canReadFromFileSystem: boolean = (window as any).nodeRequire;
+    if (canReadFromFileSystem) {
+      // Add entry for single file service.
+      solutionExplorerFactoryService.newFileSystemSolutionExplorer()
+        .then((service: ISolutionExplorerService): void => {
+          const uriOfSingleDiagramService: string = 'Single Diagrams';
+          const nameOfSingleDiagramService: string = 'Single Diagrams';
 
-        this._singleDiagramService = new SingleDiagramsSolutionExplorerService(
-          diagramValidationService,
-          service,
-          uriOfSingleDiagramService,
-          nameOfSingleDiagramService,
-        );
+          this._singleDiagramService = new SingleDiagramsSolutionExplorerService(
+            diagramValidationService,
+            service,
+            uriOfSingleDiagramService,
+            nameOfSingleDiagramService,
+          );
 
-        this._addSolutionEntry(uriOfSingleDiagramService, this._singleDiagramService, true);
-      });
+          this._addSolutionEntry(uriOfSingleDiagramService, this._singleDiagramService, true);
+        });
+    }
 
     // Allows us to debug the solution explorer list.
     (window as any).solutionList = this;

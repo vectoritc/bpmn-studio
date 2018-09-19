@@ -42,7 +42,8 @@ export class SolutionExplorerTab {
   }
 
   public async attached(): Promise<void> {
-    if (this.canReadFromFileSystem) {
+    if (this.canReadFromFileSystem()) {
+
       this._registerElectronFileOpeningHooks();
       document.addEventListener('drop', this._openDiagramOnDropBehaviour);
     }
