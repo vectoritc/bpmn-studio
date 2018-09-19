@@ -2,15 +2,20 @@ import {bindable, inject} from 'aurelia-framework';
 
 import * as clipboard from 'clipboard-polyfill';
 
-import {ILogEntry, ILogSortSettings, LogSortProperty, NotificationType} from '../../../../../../contracts/index';
+import {LogEntry} from '@process-engine/logging_api_contracts';
+import {Correlation} from '@process-engine/management_api_contracts';
+
+import {ILogSortSettings, LogSortProperty, NotificationType} from '../../../../../../contracts/index';
 import {DateService} from '../../../../../date-service/date.service';
 import {NotificationService} from '../../../../../notification/notification.service';
+import {IInspectCorrelationService} from '../../../../contracts';
 
-@inject('NotificationService')
+@inject('NotificationService', 'InspectCorrelationService')
 export class LogViewer {
-  @bindable({ changeHandler: 'logChanged' }) public log: Array<ILogEntry>;
+  @bindable() public log: Array<LogEntry>;
+  @bindable({ changeHandler: 'correlationChanged' }) public correlation: Correlation;
   public LogSortProperty: typeof LogSortProperty = LogSortProperty;
-  public sortedLog: Array<ILogEntry>;
+  public sortedLog: Array<LogEntry>;
   public sortSettings: ILogSortSettings = {
     ascending: false,
     sortProperty: undefined,
@@ -18,18 +23,21 @@ export class LogViewer {
 
   private _dateService: DateService;
   private _notificationService: NotificationService;
+  private _inspectCorrelationService: IInspectCorrelationService;
 
-  constructor(notificationService: NotificationService) {
+  constructor(notificationService: NotificationService, inspectCorrelationService: IInspectCorrelationService) {
     this._notificationService = notificationService;
     this._dateService = new DateService();
+    this._inspectCorrelationService = inspectCorrelationService;
   }
 
-  public logChanged(): void {
-    this.log.forEach((logEntry: ILogEntry) => {
-      logEntry.logLevel = logEntry.logLevel.toUpperCase();
-    });
+  public async correlationChanged(): Promise<void> {
+    this.log = await this._inspectCorrelationService.getLogsForCorrelation(this.correlation);
+    // this.log.forEach((logEntry: LogEntry) => {
+    //   logEntry.logLevel = logEntry.logLevel.toUpperCase();
+    // });
 
-    this.sortList(LogSortProperty.Time);
+    // this.sortList(LogSortProperty.Time);
   }
 
   public copyToClipboard(textToCopy: string): void {
@@ -53,15 +61,15 @@ export class LogViewer {
     this.sortSettings.ascending = ascending;
     this.sortSettings.sortProperty = property;
 
-    const sortedLog: Array<ILogEntry> = this._getSortedLogByProperty(property);
+    const sortedLog: Array<LogEntry> = this._getSortedLogByProperty(property);
 
     this.sortedLog = ascending ? sortedLog
                                      : sortedLog.reverse();
   }
 
-  private _getSortedLogByProperty(property: LogSortProperty): Array<ILogEntry> {
-    const sortedLog: Array<ILogEntry> =
-      this.log.sort((firstEntry: ILogEntry, secondEntry: ILogEntry) => {
+  private _getSortedLogByProperty(property: LogSortProperty): Array<LogEntry> {
+    const sortedLog: Array<LogEntry> =
+      this.log.sort((firstEntry: LogEntry, secondEntry: LogEntry) => {
         const firstEntryIsBigger: boolean = firstEntry[property] > secondEntry[property];
         if (firstEntryIsBigger) {
           return 1;
