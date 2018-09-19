@@ -10,12 +10,12 @@ import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service
  * This factory provides new instances of different solution explorer services.
  */
 @inject('HttpFetchClient')
-export class SolutionExplorerFactoryService {
+export class SolutionExplorerServiceFactory {
 
-  private httpClient: IHttpClient;
+  private _httpClient: IHttpClient;
 
   constructor(httpClient: IHttpClient) {
-    this.httpClient = httpClient;
+    this._httpClient = httpClient;
   }
 
   public async newFileSystemSolutionExplorer(): Promise<ISolutionExplorerService> {
@@ -26,7 +26,7 @@ export class SolutionExplorerFactoryService {
   }
 
   public async newManagementApiSolutionExplorer(): Promise<ISolutionExplorerService> {
-    const managementApiRepository: SolutionExplorerManagementApiRepository = new SolutionExplorerManagementApiRepository(this.httpClient);
+    const managementApiRepository: SolutionExplorerManagementApiRepository = new SolutionExplorerManagementApiRepository(this._httpClient);
     const createdService: SolutionExplorerService = new SolutionExplorerService(managementApiRepository);
 
     return createdService;

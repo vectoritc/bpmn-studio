@@ -18,19 +18,19 @@ import {IDiagramValidationService} from '../../contracts';
 export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerService {
 
   private _validationService: IDiagramValidationService;
-  private _proxied: ISolutionExplorerService;
+  private _solutionExplorerToOpenDiagrams: ISolutionExplorerService;
   private _uriOfSingleDiagramService: string;
   private _nameOfSingleDiagramService: string;
   private _openedDiagrams: Array<IDiagram> = [];
 
   constructor(
     validationService: IDiagramValidationService,
-    proxied: ISolutionExplorerService,
+    solutionExplorerToOpenDiagrams: ISolutionExplorerService,
     uriOfSingleDiagramService: string,
     nameOfSingleDiagramService: string,
   ) {
     this._validationService = validationService;
-    this._proxied = proxied;
+    this._solutionExplorerToOpenDiagrams = solutionExplorerToOpenDiagrams;
     this._uriOfSingleDiagramService = uriOfSingleDiagramService;
     this._nameOfSingleDiagramService = nameOfSingleDiagramService;
   }
@@ -59,7 +59,8 @@ export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerS
       throw new Error('This diagram is already opened.');
     }
 
-    const diagram: IDiagram = await this._proxied.openSingleDiagram(uri, identity);
+    const diagram: IDiagram = await this._solutionExplorerToOpenDiagrams
+      .openSingleDiagram(uri, identity);
 
     await this._validationService
       .validate(diagram.xml)
@@ -81,7 +82,8 @@ export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerS
   }
 
   public saveSingleDiagram(diagramToSave: IDiagram, identity: IIdentity, path?: string): Promise<IDiagram> {
-    return this._proxied.saveSingleDiagram(diagramToSave, identity, path);
+    return this._solutionExplorerToOpenDiagrams
+      .saveSingleDiagram(diagramToSave, identity, path);
   }
 
   public loadDiagram(diagramName: string): Promise<IDiagram> {

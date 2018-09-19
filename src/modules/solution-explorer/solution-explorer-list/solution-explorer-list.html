@@ -16,7 +16,7 @@
           <div class="solution-entry__header__actions">
               <button
                 if.bind="solutionEntry.canCreateNewDiagramsInSolution"
-                click.delegate="createDiagram(solutionEntry)"
+                click.delegate="createDiagram(solutionEntry.uri)"
                 title="Create a new diagram">
 
                 <i class="fa fa-file-medical"></i>
