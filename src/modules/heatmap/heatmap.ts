@@ -16,7 +16,7 @@ interface RouteParameters {
 @inject('HeatmapService', EventAggregator)
 export class Heatmap {
   public viewerContainer: HTMLDivElement;
-  @bindable() public processmodelid: string;
+  @bindable() public processModelId: string;
   @bindable() public dashboardIsShown: string;
 
   private _processModel: ProcessModelExecution.ProcessModel;
@@ -30,8 +30,8 @@ export class Heatmap {
     this._eventAggregator = eventAggregator;
   }
 
-  public processmodelidChanged(): void {
-    const noProcessModelId: boolean = this.processmodelid === undefined || this.processmodelid === null;
+  public processModelIdChanged(): void {
+    const noProcessModelId: boolean = this.processModelId === undefined || this.processModelId === null;
     if (noProcessModelId) {
       return;
     }
@@ -57,7 +57,7 @@ export class Heatmap {
   }
 
   public async attached(): Promise<void> {
-    const noProcessModelId: boolean = this.processmodelid === undefined || this.processmodelid === null;
+    const noProcessModelId: boolean = this.processModelId === undefined || this.processModelId === null;
     if (noProcessModelId) {
       return;
     }
@@ -68,7 +68,7 @@ export class Heatmap {
       },
     });
 
-    this._processModel = await this._heatmapService.getProcess(this.processmodelid);
+    this._processModel = await this._heatmapService.getProcess(this.processModelId);
 
     this._eventAggregator.publish(environment.events.navBar.updateProcess, this._processModel);
 
@@ -88,7 +88,7 @@ export class Heatmap {
 
     const flowNodeRuntimeInformation: Array<FlowNodeRuntimeInformation> = await this
       ._heatmapService
-      .getRuntimeInformationForProcessModel(this.processmodelid);
+      .getRuntimeInformationForProcessModel(this.processModelId);
 
     const xml: string = await this._heatmapService.getColoredXML(associations, flowNodeRuntimeInformation, this._modeler);
 
