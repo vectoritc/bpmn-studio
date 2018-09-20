@@ -1,11 +1,44 @@
 <template>
   <require from="./solution-explorer-panel.css"></require>
-  <require from="../solution-explorer-tab/solution-explorer-tab"></require>
-  
-  
-  <div class="solution-explorer-panel">
+  <require from="../solution-explorer-list/solution-explorer-list"></require>
 
-    <solution-explorer-tab></solution-explorer-tab>
-    
+  <div class="solution-explorer">
+    <div class="solution-explorer-panel">
+
+      <div class="solution-explorer-panel__header">
+        <span class="solution-explorer-panel__header__name">Solution Explorer</span>
+        
+        <div class="solution-explorer-panel__actions">
+          <button
+            if.bind="canReadFromFileSystem()"
+            click.delegate="openDiagram()"
+            title="Open a diagram">
+
+            <i class="fa fa-file"></i>
+          </button>  
+
+          <button
+            if.bind="canReadFromFileSystem()"
+            click.delegate="openSolution()"
+            title="Open a solution">
+
+            <i class="fa fa-folder-open"></i>
+          </button>
+
+          <button
+            click.delegate="refreshSolutions()"
+            title="Refresh solutions">
+
+            <i class="fa fa-sync"></i>
+          </button>    
+        </div>
+      </div>
+
+      <input class="solution-explorer-panel__input" ref="solutionInput" type="file" change.delegate="onSolutionInputChange($event)" webkitdirectory>
+      <input class="solution-explorer-panel__input" ref="singleDiagramInput" type="file" change.delegate="onSingleDiagramInputChange($event)" accept=".xml, application/xml, .bpmn, application/bpmn20-xml">
+
+      <solution-explorer-list view-model.ref="solutionExplorerList"></solution-explorer-list>
+
+    </div>
   </div>
 </template>
