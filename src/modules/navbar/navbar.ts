@@ -186,12 +186,13 @@ export class NavBar {
 
     const activeRouteIsNotProcessEngineRoute: boolean = this.activeRouteName !== 'processdef-detail';
 
-    let processModelId: string = this.process ? this.process.id : undefined;
+    const processModelId: string = (this.process && !activeRouteIsNotProcessEngineRoute)
+                                  ? this.process.id
+                                  : undefined;
 
     if (activeRouteIsNotProcessEngineRoute) {
       this.showInspectTools = false;
       this.showProcessName = false;
-      processModelId = undefined;
     }
 
     this._router.navigateToRoute('inspect', {
@@ -207,7 +208,7 @@ export class NavBar {
     const latestSourceIsFS: boolean = this.latestSource === 'file-system';
 
     if (processIsUndefined) {
-      this._notificationService.showNotification(NotificationType.INFO, 'To open the designer, you must first select a diagram');
+      this._notificationService.showNotification(NotificationType.INFO, 'In order to open the designer, you have to select a diagram first!');
 
       return;
     }
