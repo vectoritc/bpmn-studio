@@ -295,7 +295,7 @@ export class DiagramToolsRight {
 
   public colorSelectionDropdownClickListener: IEventFunction =  (): void => {
     if (this._preventColorSelectionFromHiding) {
-      this.colorSelectionDropdownToggle.className += ' open';
+      this.colorSelectionDropdownToggle.classList.add('open');
     } else {
       document.removeEventListener('click', this.colorSelectionDropdownClickListener);
     }
