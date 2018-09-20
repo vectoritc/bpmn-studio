@@ -12,12 +12,11 @@
       class.bind="activeRouteName === 'processdef-list' ? 'button--active menu__menu-tabbed-link--active' : ''">
         <a id="navbarThinkLink" class="menu-tabbed-link" route-href="route: processdef-list">Think</a>
       </div>
-      <div class="button menu__menu-tabbed-link" class.bind="activeRouteName === 'processdef-detail' || activeRouteName === 'diagram-detail' ? 'button--active menu__menu-tabbed-link--active' : ''">
-        <a id="navbarDesignLink" class="menu-tabbed-link">Design</a>
+      <div class="button menu__menu-tabbed-link" class.bind="activeRouteName === 'processdef-detail' || activeRouteName === 'diagram-detail' ? 'menu__menu-tabbed-link--active' : ''">
+        <a id="navbarDesignLink" class.bind="disableDesignLink ? 'menu-tabbed-link menu-tabbed-link--disabled' : 'menu-tabbed-link'" click.delegate="navigateToDesigner()">Design</a>
       </div>
-      <div class="button menu__menu-tabbed-link" class.bind="activeRouteName === 'dashboard' || activeRouteName === 'heatmap' ? 'button--active menu__menu-tabbed-link--active' : ''">
-        <a id="navbarInspectLink" class="menu-tabbed-link" route-href="route: dashboard">Inspect</a>
-      </div>
+      <div class="button menu__menu-tabbed-link" class.bind="activeRouteName === 'inspect' ? 'menu__menu-tabbed-link--active' : ''">
+        <a id="navbarInspectLink" class="menu-tabbed-link" click.delegate="navigateToInspect()">Inspect</a>
     </div>
     <div class="menu-bar__menu menu-bar__menu--center" id="navBarCenter">
       <div class="menu__element menu__element--title btn-group" if.bind="showProcessName" ref="diagramInfo">
@@ -59,17 +58,17 @@
         </button>
       </template>
       <template if.bind="showTools">
-        <button class="button menu-bar__menu-center--action-button" click.delegate="startProcess()" disabled.bind="validationError || disableStartButton" title.bind="disableStartButton ? 'Before starting the process please deploy it to the ProcessEngine' : 'Start Process'">
+        <button class="button menu-bar__menu-center--action-button" class.bind="validationError || disableStartButton ? 'button--disabled' : ''" click.delegate="startProcess()" disabled.bind="validationError || disableStartButton" title.bind="disableStartButton ? 'Before starting the process please deploy it to the ProcessEngine' : 'Start Process'">
           <i class="fas fa-play"></i>
         </button>
       </template>
       <template if.bind="showInspectTools">
-        <button class="button menu-bar__menu-center--action-button" click.delegate="showDashboard()" disabled.bind="disableDashboardButton" title.bind="disableDashboardButton ? 'You are on the dashboard' : 'Show Dashboard'">
+        <button class="button menu-bar__menu-center--action-button" click.delegate="showDashboard()" class.bind="disableDashboardButton ? 'button--disabled' : ''" disabled.bind="disableDashboardButton" title.bind="disableDashboardButton ? 'You are on the dashboard' : 'Show Dashboard'">
           <i class="fas fa-chalkboard"></i>
         </button>
       </template>
       <template if.bind="showInspectTools">
-        <button class="button menu-bar__menu-center--action-button" click.delegate="showHeatmap()" disabled.bind="disableHeatmapButton" title.bind="disableHeatmapButton ? 'You are on the heatmap view' : 'Show Heatmap'">
+        <button class="button menu-bar__menu-center--action-button" click.delegate="showHeatmap()" class.bind="disableHeatmapButton ? 'button--disabled' : ''" disabled.bind="disableHeatmapButton" title.bind="disableHeatmapButton ? 'You are on the heatmap view' : 'Show Heatmap'">
           <i class="fas fa-chart-line"></i>
         </button>
       </template>
