@@ -1,4 +1,10 @@
-import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
+import {
+  browser,
+  ElementArrayFinder,
+  ElementFinder,
+  protractor,
+  ProtractorExpectedConditions,
+} from 'protractor';
 
 import {General} from './pages/general';
 import {ProcessDefListPage} from './pages/processDefListPage';
@@ -23,42 +29,73 @@ describe('Process definition list', () => {
     processDefListPage = new ProcessDefListPage();
     processModel = new ProcessModel();
 
-    processModelId = processModel.getProcessModelID();
+    // Get processModelId
+    processModelId = processModel.getProcessModelId();
 
     // Create a new process definition by POST REST call
     processModel.postProcessModel(processModelId);
   });
 
   beforeEach(() => {
-    browser.get(aureliaUrl + processModel.getProcessModelLink());
-    browser.driver.wait(() => {
-      browser.wait(expectedConditions.visibilityOf(general.getRouterViewContainer), defaultTimeoutMS);
-      return general.getRouterViewContainer;
-    });
-    browser.driver.wait(() => {
-      browser.wait(expectedConditions.visibilityOf(processDefListPage.processDefinitionListItem), defaultTimeoutMS);
-      return processDefListPage.processDefinitionListItem;
-    });
-  });
+    const processModelLink: string = processModel.getProcessModelLink();
+    const destination: string = aureliaUrl + processModelLink;
+    const routerViewContainer: ElementFinder = general.getRouterViewContainer;
+    const visibilityOfRouterViewContainer: Function = expectedConditions.visibilityOf(routerViewContainer);
 
-  it('should contain at least process definitions.', () => {
-    processDefListPage.processDefinitionListItems.count().then((numberOfProcessDefinitions: number) => {
-      expect(numberOfProcessDefinitions).toBeGreaterThan(0);
-    });
-  });
+    browser.get(destination);
+    browser.driver
+      .wait(() => {
+        browser
+          .wait(visibilityOfRouterViewContainer, defaultTimeoutMS);
 
-  it('should contain the just created process definition.', () => {
-    processDefListPage.processDefinitionListItemIDs(processModelId).count().then((numberOfProcessDefinitionsById: number) => {
-      expect(numberOfProcessDefinitionsById).toBe(1);
-    });
-  });
+        return routerViewContainer;
+     });
 
-  it('should be possible to open a process diagram.', () => {
-    processDefListPage.processModellDiagram(processModelId).click().then(() => {
-      browser.getCurrentUrl().then((currentBrowserUrl: string) => {
-        expect(currentBrowserUrl).toContain(processModel.getProcessModelLink());
+    const processDefinitionListItem: ElementFinder = processDefListPage.processDefinitionListItem;
+    const visibilityOfProcessDefinitionListItem: Function = expectedConditions.visibilityOf(processDefinitionListItem);
+
+    browser.driver
+      .wait(() => {
+        browser
+          .wait(visibilityOfProcessDefinitionListItem, defaultTimeoutMS);
+
+        return processDefinitionListItem;
       });
-    });
   });
 
+  it('should contain at least process definitions.', async() => {
+    const processDefinitionListItems: ElementArrayFinder = processDefListPage.processDefinitionListItems;
+    const numberOfProcessDefinitions: number = await processDefinitionListItems.count();
+
+    expect(numberOfProcessDefinitions).toBeGreaterThan(0);
+  });
+
+  it('should contain just created process definition.', async() => {
+    const processDefinitionListItemIds: ElementArrayFinder = processDefListPage.processDefinitionListItemIds(processModelId);
+    const numberOfProcessDefinitionsById: number = await processDefinitionListItemIds.count();
+
+    expect(numberOfProcessDefinitionsById).toBe(1);
+  });
+
+  it('should be possible to open a process diagram.', async() => {
+    const processModellDiagram: ElementFinder = processDefListPage.processModellDiagram(processModelId);
+
+    await processModellDiagram.click();
+
+    const routerViewContainer: ElementFinder = general.getRouterViewContainer;
+    const visibilityOfRouterViewContainer: Function = expectedConditions.visibilityOf(routerViewContainer);
+
+    browser.driver
+      .wait(() => {
+        browser
+          .wait(visibilityOfRouterViewContainer, defaultTimeoutMS);
+
+        return routerViewContainer;
+     });
+
+    const currentBrowserUrl: string = await browser.getCurrentUrl();
+    const processModelLink: string = processModel.getProcessModelLink();
+
+    expect(currentBrowserUrl).toContain(processModelLink);
+  });
 });

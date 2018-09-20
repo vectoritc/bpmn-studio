@@ -1,4 +1,3 @@
-import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
 import environment from '../../environment';
 
@@ -11,18 +10,19 @@ import {defaultBpmnColors,
         IBpmnModeler,
         IColorPickerColor,
         IColorPickerSettings,
+        IEvent,
         IModdleElement,
         IModeling,
-        IShape,
-        NotificationType} from '../../contracts/index';
+        IShape, NotificationType} from '../../contracts/index';
 import {NotificationService} from '../notification/notification.service';
 
-@inject(EventAggregator, 'NotificationService')
+@inject('NotificationService')
 export class DiagramToolsRight {
 
   @bindable()
   public modeler: IBpmnModeler;
 
+  public distributeElementsEnabled: boolean;
   public colorPickerEnabled: boolean = true;
   public colorPickerBorder: HTMLInputElement;
   public colorPickerFill: HTMLInputElement;
@@ -31,23 +31,45 @@ export class DiagramToolsRight {
   public borderColor: string;
 
   private _notificationService: NotificationService;
-  private _eventAggregator: EventAggregator;
-  private _subscriptions: Array<Subscription>;
 
-  constructor(eventAggregator: EventAggregator, notificationService: NotificationService) {
-    this._eventAggregator = eventAggregator;
+  constructor(notificationService: NotificationService) {
     this._notificationService = notificationService;
   }
 
   public attached(): void {
-    this._subscriptions = [
-      this._eventAggregator.subscribe(environment.events.disableColorPicker, () => {
-        this.colorPickerEnabled = false;
-      }),
-      this._eventAggregator.subscribe(environment.events.enableColorPicker, () => {
-        this.colorPickerEnabled = true;
-      }),
-    ];
+    this.distributeElementsEnabled = false;
+
+    /**
+     * Subscribe to the "element.click" event to determine, if the ColorPicker
+     * should be enabled or not.
+     *
+     * The ColorPicker should only be enabled, if the user selects a Diagram
+     * Element inside a Collaboration.
+     */
+    this.modeler.on('element.click', (event: IEvent) => {
+      const selectedElements: Array<IShape> = this._getSelectedElements();
+      const userSelectedDiagramElement: boolean = selectedElements.length > 0;
+
+      this.colorPickerEnabled = userSelectedDiagramElement;
+
+      /**
+       * The distribute elements feature only can do it's thing, if the
+       * user selects more than two elements.
+       */
+      /*tslint:disable:no-magic-numbers*/
+      this.distributeElementsEnabled = selectedElements.length > 2;
+    });
+
+    /**
+     * Subscribe to the "commandStack.elements.move.postExecute" event.
+     *
+     * This is needed because otherwise the colorpicker stays disabled if the
+     * user directly drags around an element after he clicked at a Collaboration.
+     */
+    this.modeler.on('commandStack.elements.move.postExecute', (event: IEvent) => {
+      this.colorPickerEnabled = true;
+    });
+
   }
 
   public detached(): void {

@@ -7,6 +7,7 @@ import {diff} from 'bpmn-js-differ';
 
 import {IBpmnModdle,
         IBpmnModeler,
+        IBpmnXmlSaveOptions,
         IDefinition,
         IDiagramExportService,
         IDiagramPrintService,
@@ -46,6 +47,16 @@ export class BpmnIo {
   @observable public propertyPanelWidth: number;
   public minCanvasWidth: number = 100;
   public minPropertyPanelWidth: number = 200;
+
+  /**
+   * The following to variables are needed to fix a bug, where the command
+   * stack was reset when opening the bpmn-diff-view or the
+   * bpmn-xml-view component.
+   *
+   * todo: see https://github.com/process-engine/bpmn-studio/issues/912
+   */
+  public xmlForXmlView: string;
+  public xmlForDiffView: string;
 
   private _propertyPanelShouldOpen: boolean = false;
   private _propertyPanelHiddenForSpaceReasons: boolean = false;
@@ -100,34 +111,6 @@ export class BpmnIo {
         .showNotification(NotificationType.INFO, 'In order to paste an element you have to place your cursor outside of the element.');
     });
 
-    /**
-     * Subscribe to the "element.click" event to determine, if the ColorPicker
-     * should be enabled or not.
-     *
-     * The ColorPicker should only be enabled, if the user selects a Diagram
-     * Element inside a Collaboration.
-     */
-    this.modeler.on('element.click', (event: IEvent) => {
-      const clickedShape: IShape = event.element;
-      const colorPickerCanBeEnabled: boolean = clickedShape.type !== 'bpmn:Collaboration';
-
-      if (colorPickerCanBeEnabled) {
-        this._eventAggregator.publish(environment.events.enableColorPicker);
-      } else {
-        this._eventAggregator.publish(environment.events.disableColorPicker);
-      }
-    });
-
-    /**
-     * Subscribe to the "commandStack.elements.move.postExecute" event.
-     *
-     * This is needed because otherwise the colorpicker stays disabled if the
-     * user directly drags around an element after he clicked at a Collaboration.
-     */
-    this.modeler.on('commandStack.elements.move.postExecute', (event: IEvent) => {
-      this._eventAggregator.publish(environment.events.enableColorPicker);
-    });
-
     this._addRemoveWithBackspaceKeyboardListener();
 
     /**
@@ -151,6 +134,9 @@ export class BpmnIo {
         this.savedXml = await this.getXML();
       });
     }
+
+    this.xmlForXmlView = this.xml;
+    this.xmlForDiffView = this.xml;
 
     this.modeler.attachTo(this.canvasModel);
 
@@ -213,8 +199,9 @@ export class BpmnIo {
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, async() => {
         try {
           const exportName: string = `${this.name}.bpmn`;
+          const xmlToExport: string = await this.getXML();
           await this._diagramExportService
-            .loadXML(this.xml)
+            .loadXML(xmlToExport)
             .asBpmn()
             .export(exportName);
         } catch (error) {
@@ -303,8 +290,6 @@ export class BpmnIo {
     document.removeEventListener('keydown', this._saveHotkeyEventHandler);
     document.removeEventListener('keydown', this._printHotkeyEventHandler);
 
-    this._eventAggregator.publish(environment.events.disableColorPicker);
-
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
@@ -370,7 +355,7 @@ export class BpmnIo {
   public async toggleXMLView(): Promise<void> {
     const shouldShowXmlView: boolean = !this.showXMLView;
     if (shouldShowXmlView) {
-      this.xml = await this.getXML();
+      this.xmlForXmlView = await this.getXML();
     }
 
     this.showXMLView = !this.showXMLView;
@@ -378,7 +363,11 @@ export class BpmnIo {
 
   public async getXML(): Promise<string> {
     const returnPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void => {
-      this.modeler.saveXML({}, (error: Error, result: string) => {
+      const xmlSaveOptions: IBpmnXmlSaveOptions = {
+        format: true,
+      };
+
+      this.modeler.saveXML(xmlSaveOptions, (error: Error, result: string) => {
         if (error) {
           reject(error);
         }
@@ -390,10 +379,10 @@ export class BpmnIo {
   }
 
   private async _updateXmlChanges(): Promise<void> {
-    this.xml = await this.getXML();
+    this.xmlForDiffView = await this.getXML();
 
     const previousDefinitions: IDefinition = await this._getDefintionsFromXml(this.savedXml);
-    const newDefinitions: IDefinition = await this._getDefintionsFromXml(this.xml);
+    const newDefinitions: IDefinition = await this._getDefintionsFromXml(this.xmlForDiffView);
 
     this.xmlChanges = diff(previousDefinitions, newDefinitions);
   }

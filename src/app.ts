@@ -138,14 +138,14 @@ export class App {
         route: ['task', 'processdef/:processModelId/task'],
         title: 'Task List',
         name: 'task-list-processmodel',
-        moduleId: 'modules/task-list/task-list',
+        moduleId: 'modules/task-list-container/task-list-container',
         nav: false,
       },
       {
         route: ['correlation/:correlationId/task'],
         title: 'Task List',
         name: 'task-list-correlation',
-        moduleId: 'modules/task-list/task-list',
+        moduleId: 'modules/task-list-container/task-list-container',
         nav: false,
       },
       {
@@ -184,6 +184,18 @@ export class App {
         title: 'Waiting Room',
         name: 'waiting-room',
         moduleId: 'modules/waiting-room/waiting-room',
+      },
+      {
+        route: 'process/:processModelId/heatmap',
+        title: 'Heatmap',
+        name: 'heatmap',
+        moduleId: 'modules/heatmap/heatmap',
+      },
+      {
+        route: ['inspect', 'inspect/:processModelId?/:view?/:latestSource?'],
+        title: 'Inspect',
+        name: 'inspect',
+        moduleId: 'modules/inspect/inspect',
       },
     ]);
 

@@ -11,12 +11,14 @@ import {protractor} from 'gulp-protractor';
 import * as typescript from 'gulp-typescript';
 import * as tsConfig from './../../tsconfig.json';
 import * as project from './../aurelia.json';
+import build from './build';
+import run from './run';
 
 function clean(): Promise<Array<string>> {
   return del(`${project.e2eTestRunner.dist}/*`);
 }
 
-function build(): NodeJS.ReadWriteStream {
+function build_tests(): NodeJS.ReadWriteStream {
 
   const typescriptCompiler: typescript.Project = typescript.createProject(Object.assign({}, tsConfig.compilerOptions, {
     module: 'commonjs',
@@ -36,11 +38,15 @@ function e2e(): NodeJS.ReadWriteStream {
     .on('end', () => {
       process.exit();
     })
-    .on('error', () => { });
+    .on('error', () => {
+      process.exit();
+    });
 }
 
 export default gulp.series(
   clean,
+  build_tests,
   build,
+  run,
   e2e,
 );

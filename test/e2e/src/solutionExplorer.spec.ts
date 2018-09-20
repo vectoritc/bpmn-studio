@@ -1,4 +1,10 @@
-import {browser, protractor, ProtractorExpectedConditions} from 'protractor';
+import {
+  browser,
+  ElementArrayFinder,
+  ElementFinder,
+  protractor,
+  ProtractorExpectedConditions,
+} from 'protractor';
 
 import {NavBar} from './pages/navBar';
 import {ProcessModel} from './pages/processModel';
@@ -23,18 +29,23 @@ describe('Solution Explorer', () => {
     processModel = new ProcessModel();
     solutionExplorer = new SolutionExplorer();
 
-    processModelId = processModel.getProcessModelID();
+    processModelId = processModel.getProcessModelId();
 
     // Create a new process definition by POST REST call
     processModel.postProcessModel(processModelId);
   });
 
   beforeEach(() => {
+    const navBarTag: ElementFinder = navBar.navBarTag;
+    const visibilityOfNavBarTag: Function = expectedConditions.visibilityOf(navBarTag);
+
     browser.get(aureliaUrl);
-    browser.driver.wait(() => {
-      browser.wait(expectedConditions.visibilityOf(navBar.navBarTag), defaultTimeoutMS);
-      return navBar.navBarTag;
-    });
+    browser.driver
+      .wait(() => {
+        browser.wait(visibilityOfNavBarTag, defaultTimeoutMS);
+
+        return navBarTag;
+      });
 
     // Click on solution explorer icon
     navBar.openSolutionExplorerByButtonClick();
@@ -42,28 +53,33 @@ describe('Solution Explorer', () => {
     // Wait until solutions are loaded
     browser.driver.wait(() => {
       browser.wait(expectedConditions.visibilityOf(solutionExplorer.solutionExplorerListItemsId(processModelId)), defaultTimeoutMS);
+
       return solutionExplorer.solutionExplorerListItemsId(processModelId);
     });
   });
 
-  it('should display more than one process definitions.', () => {
-    solutionExplorer.solutionExplorerListItems.count().then((numberOfProcessDefinitions: number) => {
-      expect(numberOfProcessDefinitions).toBeGreaterThan(0);
-    });
+  it('should display more than one process definitions.', async() => {
+    const solutionExplorerListItems: ElementArrayFinder = solutionExplorer.solutionExplorerListItems;
+    const numberOfProcessDefinitions: number = await solutionExplorerListItems.count();
+
+    expect(numberOfProcessDefinitions).toBeGreaterThan(0);
   });
 
-  it('should display created solution.', () => {
-    solutionExplorer.solutionExplorerListItemsIds(processModelId).count().then((numberOfProcessDefinitionsById: number) => {
-      expect(numberOfProcessDefinitionsById).toBe(1);
-    });
+  it('should display created solution.', async() => {
+    const solutionExplorerListItemsIds: ElementArrayFinder = solutionExplorer.solutionExplorerListItemsIds(processModelId);
+    const numberOfProcessDefinitionsById: number = await solutionExplorerListItemsIds.count();
+
+    expect(numberOfProcessDefinitionsById).toBe(1);
   });
 
-  it('should be possible to open a process diagram.', () => {
-    solutionExplorer.solutionExplorerListItemsId(processModelId).click().then(() => {
-      browser.getCurrentUrl().then((currentBrowserUrl: string) => {
-        expect(currentBrowserUrl).toContain(processModel.getProcessModelLink());
-      });
-    });
+  it('should be possible to open a process diagram.', async() => {
+    const getProcessModelLink: string = processModel.getProcessModelLink();
+
+    await solutionExplorer.openProcessModelByClick(processModelId);
+
+    const currentBrowserUrl: string = await browser.getCurrentUrl();
+
+    expect(currentBrowserUrl).toContain(getProcessModelLink);
   });
 
 });

@@ -1,0 +1,58 @@
+.heatmap {
+  width: 100%;
+  height: 100%;
+}
+
+.heatmap__viewer-container {
+  height: 100%;
+}
+
+.heatmap__legend {
+  position: absolute;
+  top: 60px;
+  right: 56px;
+  max-width: 155px;
+  background: whitesmoke;
+}
+
+.heatmap__legend-entry {
+  display: block;
+  margin: 0 10px;
+  font-size: 13px;
+}
+
+.heatmap__legend-entry-first {
+  margin-top: 10px;
+  margin-bottom: 2px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.heatmap__legend-entry-last {
+  margin-bottom: 10px;
+}
+
+.heatmap__overlay {
+  width: 35px;
+  height: 35px;
+  min-height: 16px;
+  padding: 9px;
+  background-color: black;
+  border-radius: 50%;
+  font-family: Arial;
+  font-size: 12px;
+  color: white;
+  text-align: center;
+}
+
+.red {
+  color: #E53935;
+}
+
+.green {
+  color: #43A047;
+}
+
+.black {
+  color: black;
+}

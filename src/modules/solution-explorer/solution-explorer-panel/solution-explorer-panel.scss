@@ -1,0 +1,54 @@
+.solution-explorer {
+  padding-bottom: 45px;
+
+  min-width: 200px;
+  width: 250px;
+  height: 100%;
+
+  display: block;
+
+  background-color: #f7f7f7;
+  border-right: 2px solid #dcdbdb;
+}
+
+.solution-explorer-panel {
+  position: relative;
+  height: 100%;
+}
+
+.solution-explorer-panel__header {
+  padding: 5px 5px;
+  display: flex;
+  color: #a5a5a5;
+  border-bottom: 2px solid #dcdbdb;
+}
+
+.solution-explorer-panel__header__name {
+  font-size: 16px;
+  flex: 1;
+}
+
+.solution-explorer-panel__actions {
+  display: flex;
+}
+
+.solution-explorer-panel__actions button {
+  padding: 0 2px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.solution-explorer-panel__actions button:hover {
+  color: #5e5e5e;
+}
+
+.solution-explorer-panel__input {
+  visibility: hidden;
+  height: 0;
+}
+
+.solution-explorer-panel button {
+  min-width: 20px;
+}

@@ -1,7 +1,7 @@
 {
   "name": "bpmn-studio",
   "description": "An Aurelia application for designing BPMN diagrams, which can also be connected to a process engine to execute these diagrams.",
-  "version": "4.3.0",
+  "version": "4.4.0",
   "author": {
     "name": "process-engine",
     "email": "hello@process-engine.io",
@@ -14,13 +14,13 @@
     "start_dev": "au run --watch",
     "build": "au build --prod",
     "reset": "bash dev_tooling/scripts/reset_setup.bash",
-    "reinstall": "bash dev_tooling/scripts/reinstall_setup.bash",
+    "reinstall": "OLD_PATH=$PATH bash dev_tooling/scripts/reinstall_setup.bash && unset OLD_PATH",
     "deploy": "npm run build && npm publish",
-    "integration-test-init": "webdriver-manager update && webdriver-manager start",
-    "integration-test": "au e2e",
-    "crossbrowser-test": "au e2eCrossbrowser",
+    "test-init": "process-engine && webdriver-manager update && webdriver-manager start",
+    "test": "au e2e",
+    "test-docker": "bash test/start_docker_bundle.sh && au e2eDocker",
+    "test-crossbrowser": "au e2eCrossbrowser",
     "lint": "tslint --project .",
-    "test": "echo 'Currently there a no tests specified'",
     "electron-start-dev": "npm run build && electron electron_app/electron.js",
     "rebuild": "electron-rebuild --force --which-module deasync",
     "electron-build-windows": "npm run rebuild && npm run build && build --publish never --windows",
@@ -35,7 +35,8 @@
   },
   "build": {
     "extraFiles": [
-      "config/**/*"
+      "config/**/*",
+      "build/**"
     ],
     "extraResources": [
       "node_modules/@process-engine/process_engine_runtime/sequelize/migrations/**/*"
@@ -54,7 +55,8 @@
           "name": "BPMN",
           "description": "BPMN diagram extension"
         }
-      ]
+      ],
+      "artifactName": "bpmn-studio-setup-${version}.${ext}"
     },
     "mac": {
       "target": [
@@ -89,18 +91,20 @@
     "@essential-projects/errors_ts": "^1.3.0",
     "@essential-projects/http_contracts": "^2.0.2",
     "@process-engine/consumer_api_contracts": "^0.15.0",
-    "@process-engine/management_api_client": "^0.7.0",
-    "@process-engine/management_api_contracts": "^0.8.0",
-    "@process-engine/process_engine_runtime": "2.0.4",
+    "@process-engine/management_api_client": "^0.8.0",
+    "@process-engine/process_engine_runtime": "2.2.0",
+    "@process-engine/management_api_contracts": "0.9.0",
     "@process-engine/solutionexplorer.contracts": "1.0.0",
     "@process-engine/solutionexplorer.repository.contracts": "1.0.0",
     "@process-engine/solutionexplorer.repository.filesystem": "1.0.0",
     "@process-engine/solutionexplorer.repository.management_api": "0.0.3",
     "@process-engine/solutionexplorer.service": "1.0.0",
     "@process-engine/solutionexplorer.service.contracts": "1.0.0",
+    "about-window": "^1.12.1",
+    "@process-engine/kpi_api_contracts": "0.1.1",
     "aurelia-open-id-connect": "1.0.3",
     "aurelia-validation": "^1.1.2",
-    "bpmn-js-differ": "^1.2.0",
+    "bpmn-js-differ": "2.0.2",
     "electron-is-dev": "^0.3.0",
     "electron-notifications": "^1.0.0",
     "electron-updater": "^2.19.1",
@@ -113,8 +117,7 @@
     "proxy-polyfill": "^0.1.7",
     "pushserve": "^1.0.2",
     "spectrum-colorpicker": "^1.8.0",
-    "sqlite3": "^4.0.2",
-    "xml-beautifier": "^0.3.0"
+    "sqlite3": "^4.0.2"
   },
   "peerDependencies": {},
   "devDependencies": {
@@ -149,7 +152,6 @@
     "electron-rebuild": "^1.7.3",
     "event-stream": "^3.3.3",
     "eventemitter2": "^4.1.2",
-    "faye": "^1.2.4",
     "fetch-ponyfill": "^4.1.0",
     "gulp": "github:gulpjs/gulp#4.0",
     "gulp-changed-in-place": "^2.0.3",

@@ -85,7 +85,7 @@ export class DiagramPrintService implements IDiagramPrintService {
   /**
    * Calculate the pixel ratio for the given DPI.
    * The Pixel Ratio is the factor which is needed, to extend the
-   * the width and height of a canvas to match a rendered resolution
+   * width and height of a canvas to match a rendered resolution
    * with the targeting DPI.
    *
    * @param svgWidth With of the diagrams canvas element.

@@ -184,13 +184,6 @@
             ]
           },
           {
-            "name": "faye",
-            "path": "../node_modules/faye",
-            "main": "client/faye-browser-min",
-            "resources": [],
-            "exports": "Faye"
-          },
-          {
             "name": "@fortawesome/fontawesome-free",
             "path": "../node_modules/@fortawesome/fontawesome-free",
             "main": "css/all.css",
@@ -274,11 +267,6 @@
             "resources": []
           },
           {
-            "name": "xml-beautifier",
-            "main": "index.js",
-            "path": "../node_modules/xml-beautifier/dist"
-          },
-          {
             "name": "repeat-string",
             "main": "index.js",
             "path": "../node_modules/repeat-string"
@@ -356,6 +344,11 @@
             "deps":[
               "@process-engine/consumer_api_contracts"
             ]
+          },
+          {
+            "name": "@process-engine/kpi_api_contracts",
+            "path": "../node_modules/@process-engine/kpi_api_contracts/dist/commonjs",
+            "main": "index.js"
           },
           {
             "name": "bpmn-js-differ",

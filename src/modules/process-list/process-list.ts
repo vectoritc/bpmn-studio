@@ -49,9 +49,13 @@ export class ProcessList {
     this._authenticationService = authenticationService;
   }
 
-  public currentPageChanged(newValue: number, oldValue: number): void {
-    if (oldValue !== undefined && oldValue !== null) {
-      this.updateProcesses();
+  public async currentPageChanged(newValue: number, oldValue: number): Promise<void> {
+    const oldValueIsDefined: boolean = oldValue !== undefined && oldValue !== null;
+
+    if (oldValueIsDefined) {
+      this._initializeGetProcesses();
+      await this.updateProcesses();
+      this.updateList();
     }
   }
 
@@ -67,10 +71,16 @@ export class ProcessList {
 
   public async updateProcesses(): Promise<void> {
     try {
-      this._processes = await this._getProcesses();
+      const processes: Array<Correlation> = await this._getProcesses();
+      const processListWasUpdated: boolean = JSON.stringify(processes) !== JSON.stringify(this._processes);
+
+      if (processListWasUpdated) {
+        this._processes = processes;
+      }
+
       this.succesfullRequested = true;
     } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, `Error receiving task list: ${error.message}`);
+      this._notificationService.showNotification(NotificationType.ERROR, `Error receiving process list: ${error.message}`);
     }
 
     if (!this.instances) {
@@ -84,11 +94,11 @@ export class ProcessList {
     this.instances = this.allInstances;
   }
 
-  public attached(): void {
-    if (!this._getProcesses) {
-      this._getProcesses = this.getAllProcesses;
-    }
-    this.updateProcesses();
+  public async attached(): Promise<void> {
+    this._initializeGetProcesses();
+
+    await this.updateProcesses();
+    this.updateList();
 
     this._getProcessesIntervalId = window.setInterval(async() => {
       await this.updateProcesses();
@@ -126,6 +136,14 @@ export class ProcessList {
     }
 
     return this._processes;
+  }
+
+  private _initializeGetProcesses(): void {
+    const getProcessesIsUndefined: boolean = this._getProcesses === undefined;
+
+    if (getProcessesIsUndefined) {
+      this._getProcesses = this.getAllProcesses;
+    }
   }
 
   private async getAllProcesses(): Promise<Array<Correlation>> {

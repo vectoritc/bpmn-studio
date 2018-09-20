@@ -34,6 +34,7 @@ pipeline {
           branch = env.BRANCH_NAME;
           branch_is_master = branch == 'master';
           branch_is_develop = branch == 'develop';
+          branch_is_release = branch.startsWith('release/');
 
           if (branch_is_master) {
             full_electron_release_version_string = "${package_version}";
@@ -71,7 +72,11 @@ pipeline {
     }
     stage('build electron') {
       when {
-        expression { branch_is_master || branch_is_develop }
+        expression {
+          branch_is_master ||
+          branch_is_develop ||
+          branch_is_release
+        }
       }
       parallel {
         stage('Build on Linux') {
@@ -163,7 +168,13 @@ pipeline {
           def new_commit = env.GIT_PREVIOUS_COMMIT != env.GIT_COMMIT;
 
           if (branch_is_master) {
-            if (new_commit) {
+
+            def previous_build = currentBuild.getPreviousBuild();
+            def previous_build_status = previous_build == null ? null : previous_build.result;
+
+            def should_publish_to_npm = new_commit || previous_build_status == 'FAILURE';
+
+            if (should_publish_to_npm) {
               script {
                 // let the build fail if the version does not match normal semver
                 def semver_matcher = package_version =~ /\d+\.\d+\.\d+/;
@@ -185,6 +196,8 @@ pipeline {
               } else {
                 println 'Skipping publish for this version. Version unchanged.'
               }
+            } else {
+              println 'Skipped publishing for this version. No new commits pushed and previous build did not fail.'
             }
 
           } else {
@@ -206,21 +219,38 @@ pipeline {
     }
     stage('publish electron') {
       when {
-        expression { branch_is_master || branch_is_develop }
+        expression {
+          branch_is_master ||
+          branch_is_develop ||
+          branch_is_release
+        }
       }
       steps {
         unstash('linux_results')
         unstash('macos_results')
         unstash('windows_results')
-        nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
-          dir('.ci-tools') {
-            sh('npm install')
-          }
-          withCredentials([
-            string(credentialsId: 'process-engine-ci_token', variable: 'RELEASE_GH_TOKEN')
-          ]) {
-            script {
-              sh("node .ci-tools/publish-github-release.js ${full_electron_release_version_string} ${full_electron_release_version_string} ${branch} ${release_will_be_draft} ${!branch_is_master}");
+        
+        script {
+          // On release branches we will just archive the artifacts of the build.
+          // When we build master or develop, we upload the artifacts to the
+          // GitHub release.
+          if (branch_is_release) {
+            
+            archiveArtifacts 'dist/*, dist/**/*'
+
+          } else {
+
+            nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
+              dir('.ci-tools') {
+                sh('npm install')
+              }
+              withCredentials([
+                string(credentialsId: 'process-engine-ci_token', variable: 'RELEASE_GH_TOKEN')
+              ]) {
+                script {
+                  sh("node .ci-tools/publish-github-release.js ${full_electron_release_version_string} ${full_electron_release_version_string} ${branch} ${release_will_be_draft} ${!branch_is_master}");
+                }
+              }
             }
           }
         }

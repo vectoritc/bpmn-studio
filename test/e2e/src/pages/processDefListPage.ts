@@ -1,16 +1,32 @@
-import {by, element, ElementArrayFinder, ElementFinder} from 'protractor';
+import {
+  by,
+  element,
+  ElementArrayFinder,
+  ElementFinder,
+} from 'protractor';
+
+import {By} from 'selenium-webdriver';
 
 export class ProcessDefListPage {
 
   // Define Elements
-  public processDefinitionListItems: ElementArrayFinder = element.all(by.className('process-definition-list-item'));
+  private _byProcessDefinitionListItem: By = by.className('process-definition-list-item');
+
+  public processDefinitionListItems: ElementArrayFinder = element.all(this._byProcessDefinitionListItem);
   public processDefinitionListItem: ElementFinder = this.processDefinitionListItems.first();
 
   // Define Functions
-  public processDefinitionListItemIDs(processModelID: string): ElementArrayFinder {
-    return this.processDefinitionListItems.all(by.id('processDef-' + processModelID));
+  public processDefinitionListItemIds(processModelId: string): ElementArrayFinder {
+    const id: string = `processDef-${processModelId}`;
+    const byId: By = by.id(id);
+
+    return this.processDefinitionListItems.all(byId);
   }
-  public processModellDiagram(processModelID: string): ElementFinder {
-    return element(by.id('processDef-' + processModelID));
+
+  public processModellDiagram(processModelId: string): ElementFinder {
+    const id: string = `processDef-${processModelId}`;
+    const byId: By = by.id(id);
+
+    return element(byId);
   }
 }

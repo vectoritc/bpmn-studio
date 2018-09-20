@@ -1,4 +1,14 @@
-import {by, element, ElementArrayFinder, ElementFinder} from 'protractor';
+import {
+  by,
+  element,
+  ElementArrayFinder,
+  ElementFinder,
+} from 'protractor';
+
+import {
+  By,
+  promise,
+} from 'selenium-webdriver';
 
 export class SolutionExplorer {
 
@@ -7,14 +17,29 @@ export class SolutionExplorer {
   public solutionExplorerListItems: ElementArrayFinder = this.solutionExplorerTag.all(by.className('process-explorer__structure-item'));
 
   // Define Functions
-  public solutionExplorerListItemsId(processModelID: string): ElementFinder {
-    return this.solutionExplorerTag.element(by.id('processSolutionPanel-' + processModelID));
+  public solutionExplorerListItemsId(processModelId: string): ElementFinder {
+    const id: string = 'processSolutionPanel-' + processModelId;
+    const byId: By = by.id(id);
+
+    return this.solutionExplorerTag.element(byId);
   }
-  public solutionExplorerListItemsIds(processModelID: string): ElementArrayFinder {
-    return this.solutionExplorerListItems.all(by.id('processSolutionPanel-' + processModelID));
+  public solutionExplorerListItemsIds(processModelId: string): ElementArrayFinder {
+    const id: string = 'processSolutionPanel-' + processModelId;
+    const byId: By = by.id(id);
+
+    return this.solutionExplorerListItems.all(byId);
   }
-  public processModellDiagram(processModelID: string): ElementFinder {
-    return element(by.id('processSolutionPanel-' + processModelID));
+  public processModellDiagram(processModelId: string): ElementFinder {
+    const id: string = 'processSolutionPanel-' + processModelId;
+    const byId: By = by.id(id);
+
+    return element(byId);
+  }
+
+  public openProcessModelByClick(processModelId: string): promise.Promise<void> {
+    const solutionExplorerListItemsId: ElementFinder = this.solutionExplorerListItemsId(processModelId);
+
+    return solutionExplorerListItemsId.click();
   }
 
 }

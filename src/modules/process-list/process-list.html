@@ -10,13 +10,13 @@
             <th>Process Model Id</th>
             <th></th>
           </tr>
-          <tr repeat.for="instance of shownProcesses">
+          <tr repeat.for="instance of shownProcesses" id="processList-${instance.id}" class="process-list-item">
             <td>${instance.id}</td>
             <td>
-              <a route-href="route: processdef-detail; params.bind: { processModelId: instance.processModelId }">${instance.processModelId}</a>
+              <a route-href="route: processdef-detail; params.bind: { processModelId: instance.processModelId }" class="process-list-item-model-id">${instance.processModelId}</a>
             </td>
             <td class="process-list__last-table-cell">
-              <a route-href="route: task-list-processmodel; params.bind: { processModelId: instance.processModelId }">User tasks</a>
+              <a route-href="route: task-list-processmodel; params.bind: { processModelId: instance.processModelId }" class="process-list-item-user-tasks">User tasks</a>
             </td>
           </tr>
         </table>
