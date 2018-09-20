@@ -1,4 +1,4 @@
-import {EventAggregator} from 'aurelia-event-aggregator';
+import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {
   bindable,
   computedFrom,
@@ -47,6 +47,9 @@ export class SolutionExplorerSolution {
   private _diagramCreationService: IDiagramCreationService;
   private _notificationService: NotificationService;
 
+  private _diagramRoute: string = 'processdef-detail';
+  private _inspectView: string;
+  private _subscriptions: Array<Subscription>;
   private _openedSolution: ISolution;
   private _diagramCreationState: DiagramCreationState = {
     currentDiagramInputValue: undefined,
@@ -94,6 +97,19 @@ export class SolutionExplorerSolution {
   }
 
   public attached(): void {
+    this._subscriptions = [
+      this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToHeatmap, (heatmapView?: string) => {
+        const heatmapViewIsDashboard: boolean = heatmapView === 'dashboard';
+
+        this._diagramRoute = 'inspect';
+        this._inspectView = heatmapViewIsDashboard ? 'dashboard' : 'heatmap';
+      }),
+
+      this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToDesigner, () => {
+        this._diagramRoute = 'processdef-detail';
+      }),
+    ];
+
     this._refreshIntervalTask = setInterval(async() =>  {
       this.updateSolution();
     }, environment.processengine.processModelPollingIntervalInMs);
@@ -101,6 +117,7 @@ export class SolutionExplorerSolution {
 
   public detached(): void {
     clearInterval(this._refreshIntervalTask);
+    this._disposeSubscriptions();
   }
 
   /**
@@ -199,8 +216,9 @@ export class SolutionExplorerSolution {
     const diagramIsOpenedFromRemote: boolean = diagram.uri.startsWith('http');
 
     if (diagramIsOpenedFromRemote) {
-      await this._router.navigateToRoute('processdef-detail', {
+      await this._router.navigateToRoute(this._diagramRoute, {
         processModelId: diagram.id,
+        view: this._inspectView,
       });
 
     } else {
@@ -346,6 +364,12 @@ export class SolutionExplorerSolution {
     });
 
     return foundObject;
+  }
+
+  private _disposeSubscriptions(): void {
+    for (const subscription of this._subscriptions) {
+      subscription.dispose();
+    }
   }
 
 }

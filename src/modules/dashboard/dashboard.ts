@@ -11,10 +11,7 @@ import {
   ManagementContext,
 } from '@process-engine/management_api_contracts';
 
-import {
-  IAuthenticationService,
-  NotificationType,
-} from '../../contracts/index';
+import {IAuthenticationService, NotificationType} from '../../contracts/index';
 import {NotificationService} from '../notification/notification.service';
 
 @inject('ManagementApiClientService', 'NotificationService', 'AuthenticationService', Router)
@@ -70,7 +67,7 @@ export class Dashboard {
       const errorIsForbiddenError: boolean = isError(error, ForbiddenError);
       const errorIsUnauthorizedError: boolean = isError(error, UnauthorizedError);
 
-      if (errorIsForbiddenError || errorIsUnauthorizedError) {
+      if (errorIsForbiddenError || errorIsUnauthorizedError) {
         return false;
       }
     }
@@ -87,7 +84,7 @@ export class Dashboard {
       const errorIsForbiddenError: boolean = isError(error, ForbiddenError);
       const errorIsUnauthorizedError: boolean = isError(error, UnauthorizedError);
 
-      if (errorIsForbiddenError || errorIsUnauthorizedError) {
+      if (errorIsForbiddenError || errorIsUnauthorizedError) {
         return false;
       }
     }

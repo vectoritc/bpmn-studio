@@ -4,10 +4,11 @@ import {RouteConfig, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {IEventFunction} from '../../contracts';
+import {IEventFunction, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
+import {NotificationService} from '../notification/notification.service';
 
-@inject(Router, EventAggregator)
+@inject(Router, EventAggregator, 'NotificationService')
 export class NavBar {
 
   @bindable() public activeRouteName: string;
@@ -16,18 +17,27 @@ export class NavBar {
   public dropdown: HTMLElement;
   public solutionExplorerIsActive: boolean = true;
   public showTools: boolean = false;
+  public showInspectTools: boolean = false;
   public disableStartButton: boolean = true;
   public disableSaveButton: boolean = false;
+  public showProcessName: boolean = false;
   public disableDiagramUploadButton: boolean = true;
+  public disableHeatmapButton: boolean = true;
+  public disableDashboardButton: boolean = false;
   public diagramContainsUnsavedChanges: boolean = false;
+  public inspectView: string = 'dashboard';
+  public disableDesignLink: boolean = false;
+  public latestSource: string;
 
   private _router: Router;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
+  private _notificationService: NotificationService;
 
-  constructor(router: Router, eventAggregator: EventAggregator) {
+  constructor(router: Router, eventAggregator: EventAggregator, notificationService: NotificationService) {
     this._router = router;
     this._eventAggregator = eventAggregator;
+    this._notificationService = notificationService;
   }
 
   public attached(): void {
@@ -42,6 +52,10 @@ export class NavBar {
 
       this._eventAggregator.subscribe(environment.events.navBar.showTools, (process: IDiagram) => {
         this.showTools = true;
+      }),
+
+      this._eventAggregator.subscribe(environment.events.navBar.showProcessName, (process: IDiagram) => {
+        this.showProcessName = true;
         this.process = process;
       }),
 
@@ -50,8 +64,15 @@ export class NavBar {
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.updateProcess, (process: IDiagram) => {
+        const processIdIsUndefined: boolean = process.id === undefined;
+
         this.process = process;
+        this.latestSource = processIdIsUndefined ? 'file-system' : 'process-engine';
         this.diagramContainsUnsavedChanges = false;
+      }),
+
+      this._eventAggregator.subscribe(environment.events.navBar.hideProcessName, () => {
+        this.showProcessName = false;
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.disableSaveButton, () => {
@@ -85,6 +106,32 @@ export class NavBar {
       this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
         this.diagramContainsUnsavedChanges = false;
       }),
+
+      this._eventAggregator.subscribe(environment.events.navBar.inspectNavigateToHeatmap, () => {
+        this.inspectView = 'heatmap';
+      }),
+
+      this._eventAggregator.subscribe(environment.events.navBar.inspectNavigateToDashboard, () => {
+        this.inspectView = 'dashboard';
+      }),
+
+      this._eventAggregator.subscribe(environment.events.navBar.showInspectButtons, () => {
+        this.showInspectTools = true;
+      }),
+
+      this._eventAggregator.subscribe(environment.events.navBar.hideInspectButtons, () => {
+        this.showInspectTools = false;
+      }),
+
+      this._eventAggregator.subscribe(environment.events.navBar.disableHeatmapAndEnableDashboardButton, () => {
+        this.disableHeatmapButton = true;
+        this.disableDashboardButton = false;
+      }),
+
+      this._eventAggregator.subscribe(environment.events.navBar.disableDashboardAndEnableHeatmapButton, () => {
+        this.disableHeatmapButton = false;
+        this.disableDashboardButton = true;
+      }),
     ];
   }
 
@@ -100,6 +147,82 @@ export class NavBar {
 
   public navigateBack(): void {
     this._router.navigateBack();
+  }
+
+  public showDashboard(): void {
+    this.disableDashboardButton = true;
+    this.disableHeatmapButton = false;
+
+    this._router.navigateToRoute('inspect', {
+      processModelId: this.process.id,
+      view: 'dashboard',
+      latestSource: this.latestSource,
+    });
+
+    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToHeatmap, 'dashboard');
+  }
+
+  public showHeatmap(): void {
+    this.disableHeatmapButton = true;
+    this.disableDashboardButton = false;
+
+    this._router.navigateToRoute('inspect', {
+      processModelId: this.process.id,
+      view: 'heatmap',
+      latestSource: this.latestSource,
+    });
+
+    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToHeatmap, 'heatmap');
+  }
+
+  public navigateToInspect(): void {
+    this._dertermineActiveRoute();
+
+    const activeRouteIsInspect: boolean = this.activeRouteName === 'inspect';
+
+    if (activeRouteIsInspect) {
+      return;
+    }
+
+    const activeRouteIsNotProcessEngineRoute: boolean = this.activeRouteName !== 'processdef-detail';
+
+    const processModelId: string = (this.process && !activeRouteIsNotProcessEngineRoute)
+                                  ? this.process.id
+                                  : undefined;
+
+    if (activeRouteIsNotProcessEngineRoute) {
+      this.showInspectTools = false;
+      this.showProcessName = false;
+    }
+
+    this._router.navigateToRoute('inspect', {
+      processModelId: processModelId,
+      view: this.inspectView,
+      latestSource: undefined,
+    });
+  }
+
+  public navigateToDesigner(): void {
+    const processIsUndefined: boolean = this.process === undefined;
+    const latestSourceIsPE: boolean = this.latestSource === 'process-engine';
+    const latestSourceIsFS: boolean = this.latestSource === 'file-system';
+
+    if (processIsUndefined) {
+      this._notificationService.showNotification(NotificationType.INFO, 'In order to open the designer, you have to select a diagram first!');
+
+      return;
+    }
+
+    if (latestSourceIsPE) {
+      this._router.navigateToRoute('processdef-detail', {
+        processModelId: this.process.id,
+      });
+    } else if (latestSourceIsFS) {
+      this._router.navigateToRoute('diagram-detail', {
+        diagramUri: this.process.uri,
+      });
+    }
+
   }
 
   public toggleSolutionExplorer(): void {
