@@ -111,7 +111,6 @@ export class NavBar {
                                           : this.process.name;
 
         this.processOpenedFromProcessEngine = latestSourceIsProcessEngine;
-        console.log(this.navbarTitle);
 
         this.diagramContainsUnsavedChanges = false;
       }),
