@@ -177,9 +177,6 @@ export class NavBar {
         this.disableHeatmapButton = false;
         this.disableDashboardButton = true;
       }),
-      this._eventAggregator.subscribe(environment.events.navBar.setProcessEngineIcon, (processEngineIconShown: boolean) => {
-        this.processOpenedFromProcessEngine = processEngineIconShown;
-      }),
     ];
   }
 
