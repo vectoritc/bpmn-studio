@@ -48,12 +48,6 @@ export class Dashboard {
         .first();
 
   // Define Functions
-  public processRunningListItemById(correlationId: string): ElementArrayFinder {
-    const id: string = this._domProcessIdPrefix + correlationId;
-    const byId: By = by.id(id);
-
-    return this.processListTag.all(byId);
-  }
   public async countOfProcessRunningListItems(): Promise<number> {
     return this.processListTag
             .all(this._byDomProcessClassName)
@@ -136,7 +130,7 @@ export class Dashboard {
   }
 
   // user task section
-  public continueUserTaskByClickOnDynamicUiWrapperContinuButton(): promise.Promise<void> {
+  public continueUserTaskByClickOnDynamicUiWrapperContinueButton(): promise.Promise<void> {
     return this.dynamicUiWrapperContinueButton.click();
   }
 }

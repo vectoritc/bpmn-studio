@@ -36,14 +36,14 @@ describe('Process definition list', () => {
     processModel.postProcessModel(processModelId);
   });
 
-  beforeEach(() => {
-    const processModelLink: string = processModel.getProcessModelLink();
+  beforeEach(async() => {
+    const processModelLink: string = ProcessModel.getProcessModelLink();
     const destination: string = aureliaUrl + processModelLink;
     const routerViewContainer: ElementFinder = general.getRouterViewContainer;
     const visibilityOfRouterViewContainer: Function = expectedConditions.visibilityOf(routerViewContainer);
 
-    browser.get(destination);
-    browser.driver
+    await browser.get(destination);
+    await browser.driver
       .wait(() => {
         browser
           .wait(visibilityOfRouterViewContainer, defaultTimeoutMS);
@@ -54,7 +54,7 @@ describe('Process definition list', () => {
     const processDefinitionListItem: ElementFinder = processDefListPage.processDefinitionListItem;
     const visibilityOfProcessDefinitionListItem: Function = expectedConditions.visibilityOf(processDefinitionListItem);
 
-    browser.driver
+    await browser.driver
       .wait(() => {
         browser
           .wait(visibilityOfProcessDefinitionListItem, defaultTimeoutMS);
@@ -78,9 +78,9 @@ describe('Process definition list', () => {
   });
 
   it('should be possible to open a process diagram.', async() => {
-    const processModellDiagram: ElementFinder = processDefListPage.processModellDiagram(processModelId);
+    const processModelDiagram: ElementFinder = ProcessDefListPage.processModelDiagram(processModelId);
 
-    await processModellDiagram.click();
+    await processModelDiagram.click();
 
     const routerViewContainer: ElementFinder = general.getRouterViewContainer;
     const visibilityOfRouterViewContainer: Function = expectedConditions.visibilityOf(routerViewContainer);
@@ -94,7 +94,7 @@ describe('Process definition list', () => {
      });
 
     const currentBrowserUrl: string = await browser.getCurrentUrl();
-    const processModelLink: string = processModel.getProcessModelLink();
+    const processModelLink: string = ProcessModel.getProcessModelLink();
 
     expect(currentBrowserUrl).toContain(processModelLink);
   });

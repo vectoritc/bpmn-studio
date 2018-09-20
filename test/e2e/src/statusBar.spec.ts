@@ -23,12 +23,12 @@ describe('Status bar', () => {
     statusBar = new StatusBar();
   });
 
-  beforeEach(() => {
+  beforeEach(async() => {
     const statusBarTag: ElementFinder = statusBar.statusBarTag;
     const visibilityOfStatusBarTag: Function = expectedConditions.visibilityOf(statusBarTag);
 
-    browser.get(aureliaUrl);
-    browser.driver
+    await browser.get(aureliaUrl);
+    await browser.driver
       .wait(() => {
         browser.wait(visibilityOfStatusBarTag, defaultTimeoutMS);
 

@@ -35,13 +35,13 @@ describe('Dashboard view', () => {
     processModel.postProcessModelWithUserTask(processModelId);
   });
 
-  beforeEach(() => {
+  beforeEach(async() => {
     const dashboardLink: string = dashboard.dashboardLink;
     const routerViewContainer: ElementFinder = general.getRouterViewContainer;
     const visibilityOfRouterViewContainer: Function = expectedConditions.visibilityOf(routerViewContainer);
 
-    browser.get(aureliaUrl + dashboardLink);
-    browser.driver
+    await browser.get(aureliaUrl + dashboardLink);
+    await browser.driver
       .wait(() => {
         browser
           .wait(visibilityOfRouterViewContainer, defaultTimeoutMS);
@@ -67,7 +67,7 @@ describe('Dashboard view', () => {
     const firstProcessRunningListItems: ElementFinder = dashboard.firstProcessRunningListItems;
     const visibilityOfFirstProcessRunningListItems: Function = expectedConditions.visibilityOf(firstProcessRunningListItems);
 
-    browser.driver
+    await browser.driver
       .wait(() => {
         browser
           .wait(visibilityOfFirstProcessRunningListItems, defaultTimeoutMS);
@@ -85,7 +85,7 @@ describe('Dashboard view', () => {
     const firstProcessRunningListItemsById: ElementFinder = dashboard.firstProcessRunningListItemsById(correlationId);
     const visibilityOfFirstProcessRunningListItemsById: Function = expectedConditions.visibilityOf(firstProcessRunningListItemsById);
 
-    browser.driver
+    await browser.driver
       .wait(() => {
         browser
           .wait(visibilityOfFirstProcessRunningListItemsById, defaultTimeoutMS);
@@ -104,7 +104,7 @@ describe('Dashboard view', () => {
     const visibilityOfHyperlinkOfProcessRunningListItemByCorrelationId: Function =
       expectedConditions.visibilityOf(hyperlinkOfProcessRunningListItemByCorrelationId);
 
-    browser.driver
+    await browser.driver
       .wait(() => {
         browser
           .wait(visibilityOfHyperlinkOfProcessRunningListItemByCorrelationId, defaultTimeoutMS);
@@ -114,7 +114,7 @@ describe('Dashboard view', () => {
 
     await dashboard.openProcessModelByClickOnModelIdInProcessRunningList(correlationId);
 
-    const processModelUrl: string = processModel.processModelUrl(processModelId);
+    const processModelUrl: string = ProcessModel.processModelUrl(processModelId);
     const currentBrowserUrl: string = await browser.getCurrentUrl();
 
     expect(currentBrowserUrl).toContain(processModelUrl);
@@ -128,7 +128,7 @@ describe('Dashboard view', () => {
     const visibilityOfHyperlinkOfUserTasksInProcessRunningListItemByCorrelationId: Function =
       expectedConditions.visibilityOf(hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId);
 
-    browser.driver
+    await browser.driver
       .wait(() => {
         browser
           .wait(visibilityOfHyperlinkOfUserTasksInProcessRunningListItemByCorrelationId, defaultTimeoutMS);
@@ -137,7 +137,7 @@ describe('Dashboard view', () => {
 
     await dashboard.openUserTasksByClickOnModelIdInProcessRunningList(correlationId);
 
-    const userTasksUrl: string = processModel.userTasksUrl(processModelId);
+    const userTasksUrl: string = ProcessModel.userTasksUrl(processModelId);
     const currentBrowserUrl: string = await browser.getCurrentUrl();
 
     expect(currentBrowserUrl).toContain(userTasksUrl);
@@ -156,7 +156,7 @@ describe('Dashboard view', () => {
     const firstTaskListItems: ElementFinder = dashboard.firstTaskListItems;
     const visibilityOfFirstTaskListItems: Function = expectedConditions.visibilityOf(firstTaskListItems);
 
-    browser.driver
+    await browser.driver
       .wait(() => {
         browser
           .wait(visibilityOfFirstTaskListItems, taskListTimeoutMS);
@@ -172,7 +172,7 @@ describe('Dashboard view', () => {
     const firstTaskWaitingById: ElementFinder = dashboard.firstTaskWaitingById(processModelId);
     const visibilityOfFirstTaskWaitingById: Function = expectedConditions.visibilityOf(firstTaskWaitingById);
 
-    browser.driver
+    await browser.driver
       .wait(() => {
         browser
           .wait(visibilityOfFirstTaskWaitingById, taskListTimeoutMS);
@@ -189,7 +189,7 @@ describe('Dashboard view', () => {
     const firstTaskWaitingById: ElementFinder = dashboard.firstTaskWaitingById(processModelId);
     const visibilityOfFirstTaskWaitingById: Function = expectedConditions.visibilityOf(firstTaskWaitingById);
 
-    browser.driver
+    await browser.driver
       .wait(() => {
         browser
           .wait(visibilityOfFirstTaskWaitingById, taskListTimeoutMS);
@@ -199,17 +199,17 @@ describe('Dashboard view', () => {
 
     await dashboard.continueTaskByClickOnButton(processModelId);
 
-    const userTasksInputUrl: string = processModel.userTasksInputUrl(processModelId);
+    const userTasksInputUrl: string = ProcessModel.userTasksInputUrl(processModelId);
     const currentBrowserUrl: string = await browser.getCurrentUrl();
 
     expect(currentBrowserUrl).toContain(userTasksInputUrl);
   });
 
-  it('should be possbible to click continue in an opened user task.', () => {
+  it('should be possible to click continue in an opened user task.', async() => {
     const firstTaskWaitingById: ElementFinder = dashboard.firstTaskWaitingById(processModelId);
     const visibilityOfFirstTaskWaitingById: Function = expectedConditions.visibilityOf(firstTaskWaitingById);
 
-    browser.driver
+    await browser.driver
       .wait(() => {
         browser
           .wait(visibilityOfFirstTaskWaitingById, taskListTimeoutMS);
@@ -217,13 +217,13 @@ describe('Dashboard view', () => {
         return firstTaskWaitingById;
       });
 
-    dashboard.continueTaskByClickOnButton(processModelId);
+    await dashboard.continueTaskByClickOnButton(processModelId);
 
     const dynamicUiWrapperContinueButton: ElementFinder = dashboard.dynamicUiWrapperContinueButton;
     const visibilityOfDynamicUiWrapperContinueButton: Function = expectedConditions.visibilityOf(dynamicUiWrapperContinueButton);
 
     // Wait until view is loaded and button is visible
-    browser.driver
+    await browser.driver
       .wait(() => {
         browser
           .wait(visibilityOfDynamicUiWrapperContinueButton, taskListTimeoutMS);
@@ -236,7 +236,7 @@ describe('Dashboard view', () => {
     const firstTaskWaitingById: ElementFinder = dashboard.firstTaskWaitingById(processModelId);
     const visibilityOfFirstTaskWaitingById: Function = expectedConditions.visibilityOf(firstTaskWaitingById);
 
-    browser.driver
+    await browser.driver
       .wait(() => {
         browser
           .wait(visibilityOfFirstTaskWaitingById, taskListTimeoutMS);
@@ -244,13 +244,13 @@ describe('Dashboard view', () => {
         return firstTaskWaitingById;
       });
 
-    dashboard.continueTaskByClickOnButton(processModelId);
+    await dashboard.continueTaskByClickOnButton(processModelId);
 
     const dynamicUiWrapperContinueButton: ElementFinder = dashboard.dynamicUiWrapperContinueButton;
     const visibilityOfDynamicUiWrapperContinueButton: Function = expectedConditions.visibilityOf(dynamicUiWrapperContinueButton);
 
     // Wait until view is loaded and button is visible
-    browser.driver
+    await browser.driver
       .wait(() => {
         browser
           .wait(visibilityOfDynamicUiWrapperContinueButton, taskListTimeoutMS);
@@ -258,10 +258,10 @@ describe('Dashboard view', () => {
         return dynamicUiWrapperContinueButton;
       });
 
-    await dashboard.continueUserTaskByClickOnDynamicUiWrapperContinuButton();
+    await dashboard.continueUserTaskByClickOnDynamicUiWrapperContinueButton();
 
     const correlationId: string = processModel.getCorrelationId();
-    const waitingRoomUrl: string = processModel.waitingroomUrl(processModelId, correlationId);
+    const waitingRoomUrl: string = ProcessModel.waitingroomUrl(processModelId, correlationId);
     const currentBrowserUrl: string = await browser.getCurrentUrl();
 
     // Should be in waiting room
@@ -271,7 +271,7 @@ describe('Dashboard view', () => {
     const urlContainsDashboardLink: Function = expectedConditions.urlContains(dashboardLink);
 
     // Should be in dashboard view
-    browser.driver
+    await browser.driver
     .wait(() => {
       browser
       .wait(urlContainsDashboardLink, taskListTimeoutMS);
