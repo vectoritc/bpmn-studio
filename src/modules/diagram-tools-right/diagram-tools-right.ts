@@ -1,5 +1,4 @@
-import {bindable, inject} from 'aurelia-framework';
-import environment from '../../environment';
+import {bindable, EventHandler, inject} from 'aurelia-framework';
 
 import * as spectrum from 'spectrum-colorpicker';
 import 'spectrum-colorpicker/spectrum';
@@ -11,9 +10,10 @@ import {defaultBpmnColors,
         IColorPickerColor,
         IColorPickerSettings,
         IEvent,
+        IEventFunction,
         IModdleElement,
-        IModeling,
-        IShape, NotificationType} from '../../contracts/index';
+        IModeling, IShape, NotificationType} from '../../contracts/index';
+import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
 @inject('NotificationService')
