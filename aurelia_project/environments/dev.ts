@@ -68,7 +68,6 @@ export default {
     diagramChange: 'diagram:change',
     processSolutionPanel: {
       toggleProcessSolutionExplorer: 'processSolutionPanel:processsolutionexplorer:toggle',
-      openProcessEngineIndexCard: 'processSolutionPanel:processEngineIndexCard:toggle',
     },
   },
   baseRoute: processEngineRoute,
