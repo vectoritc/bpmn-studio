@@ -49,7 +49,7 @@ export class DiagramToolsRight {
      * The ColorPicker should only be enabled, if the user selects a Diagram
      * Element inside a Collaboration.
      */
-    this.modeler.on('element.click', (event: IEvent) => {
+    this.modeler.on('selection.changed', (event: IEvent) => {
       const selectedElements: Array<IShape> = this._getSelectedElements();
       const userSelectedDiagramElement: boolean = selectedElements.length > 0;
 
