@@ -330,12 +330,9 @@ export class ProcessDefDetail {
 
     this.process = updatedProcessModel;
 
-    const navbarTitle: string = this.process.id;
     this
       ._eventAggregator
-      .publish(environment.events.navBar.updateProcess, navbarTitle);
-
-    this._eventAggregator.publish(environment.events.navBar.setProcessEngineIcon, true);
+      .publish(environment.events.navBar.updateProcess, this.process);
 
     return updatedProcessModel;
   }

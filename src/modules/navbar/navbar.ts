@@ -12,7 +12,11 @@ import {NotificationService} from '../notification/notification.service';
 export class NavBar {
 
   @bindable() public activeRouteName: string;
-  public process: IDiagram;
+
+  /**
+   * Todo: see below!
+   */
+  public process: any;
   public diagramInfo: HTMLElement;
   public dropdown: HTMLElement;
   public solutionExplorerIsActive: boolean = true;
@@ -29,6 +33,7 @@ export class NavBar {
   public disableDesignLink: boolean = false;
   public latestSource: string;
   public processOpenedFromProcessEngine: boolean = false;
+  public navbarTitle: string = '';
 
   private _router: Router;
   private _eventAggregator: EventAggregator;
@@ -64,21 +69,51 @@ export class NavBar {
         this.showTools = false;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.updateProcess, (process: IDiagram) => {
-        const processIdIsUndefined: boolean = process.id === undefined;
-
-        this.process = process;
-        this.latestSource = processIdIsUndefined ? 'file-system' : 'process-engine';
-        this.diagramContainsUnsavedChanges = false;
+      this._eventAggregator.subscribe(environment.events.navBar.updateProcess, (process: any) => {
 
         /**
-         * For some reason, the uri of the process is undefiend if the
-         * process is opened from the ProcessEngine.
-         * TODO: If this gets fixed, we have to check, if the uri starts
-         * with http in to check, if the diagram was opened from a
-         * connected ProcessEngine.
+         * TODO: The type which is passed with this event from the
+         * processdef-detail component is not IDiagram. Instead, it
+         * ProcessModel from the ProcessModelExecution
+         * namespace.
+         *
+         * This is not a problem, since initially the navbar only used the
+         * name of the passed process.
+         *
+         * But inside this PR: https://github.com/process-engine/bpmn-studio/pull/810
+         * the navbar used more then just the 'name' property from the
+         * passed process model.
+         *
+         * 'Luckily' (or unluckily, depends how you see it), both interfaces,
+         * IDiagram and ProcessModel share some properties. Because of this,
+         * this approach worked (typescript can't really check the
+         * correct types at run time since its transpiled to JavaScript).
+         *
+         * The approach to define the variable Process as both types
+         * is considered as a WORKAROUND to prevent some undefined
+         * behavior.
+         *
+         * Either the navbar or the processdef-detail needs a refactoring
+         * to prevent this issue!
+         *
+         * See https://github.com/process-engine/bpmn-studio/issues/962
+         * for more informations.
          */
-        this.processOpenedFromProcessEngine = (process.uri === undefined);
+        this.process = process;
+
+        const processIdIsUndefined: boolean = process.id === undefined;
+        this.latestSource = processIdIsUndefined ? 'file-system' : 'process-engine';
+
+        const latestSourceIsProcessEngine: boolean = this.latestSource === 'process-engine';
+
+        this.navbarTitle = (latestSourceIsProcessEngine)
+                                          ? this.process.id
+                                          : this.process.name;
+
+        this.processOpenedFromProcessEngine = latestSourceIsProcessEngine;
+        console.log(this.navbarTitle);
+
+        this.diagramContainsUnsavedChanges = false;
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.hideProcessName, () => {
