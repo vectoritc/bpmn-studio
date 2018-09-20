@@ -135,13 +135,14 @@
      * button class does not use important which is needed in this case
      * to override the existing properties, given by bpmn.io.
      */
-    color: darkgray !important;
+    color: #333 !important;
+    opacity: 0.5 !important;
   }
 
   .highlighted-entry,
   .entry:hover {
-    color: #5e5e5e !important;
-    opacity: 1;
+    color: #333 !important;
+    opacity: 1 !important;
   }
 
   .djs-palette-toggle {

@@ -39,23 +39,18 @@ a:hover {
 }
 
 .button {
-  color: darkgray;
+  color: #333;
+  opacity: 0.5;
 }
 
 .button:hover {
-  color: #5e5e5e;
+  opacity: 1;
 }
 
 .button--active {
-  color: #5e5e5e;
+  opacity: 1;
 }
 
 .button--disabled {
-  color: darkgray;
-  opacity: 0.1;
-}
-
-.button--disabled:hover {
-  color: darkgray;
   opacity: 0.1;
 }
