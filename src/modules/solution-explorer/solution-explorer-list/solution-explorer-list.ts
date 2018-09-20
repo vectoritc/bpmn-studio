@@ -213,10 +213,11 @@ export class SolutionExplorerList {
     return solutionIsNotOpenedFromRemote && solutionIsNotSingleDiagrams;
   }
 
-  private _canCloseSolution(service: ISolutionExplorerService): boolean {
+  private _canCloseSolution(service: ISolutionExplorerService, uri: string): boolean {
     const solutionIsNotSingleDiagrams: boolean = !this._isSingleDiagramService(service);
+    const solutionIsNotConnectedProcessEngine: boolean = !uri.startsWith('http');
 
-    return solutionIsNotSingleDiagrams;
+    return solutionIsNotSingleDiagrams && solutionIsNotConnectedProcessEngine;
   }
 
   private _isSingleDiagramService(service: ISolutionExplorerService): boolean {
@@ -253,7 +254,7 @@ export class SolutionExplorerList {
   private _addSolutionEntry(uri: string, service: ISolutionExplorerService, insertAtBeginning: boolean): void {
     const isSingleDiagramService: boolean = this._isSingleDiagramService(service);
     const fontAwesomeIconClass: string = this._getFontAwesomeIconForSolution(service, uri);
-    const canCloseSolution: boolean = this._canCloseSolution(service);
+    const canCloseSolution: boolean = this._canCloseSolution(service, uri);
     const canCreateNewDiagramsInSolution: boolean = this._canCreateNewDiagramsInSolution(service, uri);
 
     const entry: ISolutionEntry = {
