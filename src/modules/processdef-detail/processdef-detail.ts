@@ -335,6 +335,8 @@ export class ProcessDefDetail {
       ._eventAggregator
       .publish(environment.events.navBar.updateProcess, navbarTitle);
 
+    this._eventAggregator.publish(environment.events.navBar.setProcessEngineIcon, true);
+
     return updatedProcessModel;
   }
 

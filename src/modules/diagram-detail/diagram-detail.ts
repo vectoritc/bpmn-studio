@@ -73,13 +73,13 @@ export class DiagramDetail {
   }
 
   public attached(): void {
-    const navbarTitle: string = (this.diagram.id === undefined)
-                              ? (this.diagram.name)
-                              : (this.diagram.id);
-    this._eventAggregator.publish(environment.events.navBar.showTools, navbarTitle);
+
+    this._eventAggregator.publish(environment.events.navBar.showTools, this.diagram);
     this._eventAggregator.publish(environment.events.navBar.enableDiagramUploadButton);
     this._eventAggregator.publish(environment.events.navBar.disableStartButton);
     this._eventAggregator.publish(environment.events.navBar.showProcessName, this.diagram);
+    this._eventAggregator.publish(environment.events.navBar.setProcessEngineIcon, false);
+    this._eventAggregator.publish(environment.events.navBar.updateProcess, this.diagram.name);
 
     this._eventAggregator.publish(environment.events.statusBar.showDiagramViewButtons);
 

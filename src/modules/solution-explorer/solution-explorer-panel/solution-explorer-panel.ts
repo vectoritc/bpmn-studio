@@ -241,7 +241,7 @@ export class SolutionExplorerPanel {
 
       if (navigationSuccessful) {
         // TODO: This should be moved into the diagram-detail component.
-        this._eventAggregator.publish(environment.events.navBar.updateProcess, diagram);
+        this._eventAggregator.publish(environment.events.navBar.updateProcess, diagram.name);
       }
     }
   }
