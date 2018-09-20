@@ -4,7 +4,7 @@ import {RouteConfig, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {IEventFunction, NotificationType} from '../../contracts/index';
+import {NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
