@@ -61,7 +61,9 @@ export class HeatmapService implements IHeatmapService {
 
     const elementsForOverlays: Array<IShape> = this._getElementsForOverlays(elementRegistry);
     const activeTokenListArray: Array<Array<ActiveToken>> = await this._getActiveTokenListArray(elementsForOverlays);
+
     this._addShapeTypeToActiveToken(activeTokenListArray, elementsForOverlays);
+
     const elementsWithoutToken: Array<IShape> = this._getElementsWithoutToken(elementsForOverlays, activeTokenListArray);
 
     activeTokenListArray.forEach((activeTokenArray: Array<ActiveToken & { type: string }>) => {
@@ -160,8 +162,9 @@ export class HeatmapService implements IHeatmapService {
       }
 
       const shapeToColor: IShape = this._getShape(elementRegistry, elementToColor);
+      const flowNodeRuntimeIsGreaterThanExpected: boolean = elementToColor.medianRuntimeInMs > association.runtime_medianInMs;
 
-      if (elementToColor.medianRuntimeInMs > association.runtime_medianInMs) {
+      if (flowNodeRuntimeIsGreaterThanExpected) {
         this.colorElement(modeling, shapeToColor, defaultBpmnColors.red);
       } else {
         this.colorElement(modeling, shapeToColor, defaultBpmnColors.green);
@@ -190,6 +193,7 @@ export class HeatmapService implements IHeatmapService {
       const associationWithSameId: IFlowNodeAssociation = associations.find((association: IFlowNodeAssociation) => {
         return association.sourceId === information.flowNodeId;
       });
+
       return associationWithSameId;
     });
 
@@ -295,11 +299,9 @@ export class HeatmapService implements IHeatmapService {
         return activeTokenArray[0].flowNodeId === element.id;
       });
 
-      if (activeTokenForElement === undefined) {
-        return true;
-      } else {
-        return false;
-      }
+      const noActiveTokenForElement: boolean = activeTokenForElement === undefined;
+
+      return noActiveTokenForElement;
     });
 
     return elementsWithoutToken;

@@ -64,11 +64,10 @@ export class NavBar {
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.updateProcess, (process: IDiagram) => {
-        this.process = process;
-
         const processIdIsUndefined: boolean = process.id === undefined;
-        processIdIsUndefined ? this.latestSource = 'file-system' : this.latestSource = 'process-engine';
 
+        this.process = process;
+        this.latestSource = processIdIsUndefined ? 'file-system' : 'process-engine';
         this.diagramContainsUnsavedChanges = false;
       }),
 
@@ -204,17 +203,20 @@ export class NavBar {
 
   public navigateToDesigner(): void {
     const processIsUndefined: boolean = this.process === undefined;
+    const latestSourceIsPE: boolean = this.latestSource === 'process-engine';
+    const latestSourceIsFS: boolean = this.latestSource === 'file-system';
 
     if (processIsUndefined) {
       this._notificationService.showNotification(NotificationType.INFO, 'To open the designer, you must first select a diagram');
+
       return;
     }
 
-    if (this.latestSource === 'process-engine') {
+    if (latestSourceIsPE) {
       this._router.navigateToRoute('processdef-detail', {
         processModelId: this.process.id,
       });
-    } else if (this.latestSource === 'file-system') {
+    } else if (latestSourceIsFS) {
       this._router.navigateToRoute('diagram-detail', {
         diagramUri: this.process.uri,
       });

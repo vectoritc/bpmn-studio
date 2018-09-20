@@ -44,7 +44,11 @@ export class Inspect {
       id: this.processModelId,
     };
 
-    if (routeParameters.view === 'dashboard') {
+    const routeViewIsDashboard: boolean = routeParameters.view === 'dashboard';
+    const routeViewIsHeatmap: boolean = routeParameters.view === 'heatmap';
+    const routeLatestIsPE: boolean = routeParameters.latestSource === 'process-engine';
+
+    if (routeViewIsDashboard) {
       this.showHeatmap = false;
       this.showDashboard = true;
 
@@ -56,12 +60,12 @@ export class Inspect {
         }
       }, 0);
 
-      if (routeParameters.latestSource === 'process-engine') {
+      if (routeLatestIsPE) {
         this._eventAggregator.publish(environment.events.navBar.showInspectButtons);
         this._eventAggregator.publish(environment.events.navBar.disableDashboardAndEnableHeatmapButton);
         this._eventAggregator.publish(environment.events.navBar.showProcessName, process);
       }
-    } else if (routeParameters.view === 'heatmap') {
+    } else if (routeViewIsHeatmap) {
       this._eventAggregator.publish(environment.events.navBar.showInspectButtons);
       this._eventAggregator.publish(environment.events.navBar.disableHeatmapAndEnableDashboardButton);
       this._eventAggregator.publish(environment.events.navBar.showProcessName, process);

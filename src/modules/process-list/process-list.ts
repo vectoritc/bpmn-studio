@@ -50,7 +50,9 @@ export class ProcessList {
   }
 
   public async currentPageChanged(newValue: number, oldValue: number): Promise<void> {
-    if (oldValue !== undefined && oldValue !== null) {
+    const oldValueIsDefined: boolean = oldValue !== undefined && oldValue !== null;
+
+    if (oldValueIsDefined) {
       this._initializeGetProcesses();
       await this.updateProcesses();
       this.updateList();
