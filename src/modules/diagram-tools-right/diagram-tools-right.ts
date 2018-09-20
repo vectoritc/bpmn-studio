@@ -21,6 +21,7 @@ export class DiagramToolsRight {
 
   @bindable()
   public modeler: IBpmnModeler;
+  public colorSelectionDropdownToggle: HTMLElement;
 
   public distributeElementsEnabled: boolean;
   public colorPickerEnabled: boolean = true;
@@ -29,6 +30,8 @@ export class DiagramToolsRight {
   public colorPickerLoaded: boolean = false;
   public fillColor: string;
   public borderColor: string;
+
+  private _preventColorSelectionFromHiding: boolean;
 
   private _notificationService: NotificationService;
 
@@ -119,6 +122,8 @@ export class DiagramToolsRight {
 
     $(this.colorPickerFill).spectrum('set', this.fillColor);
     $(this.colorPickerBorder).spectrum('set', this.borderColor);
+
+    document.addEventListener('click', this.colorSelectionDropdownClickListener);
   }
 
   public distributeElementsVertically(): void {
@@ -248,6 +253,19 @@ export class DiagramToolsRight {
 
     $(this.colorPickerFill).spectrum(colorPickerFillSettings);
 
+    const changeColorSelectionHiding: (event: JQueryEventObject) => void = (event: Event): void => {
+        const isDragStartEvent: boolean = event.type === 'dragstart';
+
+        this._preventColorSelectionFromHiding = isDragStartEvent;
+      };
+
+    // This is used to prevent the color selection dropdown from hiding when a colorpicker is still visible
+    $(this.colorPickerFill).on('dragstart.spectrum', changeColorSelectionHiding); // true
+    $(this.colorPickerBorder).on('dragstart.spectrum', changeColorSelectionHiding); // true
+
+    $(this.colorPickerFill).on('dragstop.spectrum', changeColorSelectionHiding); // fakse
+    $(this.colorPickerBorder).on('dragstop.spectrum', changeColorSelectionHiding); // false
+
     this.colorPickerLoaded = true;
   }
 
@@ -273,5 +291,13 @@ export class DiagramToolsRight {
 
   private _getSelectedElements(): Array<IShape> {
     return this.modeler.get('selection')._selectedElements;
+  }
+
+  public colorSelectionDropdownClickListener: IEventFunction =  (): void => {
+    if (this._preventColorSelectionFromHiding) {
+      this.colorSelectionDropdownToggle.className += ' open';
+    } else {
+      document.removeEventListener('click', this.colorSelectionDropdownClickListener);
+    }
   }
 }
