@@ -1,10 +1,11 @@
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
 
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
+
 import {Dashboard} from '../dashboard/dashboard';
 import {Heatmap} from '../heatmap/heatmap';
 
-import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import environment from '../../environment';
 
 export interface IInspectRouteParameters {

@@ -11,9 +11,7 @@ import {
   ManagementContext,
 } from '@process-engine/management_api_contracts';
 
-import {
-  IAuthenticationService, NotificationType,
-} from '../../contracts/index';
+import {IAuthenticationService, NotificationType} from '../../contracts/index';
 import {NotificationService} from '../notification/notification.service';
 
 @inject('ManagementApiClientService', 'NotificationService', 'AuthenticationService', Router)

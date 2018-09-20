@@ -1,13 +1,13 @@
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
 
-import {IBpmnModeler, IElementRegistry, IOverlay} from '../../contracts/index';
-import {IFlowNodeAssociation, IHeatmapService} from './contracts';
-
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
-import {ActiveToken, FlowNodeRuntimeInformation} from '@process-engine/kpi_api_contracts';
+import {FlowNodeRuntimeInformation} from '@process-engine/kpi_api_contracts';
 import {ProcessModelExecution} from '@process-engine/management_api_contracts';
+
+import {IBpmnModeler, IElementRegistry, IOverlay} from '../../contracts/index';
 import environment from '../../environment';
+import {IFlowNodeAssociation, IHeatmapService} from './contracts';
 
 interface RouteParameters {
   processModelId: string;
