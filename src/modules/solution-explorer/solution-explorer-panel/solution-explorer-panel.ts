@@ -84,11 +84,15 @@ export class SolutionExplorerPanel {
   }
 
   public detached(): void {
+    if (this.canReadFromFileSystem()) {
+
+      this._removeElectronFileOpeningHooks();
+      document.removeEventListener('drop', this._openDiagramOnDropBehaviour);
+    }
+
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
-
-    document.removeEventListener('drop', this._openDiagramOnDropBehaviour);
   }
 
   /**
@@ -145,16 +149,17 @@ export class SolutionExplorerPanel {
     }
   }
 
+  private _electronFileOpeningHook = async(_: Event, pathToFile: string): Promise<void> => {
+    const uri: string = pathToFile;
+    this._openSingleDiagramOrDisplyError(uri);
+  }
+
   private _registerElectronFileOpeningHooks(): void {
     // TODO: Add typings
     const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
 
     // Register handler for double-click event fired from "electron.js".
-    ipcRenderer.on('double-click-on-file',
-      async(_: Event, pathToFile: string): Promise<void> => {
-        const uri: string = pathToFile;
-        this._openSingleDiagramOrDisplyError(uri);
-      });
+    ipcRenderer.on('double-click-on-file', this._electronFileOpeningHook);
 
     // Send event to signal the component is ready to handle the event.
     ipcRenderer.send('waiting-for-double-file-click');
@@ -167,6 +172,14 @@ export class SolutionExplorerPanel {
       const uri: string = fileInfo.path;
       this._openSingleDiagramOrDisplyError(uri);
     }
+  }
+
+  private _removeElectronFileOpeningHooks(): void {
+    // TODO: Add typings
+    const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
+
+    // Register handler for double-click event fired from "electron.js".
+    ipcRenderer.removeListener('double-click-on-file', this._electronFileOpeningHook);
   }
 
   private _openDiagramOnDropBehaviour: EventListener = async(event: DragEvent): Promise<void> => {
