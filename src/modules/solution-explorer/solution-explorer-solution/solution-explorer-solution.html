@@ -1,0 +1,63 @@
+<template>
+  <require from="./solution-explorer-solution.css"></require>
+
+  <div class="solution-explorer-solution">
+
+    <div class="solution-loading" if.bind="solutionIsNotLoaded">
+      <i class="fa fa-spinner fa-spin"></i>
+    </div>
+   
+    <ul class="diagram-list">
+
+      <li if.bind="_diagramCreationState.isCreateDiagramInputShown" class="diagram-create">
+        <div class="diagram-create__input-holder">
+          <input ref="createNewDiagramInput" class="diagram-create__input-holder__input ${hasDiagramCreationErrors ? 'diagram-create__input-holder__input--error' : ''}" type="text" value.bind="_diagramCreationState.currentDiagramInputValue & validateOnChange">
+        </div>
+        <ul if.bind="hasDiagramCreationErrors" class="diagram-create__errors">
+          <li repeat.for="error of diagramCreationErrors" class="diagram-create__errors__error">${error.message}</li>
+        </ul>
+      </li>
+
+      <li
+        repeat.for="diagram of openedDiagrams"
+        class="diagram-entry"
+        title="${diagram.name}"
+        click.delegate="navigateToDetailView(diagram)">
+
+        <i if.bind="shouldFileIconBeShown()" class="diagram-entry__icon fa fa-cogs"></i>
+        <span class="diagram-entry__name">
+          ${diagram.name}
+        </span>
+        
+        <div class="diagram-entry__actions">
+          <button
+            if.bind="canRenameDiagram()"
+            click.delegate="alert()"
+            title="Rename the diagram">
+            
+            <i class="fa fa-pencil-alt"></i>
+          </button>
+
+          <button
+            if.bind="solutionIsSingleDiagrams"
+            click.delegate="closeDiagram(diagram)"
+            title="Close the diagram">
+
+            <i class="fa fa-times"></i>
+          </button>
+
+          <button
+            if.bind="canDeleteDiagram()"
+            click.delegate="alert()"
+            title="Delete the diagram">
+
+            <i class="fa fa-trash"></i>
+          </button>
+        </div>
+
+      </li>
+
+    </ul>
+  </div>
+
+</template>
