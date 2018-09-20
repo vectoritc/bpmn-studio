@@ -260,11 +260,11 @@ export class DiagramToolsRight {
       };
 
     // This is used to prevent the color selection dropdown from hiding when a colorpicker is still visible
-    $(this.colorPickerFill).on('dragstart.spectrum', changeColorSelectionHiding); // true
-    $(this.colorPickerBorder).on('dragstart.spectrum', changeColorSelectionHiding); // true
+    $(this.colorPickerFill).on('dragstart.spectrum', changeColorSelectionHiding);
+    $(this.colorPickerBorder).on('dragstart.spectrum', changeColorSelectionHiding);
 
-    $(this.colorPickerFill).on('dragstop.spectrum', changeColorSelectionHiding); // fakse
-    $(this.colorPickerBorder).on('dragstop.spectrum', changeColorSelectionHiding); // false
+    $(this.colorPickerFill).on('dragstop.spectrum', changeColorSelectionHiding);
+    $(this.colorPickerBorder).on('dragstop.spectrum', changeColorSelectionHiding);
 
     this.colorPickerLoaded = true;
   }
