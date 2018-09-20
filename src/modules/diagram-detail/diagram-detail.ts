@@ -198,7 +198,6 @@ export class DiagramDetail {
 
       // Since a new processmodel was uploaded, we need to refresh any processmodel lists.
       this._eventAggregator.publish(environment.events.refreshProcessDefs);
-      this._eventAggregator.publish(environment.events.processSolutionPanel.openProcessEngineIndexCard);
 
       this._router.navigateToRoute('processdef-detail', {
         processModelId: processModelId,
