@@ -45,11 +45,14 @@ export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerS
    */
   public getOpenedDiagramByURI(uri: string): IDiagram | null {
     const indexOfDiagram: number = this._findOfDiagramWithURI(uri);
-    if (indexOfDiagram < 0) {
+
+    const diagramWasNotFound: boolean = indexOfDiagram < 0;
+    if (diagramWasNotFound) {
       return null;
     }
 
     const diagramWithURI: IDiagram = this._openedDiagrams[indexOfDiagram];
+
     return diagramWithURI;
   }
 

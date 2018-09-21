@@ -147,7 +147,9 @@ export class SolutionExplorerPanel {
     } catch (error) {
       // The diagram may already be opened.
       const diagram: IDiagram | null = await this.solutionExplorerList.getOpenedSingleDiagramByURI(uri);
-      if (diagram !== null) {
+
+      const diagramWithURIIsAlreadyOpened: boolean = diagram !== null;
+      if (diagramWithURIIsAlreadyOpened) {
         return this._navigateToDetailView(diagram);
       }
 
