@@ -13,6 +13,7 @@ interface INavbarProcessInformation {
   name?: string;
   uri?: string;
 }
+
 @inject(Router, EventAggregator, 'NotificationService')
 export class NavBar {
 
