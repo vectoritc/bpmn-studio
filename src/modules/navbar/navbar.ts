@@ -67,6 +67,10 @@ export class NavBar {
 
       this._eventAggregator.subscribe(environment.events.navBar.showProcessName, (process: INavbarProcessInformation) => {
         this.showProcessName = true;
+
+        /**
+         * TODO: See below
+         */
         this.process = process;
 
         this._updateNavbarTitle();
