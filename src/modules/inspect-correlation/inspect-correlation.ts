@@ -79,7 +79,6 @@ export class InspectCorrelation {
   }
 
   public async processModelIdChanged(): Promise<void> {
-    console.log('test');
     this.correlations = await this._inspectCorrelationService.getAllCorrelationsForProcessModelId(this.processModelId);
   }
 
