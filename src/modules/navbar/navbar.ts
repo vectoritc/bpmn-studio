@@ -334,6 +334,5 @@ export class NavBar {
                                       : this.process.name;
 
     this.processOpenedFromProcessEngine = latestSourceIsProcessEngine;
-    console.log('new navbar title: ' + this.navbarTitle);
   }
 }
