@@ -48,5 +48,4 @@ export class SolutionExplorer {
 
     return solutionExplorerListItemsId.click();
   }
-
 }
