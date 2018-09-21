@@ -242,9 +242,6 @@ export class ProcessSolutionPanel {
       this._eventAggregator.subscribe(environment.events.refreshProcessDefs, () => {
         this._refreshProcesslist();
       }),
-      this._eventAggregator.subscribe(environment.events.processSolutionPanel.openProcessEngineIndexCard, () => {
-        this.openProcessEngineIndexCard();
-      }),
     ];
   }
 
@@ -323,11 +320,6 @@ export class ProcessSolutionPanel {
   public openFileSystemIndexCard(): void {
     this.fileSystemIndexCardIsActive = true;
     this.processEngineIndexCardIsActive = false;
-  }
-
-  public openProcessEngineIndexCard(): void {
-    this.fileSystemIndexCardIsActive = false;
-    this.processEngineIndexCardIsActive = true;
   }
 
   public async refreshSolutions(): Promise<void> {
