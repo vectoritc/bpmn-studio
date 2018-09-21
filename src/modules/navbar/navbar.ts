@@ -32,6 +32,7 @@ export class NavBar {
   public disableDiagramUploadButton: boolean = true;
   public disableHeatmapButton: boolean = true;
   public disableDashboardButton: boolean = false;
+  public disableInspectCorrelationButton: boolean = false;
   public diagramContainsUnsavedChanges: boolean = false;
   public inspectView: string = 'dashboard';
   public disableDesignLink: boolean = false;
@@ -156,15 +157,23 @@ export class NavBar {
         this.showInspectTools = false;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.disableHeatmapAndEnableDashboardButton, () => {
+      this._eventAggregator.subscribe(environment.events.navBar.toggleHeatmapView, () => {
         this.disableHeatmapButton = true;
         this.disableDashboardButton = false;
+        this.disableInspectCorrelationButton = false;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.disableDashboardAndEnableHeatmapButton, () => {
+      this._eventAggregator.subscribe(environment.events.navBar.toggleDashboardView, () => {
         this.disableHeatmapButton = false;
         this.disableDashboardButton = true;
-      }), ,
+        this.disableInspectCorrelationButton = false;
+      }),
+
+      this._eventAggregator.subscribe(environment.events.navBar.toggleInspectCorrelationView, () => {
+        this.disableHeatmapButton = false;
+        this.disableDashboardButton = false;
+        this.disableInspectCorrelationButton = true;
+      }),
     ];
   }
 
@@ -197,6 +206,7 @@ export class NavBar {
   public showDashboard(): void {
     this.disableDashboardButton = true;
     this.disableHeatmapButton = false;
+    this.disableInspectCorrelationButton = false;
 
     this._router.navigateToRoute('inspect', {
       processModelId: this.process.id,
@@ -210,6 +220,7 @@ export class NavBar {
   public showHeatmap(): void {
     this.disableHeatmapButton = true;
     this.disableDashboardButton = false;
+    this.disableInspectCorrelationButton = false;
 
     this._router.navigateToRoute('inspect', {
       processModelId: this.process.id,
@@ -218,6 +229,20 @@ export class NavBar {
     });
 
     this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToHeatmap, 'heatmap');
+  }
+
+  public showInspectCorrelation(): void {
+    this.disableHeatmapButton = false;
+    this.disableDashboardButton = false;
+    this.disableInspectCorrelationButton = true;
+
+    this._router.navigateToRoute('inspect', {
+      processModelId: this.process.id,
+      view: 'inspect-correlation',
+      latestSource: this.latestSource,
+    });
+
+    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToHeatmap, 'inspect-correlation');
   }
 
   public navigateToInspect(): void {

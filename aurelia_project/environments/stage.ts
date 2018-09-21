@@ -58,8 +58,9 @@ export default {
       inspectNavigateToDashboard: 'navbar:inspectLink:navigateToDashboard',
       showInspectButtons: 'navbar:tools:showButtonsOnInspect',
       hideInspectButtons: 'navbar:tools:hideButtonsOnInspect',
-      disableHeatmapAndEnableDashboardButton: 'navbar:tools:inspectButtons:disableHeatmapEnableDashboard',
-      disableDashboardAndEnableHeatmapButton: 'navbar:tools:inspectButtons:disableDashboardEnableHeatmap',
+      toggleDashboardView: 'navbar:tools:inspectButtons:toggleDashboardView',
+      toggleHeatmapView: 'navbar:tools:inspectButtons:toggleHeatmapView',
+      toggleInspectCorrelationView: 'navbar:tools:inspectButtons:toggleInspectCorrelationView',
     },
     processDefDetail: {
       printDiagram: 'processdefdetail:diagram:print',

@@ -18,6 +18,7 @@ export class Inspect {
   @bindable() public processModelId: string;
   public showHeatmap: boolean = false;
   @bindable() public showDashboard: boolean = true;
+  public showInspectCorrelation: boolean = false;
   public dashboard: Dashboard;
 
   private _eventAggregator: EventAggregator;
@@ -43,11 +44,13 @@ export class Inspect {
 
     const routeViewIsDashboard: boolean = routeParameters.view === 'dashboard';
     const routeViewIsHeatmap: boolean = routeParameters.view === 'heatmap';
-    const routeLatestIsPE: boolean = routeParameters.latestSource === 'process-engine';
+    const routeViewIsInspectCorrelation: boolean = routeParameters.view === 'inspect-correlation';
+    const latestSourceIsPE: boolean = routeParameters.latestSource === 'process-engine';
 
     if (routeViewIsDashboard) {
       this.showHeatmap = false;
       this.showDashboard = true;
+      this.showInspectCorrelation = false;
 
       setTimeout(() => {
         const dashboardIsAttached: boolean = this.dashboard !== undefined;
@@ -57,18 +60,26 @@ export class Inspect {
         }
       }, 0);
 
-      if (routeLatestIsPE) {
+      if (latestSourceIsPE) {
         this._eventAggregator.publish(environment.events.navBar.showInspectButtons);
-        this._eventAggregator.publish(environment.events.navBar.disableDashboardAndEnableHeatmapButton);
+        this._eventAggregator.publish(environment.events.navBar.toggleDashboardView);
         this._eventAggregator.publish(environment.events.navBar.showProcessName, process);
       }
     } else if (routeViewIsHeatmap) {
       this._eventAggregator.publish(environment.events.navBar.showInspectButtons);
-      this._eventAggregator.publish(environment.events.navBar.disableHeatmapAndEnableDashboardButton);
+      this._eventAggregator.publish(environment.events.navBar.toggleHeatmapView);
       this._eventAggregator.publish(environment.events.navBar.showProcessName, process);
 
       this.showDashboard = false;
       this.showHeatmap = true;
+      this.showInspectCorrelation = false;
+    } else if (routeViewIsInspectCorrelation) {
+      this._eventAggregator.publish(environment.events.navBar.showInspectButtons);
+      this._eventAggregator.publish(environment.events.navBar.toggleInspectCorrelationView);
+
+      this.showDashboard = false;
+      this.showHeatmap = false;
+      this.showInspectCorrelation = true;
     }
 
   }

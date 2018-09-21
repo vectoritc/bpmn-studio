@@ -13,6 +13,7 @@ interface RouteParameters {
 
 @inject('InspectCorrelationService', EventAggregator)
 export class InspectCorrelation {
+  @bindable() public processModelId: string;
   @bindable() public selectedCorrelation: Correlation;
   @bindable() public inspectPanelFullscreen: boolean = false;
   @observable public bottomPanelHeight: number = 250;
@@ -26,7 +27,6 @@ export class InspectCorrelation {
   private _inspectCorrelationService: IInspectCorrelationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
-  private _processModelId: string;
   private _statusBarHeight: number = 20;
   private _minInspectPanelHeight: number = 250;
 
@@ -38,14 +38,12 @@ export class InspectCorrelation {
   }
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
-    this._processModelId = routeParameters.processModelId;
-
-    this.correlations = await this._inspectCorrelationService.getAllCorrelationsForProcessModelId(this._processModelId);
+    this.processModelId = routeParameters.processModelId;
   }
 
   public attached(): void {
     this._eventAggregator.publish(environment.events.statusBar.showInspectViewButtons, true);
-    this._eventAggregator.publish(environment.events.navBar.updateProcessName, this._processModelId);
+    this._eventAggregator.publish(environment.events.navBar.updateProcessName, this.processModelId);
 
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.inspectView.showInspectPanel, (showInspectPanel: boolean) => {
@@ -78,6 +76,11 @@ export class InspectCorrelation {
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
+  }
+
+  public async processModelIdChanged(): Promise<void> {
+    console.log('test');
+    this.correlations = await this._inspectCorrelationService.getAllCorrelationsForProcessModelId(this.processModelId);
   }
 
   public resize(mouseEvent: MouseEvent): void {
