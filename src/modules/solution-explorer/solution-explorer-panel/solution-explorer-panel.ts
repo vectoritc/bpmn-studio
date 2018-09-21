@@ -145,6 +145,12 @@ export class SolutionExplorerPanel {
       await this._navigateToDetailView(openedDiagram);
 
     } catch (error) {
+      // The diagram may already be opened.
+      const diagram: IDiagram | null = await this.solutionExplorerList.getOpenedSingleDiagramByURI(uri);
+      if (diagram !== null) {
+        return this._navigateToDetailView(diagram);
+      }
+
       this._notificationService.showNotification(NotificationType.ERROR, error.message);
     }
   }
