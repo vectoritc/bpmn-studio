@@ -29,7 +29,9 @@ export class Inspect {
 
   public activate(routeParameters: IInspectRouteParameters): void {
 
-    const noRouteParameters: boolean = routeParameters.processModelId === undefined || routeParameters.view === undefined;
+    const noRouteParameters: boolean = routeParameters.processModelId === undefined
+                                    || routeParameters.view === undefined;
+
     if (noRouteParameters) {
       return;
     }
