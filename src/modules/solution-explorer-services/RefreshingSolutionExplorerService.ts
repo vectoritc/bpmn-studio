@@ -6,7 +6,7 @@ import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
 import {IAuthenticationService} from '../../contracts';
-import {AuthenticationStateEvent} from '../../contracts';
+import {AuthenticationStateEvent} from '../../contracts/index';
 import environment from '../../environment';
 
 /**
