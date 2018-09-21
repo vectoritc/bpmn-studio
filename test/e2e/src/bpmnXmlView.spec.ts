@@ -8,7 +8,7 @@ import {
 import {BpmnIo} from './pages/bpmn-io';
 import {BpmnXmlView} from './pages/bpmnXmlView';
 import {General} from './pages/general';
-import {NavBar} from './pages/navbar';
+import {NavBar} from './pages/navBar';
 import {ProcessModel} from './pages/processModel';
 import {SolutionExplorer} from './pages/solutionExplorer';
 import {StatusBar} from './pages/statusBar';
@@ -45,12 +45,12 @@ describe('bpmn-io XML view', () => {
     processModel.postProcessModelWithUserTask(processModelId);
   });
 
-  beforeEach(() => {
+  beforeEach(async() => {
     const getRouterViewContainer: ElementFinder = general.getRouterViewContainer;
     const visibilityOfRouterViewContainer: Function = expectedConditions.visibilityOf(getRouterViewContainer);
 
-    browser.get(aureliaUrl);
-    browser.driver
+    await browser.get(aureliaUrl);
+    await browser.driver
       .wait(() => {
         browser.wait(visibilityOfRouterViewContainer, defaultTimeoutMS);
 
@@ -58,14 +58,14 @@ describe('bpmn-io XML view', () => {
       });
 
     // You have to open the solution explorer before clicking on a link
-    navBar.openSolutionExplorerByButtonClick();
-    solutionExplorer.openProcessModelByClick(processModelId);
+    await navBar.openSolutionExplorerByButtonClick();
+    await solutionExplorer.openProcessModelByClick(processModelId);
 
     const bpmnIoTag: ElementFinder = bpmnIo.bpmnIoTag;
     const visibilityOfBpmnIoTag: Function = expectedConditions.visibilityOf(bpmnIoTag);
 
     // Wait until the diagram is loaded
-    browser.driver
+    await browser.driver
       .wait(() => {
         browser.wait(visibilityOfBpmnIoTag, defaultTimeoutMS);
 
@@ -80,11 +80,11 @@ describe('bpmn-io XML view', () => {
     expect(statusBarXMLViewButtonIsDisplayed).toBeTruthy();
   });
 
-  it('should be possbile to open xml view when click on `Show XML` button.', async() => {
+  it('should be possible to open xml view when click on `Show XML` button.', async() => {
     const statusBarXMLViewButton: ElementFinder = statusBar.statusBarXMLViewButton;
     const bpmnXmlViewTag: ElementFinder = bpmnXmlView.bpmnXmlViewTag;
 
-    await bpmnXmlView.openXMLViewByClickOnButton(statusBarXMLViewButton);
+    await BpmnXmlView.openXMLViewByClickOnButton(statusBarXMLViewButton);
 
     const xmlViewIsDisplayed: boolean = await bpmnXmlViewTag.isDisplayed();
 

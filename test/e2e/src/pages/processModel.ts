@@ -14,8 +14,24 @@ export class ProcessModel {
   // Define Elements
 
   // Define Functions
-  public getProcessModelLink(): string {
+  public static getProcessModelLink(): string {
     return '/processdef';
+  }
+
+  public static processModelUrl(processModel: string): string {
+    return '/processdef/' + processModel + '/detail';
+  }
+
+  public static userTasksUrl(processModel: string): string {
+    return '/processdef/' + processModel + '/task';
+  }
+
+  public static userTasksInputUrl(processModel: string): string {
+    return '/processdef/' + processModel + '/task/Task_0k8m2if/dynamic-ui';
+  }
+
+  public static waitingroomUrl(processModelId: string, correlationId: string): string {
+    return '/waitingroom/' + correlationId + '/' + processModelId;
   }
 
   public getProcessModelId(): string {
@@ -24,22 +40,6 @@ export class ProcessModel {
 
   public getCorrelationId(): string {
     return this._correlationId;
-  }
-
-  public processModelUrl(processModel: string): string {
-    return '/processdef/' + processModel + '/detail';
-  }
-
-  public userTasksUrl(processModel: string): string {
-    return '/processdef/' + processModel + '/task';
-  }
-
-  public userTasksInputUrl(processModel: string): string {
-    return '/processdef/' + processModel + '/task/Task_0k8m2if/dynamic-ui';
-  }
-
-  public waitingroomUrl(processModelId: string, correlationId: string): string {
-    return '/waitingroom/' + correlationId + '/' + processModelId;
   }
 
   public postProcessModel(processModel?: string): void {

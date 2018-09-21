@@ -16,17 +16,17 @@ export class ProcessDefListPage {
   public processDefinitionListItem: ElementFinder = this.processDefinitionListItems.first();
 
   // Define Functions
+  public static processModelDiagram(processModelId: string): ElementFinder {
+    const id: string = `processDef-${processModelId}`;
+    const byId: By = by.id(id);
+
+    return element(byId);
+  }
+
   public processDefinitionListItemIds(processModelId: string): ElementArrayFinder {
     const id: string = `processDef-${processModelId}`;
     const byId: By = by.id(id);
 
     return this.processDefinitionListItems.all(byId);
-  }
-
-  public processModellDiagram(processModelId: string): ElementFinder {
-    const id: string = `processDef-${processModelId}`;
-    const byId: By = by.id(id);
-
-    return element(byId);
   }
 }

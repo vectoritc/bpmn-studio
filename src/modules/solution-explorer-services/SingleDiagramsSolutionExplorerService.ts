@@ -39,6 +39,23 @@ export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerS
     return this._openedDiagrams;
   }
 
+  /**
+   * Gets the single diagram with the given uri, if the diagram was opened
+   * before.
+   */
+  public getOpenedDiagramByURI(uri: string): IDiagram | null {
+    const indexOfDiagram: number = this._findOfDiagramWithURI(uri);
+
+    const diagramWasNotFound: boolean = indexOfDiagram < 0;
+    if (diagramWasNotFound) {
+      return null;
+    }
+
+    const diagramWithURI: IDiagram = this._openedDiagrams[indexOfDiagram];
+
+    return diagramWithURI;
+  }
+
   public openSolution(pathspec: string, identity: IIdentity): Promise<void> {
     return Promise.resolve();
   }

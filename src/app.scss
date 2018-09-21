@@ -24,7 +24,8 @@ a:hover {
 
 .bpmn-studio-layout__content {
   display: flex;
-  height: 100%;
+  // The height of the navbar must be subtracted in order to get the total height for the content.
+  max-height: calc(100% - 42px);
   flex: 1;
   align-items: stretch;
 }
