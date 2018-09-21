@@ -252,6 +252,13 @@ export class NavBar {
     });
   }
 
+  // Todo: This needs to be done on a different way
+  public navigateToInspectCorrelation(): void {
+    this._router.navigateToRoute('inspect-correlation', {
+      processModelId: this.process.id,
+    });
+  }
+
   public navigateToDesigner(): void {
     const processIsUndefined: boolean = this.process === undefined;
     const latestSourceIsPE: boolean = this.latestSource === 'process-engine';
