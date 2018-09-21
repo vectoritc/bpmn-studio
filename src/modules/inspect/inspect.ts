@@ -3,10 +3,8 @@ import {bindable, inject} from 'aurelia-framework';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {Dashboard} from '../dashboard/dashboard';
-import {Heatmap} from '../heatmap/heatmap';
-
 import environment from '../../environment';
+import {Dashboard} from '../dashboard/dashboard';
 
 export interface IInspectRouteParameters {
   processModelId?: string;
@@ -20,7 +18,6 @@ export class Inspect {
   @bindable() public processModelId: string;
   public showHeatmap: boolean = false;
   @bindable() public showDashboard: boolean = true;
-  public heatmap: Heatmap;
   public dashboard: Dashboard;
 
   private _eventAggregator: EventAggregator;
