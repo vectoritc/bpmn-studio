@@ -1,5 +1,4 @@
-import {bindable, inject} from 'aurelia-framework';
-import environment from '../../environment';
+import {bindable, EventHandler, inject} from 'aurelia-framework';
 
 import * as spectrum from 'spectrum-colorpicker';
 import 'spectrum-colorpicker/spectrum';
@@ -11,9 +10,10 @@ import {defaultBpmnColors,
         IColorPickerColor,
         IColorPickerSettings,
         IEvent,
+        IEventFunction,
         IModdleElement,
-        IModeling,
-        IShape, NotificationType} from '../../contracts/index';
+        IModeling, IShape, NotificationType} from '../../contracts/index';
+import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
 @inject('NotificationService')
@@ -21,6 +21,7 @@ export class DiagramToolsRight {
 
   @bindable()
   public modeler: IBpmnModeler;
+  public colorSelectionDropdownToggle: HTMLElement;
 
   public distributeElementsEnabled: boolean;
   public colorPickerEnabled: boolean = true;
@@ -29,6 +30,8 @@ export class DiagramToolsRight {
   public colorPickerLoaded: boolean = false;
   public fillColor: string;
   public borderColor: string;
+
+  private _preventColorSelectionFromHiding: boolean;
 
   private _notificationService: NotificationService;
 
@@ -119,6 +122,8 @@ export class DiagramToolsRight {
 
     $(this.colorPickerFill).spectrum('set', this.fillColor);
     $(this.colorPickerBorder).spectrum('set', this.borderColor);
+
+    document.addEventListener('click', this.colorSelectionDropdownClickListener);
   }
 
   public distributeElementsVertically(): void {
@@ -248,6 +253,19 @@ export class DiagramToolsRight {
 
     $(this.colorPickerFill).spectrum(colorPickerFillSettings);
 
+    const changeColorSelectionHiding: (event: JQueryEventObject) => void = (event: Event): void => {
+        const isDragStartEvent: boolean = event.type === 'dragstart';
+
+        this._preventColorSelectionFromHiding = isDragStartEvent;
+      };
+
+    // This is used to prevent the color selection dropdown from hiding when a colorpicker is still visible
+    $(this.colorPickerFill).on('dragstart.spectrum', changeColorSelectionHiding);
+    $(this.colorPickerBorder).on('dragstart.spectrum', changeColorSelectionHiding);
+
+    $(this.colorPickerFill).on('dragstop.spectrum', changeColorSelectionHiding);
+    $(this.colorPickerBorder).on('dragstop.spectrum', changeColorSelectionHiding);
+
     this.colorPickerLoaded = true;
   }
 
@@ -273,5 +291,13 @@ export class DiagramToolsRight {
 
   private _getSelectedElements(): Array<IShape> {
     return this.modeler.get('selection')._selectedElements;
+  }
+
+  public colorSelectionDropdownClickListener: IEventFunction =  (): void => {
+    if (this._preventColorSelectionFromHiding) {
+      this.colorSelectionDropdownToggle.classList.add('open');
+    } else {
+      document.removeEventListener('click', this.colorSelectionDropdownClickListener);
+    }
   }
 }
