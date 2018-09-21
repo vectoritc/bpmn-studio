@@ -61,11 +61,11 @@ export class NavBar {
         this._dertermineActiveRoute();
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.showTools, (process: IDiagram) => {
+      this._eventAggregator.subscribe(environment.events.navBar.showTools, (process: INavbarProcessInformation) => {
         this.showTools = true;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.showProcessName, (process: IDiagram) => {
+      this._eventAggregator.subscribe(environment.events.navBar.showProcessName, (process: INavbarProcessInformation) => {
         this.showProcessName = true;
         this.process = process;
 
