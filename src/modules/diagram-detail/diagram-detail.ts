@@ -151,7 +151,6 @@ export class DiagramDetail {
     this._eventAggregator.publish(environment.events.navBar.noValidationError);
     this._eventAggregator.publish(environment.events.navBar.disableDiagramUploadButton);
 
-    this._eventAggregator.publish(environment.events.navBar.clearProcessData);
     this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
   }
 

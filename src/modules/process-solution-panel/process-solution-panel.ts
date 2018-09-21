@@ -252,7 +252,6 @@ export class ProcessSolutionPanel {
 
     window.localStorage.setItem('processSolutionExplorerHideState', 'hide');
     document.removeEventListener('drop', this._dropBehaviour);
-    this._eventAggregator.publish(environment.events.navBar.clearProcessData);
   }
 
   /**

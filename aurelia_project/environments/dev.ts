@@ -54,7 +54,6 @@ export default {
       noValidationError: 'navbar:validationError:false',
       setProcessEngineIcon: 'navbar:setOriginIcon:processEngine',
       updateProcessName: 'navbar:processName:update',
-      clearProcessData: 'navbar:process:clear',
       disableSaveButton: 'navbar:saveButton:disable',
       enableSaveButton: 'navbar:saveButton:enable',
       disableDiagramUploadButton: 'navbar:diagramUploadButton:disable',
