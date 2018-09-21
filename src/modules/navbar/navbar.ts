@@ -68,6 +68,8 @@ export class NavBar {
       this._eventAggregator.subscribe(environment.events.navBar.showProcessName, (process: IDiagram) => {
         this.showProcessName = true;
         this.process = process;
+
+        this._updateNavbarTitle();
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.hideTools, () => {
@@ -105,19 +107,7 @@ export class NavBar {
          * for more informations.
          */
         this.process = process;
-
-        const processIdIsUndefined: boolean = process.id === undefined;
-        this.latestSource = processIdIsUndefined ? 'file-system' : 'process-engine';
-
-        const latestSourceIsProcessEngine: boolean = this.latestSource === 'process-engine';
-
-        this.navbarTitle = (latestSourceIsProcessEngine)
-                                          ? this.process.id
-                                          : this.process.name;
-
-        this.processOpenedFromProcessEngine = latestSourceIsProcessEngine;
-
-        this.diagramContainsUnsavedChanges = false;
+        this.showProcessName = false;
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.hideProcessName, () => {
@@ -331,5 +321,19 @@ export class NavBar {
       return this._isRouteActive(route.name);
     });
     this.activeRouteName = activeRoute.name;
+  }
+
+  private _updateNavbarTitle(): void {
+    const processIdIsUndefined: boolean = this.process.id === undefined;
+    this.latestSource = processIdIsUndefined ? 'file-system' : 'process-engine';
+
+    const latestSourceIsProcessEngine: boolean = this.latestSource === 'process-engine';
+
+    this.navbarTitle = (latestSourceIsProcessEngine)
+                                      ? this.process.id
+                                      : this.process.name;
+
+    this.processOpenedFromProcessEngine = latestSourceIsProcessEngine;
+    console.log('new navbar title: ' + this.navbarTitle);
   }
 }
