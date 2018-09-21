@@ -6,7 +6,7 @@ import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
 import {IAuthenticationService} from '../../contracts';
-import {AuthenticationStateEvent} from '../../contracts/index';
+import {AuthenticationStateEvent} from '../../contracts';
 import environment from '../../environment';
 
 /**
@@ -116,8 +116,8 @@ export class RefreshingSolutionExplorerService implements ISolutionExplorerServi
     const customProcessEngineRouteSet: boolean = customProcessEngineRoute !== ''
                                                  && customProcessEngineRoute !== null
                                                  && customProcessEngineRoute !== undefined;
-    if (customProcessEngineRouteSet) {
 
+    if (customProcessEngineRouteSet) {
       return customProcessEngineRoute;
     }
 

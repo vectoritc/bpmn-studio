@@ -5,7 +5,7 @@ import {SolutionExplorerFileSystemRepository} from '@process-engine/solutionexpl
 import {SolutionExplorerManagementApiRepository} from '@process-engine/solutionexplorer.repository.management_api';
 import {SolutionExplorerService} from '@process-engine/solutionexplorer.service';
 
-import {RefreshingSolutionExplorer} from './RefreshingSolutionExplorer';
+import {RefreshingSolutionExplorerService} from './RefreshingSolutionExplorerService';
 import {SolutionExplorerServiceFactory} from './SolutionExplorerServiceFactory';
 
 export async function configure(config: FrameworkConfiguration): Promise<void> {
@@ -33,5 +33,5 @@ function registerManagementApi(container: Container): void {
 
   container.registerInstance('SolutionExplorerServiceManagementApi_NotRefreshing', solutionexplorerService);
 
-  container.registerSingleton('SolutionExplorerServiceManagementApi', RefreshingSolutionExplorer);
+  container.registerSingleton('SolutionExplorerServiceManagementApi', RefreshingSolutionExplorerService);
 }
