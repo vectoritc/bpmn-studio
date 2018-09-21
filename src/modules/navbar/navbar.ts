@@ -214,7 +214,7 @@ export class NavBar {
       latestSource: this.latestSource,
     });
 
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToHeatmap, 'dashboard');
+    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, 'dashboard');
   }
 
   public showHeatmap(): void {
@@ -228,7 +228,7 @@ export class NavBar {
       latestSource: this.latestSource,
     });
 
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToHeatmap, 'heatmap');
+    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, 'heatmap');
   }
 
   public showInspectCorrelation(): void {
@@ -242,7 +242,7 @@ export class NavBar {
       latestSource: this.latestSource,
     });
 
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToHeatmap, 'inspect-correlation');
+    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, 'inspect-correlation');
   }
 
   public navigateToInspect(): void {

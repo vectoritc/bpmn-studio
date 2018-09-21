@@ -91,7 +91,7 @@ export class Inspect {
       this.dashboard.canActivate();
     }
 
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToHeatmap);
+    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect);
   }
 
   public detached(): void {

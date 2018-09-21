@@ -87,7 +87,7 @@ export default {
     diagramChange: 'diagram:change',
     processSolutionPanel: {
       toggleProcessSolutionExplorer: 'processSolutionPanel:processsolutionexplorer:toggle',
-      navigateToHeatmap: 'processSolutionPanel:processEngineLinks:navigateToHeatmap',
+      navigateToInspect: 'processSolutionPanel:processEngineLinks:navigateToInspect',
       navigateToDesigner: 'processSolutionPanel:processEngineLinks:navigateToDesigner',
     },
     inspectView: {

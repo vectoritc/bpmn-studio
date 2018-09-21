@@ -98,9 +98,9 @@ export class SolutionExplorerSolution {
 
   public attached(): void {
     this._subscriptions = [
-      this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToHeatmap, (heatmapView?: string) => {
+      this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToInspect, (inspectView?: string) => {
         this._diagramRoute = 'inspect';
-        this._inspectView = heatmapView;
+        this._inspectView = inspectView;
       }),
 
       this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToDesigner, () => {
