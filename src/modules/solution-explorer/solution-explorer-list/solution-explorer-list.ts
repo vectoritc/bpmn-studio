@@ -107,6 +107,14 @@ export class SolutionExplorerList {
     return this._singleDiagramService.openSingleDiagram(uri, identity);
   }
 
+  /**
+   * Gets the single diagram with the given uri, if the diagram was opened
+   * before.
+   */
+  public getOpenedSingleDiagramByURI(uri: string): IDiagram | null {
+    return this._singleDiagramService.getOpenedDiagramByURI(uri);
+  }
+
   public async openSolution(uri: string, insertAtBeginning: boolean = false): Promise<void> {
     const uriIsRemote: boolean = uri.startsWith('http');
 
