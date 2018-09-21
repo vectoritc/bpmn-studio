@@ -57,6 +57,10 @@ export function configure(aurelia: Aurelia): void {
     .feature('modules/diagram-validation-service')
     .feature('modules/management-api_client')
     .feature('modules/authentication')
+    /*
+     * The modules/solution-explorer-services has a hard dependency on
+     * EventAggregator and AuthenticationService.
+     */
     .feature('modules/solution-explorer-services')
     .feature('modules/diagram-creation-service')
     .feature('modules/heatmap')

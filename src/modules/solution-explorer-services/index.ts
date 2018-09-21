@@ -1,8 +1,11 @@
+import {Container, FrameworkConfiguration} from 'aurelia-framework';
+
 import {IHttpClient} from '@essential-projects/http_contracts';
 import {SolutionExplorerFileSystemRepository} from '@process-engine/solutionexplorer.repository.filesystem';
 import {SolutionExplorerManagementApiRepository} from '@process-engine/solutionexplorer.repository.management_api';
 import {SolutionExplorerService} from '@process-engine/solutionexplorer.service';
-import {Container, FrameworkConfiguration} from 'aurelia-framework';
+
+import {RefreshingSolutionExplorerService} from './RefreshingSolutionExplorerService';
 import {SolutionExplorerServiceFactory} from './SolutionExplorerServiceFactory';
 
 export async function configure(config: FrameworkConfiguration): Promise<void> {
@@ -28,5 +31,7 @@ function registerManagementApi(container: Container): void {
   const managementApiRepository: SolutionExplorerManagementApiRepository = new SolutionExplorerManagementApiRepository(httpClient);
   const solutionexplorerService: SolutionExplorerService = new SolutionExplorerService(managementApiRepository);
 
-  container.registerInstance('SolutionExplorerServiceManagementApi', solutionexplorerService);
+  container.registerInstance('SolutionExplorerServiceManagementApi_NotRefreshing', solutionexplorerService);
+
+  container.registerSingleton('SolutionExplorerServiceManagementApi', RefreshingSolutionExplorerService);
 }
