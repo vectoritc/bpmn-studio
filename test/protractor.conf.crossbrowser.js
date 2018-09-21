@@ -37,7 +37,7 @@ exports.config = {
   params: {
     aureliaUrl: process.env.aureliaUrl,
     processEngineUrl: process.env.processEngineUrl,
-    defaultTimeoutMS: number = 60000,
+    defaultTimeoutMS: number = 30000,
   },
 
   specs: ['test/e2e/dist/*.js'],
@@ -50,7 +50,7 @@ exports.config = {
 
   jasmineNodeOpts: {
     showColors: true,
-    defaultTimeoutInterval: 60000,
+    defaultTimeoutInterval: 30000,
   },
 
   onPrepare: function() {
@@ -64,9 +64,9 @@ exports.config = {
       });
     });
     afterEach(() => {
-        browser.executeScript('window.localStorage.clear();');
-        browser.executeScript('window.sessionStorage.clear();');
-        browser.driver.manage().deleteAllCookies();
+      browser.executeScript('window.localStorage.clear();');
+      browser.executeScript('window.sessionStorage.clear();');
+      browser.driver.manage().deleteAllCookies();
     });
   },
 };

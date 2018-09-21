@@ -34,6 +34,7 @@ export class SolutionExplorer {
 
   public async openProcessModelByClick(processModelId: string): promise.Promise<void> {
     const retryCount: number = 3;
+    const hibernatingSeconds: number = 1000;
     const solutionExplorerListItemsId: ElementFinder = this.solutionExplorerListItemsId(processModelId);
 
     for (let currentTry: number = 1; currentTry <= retryCount; currentTry++) {
@@ -41,8 +42,7 @@ export class SolutionExplorer {
       if (itemIsPresent) {
         break;
       } else {
-        // tslint:disable-next-line:no-magic-numbers
-        browser.sleep(1000);
+        browser.sleep(hibernatingSeconds);
       }
     }
 

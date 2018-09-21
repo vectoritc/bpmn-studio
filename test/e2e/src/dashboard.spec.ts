@@ -220,13 +220,13 @@ describe('Dashboard view', () => {
     await dashboard.continueTaskByClickOnButton(processModelId);
 
     const dynamicUiWrapperContinueButton: ElementFinder = dashboard.dynamicUiWrapperContinueButton;
-    const visibilityOfDynamicUiWrapperContinueButton: Function = expectedConditions.visibilityOf(dynamicUiWrapperContinueButton);
+    const continueButtonVisible: Function = expectedConditions.visibilityOf(dynamicUiWrapperContinueButton);
 
     // Wait until view is loaded and button is visible
     await browser.driver
       .wait(() => {
         browser
-          .wait(visibilityOfDynamicUiWrapperContinueButton, taskListTimeoutMS);
+          .wait(continueButtonVisible, taskListTimeoutMS);
 
         return dynamicUiWrapperContinueButton;
       });
