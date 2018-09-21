@@ -38,6 +38,8 @@ export class ProcessInstanceList {
   }
 
   private _convertCorrelationsIntoTableData(correlations: Array<NewCorrelation>): void {
+    this._tableData = [];
+
     for (const correlation of correlations) {
       const formattedStartedDate: string = this._dateService.getDateStringFromTimestamp(correlation.startedAt);
 
