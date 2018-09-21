@@ -22,7 +22,8 @@
         repeat.for="diagram of openedDiagrams"
         class="diagram-entry"
         title="${diagram.name}"
-        click.delegate="navigateToDetailView(diagram)">
+        click.delegate="navigateToDetailView(diagram)"
+        id="diagramList-${diagram.name}">
 
         <i if.bind="shouldFileIconBeShown()" class="diagram-entry__icon fa fa-cogs"></i>
         <span class="diagram-entry__name">

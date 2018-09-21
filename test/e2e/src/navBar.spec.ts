@@ -26,12 +26,12 @@ describe('Navigation bar', () => {
     processModel = new ProcessModel();
   });
 
-  beforeEach(() => {
+  beforeEach(async() => {
     const navBarTag: ElementFinder = navBar.navBarTag;
     const visibilityOfNavBarTag: Function = expectedConditions.visibilityOf(navBarTag);
 
-    browser.get(aureliaUrl);
-    browser.driver
+    await browser.get(aureliaUrl);
+    await browser.driver
       .wait(() => {
         browser
           .wait(visibilityOfNavBarTag, defaultTimeoutMS);
@@ -125,7 +125,7 @@ describe('Navigation bar', () => {
     await navBarThinkLink.click();
 
     const currentBrowserUrl: string = await browser.getCurrentUrl();
-    const processModelLink: string = processModel.getProcessModelLink();
+    const processModelLink: string = ProcessModel.getProcessModelLink();
 
     expect(currentBrowserUrl).toContain(processModelLink);
   });
@@ -138,11 +138,11 @@ describe('Navigation bar', () => {
     expect(navBarDesignLinkIsDisplayed).toBeTruthy();
   });
 
-  it('should contain a disabled design view button.', async() => {
+  it('should contain an enabled design view button.', async() => {
     const navBarDesignLink: ElementFinder = navBar.navBarDesignLink;
     const navBarDesignLinkAttributes: boolean = await navBar.navBarButtonIsDisabled(navBarDesignLink);
 
-    expect(navBarDesignLinkAttributes).not.toBeTruthy();
+    expect(navBarDesignLinkAttributes).toBeTruthy();
   });
 
   // This section tests the inspect button
@@ -168,7 +168,7 @@ describe('Navigation bar', () => {
     const processListTag: ElementFinder = dashboard.processListTag;
     const visibilityOfProcessListTag: Function = expectedConditions.visibilityOf(processListTag);
 
-    browser.driver
+    await browser.driver
       .wait(() => {
         browser
           .wait(visibilityOfProcessListTag, defaultTimeoutMS);

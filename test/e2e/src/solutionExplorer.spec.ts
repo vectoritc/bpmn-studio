@@ -35,12 +35,12 @@ describe('Solution Explorer', () => {
     processModel.postProcessModel(processModelId);
   });
 
-  beforeEach(() => {
+  beforeEach(async() => {
     const navBarTag: ElementFinder = navBar.navBarTag;
     const visibilityOfNavBarTag: Function = expectedConditions.visibilityOf(navBarTag);
 
-    browser.get(aureliaUrl);
-    browser.driver
+    await browser.get(aureliaUrl);
+    await browser.driver
       .wait(() => {
         browser.wait(visibilityOfNavBarTag, defaultTimeoutMS);
 
@@ -48,10 +48,10 @@ describe('Solution Explorer', () => {
       });
 
     // Click on solution explorer icon
-    navBar.openSolutionExplorerByButtonClick();
+    await navBar.openSolutionExplorerByButtonClick();
 
     // Wait until solutions are loaded
-    browser.driver.wait(() => {
+    await browser.driver.wait(() => {
       browser.wait(expectedConditions.visibilityOf(solutionExplorer.solutionExplorerListItemsId(processModelId)), defaultTimeoutMS);
 
       return solutionExplorer.solutionExplorerListItemsId(processModelId);
@@ -73,7 +73,7 @@ describe('Solution Explorer', () => {
   });
 
   it('should be possible to open a process diagram.', async() => {
-    const getProcessModelLink: string = processModel.getProcessModelLink();
+    const getProcessModelLink: string = ProcessModel.getProcessModelLink();
 
     await solutionExplorer.openProcessModelByClick(processModelId);
 

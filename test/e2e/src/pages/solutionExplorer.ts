@@ -1,4 +1,5 @@
 import {
+  browser,
   by,
   element,
   ElementArrayFinder,
@@ -13,31 +14,37 @@ import {
 export class SolutionExplorer {
 
   // Define Elements
-  public solutionExplorerTag: ElementFinder = element(by.tagName('process-solution-panel'));
-  public solutionExplorerListItems: ElementArrayFinder = this.solutionExplorerTag.all(by.className('process-explorer__structure-item'));
+  private identifier: string = 'diagramList-';
+  public solutionExplorerTag: ElementFinder = element(by.tagName('solution-explorer-list'));
+  public solutionExplorerListItems: ElementArrayFinder = this.solutionExplorerTag.all(by.className('diagram-entry'));
 
   // Define Functions
   public solutionExplorerListItemsId(processModelId: string): ElementFinder {
-    const id: string = 'processSolutionPanel-' + processModelId;
+    const id: string = this.identifier + processModelId;
     const byId: By = by.id(id);
 
     return this.solutionExplorerTag.element(byId);
   }
   public solutionExplorerListItemsIds(processModelId: string): ElementArrayFinder {
-    const id: string = 'processSolutionPanel-' + processModelId;
+    const id: string = this.identifier + processModelId;
     const byId: By = by.id(id);
 
-    return this.solutionExplorerListItems.all(byId);
-  }
-  public processModellDiagram(processModelId: string): ElementFinder {
-    const id: string = 'processSolutionPanel-' + processModelId;
-    const byId: By = by.id(id);
-
-    return element(byId);
+    return element.all(byId);
   }
 
-  public openProcessModelByClick(processModelId: string): promise.Promise<void> {
+  public async openProcessModelByClick(processModelId: string): promise.Promise<void> {
+    const retryCount: number = 3;
+    const hibernatingSeconds: number = 1000;
     const solutionExplorerListItemsId: ElementFinder = this.solutionExplorerListItemsId(processModelId);
+
+    for (let currentTry: number = 1; currentTry <= retryCount; currentTry++) {
+      const itemIsPresent: boolean = await solutionExplorerListItemsId.isPresent();
+      if (itemIsPresent) {
+        break;
+      } else {
+        browser.sleep(hibernatingSeconds);
+      }
+    }
 
     return solutionExplorerListItemsId.click();
   }

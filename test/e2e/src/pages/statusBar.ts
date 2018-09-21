@@ -8,9 +8,6 @@ import {By} from 'selenium-webdriver';
 
 export class StatusBar {
 
-  // Define Links, Urls, Classes
-  public statusBarLink: string = '/processdef';
-
   // Define Elements
   private _byTagName: By = by.tagName('status-bar');
   private _byStatusBarSettingsButton: By = by.id('statusBarSettingsButton');

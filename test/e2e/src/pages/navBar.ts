@@ -14,7 +14,6 @@ export class NavBar {
 
   // Define Links, Urls, Classes
   public navBarDisabledClassName: string = 'menu-tabbed-link--disabled';
-  public navBarSolutionExplorerActiveClassName: string = 'solution-explorer--active';
 
   // Define Elements
   private _byTagName: By = by.tagName('nav-bar');

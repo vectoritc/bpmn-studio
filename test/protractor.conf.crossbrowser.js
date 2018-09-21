@@ -5,27 +5,34 @@ exports.config = {
 
   multiCapabilities : [
     {
-      name : '(Chrome68x64/W10) BPMN-Studio E2E Test',
-      build: '4.2.0',
+      name : '(Chrome69x64/W10) BPMN-Studio E2E Test',
+      build: '4.4.0',
       browserName: 'Chrome',
-      version: '68x64',
+      version: '69x64',
       platform: 'Windows 10',
       screenResolution: '1920x1080',
       record_video : true,
       record_network : true,
       record_snapshot : true,
-    }, {
-      name : '(Chrome66x64/Mac10.13) BPMN-Studio E2E Test',
-      build: '4.2.0',
-      browserName: 'Chrome',
-      version: '66x64',
+      chromeOptions: {
+        args: [
+          "--window-size=1920,1080",
+        ],
+      }
+    },{
+      name : '(Safari11/Mac10.13) BPMN-Studio E2E Test',
+      build: '4.4.0',
+      browserName: 'Safari',
+      version: '11',
       platform: 'Mac OSX 10.13',
       screenResolution: '1920x1200',
       record_video : true,
       record_network : true,
       record_snapshot : true,
-    }
+    },
   ],
+
+  maxSessions: 1,
 
   params: {
     aureliaUrl: process.env.aureliaUrl,
@@ -47,17 +54,19 @@ exports.config = {
   },
 
   onPrepare: function() {
+    browser.manage().window().maximize();
+
     beforeAll(() => {
       browser.driver.getSession().then(function(session) {
-        this.sessionId = session.id_; //need for API calls
+        this.sessionId = session.id; //need for API calls
         console.log(`Session ID:  ${sessionId}`);
         console.log(`See your test run at: https://app.crossbrowsertesting.com/selenium/${sessionId}`);
       });
     });
     afterEach(() => {
-        browser.executeScript('window.localStorage.clear();');
-        browser.executeScript('window.sessionStorage.clear();');
-        browser.driver.manage().deleteAllCookies();
+      browser.executeScript('window.localStorage.clear();');
+      browser.executeScript('window.sessionStorage.clear();');
+      browser.driver.manage().deleteAllCookies();
     });
   },
 };
