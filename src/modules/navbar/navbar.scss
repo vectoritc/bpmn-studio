@@ -151,3 +151,10 @@ button {
   margin-left: 4px;
   opacity: 0.7;
 }
+
+/*
+* This will be improved when https://github.com/process-engine/bpmn-studio/pull/913 is merged
+*/
+.activeInspectButton {
+  opacity: 1 !important;
+}
