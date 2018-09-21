@@ -8,7 +8,7 @@ import {NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
-interface Process {
+interface INavbarProcessInformation {
   id?: string;
   name?: string;
   uri?: string;
@@ -21,7 +21,7 @@ export class NavBar {
   /**
    * Todo: see below!
    */
-  public process: Process;
+  public process: INavbarProcessInformation;
   public diagramInfo: HTMLElement;
   public dropdown: HTMLElement;
   public solutionExplorerIsActive: boolean = true;
@@ -76,7 +76,7 @@ export class NavBar {
         this.showTools = false;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.updateProcess, (process: Process) => {
+      this._eventAggregator.subscribe(environment.events.navBar.updateProcess, (process: INavbarProcessInformation) => {
 
         /**
          * TODO: The type which is passed with this event from the
