@@ -20,7 +20,7 @@
       </div>
     </div>
     <div class="menu-bar__menu menu-bar__menu--center" id="navBarCenter">
-      <div class="menu__element menu__element--title btn-group" if.bind="showTools" ref="diagramInfo">
+      <div class="menu__element menu__element--title btn-group" if.bind="showProcessName" ref="diagramInfo">
         <span class="fas menu__element--title__icon" class.bind="processOpenedFromProcessEngine ? 'fa-database' : 'fa-folder'"></span>
         <span class="process-details-title">${navbarTitle}</span>
         <span if.bind="diagramContainsUnsavedChanges" class="edited-label">- edited</span>
