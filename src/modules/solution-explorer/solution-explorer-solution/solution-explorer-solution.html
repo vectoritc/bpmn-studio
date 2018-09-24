@@ -11,7 +11,7 @@
 
       <li if.bind="_diagramCreationState.isCreateDiagramInputShown" class="diagram-create">
         <div class="diagram-create__input-holder">
-          <input ref="createNewDiagramInput" class="diagram-create__input-holder__input ${hasDiagramCreationErrors ? 'diagram-create__input-holder__input--error' : ''}" type="text" value.bind="_diagramCreationState.currentDiagramInputValue & validateOnChange">
+          <input ref="createNewDiagramInput" class.bind="hasDiagramCreationErrors ? 'diagram-create__input-holder__input diagram-create__input-holder__input--error' : 'diagram-create__input-holder__input'" type="text" value.bind="_diagramCreationState.currentDiagramInputValue & validateOnChange">
         </div>
         <ul if.bind="hasDiagramCreationErrors" class="diagram-create__errors">
           <li repeat.for="error of diagramCreationErrors" class="diagram-create__errors__error">${error.message}</li>
