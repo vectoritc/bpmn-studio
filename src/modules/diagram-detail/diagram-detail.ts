@@ -166,7 +166,6 @@ export class DiagramDetail {
    * Uploads the current diagram to the connected ProcessEngine.
    */
   public async uploadProcess(): Promise<void> {
-
     const rootElements: Array<IModdleElement> = this.bpmnio.modeler._definitions.rootElements;
     const payload: ProcessModelExecution.UpdateProcessDefinitionsRequestPayload = {
       xml: this.diagram.xml,
@@ -203,13 +202,6 @@ export class DiagramDetail {
    * Saves the current diagram to disk.
    */
   private async _saveDiagram(): Promise<void> {
-    if (this._diagramIsInvalid) {
-      this
-        ._notificationService
-        .showNotification(
-          NotificationType.WARNING,
-          'Unable to save the process, because it is not valid. This could have something to do with your latest changes. Try to undo them.',
-        );
     try {
       const xml: string = await this.bpmnio.getXML();
       this.diagram.xml = xml;
@@ -266,7 +258,5 @@ export class DiagramDetail {
 
     this._eventAggregator
       .publish(environment.events.navBar.noValidationError);
-
-    this._diagramIsInvalid = false;
   }
 }

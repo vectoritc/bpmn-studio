@@ -242,16 +242,6 @@ export class ProcessDefDetail {
 
     this._dropInvalidFormData();
 
-    if (this._diagramIsInvalid) {
-      this
-        ._notificationService
-        .showNotification(
-          NotificationType.WARNING,
-          'Unable to start the process, because it is not valid. This could have something to do with your latest changes. Try to undo them.',
-        );
-      return;
-    }
-
     const context: ManagementContext = this._getManagementContext();
     const startRequestPayload: ProcessModelExecution.ProcessStartRequestPayload = {
       inputValues: {},
@@ -369,16 +359,6 @@ export class ProcessDefDetail {
 
     this._dropInvalidFormData();
 
-    if (this._diagramIsInvalid) {
-      this
-        ._notificationService
-        .showNotification(
-          NotificationType.WARNING,
-          'Unable to save the diagram, because it is not valid. This could have something to do with your latest changes. Try to undo them.',
-        );
-      return;
-    }
-
     //#region Save the diagram to the ProcessEngine
 
     try {
@@ -443,13 +423,12 @@ export class ProcessDefDetail {
    *
    * The user inserts an invalid string (e.g. he uses a already used Id for an element);
    * The Aurelia validators will trigger; the validation event will arrive here;
-   * if there are errors present, we will disable the save button and the save functionality
-   * by setting the _diagramIsInvalid flag to true.
+   * if there are errors present, we will disable the tool buttons on the navbar.
    *
    * Events fired here:
    *
-   * 1. disableSaveButton
-   * 2. enableSaveButton
+   * 1. validationError
+   * 2. noValidationError
    */
   private _handleFormValidateEvents(event: ValidateEvent): void {
     const eventIsValidateEvent: boolean = event.type !== 'validate';
@@ -462,7 +441,6 @@ export class ProcessDefDetail {
       const resultIsNotValid: boolean = result.valid === false;
 
       if (resultIsNotValid) {
-        this._diagramIsInvalid = true;
         this._eventAggregator
           .publish(environment.events.navBar.validationError);
 
@@ -472,7 +450,5 @@ export class ProcessDefDetail {
 
     this._eventAggregator
       .publish(environment.events.navBar.noValidationError);
-
-    this._diagramIsInvalid = false;
   }
 }
