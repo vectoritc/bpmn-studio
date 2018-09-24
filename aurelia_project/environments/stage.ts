@@ -14,7 +14,7 @@ export default {
   },
   processengine: {
     waitingRoomPollingIntervalInMs: 200,
-    processModelPollingIntervalInMs: 1500,
+    processModelPollingIntervalInMs: 5000,
     routes: {
       processes: `${processEngineRoute}/datastore/ProcessDef`,
       startProcess: `${processEngineRoute}/processengine/start`,
