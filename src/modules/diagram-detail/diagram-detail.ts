@@ -139,10 +139,10 @@ export class DiagramDetail {
     }
 
     this._eventAggregator.publish(environment.events.navBar.hideTools);
-    this._eventAggregator.publish(environment.events.navBar.disableDiagramUploadButton);
-    this._eventAggregator.publish(environment.events.navBar.enableStartButton);
     this._eventAggregator.publish(environment.events.navBar.hideProcessName);
-
+    this._eventAggregator.publish(environment.events.navBar.enableStartButton);
+    this._eventAggregator.publish(environment.events.navBar.noValidationError);
+    this._eventAggregator.publish(environment.events.navBar.disableDiagramUploadButton);
     this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
   }
 
@@ -274,14 +274,14 @@ export class DiagramDetail {
       if (resultIsNotValid) {
         this._diagramIsInvalid = true;
         this._eventAggregator
-          .publish(environment.events.navBar.disableSaveButton);
+          .publish(environment.events.navBar.validationError);
 
         return;
       }
     }
 
     this._eventAggregator
-      .publish(environment.events.navBar.enableSaveButton);
+      .publish(environment.events.navBar.noValidationError);
 
     this._diagramIsInvalid = false;
   }

@@ -19,7 +19,7 @@ export class NavBar {
   public showTools: boolean = false;
   public showInspectTools: boolean = false;
   public disableStartButton: boolean = true;
-  public disableSaveButton: boolean = false;
+  public validationError: boolean = false;
   public showProcessName: boolean = false;
   public disableDiagramUploadButton: boolean = true;
   public disableHeatmapButton: boolean = true;
@@ -75,12 +75,12 @@ export class NavBar {
         this.showProcessName = false;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.disableSaveButton, () => {
-        this.disableSaveButton = true;
+      this._eventAggregator.subscribe(environment.events.navBar.validationError, () => {
+        this.validationError = true;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.enableSaveButton, () => {
-        this.disableSaveButton = false;
+      this._eventAggregator.subscribe(environment.events.navBar.noValidationError, () => {
+        this.validationError = false;
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.disableStartButton, () => {
@@ -231,24 +231,42 @@ export class NavBar {
   }
 
   public saveDiagram(): void {
-    if (!this.disableSaveButton) {
-      this._eventAggregator.publish(environment.events.processDefDetail.saveDiagram);
+    if (this.validationError) {
+      return;
     }
+
+    this._eventAggregator.publish(environment.events.processDefDetail.saveDiagram);
   }
 
   public printDiagram(): void {
+    if (this.validationError) {
+      return;
+    }
+
     this._eventAggregator.publish(environment.events.processDefDetail.printDiagram);
   }
 
   public exportDiagram(exportAs: string): void {
+    if (this.validationError) {
+      return;
+    }
+
     this._eventAggregator.publish(`${environment.events.processDefDetail.exportDiagramAs}:${exportAs}`);
   }
 
   public startProcess(): void {
+    if (this.validationError) {
+      return;
+    }
+
     this._eventAggregator.publish(environment.events.processDefDetail.startProcess);
   }
 
   public uploadProcess(): void {
+    if (this.validationError) {
+      return;
+    }
+
     this._eventAggregator.publish(environment.events.processDefDetail.uploadProcess);
   }
 

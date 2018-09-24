@@ -228,11 +228,12 @@ export class ProcessDefDetail {
     }
 
     this._eventAggregator.publish(environment.events.navBar.hideTools);
-    this._eventAggregator.publish(environment.events.navBar.disableStartButton);
-    this._eventAggregator.publish(environment.events.navBar.enableDiagramUploadButton);
-    this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
     this._eventAggregator.publish(environment.events.navBar.hideProcessName);
+    this._eventAggregator.publish(environment.events.navBar.disableStartButton);
+    this._eventAggregator.publish(environment.events.navBar.noValidationError);
+    this._eventAggregator.publish(environment.events.navBar.enableDiagramUploadButton);
     this._eventAggregator.publish(environment.events.navBar.inspectNavigateToDashboard);
+    this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
   }
 
   public async startProcess(): Promise<void> {
@@ -465,14 +466,14 @@ export class ProcessDefDetail {
       if (resultIsNotValid) {
         this._diagramIsInvalid = true;
         this._eventAggregator
-          .publish(environment.events.navBar.disableSaveButton);
+          .publish(environment.events.navBar.validationError);
 
         return;
       }
     }
 
     this._eventAggregator
-      .publish(environment.events.navBar.enableSaveButton);
+      .publish(environment.events.navBar.noValidationError);
 
     this._diagramIsInvalid = false;
   }
