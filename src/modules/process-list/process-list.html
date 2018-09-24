@@ -16,7 +16,7 @@
               <a route-href="route: processdef-detail; params.bind: { processModelId: instance.processModelId }" class="process-list-item-model-id">${instance.processModelId}</a>
             </td>
             <td class="process-list__last-table-cell">
-              <a route-href="route: task-list-processmodel; params.bind: { processModelId: instance.processModelId }" class="process-list-item-user-tasks">User tasks</a>
+              <a route-href="route: task-list-correlation; params.bind: { correlationId: instance.id }" class="process-list-item-user-tasks">User tasks</a>
             </td>
           </tr>
         </table>
