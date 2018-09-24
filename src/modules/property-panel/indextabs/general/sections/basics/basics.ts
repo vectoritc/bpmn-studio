@@ -88,8 +88,8 @@ export class BasicsSection implements ISection {
   }
 
   public updateName(): void {
-    const updateProperty: Object = {name: this.businessObjInPanel.name};
-    this._modeling.updateProperties(this._elementInPanel, updateProperty);
+    this._modeling.updateLabel(this._elementInPanel, this.businessObjInPanel.name);
+
     this._publishDiagramChange();
   }
 
