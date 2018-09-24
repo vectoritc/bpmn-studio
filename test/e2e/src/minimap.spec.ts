@@ -13,7 +13,7 @@ import {ProcessModel} from './pages/processModel';
 import {SolutionExplorer} from './pages/solutionExplorer';
 import {StatusBar} from './pages/statusBar';
 
-fdescribe('Minimap view', () => {
+describe('Minimap view', () => {
 
   let bpmnIo: BpmnIo;
   let minimap: Minimap;
