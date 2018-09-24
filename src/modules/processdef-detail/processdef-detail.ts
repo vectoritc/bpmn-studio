@@ -57,8 +57,6 @@ export class ProcessDefDetail {
   private _router: Router;
   private _diagramHasChanged: boolean = false;
   private _validationController: ValidationController;
-  // TODO: Explain when this is set and by whom.
-  private _diagramIsInvalid: boolean = false;
   // Used to control the modal view; shows the modal view for pressing the play button.
   private _startButtonPressed: boolean = false;
   private _authenticationService: IAuthenticationService;

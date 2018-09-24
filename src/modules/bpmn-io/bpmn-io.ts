@@ -65,8 +65,6 @@ export class BpmnIo {
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
-  private _diagramIsValid: boolean = true;
-
   private _diagramExportService: IDiagramExportService;
   private _diagramPrintService: IDiagramPrintService;
 
@@ -190,12 +188,6 @@ export class BpmnIo {
         }, 0);
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.enableSaveButton, () => {
-        this._diagramIsValid = true;
-      }),
-      this._eventAggregator.subscribe(environment.events.navBar.disableSaveButton, () => {
-        this._diagramIsValid = false;
-      }),
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, async() => {
         try {
           const exportName: string = `${this.name}.bpmn`;
