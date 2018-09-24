@@ -123,10 +123,6 @@ export class SolutionExplorerPanel {
     return this._openSingleDiagramOrDisplyError(uri);
   }
 
-  public async refreshSolutions(): Promise<void> {
-    return this.solutionExplorerList.refreshSolutions();
-  }
-
   public async openDiagram(): Promise<void> {
     this.singleDiagramInput.click();
   }
