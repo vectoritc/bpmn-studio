@@ -56,7 +56,7 @@ export class InspectCorrelation {
       windowEvent.cancelBubble = true;
 
       const mousemoveFunction: IEventFunction = (mouseMoveEvent: MouseEvent): void => {
-        this.resize(mouseMoveEvent);
+        this.resizeInspectPanel(mouseMoveEvent);
         document.getSelection().empty();
       };
 
@@ -82,7 +82,7 @@ export class InspectCorrelation {
     this.correlations = await this._inspectCorrelationService.getAllCorrelationsForProcessModelId(this.processModelId);
   }
 
-  public resize(mouseEvent: MouseEvent): void {
+  public resizeInspectPanel(mouseEvent: MouseEvent): void {
     const mouseYPosition: number = mouseEvent.clientY;
     const inspectPanelHeightWithStatusBar: number = this.bottomPanelResizeDiv.parentElement.parentElement.clientHeight + this._statusBarHeight;
     const newBottomPanelHeight: number = inspectPanelHeightWithStatusBar - mouseYPosition;
