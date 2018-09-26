@@ -81,27 +81,11 @@ export class NavBar {
 
       this._eventAggregator.subscribe(environment.events.navBar.updateProcess, (process: INavbarProcessInformation) => {
 
-        /**
-         * TODO: The type which is passed with this event from the
-         * processdef-detail component is not IDiagram. Instead, it
-         * ProcessModel from the ProcessModelExecution
-         * namespace.
-         *
-         * This is not a problem, since initially the navbar only used the
-         * name of the passed process.
-         *
-         * But inside this PR: https://github.com/process-engine/bpmn-studio/pull/810
-         * the navbar used more then just the 'name' property from the
-         * passed process model.
-         *
-         * 'Luckily' (or unluckily, depends how you see it), both interfaces,
-         * IDiagram and ProcessModel share some properties. Because of this,
-         * this approach worked (typescript can't really check the
-         * correct types at run time since its transpiled to JavaScript).
-         *
-         * The approach to define the variable Process as both types
-         * is considered as a WORKAROUND to prevent some undefined
-         * behavior.
+        /*
+         * TODO: Currently the process can be of one of two different types.
+         * One of them has an attribute 'name' which should be used for the
+         * navbar title. The other one does not have this attribute.
+         * At the moment we use the 'id' if there is no 'name'.
          *
          * Either the navbar or the processdef-detail needs a refactoring
          * to prevent this issue!
