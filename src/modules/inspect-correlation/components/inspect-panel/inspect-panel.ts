@@ -9,7 +9,7 @@ import environment from '../../../../environment';
 @inject(EventAggregator)
 export class InspectPanel {
   @bindable() public correlations: Array<Correlation>;
-  @bindable() public selectedCorrelation: Correlation;
+  @bindable({ changeHandler: 'correlationChanged'}) public selectedCorrelation: Correlation;
   @bindable() public fullscreen: boolean;
   public InspectPanelTab: typeof InspectPanelTab = InspectPanelTab;
   public showProcessInstanceList: boolean = true;
@@ -33,5 +33,17 @@ export class InspectPanel {
 
     this.showProcessInstanceList = shouldShowProcessInstanceList;
     this.showLogViewer = shouldShowLogViewer;
+  }
+
+  public correlationChanged(newCorrelation: Correlation, oldCorrelation: Correlation): void {
+    const firstCorrelationGotSelected: boolean = oldCorrelation !== undefined;
+    const shouldNotEnableTokenViewerButton: boolean = firstCorrelationGotSelected
+                                                   || this.fullscreen;
+
+    if (shouldNotEnableTokenViewerButton) {
+      return;
+    }
+
+    this._eventAggregator.publish(environment.events.inspect.disableTokenViewerButton, false);
   }
 }
