@@ -94,7 +94,6 @@ export class NavBar {
          * for more informations.
          */
         this.process = process;
-        this.showProcessName = false;
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.hideProcessName, () => {
