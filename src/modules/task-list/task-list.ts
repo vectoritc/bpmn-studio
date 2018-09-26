@@ -87,7 +87,7 @@ export class TaskList {
 
     this._getUserTasksIntervalId = window.setInterval(() => {
       this._updateUserTasks();
-    }, environment.processengine.processModelPollingIntervalInMs);
+    }, environment.processengine.dashboardPollingIntervalInMs);
 
     this._subscriptions = [
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {

@@ -112,7 +112,7 @@ export class SolutionExplorerSolution {
 
     this._refreshIntervalTask = setInterval(async() =>  {
       this.updateSolution();
-    }, environment.processengine.processModelPollingIntervalInMs);
+    }, environment.processengine.solutionExplorerPollingIntervalInMs);
   }
 
   public detached(): void {
