@@ -67,14 +67,15 @@ export class HeatmapService implements IHeatmapService {
     const elementsWithoutToken: Array<IShape> = this._getElementsWithoutToken(elementsForOverlays, activeTokenListArray);
 
     activeTokenListArray.forEach((activeTokenArray: Array<ActiveToken & { type: string }>) => {
-      const elementIsEvent: boolean = activeTokenArray[0].type === 'bpmn:StartEvent' || activeTokenArray[0].type === 'bpmn:EndEvent';
-      const elementIsGateway: boolean = activeTokenArray[0].type === 'bpmn:ExclusiveGateway';
+      const elementIsEvent: boolean = this._elementIsEvent(activeTokenArray[0].type);
+      const elementIsGateway: boolean = this._elementIsGateway(activeTokenArray[0].type);
+      const elementIsTask: boolean = this._elementIsTask(activeTokenArray[0].type);
 
       if (elementIsGateway) {
         addOverlay(activeTokenArray[0].flowNodeId, activeTokenArray.length, defaultOverlayPositions.gateways);
       } else if (elementIsEvent) {
         addOverlay(activeTokenArray[0].flowNodeId, activeTokenArray.length, defaultOverlayPositions.events);
-      } else {
+      } else if (elementIsTask) {
         addOverlay(activeTokenArray[0].flowNodeId, activeTokenArray.length, defaultOverlayPositions.tasks);
       }
 
@@ -82,14 +83,15 @@ export class HeatmapService implements IHeatmapService {
     });
 
     elementsWithoutToken.forEach((element: IShape) => {
-      const elementIsEvent: boolean = element.type === 'bpmn:StartEvent' || element.type === 'bpmn:EndEvent';
-      const elementIsGateway: boolean = element.type === 'bpmn:ExclusiveGateway';
+      const elementIsEvent: boolean = this._elementIsEvent(element.type);
+      const elementIsGateway: boolean = this._elementIsGateway(element.type);
+      const elementIsTask: boolean = this._elementIsTask(element.type);
 
       if (elementIsGateway) {
         addOverlay(element.id, 0, defaultOverlayPositions.gateways);
       } else if (elementIsEvent) {
         addOverlay(element.id, 0, defaultOverlayPositions.events);
-      } else {
+      } else if (elementIsTask) {
         addOverlay(element.id, 0, defaultOverlayPositions.tasks);
       }
     });
@@ -305,6 +307,41 @@ export class HeatmapService implements IHeatmapService {
     });
 
     return elementsWithoutToken;
+  }
+
+  private _elementIsEvent(type: string): boolean {
+    const elementTypeIsEvent: boolean = type === 'bpmn:StartEvent'
+                                     || type === 'bpmn:EndEvent'
+                                     || type === 'bpmn:IntermediateThrowEvent'
+                                     || type === 'bpmn:IntermediateCatchEvent'
+                                     || type === 'bpmn:BoundaryEvent';
+
+    return elementTypeIsEvent;
+  }
+
+  private _elementIsGateway(type: string): boolean {
+    const elementTypeIsGateway: boolean = type === 'bpmn:ExclusiveGateway'
+                                       || type === 'bpmn:ParallelGateway'
+                                       || type === 'bpmn:InclusiveGateway'
+                                       || type === 'bpmn:ComplexGateway'
+                                       || type === 'bpmn:EventBasedGateway';
+
+    return elementTypeIsGateway;
+  }
+
+  private _elementIsTask(type: string): boolean {
+    const elementTypeIsTask: boolean = type === 'bpmn:UserTask'
+                                    || type === 'bpmn:ScriptTask'
+                                    || type === 'bpmn:ServiceTask'
+                                    || type === 'bpmn:Task'
+                                    || type === 'bpmn:SendTask'
+                                    || type === 'bpmn:ReceiveTask'
+                                    || type === 'bpmn:ManualTask'
+                                    || type === 'bpmn:BusinessRuleTask'
+                                    || type === 'bpmn:CallActivity'
+                                    || type === 'bpmn:SubProcess';
+
+    return elementTypeIsTask;
   }
 
 }
