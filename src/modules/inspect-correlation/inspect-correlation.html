@@ -17,9 +17,4 @@
         <inspect-panel correlations.bind="correlations" selected-correlation.two-way="selectedCorrelation" fullscreen.two-way="inspectPanelFullscreen" log.bind="log"></inspect-panel>
       </div>
     </div>
-    <div class="inspect-correlation__right-toolbar">
-      <div class="inspect-correlation__tool" class.bind="showTokenViewer ? 'inspect-correlation__active-tool' : ''" disable.bind="inspectPanelFullscreen" click.delegate="toggleTokenViewer()">
-          <i class="fas fa-book"></i>
-      </div>
-    </div>
 </template>

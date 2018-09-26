@@ -1,9 +1,12 @@
-import {bindable} from 'aurelia-framework';
+import {EventAggregator} from 'aurelia-event-aggregator';
+import {bindable, inject} from 'aurelia-framework';
 
 import {Correlation} from '@process-engine/management_api_contracts';
 
 import {InspectPanelTab} from '../../../../contracts/index';
+import environment from '../../../../environment';
 
+@inject(EventAggregator)
 export class InspectPanel {
   @bindable() public correlations: Array<Correlation>;
   @bindable() public selectedCorrelation: Correlation;
@@ -12,8 +15,16 @@ export class InspectPanel {
   public showProcessInstanceList: boolean = true;
   public showLogViewer: boolean;
 
+  private _eventAggregator: EventAggregator;
+
+  constructor(eventAggregator: EventAggregator) {
+    this._eventAggregator = eventAggregator;
+  }
+
   public toggleFullscreen(): void {
     this.fullscreen = !this.fullscreen;
+
+    this._eventAggregator.publish(environment.events.inspect.disableTokenViewerButton, this.fullscreen);
   }
 
   public changeTab(inspectPanelTab: InspectPanelTab): void {

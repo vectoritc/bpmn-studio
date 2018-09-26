@@ -1,4 +1,4 @@
-import {EventAggregator} from 'aurelia-event-aggregator';
+import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
@@ -20,8 +20,11 @@ export class Inspect {
   @bindable() public showDashboard: boolean = true;
   public showInspectCorrelation: boolean = false;
   public dashboard: Dashboard;
+  public showTokenViewer: boolean = false;
+  public tokenViewerButtonDisabled: boolean = true;
 
   private _eventAggregator: EventAggregator;
+  private _subscriptions: Array<Subscription>;
 
   constructor(eventAggregator: EventAggregator) {
     this._eventAggregator = eventAggregator;
@@ -83,7 +86,6 @@ export class Inspect {
       this.showHeatmap = false;
       this.showInspectCorrelation = true;
     }
-
   }
 
   public attached(): void {
@@ -94,6 +96,12 @@ export class Inspect {
     }
 
     this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect);
+
+    this._subscriptions = [
+      this._eventAggregator.subscribe(environment.events.inspect.disableTokenViewerButton, (tokenViewerButtonDisabled: boolean) => {
+        this.tokenViewerButtonDisabled = tokenViewerButtonDisabled;
+      }),
+    ];
   }
 
   public detached(): void {
@@ -101,5 +109,19 @@ export class Inspect {
     this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToDesigner);
     this._eventAggregator.publish(environment.events.navBar.hideInspectButtons);
     this._eventAggregator.publish(environment.events.navBar.hideProcessName);
+
+    for (const subscription of this._subscriptions) {
+      subscription.dispose();
+    }
+  }
+
+  public toggleShowTokenViewer(): void {
+    if (this.tokenViewerButtonDisabled) {
+      return;
+    }
+
+    this.showTokenViewer = !this.showTokenViewer;
+
+    this._eventAggregator.publish(environment.events.inspectCorrelation.showTokenViewer, this.showTokenViewer);
   }
 }

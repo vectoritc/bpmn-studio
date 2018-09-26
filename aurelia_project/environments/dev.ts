@@ -90,8 +90,12 @@ export default {
       navigateToInspect: 'processSolutionPanel:processEngineLinks:navigateToInspect',
       navigateToDesigner: 'processSolutionPanel:processEngineLinks:navigateToDesigner',
     },
-    inspectView: {
-      showInspectPanel: 'inspectView:inspectPanel:show',
+    inspect: {
+      disableTokenViewerButton: 'inspect:tokenViewerButton:disable',
+    },
+    inspectCorrelation: {
+      showInspectPanel: 'inspectCorrelation:inspectPanel:show',
+      showTokenViewer: 'inspectCorrelation:tokenViewer:show',
     },
   },
   baseRoute: processEngineRoute,

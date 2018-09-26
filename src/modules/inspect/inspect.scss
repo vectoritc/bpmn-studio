@@ -14,6 +14,31 @@
   border-left: 2px solid #dcdbdb;
 }
 
+.inspect-layout__tool {
+  padding: 5px;
+  margin: 0 5px;
+  opacity: 0.5;
+  text-align: center;
+  cursor: pointer
+}
+
+.inspect-layout__tool:hover {
+  opacity: 1;
+}
+
+.inspect-layout__tool--active {
+  opacity: 1;
+}
+.inspect-layout__tool--disabled {
+  opacity: 0.2 !important;
+  cursor: default;
+}
+
+.inspect-layout__tool--disabled:hover {
+  opacity: 0.2;
+  cursor: default;
+}
+
 .inspect__heatmap-container {
   height: 100%;
   margin-right: 36px;

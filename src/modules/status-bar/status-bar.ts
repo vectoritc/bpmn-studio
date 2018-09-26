@@ -99,7 +99,7 @@ export class StatusBar {
   public toggleInspectPanel(): void {
     this.showInspectPanel = !this.showInspectPanel;
 
-    this._eventAggregator.publish(environment.events.inspectView.showInspectPanel, this.showInspectPanel);
+    this._eventAggregator.publish(environment.events.inspectCorrelation.showInspectPanel, this.showInspectPanel);
   }
 
   public navigateToSettings(): void {

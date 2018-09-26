@@ -46,8 +46,11 @@ export class InspectCorrelation {
     this._eventAggregator.publish(environment.events.navBar.updateProcessName, this.processModelId);
 
     this._subscriptions = [
-      this._eventAggregator.subscribe(environment.events.inspectView.showInspectPanel, (showInspectPanel: boolean) => {
+      this._eventAggregator.subscribe(environment.events.inspectCorrelation.showInspectPanel, (showInspectPanel: boolean) => {
         this.showInspectPanel = showInspectPanel;
+      }),
+      this._eventAggregator.subscribe(environment.events.inspectCorrelation.showTokenViewer, (showTokenViewer: boolean) => {
+        this.showTokenViewer = showTokenViewer;
       }),
     ];
 
@@ -88,9 +91,5 @@ export class InspectCorrelation {
     const newBottomPanelHeight: number = inspectPanelHeightWithStatusBar - mouseYPosition;
 
     this.bottomPanelHeight = Math.max(newBottomPanelHeight, this._minInspectPanelHeight);
-  }
-
-  public toggleTokenViewer(): void {
-    this.showTokenViewer = !this.showTokenViewer;
   }
 }
