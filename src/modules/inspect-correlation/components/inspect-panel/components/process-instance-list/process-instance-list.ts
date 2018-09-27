@@ -5,15 +5,9 @@ import {Correlation} from '@process-engine/management_api_contracts';
 import {IProcessInstanceSortSettings, IProcessInstanceTableEntry, ProcessInstanceListSortProperty} from '../../../../../../contracts/index';
 import {DateService} from '../../../../../date-service/date.service';
 
-interface NewCorrelation extends Correlation {
-  startedAt: number;
-  state: string;
-  user: string;
-}
-
 export class ProcessInstanceList {
-  @bindable({ defaultBindingMode: bindingMode.twoWay }) public selectedCorrelation: NewCorrelation;
-  @bindable({ changeHandler: 'correlationsChanged' }) public correlations: Array<NewCorrelation>;
+  @bindable({ defaultBindingMode: bindingMode.twoWay }) public selectedCorrelation: Correlation;
+  @bindable({ changeHandler: 'correlationsChanged' }) public correlations: Array<Correlation>;
   public sortedTableData: Array<IProcessInstanceTableEntry>;
   public ProcessInstanceListSortProperty: typeof ProcessInstanceListSortProperty = ProcessInstanceListSortProperty;
   public sortSettings: IProcessInstanceSortSettings = {
@@ -27,16 +21,16 @@ export class ProcessInstanceList {
     this.selectedCorrelation = this._getCorrelationForTableEntry(selectedTableEntry);
   }
 
-  public correlationsChanged(correlations: Array<NewCorrelation>): void {
+  public correlationsChanged(correlations: Array<Correlation>): void {
     this._convertCorrelationsIntoTableData(correlations);
     this.sortList(ProcessInstanceListSortProperty.Number);
   }
 
-  private _convertCorrelationsIntoTableData(correlations: Array<NewCorrelation>): void {
+  private _convertCorrelationsIntoTableData(correlations: Array<Correlation>): void {
     this._tableData = [];
 
     for (const correlation of correlations) {
-      const formattedStartedDate: string = new DateService(correlation.startedAt)
+      const formattedStartedDate: string = new DateService(correlation.createdAt)
                                             .getYear()
                                             .getMonth()
                                             .getDay()
@@ -45,13 +39,13 @@ export class ProcessInstanceList {
                                             .asFormattedDate();
 
       const index: number = this._getIndexForCorrelation(correlation, correlations);
-      const state: string = 'test'; // correlation.state.toUpperCase();
+      const state: string = correlation.state.toUpperCase();
 
       const tableEntry: IProcessInstanceTableEntry = {
         index: index,
         startedAt: formattedStartedDate,
         state: state,
-        user: correlation.user,
+        user: 'Not supported yet.',
         correlationId: correlation.id,
       };
 
@@ -100,15 +94,15 @@ export class ProcessInstanceList {
   private _sortListByStartDate(): Array<IProcessInstanceTableEntry> {
     const sortedTableData: Array<IProcessInstanceTableEntry> =
       this._tableData.sort((firstEntry: IProcessInstanceTableEntry, secondEntry: IProcessInstanceTableEntry) => {
-        const firstCorrelation: NewCorrelation = this._getCorrelationForTableEntry(firstEntry);
-        const secondCorrelation: NewCorrelation = this._getCorrelationForTableEntry(secondEntry);
+        const firstCorrelation: Correlation = this._getCorrelationForTableEntry(firstEntry);
+        const secondCorrelation: Correlation = this._getCorrelationForTableEntry(secondEntry);
 
-        const firstEntryIsBigger: boolean = firstCorrelation.startedAt > secondCorrelation.startedAt;
+        const firstEntryIsBigger: boolean = firstCorrelation.createdAt.getTime() > secondCorrelation.createdAt.getTime();
         if (firstEntryIsBigger) {
           return 1;
         }
 
-        const secondEntryIsBigger: boolean = firstCorrelation.startedAt < secondCorrelation.startedAt;
+        const secondEntryIsBigger: boolean = firstCorrelation.createdAt.getTime() < secondCorrelation.createdAt.getTime();
         if (secondEntryIsBigger) {
           return -1;
         }
@@ -119,19 +113,19 @@ export class ProcessInstanceList {
     return sortedTableData;
   }
 
-  private _getCorrelationForTableEntry(tableEntry: IProcessInstanceTableEntry): NewCorrelation {
-    const correlationForTableEntry: NewCorrelation = this.correlations.find((correlation: NewCorrelation) => {
+  private _getCorrelationForTableEntry(tableEntry: IProcessInstanceTableEntry): Correlation {
+    const correlationForTableEntry: Correlation = this.correlations.find((correlation: Correlation) => {
       return correlation.id === tableEntry.correlationId;
     });
 
     return correlationForTableEntry;
   }
 
-  private _getIndexForCorrelation(correlation: NewCorrelation, correlations: Array<NewCorrelation>): number {
-    const correlationStartedDate: number = correlation.startedAt;
+  private _getIndexForCorrelation(correlation: Correlation, correlations: Array<Correlation>): number {
+    const correlationStartedDate: number = correlation.createdAt.getTime();
 
-    const earlierStartedCorrelations: Array<NewCorrelation> = correlations.filter((entry: NewCorrelation) => {
-      return entry.startedAt < correlationStartedDate;
+    const earlierStartedCorrelations: Array<Correlation> = correlations.filter((entry: Correlation) => {
+      return entry.createdAt.getTime() < correlationStartedDate;
     });
 
     const amountOfEarlierStartedCorrelations: number = earlierStartedCorrelations.length;

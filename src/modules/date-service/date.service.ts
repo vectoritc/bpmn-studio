@@ -7,8 +7,8 @@ export class DateService {
   private _hour: string;
   private _minute: string;
 
-  constructor(timestamp: number) {
-    this._date = new Date(timestamp);
+  constructor(date: Date) {
+    this._date = date;
   }
 
   public asFormattedDate(): string {
