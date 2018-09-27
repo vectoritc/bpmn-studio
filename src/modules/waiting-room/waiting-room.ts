@@ -1,7 +1,7 @@
+import {IIdentity} from '@essential-projects/iam_contracts';
 import {
   Correlation,
-  IManagementApiService,
-  ManagementContext,
+  IManagementApi,
   UserTask,
   UserTaskList,
 } from '@process-engine/management_api_contracts';
@@ -23,14 +23,14 @@ export class WaitingRoom {
   private _correlationId: string;
   private _notificationService: NotificationService;
   private _authenticationService: IAuthenticationService;
-  private _managementApiClient: IManagementApiService;
+  private _managementApiClient: IManagementApi;
   private _pollingTimer: NodeJS.Timer;
   private _processModelId: string;
 
   constructor(router: Router,
               notificationService: NotificationService,
               authenticationService: IAuthenticationService,
-              managementApiClient: IManagementApiService) {
+              managementApiClient: IManagementApi) {
 
     this._router = router;
     this._notificationService = notificationService;
@@ -78,8 +78,8 @@ export class WaitingRoom {
 
   private async _pollUserTasksForCorrelation(): Promise<boolean> {
 
-    const managementContext: ManagementContext = this._getManagementContext();
-    const userTasksForCorrelation: UserTaskList = await this._managementApiClient.getUserTasksForCorrelation(managementContext,
+    const identity: IIdentity = this._getIdentity();
+    const userTasksForCorrelation: UserTaskList = await this._managementApiClient.getUserTasksForCorrelation(identity,
                                                                                                              this._correlationId);
 
     const userTaskListHasNoUserTask: boolean = userTasksForCorrelation.userTasks.length <= 0;
@@ -95,8 +95,8 @@ export class WaitingRoom {
 
   private async _pollIsCorrelationStillActive(): Promise<boolean> {
 
-    const managementContext: ManagementContext = this._getManagementContext();
-    const allActiveCorrelations: Array<Correlation> = await this._managementApiClient.getAllActiveCorrelations(managementContext);
+    const identity: IIdentity = this._getIdentity();
+    const allActiveCorrelations: Array<Correlation> = await this._managementApiClient.getAllActiveCorrelations(identity);
 
     const correlationIsNotActive: boolean = !allActiveCorrelations.some((activeCorrelation: Correlation) => {
       return activeCorrelation.id === this._correlationId;
@@ -124,12 +124,12 @@ export class WaitingRoom {
     this._router.navigateToRoute('dashboard');
   }
 
-  private _getManagementContext(): ManagementContext {
+  private _getIdentity(): IIdentity {
     const accessToken: string = this._authenticationService.getAccessToken();
-    const context: ManagementContext = {
-      identity: accessToken,
+    const identity: IIdentity = {
+      token: accessToken,
     };
 
-    return context;
+    return identity;
   }
 }

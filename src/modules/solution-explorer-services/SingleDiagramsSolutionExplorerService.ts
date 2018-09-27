@@ -1,4 +1,4 @@
-import {IIdentity} from '@essential-projects/core_contracts';
+import {IIdentity} from '@essential-projects/iam_contracts';
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 

@@ -3,7 +3,8 @@ import {inject} from 'aurelia-framework';
 import {Redirect, Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
-import {IManagementApiService, ManagementContext} from '@process-engine/management_api_contracts';
+import {IIdentity} from '@essential-projects/iam_contracts';
+import {IManagementApi} from '@process-engine/management_api_contracts';
 import {ProcessModelExecution} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
@@ -32,7 +33,7 @@ export class DiagramDetail {
   public showSaveBeforeDeployModal: boolean = false;
 
   private _solutionExplorerService: ISolutionExplorerService;
-  private _managementClient: IManagementApiService;
+  private _managementClient: IManagementApi;
   private _authenticationService: IAuthenticationService;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
@@ -46,7 +47,7 @@ export class DiagramDetail {
   private _identity: any;
 
   constructor(solutionExplorerService: ISolutionExplorerService,
-              managementClient: IManagementApiService,
+              managementClient: IManagementApi,
               authenticationService: IAuthenticationService,
               notificationService: NotificationService,
               eventAggregator: EventAggregator,
@@ -181,12 +182,12 @@ export class DiagramDetail {
     });
     const processModelId: string = processModel.id;
 
-    const managementContext: ManagementContext = this._getManagementContext();
+    const identity: IIdentity = this._getIdentity();
 
     try {
       await this
         ._managementClient
-        .updateProcessDefinitionsByName(managementContext, processModelId, payload);
+        .updateProcessDefinitionsByName(identity, processModelId, payload);
 
       this._notificationService
           .showNotification(NotificationType.SUCCESS, 'Diagram was successfully uploaded to the connected ProcessEngine.');
@@ -241,13 +242,13 @@ export class DiagramDetail {
     }
   }
 
-  private _getManagementContext(): ManagementContext {
+  private _getIdentity(): IIdentity {
     const accessToken: string = this._authenticationService.getAccessToken();
-    const context: ManagementContext = {
-      identity: accessToken,
+    const identity: IIdentity = {
+      token: accessToken,
     };
 
-    return context;
+    return identity;
   }
 
   private _handleFormValidateEvents(event: ValidateEvent): void {
