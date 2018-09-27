@@ -1,5 +1,5 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {bindable, inject} from 'aurelia-framework';
+import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {RouteConfig, Router} from 'aurelia-router';
 
 import {NotificationType} from '../../contracts/index';
@@ -36,13 +36,13 @@ export class NavBar {
   public inspectView: string = 'dashboard';
   public disableDesignLink: boolean = false;
   public latestSource: string;
-  public processOpenedFromProcessEngine: boolean = false;
   public navbarTitle: string = '';
 
   private _router: Router;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
   private _notificationService: NotificationService;
+  @bindable() private _processOpenedFromProcessEngine: boolean = false;
 
   constructor(router: Router, eventAggregator: EventAggregator, notificationService: NotificationService) {
     this._router = router;
@@ -162,6 +162,18 @@ export class NavBar {
 
   public detached(): void {
     this._disposeAllSubscriptions();
+  }
+
+  @computedFrom('_processOpenedFromProcessEngine')
+  public get getClassNameForNavbarIcon(): string {
+    const iconClassName: string = ((): string => {
+      if (this._processOpenedFromProcessEngine) {
+        return 'fa-database';
+      } else {
+        return 'fa-folder';
+      }
+    })();
+    return iconClassName;
   }
 
   private _disposeAllSubscriptions(): void {
@@ -309,16 +321,31 @@ export class NavBar {
     this.activeRouteName = activeRoute.name;
   }
 
+  /**
+   * Updates the title of the navbar including the navbar icon which
+   * indicates, if the process was opened from the local filesystem
+   * or a remote ProcessEngine
+   */
   private _updateNavbarTitle(): void {
+
     const processIdIsUndefined: boolean = this.process.id === undefined;
-    this.latestSource = processIdIsUndefined ? 'file-system' : 'process-engine';
+    this.latestSource = ((): string => {
+      if (processIdIsUndefined) {
+        return 'file-system';
+      } else {
+        return 'process-engine';
+      }
+    })();
 
     const latestSourceIsProcessEngine: boolean = this.latestSource === 'process-engine';
+    this.navbarTitle = ((): string => {
+      if (latestSourceIsProcessEngine) {
+        return this.process.id;
+      } else {
+        return this.process.name;
+      }
+    })();
 
-    this.navbarTitle = (latestSourceIsProcessEngine)
-                                      ? this.process.id
-                                      : this.process.name;
-
-    this.processOpenedFromProcessEngine = latestSourceIsProcessEngine;
+    this._processOpenedFromProcessEngine = latestSourceIsProcessEngine;
   }
 }
