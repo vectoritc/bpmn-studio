@@ -223,7 +223,7 @@ export class SolutionExplorerSolution {
 
     } else {
 
-      const navigationResult: boolean = await this._router.navigateToRoute('diagram-detail', {
+      const navigationResult: (false | PipelineResult) | (true | PipelineResult) = await this._router.navigateToRoute('diagram-detail', {
         diagramUri: diagram.uri,
       });
 
