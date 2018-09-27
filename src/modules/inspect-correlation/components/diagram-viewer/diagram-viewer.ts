@@ -2,7 +2,7 @@ import {bindable, inject} from 'aurelia-framework';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 
-import {Correlation, IManagementApiService, ManagementContext, ProcessModelExecution} from '@process-engine/management_api_contracts';
+import {Correlation, IManagementApi, ManagementContext, ProcessModelExecution} from '@process-engine/management_api_contracts';
 import {IAuthenticationService, IBpmnModeler, NotificationType} from '../../../../contracts/index';
 import {NotificationService} from '../../../notification/notification.service';
 
@@ -13,12 +13,12 @@ export class DiagramViewer {
   public canvasModel: HTMLElement;
   public showDiagram: boolean = true;
 
-  private _managementApiService: IManagementApiService;
+  private _managementApiService: IManagementApi;
   private _authenticationService: IAuthenticationService;
   private _notificationService: NotificationService;
   private _diagramViewer: IBpmnModeler;
 
-  constructor(notificationService: NotificationService, managementApi: IManagementApiService, authenticationService: IAuthenticationService) {
+  constructor(notificationService: NotificationService, managementApi: IManagementApi, authenticationService: IAuthenticationService) {
     this._notificationService = notificationService;
     this._managementApiService = managementApi;
     this._authenticationService = authenticationService;

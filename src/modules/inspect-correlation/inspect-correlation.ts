@@ -1,7 +1,7 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 
-import {Correlation, IManagementApiService} from '@process-engine/management_api_contracts';
+import {Correlation, IManagementApi} from '@process-engine/management_api_contracts';
 
 import {IEventFunction} from '../../contracts/index';
 import environment from '../../environment';

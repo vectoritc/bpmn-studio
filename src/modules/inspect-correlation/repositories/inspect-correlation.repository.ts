@@ -1,7 +1,7 @@
 
 import {inject} from 'aurelia-framework';
 
-import {Correlation, IManagementApiService, ManagementContext} from '@process-engine/management_api_contracts';
+import {Correlation, IManagementApi, ManagementContext} from '@process-engine/management_api_contracts';
 
 import {LogEntry} from '@process-engine/logging_api_contracts';
 import {IAuthenticationService} from '../../../contracts';
@@ -10,10 +10,10 @@ import {IInspectCorrelationRepository} from '../contracts';
 @inject('ManagementApiClientService', 'AuthenticationService')
 export class InspectCorrelationRepository implements IInspectCorrelationRepository {
 
-  private _managementApiService: IManagementApiService;
+  private _managementApiService: IManagementApi;
   private _authenticationService: IAuthenticationService;
 
-  constructor(managementApi: IManagementApiService, authenticationService: IAuthenticationService) {
+  constructor(managementApi: IManagementApi, authenticationService: IAuthenticationService) {
     this._managementApiService = managementApi;
     this._authenticationService = authenticationService;
   }
