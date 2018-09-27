@@ -167,6 +167,12 @@ export class BpmnDiffView {
 
     this.previousXmlIdentifier = 'Deployed';
     this.currentXmlIdentifier = 'Filesystem';
+
+    this._eventAggregator.publish(environment.events.statusBar.setXmlIdentifier,
+      [
+        this.previousXmlIdentifier,
+        this.currentXmlIdentifier,
+      ]);
   }
 
   public _setSavedProcessModelAsPreviousXml(): void {
@@ -174,6 +180,12 @@ export class BpmnDiffView {
 
     this.previousXmlIdentifier = 'Before';
     this.currentXmlIdentifier = 'After';
+
+    this._eventAggregator.publish(environment.events.statusBar.setXmlIdentifier,
+      [
+        this.previousXmlIdentifier,
+        this.currentXmlIdentifier,
+      ]);
   }
 
   public togglePreviousXml(): void {

@@ -32,6 +32,7 @@ export default {
     statusBar: {
       showDiagramViewButtons: 'statusbar:diagramviewbuttons:show',
       hdieDiagramViewButtons: 'statusbar:diagramviewbuttons:hide',
+      setXmlIdentifier: 'statusbar:xmlIdentifier',
     },
     configPanel: {
       processEngineRouteChanged: 'configpanel:processEngineRoute:changed',
