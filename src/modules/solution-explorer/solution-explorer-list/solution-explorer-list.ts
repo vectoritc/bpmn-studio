@@ -1,12 +1,12 @@
 import {computedFrom, inject} from 'aurelia-framework';
 
+import {IIdentity} from '@essential-projects/iam_contracts';
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
 import {
   IAuthenticationService,
   IDiagramValidationService,
-  IIdentity,
 } from '../../../contracts';
 import {SingleDiagramsSolutionExplorerService} from '../../solution-explorer-services/SingleDiagramsSolutionExplorerService';
 import {SolutionExplorerServiceFactory} from '../../solution-explorer-services/SolutionExplorerServiceFactory';
@@ -282,13 +282,20 @@ export class SolutionExplorerList {
   }
 
   private _createIdentityForSolutionExplorer(): IIdentity {
-    const identity: IIdentity = {} as IIdentity;
+    // const identity: IIdentity = {} as IIdentity;
 
-    const solutionExplorerAccessToken: {accessToken: string} = {
-      accessToken: this._authenticationService.getAccessToken(),
+    // const solutionExplorerAccessToken: {token: string} = {
+    //   token: this._authenticationService.getAccessToken(),
+    // };
+
+    // Object.assign(identity, solutionExplorerAccessToken);
+
+    // return identity;
+
+    const accessToken: string = this._authenticationService.getAccessToken();
+    const identity: IIdentity = {
+      token: accessToken,
     };
-
-    Object.assign(identity, solutionExplorerAccessToken);
 
     return identity;
   }

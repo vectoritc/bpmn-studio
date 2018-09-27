@@ -1,4 +1,4 @@
-import {IIdentity} from '../../../node_modules/@essential-projects/core_contracts';
+import {IIdentity} from '../../../node_modules/@essential-projects/iam_contracts';
 import {ILoginResult} from './ILoginResult';
 import {ILogoutResult} from './ILogoutResult';
 

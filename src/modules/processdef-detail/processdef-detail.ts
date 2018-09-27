@@ -3,11 +3,11 @@ import {inject} from 'aurelia-framework';
 import {activationStrategy, Redirect, Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
+import {IIdentity} from '@essential-projects/iam_contracts';
 import {
   Event,
   EventList,
-  IManagementApiService,
-  ManagementContext,
+  IManagementApi,
   ProcessModelExecution,
 } from '@process-engine/management_api_contracts';
 
@@ -60,15 +60,15 @@ export class ProcessDefDetail {
   // Used to control the modal view; shows the modal view for pressing the play button.
   private _startButtonPressed: boolean = false;
   private _authenticationService: IAuthenticationService;
-  private _managementApiClient: IManagementApiService;
   private _diagramIsInvalid: boolean = false;
+  private _managementApiClient: IManagementApi;
 
   constructor(eventAggregator: EventAggregator,
               router: Router,
               validationController: ValidationController,
               notificationService: NotificationService,
               authenticationService: IAuthenticationService,
-              managementApiClient: IManagementApiService) {
+              managementApiClient: IManagementApi) {
 
     this._eventAggregator = eventAggregator;
     this._router = router;
@@ -250,14 +250,14 @@ export class ProcessDefDetail {
 
     this._dropInvalidFormData();
 
-    const context: ManagementContext = this._getManagementContext();
+    const identity: IIdentity = this._getIdentity();
     const startRequestPayload: ProcessModelExecution.ProcessStartRequestPayload = {
       inputValues: {},
     };
 
     try {
       const response: ProcessModelExecution.ProcessStartResponsePayload = await this._managementApiClient
-        .startProcessInstance(context, this.process.id, this.selectedStartEventId, startRequestPayload, undefined, undefined);
+        .startProcessInstance(identity, this.process.id, this.selectedStartEventId, startRequestPayload, undefined, undefined);
 
       const correlationId: string = response.correlationId;
 
@@ -323,9 +323,9 @@ export class ProcessDefDetail {
   }
 
   private async _refreshProcess(): Promise<ProcessModelExecution.ProcessModel> {
-    const context: ManagementContext = this._getManagementContext();
+    const identity: IIdentity = this._getIdentity();
 
-    const updatedProcessModel: ProcessModelExecution.ProcessModel = await this._managementApiClient.getProcessModelById(context,
+    const updatedProcessModel: ProcessModelExecution.ProcessModel = await this._managementApiClient.getProcessModelById(identity,
                                                                                                                         this._processModelId);
 
     this.process = updatedProcessModel;
@@ -336,18 +336,18 @@ export class ProcessDefDetail {
     return updatedProcessModel;
   }
 
-  private _getManagementContext(): ManagementContext {
+  private _getIdentity(): IIdentity {
     const accessToken: string = this._authenticationService.getAccessToken();
-    const context: ManagementContext = {
-      identity: accessToken,
+    const identity: IIdentity = {
+      token: accessToken,
     };
 
-    return context;
+    return identity;
   }
 
   private async _updateProcessStartEvents(): Promise<void> {
-    const context: ManagementContext = this._getManagementContext();
-    const startEventResponse: EventList = await this._managementApiClient.getEventsForProcessModel(context, this.process.id);
+    const identity: IIdentity = this._getIdentity();
+    const startEventResponse: EventList = await this._managementApiClient.getEventsForProcessModel(identity, this.process.id);
 
     this.processesStartEvents = startEventResponse.events;
   }
@@ -382,13 +382,13 @@ export class ProcessDefDetail {
     try {
       const xml: string = await this.bpmnio.getXML();
 
-      const context: ManagementContext = this._getManagementContext();
+      const identity: IIdentity = this._getIdentity();
 
       const payload: ProcessModelExecution.UpdateProcessDefinitionsRequestPayload = {
         xml: xml,
       };
 
-      await this._managementApiClient.updateProcessDefinitionsByName(context, this.process.id, payload);
+      await this._managementApiClient.updateProcessDefinitionsByName(identity, this.process.id, payload);
       this._notificationService.showNotification(NotificationType.SUCCESS, 'File saved.');
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, `Error while saving diagram: ${error.message}`);

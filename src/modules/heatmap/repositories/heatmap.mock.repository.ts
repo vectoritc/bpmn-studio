@@ -1,8 +1,9 @@
 import {inject} from 'aurelia-framework';
 
+import {IIdentity} from '@essential-projects/iam_contracts';
 import {ActiveToken, FlowNodeRuntimeInformation} from '@process-engine/kpi_api_contracts';
 import {ManagementApiClientService} from '@process-engine/management_api_client';
-import {ManagementContext, ProcessModelExecution} from '@process-engine/management_api_contracts';
+import {ProcessModelExecution} from '@process-engine/management_api_contracts';
 
 import {IAuthenticationService} from '../../../contracts';
 import {IHeatmapRepository} from '../contracts/IHeatmap.Repository';
@@ -1676,17 +1677,17 @@ export class HeatmapMockRepository implements IHeatmapRepository {
   }
 
   public getProcess(processModelId: string): Promise<ProcessModelExecution.ProcessModel> {
-    const context: ManagementContext = this._getManagementContext();
+    const identity: IIdentity = this._getIdentity();
 
-    return this._managementApiClient.getProcessModelById(context, processModelId);
+    return this._managementApiClient.getProcessModelById(identity, processModelId);
   }
 
-  private _getManagementContext(): ManagementContext {
+  private _getIdentity(): IIdentity {
     const accessToken: string = this._authenticationService.getAccessToken();
-    const context: ManagementContext = {
-      identity: accessToken,
+    const identity: IIdentity = {
+      token: accessToken,
     };
 
-    return context;
+    return identity;
   }
 }

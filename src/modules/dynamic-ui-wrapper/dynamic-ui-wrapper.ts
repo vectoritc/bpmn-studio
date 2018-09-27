@@ -2,8 +2,8 @@
 import {bindable, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
+import {IIdentity} from '@essential-projects/iam_contracts';
 import {
-  ManagementContext,
   UserTask,
   UserTaskFormField,
   UserTaskFormFieldType,
@@ -104,14 +104,14 @@ export class DynamicUiWrapper {
       this.onButtonClick(action);
     }
 
-    const managementContext: ManagementContext = this._getManagementContext();
+    const identity: IIdentity = this._getIdentity();
 
     const correlationId: string = this.currentUserTask.correlationId;
     const processModelId: string = this.currentUserTask.processModelId;
     const userTaskId: string = this.currentUserTask.id;
     const userTaskResult: UserTaskResult = this._getUserTaskResults();
 
-    this._dynamicUiService.finishUserTask(managementContext,
+    this._dynamicUiService.finishUserTask(identity,
                                           processModelId,
                                           correlationId,
                                           userTaskId,
@@ -139,12 +139,12 @@ export class DynamicUiWrapper {
     return userTaskResult;
   }
 
-  private _getManagementContext(): ManagementContext {
+  private _getIdentity(): IIdentity {
     const accessToken: string = this._authenticationService.getAccessToken();
-    const context: ManagementContext = {
-      identity: accessToken,
+    const identity: IIdentity = {
+      token: accessToken,
     };
 
-    return context;
+    return identity;
   }
 }
