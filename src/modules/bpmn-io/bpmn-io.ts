@@ -67,6 +67,7 @@ export class BpmnIo {
   private _subscriptions: Array<Subscription>;
   private _diagramExportService: IDiagramExportService;
   private _diagramPrintService: IDiagramPrintService;
+  private _diagramIsInvalid: boolean = false;
 
   /**
    * We are using the direct reference of a container element to place the tools of bpmn-js
@@ -256,6 +257,10 @@ export class BpmnIo {
         const diagramIsChanged: boolean = unformattedSaveXml !== unformattedXml;
 
         this._eventAggregator.publish(environment.events.differsFromOriginal, diagramIsChanged);
+      }), this._eventAggregator.subscribe(environment.events.navBar.validationError, () => {
+        this._diagramIsInvalid = true;
+      }), this._eventAggregator.subscribe(environment.events.navBar.noValidationError, () => {
+        this._diagramIsInvalid = false;
       }),
     ];
 
@@ -551,6 +556,15 @@ export class BpmnIo {
     if (userWantsToPrint) {
       // Prevent the browser from handling the default action for CMD/CTRL + p.
       event.preventDefault();
+
+      /**
+       * We don't want the user to print an invalid diagram.
+       */
+      if (this._diagramIsInvalid) {
+        this._notificationService.showNotification(NotificationType.WARNING,
+          `The Diagram is invalid. Please resolve this issues to print the diagram`);
+        return;
+      }
 
       // TODO: Handle the promise properly
       this.getSVG().then((svg: string): void => {
