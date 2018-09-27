@@ -99,13 +99,10 @@ export class RefreshingSolutionExplorerService implements ISolutionExplorerServi
   }
 
   private _createIdentityForSolutionExplorer(): IIdentity {
-    const identity: IIdentity = {} as IIdentity;
-
-    const solutionExplorerAccessToken: {accessToken: string} = {
-      accessToken: this._authenticationService.getAccessToken(),
+    const accessToken: string = this._authenticationService.getAccessToken();
+    const identity: IIdentity = {
+      token: accessToken,
     };
-
-    Object.assign(identity, solutionExplorerAccessToken);
 
     return identity;
   }
