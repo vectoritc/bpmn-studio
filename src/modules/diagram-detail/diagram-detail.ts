@@ -211,7 +211,6 @@ export class DiagramDetail {
     if (this._diagramIsInvalid) {
       this._notificationService.showNotification(NotificationType.WARNING, `The could not be saved because it is invalid!`);
 
-      Promise.reject(Error('invalid'));
       return;
     }
 
