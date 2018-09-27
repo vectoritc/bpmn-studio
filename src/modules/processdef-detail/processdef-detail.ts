@@ -182,6 +182,7 @@ export class ProcessDefDetail {
 
             if (this._diagramIsInvalid) {
               this.showSaveOnLeaveModal = false;
+
               resolve(false);
             }
 
