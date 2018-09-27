@@ -22,8 +22,8 @@ export class ProcessModel {
     return '/processdef/' + processModel + '/detail';
   }
 
-  public static userTasksUrl(processModel: string): string {
-    return '/processdef/' + processModel + '/task';
+  public static userTasksUrl(correlationId: string): string {
+    return '/correlation/' + correlationId + '/task';
   }
 
   public static userTasksInputUrl(processModel: string): string {

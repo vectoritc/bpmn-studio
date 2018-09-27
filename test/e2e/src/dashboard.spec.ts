@@ -137,7 +137,7 @@ describe('Dashboard view', () => {
 
     await dashboard.openUserTasksByClickOnModelIdInProcessRunningList(correlationId);
 
-    const userTasksUrl: string = ProcessModel.userTasksUrl(processModelId);
+    const userTasksUrl: string = ProcessModel.userTasksUrl(correlationId);
     const currentBrowserUrl: string = await browser.getCurrentUrl();
 
     expect(currentBrowserUrl).toContain(userTasksUrl);
