@@ -32,7 +32,7 @@ export class BpmnDiffView {
   public leftCanvasModel: HTMLElement;
   public rightCanvasModel: HTMLElement;
   public lowerCanvasModel: HTMLElement;
-  public currentDiffMode: DiffMode = DiffMode.AfterVsBefore;
+  public currentDiffMode: DiffMode = DiffMode.CurrentVsPrevious;
   public diffModeTitle: string = '';
   public showChangeList: boolean;
   public noChangesExisting: boolean = true;
@@ -285,12 +285,12 @@ export class BpmnDiffView {
   }
 
   private _updateDiffView(): void {
-    if (this.currentDiffMode === DiffMode.AfterVsBefore) {
+    if (this.currentDiffMode === DiffMode.CurrentVsPrevious) {
       this._updateLowerDiff(this.xml);
-      this.diffModeTitle = 'After vs. Before';
-    } else if (this.currentDiffMode === DiffMode.BeforeVsAfter) {
+      this.diffModeTitle = 'Current vs. Previous';
+    } else if (this.currentDiffMode === DiffMode.PreviousVsCurrent) {
       this._updateLowerDiff(this.savedxml);
-      this.diffModeTitle = 'Before vs. After';
+      this.diffModeTitle = 'Previous vs. Current';
     } else {
       this.diffModeTitle = '';
     }
@@ -311,7 +311,7 @@ export class BpmnDiffView {
     const changedElements: object = this.changes._changed;
     const layoutChangedElements: object = this.changes._layoutChanged;
 
-    const diffModeIsAfterVsBefore: boolean = this.currentDiffMode === DiffMode.AfterVsBefore;
+    const diffModeIsCurrentVsPrevious: boolean = this.currentDiffMode === DiffMode.CurrentVsPrevious;
 
     await this._importXml(xml, this._diffModeler);
     this._clearColors();
@@ -319,7 +319,7 @@ export class BpmnDiffView {
     this._markLayoutChangedElements(layoutChangedElements);
     this._markChangedElements(changedElements);
 
-    if (diffModeIsAfterVsBefore) {
+    if (diffModeIsCurrentVsPrevious) {
       this._markAddedElements(addedElements);
     } else {
       this._markRemovedElements(removedElements);
