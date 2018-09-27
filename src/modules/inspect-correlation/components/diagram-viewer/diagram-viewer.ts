@@ -1,27 +1,25 @@
 import {bindable, inject} from 'aurelia-framework';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
+import {Correlation, IManagementApi} from '@process-engine/management_api_contracts';
+import {CorrelationProcessModel, ProcessModel} from '@process-engine/management_api_contracts/dist/data_models';
 
-import {Correlation, IManagementApi, ManagementContext, ProcessModelExecution} from '@process-engine/management_api_contracts';
-import {IAuthenticationService, IBpmnModeler, NotificationType} from '../../../../contracts/index';
+import {IBpmnModeler, NotificationType} from '../../../../contracts/index';
 import {NotificationService} from '../../../notification/notification.service';
 
 @inject('NotificationService', 'ManagementApiClientService', 'AuthenticationService')
 export class DiagramViewer {
   @bindable({ changeHandler: 'correlationChanged' }) public correlation: Correlation;
   @bindable() public xml: string;
+  @bindable() public processModelId: string;
   public canvasModel: HTMLElement;
   public showDiagram: boolean = true;
 
-  private _managementApiService: IManagementApi;
-  private _authenticationService: IAuthenticationService;
   private _notificationService: NotificationService;
   private _diagramViewer: IBpmnModeler;
 
-  constructor(notificationService: NotificationService, managementApi: IManagementApi, authenticationService: IAuthenticationService) {
+  constructor(notificationService: NotificationService) {
     this._notificationService = notificationService;
-    this._managementApiService = managementApi;
-    this._authenticationService = authenticationService;
   }
 
   public attached(): void {
@@ -37,18 +35,20 @@ export class DiagramViewer {
   }
 
   public async correlationChanged(): Promise<void> {
-    const correlationId: string = this.correlation.id;
-    this.xml = await this.getXmlByCorrelationId(correlationId);
+    this.xml = await this._getXmlByCorrelation(this.correlation);
 
     this._importXml();
   }
 
-  public async getXmlByCorrelationId(correlationId: string): Promise<string> {
-    const managementContext: ManagementContext = this._getManagementContext();
-    const processModel: ProcessModelExecution.ProcessModel = await this._managementApiService.getProcessModelForCorrelation(managementContext,
-                                                                                                                            correlationId);
+  private async _getXmlByCorrelation(correlation: Correlation): Promise<string> {
+    const processModelForCorrelation: CorrelationProcessModel = correlation.processModels.find((processModel: CorrelationProcessModel) => {
+      // TODO: Check if this works
+      return processModel.name === this.processModelId;
+    });
 
-    return processModel.xml;
+    const xmlForCorrelation: string = processModelForCorrelation.xml;
+
+    return xmlForCorrelation;
   }
 
   private async _importXml(): Promise <void> {
@@ -73,14 +73,5 @@ export class DiagramViewer {
     });
 
     return xmlImportPromise;
-  }
-
-  private _getManagementContext(): ManagementContext {
-    const accessToken: string = this._authenticationService.getAccessToken();
-    const context: ManagementContext = {
-      identity: accessToken,
-    };
-
-    return context;
   }
 }
