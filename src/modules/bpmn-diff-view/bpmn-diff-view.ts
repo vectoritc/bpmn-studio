@@ -32,7 +32,7 @@ export class BpmnDiffView {
   public leftCanvasModel: HTMLElement;
   public rightCanvasModel: HTMLElement;
   public lowerCanvasModel: HTMLElement;
-  public currentDiffMode: DiffMode;
+  public currentDiffMode: DiffMode = DiffMode.AfterVsBefore;
   public diffModeTitle: string = '';
   public showChangeList: boolean;
   public noChangesExisting: boolean = true;
@@ -92,7 +92,6 @@ export class BpmnDiffView {
       }),
     ];
 
-    this.currentDiffMode = DiffMode.AfterVsBefore;
     this._updateDiffView();
   }
 
