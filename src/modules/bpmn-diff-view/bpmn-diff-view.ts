@@ -3,6 +3,8 @@ import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable} from 'aurelia-framework';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
+import {ManagementApiClientService} from '@process-engine/management_api_client';
+import {ManagementContext, ProcessModelExecution} from '@process-engine/management_api_contracts';
 
 import {diff} from 'bpmn-js-differ';
 
@@ -24,15 +26,19 @@ import {defaultBpmnColors,
   IShape,
   NotificationType} from '../../contracts/index';
 import environment from '../../environment';
+import { AuthenticationService } from '../authentication/authentication.service';
 import {ElementNameService} from '../elementname/elementname.service';
 import {NotificationService} from '../notification/notification.service';
 
-@inject('NotificationService', EventAggregator)
+@inject('NotificationService', EventAggregator, 'ManagementApiClientService', AuthenticationService)
 export class BpmnDiffView {
 
   @bindable({ changeHandler: 'currentXmlChanged' }) public currentXml: string;
   @bindable({ changeHandler: 'previousXmlChanged' }) public previousXml: string;
+  @bindable({ changeHandler: 'savedXmlChanged' }) public savedXml: string;
+  @bindable({ changeHandler: 'processModelIdChanged' }) public processModelId: string;
   public xmlChanges: IDiffChanges;
+  public deployedXml: string;
   public leftCanvasModel: HTMLElement;
   public rightCanvasModel: HTMLElement;
   public lowerCanvasModel: HTMLElement;
@@ -59,11 +65,20 @@ export class BpmnDiffView {
   private _elementRegistry: IElementRegistry;
   private _subscriptions: Array<Subscription>;
   private _elementNameService: ElementNameService;
+  private _managementApiService: ManagementApiClientService;
+  private _authenticationService: AuthenticationService;
+  private _showSavedXml: boolean = true;
 
-  constructor(notificationService: NotificationService, eventAggregator: EventAggregator) {
+  constructor(notificationService: NotificationService,
+              eventAggregator: EventAggregator,
+              managementApiService: ManagementApiClientService,
+              authenticationService: AuthenticationService) {
+
     this._notificationService = notificationService;
     this._eventAggregator = eventAggregator;
     this._elementNameService = new ElementNameService();
+    this._managementApiService = managementApiService;
+    this._authenticationService = authenticationService;
   }
 
   public created(): void {
@@ -108,12 +123,59 @@ export class BpmnDiffView {
 
   public async currentXmlChanged(): Promise<void> {
     this._importXml(this.currentXml, this._rightViewer);
+
     await this._updateXmlChanges();
+    this._updateDiffView();
+  }
+
+  public savedXmlChanged(): void {
+    if (this._showSavedXml) {
+      this._setSavedProcessModelAsPreviousXml();
+    }
+  }
+
+  public async processModelIdChanged(): Promise<void> {
+    const hasNoProcessModelId: boolean = this.processModelId === undefined;
+
+    if (hasNoProcessModelId) {
+      this.deployedXml = undefined;
+
+      return;
+    }
+
+    const deployedProcessModel: ProcessModelExecution.ProcessModel =
+      await this._managementApiService.getProcessModelById(this._getManagementContext(), this.processModelId);
+
+    const processModelIsDeployed: boolean = deployedProcessModel !== undefined;
+
+    this.deployedXml = processModelIsDeployed
+                        ? deployedProcessModel.xml
+                        : undefined;
   }
 
   public async previousXmlChanged(): Promise<void> {
     this._importXml(this.previousXml, this._leftViewer);
+
     await this._updateXmlChanges();
+    this._updateDiffView();
+  }
+
+  public _setDeployedProcessModelAsPreviousXml(): void {
+    this.previousXml = this.deployedXml;
+  }
+
+  public _setSavedProcessModelAsPreviousXml(): void {
+    this.previousXml = this.savedXml;
+  }
+
+  public togglePreviousXml(): void {
+    this._showSavedXml = !this._showSavedXml;
+
+    if (this._showSavedXml) {
+      this._setSavedProcessModelAsPreviousXml();
+    } else {
+      this._setDeployedProcessModelAsPreviousXml();
+    }
   }
 
   private _syncAllViewers(): void {
@@ -211,10 +273,10 @@ export class BpmnDiffView {
     const diagramIsUnchanged: boolean = unformattedSaveXml === unformattedXml;
 
     if (diagramIsUnchanged) {
-        this.noChangesReason = 'The two diagrams are identical.';
-      } else {
-        this.noChangesReason = 'The two diagrams are incomparable.';
-      }
+      this.noChangesReason = 'The two diagrams are identical.';
+    } else {
+      this.noChangesReason = 'The two diagrams are incomparable.';
+    }
   }
 
   private _createChangeListEntry(elementName: string, elementType: string): IChangeListEntry {
@@ -444,5 +506,14 @@ export class BpmnDiffView {
       stroke: color.border,
       fill: color.fill,
     });
+  }
+
+  private _getManagementContext(): ManagementContext {
+    const accessToken: string = this._authenticationService.getAccessToken();
+    const context: ManagementContext = {
+      identity: accessToken,
+    };
+
+    return context;
   }
 }

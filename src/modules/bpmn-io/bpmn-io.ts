@@ -33,6 +33,7 @@ export class BpmnIo {
 
   @bindable() public xml: string;
   @bindable({changeHandler: 'nameChanged'}) public name: string;
+  @bindable() public processModelId: string;
 
   public savedXml: string;
   public showPropertyPanel: boolean = false;

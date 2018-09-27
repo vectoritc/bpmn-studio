@@ -38,7 +38,7 @@
         </div>
       </div>
       <bpmn-xml-view if.bind="initialLoadingFinished" show.bind="showXMLView" xml.bind="xmlForXmlView"></bpmn-xml-view>
-      <bpmn-diff-view if.bind="showDiffView" previous-xml.bind="savedXml" current-xml.bind="xmlForDiffView"></bpmn-diff-view>
+      <bpmn-diff-view if.bind="showDiffView" saved-xml.bind="savedXml" current-xml.bind="xmlForDiffView" process-model-id.bind="processModelId"></bpmn-diff-view>
     </div>
 
     <div class="bpmn-io-layout__tools-right">
