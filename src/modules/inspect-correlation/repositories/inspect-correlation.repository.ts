@@ -20,7 +20,7 @@ export class InspectCorrelationRepository implements IInspectCorrelationReposito
 
   public async getAllCorrelationsForProcessModelId(processModelId: string): Promise<Array<Correlation>> {
     const managementContext: ManagementContext = this._getManagementContext();
-    const allActiveCorrelations: Array<Correlation> = await this._managementApiService.getAllActiveCorrelations(managementContext);
+    const allActiveCorrelations: Array<Correlation> = await this._managementApiService.getActiveCorrelations(managementContext);
 
     const correlationsForProcessModelId: Array<Correlation> = allActiveCorrelations.filter((correlation: Correlation) => {
       return correlation.processModelId === processModelId;

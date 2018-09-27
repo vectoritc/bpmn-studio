@@ -152,13 +152,13 @@ export class ProcessList {
   private async getAllProcesses(): Promise<Array<Correlation>> {
     const identity: IIdentity = this._getIdentity();
 
-    return this._managementApiService.getAllActiveCorrelations(identity);
+    return this._managementApiService.getActiveCorrelations(identity);
   }
 
   private async getProcessesForProcessModel(processModelId: string): Promise<Array<Correlation>> {
     const identity: IIdentity = this._getIdentity();
 
-    const runningCorrelations: Array<Correlation> = await this._managementApiService.getAllActiveCorrelations(identity);
+    const runningCorrelations: Array<Correlation> = await this._managementApiService.getActiveCorrelations(identity);
 
     const correlationsWithId: Array<Correlation> = runningCorrelations.filter((correlation: Correlation) => {
       return correlation.processModelId === processModelId;

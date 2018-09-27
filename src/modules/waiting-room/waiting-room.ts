@@ -96,7 +96,7 @@ export class WaitingRoom {
   private async _pollIsCorrelationStillActive(): Promise<boolean> {
 
     const identity: IIdentity = this._getIdentity();
-    const allActiveCorrelations: Array<Correlation> = await this._managementApiClient.getAllActiveCorrelations(identity);
+    const allActiveCorrelations: Array<Correlation> = await this._managementApiClient.getActiveCorrelations(identity);
 
     const correlationIsNotActive: boolean = !allActiveCorrelations.some((activeCorrelation: Correlation) => {
       return activeCorrelation.id === this._correlationId;

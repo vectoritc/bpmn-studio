@@ -198,7 +198,7 @@ export class TaskList {
 
     const userTaskList: UserTaskList = await this._managementApiService.getUserTasksForCorrelation(identity, correlationId);
 
-    const runningCorrelations: Array<Correlation> = await this._managementApiService.getAllActiveCorrelations(identity);
+    const runningCorrelations: Array<Correlation> = await this._managementApiService.getActiveCorrelations(identity);
 
     const correlation: Correlation = runningCorrelations.find((otherCorrelation: Correlation) => {
       return otherCorrelation.id === correlationId;

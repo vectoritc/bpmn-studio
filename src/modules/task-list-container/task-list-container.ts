@@ -78,7 +78,7 @@ export class TaskListContainer {
       // Talk to Sebastian or Christoph first.
 
       await this._managementApiService.getProcessModels(identity);
-      await this._managementApiService.getAllActiveCorrelations(identity);
+      await this._managementApiService.getActiveCorrelations(identity);
 
     } catch (error) {
       const errorIsForbiddenError: boolean = isError(error, ForbiddenError);
