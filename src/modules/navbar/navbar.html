@@ -32,12 +32,12 @@
         </button>
       </template>
       <template if.bind="showTools">
-        <button class="button menu-bar__menu-center--action-button" click.delegate="saveDiagram()" disabled.bind="validationError" title="Save Diagram">
+        <button class="button menu-bar__menu-center--action-button" class.bind="validationError ? 'button--disabled' : ''" click.delegate="saveDiagram()" disabled.bind="validationError" title="Save Diagram">
           <i class="fas fa-save"></i>
         </button>
       </template>
       <div class="btn-group" if.bind="showTools">
-        <button class="button menu-bar__menu-center--action-button dropdown-toggle" disabled.bind="validationError" title="Export Diagram" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button class="button menu-bar__menu-center--action-button dropdown-toggle" class.bind="validationError ? 'button--disabled' : ''" disabled.bind="validationError" title="Export Diagram" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="fas fa-upload"></i>
         </button>
         <ul class="dropdown-menu">
@@ -48,7 +48,7 @@
         </ul>
       </div>
       <template if.bind="showTools">
-        <button class="button menu-bar__menu-center--action-button" disabled.bind="validationError" click.delegate="printDiagram()" title="Print Diagram">
+        <button class="button menu-bar__menu-center--action-button" class.bind="validationError ? 'button--disabled' : ''" disabled.bind="validationError" click.delegate="printDiagram()" title="Print Diagram">
           <i class="fas fa-print"></i>
         </button>
       </template>
