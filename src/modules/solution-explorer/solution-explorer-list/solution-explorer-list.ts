@@ -282,16 +282,6 @@ export class SolutionExplorerList {
   }
 
   private _createIdentityForSolutionExplorer(): IIdentity {
-    // const identity: IIdentity = {} as IIdentity;
-
-    // const solutionExplorerAccessToken: {token: string} = {
-    //   token: this._authenticationService.getAccessToken(),
-    // };
-
-    // Object.assign(identity, solutionExplorerAccessToken);
-
-    // return identity;
-
     const accessToken: string = this._authenticationService.getAccessToken();
     const identity: IIdentity = {
       token: accessToken,
