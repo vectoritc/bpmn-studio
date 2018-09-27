@@ -22,11 +22,6 @@ export class ProcessInstanceList {
   };
 
   private _tableData: Array<IProcessInstanceTableEntry> = [];
-  private _dateService: DateService;
-
-  constructor() {
-    this._dateService = new DateService();
-  }
 
   public selectCorrelation(selectedTableEntry: IProcessInstanceTableEntry): void {
     this.selectedCorrelation = this._getCorrelationForTableEntry(selectedTableEntry);
@@ -41,7 +36,13 @@ export class ProcessInstanceList {
     this._tableData = [];
 
     for (const correlation of correlations) {
-      const formattedStartedDate: string = this._dateService.getDateStringFromTimestamp(correlation.startedAt);
+      const formattedStartedDate: string = new DateService(correlation.startedAt)
+                                            .getYear()
+                                            .getMonth()
+                                            .getDay()
+                                            .getHours()
+                                            .getMinutes()
+                                            .asFormattedDate();
 
       const index: number = this._getIndexForCorrelation(correlation, correlations);
       const state: string = 'test'; // correlation.state.toUpperCase();

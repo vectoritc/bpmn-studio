@@ -1,61 +1,71 @@
 export class DateService {
 
-  public getDateStringFromTimestamp(timestamp: number): string {
-    const date: Date = new Date(timestamp);
+  private _date: Date;
+  private _day: string;
+  private _month: string;
+  private _year: string;
+  private _hour: string;
+  private _minute: string;
 
-    const day: string = this.getDayFromDate(date);
-    const month: string = this.getMonth(date);
-    const year: string = this.getYearFromDate(date);
-    const hour: string = this.getHoursFromDate(date);
-    const minute: string =  this.getMinutesFromDate(date);
+  constructor(timestamp: number) {
+    this._date = new Date(timestamp);
+  }
 
-    const formattedDate: string = `${day}.${month}.${year} ${hour}:${minute}`;
+  public asFormattedDate(): string {
+    const formattedDate: string = `${this._day}.${this._month}.${this._year} ${this._hour}:${this._minute}`;
+
     return formattedDate;
   }
 
-  public getDayFromDate(date: Date): string {
-    const day: string = `${date.getDate()}`;
+  public getDay(): DateService {
+    const day: string = `${this._date.getDate()}`;
 
-    if (day.length === 1) {
-      return `0${day}`;
-    }
+    const dayIsOneChar: boolean = day.length === 1;
 
-    return day;
+    this._day = dayIsOneChar ? `0${day}`
+                             : day;
+
+    return this;
   }
 
-  public getMonth(date: Date): string {
-    const month: string = `${date.getMonth() + 1}`;
+  public getMonth(): DateService {
+    const month: string = `${this._date.getMonth() + 1}`;
 
-    if (month.length === 1) {
-      return `0${month}`;
-    }
+    const monthIsOneChar: boolean = month.length === 1;
 
-    return month;
+    this._month = monthIsOneChar ? `0${month}`
+                                 : month;
+
+    return this;
   }
 
-  public getYearFromDate(date: Date): string {
-    const year: string = `${date.getFullYear()}`;
+  public getYear(): DateService {
+    const year: string = `${this._date.getFullYear()}`;
 
-    return year;
+    this._year = year;
+
+    return this;
   }
 
-  public getHoursFromDate(date: Date): string {
-    const hours: string = `${date.getHours()}`;
+  public getHours(): DateService {
+    const hours: string = `${this._date.getHours()}`;
 
-    if (hours.length === 1) {
-      return `0${hours}`;
-    }
+    const hourIsOneChar: boolean = hours.length === 1;
 
-    return hours;
+    this._hour = hourIsOneChar ? `0${hours}`
+                               : hours;
+
+    return this;
   }
 
-  public getMinutesFromDate(date: Date): string {
-    const minute: string = `${date.getMinutes()}`;
+  public getMinutes(): DateService {
+    const minute: string = `${this._date.getMinutes()}`;
 
-    if (minute.length === 1) {
-      return `0${minute}`;
-    }
+    const minuteIsOneChar: boolean = minute.length === 1;
 
-    return minute;
+    this._minute = minuteIsOneChar ? `0${minute}`
+                                   : minute;
+
+    return this;
   }
 }

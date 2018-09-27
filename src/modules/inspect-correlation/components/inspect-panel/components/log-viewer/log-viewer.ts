@@ -21,13 +21,11 @@ export class LogViewer {
     sortProperty: undefined,
   };
 
-  private _dateService: DateService;
   private _notificationService: NotificationService;
   private _inspectCorrelationService: IInspectCorrelationService;
 
   constructor(notificationService: NotificationService, inspectCorrelationService: IInspectCorrelationService) {
     this._notificationService = notificationService;
-    this._dateService = new DateService();
     this._inspectCorrelationService = inspectCorrelationService;
   }
 
@@ -47,7 +45,13 @@ export class LogViewer {
   }
 
   public getDateStringFromTimestamp(timestamp: number): string {
-    const dateString: string = this._dateService.getDateStringFromTimestamp(timestamp);
+    const dateString: string = new DateService(timestamp)
+                                .getYear()
+                                .getMonth()
+                                .getDay()
+                                .getHours()
+                                .getMinutes()
+                                .asFormattedDate();
 
     return dateString;
   }
