@@ -48,8 +48,8 @@ export class BpmnDiffView {
   public noChangesExisting: boolean = true;
   public noChangesReason: string;
   public totalAmountOfChange: number;
-  public previousXmlTitle: string;
-  public currentXmlTitle: string;
+  public previousXmlIdentifier: string;
+  public currentXmlIdentifier: string;
   public changeListData: IDiffChangeListData = {
     removed: [],
     changed: [],
@@ -165,15 +165,15 @@ export class BpmnDiffView {
   public _setDeployedProcessModelAsPreviousXml(): void {
     this.previousXml = this.deployedXml;
 
-    this.previousXmlTitle = 'Deployed';
-    this.currentXmlTitle = 'Filesystem';
+    this.previousXmlIdentifier = 'Deployed';
+    this.currentXmlIdentifier = 'Filesystem';
   }
 
   public _setSavedProcessModelAsPreviousXml(): void {
     this.previousXml = this.savedXml;
 
-    this.previousXmlTitle = 'Before';
-    this.currentXmlTitle = 'After';
+    this.previousXmlIdentifier = 'Before';
+    this.currentXmlIdentifier = 'After';
   }
 
   public togglePreviousXml(): void {
@@ -381,10 +381,10 @@ export class BpmnDiffView {
   private _updateDiffView(): void {
     if (this.currentDiffMode === DiffMode.CurrentVsPrevious) {
       this._updateLowerDiff(this.currentXml);
-      this.diffModeTitle = `${this.currentXmlTitle} vs. ${this.previousXmlTitle}`;
+      this.diffModeTitle = `${this.currentXmlIdentifier} vs. ${this.previousXmlIdentifier}`;
     } else if (this.currentDiffMode === DiffMode.PreviousVsCurrent) {
       this._updateLowerDiff(this.previousXml);
-      this.diffModeTitle = `${this.previousXmlTitle} vs. ${this.currentXmlTitle}`;
+      this.diffModeTitle = `${this.previousXmlIdentifier} vs. ${this.currentXmlIdentifier}`;
     } else {
       this.diffModeTitle = '';
     }
