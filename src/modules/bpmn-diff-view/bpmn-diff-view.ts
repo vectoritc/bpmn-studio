@@ -48,6 +48,8 @@ export class BpmnDiffView {
   public noChangesExisting: boolean = true;
   public noChangesReason: string;
   public totalAmountOfChange: number;
+  public previousXmlTitle: string;
+  public currentXmlTitle: string;
   public changeListData: IDiffChangeListData = {
     removed: [],
     changed: [],
@@ -162,10 +164,16 @@ export class BpmnDiffView {
 
   public _setDeployedProcessModelAsPreviousXml(): void {
     this.previousXml = this.deployedXml;
+
+    this.previousXmlTitle = 'Deployed';
+    this.currentXmlTitle = 'Filesystem';
   }
 
   public _setSavedProcessModelAsPreviousXml(): void {
     this.previousXml = this.savedXml;
+
+    this.previousXmlTitle = 'Before';
+    this.currentXmlTitle = 'After';
   }
 
   public togglePreviousXml(): void {
@@ -373,10 +381,10 @@ export class BpmnDiffView {
   private _updateDiffView(): void {
     if (this.currentDiffMode === DiffMode.CurrentVsPrevious) {
       this._updateLowerDiff(this.currentXml);
-      this.diffModeTitle = 'Current vs. Previous';
+      this.diffModeTitle = `${this.currentXmlTitle} vs. ${this.previousXmlTitle}`;
     } else if (this.currentDiffMode === DiffMode.PreviousVsCurrent) {
       this._updateLowerDiff(this.previousXml);
-      this.diffModeTitle = 'Previous vs. Current';
+      this.diffModeTitle = `${this.previousXmlTitle} vs. ${this.currentXmlTitle}`;
     } else {
       this.diffModeTitle = '';
     }
