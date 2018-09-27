@@ -46,14 +46,14 @@ export class StatusBar {
       this.xmlIsShown = false;
       this.diffIsShown = false;
       this.showChangeList = false;
-      this.currentDiffMode = DiffMode.AfterVsBefore;
+      this.currentDiffMode = DiffMode.CurrentVsPrevious;
     });
 
     this._eventAggregator.subscribe(environment.events.configPanel.processEngineRouteChanged, (newProcessEngineRoute: string) => {
       this._setProcessEngineRoute(newProcessEngineRoute);
     });
 
-    this.currentDiffMode = DiffMode.AfterVsBefore;
+    this.currentDiffMode = DiffMode.CurrentVsPrevious;
   }
 
   public toggleXMLView(): void {

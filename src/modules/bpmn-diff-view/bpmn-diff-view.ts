@@ -4,13 +4,17 @@ import {bindable} from 'aurelia-framework';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 
+import {diff} from 'bpmn-js-differ';
+
 import {defaultBpmnColors,
   DiffMode,
+  IBpmnModdle,
   IBpmnModeler,
   IBpmnXmlSaveOptions,
   ICanvas,
   IChangeListEntry,
   IColorPickerColor,
+  IDefinition,
   IDiffChangeListData,
   IDiffChanges,
   IElementChange,
@@ -26,9 +30,9 @@ import {NotificationService} from '../notification/notification.service';
 @inject('NotificationService', EventAggregator)
 export class BpmnDiffView {
 
-  @bindable() public xml: string;
-  @bindable({ changeHandler: 'savedXmlChanged' }) public savedxml: string;
-  @bindable() public changes: IDiffChanges;
+  @bindable({ changeHandler: 'currentXmlChanged' }) public currentXml: string;
+  @bindable({ changeHandler: 'previousXmlChanged' }) public previousXml: string;
+  public xmlChanges: IDiffChanges;
   public leftCanvasModel: HTMLElement;
   public rightCanvasModel: HTMLElement;
   public lowerCanvasModel: HTMLElement;
@@ -75,12 +79,13 @@ export class BpmnDiffView {
     this._startSynchronizingViewers();
   }
 
-  public attached(): void {
+  public async attached(): Promise<void> {
     this._leftViewer.attachTo(this.leftCanvasModel);
     this._rightViewer.attachTo(this.rightCanvasModel);
     this._lowerViewer.attachTo(this.lowerCanvasModel);
 
     this._syncAllViewers();
+    await this._updateXmlChanges();
 
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.diffView.changeDiffMode, (diffMode: DiffMode) => {
@@ -101,17 +106,14 @@ export class BpmnDiffView {
     }
   }
 
-  public xmlChanged(): void {
-    this._importXml(this.xml, this._rightViewer);
+  public async currentXmlChanged(): Promise<void> {
+    this._importXml(this.currentXml, this._rightViewer);
+    await this._updateXmlChanges();
   }
 
-  public savedXmlChanged(): void {
-    this._importXml(this.savedxml, this._leftViewer);
-  }
-
-  public changesChanged(): void {
-    this._updateDiffView();
-    this._prepareChangesForChangeList();
+  public async previousXmlChanged(): Promise<void> {
+    this._importXml(this.previousXml, this._leftViewer);
+    await this._updateXmlChanges();
   }
 
   private _syncAllViewers(): void {
@@ -122,6 +124,28 @@ export class BpmnDiffView {
     const changedViewbox: string = lowerCanvas.viewbox();
     leftCanvas.viewbox(changedViewbox);
     rightCanvas.viewbox(changedViewbox);
+  }
+
+  private async _updateXmlChanges(): Promise<void> {
+    const previousDefinitions: IDefinition = await this._getDefintionsFromXml(this.previousXml);
+    const newDefinitions: IDefinition = await this._getDefintionsFromXml(this.currentXml);
+
+    this.xmlChanges = diff(previousDefinitions, newDefinitions);
+    this._prepareChangesForChangeList();
+  }
+
+  private async _getDefintionsFromXml(xml: string): Promise<any> {
+    return new Promise((resolve: Function, reject: Function): void => {
+      const moddle: IBpmnModdle =  this._diffModeler.get('moddle');
+
+      moddle.fromXML(xml, (error: Error, definitions: IDefinition) => {
+        if (error) {
+          reject(error);
+        }
+
+        resolve(definitions);
+      });
+    });
   }
 
   private _getChangeListEntriesFromChanges(elementChanges: object): Array<IChangeListEntry> {
@@ -152,12 +176,12 @@ export class BpmnDiffView {
     this.changeListData.added = [];
     this.changeListData.layoutChanged = [];
 
-    const changedElement: object = this._removeElementsWithoutChanges(this.changes._changed);
+    const changedElement: object = this._removeElementsWithoutChanges(this.xmlChanges._changed);
 
-    this.changeListData.removed = this._getChangeListEntriesFromChanges(this.changes._removed);
+    this.changeListData.removed = this._getChangeListEntriesFromChanges(this.xmlChanges._removed);
     this.changeListData.changed = this._getChangeListEntriesFromChanges(changedElement);
-    this.changeListData.added = this._getChangeListEntriesFromChanges(this.changes._added);
-    this.changeListData.layoutChanged = this._getChangeListEntriesFromChanges(this.changes._layoutChanged);
+    this.changeListData.added = this._getChangeListEntriesFromChanges(this.xmlChanges._added);
+    this.changeListData.layoutChanged = this._getChangeListEntriesFromChanges(this.xmlChanges._layoutChanged);
 
     this.totalAmountOfChange = this.changeListData.removed.length +
                                 this.changeListData.changed.length +
@@ -181,8 +205,8 @@ export class BpmnDiffView {
     */
     const whitespaceAndNewLineRegex: RegExp = /\r?\n|\r|\s/g;
 
-    const unformattedXml: string = this.xml.replace(whitespaceAndNewLineRegex, '');
-    const unformattedSaveXml: string = this.savedxml.replace(whitespaceAndNewLineRegex, '');
+    const unformattedXml: string = this.currentXml.replace(whitespaceAndNewLineRegex, '');
+    const unformattedSaveXml: string = this.previousXml.replace(whitespaceAndNewLineRegex, '');
 
     const diagramIsUnchanged: boolean = unformattedSaveXml === unformattedXml;
 
@@ -286,10 +310,10 @@ export class BpmnDiffView {
 
   private _updateDiffView(): void {
     if (this.currentDiffMode === DiffMode.CurrentVsPrevious) {
-      this._updateLowerDiff(this.xml);
+      this._updateLowerDiff(this.currentXml);
       this.diffModeTitle = 'Current vs. Previous';
     } else if (this.currentDiffMode === DiffMode.PreviousVsCurrent) {
-      this._updateLowerDiff(this.savedxml);
+      this._updateLowerDiff(this.previousXml);
       this.diffModeTitle = 'Previous vs. Current';
     } else {
       this.diffModeTitle = '';
@@ -306,10 +330,10 @@ export class BpmnDiffView {
       return;
     }
 
-    const addedElements: Object = this.changes._added;
-    const removedElements: object = this.changes._removed;
-    const changedElements: object = this.changes._changed;
-    const layoutChangedElements: object = this.changes._layoutChanged;
+    const addedElements: Object = this.xmlChanges._added;
+    const removedElements: object = this.xmlChanges._removed;
+    const changedElements: object = this.xmlChanges._changed;
+    const layoutChangedElements: object = this.xmlChanges._layoutChanged;
 
     const diffModeIsCurrentVsPrevious: boolean = this.currentDiffMode === DiffMode.CurrentVsPrevious;
 
