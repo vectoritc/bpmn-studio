@@ -34,6 +34,7 @@ export default {
       hdieDiagramViewButtons: 'statusbar:diagramviewbuttons:hide',
       setXmlIdentifier: 'statusbar:xmlIdentifier',
       showInspectViewButtons: 'statusbar:inspectviewbuttons',
+      showInspectCorrelationButton: 'statusbar:inspectcorrelationbuttons',
     },
     configPanel: {
       processEngineRouteChanged: 'configpanel:processEngineRoute:changed',

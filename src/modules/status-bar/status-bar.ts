@@ -13,7 +13,7 @@ export class StatusBar {
   public diffIsShown: boolean = false;
   public currentDiffMode: DiffMode;
   public xmlIsShown: boolean = false;
-  public showInspectViewButtons: boolean = false;
+  public showInspectCorrelationButtons: boolean = false;
   public showChangeList: boolean = false;
   public isEncryptedCommunication: boolean = false;
   public currentXmlIdentifier: string;
@@ -61,8 +61,8 @@ export class StatusBar {
       [this.previousXmlIdentifier, this.currentXmlIdentifier] = xmlIdentifier;
     });
 
-    this._eventAggregator.subscribe(environment.events.statusBar.showInspectViewButtons, (showInspectViewButtons: boolean) => {
-      this.showInspectViewButtons = showInspectViewButtons;
+    this._eventAggregator.subscribe(environment.events.statusBar.showInspectCorrelationButton, (showInspectCorrelation: boolean) => {
+      this.showInspectCorrelationButtons = showInspectCorrelation;
     });
 
     this.currentDiffMode = DiffMode.CurrentVsPrevious;

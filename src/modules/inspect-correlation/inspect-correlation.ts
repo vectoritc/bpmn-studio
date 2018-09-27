@@ -44,6 +44,7 @@ export class InspectCorrelation {
   public attached(): void {
     this._eventAggregator.publish(environment.events.statusBar.showInspectViewButtons, true);
     this._eventAggregator.publish(environment.events.navBar.updateProcessName, this.processModelId);
+    this._eventAggregator.publish(environment.events.statusBar.showInspectCorrelationButton, true);
 
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.inspectCorrelation.showInspectPanel, (showInspectPanel: boolean) => {
@@ -75,6 +76,7 @@ export class InspectCorrelation {
 
   public detached(): void {
     this._eventAggregator.publish(environment.events.statusBar.showInspectViewButtons, false);
+    this._eventAggregator.publish(environment.events.statusBar.showInspectCorrelationButton, false);
 
     for (const subscription of this._subscriptions) {
       subscription.dispose();
