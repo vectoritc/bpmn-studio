@@ -40,6 +40,7 @@ export class DiagramDetail {
   private _router: Router;
   private _diagramHasChanged: boolean;
   private _validationController: ValidationController;
+  private _diagramIsInvalid: boolean = false;
 
   // This identity is used for the filesystem actions. Needs to be refactored.
   private _identity: any;
@@ -109,6 +110,10 @@ export class DiagramDetail {
           resolve(true);
         });
         document.getElementById('saveButtonLeaveView').addEventListener('click', () => {
+          if (this._diagramIsInvalid) {
+            resolve(false);
+          }
+
           this.showUnsavedChangesModal = false;
           this._saveDiagram();
           this._diagramHasChanged = false;
@@ -202,6 +207,13 @@ export class DiagramDetail {
    * Saves the current diagram to disk.
    */
   private async _saveDiagram(): Promise<void> {
+
+    if (this._diagramIsInvalid) {
+      this._notificationService.showNotification(NotificationType.WARNING, `The could not be saved because it is invalid!`);
+
+      return;
+    }
+
     try {
       const xml: string = await this.bpmnio.getXML();
       this.diagram.xml = xml;
@@ -251,6 +263,7 @@ export class DiagramDetail {
       if (resultIsNotValid) {
         this._eventAggregator
           .publish(environment.events.navBar.validationError);
+        this._diagramIsInvalid = true;
 
         return;
       }
@@ -258,5 +271,6 @@ export class DiagramDetail {
 
     this._eventAggregator
       .publish(environment.events.navBar.noValidationError);
+    this._diagramIsInvalid = false;
   }
 }

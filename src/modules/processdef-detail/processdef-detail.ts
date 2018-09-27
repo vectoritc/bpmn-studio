@@ -61,6 +61,7 @@ export class ProcessDefDetail {
   private _startButtonPressed: boolean = false;
   private _authenticationService: IAuthenticationService;
   private _managementApiClient: IManagementApiService;
+  private _diagramIsInvalid: boolean = false;
 
   constructor(eventAggregator: EventAggregator,
               router: Router,
@@ -179,6 +180,12 @@ export class ProcessDefDetail {
           .getElementById(saveButtonId)
           .addEventListener('click', () => {
 
+            if (this._diagramIsInvalid) {
+              this.showSaveOnLeaveModal = false;
+
+              resolve(false);
+            }
+
             this
               ._saveDiagram()
               .catch((error: Error) => {
@@ -190,6 +197,7 @@ export class ProcessDefDetail {
             this._startButtonPressed = false;
 
             resolve(true);
+
           });
 
         /* Stay, do not save */
@@ -350,7 +358,7 @@ export class ProcessDefDetail {
    * The user will be notified, about the outcome of the operation. Errors will be
    * reported reasonably and a success message will be emitted.
    *
-   * Saving is not possible, if _diagramIsInvalid has been set to true.
+   * Saving is not possible, if _diagramIsValid is set to false.
    *
    * The source of the XML is the bmpn.io-modeler. It is used to extract the BPMN
    * while saving; a validation is not executed here.
@@ -358,6 +366,16 @@ export class ProcessDefDetail {
   private async _saveDiagram(): Promise<void> {
 
     this._dropInvalidFormData();
+
+    if (this._diagramIsInvalid) {
+      this._notificationService.showNotification(NotificationType.WARNING, `The could not be saved because it is invalid!`);
+
+      /**
+       * TODO: Maybe we can reject this promise with some kind of 'ValidationError'
+       * here.
+       */
+      return;
+    }
 
     //#region Save the diagram to the ProcessEngine
 
@@ -441,6 +459,7 @@ export class ProcessDefDetail {
       const resultIsNotValid: boolean = result.valid === false;
 
       if (resultIsNotValid) {
+        this._diagramIsInvalid = true;
         this._eventAggregator
           .publish(environment.events.navBar.validationError);
 
@@ -448,6 +467,7 @@ export class ProcessDefDetail {
       }
     }
 
+    this._diagramIsInvalid = false;
     this._eventAggregator
       .publish(environment.events.navBar.noValidationError);
   }
