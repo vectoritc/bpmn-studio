@@ -13,7 +13,7 @@
         <th click.delegate="sortList(ProcessInstanceListSortProperty.State)">
           State <i if.bind="sortSettings.sortProperty == ProcessInstanceListSortProperty.State" class.bind="sortSettings.ascending ? 'fas fa-caret-up' : ' fas fa-caret-down'"></i>
         </th>
-        <th click.delegate="sortList(ProcessInstanceListSortProperty.User)">
+        <th if.bind="false" click.delegate="sortList(ProcessInstanceListSortProperty.User)">
           User <i if.bind="sortSettings.sortProperty === ProcessInstanceListSortProperty.User" class.bind="sortSettings.ascending ? 'fas fa-caret-up' : ' fas fa-caret-down'"></i>
         </th>
         <th click.delegate="sortList(ProcessInstanceListSortProperty.CorrelationId)">
@@ -26,7 +26,7 @@
         <td>${tableEntry.index}</td>
         <td>${tableEntry.startedAt}</td>
         <td>${tableEntry.state}</td>
-        <td>${tableEntry.user}</td>
+        <td if.bind="false">${tableEntry.user}</td>
         <td>${tableEntry.correlationId}</td>
       </tr>
     </tbody>
