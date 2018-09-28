@@ -20,7 +20,14 @@ RUN set -ex && \
     echo 'deb http://deb.debian.org/debian jessie-backports main' \
     > /etc/apt/sources.list.d/stretch-backports.list && \
     apt-get update -y && \
-    apt-get install -y unzip zip apt-utils
+    apt-get install -y unzip \
+                       zip \
+                       apt-utils \
+                       xvfb \
+                       fluxbox \
+                       wmctrl \
+                       x11vnc \
+                       wget
 
 FROM base as java
 RUN set -ex && \
@@ -56,6 +63,7 @@ FROM chrome as app
 COPY test/jenkins_e2e.sh /jenkins_e2e.sh
 RUN chmod 777 /jenkins_e2e.sh
 
+EXPOSE 5900
 ENTRYPOINT [ "/bin/bash" ]
 
 CMD [ "/jenkins_e2e.sh"]

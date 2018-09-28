@@ -6,12 +6,26 @@ exports.config = {
       browserName: 'chrome',
       chromeOptions: {
         args: [
-          "--headless",
+          //"--headless",
           "--disable-gpu",
           "--no-sandbox",
+          "--test-type=browser",
           "--disable-dev-shm-usage",
           "--window-size=1920,1080",
+          "--ignore-certificate",
         ],
+        prefs: {
+          'download': {
+            'prompt_for_download': false,
+            'directory_upgrade': true,
+            'default_directory':  'downloads',
+          },
+          'browser': {
+            'set_download_behavior': {
+              'behavior': 'allow',
+            }
+          }
+        }
       },
     },
   ],

@@ -27,6 +27,11 @@ export class NavBar {
   private _byThinkLink: By = by.id('navbarThinkLink');
   private _byDesignLink: By = by.id('navbarDesignLink');
   private _byInspectLink: By = by.id('navbarInspectLink');
+  private _byNavbarExportButton: By = by.id('navbarExportDiagram');
+  private _byNavbarExportAsBPMNButton: By = by.id('navbarExportDiagramAsBPMN');
+  private _byNavbarExportAsJPEGButton: By = by.id('navbarExportDiagramAsJPEG');
+  private _byNavbarExportAsPNGButton: By = by.id('navbarExportDiagramAsPNG');
+  private _byNavbarExportAsSVGButton: By = by.id('navbarExportDiagramAsSVG');
 
   public navBarTag: ElementFinder = element(this._byTagName);
   public navBarContainer: ElementFinder = this.navBarTag.element(this._byStatusBarContainer);
@@ -42,6 +47,12 @@ export class NavBar {
   public navBarDesignLink: ElementFinder = this.navBarTag.element(this._byDesignLink);
   public navBarInspectLink: ElementFinder = this.navBarTag.element(this._byInspectLink);
 
+  public navbarExportButton: ElementFinder = this.navBarTag.element(this._byNavbarExportButton);
+  public navbarExportAsBPMNButton: ElementFinder = this.navBarTag.element(this._byNavbarExportAsBPMNButton);
+  public navbarExportAsJPEGButton: ElementFinder = this.navBarTag.element(this._byNavbarExportAsJPEGButton);
+  public navbarExportAsSVGButton: ElementFinder = this.navBarTag.element(this._byNavbarExportAsSVGButton);
+  public navbarExportAsPNGButton: ElementFinder = this.navBarTag.element(this._byNavbarExportAsPNGButton);
+
   // Define Functions
   public openSolutionExplorerByButtonClick(): promise.Promise<void> {
     return this.navBarSolutionExplorerButton.click();
@@ -52,6 +63,18 @@ export class NavBar {
     const containsDisabledAttribute: boolean = navBarButtonAttributes.includes(this.navBarDisabledClassName);
 
     return !containsDisabledAttribute;
+  }
+
+  public async clickAtNavbarExportButton(): promise.Promise<void> {
+    return this.navbarExportButton.click();
+  }
+
+  public async clickAtNavbarExportAsSVGButton(): promise.Promise<void> {
+    return this.navbarExportAsSVGButton.click();
+  }
+
+  public async clickAtNavbarExportAsJPEGButton(): promise.Promise<void> {
+    return this.navbarExportAsJPEGButton.click();
   }
 
 }
