@@ -62,19 +62,22 @@ export class LogViewer {
   public sortList(property: LogSortProperty): void {
     this.sortedLog = [];
     const isSamePropertyAsPrevious: boolean = this.sortSettings.sortProperty === property;
-    const ascending: boolean = isSamePropertyAsPrevious ? !this.sortSettings.ascending
-                                                        : true;
+    const ascending: boolean = isSamePropertyAsPrevious
+                                ? !this.sortSettings.ascending
+                                : true;
 
     this.sortSettings.ascending = ascending;
     this.sortSettings.sortProperty = property;
 
     const sortPropertyIsTime: boolean = property === LogSortProperty.Time;
 
-    const sortedLog: Array<LogEntry> = sortPropertyIsTime ? this._getSortedLogByDate()
-                                                          : this._getSortedLogByProperty(property);
+    const sortedLog: Array<LogEntry> = sortPropertyIsTime
+                                        ? this._getSortedLogByDate()
+                                        : this._getSortedLogByProperty(property);
 
-    this.sortedLog = ascending ? sortedLog
-                               : sortedLog.reverse();
+    this.sortedLog = ascending
+                      ? sortedLog
+                      : sortedLog.reverse();
   }
 
   private _getSortedLogByProperty(property: LogSortProperty): Array<LogEntry> {
