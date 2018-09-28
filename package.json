@@ -94,7 +94,7 @@
     "@essential-projects/http_contracts": "^2.0.2",
     "@process-engine/consumer_api_contracts": "^0.16.1",
     "@process-engine/kpi_api_contracts": "^0.1.2",
-    "@process-engine/management_api_client": "feature/inspect_correlation_features",
+    "@process-engine/management_api_client": "feature~inspect_correlation_features",
     "@process-engine/management_api_contracts": "feature~inspect_correlation_features",
     "@process-engine/process_engine_runtime": "feature~inspect_correlation",
     "@process-engine/solutionexplorer.contracts": "1.0.0",
