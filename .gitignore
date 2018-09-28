@@ -41,3 +41,13 @@ dev_tooling/scripts/prepare_environment_for_integration_tests.sh
 
 # E2E downloads directory
 downloads/*
+
+Build files
+.config/*
+.electron/*
+.fehbg
+.fluxbox/*
+.local/*
+.node-gyp/*
+.npm/*
+.pki/*
