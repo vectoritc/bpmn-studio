@@ -10,6 +10,10 @@ import {DateService} from '../../../../../date-service/date.service';
 import {NotificationService} from '../../../../../notification/notification.service';
 import {IInspectCorrelationService} from '../../../../contracts';
 
+interface IClipboard {
+  writeText?(text: string): void;
+}
+
 @inject('NotificationService', 'InspectCorrelationService')
 export class LogViewer {
   @bindable() public log: Array<LogEntry>;
@@ -36,7 +40,7 @@ export class LogViewer {
   }
 
   public copyToClipboard(textToCopy: string): void {
-    (clipboard as any).writeText(textToCopy);
+    (clipboard as IClipboard).writeText(textToCopy);
 
     this._notificationService.showNotification(NotificationType.SUCCESS, 'Successfully copied to clipboard.');
   }
