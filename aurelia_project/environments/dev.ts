@@ -18,7 +18,9 @@ export default {
   },
   processengine: {
     waitingRoomPollingIntervalInMs: 200,
-    processModelPollingIntervalInMs: 1500,
+    solutionExplorerPollingIntervalInMs: 5000,
+    processDefListPollingIntervalInMs: 5000,
+    dashboardPollingIntervalInMs: 1500,
     routes: {
       processes: `${processEngineRoute}/datastore/ProcessDef`,
       startProcess: `${processEngineRoute}/processengine/start`,
@@ -46,8 +48,8 @@ export default {
       showProcessName: 'navbar:processName:show',
       hideProcessName: 'navbar:processName:hide',
       updateProcess: 'navbar:process:update',
-      disableSaveButton: 'navbar:saveButton:disable',
-      enableSaveButton: 'navbar:saveButton:enable',
+      validationError: 'navbar:validationError:true',
+      noValidationError: 'navbar:validationError:false',
       disableDiagramUploadButton: 'navbar:diagramUploadButton:disable',
       enableDiagramUploadButton: 'navbar:diagramUploadButton:enable',
       inspectNavigateToHeatmap: 'navbar:inspectLink:navigateToHeatmap',

@@ -1,7 +1,7 @@
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 
-import {IIdentity} from '@essential-projects/core_contracts';
+import {IIdentity} from '@essential-projects/iam_contracts';
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
@@ -99,13 +99,10 @@ export class RefreshingSolutionExplorerService implements ISolutionExplorerServi
   }
 
   private _createIdentityForSolutionExplorer(): IIdentity {
-    const identity: IIdentity = {} as IIdentity;
-
-    const solutionExplorerAccessToken: {accessToken: string} = {
-      accessToken: this._authenticationService.getAccessToken(),
+    const accessToken: string = this._authenticationService.getAccessToken();
+    const identity: IIdentity = {
+      token: accessToken,
     };
-
-    Object.assign(identity, solutionExplorerAccessToken);
 
     return identity;
   }

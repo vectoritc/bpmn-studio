@@ -1,9 +1,8 @@
 import {inject} from 'aurelia-framework';
 
+import {IIdentity} from '@essential-projects/iam_contracts';
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
-
-import {IIdentity} from '../../../../../contracts';
 
 @inject('SolutionExplorerServiceManagementApi')
 export class GeneralRepository {

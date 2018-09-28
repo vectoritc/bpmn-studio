@@ -123,10 +123,6 @@ export class SolutionExplorerPanel {
     return this._openSingleDiagramOrDisplyError(uri);
   }
 
-  public async refreshSolutions(): Promise<void> {
-    return this.solutionExplorerList.refreshSolutions();
-  }
-
   public async openDiagram(): Promise<void> {
     this.singleDiagramInput.click();
   }
@@ -234,7 +230,7 @@ export class SolutionExplorerPanel {
 
     } else {
 
-      const navigationResult: boolean = await this._router.navigateToRoute('diagram-detail', {
+      const navigationResult: (false | PipelineResult) | (true | PipelineResult) = await this._router.navigateToRoute('diagram-detail', {
         diagramUri: diagram.uri,
       });
 

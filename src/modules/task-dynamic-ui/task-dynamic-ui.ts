@@ -1,7 +1,10 @@
-import {ManagementContext, UserTask} from '@process-engine/management_api_contracts';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
+
+import {IIdentity} from '@essential-projects/iam_contracts';
+import {UserTask} from '@process-engine/management_api_contracts';
+
 import {AuthenticationStateEvent, IDynamicUiService, NotificationType} from '../../contracts/index';
 import {AuthenticationService} from '../authentication/authentication.service';
 import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
@@ -91,11 +94,11 @@ export class TaskDynamicUi {
   }
 
   private async refreshUserTask(): Promise<void> {
-    const managementContext: ManagementContext = this._getManagementContext();
+    const identity: IIdentity = this._getIdentity();
 
     try {
       if (this._processModelId !== undefined) {
-        this._userTask =  await this._dynamicUiService.getUserTaskByProcessModelId(managementContext,
+        this._userTask =  await this._dynamicUiService.getUserTaskByProcessModelId(identity,
                                                                                   this._userTaskId,
                                                                                   this._processModelId);
 
@@ -120,12 +123,12 @@ export class TaskDynamicUi {
     this.dynamicUiWrapper.currentUserTask = this._userTask;
   }
 
-  private _getManagementContext(): ManagementContext {
+  private _getIdentity(): IIdentity {
     const accessToken: string = this._authenticationService.getAccessToken();
-    const context: ManagementContext = {
-      identity: accessToken,
+    const identity: IIdentity = {
+      token: accessToken,
     };
 
-    return context;
+    return identity;
   }
 }

@@ -1,7 +1,10 @@
-import {ManagementApiClientService} from '@process-engine/management_api_client';
-import {ManagementContext, UserTask, UserTaskList, UserTaskResult} from '@process-engine/management_api_contracts';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
+
+import {IIdentity} from '@essential-projects/iam_contracts';
+import {ManagementApiClientService} from '@process-engine/management_api_client';
+import {UserTask, UserTaskList, UserTaskResult} from '@process-engine/management_api_contracts';
+
 import {IDynamicUiService} from '../../contracts';
 import {AuthenticationService} from '../authentication/authentication.service';
 
@@ -21,35 +24,35 @@ export class DynamicUiService implements IDynamicUiService {
     this._authenticationService = authenticationService;
   }
 
-  public finishUserTask(managementContext: ManagementContext,
+  public finishUserTask(identity: IIdentity,
                         processModelId: string,
                         correlationId: string,
                         userTaskId: string,
                         userTaskResult: UserTaskResult): void {
 
-    this._managementApiClient.finishUserTask(managementContext,
+    this._managementApiClient.finishUserTask(identity,
                                             processModelId,
                                             correlationId,
                                             userTaskId,
                                             userTaskResult);
   }
 
-  public async getUserTaskByCorrelationId(managementContext: ManagementContext,
+  public async getUserTaskByCorrelationId(identity: IIdentity,
                                           userTaskId: string,
                                           correlationId: string): Promise<UserTask> {
 
-    const userTaskList: UserTaskList = await this._managementApiClient.getUserTasksForCorrelation(managementContext, correlationId);
+    const userTaskList: UserTaskList = await this._managementApiClient.getUserTasksForCorrelation(identity, correlationId);
 
     return  userTaskList.userTasks.find((userTask: UserTask) => {
       return userTask.id === userTaskId;
     });
   }
 
-  public async getUserTaskByProcessModelId(managementContext: ManagementContext,
+  public async getUserTaskByProcessModelId(identity: IIdentity,
                                            userTaskId: string,
                                            processModelId: string): Promise<UserTask> {
 
-    const userTaskList: UserTaskList = await this._managementApiClient.getUserTasksForProcessModel(managementContext, processModelId);
+    const userTaskList: UserTaskList = await this._managementApiClient.getUserTasksForProcessModel(identity, processModelId);
 
     return  userTaskList.userTasks.find((userTask: UserTask) => {
       return userTask.id === userTaskId;

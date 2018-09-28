@@ -3,11 +3,11 @@ import {inject} from 'aurelia-framework';
 import {activationStrategy, Redirect, Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
+import {IIdentity} from '@essential-projects/iam_contracts';
 import {
   Event,
   EventList,
-  IManagementApiService,
-  ManagementContext,
+  IManagementApi,
   ProcessModelExecution,
 } from '@process-engine/management_api_contracts';
 
@@ -57,19 +57,18 @@ export class ProcessDefDetail {
   private _router: Router;
   private _diagramHasChanged: boolean = false;
   private _validationController: ValidationController;
-  // TODO: Explain when this is set and by whom.
-  private _diagramIsInvalid: boolean = false;
   // Used to control the modal view; shows the modal view for pressing the play button.
   private _startButtonPressed: boolean = false;
   private _authenticationService: IAuthenticationService;
-  private _managementApiClient: IManagementApiService;
+  private _diagramIsInvalid: boolean = false;
+  private _managementApiClient: IManagementApi;
 
   constructor(eventAggregator: EventAggregator,
               router: Router,
               validationController: ValidationController,
               notificationService: NotificationService,
               authenticationService: IAuthenticationService,
-              managementApiClient: IManagementApiService) {
+              managementApiClient: IManagementApi) {
 
     this._eventAggregator = eventAggregator;
     this._router = router;
@@ -181,6 +180,12 @@ export class ProcessDefDetail {
           .getElementById(saveButtonId)
           .addEventListener('click', () => {
 
+            if (this._diagramIsInvalid) {
+              this.showSaveOnLeaveModal = false;
+
+              resolve(false);
+            }
+
             this
               ._saveDiagram()
               .catch((error: Error) => {
@@ -192,6 +197,7 @@ export class ProcessDefDetail {
             this._startButtonPressed = false;
 
             resolve(true);
+
           });
 
         /* Stay, do not save */
@@ -228,11 +234,12 @@ export class ProcessDefDetail {
     }
 
     this._eventAggregator.publish(environment.events.navBar.hideTools);
-    this._eventAggregator.publish(environment.events.navBar.disableStartButton);
-    this._eventAggregator.publish(environment.events.navBar.enableDiagramUploadButton);
-    this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
     this._eventAggregator.publish(environment.events.navBar.hideProcessName);
+    this._eventAggregator.publish(environment.events.navBar.disableStartButton);
+    this._eventAggregator.publish(environment.events.navBar.noValidationError);
+    this._eventAggregator.publish(environment.events.navBar.enableDiagramUploadButton);
     this._eventAggregator.publish(environment.events.navBar.inspectNavigateToDashboard);
+    this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
   }
 
   public async startProcess(): Promise<void> {
@@ -243,24 +250,14 @@ export class ProcessDefDetail {
 
     this._dropInvalidFormData();
 
-    if (this._diagramIsInvalid) {
-      this
-        ._notificationService
-        .showNotification(
-          NotificationType.WARNING,
-          'Unable to start the process, because it is not valid. This could have something to do with your latest changes. Try to undo them.',
-        );
-      return;
-    }
-
-    const context: ManagementContext = this._getManagementContext();
+    const identity: IIdentity = this._getIdentity();
     const startRequestPayload: ProcessModelExecution.ProcessStartRequestPayload = {
       inputValues: {},
     };
 
     try {
       const response: ProcessModelExecution.ProcessStartResponsePayload = await this._managementApiClient
-        .startProcessInstance(context, this.process.id, this.selectedStartEventId, startRequestPayload, undefined, undefined);
+        .startProcessInstance(identity, this.process.id, this.selectedStartEventId, startRequestPayload, undefined, undefined);
 
       const correlationId: string = response.correlationId;
 
@@ -326,9 +323,9 @@ export class ProcessDefDetail {
   }
 
   private async _refreshProcess(): Promise<ProcessModelExecution.ProcessModel> {
-    const context: ManagementContext = this._getManagementContext();
+    const identity: IIdentity = this._getIdentity();
 
-    const updatedProcessModel: ProcessModelExecution.ProcessModel = await this._managementApiClient.getProcessModelById(context,
+    const updatedProcessModel: ProcessModelExecution.ProcessModel = await this._managementApiClient.getProcessModelById(identity,
                                                                                                                         this._processModelId);
 
     this.process = updatedProcessModel;
@@ -339,18 +336,18 @@ export class ProcessDefDetail {
     return updatedProcessModel;
   }
 
-  private _getManagementContext(): ManagementContext {
+  private _getIdentity(): IIdentity {
     const accessToken: string = this._authenticationService.getAccessToken();
-    const context: ManagementContext = {
-      identity: accessToken,
+    const identity: IIdentity = {
+      token: accessToken,
     };
 
-    return context;
+    return identity;
   }
 
   private async _updateProcessStartEvents(): Promise<void> {
-    const context: ManagementContext = this._getManagementContext();
-    const startEventResponse: EventList = await this._managementApiClient.getEventsForProcessModel(context, this.process.id);
+    const identity: IIdentity = this._getIdentity();
+    const startEventResponse: EventList = await this._managementApiClient.getEventsForProcessModel(identity, this.process.id);
 
     this.processesStartEvents = startEventResponse.events;
   }
@@ -361,7 +358,7 @@ export class ProcessDefDetail {
    * The user will be notified, about the outcome of the operation. Errors will be
    * reported reasonably and a success message will be emitted.
    *
-   * Saving is not possible, if _diagramIsInvalid has been set to true.
+   * Saving is not possible, if _diagramIsValid is set to false.
    *
    * The source of the XML is the bmpn.io-modeler. It is used to extract the BPMN
    * while saving; a validation is not executed here.
@@ -371,12 +368,12 @@ export class ProcessDefDetail {
     this._dropInvalidFormData();
 
     if (this._diagramIsInvalid) {
-      this
-        ._notificationService
-        .showNotification(
-          NotificationType.WARNING,
-          'Unable to save the diagram, because it is not valid. This could have something to do with your latest changes. Try to undo them.',
-        );
+      this._notificationService.showNotification(NotificationType.WARNING, `The could not be saved because it is invalid!`);
+
+      /**
+       * TODO: Maybe we can reject this promise with some kind of 'ValidationError'
+       * here.
+       */
       return;
     }
 
@@ -385,13 +382,13 @@ export class ProcessDefDetail {
     try {
       const xml: string = await this.bpmnio.getXML();
 
-      const context: ManagementContext = this._getManagementContext();
+      const identity: IIdentity = this._getIdentity();
 
       const payload: ProcessModelExecution.UpdateProcessDefinitionsRequestPayload = {
         xml: xml,
       };
 
-      await this._managementApiClient.updateProcessDefinitionsByName(context, this.process.id, payload);
+      await this._managementApiClient.updateProcessDefinitionsByName(identity, this.process.id, payload);
       this._notificationService.showNotification(NotificationType.SUCCESS, 'File saved.');
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, `Error while saving diagram: ${error.message}`);
@@ -444,13 +441,12 @@ export class ProcessDefDetail {
    *
    * The user inserts an invalid string (e.g. he uses a already used Id for an element);
    * The Aurelia validators will trigger; the validation event will arrive here;
-   * if there are errors present, we will disable the save button and the save functionality
-   * by setting the _diagramIsInvalid flag to true.
+   * if there are errors present, we will disable the tool buttons on the navbar.
    *
    * Events fired here:
    *
-   * 1. disableSaveButton
-   * 2. enableSaveButton
+   * 1. validationError
+   * 2. noValidationError
    */
   private _handleFormValidateEvents(event: ValidateEvent): void {
     const eventIsValidateEvent: boolean = event.type !== 'validate';
@@ -465,15 +461,14 @@ export class ProcessDefDetail {
       if (resultIsNotValid) {
         this._diagramIsInvalid = true;
         this._eventAggregator
-          .publish(environment.events.navBar.disableSaveButton);
+          .publish(environment.events.navBar.validationError);
 
         return;
       }
     }
 
-    this._eventAggregator
-      .publish(environment.events.navBar.enableSaveButton);
-
     this._diagramIsInvalid = false;
+    this._eventAggregator
+      .publish(environment.events.navBar.noValidationError);
   }
 }

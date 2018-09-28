@@ -6,8 +6,9 @@ import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
 import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/errors_ts';
-import {IManagementApiService, ManagementContext, ProcessModelExecution} from '@process-engine/management_api_contracts';
+import {IManagementApi, ProcessModelExecution} from '@process-engine/management_api_contracts';
 
+import {IIdentity} from '@essential-projects/iam_contracts';
 import {AuthenticationStateEvent, IAuthenticationService, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
@@ -18,7 +19,7 @@ export class ProcessDefList {
   public allProcessModels: Array<ProcessModelExecution.ProcessModel>;
 
   private _authenticationService: IAuthenticationService;
-  private _managementApiClient: IManagementApiService;
+  private _managementApiClient: IManagementApi;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _router: Router;
@@ -28,7 +29,7 @@ export class ProcessDefList {
   constructor(eventAggregator: EventAggregator,
               router: Router,
               authenticationService: IAuthenticationService,
-              managementApiClient: IManagementApiService,
+              managementApiClient: IManagementApi,
               notificationService: NotificationService) {
 
     this._eventAggregator = eventAggregator;
@@ -42,7 +43,7 @@ export class ProcessDefList {
 
   public async canActivate(): Promise<boolean> {
 
-    const hasClaimsForProcessDefList: boolean = await this._hasClaimsForProcessDefList(this._managementContext);
+    const hasClaimsForProcessDefList: boolean = await this._hasClaimsForProcessDefList(this._identity);
 
     if (!hasClaimsForProcessDefList) {
       this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have the permission to use the planning feature.');
@@ -62,7 +63,7 @@ export class ProcessDefList {
       this._getAllProcessModels();
       this._eventAggregator.publish(environment.events.refreshProcessDefs);
       // tslint:disable-next-line
-    }, environment.processengine.processModelPollingIntervalInMs);
+    }, environment.processengine.processDefListPollingIntervalInMs);
 
     this._subscriptions = [
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
@@ -87,9 +88,9 @@ export class ProcessDefList {
     });
   }
 
-  private async _hasClaimsForProcessDefList(managementContext: ManagementContext): Promise<boolean> {
+  private async _hasClaimsForProcessDefList(identity: IIdentity): Promise<boolean> {
     try {
-      await this._managementApiClient.getProcessModels(managementContext);
+      await this._managementApiClient.getProcessModels(identity);
     } catch (error) {
       const errorIsForbiddenError: boolean = isError(error, ForbiddenError);
       const errorIsUnauthorizedError: boolean = isError(error, UnauthorizedError);
@@ -103,7 +104,7 @@ export class ProcessDefList {
   }
 
   private async _getAllProcessModels(): Promise<void> {
-    const processModelExecution: ProcessModelExecution.ProcessModelList = await this._managementApiClient.getProcessModels(this._managementContext);
+    const processModelExecution: ProcessModelExecution.ProcessModelList = await this._managementApiClient.getProcessModels(this._identity);
 
     const listWasUpdated: boolean = JSON.stringify(processModelExecution.processModels) !== JSON.stringify(this.allProcessModels);
 
@@ -113,17 +114,16 @@ export class ProcessDefList {
 
   }
 
-  private get _managementContext(): ManagementContext {
-    return this._getManagementContext();
+  private get _identity(): IIdentity {
+    return this._getIdentity();
   }
 
-  private _getManagementContext(): ManagementContext {
+  private _getIdentity(): IIdentity {
     const accessToken: string = this._authenticationService.getAccessToken();
-    const context: ManagementContext = {
-      identity: accessToken,
+    const identity: IIdentity = {
+      token: accessToken,
     };
 
-    return context;
+    return identity;
   }
-
 }

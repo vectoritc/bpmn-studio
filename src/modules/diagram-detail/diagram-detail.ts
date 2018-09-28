@@ -3,7 +3,8 @@ import {inject} from 'aurelia-framework';
 import {Redirect, Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
-import {IManagementApiService, ManagementContext} from '@process-engine/management_api_contracts';
+import {IIdentity} from '@essential-projects/iam_contracts';
+import {IManagementApi} from '@process-engine/management_api_contracts';
 import {ProcessModelExecution} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
@@ -32,21 +33,21 @@ export class DiagramDetail {
   public showSaveBeforeDeployModal: boolean = false;
 
   private _solutionExplorerService: ISolutionExplorerService;
-  private _managementClient: IManagementApiService;
+  private _managementClient: IManagementApi;
   private _authenticationService: IAuthenticationService;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
   private _router: Router;
   private _diagramHasChanged: boolean;
-  private _diagramIsInvalid: boolean = false;
   private _validationController: ValidationController;
+  private _diagramIsInvalid: boolean = false;
 
   // This identity is used for the filesystem actions. Needs to be refactored.
   private _identity: any;
 
   constructor(solutionExplorerService: ISolutionExplorerService,
-              managementClient: IManagementApiService,
+              managementClient: IManagementApi,
               authenticationService: IAuthenticationService,
               notificationService: NotificationService,
               eventAggregator: EventAggregator,
@@ -110,6 +111,10 @@ export class DiagramDetail {
           resolve(true);
         });
         document.getElementById('saveButtonLeaveView').addEventListener('click', () => {
+          if (this._diagramIsInvalid) {
+            resolve(false);
+          }
+
           this.showUnsavedChangesModal = false;
           this._saveDiagram();
           this._diagramHasChanged = false;
@@ -139,10 +144,10 @@ export class DiagramDetail {
     }
 
     this._eventAggregator.publish(environment.events.navBar.hideTools);
-    this._eventAggregator.publish(environment.events.navBar.disableDiagramUploadButton);
-    this._eventAggregator.publish(environment.events.navBar.enableStartButton);
     this._eventAggregator.publish(environment.events.navBar.hideProcessName);
-
+    this._eventAggregator.publish(environment.events.navBar.enableStartButton);
+    this._eventAggregator.publish(environment.events.navBar.noValidationError);
+    this._eventAggregator.publish(environment.events.navBar.disableDiagramUploadButton);
     this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
   }
 
@@ -167,17 +172,6 @@ export class DiagramDetail {
    * Uploads the current diagram to the connected ProcessEngine.
    */
   public async uploadProcess(): Promise<void> {
-
-    if (this._diagramIsInvalid) {
-      this
-        ._notificationService
-        .showNotification(
-          NotificationType.WARNING,
-          'Unable to upload the process, because it is not valid. This could have something to do with your latest changes. Try to undo them.',
-        );
-      return;
-    }
-
     const rootElements: Array<IModdleElement> = this.bpmnio.modeler._definitions.rootElements;
     const payload: ProcessModelExecution.UpdateProcessDefinitionsRequestPayload = {
       xml: this.diagram.xml,
@@ -188,12 +182,12 @@ export class DiagramDetail {
     });
     const processModelId: string = processModel.id;
 
-    const managementContext: ManagementContext = this._getManagementContext();
+    const identity: IIdentity = this._getIdentity();
 
     try {
       await this
         ._managementClient
-        .updateProcessDefinitionsByName(managementContext, processModelId, payload);
+        .updateProcessDefinitionsByName(identity, processModelId, payload);
 
       this._notificationService
           .showNotification(NotificationType.SUCCESS, 'Diagram was successfully uploaded to the connected ProcessEngine.');
@@ -216,12 +210,8 @@ export class DiagramDetail {
   private async _saveDiagram(): Promise<void> {
 
     if (this._diagramIsInvalid) {
-      this
-        ._notificationService
-        .showNotification(
-          NotificationType.WARNING,
-          'Unable to save the process, because it is not valid. This could have something to do with your latest changes. Try to undo them.',
-        );
+      this._notificationService.showNotification(NotificationType.WARNING, `The could not be saved because it is invalid!`);
+
       return;
     }
 
@@ -252,13 +242,13 @@ export class DiagramDetail {
     }
   }
 
-  private _getManagementContext(): ManagementContext {
+  private _getIdentity(): IIdentity {
     const accessToken: string = this._authenticationService.getAccessToken();
-    const context: ManagementContext = {
-      identity: accessToken,
+    const identity: IIdentity = {
+      token: accessToken,
     };
 
-    return context;
+    return identity;
   }
 
   private _handleFormValidateEvents(event: ValidateEvent): void {
@@ -272,17 +262,16 @@ export class DiagramDetail {
       const resultIsNotValid: boolean = result.valid === false;
 
       if (resultIsNotValid) {
-        this._diagramIsInvalid = true;
         this._eventAggregator
-          .publish(environment.events.navBar.disableSaveButton);
+          .publish(environment.events.navBar.validationError);
+        this._diagramIsInvalid = true;
 
         return;
       }
     }
 
     this._eventAggregator
-      .publish(environment.events.navBar.enableSaveButton);
-
+      .publish(environment.events.navBar.noValidationError);
     this._diagramIsInvalid = false;
   }
 }

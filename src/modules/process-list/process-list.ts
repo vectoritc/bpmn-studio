@@ -1,7 +1,10 @@
-import {Correlation, IManagementApiService, ManagementContext} from '@process-engine/management_api_contracts';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject, observable} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
+
+import {IIdentity} from '@essential-projects/iam_contracts';
+import {Correlation, IManagementApi} from '@process-engine/management_api_contracts';
+
 import {
   AuthenticationStateEvent,
   IAuthenticationService,
@@ -25,7 +28,7 @@ export class ProcessList {
   public succesfullRequested: boolean = false;
   public selectedState: HTMLSelectElement;
 
-  private _managementApiService: IManagementApiService;
+  private _managementApiService: IManagementApi;
   private _eventAggregator: EventAggregator;
   private _router: Router;
   private _notificationService: NotificationService;
@@ -36,7 +39,7 @@ export class ProcessList {
   private _subscriptions: Array<Subscription>;
   private _processes: Array<Correlation>;
 
-  constructor(managementApiService: IManagementApiService,
+  constructor(managementApiService: IManagementApi,
               eventAggregator: EventAggregator,
               router: Router,
               notificationService: NotificationService,
@@ -103,7 +106,7 @@ export class ProcessList {
     this._getProcessesIntervalId = window.setInterval(async() => {
       await this.updateProcesses();
       this.updateList();
-    }, environment.processengine.processModelPollingIntervalInMs);
+    }, environment.processengine.dashboardPollingIntervalInMs);
 
     this._subscriptions = [
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
@@ -147,15 +150,15 @@ export class ProcessList {
   }
 
   private async getAllProcesses(): Promise<Array<Correlation>> {
-    const managementApiContext: ManagementContext = this._getManagementContext();
+    const identity: IIdentity = this._getIdentity();
 
-    return this._managementApiService.getAllActiveCorrelations(managementApiContext);
+    return this._managementApiService.getAllActiveCorrelations(identity);
   }
 
   private async getProcessesForProcessModel(processModelId: string): Promise<Array<Correlation>> {
-    const managementApiContext: ManagementContext = this._getManagementContext();
+    const identity: IIdentity = this._getIdentity();
 
-    const runningCorrelations: Array<Correlation> = await this._managementApiService.getAllActiveCorrelations(managementApiContext);
+    const runningCorrelations: Array<Correlation> = await this._managementApiService.getAllActiveCorrelations(identity);
 
     const correlationsWithId: Array<Correlation> = runningCorrelations.filter((correlation: Correlation) => {
       return correlation.processModelId === processModelId;
@@ -165,12 +168,12 @@ export class ProcessList {
   }
 
   // TODO: Move this method into a service.
-  private _getManagementContext(): ManagementContext {
+  private _getIdentity(): IIdentity {
     const accessToken: string = this._authenticationService.getAccessToken();
-    const context: ManagementContext = {
-      identity: accessToken,
+    const identity: IIdentity = {
+      token: accessToken,
     };
 
-    return context;
+    return identity;
   }
 }
