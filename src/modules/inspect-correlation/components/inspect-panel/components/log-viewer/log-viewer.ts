@@ -64,10 +64,13 @@ export class LogViewer {
     this.sortSettings.ascending = ascending;
     this.sortSettings.sortProperty = property;
 
-    const sortedLog: Array<LogEntry> = this._getSortedLogByProperty(property);
+    const sortPropertyIsTime: boolean = property === LogSortProperty.Time;
+
+    const sortedLog: Array<LogEntry> = sortPropertyIsTime ? this._getSortedLogByDate()
+                                                          : this._getSortedLogByProperty(property);
 
     this.sortedLog = ascending ? sortedLog
-                                     : sortedLog.reverse();
+                               : sortedLog.reverse();
   }
 
   private _getSortedLogByProperty(property: LogSortProperty): Array<LogEntry> {
@@ -85,6 +88,29 @@ export class LogViewer {
 
         return 0;
       });
+
+    return sortedLog;
+  }
+
+  private _getSortedLogByDate(): Array<LogEntry> {
+    const sortedLog: Array<LogEntry> =
+    this.log.sort((firstEntry: LogEntry, secondEntry: LogEntry) => {
+
+      const firstCorrelationDate: Date = new Date(firstEntry.timeStamp);
+      const secondCorrelationDate: Date = new Date(secondEntry.timeStamp);
+
+      const firstEntryIsBigger: boolean = firstCorrelationDate.getTime() > secondCorrelationDate.getTime();
+      if (firstEntryIsBigger) {
+        return 1;
+      }
+
+      const secondEntryIsBigger: boolean = firstCorrelationDate.getTime() < secondCorrelationDate.getTime();
+      if (secondEntryIsBigger) {
+        return -1;
+      }
+
+      return 0;
+    });
 
     return sortedLog;
   }
