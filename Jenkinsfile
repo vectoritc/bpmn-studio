@@ -78,7 +78,7 @@ pipeline {
           unstash('post_build')
           unstash('post_build_node_modules')
 
-          def docker_e2e_image_name = "bpmn-studio_end-to-end"
+          def docker_e2e_image_name = "bpmn-studio_end-to-end_vnc"
           def docker_e2e_container_name = "${docker_e2e_image_name}_container-b${env.BUILD_NUMBER}-${env.GIT_COMMIT}"
 
           try {

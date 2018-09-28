@@ -88,7 +88,7 @@ describe('Export BPMN diagram', () => {
 
     expect(navbarExportAsBPMNButtonIsDisplayed).toBeTruthy();
   });
-  
+
   it('should contain `Export as JPEG` button in navbar.', async() => {
     // Show export menu
     await navBar.clickAtNavbarExportButton();
@@ -98,7 +98,7 @@ describe('Export BPMN diagram', () => {
 
     expect(navbarExportAsJPEGButtonIsDisplayed).toBeTruthy();
   });
-  
+
   it('should contain `Export as PNG` button in navbar.', async() => {
     // Show export menu
     await navBar.clickAtNavbarExportButton();
@@ -108,7 +108,7 @@ describe('Export BPMN diagram', () => {
 
     expect(navbarExportAsPNGButtonIsDisplayed).toBeTruthy();
   });
-  
+
   it('should contain `Export as SVG` button in navbar.', async() => {
     // Show export menu
     await navBar.clickAtNavbarExportButton();
@@ -120,12 +120,13 @@ describe('Export BPMN diagram', () => {
   });
 
   it('should be possible to export diagram as SVG.', async() => {
+    const sleepTime: number = 5000;
     // Show export menu
     await navBar.clickAtNavbarExportButton();
 
     await navBar.clickAtNavbarExportAsSVGButton();
 
-    await browser.sleep(5000);
+    await browser.sleep(sleepTime);
 
     const fileExists: boolean = fs.existsSync(`downloads/${processModelId}.svg`);
     expect(fileExists).toBeTruthy();
