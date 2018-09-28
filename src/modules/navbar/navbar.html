@@ -38,14 +38,14 @@
         </button>
       </template>
       <div class="dropdown" if.bind="showTools">
-        <button class="button menu-bar__menu-center--action-button dropdown-toggle" class.bind="validationError ? 'button--disabled' : ''" disabled.bind="validationError" title="Export Diagram" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button class="button menu-bar__menu-center--action-button dropdown-toggle" class.bind="validationError ? 'button--disabled' : ''" disabled.bind="validationError" title="Export Diagram" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="navbarExportDiagram">
           <i class="fas fa-upload"></i>
         </button>
         <ul class="dropdown-menu">
-          <li class="dropdown-item" click.delegate="exportDiagram('BPMN')"><a href="#">as BPMN</a></li>
-          <li class="dropdown-item" click.delegate="exportDiagram('SVG')"><a href="#">as SVG</a></li>
-          <li class="dropdown-item" click.delegate="exportDiagram('PNG')"><a href="#">as PNG</a></li>
-          <li class="dropdown-item" click.delegate="exportDiagram('JPEG')"><a href="#">as JPEG</a></li>
+          <li class="dropdown-item" click.delegate="exportDiagram('BPMN')" id="navbarExportDiagramAsBPMN"><a href="#">as BPMN</a></li>
+          <li class="dropdown-item" click.delegate="exportDiagram('SVG')" id="navbarExportDiagramAsSVG"><a href="#">as SVG</a></li>
+          <li class="dropdown-item" click.delegate="exportDiagram('PNG')" id="navbarExportDiagramAsPNG"><a href="#">as PNG</a></li>
+          <li class="dropdown-item" click.delegate="exportDiagram('JPEG')" id="navbarExportDiagramAsJPEG"><a href="#">as JPEG</a></li>
         </ul>
       </div>
       <template if.bind="showTools">
