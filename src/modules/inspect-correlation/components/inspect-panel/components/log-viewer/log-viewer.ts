@@ -44,8 +44,8 @@ export class LogViewer {
     this._notificationService.showNotification(NotificationType.SUCCESS, 'Successfully copied to clipboard.');
   }
 
-  public getDateStringFromTimestamp(timestamp: number): string {
-    const dateString: string = new DateService(timestamp)
+  public getDateStringFromTimestamp(date: Date): string {
+    const dateString: string = new DateService(date)
                                 .getYear()
                                 .getMonth()
                                 .getDay()

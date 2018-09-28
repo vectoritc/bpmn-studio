@@ -1,8 +1,9 @@
 
 import {inject} from 'aurelia-framework';
 
-import {Correlation, IManagementApi, ManagementContext} from '@process-engine/management_api_contracts';
+import {Correlation, CorrelationProcessModel, IManagementApi} from '@process-engine/management_api_contracts';
 
+import {IIdentity} from '@essential-projects/iam_contracts';
 import {LogEntry} from '@process-engine/logging_api_contracts';
 import {IAuthenticationService} from '../../../contracts';
 import {IInspectCorrelationRepository} from '../contracts';
@@ -19,22 +20,27 @@ export class InspectCorrelationRepository implements IInspectCorrelationReposito
   }
 
   public async getAllCorrelationsForProcessModelId(processModelId: string): Promise<Array<Correlation>> {
-    const managementContext: ManagementContext = this._getManagementContext();
-    const allActiveCorrelations: Array<Correlation> = await this._managementApiService.getActiveCorrelations(managementContext);
+    const identity: IIdentity = this._createIdentity();
+    const allCorrelations: Array<Correlation> = await this._managementApiService.getAllCorrelations(identity);
 
-    const correlationsForProcessModelId: Array<Correlation> = allActiveCorrelations.filter((correlation: Correlation) => {
-      return correlation.processModelId === processModelId;
+    const correlationsForProcessModelId: Array<Correlation> = allCorrelations.filter((correlation: Correlation) => {
+      return correlation.processModels.find((processModel: CorrelationProcessModel) => {
+        return processModel.name === processModelId;
+      });
     });
 
     return correlationsForProcessModelId;
   }
 
   public async getLogsForCorrelation(correlation: Correlation): Promise<Array<LogEntry>> {
-    const managementContext: ManagementContext = this._getManagementContext();
+    const identity: IIdentity = this._createIdentity();
 
-    const logsForCorrelation: Array<LogEntry> = await this._managementApiService.getLogsForProcessModel(managementContext,
-                                                                                          correlation.id,
-                                                                                          correlation.processModelId);
+    const logsForCorrelation: Array<LogEntry> = [];
+    for (const processModel of correlation.processModels) {
+      const logsForProcessModel: Array<LogEntry> = await this._managementApiService.getProcessModelLog(identity, processModel.name);
+
+      logsForCorrelation.concat(logsForProcessModel);
+    }
 
     return logsForCorrelation;
   }
@@ -82,12 +88,15 @@ export class InspectCorrelationRepository implements IInspectCorrelationReposito
     return tokenPromise;
   }
 
-  private _getManagementContext(): ManagementContext {
-    const accessToken: string = this._authenticationService.getAccessToken();
-    const context: ManagementContext = {
-      identity: accessToken,
+  private _createIdentity(): IIdentity {
+    const identity: IIdentity = {} as IIdentity;
+
+    const solutionExplorerAccessToken: {accessToken: string} = {
+      accessToken: this._authenticationService.getAccessToken(),
     };
 
-    return context;
+    Object.assign(identity, solutionExplorerAccessToken);
+
+    return identity;
   }
 }

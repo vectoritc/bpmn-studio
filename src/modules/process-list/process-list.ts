@@ -3,7 +3,7 @@ import {inject, observable} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
-import {Correlation, IManagementApi} from '@process-engine/management_api_contracts';
+import {Correlation, CorrelationProcessModel, IManagementApi} from '@process-engine/management_api_contracts';
 
 import {
   AuthenticationStateEvent,
@@ -161,7 +161,9 @@ export class ProcessList {
     const runningCorrelations: Array<Correlation> = await this._managementApiService.getActiveCorrelations(identity);
 
     const correlationsWithId: Array<Correlation> = runningCorrelations.filter((correlation: Correlation) => {
-      return correlation.processModelId === processModelId;
+      return correlation.processModels.find((processModel: CorrelationProcessModel) => {
+        return processModel.name === processModelId;
+      });
     });
 
     return correlationsWithId;

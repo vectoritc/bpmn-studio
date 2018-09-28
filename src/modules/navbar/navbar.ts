@@ -110,7 +110,7 @@ export class NavBar {
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.disableSaveButton, () => {
-        this.disableSaveButton = true;
+        this.disableStartButton = true;
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.noValidationError, () => {
