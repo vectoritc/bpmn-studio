@@ -36,12 +36,15 @@ export class InspectCorrelationRepository implements IInspectCorrelationReposito
   public async getLogsForCorrelation(correlation: Correlation): Promise<Array<LogEntry>> {
     const identity: IIdentity = this._createIdentity();
 
-    const logsForCorrelation: Array<LogEntry> = [];
+    const logsForAllProcessModelsOfCorrelation: Array<Array<LogEntry>> = [];
+
     for (const processModel of correlation.processModels) {
       const logsForProcessModel: Array<LogEntry> = await this._managementApiService.getProcessModelLog(identity, processModel.name);
 
-      logsForCorrelation.concat(logsForProcessModel);
+      logsForAllProcessModelsOfCorrelation.push(logsForProcessModel);
     }
+
+    const logsForCorrelation: Array<LogEntry> = [].concat(...logsForAllProcessModelsOfCorrelation);
 
     return logsForCorrelation;
   }

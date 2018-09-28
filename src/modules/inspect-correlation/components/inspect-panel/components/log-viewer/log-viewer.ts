@@ -31,11 +31,8 @@ export class LogViewer {
 
   public async correlationChanged(): Promise<void> {
     this.log = await this._inspectCorrelationService.getLogsForCorrelation(this.correlation);
-    // this.log.forEach((logEntry: LogEntry) => {
-    //   logEntry.logLevel = logEntry.logLevel.toUpperCase();
-    // });
 
-    // this.sortList(LogSortProperty.Time);
+    this.sortList(LogSortProperty.Time);
   }
 
   public copyToClipboard(textToCopy: string): void {
@@ -44,7 +41,9 @@ export class LogViewer {
     this._notificationService.showNotification(NotificationType.SUCCESS, 'Successfully copied to clipboard.');
   }
 
-  public getDateStringFromTimestamp(date: Date): string {
+  public getDateStringFromTimestamp(time: string): string {
+    const date: Date = new Date(time);
+
     const dateString: string = new DateService(date)
                                 .getYear()
                                 .getMonth()

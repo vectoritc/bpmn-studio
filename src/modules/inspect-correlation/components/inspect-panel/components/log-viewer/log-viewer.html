@@ -18,8 +18,8 @@
       </thead class="log-table__header">
       <tbody class="log-table__body">
         <tr repeat.for="logEntry of sortedLog" click.delegate="copyToClipboard(logEntry.message)">
-          <td class="log-table__time-column">${getDateStringFromTimestamp(logEntry.timestamp)}</td>
-          <td class="log-table__log-level-column">${logEntry.logLevel}</td>
+          <td class="log-table__time-column">${getDateStringFromTimestamp(logEntry.timeStamp)}</td>
+          <td class="log-table__log-level-column">${logEntry.logLevel.toUpperCase()}</td>
           <td class="log-table__message-column">${logEntry.message}</td>
         </tr>
       </tbody>
