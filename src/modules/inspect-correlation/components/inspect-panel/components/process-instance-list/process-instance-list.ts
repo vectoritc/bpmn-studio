@@ -30,7 +30,8 @@ export class ProcessInstanceList {
     this._tableData = [];
 
     for (const correlation of correlations) {
-      const formattedStartedDate: string = new DateService(correlation.createdAt)
+      const date: Date = new Date(correlation.createdAt);
+      const formattedStartedDate: string = new DateService(date)
                                             .getYear()
                                             .getMonth()
                                             .getDay()
@@ -97,12 +98,15 @@ export class ProcessInstanceList {
         const firstCorrelation: Correlation = this._getCorrelationForTableEntry(firstEntry);
         const secondCorrelation: Correlation = this._getCorrelationForTableEntry(secondEntry);
 
-        const firstEntryIsBigger: boolean = firstCorrelation.createdAt.getTime() > secondCorrelation.createdAt.getTime();
+        const firstCorrelationDate: Date = new Date(firstCorrelation.createdAt);
+        const secondCorrelationDate: Date = new Date(secondCorrelation.createdAt);
+
+        const firstEntryIsBigger: boolean = firstCorrelationDate.getTime() > secondCorrelationDate.getTime();
         if (firstEntryIsBigger) {
           return 1;
         }
 
-        const secondEntryIsBigger: boolean = firstCorrelation.createdAt.getTime() < secondCorrelation.createdAt.getTime();
+        const secondEntryIsBigger: boolean = firstCorrelationDate.getTime() < secondCorrelationDate.getTime();
         if (secondEntryIsBigger) {
           return -1;
         }
@@ -122,10 +126,12 @@ export class ProcessInstanceList {
   }
 
   private _getIndexForCorrelation(correlation: Correlation, correlations: Array<Correlation>): number {
-    const correlationStartedDate: number = correlation.createdAt.getTime();
+    const correlationStartedDate: Date = new Date(correlation.createdAt);
 
     const earlierStartedCorrelations: Array<Correlation> = correlations.filter((entry: Correlation) => {
-      return entry.createdAt.getTime() < correlationStartedDate;
+      const entryStartedDate: Date = new Date(entry.createdAt);
+
+      return entryStartedDate.getTime() < correlationStartedDate.getTime();
     });
 
     const amountOfEarlierStartedCorrelations: number = earlierStartedCorrelations.length;

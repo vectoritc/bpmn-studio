@@ -21,6 +21,7 @@ export class InspectCorrelationRepository implements IInspectCorrelationReposito
 
   public async getAllCorrelationsForProcessModelId(processModelId: string): Promise<Array<Correlation>> {
     const identity: IIdentity = this._createIdentity();
+
     const allCorrelations: Array<Correlation> = await this._managementApiService.getAllCorrelations(identity);
 
     const correlationsForProcessModelId: Array<Correlation> = allCorrelations.filter((correlation: Correlation) => {
@@ -91,11 +92,11 @@ export class InspectCorrelationRepository implements IInspectCorrelationReposito
   private _createIdentity(): IIdentity {
     const identity: IIdentity = {} as IIdentity;
 
-    const solutionExplorerAccessToken: {accessToken: string} = {
-      accessToken: this._authenticationService.getAccessToken(),
+    const accessToken: {token: string} = {
+      token: this._authenticationService.getAccessToken(),
     };
 
-    Object.assign(identity, solutionExplorerAccessToken);
+    Object.assign(identity, accessToken);
 
     return identity;
   }
