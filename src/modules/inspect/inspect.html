@@ -18,6 +18,7 @@
     <div class="inspect-layout__tools-right">
       <div class="tool-list tool-list--vertical">
         <div if.bind="showInspectCorrelation"
+             show.bind="false"
              class="inspect-layout__tool"
              class.bind="tokenViewerButtonDisabled ? 'inspect-layout__tool--disabled' : showTokenViewer ? 'inspect-layout__tool--active' : ''"
              disable.bind="tokenViewerButtonDisabled"
