@@ -1,10 +1,10 @@
 
 import {inject} from 'aurelia-framework';
 
-import {Correlation, CorrelationProcessModel, IManagementApi} from '@process-engine/management_api_contracts';
-
 import {IIdentity} from '@essential-projects/iam_contracts';
 import {LogEntry} from '@process-engine/logging_api_contracts';
+import {Correlation, CorrelationProcessModel, IManagementApi} from '@process-engine/management_api_contracts';
+
 import {IAuthenticationService} from '../../../contracts';
 import {IInspectCorrelationRepository} from '../contracts';
 
