@@ -4,9 +4,10 @@ import {bindable} from 'aurelia-framework';
 
 import {diff} from 'bpmn-js-differ';
 
+import {IIdentity} from '@essential-projects/iam_contracts';
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {ManagementApiClientService} from '@process-engine/management_api_client';
-import {ManagementContext, ProcessModelExecution} from '@process-engine/management_api_contracts';
+import {ProcessModelExecution} from '@process-engine/management_api_contracts';
 
 import {
   defaultBpmnColors,
@@ -148,7 +149,7 @@ export class BpmnDiffView {
     }
 
     const deployedProcessModel: ProcessModelExecution.ProcessModel =
-      await this._managementApiService.getProcessModelById(this._getManagementContext(), this.processModelId);
+      await this._managementApiService.getProcessModelById(this._createIdentity(), this.processModelId);
 
     const processModelIsDeployed: boolean = deployedProcessModel !== undefined;
 
@@ -530,12 +531,12 @@ export class BpmnDiffView {
     });
   }
 
-  private _getManagementContext(): ManagementContext {
+  private _createIdentity(): IIdentity {
     const accessToken: string = this._authenticationService.getAccessToken();
-    const context: ManagementContext = {
-      identity: accessToken,
+    const identity: IIdentity = {
+      token: accessToken,
     };
 
-    return context;
+    return identity;
   }
 }
