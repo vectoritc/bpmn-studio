@@ -197,12 +197,6 @@ export class App {
         name: 'inspect',
         moduleId: 'modules/inspect/inspect',
       },
-      {
-        route: 'process/:processModelId/inspect-correlation',
-        title: 'Inspect Correlation',
-        name: 'inspect-correlation',
-        moduleId: 'modules/inspect-correlation/inspect-correlation',
-      },
     ]);
 
     this._openIdConnect.configure(config);
