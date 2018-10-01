@@ -16,8 +16,8 @@ export interface IInspectRouteParameters {
 export class Inspect {
 
   @bindable() public processModelId: string;
-  public showHeatmap: boolean = false;
   @bindable() public showDashboard: boolean = true;
+  public showHeatmap: boolean = false;
   public showInspectCorrelation: boolean = false;
   public dashboard: Dashboard;
   public showTokenViewer: boolean = false;
