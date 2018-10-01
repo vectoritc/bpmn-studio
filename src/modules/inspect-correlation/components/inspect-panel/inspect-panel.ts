@@ -24,7 +24,7 @@ export class InspectPanel {
   public toggleFullscreen(): void {
     this.fullscreen = !this.fullscreen;
 
-    this._eventAggregator.publish(environment.events.inspect.disableTokenViewerButton, this.fullscreen);
+    this._eventAggregator.publish(environment.events.inspect.shouldDisableTokenViewerButton, this.fullscreen);
   }
 
   public changeTab(inspectPanelTab: InspectPanelTab): void {
@@ -44,6 +44,6 @@ export class InspectPanel {
       return;
     }
 
-    this._eventAggregator.publish(environment.events.inspect.disableTokenViewerButton, false);
+    this._eventAggregator.publish(environment.events.inspect.shouldDisableTokenViewerButton, false);
   }
 }

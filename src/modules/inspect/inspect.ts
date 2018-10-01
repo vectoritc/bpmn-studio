@@ -98,7 +98,7 @@ export class Inspect {
     this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect);
 
     this._subscriptions = [
-      this._eventAggregator.subscribe(environment.events.inspect.disableTokenViewerButton, (tokenViewerButtonDisabled: boolean) => {
+      this._eventAggregator.subscribe(environment.events.inspect.shouldDisableTokenViewerButton, (tokenViewerButtonDisabled: boolean) => {
         this.tokenViewerButtonDisabled = tokenViewerButtonDisabled;
       }),
     ];

@@ -92,7 +92,7 @@ export default {
       navigateToDesigner: 'processSolutionPanel:processEngineLinks:navigateToDesigner',
     },
     inspect: {
-      disableTokenViewerButton: 'inspect:tokenViewerButton:disable',
+      shouldDisableTokenViewerButton: 'inspect:tokenViewerButton:disable',
     },
     inspectCorrelation: {
       showInspectPanel: 'inspectCorrelation:inspectPanel:show',
