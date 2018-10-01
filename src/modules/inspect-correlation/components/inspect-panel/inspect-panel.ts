@@ -12,7 +12,7 @@ export class InspectPanel {
   @bindable() public selectedCorrelation: Correlation;
   @bindable() public fullscreen: boolean;
   public InspectPanelTab: typeof InspectPanelTab = InspectPanelTab;
-  public showProcessInstanceList: boolean = true;
+  public showCorrelationList: boolean = true;
   public showLogViewer: boolean;
 
   private _eventAggregator: EventAggregator;
@@ -28,10 +28,10 @@ export class InspectPanel {
   }
 
   public changeTab(inspectPanelTab: InspectPanelTab): void {
-    const shouldShowProcessInstanceList: boolean = inspectPanelTab === InspectPanelTab.ProcessInstanceList;
+    const shouldShowCorrelationList: boolean = inspectPanelTab === InspectPanelTab.CorrelationList;
     const shouldShowLogViewer: boolean = inspectPanelTab === InspectPanelTab.LogViewer;
 
-    this.showProcessInstanceList = shouldShowProcessInstanceList;
+    this.showCorrelationList = shouldShowCorrelationList;
     this.showLogViewer = shouldShowLogViewer;
   }
 

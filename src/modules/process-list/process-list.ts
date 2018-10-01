@@ -23,7 +23,7 @@ export class ProcessList {
   @observable public currentPage: number = 0;
   public pageSize: number = 10;
   public totalItems: number;
-  public instances: Array<Correlation>;
+  public correlations: Array<Correlation>;
   public status: Array<string> = [];
   public succesfullRequested: boolean = false;
   public selectedState: HTMLSelectElement;
@@ -86,15 +86,15 @@ export class ProcessList {
       this._notificationService.showNotification(NotificationType.ERROR, `Error receiving process list: ${error.message}`);
     }
 
-    if (!this.instances) {
-      this.instances = this.allInstances;
+    if (!this.correlations) {
+      this.correlations = this.allcorrelations;
     }
 
-    this.totalItems = this.instances.length;
+    this.totalItems = this.correlations.length;
   }
 
   public updateList(): void {
-    this.instances = this.allInstances;
+    this.correlations = this.allcorrelations;
   }
 
   public async attached(): Promise<void> {
@@ -130,10 +130,10 @@ export class ProcessList {
   }
 
   public get shownProcesses(): Array<Correlation> {
-    return this.instances.slice((this.currentPage - 1) * this.pageSize, this.pageSize * this.currentPage);
+    return this.correlations.slice((this.currentPage - 1) * this.pageSize, this.pageSize * this.currentPage);
   }
 
-  public get allInstances(): Array<Correlation> {
+  public get allcorrelations(): Array<Correlation> {
     if (!this._processes) {
       return [];
     }

@@ -1,4 +1,4 @@
 export enum InspectPanelTab {
-  ProcessInstanceList = 'processInstanceList',
+  CorrelationList = 'correlationList',
   LogViewer = 'LogViewer',
 }

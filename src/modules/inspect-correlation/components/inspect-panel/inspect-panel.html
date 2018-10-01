@@ -1,19 +1,20 @@
 <template>
   <require from="./inspect-panel.css"></require>
   <require from="./components/log-viewer/log-viewer"></require>
-  <require from="./components/process-instance-list/process-instance-list"></require>
+  <require from="./components/correlation-list/correlation-list"></require>
   <div class="inspect-panel">
     <div class="inspect-panel__control-bar">
       <div class="inspect-panel__tabs">
         <button class="inspect-panel__tab"
-                class.bind="showProcessInstanceList ? 'inspect-panel__active-tab' : ''"
-                click.delegate="changeTab(InspectPanelTab.ProcessInstanceList)">
-          Process Instance List (${correlations.length})
+                class.bind="showCorrelationList ? 'inspect-panel__active-tab' : ''"
+                click.delegate="changeTab(InspectPanelTab.CorrelationList)"
+                title="Show a list of all correlations for this process model">
+          Correlation List (${correlations.length})
         </button>
         <button class="inspect-panel__tab ${showLogViewer ? 'inspect-panel__active-tab' : ''}"
                 class.bind="selectedCorrelation === undefined ? 'inspect-panel__disabled-tab' : ''"
                 disabled.bind="selectedCorrelation === undefined"
-                title.bind="selectedCorrelation !== undefined ? 'Show log of process instance' : 'Select a process instance in order to toggle the log viewer'"
+                title.bind="selectedCorrelation !== undefined ? 'Show log of correlation' : 'Select a correlation in order to toggle the log viewer'"
                 click.delegate="changeTab(InspectPanelTab.LogViewer)">
           Log Viewer
         </button>
@@ -23,7 +24,7 @@
       </div>
     </div>
     <div class="inspect-panel__body">
-      <process-instance-list if.bind="showProcessInstanceList" correlations.bind="correlations" selected-correlation.two-way="selectedCorrelation"></process-instance-list>
+      <correlation-list if.bind="showCorrelationList" correlations.bind="correlations" selected-correlation.two-way="selectedCorrelation"></correlation-list>
       <log-viewer if.bind="showLogViewer" correlation.bind="selectedCorrelation"></log-viewer>
     </div>
   </div>

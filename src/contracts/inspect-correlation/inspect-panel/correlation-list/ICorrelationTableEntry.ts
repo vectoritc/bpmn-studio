@@ -1,4 +1,4 @@
-export interface IProcessInstanceTableEntry {
+export interface ICorrelationTableEntry {
   index: number;
   startedAt: string;
   state: string;
