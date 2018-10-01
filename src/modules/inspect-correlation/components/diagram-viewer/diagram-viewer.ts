@@ -47,7 +47,6 @@ export class DiagramViewer {
 
   private async _getXmlByCorrelation(correlation: Correlation): Promise<string> {
     const processModelForCorrelation: CorrelationProcessModel = correlation.processModels.find((processModel: CorrelationProcessModel) => {
-      // TODO: Check if this works
       return processModel.name === this.processModelId;
     });
 
