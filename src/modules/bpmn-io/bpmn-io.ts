@@ -4,13 +4,11 @@ import {bindable, inject, observable} from 'aurelia-framework';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 
-import {IBpmnModdle,
+import {
         IBpmnModeler,
         IBpmnXmlSaveOptions,
-        IDefinition,
         IDiagramExportService,
         IDiagramPrintService,
-        IDiffChanges,
         IEditorActions,
         IEventFunction,
         IKeyboard,
