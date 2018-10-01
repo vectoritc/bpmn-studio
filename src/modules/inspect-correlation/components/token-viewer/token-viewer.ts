@@ -18,6 +18,7 @@ export class TokenViewer {
 
   public async correlationChanged(): Promise<void> {
     this.token = await this._inspectCorrelationService.getTokenForCorrelation(this.correlation);
+
     this.formatToken();
   }
 
