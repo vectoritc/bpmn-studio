@@ -33,10 +33,10 @@ import {NotificationService} from '../notification/notification.service';
 @inject('NotificationService', EventAggregator, 'ManagementApiClientService', AuthenticationService)
 export class BpmnDiffView {
 
-  @bindable({ changeHandler: 'currentXmlChanged' }) public currentXml: string;
-  @bindable({ changeHandler: 'previousXmlChanged' }) public previousXml: string;
-  @bindable({ changeHandler: 'savedXmlChanged' }) public savedXml: string;
-  @bindable({ changeHandler: 'processModelIdChanged' }) public processModelId: string;
+  @bindable() public currentXml: string;
+  @bindable() public previousXml: string;
+  @bindable() public savedXml: string;
+  @bindable() public processModelId: string;
   public xmlChanges: IDiffChanges;
   public deployedXml: string;
   public leftCanvasModel: HTMLElement;
