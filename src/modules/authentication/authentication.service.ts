@@ -4,7 +4,7 @@ import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {User} from 'oidc-client';
 import {SigninResponse} from './open-id/open-id-signin-response';
 
-import { Router } from 'aurelia-router';
+import {Router} from 'aurelia-router';
 import {AuthenticationStateEvent, IAuthenticationService, IIdentity, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {oidcConfig} from '../../open-id-connect-configuration';

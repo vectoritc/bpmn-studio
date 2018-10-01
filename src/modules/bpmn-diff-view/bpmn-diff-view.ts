@@ -26,7 +26,7 @@ import {defaultBpmnColors,
   IShape,
   NotificationType} from '../../contracts/index';
 import environment from '../../environment';
-import { AuthenticationService } from '../authentication/authentication.service';
+import {AuthenticationService} from '../authentication/authentication.service';
 import {ElementNameService} from '../elementname/elementname.service';
 import {NotificationService} from '../notification/notification.service';
 
