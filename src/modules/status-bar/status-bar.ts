@@ -61,7 +61,7 @@ export class StatusBar {
       [this.previousXmlIdentifier, this.currentXmlIdentifier] = xmlIdentifier;
     });
 
-    this._eventAggregator.subscribe(environment.events.statusBar.showInspectCorrelationButton, (showInspectCorrelation: boolean) => {
+    this._eventAggregator.subscribe(environment.events.statusBar.showInspectCorrelationButtons, (showInspectCorrelation: boolean) => {
       this.showInspectCorrelationButtons = showInspectCorrelation;
     });
 
