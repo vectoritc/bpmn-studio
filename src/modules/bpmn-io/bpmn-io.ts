@@ -5,15 +5,15 @@ import {bindable, inject, observable} from 'aurelia-framework';
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 
 import {
-        IBpmnModeler,
-        IBpmnXmlSaveOptions,
-        IDiagramExportService,
-        IDiagramPrintService,
-        IEditorActions,
-        IEventFunction,
-        IKeyboard,
-        NotificationType,
-      } from '../../contracts/index';
+  IBpmnModeler,
+  IBpmnXmlSaveOptions,
+  IDiagramExportService,
+  IDiagramPrintService,
+  IEditorActions,
+  IEventFunction,
+  IKeyboard,
+  NotificationType,
+} from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from './../notification/notification.service';
 import {DiagramExportService, DiagramPrintService} from './services/index';
