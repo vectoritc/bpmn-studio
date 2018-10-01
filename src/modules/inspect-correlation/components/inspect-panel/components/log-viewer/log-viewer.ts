@@ -2,8 +2,7 @@ import {bindable, inject} from 'aurelia-framework';
 
 import * as clipboard from 'clipboard-polyfill';
 
-import {LogEntry} from '@process-engine/logging_api_contracts';
-import {Correlation} from '@process-engine/management_api_contracts';
+import {Correlation, LogEntry} from '@process-engine/management_api_contracts';
 
 import {ILogSortSettings, LogSortProperty, NotificationType} from '../../../../../../contracts/index';
 import {DateService} from '../../../../../date-service/date.service';

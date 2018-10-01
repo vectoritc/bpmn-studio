@@ -1,5 +1,4 @@
-import {LogEntry} from '@process-engine/logging_api_contracts';
-import {Correlation} from '@process-engine/management_api_contracts';
+import {Correlation, LogEntry} from '@process-engine/management_api_contracts';
 
 export interface IInspectCorrelationRepository {
   getAllCorrelationsForProcessModelId(processModelId: string): Promise<Array<Correlation>>;

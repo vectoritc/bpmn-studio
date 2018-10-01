@@ -1,7 +1,6 @@
 import {inject} from 'aurelia-framework';
 
-import {LogEntry} from '@process-engine/logging_api_contracts';
-import {Correlation} from '@process-engine/management_api_contracts';
+import {Correlation, LogEntry} from '@process-engine/management_api_contracts';
 
 import {IInspectCorrelationRepository, IInspectCorrelationService} from '../contracts';
 
