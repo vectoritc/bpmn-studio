@@ -66,11 +66,13 @@ export class ProcessInstanceList {
 
     const sortByDate: boolean = property === ProcessInstanceListSortProperty.StartedAt;
 
-    const sortedTableData: Array<IProcessInstanceTableEntry> = sortByDate ? this._sortListByStartDate()
-                                                                          : this._sortList(property);
+    const sortedTableData: Array<IProcessInstanceTableEntry> = sortByDate
+                                                                ? this._sortListByStartDate()
+                                                                : this._sortList(property);
 
-    this.sortedTableData = ascending ? sortedTableData
-                                     : sortedTableData.reverse();
+    this.sortedTableData = ascending
+                            ? sortedTableData
+                            : sortedTableData.reverse();
   }
 
   private _sortList(property: ProcessInstanceListSortProperty): Array<IProcessInstanceTableEntry> {
