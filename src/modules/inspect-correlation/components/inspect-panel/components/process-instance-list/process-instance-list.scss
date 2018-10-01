@@ -11,7 +11,7 @@
   cursor: pointer;
 }
 
-.correlation-table__headlines > th {
+.correlation-table__headline {
   width: 25%;
   padding: 8px;
   overflow: hidden;
@@ -28,13 +28,13 @@
   overflow: auto;
 }
 
-.correlation-table__body > tr {
+.correlation-table__table-row {
   display: flex;
   width: 100%;
   cursor: pointer;
 }
 
-.correlation-table__body > tr > td{
+.correlation-table__table-entry {
   width: 25%;
   padding: 8px;
   overflow: hidden;
