@@ -9,7 +9,7 @@ import environment from '../../../../environment';
 @inject(EventAggregator)
 export class InspectPanel {
   @bindable() public correlations: Array<Correlation>;
-  @bindable({ changeHandler: 'correlationChanged'}) public selectedCorrelation: Correlation;
+  @bindable() public selectedCorrelation: Correlation;
   @bindable() public fullscreen: boolean;
   public InspectPanelTab: typeof InspectPanelTab = InspectPanelTab;
   public showProcessInstanceList: boolean = true;

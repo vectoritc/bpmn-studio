@@ -9,7 +9,7 @@ import {NotificationService} from '../../../notification/notification.service';
 
 @inject('NotificationService', 'ManagementApiClientService', 'AuthenticationService')
 export class DiagramViewer {
-  @bindable({ changeHandler: 'correlationChanged' }) public correlation: Correlation;
+  @bindable() public correlation: Correlation;
   @bindable() public xml: string;
   @bindable() public processModelId: string;
   public xmlIsNotSelected: boolean = true;

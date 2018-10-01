@@ -6,7 +6,7 @@ import {IInspectCorrelationService} from '../../contracts';
 
 @inject('InspectCorrelationService')
 export class TokenViewer {
-  @bindable({ changeHandler: 'correlationChanged' }) public correlation: Correlation;
+  @bindable() public correlation: Correlation;
   @bindable() public token: string;
   public formattedToken: string;
 

@@ -17,7 +17,7 @@ interface IClipboard {
 @inject('NotificationService', 'InspectCorrelationService')
 export class LogViewer {
   @bindable() public log: Array<LogEntry>;
-  @bindable({ changeHandler: 'correlationChanged' }) public correlation: Correlation;
+  @bindable() public correlation: Correlation;
   public LogSortProperty: typeof LogSortProperty = LogSortProperty;
   public sortedLog: Array<LogEntry>;
   public sortSettings: ILogSortSettings = {
