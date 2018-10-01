@@ -11,7 +11,7 @@
     <div show.bind="showHeatmap" class="inspect__heatmap-container">
       <heatmap process-model-id.bind="processModelId" dashboardIsShown.bind="showDashboard"></heatmap>
     </div>
-    <div if.bind="showInspectCorrelation" class="inspect__inspect-correlation-container">
+    <div show.bind="showInspectCorrelation" class="inspect__inspect-correlation-container">
       <inspect-correlation process-model-id.bind="processModelId"></inspect-correlation>
     </div>
 

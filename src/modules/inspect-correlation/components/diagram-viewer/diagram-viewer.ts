@@ -41,6 +41,15 @@ export class DiagramViewer {
     this._importXml();
   }
 
+  public processModelIdChanged(): void {
+    if (this._diagramViewer === undefined) {
+      return;
+    }
+
+    this._diagramViewer.clear();
+    this.xmlIsNotSelected = true;
+  }
+
   public xmlChanged(): void {
     this.xmlIsNotSelected = this.xml === undefined;
   }
