@@ -25,9 +25,15 @@ export class InspectCorrelationRepository implements IInspectCorrelationReposito
     const allCorrelations: Array<Correlation> = await this._managementApiService.getAllCorrelations(identity);
 
     const correlationsForProcessModelId: Array<Correlation> = allCorrelations.filter((correlation: Correlation) => {
-      return correlation.processModels.find((processModel: CorrelationProcessModel) => {
-        return processModel.name === processModelId;
+      const processModelWithSameId: CorrelationProcessModel = correlation.processModels.find((processModel: CorrelationProcessModel) => {
+        const isSearchedProcessModel: boolean = processModel.name === processModelId;
+
+        return isSearchedProcessModel;
       });
+
+      const processModelFound: boolean = processModelWithSameId !== undefined;
+
+      return processModelFound;
     });
 
     return correlationsForProcessModelId;

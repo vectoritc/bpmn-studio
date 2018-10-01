@@ -161,9 +161,15 @@ export class ProcessList {
     const runningCorrelations: Array<Correlation> = await this._managementApiService.getActiveCorrelations(identity);
 
     const correlationsWithId: Array<Correlation> = runningCorrelations.filter((correlation: Correlation) => {
-      return correlation.processModels.find((processModel: CorrelationProcessModel) => {
-        return processModel.name === processModelId;
+      const processModelWithSearchedId: CorrelationProcessModel =  correlation.processModels.find((processModel: CorrelationProcessModel) => {
+        const isSearchedProcessModel: boolean = processModel.name === processModelId;
+
+        return isSearchedProcessModel;
       });
+
+      const processModelFound: boolean = processModelWithSearchedId !== undefined;
+
+      return processModelFound;
     });
 
     return correlationsWithId;
