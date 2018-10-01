@@ -2,7 +2,7 @@
   <require from="./bpmn-diff-view.css"></require>
   <div class="diff-view">
     <div class="left-diff-view">
-      <button if.bind="deployedXml" style="position: absolute; z-index: 1; top: 10px; left: 10px;" click.delegate="togglePreviousXml()">Diff Deployed Process</button>
+      <button if.bind="deployedXml" style="position: absolute; z-index: 1; top: 10px; left: 10px;" click.delegate="togglePreviousXml()">Diff ${showSavedXml ? 'Deployed': 'Last Saved'} Process</button>
       <div ref="leftCanvasModel" class="left-diff-view__canvasModel"></div>
       <span class="diff-canvas-title">${previousXmlIdentifier}</span>
     </div>

@@ -59,6 +59,7 @@ export class BpmnDiffView {
     added: [],
     layoutChanged: [],
   };
+  public showSavedXml: boolean = true;
 
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
@@ -72,7 +73,6 @@ export class BpmnDiffView {
   private _elementNameService: ElementNameService;
   private _managementApiService: ManagementApiClientService;
   private _authenticationService: AuthenticationService;
-  private _showSavedXml: boolean = true;
 
   constructor(notificationService: NotificationService,
               eventAggregator: EventAggregator,
@@ -134,7 +134,7 @@ export class BpmnDiffView {
   }
 
   public savedXmlChanged(): void {
-    if (this._showSavedXml) {
+    if (this.showSavedXml) {
       this._setSavedProcessModelAsPreviousXml();
     }
   }
@@ -192,9 +192,9 @@ export class BpmnDiffView {
   }
 
   public togglePreviousXml(): void {
-    this._showSavedXml = !this._showSavedXml;
+    this.showSavedXml = !this.showSavedXml;
 
-    if (this._showSavedXml) {
+    if (this.showSavedXml) {
       this._setSavedProcessModelAsPreviousXml();
     } else {
       this._setDeployedProcessModelAsPreviousXml();
