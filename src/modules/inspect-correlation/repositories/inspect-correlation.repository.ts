@@ -93,13 +93,11 @@ export class InspectCorrelationRepository implements IInspectCorrelationReposito
   }
 
   private _createIdentity(): IIdentity {
-    const identity: IIdentity = {} as IIdentity;
+    const accessToken: string = this._authenticationService.getAccessToken();
 
-    const accessToken: {token: string} = {
-      token: this._authenticationService.getAccessToken(),
+    const identity: IIdentity = {
+      token: accessToken,
     };
-
-    Object.assign(identity, accessToken);
 
     return identity;
   }
