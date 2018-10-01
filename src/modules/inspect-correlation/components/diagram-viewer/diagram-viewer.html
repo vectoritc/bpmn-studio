@@ -1,6 +1,6 @@
 <template>
   <require from="./diagram-viewer.css"></require>
   <div ref="canvasModel" class="diagram-viewer__body">
-    <span if.bind="xml === undefined" class="diagram-viewer__empty-message">No Process Instance selected.</span>
+    <span if.bind="xmlIsNotSelected" class="diagram-viewer__empty-message">No Process Instance selected.</span>
   </div>
 </template>

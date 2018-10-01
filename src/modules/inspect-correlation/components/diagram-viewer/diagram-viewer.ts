@@ -12,6 +12,7 @@ export class DiagramViewer {
   @bindable({ changeHandler: 'correlationChanged' }) public correlation: Correlation;
   @bindable() public xml: string;
   @bindable() public processModelId: string;
+  public xmlIsNotSelected: boolean = true;
   public canvasModel: HTMLElement;
   public showDiagram: boolean = true;
 
@@ -38,6 +39,10 @@ export class DiagramViewer {
     this.xml = await this._getXmlByCorrelation(this.correlation);
 
     this._importXml();
+  }
+
+  public xmlChanged(): void {
+    this.xmlIsNotSelected = this.xml === undefined;
   }
 
   private async _getXmlByCorrelation(correlation: Correlation): Promise<string> {
