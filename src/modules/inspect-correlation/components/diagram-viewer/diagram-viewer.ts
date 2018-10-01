@@ -55,7 +55,7 @@ export class DiagramViewer {
     return xmlForCorrelation;
   }
 
-  private async _importXml(): Promise <void> {
+  private async _importXml(): Promise<void> {
     const xmlIsNotLoaded: boolean = (this.xml === undefined || this.xml === null);
 
     if (xmlIsNotLoaded) {
