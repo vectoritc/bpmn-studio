@@ -100,7 +100,12 @@ export class SolutionExplorerSolution {
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToInspect, (inspectView?: string) => {
         this._diagramRoute = 'inspect';
-        this._inspectView = inspectView;
+
+        const inspectViewIsNotSet: boolean = inspectView === undefined;
+
+        this._inspectView = inspectViewIsNotSet
+                              ? 'heatmap'
+                              : inspectView;
       }),
 
       this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToDesigner, () => {
