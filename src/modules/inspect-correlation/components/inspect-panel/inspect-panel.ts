@@ -11,6 +11,7 @@ export class InspectPanel {
   @bindable() public correlations: Array<Correlation>;
   @bindable() public selectedCorrelation: Correlation;
   @bindable() public fullscreen: boolean;
+  @bindable() public processModelId: string;
   public InspectPanelTab: typeof InspectPanelTab = InspectPanelTab;
   public showCorrelationList: boolean = true;
   public showLogViewer: boolean;
@@ -25,6 +26,10 @@ export class InspectPanel {
     this.fullscreen = !this.fullscreen;
 
     this._eventAggregator.publish(environment.events.inspect.shouldDisableTokenViewerButton, this.fullscreen);
+  }
+
+  public processModelIdChanged(): void {
+    this.selectedCorrelation = undefined;
   }
 
   public changeTab(inspectPanelTab: InspectPanelTab): void {
