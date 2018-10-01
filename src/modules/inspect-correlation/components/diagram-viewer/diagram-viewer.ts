@@ -1,8 +1,8 @@
 import {bindable, inject} from 'aurelia-framework';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
-import {Correlation, IManagementApi} from '@process-engine/management_api_contracts';
-import {CorrelationProcessModel, ProcessModel} from '@process-engine/management_api_contracts/dist/data_models';
+import {Correlation} from '@process-engine/management_api_contracts';
+import {CorrelationProcessModel} from '@process-engine/management_api_contracts/dist/data_models';
 
 import {IBpmnModeler, NotificationType} from '../../../../contracts/index';
 import {NotificationService} from '../../../notification/notification.service';
