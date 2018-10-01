@@ -70,10 +70,12 @@ export default {
     bpmnio: {
       toggleXMLView: 'processdefdetail:xmlview:toggle',
       toggleDiffView: 'processdefdetail:diffview:toggle',
+      showDiffDestinationButton: 'processdefdetail:diffDestinationButton:toggle',
     },
     diffView: {
       changeDiffMode: 'diffview:diffmode:change',
       toggleChangeList: 'diffview:changelist:toggle',
+      setDiffDestination: 'diffview:diffDestination:set',
     },
     diagramChange: 'diagram:change',
     processSolutionPanel: {

@@ -21,6 +21,11 @@
           <!-- TODO: insert settings icon here; Ref: https://github.com/process-engine/bpmn-studio/issues/461-->
         </div>
       </div>
+      <div show.bind="showDiffView" class="tool-list tool-list--vertical">
+        <div if.bind="showDiffDestinationButton" class="tool" click.delegate="toggleDiffDestination()">
+          <i class.bind="diffDestinationIsLocal ? 'fas fa-database' :  'fas fa-save'"></i>
+        </div>
+      </div>
     </div>
 
     <!--

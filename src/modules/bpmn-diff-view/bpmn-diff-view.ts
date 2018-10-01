@@ -40,8 +40,8 @@ export class BpmnDiffView {
   @bindable() public previousXml: string;
   @bindable() public savedXml: string;
   @bindable() public processModelId: string;
+  @bindable() public deployedXml: string;
   public xmlChanges: IDiffChanges;
-  public deployedXml: string;
   public leftCanvasModel: HTMLElement;
   public rightCanvasModel: HTMLElement;
   public lowerCanvasModel: HTMLElement;
@@ -112,8 +112,20 @@ export class BpmnDiffView {
         this.currentDiffMode = diffMode;
         this._updateDiffView();
       }),
+
       this._eventAggregator.subscribe(environment.events.diffView.toggleChangeList, () => {
         this.showChangeList = !this.showChangeList;
+      }),
+
+      this._eventAggregator.subscribe(environment.events.diffView.setDiffDestination, (diffDestination: string) => {
+        const diffLastSavedXml: boolean = diffDestination === 'local';
+        const diffDeployedXml: boolean = diffDestination === 'deployed';
+
+        if (diffLastSavedXml) {
+          this._setSavedProcessModelAsPreviousXml();
+        } else if (diffDeployedXml) {
+          this._setDeployedProcessModelAsPreviousXml();
+        }
       }),
     ];
 
@@ -156,6 +168,12 @@ export class BpmnDiffView {
     this.deployedXml = processModelIsDeployed
                         ? deployedProcessModel.xml
                         : undefined;
+  }
+
+  public deployedXmlChanged(): void {
+    const processModelIsDeployed: boolean = this.deployedXml !== undefined;
+
+    this._eventAggregator.publish(environment.events.bpmnio.showDiffDestinationButton, processModelIsDeployed);
   }
 
   public async previousXmlChanged(): Promise<void> {

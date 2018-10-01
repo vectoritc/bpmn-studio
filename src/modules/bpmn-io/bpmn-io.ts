@@ -44,6 +44,8 @@ export class BpmnIo {
   @observable public propertyPanelWidth: number;
   public minCanvasWidth: number = 100;
   public minPropertyPanelWidth: number = 200;
+  public showDiffDestinationButton: boolean = false;
+  public diffDestinationIsLocal: boolean = true;
 
   /**
    * The following to variables are needed to fix a bug, where the command
@@ -198,6 +200,7 @@ export class BpmnIo {
           this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
         }
       }),
+
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, async() => {
         try {
           const exportName: string = `${this.name}.svg`;
@@ -209,6 +212,7 @@ export class BpmnIo {
           this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
         }
       }),
+
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, async() => {
         try {
           const exportName: string = `${this.name}.png`;
@@ -220,6 +224,7 @@ export class BpmnIo {
           this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
         }
       }),
+
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, async() => {
         try {
           const exportName: string = `${this.name}.jpeg`;
@@ -232,6 +237,7 @@ export class BpmnIo {
         }
 
       }),
+
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.printDiagram}`, async() => {
         await this._printHandler();
       }),
@@ -262,6 +268,10 @@ export class BpmnIo {
 
       this._eventAggregator.subscribe(environment.events.navBar.noValidationError, () => {
         this._diagramIsInvalid = false;
+      }),
+
+      this._eventAggregator.subscribe(environment.events.bpmnio.showDiffDestinationButton, (showDiffDestinationButton: boolean) => {
+        this.showDiffDestinationButton = showDiffDestinationButton;
       }),
     ];
 
@@ -339,6 +349,14 @@ export class BpmnIo {
     this.xmlForDiffView = await this.getXML();
 
     this.showDiffView = !this.showDiffView;
+  }
+
+  public toggleDiffDestination(): void {
+    this.diffDestinationIsLocal = !this.diffDestinationIsLocal;
+
+    const diffDestination: string = this.diffDestinationIsLocal ? 'local' : 'deployed';
+
+    this._eventAggregator.publish(environment.events.diffView.setDiffDestination, diffDestination);
   }
 
   public resize(event: MouseEvent): void {
