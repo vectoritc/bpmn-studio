@@ -138,7 +138,7 @@ export class BpmnDiffView {
   }
 
   public async currentXmlChanged(): Promise<void> {
-    this._importXml(this.currentXml, this._rightViewer);
+    this._importXml(this.currentXml, this._leftViewer);
 
     await this._updateXmlChanges();
     this._updateDiffView();
@@ -176,7 +176,7 @@ export class BpmnDiffView {
   }
 
   public async previousXmlChanged(): Promise<void> {
-    this._importXml(this.previousXml, this._leftViewer);
+    this._importXml(this.previousXml, this._rightViewer);
 
     await this._updateXmlChanges();
     this._updateDiffView();
