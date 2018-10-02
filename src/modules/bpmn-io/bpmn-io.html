@@ -55,6 +55,10 @@
           <i class="fas fa-database"
             title.bind="diffDestinationIsLocal ? 'Show difference to the deployed diagram' : 'Show difference to the last saved diagram'"></i>
         </div>
+        <div if.bind="!showDiffDestinationButton" class="tool--deactivated">
+          <i class="fas fa-database"
+            title="There is no coherent deployed diagram"></i>
+        </div>
       </div>
 
     </div>
