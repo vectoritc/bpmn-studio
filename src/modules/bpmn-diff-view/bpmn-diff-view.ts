@@ -2,12 +2,11 @@ import {inject} from 'aurelia-dependency-injection';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable} from 'aurelia-framework';
 
-import {diff} from 'bpmn-js-differ';
-
 import {IIdentity} from '@essential-projects/iam_contracts';
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {ManagementApiClientService} from '@process-engine/management_api_client';
 import {ProcessModelExecution} from '@process-engine/management_api_contracts';
+import {diff} from 'bpmn-js-differ';
 
 import {
   defaultBpmnColors,

@@ -21,11 +21,6 @@
           <!-- TODO: insert settings icon here; Ref: https://github.com/process-engine/bpmn-studio/issues/461-->
         </div>
       </div>
-      <div show.bind="showDiffView" class="tool-list tool-list--vertical">
-        <div if.bind="showDiffDestinationButton" class="tool" click.delegate="toggleDiffDestination()">
-          <i class.bind="diffDestinationIsLocal ? 'fas fa-database' :  'fas fa-save'"></i>
-        </div>
-      </div>
     </div>
 
     <!--
@@ -54,6 +49,13 @@
           </button>
         </div>
       </div>
+      <div show.bind="showDiffView" class="tool-list tool-list--vertical">
+        <div if.bind="showDiffDestinationButton" class="tool" click.delegate="toggleDiffDestination()">
+          <i class.bind="diffDestinationIsLocal ? 'fas fa-database' :  'fas fa-save'"
+            title.bind="diffDestinationIsLocal ? 'Show difference on the deployed diagram' : 'Show difference on the last saved diagram'"></i>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
