@@ -237,6 +237,7 @@ export class BpmnDiffView {
   }
 
   private async _getDefintionsFromXml(xml: string): Promise<any> {
+
     return new Promise((resolve: Function, reject: Function): void => {
       const moddle: IBpmnModdle =  this._diffModeler.get('moddle');
 
