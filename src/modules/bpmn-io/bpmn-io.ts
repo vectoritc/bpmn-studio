@@ -179,8 +179,9 @@ export class BpmnIo {
         }, 0);
       }),
 
-      this._eventAggregator.subscribe(environment.events.bpmnio.toggleDiffView, () => {
-        this.toggleDiffView();
+      this._eventAggregator.subscribe(environment.events.bpmnio.toggleDiffView, async() => {
+        this._toggleDiffView();
+        this.xmlForDiffView = await this.getXML();
         setTimeout(() => { // This makes the function gets called after the XMLView is toggled
           this._hideOrShowPpForSpaceReasons();
         }, 0);
@@ -343,12 +344,6 @@ export class BpmnIo {
     }
   }
 
-  public async toggleDiffView(): Promise<void> {
-    this.xmlForDiffView = await this.getXML();
-
-    this.showDiffView = !this.showDiffView;
-  }
-
   public toggleDiffDestination(): void {
     this.diffDestinationIsLocal = !this.diffDestinationIsLocal;
 
@@ -387,6 +382,10 @@ export class BpmnIo {
       });
     });
     return returnPromise;
+  }
+
+  private _toggleDiffView(): void {
+    this.showDiffView = !this.showDiffView;
   }
 
   private _setNewPropertyPanelWidthFromMousePosition(mousePosition: number): void {
