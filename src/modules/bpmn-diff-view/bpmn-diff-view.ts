@@ -198,8 +198,8 @@ export class BpmnDiffView {
   public _setSavedProcessModelAsPreviousXml(): void {
     this.previousXml = this.savedXml;
 
-    this.previousXmlIdentifier = 'Before';
-    this.currentXmlIdentifier = 'After';
+    this.previousXmlIdentifier = 'Previous';
+    this.currentXmlIdentifier = 'Current';
 
     this._eventAggregator.publish(environment.events.statusBar.setXmlIdentifier,
       [
