@@ -2,15 +2,18 @@ import {bindable, inject} from 'aurelia-framework';
 
 import {Correlation, TokenHistoryEntry} from '@process-engine/management_api_contracts';
 
-import {IInspectCorrelationService} from '../../contracts';
+import {IShape} from '../../../../contracts';
+import {IInspectCorrelationService, IPayLoadEntry, ITokenEntry} from '../../contracts';
 
 @inject('InspectCorrelationService')
 export class TokenViewer {
   @bindable() public correlation: Correlation;
   @bindable() public processModelId: string;
-  @bindable() public flowNodeId: string;
+  @bindable() public flowNode: IShape;
   @bindable() public token: string;
-  public formattedToken: string;
+  public tokenEntries: Array<ITokenEntry> = [];
+  public showTokenEntries: boolean = false;
+  public firstElementSelected: boolean = false;
 
   private _inspectCorrelationService: IInspectCorrelationService;
 
@@ -18,24 +21,54 @@ export class TokenViewer {
     this._inspectCorrelationService = inspectCorrelationService;
   }
 
-  // public async correlationChanged(): Promise<void> {
-  //   this.token = await this._inspectCorrelationService.getTokenForCorrelation(this.correlation);
+  public async flowNodeChanged(): Promise<void> {
 
-  //   this.formatToken();
-  // }
+    this.firstElementSelected = true;
+    this.tokenEntries = [];
 
-  public async flowNodeIdChanged(): Promise<void> {
-    console.log(this.flowNodeId);
-    const sometoken: Array<TokenHistoryEntry> = await this._inspectCorrelationService
-      .getTokenForFlowNodeInstance(this.processModelId, this.correlation.id, this.flowNodeId);
+    // Check if the selected Element can have a token.
+    const elementHasNoToken: boolean = this.flowNode.type.includes('Lane') ||
+                                      this.flowNode.type.includes('Collaboration') ||
+                                      this.flowNode.type.includes('Participant');
 
-    console.log(sometoken);
-  }
+    if (elementHasNoToken) {
+      this.showTokenEntries = false;
+      return;
+    }
 
-  public formatToken(): void {
-    const unformattedToken: JSON = JSON.parse(this.token);
+    const tokenHistoryEntries: Array<TokenHistoryEntry> = await this._inspectCorrelationService
+      .getTokenForFlowNodeInstance(this.processModelId, this.correlation.id, this.flowNode.id);
 
-    // tslint:disable-next-line:no-magic-numbers
-    this.formattedToken = JSON.stringify(unformattedToken, null, 2);
+    tokenHistoryEntries.forEach((historyEntry: TokenHistoryEntry, index: number) => {
+
+      const tokenEntry: ITokenEntry = {
+        entryNr: index,
+        eventType: historyEntry.tokenEventType,
+        createdAt: historyEntry.createdAt,
+        payload: [],
+      };
+
+      if (historyEntry.payload !== undefined) {
+        for (const load in historyEntry.payload) {
+          const payloadEntry: IPayLoadEntry = {
+            name: load,
+            values: [],
+          };
+
+          for (const entry in historyEntry.payload[load]) {
+            payloadEntry.values.push({
+              title: entry,
+              value: historyEntry.payload[load][entry],
+            });
+          }
+
+          tokenEntry.payload.push(payloadEntry);
+        }
+      }
+
+      this.tokenEntries.push(tokenEntry);
+    });
+
+    this.showTokenEntries = true;
   }
 }

@@ -54,19 +54,10 @@ export class InspectCorrelationRepository implements IInspectCorrelationReposito
     return logsForCorrelation;
   }
 
-  public async getTokenForFlowNodeInstance(processModelId: string, correlationId: string, flowNodeId: string): Promise<string> {
+  public async getTokenForFlowNodeInstance(processModelId: string, correlationId: string, flowNodeId: string): Promise<Array<TokenHistoryEntry>> {
     const identity: IIdentity = this._createIdentity();
 
-    console.log(processModelId, correlationId, flowNodeId);
-
-    const tokenHistoryEntries: Array<TokenHistoryEntry> = await this._managementApiService
-      .getTokensForFlowNodeInstance(identity, processModelId, correlationId, flowNodeId);
-
-    const tokenPromise: Promise<string> =  new Promise((resolve: Function): void => {
-      resolve(tokenHistoryEntries[0].payload);
-    });
-
-    return tokenPromise;
+    return this._managementApiService.getTokensForFlowNodeInstance(identity, correlationId, processModelId, flowNodeId);
   }
 
   private _createIdentity(): IIdentity {

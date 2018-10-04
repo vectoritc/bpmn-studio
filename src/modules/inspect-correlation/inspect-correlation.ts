@@ -3,7 +3,7 @@ import {bindable, inject, observable} from 'aurelia-framework';
 
 import {Correlation} from '@process-engine/management_api_contracts';
 
-import {IEventFunction} from '../../contracts/index';
+import {IEventFunction, IShape} from '../../contracts/index';
 import environment from '../../environment';
 import {IInspectCorrelationService} from './contracts';
 
@@ -23,7 +23,7 @@ export class InspectCorrelation {
   public showInspectPanel: boolean = true;
   public showTokenViewer: boolean = false;
   public bottomPanelResizeDiv: HTMLDivElement;
-  public selectedFlowNodeId: String;
+  public selectedFlowNode: IShape;
 
   private _inspectCorrelationService: IInspectCorrelationService;
   private _eventAggregator: EventAggregator;

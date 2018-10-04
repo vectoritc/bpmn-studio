@@ -7,8 +7,8 @@
     <div class="inspect-correlation__left-toolbar"></div>
     <div class="inspect-correlation__panels">
       <div class="inspect-correlation__upper-panel" show.bind="!inspectPanelFullscreen" >
-        <diagram-viewer class="inspect-correlation__diagram-viewer" selected-flow-node-id.two-way="selectedFlowNodeId" process-model-id.bind="processModelId" correlation.bind="selectedCorrelation"></diagram-viewer>
-        <token-viewer class="inspect-correlation__token-viewer" correlation.bind="selectedCorrelation" process-model-id.bind="processModelId" flow-node-id.bind="selectedFlowNodeId" show.bind="showTokenViewer"></token-viewer>
+        <diagram-viewer class="inspect-correlation__diagram-viewer" selected-flow-node.two-way="selectedFlowNode" process-model-id.bind="processModelId" correlation.bind="selectedCorrelation"></diagram-viewer>
+        <token-viewer class="inspect-correlation__token-viewer" correlation.bind="selectedCorrelation" process-model-id.bind="processModelId" flow-node.bind="selectedFlowNode" show.bind="showTokenViewer"></token-viewer>
       </div>
       <div class="inspect-correlation__bottom-panel__resize-div" ref="bottomPanelResizeDiv" if.bind="!inspectPanelFullscreen"></div>
       <div class="inspect-correlation__bottom-panel" css="height: ${bottomPanelHeight}px;"

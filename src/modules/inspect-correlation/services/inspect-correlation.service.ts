@@ -2,7 +2,7 @@ import {inject} from 'aurelia-framework';
 
 import {Correlation, LogEntry, TokenHistoryEntry} from '@process-engine/management_api_contracts';
 
-import {IInspectCorrelationRepository, IInspectCorrelationService} from '../contracts';
+import {IInspectCorrelationRepository, IInspectCorrelationService, ITokenEntry} from '../contracts';
 
 @inject('InspectCorrelationRepository')
 export class InspectCorrelationService implements IInspectCorrelationService {
@@ -20,7 +20,7 @@ export class InspectCorrelationService implements IInspectCorrelationService {
     return this._inspectCorrelationRepository.getLogsForCorrelation(correlation);
   }
 
-  public getTokenForFlowNodeInstance(processModelId: string, correlationId: string, flowNodeId: string): Promise<string> {
+  public getTokenForFlowNodeInstance(processModelId: string, correlationId: string, flowNodeId: string): Promise<Array<TokenHistoryEntry>> {
     return this._inspectCorrelationRepository.getTokenForFlowNodeInstance(processModelId, correlationId, flowNodeId);
   }
 }
