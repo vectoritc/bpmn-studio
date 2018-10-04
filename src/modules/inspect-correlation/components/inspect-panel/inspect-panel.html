@@ -20,7 +20,7 @@
         </button>
       </div>
       <div class="inspect-panel__fullscreen-button" click.delegate="toggleFullscreen()">
-        <i class="fas fa-arrows-alt-v"></i>
+        <i class.bind="fullscreen ? 'fas fa-arrow-down' : 'fas fa-arrow-up'"></i>
       </div>
     </div>
     <div class="inspect-panel__body">

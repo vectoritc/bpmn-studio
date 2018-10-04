@@ -10,7 +10,7 @@ import environment from '../../../../environment';
 export class InspectPanel {
   @bindable() public correlations: Array<Correlation>;
   @bindable() public selectedCorrelation: Correlation;
-  @bindable() public fullscreen: boolean;
+  @bindable() public fullscreen: boolean = false;
   @bindable() public processModelId: string;
   public InspectPanelTab: typeof InspectPanelTab = InspectPanelTab;
   public showCorrelationList: boolean = true;
