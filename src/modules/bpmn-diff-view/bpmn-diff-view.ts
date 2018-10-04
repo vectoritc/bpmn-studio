@@ -160,14 +160,14 @@ export class BpmnDiffView {
     }
 
     const identity: IIdentity = this._createIdentity();
+    const processModels: ProcessModelExecution.ProcessModelList = await this._managementApiService.getProcessModels(identity);
 
-    try {
-      const deployedProcessModel: ProcessModelExecution.ProcessModel =
-        await this._managementApiService.getProcessModelById(this._createIdentity(), this.processModelId);
-      this.deployedXml = deployedProcessModel.xml;
-    } catch (error) {
-      this.deployedXml = undefined;
-    }
+    const deployedProcessModel: ProcessModelExecution.ProcessModel =
+      processModels.processModels.find((currentProcessModel: ProcessModelExecution.ProcessModel) => {
+        return currentProcessModel.id === this.processModelId;
+    });
+
+    this.deployedXml = (deployedProcessModel === undefined) ? undefined : deployedProcessModel.xml;
   }
 
   public deployedXmlChanged(): void {
