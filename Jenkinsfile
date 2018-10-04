@@ -134,10 +134,11 @@ pipeline {
             unstash('post_build_node_modules')
 
             sh('node --version')
+            
             // We copy the node_modules folder from the slave running
             // prepare and install steps. That slave may run another OS
-            // then linux. Some dependencies may not be installed if
-            // they have a os restriction in their package.json.
+            // than linux. Some dependencies may not be installed if
+            // they have an os restriction in their package.json.
             sh('npm install')
 
             sh('npm run jenkins-electron-install-app-deps')
@@ -160,10 +161,11 @@ pipeline {
             unstash('post_build_node_modules')
 
             sh('node --version')
+            
             // We copy the node_modules folder from the slave running
             // prepare and install steps. That slave may run another OS
-            // then macos. Some dependencies may not be installed if
-            // they have a os restriction in their package.json.
+            // than macos. Some dependencies may not be installed if
+            // they have an os restriction in their package.json.
             sh('npm install')
 
             sh('npm run jenkins-electron-install-app-deps')
