@@ -228,11 +228,7 @@ export class ProcessDefDetail {
     }
   }
 
-  public detached(): void {
-    for (const subscription of this._subscriptions) {
-      subscription.dispose();
-    }
-
+  public deactivate(): void {
     this._eventAggregator.publish(environment.events.navBar.hideTools);
     this._eventAggregator.publish(environment.events.navBar.hideProcessName);
     this._eventAggregator.publish(environment.events.navBar.disableStartButton);
@@ -240,6 +236,12 @@ export class ProcessDefDetail {
     this._eventAggregator.publish(environment.events.navBar.enableDiagramUploadButton);
     this._eventAggregator.publish(environment.events.navBar.inspectNavigateToDashboard);
     this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
+  }
+
+  public detached(): void {
+    for (const subscription of this._subscriptions) {
+      subscription.dispose();
+    }
   }
 
   public async startProcess(): Promise<void> {
