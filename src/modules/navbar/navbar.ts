@@ -1,18 +1,26 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {bindable, inject} from 'aurelia-framework';
+import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {RouteConfig, Router} from 'aurelia-router';
 
-import {IDiagram} from '@process-engine/solutionexplorer.contracts';
-
-import {IEventFunction, NotificationType} from '../../contracts/index';
+import {NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
+
+interface INavbarProcessInformation {
+  id?: string;
+  name?: string;
+  uri?: string;
+}
 
 @inject(Router, EventAggregator, 'NotificationService')
 export class NavBar {
 
   @bindable() public activeRouteName: string;
-  public process: IDiagram;
+
+  /**
+   * Todo: see below!
+   */
+  public process: INavbarProcessInformation;
   public diagramInfo: HTMLElement;
   public dropdown: HTMLElement;
   public solutionExplorerIsActive: boolean = true;
@@ -28,6 +36,8 @@ export class NavBar {
   public inspectView: string = 'dashboard';
   public disableDesignLink: boolean = false;
   public latestSource: string;
+  public navbarTitle: string = '';
+  @bindable() public processOpenedFromProcessEngine: boolean = false;
 
   private _router: Router;
   private _eventAggregator: EventAggregator;
@@ -50,25 +60,40 @@ export class NavBar {
         this._dertermineActiveRoute();
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.showTools, (process: IDiagram) => {
+      this._eventAggregator.subscribe(environment.events.navBar.showTools, () => {
         this.showTools = true;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.showProcessName, (process: IDiagram) => {
+      this._eventAggregator.subscribe(environment.events.navBar.showProcessName, (process: INavbarProcessInformation) => {
         this.showProcessName = true;
+
+        /**
+         * TODO: See below
+         */
         this.process = process;
+
+        this._updateNavbarTitle();
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.hideTools, () => {
         this.showTools = false;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.updateProcess, (process: IDiagram) => {
-        const processIdIsUndefined: boolean = process.id === undefined;
+      this._eventAggregator.subscribe(environment.events.navBar.updateProcess, (process: INavbarProcessInformation) => {
 
+        /*
+         * TODO: Currently the process can be of one of two different types.
+         * One of them has an attribute 'name' which should be used for the
+         * navbar title. The other one does not have this attribute.
+         * At the moment we use the 'id' if there is no 'name'.
+         *
+         * Either the navbar or the processdef-detail needs a refactoring
+         * to prevent this issue!
+         *
+         * See https://github.com/process-engine/bpmn-studio/issues/962
+         * for more informations.
+         */
         this.process = process;
-        this.latestSource = processIdIsUndefined ? 'file-system' : 'process-engine';
-        this.diagramContainsUnsavedChanges = false;
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.hideProcessName, () => {
@@ -137,6 +162,18 @@ export class NavBar {
 
   public detached(): void {
     this._disposeAllSubscriptions();
+  }
+
+  @computedFrom('_processOpenedFromProcessEngine')
+  public get getClassNameForNavbarIcon(): string {
+    const iconClassName: string = ((): string => {
+      if (this.processOpenedFromProcessEngine) {
+        return 'fa-database';
+      } else {
+        return 'fa-folder';
+      }
+    })();
+    return iconClassName;
   }
 
   private _disposeAllSubscriptions(): void {
@@ -282,5 +319,33 @@ export class NavBar {
       return this._isRouteActive(route.name);
     });
     this.activeRouteName = activeRoute.name;
+  }
+
+  /**
+   * Updates the title of the navbar including the navbar icon which
+   * indicates, if the process was opened from the local filesystem
+   * or a remote ProcessEngine
+   */
+  private _updateNavbarTitle(): void {
+
+    const processIdIsUndefined: boolean = this.process.id === undefined;
+    this.latestSource = ((): string => {
+      if (processIdIsUndefined) {
+        return 'file-system';
+      } else {
+        return 'process-engine';
+      }
+    })();
+
+    const latestSourceIsProcessEngine: boolean = this.latestSource === 'process-engine';
+    this.navbarTitle = ((): string => {
+      if (latestSourceIsProcessEngine) {
+        return this.process.id;
+      } else {
+        return this.process.name;
+      }
+    })();
+
+    this.processOpenedFromProcessEngine = latestSourceIsProcessEngine;
   }
 }

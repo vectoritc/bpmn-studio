@@ -18,11 +18,11 @@
       <div class="menu__menu-tabbed-link" class.bind="activeRouteName === 'inspect' ? 'menu__menu-tabbed-link--active' : ''">
         <a id="navbarInspectLink" class="menu-tabbed-link" click.delegate="navigateToInspect()">Inspect</a>
       </div>
-    </div> 
+    </div>
     <div class="menu-bar__menu menu-bar__menu--center" id="navBarCenter">
       <div class="menu__element menu__element--title btn-group" if.bind="showProcessName" ref="diagramInfo">
-        <span if.bind="process.name === undefined" class="process-details-title">${process.id}</span>
-        <span else class="process-details-title">${process.name}</span>
+        <span class="fas menu__origin-icon" class.bind="getClassNameForNavbarIcon"></span>
+        <span class="process-details-title">${navbarTitle}</span>
         <span if.bind="diagramContainsUnsavedChanges" class="edited-label">- edited</span>
       </div>
     </div>

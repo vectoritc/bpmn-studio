@@ -129,7 +129,7 @@ export class ProcessDefDetail {
 
     ];
 
-    this._eventAggregator.publish(environment.events.navBar.showTools, this.process);
+    this._eventAggregator.publish(environment.events.navBar.showTools);
     this._eventAggregator.publish(environment.events.navBar.enableStartButton);
     this._eventAggregator.publish(environment.events.navBar.disableDiagramUploadButton);
     this._eventAggregator.publish(environment.events.navBar.showProcessName, this.process);
@@ -329,6 +329,7 @@ export class ProcessDefDetail {
                                                                                                                         this._processModelId);
 
     this.process = updatedProcessModel;
+
     this
       ._eventAggregator
       .publish(environment.events.navBar.updateProcess, this.process);
