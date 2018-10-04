@@ -355,6 +355,11 @@
             "name": "bpmn-js-differ",
             "main": "dist/index.cjs.js",
             "path": "../node_modules/bpmn-js-differ"
+          },
+          {
+            "name": "socket.io-client",
+            "path": "../node_modules/socket.io-client/dist",
+            "main": "socket.io"
           }
         ]
       }
