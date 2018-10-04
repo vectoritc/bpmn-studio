@@ -37,12 +37,12 @@ export class NavBar {
   public disableDesignLink: boolean = false;
   public latestSource: string;
   public navbarTitle: string = '';
+  @bindable() public processOpenedFromProcessEngine: boolean = false;
 
   private _router: Router;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
   private _notificationService: NotificationService;
-  @bindable() private _processOpenedFromProcessEngine: boolean = false;
 
   constructor(router: Router, eventAggregator: EventAggregator, notificationService: NotificationService) {
     this._router = router;
@@ -167,7 +167,7 @@ export class NavBar {
   @computedFrom('_processOpenedFromProcessEngine')
   public get getClassNameForNavbarIcon(): string {
     const iconClassName: string = ((): string => {
-      if (this._processOpenedFromProcessEngine) {
+      if (this.processOpenedFromProcessEngine) {
         return 'fa-database';
       } else {
         return 'fa-folder';
@@ -346,6 +346,6 @@ export class NavBar {
       }
     })();
 
-    this._processOpenedFromProcessEngine = latestSourceIsProcessEngine;
+    this.processOpenedFromProcessEngine = latestSourceIsProcessEngine;
   }
 }
