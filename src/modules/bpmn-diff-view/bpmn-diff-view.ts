@@ -167,7 +167,10 @@ export class BpmnDiffView {
         return currentProcessModel.id === this.processModelId;
     });
 
-    this.deployedXml = (deployedProcessModel === undefined) ? undefined : deployedProcessModel.xml;
+    const processModelIsDeployed: boolean = deployedProcessModel !== undefined;
+    this.deployedXml = (processModelIsDeployed)
+                                    ? deployedProcessModel.xml
+                                    : undefined;
   }
 
   public deployedXmlChanged(): void {
