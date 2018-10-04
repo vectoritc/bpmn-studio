@@ -50,7 +50,7 @@ export default {
       updateProcess: 'navbar:process:update',
       validationError: 'navbar:validationError:true',
       noValidationError: 'navbar:validationError:false',
-      setProcessEngineIcon: 'setProcessEngineIcon',
+      setProcessEngineIcon: 'navbar:setOriginIcon:processEngine',
       disableSaveButton: 'navbar:saveButton:disable',
       enableSaveButton: 'navbar:saveButton:enable',
       disableDiagramUploadButton: 'navbar:diagramUploadButton:disable',
