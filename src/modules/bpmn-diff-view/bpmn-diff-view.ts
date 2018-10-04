@@ -233,6 +233,19 @@ export class BpmnDiffView {
   }
 
   private async _updateXmlChanges(): Promise<void> {
+
+    /**
+     * TODO: This is a dirty fix, so that the model parser does not
+     * get an undefined string.
+     *
+     * We need to find out, where this value gets set to undefined
+     * and prevent this issue there.
+     */
+    const previousXmlIsNotDefined: boolean = this.previousXml === undefined;
+    if (previousXmlIsNotDefined) {
+      this.previousXml = this.currentXml;
+    }
+
     const previousDefinitions: IDefinition = await this._getDefintionsFromXml(this.previousXml);
     const newDefinitions: IDefinition = await this._getDefintionsFromXml(this.currentXml);
 
