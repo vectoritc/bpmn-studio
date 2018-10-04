@@ -1,6 +1,17 @@
 .start-page__container {
+  display: flex;
+  flex-direction: column;
+
   text-align: center;
   user-select: none;
+}
+
+.start-page__spacer {
+  flex: 1;
+}
+
+.start-page__content {
+  flex: 0;
 }
 
 .start-page__title {
