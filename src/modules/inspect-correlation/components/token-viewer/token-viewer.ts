@@ -1,12 +1,14 @@
 import {bindable, inject} from 'aurelia-framework';
 
-import {Correlation} from '@process-engine/management_api_contracts';
+import {Correlation, TokenHistoryEntry} from '@process-engine/management_api_contracts';
 
 import {IInspectCorrelationService} from '../../contracts';
 
 @inject('InspectCorrelationService')
 export class TokenViewer {
   @bindable() public correlation: Correlation;
+  @bindable() public processModelId: string;
+  @bindable() public flowNodeId: string;
   @bindable() public token: string;
   public formattedToken: string;
 
@@ -16,10 +18,18 @@ export class TokenViewer {
     this._inspectCorrelationService = inspectCorrelationService;
   }
 
-  public async correlationChanged(): Promise<void> {
-    this.token = await this._inspectCorrelationService.getTokenForCorrelation(this.correlation);
+  // public async correlationChanged(): Promise<void> {
+  //   this.token = await this._inspectCorrelationService.getTokenForCorrelation(this.correlation);
 
-    this.formatToken();
+  //   this.formatToken();
+  // }
+
+  public async flowNodeIdChanged(): Promise<void> {
+    console.log(this.flowNodeId);
+    const sometoken: Array<TokenHistoryEntry> = await this._inspectCorrelationService
+      .getTokenForFlowNodeInstance(this.processModelId, this.correlation.id, this.flowNodeId);
+
+    console.log(sometoken);
   }
 
   public formatToken(): void {

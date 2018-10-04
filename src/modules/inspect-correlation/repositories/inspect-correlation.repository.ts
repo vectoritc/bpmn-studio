@@ -2,7 +2,7 @@
 import {inject} from 'aurelia-framework';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
-import {Correlation, CorrelationProcessModel, IManagementApi, LogEntry} from '@process-engine/management_api_contracts';
+import {Correlation, CorrelationProcessModel, IManagementApi, LogEntry, TokenHistoryEntry} from '@process-engine/management_api_contracts';
 
 import {IAuthenticationService} from '../../../contracts';
 import {IInspectCorrelationRepository} from '../contracts';
@@ -54,44 +54,16 @@ export class InspectCorrelationRepository implements IInspectCorrelationReposito
     return logsForCorrelation;
   }
 
-  public async getTokenForCorrelation(correlation: Correlation): Promise<string> {
-    const token: string = '{' +
-    '"history":{"StartEvent":{},' +
-    '"ut_WaehleKlasse":{ "form_fields":{"category":"Kleinwagen","isOneWay":"false","currency":"EUR"}},' +
-    '"ut_WaehleExtras":{"form_fields":{"navigationSystem":"true","additionalDriver":"true","leather":"true"}},' +
-    '"UserTask_Luxus":{"form_fields":{"chauffeur":"true"}},' +
-    '"ut_WaehleKlasse2":{ "form_fields":{"category":"Kleinwagen","isOneWay":"false","currency":"EUR"}},' +
-    '"ut_WaehleExtras2":{"form_fields":{"navigationSystem":"true","additionalDriver":"true","leather":"true"}},' +
-    '"UserTask_Luxus2":{"form_fields":{"chauffeur":"true"}},' +
-    '"ut_WaehleKlasse3":{ "form_fields":{"category":"Kleinwagen","isOneWay":"false","currency":"EUR"}},' +
-    '"ut_WaehleExtras3":{"form_fields":{"navigationSystem":"true","additionalDriver":"true","leather":"true"}},' +
-    '"UserTask_Luxus3":{"form_fields":{"chauffeur":"true"}},' +
-    '"ut_WaehleKlasse4":{ "form_fields":{"category":"Kleinwagen","isOneWay":"false","currency":"EUR"}},' +
-    '"ut_WaehleExtras4":{"form_fields":{"navigationSystem":"true","additionalDriver":"true","leather":"true"}},' +
-    '"UserTask_Luxus4":{"form_fields":{"chauffeur":"true"}},' +
-    '"ut_WaehleKlasse5":{ "form_fields":{"category":"Kleinwagen","isOneWay":"false","currency":"EUR"}},' +
-    '"ut_WaehleExtras5":{"form_fields":{"navigationSystem":"true","additionalDriver":"true","leather":"true"}},' +
-    '"UserTask_Luxus5":{"form_fields":{"chauffeur":"true"}},' +
-    '"ut_WaehleKlasse6":{ "form_fields":{"category":"Kleinwagen","isOneWay":"false","currency":"EUR"}},' +
-    '"ut_WaehleExtras6":{"form_fields":{"navigationSystem":"true","additionalDriver":"true","leather":"true"}},' +
-    '"UserTask_Luxus6":{"form_fields":{"chauffeur":"true"}},' +
-    '"ut_WaehleKlasse7":{ "form_fields":{"category":"Kleinwagen","isOneWay":"false","currency":"EUR"}},' +
-    '"ut_WaehleExtras7":{"form_fields":{"navigationSystem":"true","additionalDriver":"true","leather":"true"}},' +
-    '"UserTask_Luxus7":{"form_fields":{"chauffeur":"true"}},' +
-    '"ut_WaehleKlasse8":{ "form_fields":{"category":"Kleinwagen","isOneWay":"false","currency":"EUR"}},' +
-    '"ut_WaehleExtras8":{"form_fields":{"navigationSystem":"true","additionalDriver":"true","leather":"true"}},' +
-    '"UserTask_Luxus8":{"form_fields":{"chauffeur":"true"}},' +
-    '"ut_WaehleKlasse9":{ "form_fields":{"category":"Kleinwagen","isOneWay":"false","currency":"EUR"}},' +
-    '"ut_WaehleExtras9":{"form_fields":{"navigationSystem":"true","additionalDriver":"true","leather":"true"}},' +
-    '"UserTask_Luxus9":{"form_fields":{"chauffeur":"true"}},' +
-    '"ut_WaehleKlasse10":{ "form_fields":{"category":"Kleinwagen","isOneWay":"false","currency":"EUR"}},' +
-    '"ut_WaehleExtras10":{"form_fields":{"navigationSystem":"true","additionalDriver":"true","leather":"true"}},' +
-    '"UserTask_Luxus10":{"form_fields":{"chauffeur":"true"}},' +
-    '"current":{"form_fields":{"chauffeur":"true"}}}' +
-    '}';
+  public async getTokenForFlowNodeInstance(processModelId: string, correlationId: string, flowNodeId: string): Promise<string> {
+    const identity: IIdentity = this._createIdentity();
+
+    console.log(processModelId, correlationId, flowNodeId);
+
+    const tokenHistoryEntries: Array<TokenHistoryEntry> = await this._managementApiService
+      .getTokensForFlowNodeInstance(identity, processModelId, correlationId, flowNodeId);
 
     const tokenPromise: Promise<string> =  new Promise((resolve: Function): void => {
-      resolve(token);
+      resolve(tokenHistoryEntries[0].payload);
     });
 
     return tokenPromise;

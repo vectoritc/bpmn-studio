@@ -23,6 +23,7 @@ export class InspectCorrelation {
   public showInspectPanel: boolean = true;
   public showTokenViewer: boolean = false;
   public bottomPanelResizeDiv: HTMLDivElement;
+  public selectedFlowNodeId: String;
 
   private _inspectCorrelationService: IInspectCorrelationService;
   private _eventAggregator: EventAggregator;

@@ -4,7 +4,7 @@ import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {Correlation} from '@process-engine/management_api_contracts';
 import {CorrelationProcessModel} from '@process-engine/management_api_contracts';
 
-import {IBpmnModeler, NotificationType} from '../../../../contracts/index';
+import {IBpmnModeler, IEvent, NotificationType} from '../../../../contracts/index';
 import {NotificationService} from '../../../notification/notification.service';
 
 @inject('NotificationService', 'ManagementApiClientService', 'AuthenticationService')
@@ -12,6 +12,7 @@ export class DiagramViewer {
   @bindable() public correlation: Correlation;
   @bindable() public xml: string;
   @bindable() public processModelId: string;
+  @bindable() public selectedFlowNodeId: string;
   public xmlIsNotSelected: boolean = true;
   public canvasModel: HTMLElement;
   public showDiagram: boolean = true;
@@ -33,6 +34,11 @@ export class DiagramViewer {
     });
 
     this._diagramViewer.attachTo(this.canvasModel);
+
+    this._diagramViewer.on('element.click', (event: IEvent) => {
+      this.selectedFlowNodeId = event.element.id;
+    });
+
   }
 
   public async correlationChanged(): Promise<void> {

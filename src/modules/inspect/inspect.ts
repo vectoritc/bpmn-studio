@@ -21,7 +21,7 @@ export class Inspect {
   public showInspectCorrelation: boolean = false;
   public dashboard: Dashboard;
   public showTokenViewer: boolean = false;
-  public tokenViewerButtonDisabled: boolean = true;
+  public tokenViewerButtonDisabled: boolean = false;
 
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;

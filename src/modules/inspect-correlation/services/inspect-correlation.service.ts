@@ -1,6 +1,6 @@
 import {inject} from 'aurelia-framework';
 
-import {Correlation, LogEntry} from '@process-engine/management_api_contracts';
+import {Correlation, LogEntry, TokenHistoryEntry} from '@process-engine/management_api_contracts';
 
 import {IInspectCorrelationRepository, IInspectCorrelationService} from '../contracts';
 
@@ -20,7 +20,7 @@ export class InspectCorrelationService implements IInspectCorrelationService {
     return this._inspectCorrelationRepository.getLogsForCorrelation(correlation);
   }
 
-  public getTokenForCorrelation(correlation: Correlation): Promise<string> {
-    return this._inspectCorrelationRepository.getTokenForCorrelation(correlation);
+  public getTokenForFlowNodeInstance(processModelId: string, correlationId: string, flowNodeId: string): Promise<string> {
+    return this._inspectCorrelationRepository.getTokenForFlowNodeInstance(processModelId, correlationId, flowNodeId);
   }
 }
