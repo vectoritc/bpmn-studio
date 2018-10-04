@@ -549,6 +549,12 @@ export class BpmnDiffView {
     });
   }
 
+  /**
+   * Creates an identity using the authentication service.
+   *
+   * TODO: This needs to moved away from here in the future.
+   * @returns IIdentity created Identity
+   */
   private _createIdentity(): IIdentity {
     const accessToken: string = this._authenticationService.getAccessToken();
     const identity: IIdentity = {
