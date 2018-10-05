@@ -5,17 +5,13 @@
 
   display: flex;
   flex-direction: column;
-
-  text-align: center;
-  user-select: none;
+  justify-content: center;
 }
 
-.start-page__spacer {
-  flex: 1;
-}
 
 .start-page__content {
-  flex: 0;
+  text-align: center;
+  -webkit-user-drag: none;
 }
 
 .start-page__title {
