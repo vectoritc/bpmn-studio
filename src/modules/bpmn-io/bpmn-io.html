@@ -44,15 +44,14 @@
     <div class="bpmn-io-layout__tools-right">
       <div show.bind="!showXMLView && !showDiffView" class="tool-list tool-list--vertical">
         <div ref="toggleButtonPropertyPanel" class="tool__right">
-          <button class="button menu-bar__menu-left--tool" click.delegate="togglePanel()" title="Toggle visibility of the Property Panel">
+          <button class="button menu-bar__menu-left--tool" class.bind="showPropertyPanel ? 'button--active' : ''" click.delegate="togglePanel()" title="Toggle visibility of the Property Panel">
             <i class="fas fa-sliders-h"></i>
           </button>
         </div>
       </div>
       <div show.bind="showDiffView" class="tool-list tool-list--vertical">
-        <div if.bind="showDiffDestinationButton" class="tool__right"
-             class.bind="diffDestinationIsLocal ? '' :  'tool--active'" click.delegate="toggleDiffDestination()">
-          <i class="fas fa-database"
+        <div if.bind="showDiffDestinationButton" class="tool__right" click.delegate="toggleDiffDestination()">
+          <i class="button fas fa-database" class.bind="diffDestinationIsLocal ? '' :  'button--active'"
             title.bind="diffDestinationIsLocal ? 'Show difference to the deployed diagram' : 'Show difference to the last saved diagram'"></i>
         </div>
         <div if.bind="!showDiffDestinationButton" class="tool--deactivated">
