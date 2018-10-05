@@ -1,0 +1,20 @@
+<template>
+  <require from="./inspect-correlation.css"></require>
+  <require from="./components/inspect-panel/inspect-panel"></require>
+  <require from="./components/diagram-viewer/diagram-viewer"></require>
+  <require from="./components/token-viewer/token-viewer"></require>
+  <div class="inspect-correlation">
+    <div class="inspect-correlation__left-toolbar"></div>
+    <div class="inspect-correlation__panels">
+      <div class="inspect-correlation__upper-panel" show.bind="!inspectPanelFullscreen" >
+        <diagram-viewer class="inspect-correlation__diagram-viewer" selected-flow-node.two-way="selectedFlowNode" process-model-id.bind="processModelId" correlation.bind="selectedCorrelation"></diagram-viewer>
+        <token-viewer class="inspect-correlation__token-viewer" correlation.bind="selectedCorrelation" process-model-id.bind="processModelId" flow-node.bind="selectedFlowNode" show.bind="showTokenViewer"></token-viewer>
+      </div>
+      <div class="inspect-correlation__bottom-panel__resize-div" ref="bottomPanelResizeDiv" if.bind="!inspectPanelFullscreen"></div>
+      <div class="inspect-correlation__bottom-panel" css="height: ${bottomPanelHeight}px;"
+            class.bind="inspectPanelFullscreen ? 'inspect-correlation__bottom-panel__fullscreen' : ''"
+            show.bind="showInspectPanel">
+        <inspect-panel process-model-id.bind="processModelId" correlations.bind="correlations" selected-correlation.two-way="selectedCorrelation" fullscreen.two-way="inspectPanelFullscreen" log.bind="log"></inspect-panel>
+      </div>
+    </div>
+</template>

@@ -2,18 +2,28 @@
   <require from="./inspect.css"></require>
   <require from="../heatmap/heatmap"></require>
   <require from="../dashboard/dashboard"></require>
+  <require from="../inspect-correlation/inspect-correlation"></require>
   <div class="inspect">
 
     <div if.bind="showDashboard" class="inspect__dashboard-container">
       <dashboard view-model.ref="dashboard"></dashboard>
     </div>
-    <div show.bind="showHeatmap" class="inspect__heatmap-container">
-      <heatmap view-model.ref="heatmap" process-model-id.bind="processModelId" dashboardIsShown.bind="showDashboard"></heatmap>
+    <div if.bind="showHeatmap" class="inspect__heatmap-container">
+      <heatmap process-model-id.bind="processModelId" dashboardIsShown.bind="showDashboard"></heatmap>
+    </div>
+    <div if.bind="showInspectCorrelation" class="inspect__inspect-correlation-container">
+      <inspect-correlation process-model-id.bind="processModelId"></inspect-correlation>
     </div>
 
     <div class="inspect-layout__tools-right">
       <div class="tool-list tool-list--vertical">
-
+        <div if.bind="showInspectCorrelation"
+             class="inspect-layout__tool"
+             class.bind="tokenViewerButtonDisabled ? 'inspect-layout__tool--disabled' : showTokenViewer ? 'inspect-layout__tool--active' : ''"
+             disable.bind="tokenViewerButtonDisabled"
+             click.delegate="toggleShowTokenViewer()">
+          <i class="fas fa-book"></i>
+      </div>
       </div>
     </div>
   </div>

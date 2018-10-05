@@ -140,17 +140,19 @@ export class DiagramDetail {
     }
   }
 
-  public detached(): void {
-    for (const subscription of this._subscriptions) {
-      subscription.dispose();
-    }
-
+  public deactivate(): void {
     this._eventAggregator.publish(environment.events.navBar.hideTools);
     this._eventAggregator.publish(environment.events.navBar.hideProcessName);
     this._eventAggregator.publish(environment.events.navBar.enableStartButton);
     this._eventAggregator.publish(environment.events.navBar.noValidationError);
     this._eventAggregator.publish(environment.events.navBar.disableDiagramUploadButton);
     this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
+  }
+
+  public detached(): void {
+    for (const subscription of this._subscriptions) {
+      subscription.dispose();
+    }
   }
 
   /**

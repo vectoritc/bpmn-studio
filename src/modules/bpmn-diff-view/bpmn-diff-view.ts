@@ -473,7 +473,7 @@ export class BpmnDiffView {
     await this._importXml(coloredXml, this._lowerViewer);
   }
 
-  private async _importXml(xml: string, viewer: IBpmnModeler): Promise <void> {
+  private async _importXml(xml: string, viewer: IBpmnModeler): Promise<void> {
     const xmlIsNotLoaded: boolean = (xml === undefined || xml === null);
 
     if (xmlIsNotLoaded) {

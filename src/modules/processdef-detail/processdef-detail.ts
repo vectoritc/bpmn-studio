@@ -228,11 +228,7 @@ export class ProcessDefDetail {
     }
   }
 
-  public detached(): void {
-    for (const subscription of this._subscriptions) {
-      subscription.dispose();
-    }
-
+  public deactivate(): void {
     this._eventAggregator.publish(environment.events.navBar.hideTools);
     this._eventAggregator.publish(environment.events.navBar.hideProcessName);
     this._eventAggregator.publish(environment.events.navBar.disableStartButton);
@@ -240,6 +236,12 @@ export class ProcessDefDetail {
     this._eventAggregator.publish(environment.events.navBar.enableDiagramUploadButton);
     this._eventAggregator.publish(environment.events.navBar.inspectNavigateToDashboard);
     this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
+  }
+
+  public detached(): void {
+    for (const subscription of this._subscriptions) {
+      subscription.dispose();
+    }
   }
 
   public async startProcess(): Promise<void> {
@@ -440,7 +442,7 @@ export class ProcessDefDetail {
    * Currently only form fields in the Property Panel are validated. This will cause
    * the following behaviour:
    *
-   * The user inserts an invalid string (e.g. he uses a already used Id for an element);
+   * The user inserts an invalid string (e.g. he uses a already used ID for an element);
    * The Aurelia validators will trigger; the validation event will arrive here;
    * if there are errors present, we will disable the tool buttons on the navbar.
    *

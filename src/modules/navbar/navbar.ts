@@ -32,6 +32,7 @@ export class NavBar {
   public disableDiagramUploadButton: boolean = true;
   public disableHeatmapButton: boolean = true;
   public disableDashboardButton: boolean = false;
+  public disableInspectCorrelationButton: boolean = false;
   public diagramContainsUnsavedChanges: boolean = false;
   public inspectView: string = 'dashboard';
   public disableDesignLink: boolean = false;
@@ -104,6 +105,46 @@ export class NavBar {
         this.validationError = true;
       }),
 
+      this._eventAggregator.subscribe(environment.events.navBar.updateProcessName, (processName: string) => {
+
+        /**
+         * Only changing the navbar title here would lead to an
+         * inconsistent state, since currently the navbar held a reference
+         * to a Diagram like object.
+         *
+         * Since this object is passed around at some point, we need to create
+         * a new Diagram object when changing the navbar title.
+         *
+         * This will hopefully be obsolete once the navbar gets refactored.
+         */
+        const updatedProcess: INavbarProcessInformation = ((): INavbarProcessInformation => {
+          const latestSourceIsProcessEngine: boolean = this.latestSource === 'process-engine';
+
+          if (latestSourceIsProcessEngine) {
+            return {
+              id: processName,
+            };
+          } else {
+            return {
+              name: processName,
+            };
+          }
+
+        })();
+
+        const uriWasDefined: boolean = this.process.id !== undefined;
+        if (uriWasDefined) {
+          Object.assign(updatedProcess, {uri: this.process.uri});
+        }
+
+        this.process = updatedProcess;
+        this._updateNavbarTitle();
+      }),
+
+      this._eventAggregator.subscribe(environment.events.navBar.disableSaveButton, () => {
+        this.disableStartButton = true;
+      }),
+
       this._eventAggregator.subscribe(environment.events.navBar.noValidationError, () => {
         this.validationError = false;
       }),
@@ -148,14 +189,22 @@ export class NavBar {
         this.showInspectTools = false;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.disableHeatmapAndEnableDashboardButton, () => {
+      this._eventAggregator.subscribe(environment.events.navBar.toggleHeatmapView, () => {
         this.disableHeatmapButton = true;
         this.disableDashboardButton = false;
+        this.disableInspectCorrelationButton = false;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.disableDashboardAndEnableHeatmapButton, () => {
+      this._eventAggregator.subscribe(environment.events.navBar.toggleDashboardView, () => {
         this.disableHeatmapButton = false;
         this.disableDashboardButton = true;
+        this.disableInspectCorrelationButton = false;
+      }),
+
+      this._eventAggregator.subscribe(environment.events.navBar.toggleInspectCorrelationView, () => {
+        this.disableHeatmapButton = false;
+        this.disableDashboardButton = false;
+        this.disableInspectCorrelationButton = true;
       }),
     ];
   }
@@ -189,6 +238,7 @@ export class NavBar {
   public showDashboard(): void {
     this.disableDashboardButton = true;
     this.disableHeatmapButton = false;
+    this.disableInspectCorrelationButton = false;
 
     this._router.navigateToRoute('inspect', {
       processModelId: this.process.id,
@@ -196,12 +246,13 @@ export class NavBar {
       latestSource: this.latestSource,
     });
 
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToHeatmap, 'dashboard');
+    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, 'dashboard');
   }
 
   public showHeatmap(): void {
     this.disableHeatmapButton = true;
     this.disableDashboardButton = false;
+    this.disableInspectCorrelationButton = false;
 
     this._router.navigateToRoute('inspect', {
       processModelId: this.process.id,
@@ -209,7 +260,21 @@ export class NavBar {
       latestSource: this.latestSource,
     });
 
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToHeatmap, 'heatmap');
+    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, 'heatmap');
+  }
+
+  public showInspectCorrelation(): void {
+    this.disableHeatmapButton = false;
+    this.disableDashboardButton = false;
+    this.disableInspectCorrelationButton = true;
+
+    this._router.navigateToRoute('inspect', {
+      processModelId: this.process.id,
+      view: 'inspect-correlation',
+      latestSource: this.latestSource,
+    });
+
+    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, 'inspect-correlation');
   }
 
   public navigateToInspect(): void {
@@ -259,7 +324,6 @@ export class NavBar {
         diagramUri: this.process.uri,
       });
     }
-
   }
 
   public toggleSolutionExplorer(): void {

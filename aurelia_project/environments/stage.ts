@@ -33,6 +33,8 @@ export default {
       showDiagramViewButtons: 'statusbar:diagramviewbuttons:show',
       hdieDiagramViewButtons: 'statusbar:diagramviewbuttons:hide',
       setXmlIdentifier: 'statusbar:xmlIdentifier',
+      showInspectViewButtons: 'statusbar:inspectviewbuttons',
+      showInspectCorrelationButtons: 'statusbar:inspectcorrelationbuttons',
     },
     configPanel: {
       processEngineRouteChanged: 'configpanel:processEngineRoute:changed',
@@ -48,6 +50,7 @@ export default {
       validationError: 'navbar:validationError:true',
       noValidationError: 'navbar:validationError:false',
       setProcessEngineIcon: 'navbar:setOriginIcon:processEngine',
+      updateProcessName: 'navbar:processName:update',
       disableSaveButton: 'navbar:saveButton:disable',
       enableSaveButton: 'navbar:saveButton:enable',
       disableDiagramUploadButton: 'navbar:diagramUploadButton:disable',
@@ -56,8 +59,9 @@ export default {
       inspectNavigateToDashboard: 'navbar:inspectLink:navigateToDashboard',
       showInspectButtons: 'navbar:tools:showButtonsOnInspect',
       hideInspectButtons: 'navbar:tools:hideButtonsOnInspect',
-      disableHeatmapAndEnableDashboardButton: 'navbar:tools:inspectButtons:disableHeatmapEnableDashboard',
-      disableDashboardAndEnableHeatmapButton: 'navbar:tools:inspectButtons:disableDashboardEnableHeatmap',
+      toggleDashboardView: 'navbar:tools:inspectButtons:toggleDashboardView',
+      toggleHeatmapView: 'navbar:tools:inspectButtons:toggleHeatmapView',
+      toggleInspectCorrelationView: 'navbar:tools:inspectButtons:toggleInspectCorrelationView',
     },
     processDefDetail: {
       printDiagram: 'processdefdetail:diagram:print',
@@ -80,8 +84,11 @@ export default {
     diagramChange: 'diagram:change',
     processSolutionPanel: {
       toggleProcessSolutionExplorer: 'processSolutionPanel:processsolutionexplorer:toggle',
-      navigateToHeatmap: 'processSolutionPanel:processEngineLinks:navigateToHeatmap',
+      navigateToInspect: 'processSolutionPanel:processEngineLinks:navigateToInspect',
       navigateToDesigner: 'processSolutionPanel:processEngineLinks:navigateToDesigner',
+    },
+    inspectView: {
+      showInspectPanel: 'inspectView:inspectPanel:show',
     },
   },
   baseRoute: processEngineRoute,

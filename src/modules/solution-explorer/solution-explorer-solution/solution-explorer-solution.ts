@@ -98,11 +98,14 @@ export class SolutionExplorerSolution {
 
   public attached(): void {
     this._subscriptions = [
-      this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToHeatmap, (heatmapView?: string) => {
-        const heatmapViewIsDashboard: boolean = heatmapView === 'dashboard';
-
+      this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToInspect, (inspectView?: string) => {
         this._diagramRoute = 'inspect';
-        this._inspectView = heatmapViewIsDashboard ? 'dashboard' : 'heatmap';
+
+        const inspectViewIsNotSet: boolean = inspectView === undefined;
+
+        this._inspectView = inspectViewIsNotSet
+                              ? 'heatmap'
+                              : inspectView;
       }),
 
       this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToDesigner, () => {

@@ -32,6 +32,9 @@ export class BpmnIo {
   @bindable() public xml: string;
   @bindable({changeHandler: 'nameChanged'}) public name: string;
   @bindable() public processModelId: string;
+  @bindable() public openedFromProcessEngine: boolean = true;
+
+  @observable public propertyPanelWidth: number;
 
   public savedXml: string;
   public showPropertyPanel: boolean = false;
@@ -39,7 +42,6 @@ export class BpmnIo {
   public showXMLView: boolean = false;
   public showDiffView: boolean = false;
   public colorPickerLoaded: boolean = false;
-  @observable public propertyPanelWidth: number;
   public minCanvasWidth: number = 100;
   public minPropertyPanelWidth: number = 200;
   public showDiffDestinationButton: boolean = false;

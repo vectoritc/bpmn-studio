@@ -5,6 +5,7 @@ import {IDefinition} from './IDefinition';
 export interface IBpmnModeler {
   _definitions: any;
   attachTo(dom: HTMLElement): void;
+  clear(): void;
   detach(): void;
   destroy(): void;
   saveXML(options: IBpmnXmlSaveOptions, callback: (error: Error, result: string) => void): void;

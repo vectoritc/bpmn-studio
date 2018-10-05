@@ -10,6 +10,9 @@
       </span>
     </div>
     <div class="status-bar__center-bar" id="statusBarCenter">
+      <div if.bind="showInspectCorrelationButtons">
+        <a class="status-bar__element" class.bind="showInspectPanel ? 'status-bar__element--active' : ''" click.delegate="toggleInspectPanel()">Inspect Panel</a>
+      </div>
       <div class="center-bar__diff-view-buttons" if.bind="diffIsShown">
         <a class="status-bar__element" class.bind="currentDiffMode === DiffMode.PreviousVsCurrent ? 'status-bar__element--active' : ''" click.delegate="changeDiffMode(DiffMode.PreviousVsCurrent)" title="Compare the last saved diagram with the current diagram" id="statusBarPreviousVsCurrent">
           ${previousXmlIdentifier} vs. ${currentXmlIdentifier} <i class="fa fa-arrow-right"></i>

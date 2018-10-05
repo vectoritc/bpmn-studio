@@ -40,6 +40,7 @@ export class Heatmap {
 
     const viewerContainerIsAttached: boolean = this.viewerContainer !== undefined
                                             && this.viewerContainer !== null
+                                            && this.viewerContainer.childElementCount > 1
                                             && attachedViewer !== undefined
                                             && attachedViewer !== null;
 
