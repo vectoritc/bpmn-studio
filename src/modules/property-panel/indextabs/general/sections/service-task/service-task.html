@@ -1,0 +1,64 @@
+<template>
+  <require from="./service-task.css"></require>
+  <require from="../../../../styles/sections.css"></require>
+  <div class="section-panel panel--grow">
+    <div class="panel__heading">Service Task</div>
+    <div class="panel__content">
+      <table class="props-table">
+        <tr>
+          <th>Kind</th>
+          <td>
+            <select class="props-input" value.bind="selectedKind">
+              <option value="null">-Choose Kind-</option>
+              <option value="HttpService">HTTP REST Service</option>
+            </select>
+          </td>
+        </tr>
+        <template if.bind="selectedKind === 'HttpService'">
+          <tr>
+            <th>Method</th>
+            <td>
+              <select class="props-input" value.bind="selectedHttpMethod" change.delegate="selectedHttpMethodChanged()">
+                <option value="null">-Choose Method-</option>
+                <option value="get">get</option>
+                <option value="post">post</option>
+                <option value="update">update</option>
+                <option value="delete">delete</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <th>Url</th>
+            <td>
+              <input type="text" class="props-input name-input" value.bind="selectedHttpUrl">
+            </td>
+          </tr>
+          <tr>
+            <th>Header</th>
+            <td>
+              <input type="text" class="props-input name-input" value.bind="selectedHttpHeader">
+            </td>
+          </tr>
+          <tr>
+            <th>Body</th>
+            <td>
+              <input type="text" class="props-input name-input" value.bind="selectedHttpBody">
+            </td>
+          </tr>
+          <tr>
+            <th>Content Type</th>
+            <td>
+              <input type="text" class="props-input name-input" value.bind="selectedHttpContentType">
+            </td>
+          </tr>
+          <tr>
+            <th>Authorization</th>
+            <td>
+              <input type="text" class="props-input name-input" value.bind="selectedHttpAuth">
+            </td>
+          </tr>
+        </template>
+      </table>
+    </div>
+  </div>
+</template>
