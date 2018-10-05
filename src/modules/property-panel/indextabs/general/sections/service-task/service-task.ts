@@ -16,8 +16,8 @@ export class ServiceTaskSection implements ISection {
   public path: string = '/sections/service-task/service-task';
   public canHandleElement: boolean = false;
   public businessObjInPanel: IModdleElement;
-  @observable({changeHandler: 'selectedHttpParamsChanged'}) public selectedKind: string;
-  @observable({changeHandler: 'selectedHttpParamsChanged'}) public selectedHttpMethod: string;
+  @observable public selectedKind: string;
+  @observable public selectedHttpMethod: string;
   @observable({changeHandler: 'selectedHttpParamsChanged'}) public selectedHttpUrl: string;
   @observable({changeHandler: 'selectedHttpParamsChanged'}) public selectedHttpBody: string;
   @observable({changeHandler: 'selectedHttpParamsChanged'}) public selectedHttpAuth: string;
@@ -62,7 +62,6 @@ export class ServiceTaskSection implements ISection {
   }
 
   public selectedHttpMethodChanged(): void {
-    console.log(this.businessObjInPanel);
     const property: IProperty = this._getProperty('method');
     property.value = this.selectedHttpMethod;
     this._getParamsFromInput();
@@ -156,6 +155,7 @@ export class ServiceTaskSection implements ISection {
         this.selectedKind = moduleProp.value;
         this.selectedHttpMethod = this._getProperty('method').value;
 
+        this._fillVariablesFromParam(this._getProperty('params').value);
         return;
       }
     }
@@ -197,12 +197,36 @@ export class ServiceTaskSection implements ISection {
     }
 
     if (this.selectedHttpAuth && this.selectedHttpContentType) {
-      params = params + ', {headers: {Authorization: "' + this.selectedHttpAuth + '", "Content-Type": "' + this.selectedHttpContentType + '"} }';
+      params = params + ', {headers: {Authorization: "' + this.selectedHttpAuth + '", "Content-Type": "' + this.selectedHttpContentType + '"}}';
     }
 
-    params = '[' + params + ' ]';
+    params = '[' + params + ']';
 
     return params;
+  }
+
+  private _fillVariablesFromParam(params: string): void {
+    const splittedParamString: Array<string> = params.split(',');
+
+    const urlParam: string = splittedParamString[0].slice(splittedParamString[0].search('"') + 1, splittedParamString[0].lastIndexOf('"'));
+    this.selectedHttpUrl = urlParam;
+
+    if (splittedParamString.length > 1) {
+      const bodyParam: string = splittedParamString[1].slice(splittedParamString[1].search('"') + 1, splittedParamString[1].lastIndexOf('"'));
+      this.selectedHttpBody = bodyParam;
+    }
+
+    if (splittedParamString.length > 2) {
+      const authSplitted: Array<string> = splittedParamString[2].split(':');
+      const authParam: string = authSplitted[2].slice(authSplitted[2].search('"') + 1, authSplitted[2].lastIndexOf('"'));
+      this.selectedHttpAuth = authParam;
+    }
+
+    if (splittedParamString.length > 3) {
+      const contentTypeSplitted: Array<string> = splittedParamString[3].split(':');
+      const contentTypeParam: string = contentTypeSplitted[1].slice(contentTypeSplitted[1].search('"') + 1, contentTypeSplitted[1].search('}') - 1);
+      this.selectedHttpContentType = contentTypeParam;
+    }
   }
 
 }
