@@ -86,6 +86,7 @@ export class InspectCorrelation {
 
   public async processModelIdChanged(): Promise<void> {
     this.correlations = await this._inspectCorrelationService.getAllCorrelationsForProcessModelId(this.processModelId);
+    this._eventAggregator.publish(environment.events.navBar.updateProcessName, this.processModelId);
   }
 
   public resizeInspectPanel(mouseEvent: MouseEvent): void {

@@ -106,7 +106,29 @@ export class NavBar {
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.updateProcessName, (processName: string) => {
-        this.processName = processName;
+
+        const updatedProcess: INavbarProcessInformation = ((): INavbarProcessInformation => {
+          const latestSourceIsProcessEngine: boolean = this.latestSource === 'process-engine';
+
+          if (latestSourceIsProcessEngine) {
+            return {
+              id: processName,
+            };
+          } else {
+            return {
+              name: processName,
+            };
+          }
+
+        })();
+
+        const uriWasDefined: boolean = this.process.id !== undefined;
+        if (uriWasDefined) {
+          Object.assign(updatedProcess, {uri: this.process.uri});
+        }
+
+        this.process = updatedProcess;
+        this._updateNavbarTitle();
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.disableSaveButton, () => {
