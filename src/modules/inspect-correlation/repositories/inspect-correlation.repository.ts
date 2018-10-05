@@ -44,7 +44,7 @@ export class InspectCorrelationRepository implements IInspectCorrelationReposito
     const logsForAllProcessModelsOfCorrelation: Array<Array<LogEntry>> = [];
 
     for (const processModel of correlation.processModels) {
-      const logsForProcessModel: Array<LogEntry> = await this._managementApiService.getProcessModelLog(identity, processModel.name);
+      const logsForProcessModel: Array<LogEntry> = await this._managementApiService.getProcessModelLog(identity, processModel.name, correlation.id);
 
       logsForAllProcessModelsOfCorrelation.push(logsForProcessModel);
     }
