@@ -164,7 +164,7 @@ export class NavBar {
     this._disposeAllSubscriptions();
   }
 
-  @computedFrom('_processOpenedFromProcessEngine')
+  @computedFrom('processOpenedFromProcessEngine')
   public get getClassNameForNavbarIcon(): string {
     const iconClassName: string = ((): string => {
       if (this.processOpenedFromProcessEngine) {
