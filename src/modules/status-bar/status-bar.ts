@@ -18,7 +18,7 @@ export class StatusBar {
   public isEncryptedCommunication: boolean = false;
   public currentXmlIdentifier: string;
   public previousXmlIdentifier: string;
-  public showInspectPanel: boolean = false;
+  public showInspectPanel: boolean = true;
 
   public DiffMode: typeof DiffMode = DiffMode;
 
