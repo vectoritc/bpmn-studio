@@ -32,11 +32,11 @@ export class CorrelationList {
     for (const correlation of correlations) {
       const date: Date = new Date(correlation.createdAt);
       const formattedStartedDate: string = new DateService(date)
-                                            .getYear()
-                                            .getMonth()
-                                            .getDay()
-                                            .getHours()
-                                            .getMinutes()
+                                            .year()
+                                            .month()
+                                            .day()
+                                            .hours()
+                                            .minutes()
                                             .asFormattedDate();
 
       const index: number = this._getIndexForCorrelation(correlation, correlations);
