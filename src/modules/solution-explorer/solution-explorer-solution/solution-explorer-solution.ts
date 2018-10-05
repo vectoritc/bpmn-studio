@@ -27,12 +27,12 @@ import {SingleDiagramsSolutionExplorerService} from '../../solution-explorer-ser
 const ENTER_KEY: string = 'Enter';
 const ESCAPE_KEY: string = 'Escape';
 
-interface DiagramCreationState extends IDiagramInputState {
-  isCreateDiagramInputShown: boolean;
-}
-
 interface IDiagramInputState {
   currentDiagramInputValue: string;
+}
+
+interface DiagramCreationState extends IDiagramInputState {
+  isCreateDiagramInputShown: boolean;
 }
 
 @inject(
