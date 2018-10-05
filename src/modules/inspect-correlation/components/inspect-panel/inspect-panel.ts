@@ -30,6 +30,9 @@ export class InspectPanel {
 
   public processModelIdChanged(): void {
     this.selectedCorrelation = undefined;
+
+    this.showLogViewer = false;
+    this.showCorrelationList = true;
   }
 
   public changeTab(inspectPanelTab: InspectPanelTab): void {
