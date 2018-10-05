@@ -22,6 +22,17 @@
   white-space: nowrap;
 }
 
+.correlation-table__headline--number {
+  width: 15%;
+  padding: 8px;
+  overflow: hidden;
+  border-bottom: 2px solid #ccc !important;
+  font-size: 18px;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .correlation-table__body {
   display: block;
   height: 100%;
@@ -36,6 +47,15 @@
 
 .correlation-table__table-entry {
   width: 25%;
+  padding: 8px;
+  overflow: hidden;
+  border-top: none !important;
+  border-bottom: 1px solid #ccc;
+  text-overflow: ellipsis;
+}
+
+.correlation-table__table-entry--number {
+  width: 15%;
   padding: 8px;
   overflow: hidden;
   border-top: none !important;
