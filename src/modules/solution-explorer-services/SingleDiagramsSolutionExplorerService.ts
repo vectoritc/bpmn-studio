@@ -103,6 +103,14 @@ export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerS
       .saveSingleDiagram(diagramToSave, identity, path);
   }
 
+  public renameDiagram(diagram: IDiagram, newName: string): Promise<IDiagram> {
+    throw new Error('Method not supported.');
+  }
+
+  public deleteDiagram(diagram: IDiagram): Promise<void> {
+    throw new Error('Method not supported.');
+  }
+
   public loadDiagram(diagramName: string): Promise<IDiagram> {
     throw new Error('Method not supported.');
   }

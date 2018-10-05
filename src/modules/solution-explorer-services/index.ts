@@ -5,6 +5,7 @@ import {SolutionExplorerFileSystemRepository} from '@process-engine/solutionexpl
 import {SolutionExplorerManagementApiRepository} from '@process-engine/solutionexplorer.repository.management_api';
 import {SolutionExplorerService} from '@process-engine/solutionexplorer.service';
 
+import { DiagramTrashFolderService } from './DiagramTrashFolderService';
 import {RefreshingSolutionExplorerService} from './RefreshingSolutionExplorerService';
 import {SolutionExplorerServiceFactory} from './SolutionExplorerServiceFactory';
 
@@ -17,10 +18,14 @@ export async function configure(config: FrameworkConfiguration): Promise<void> {
   registerManagementApi(config.container);
 
   config.container.registerSingleton('SolutionExplorerServiceFactory', SolutionExplorerServiceFactory);
+  config.container.registerSingleton('DiagramTrashFolderService', DiagramTrashFolderService);
 }
 
 function registerFileSystem(container: Container): void {
-  const fileSystemrepository: SolutionExplorerFileSystemRepository = new SolutionExplorerFileSystemRepository();
+  const diagramTrashFolderService: DiagramTrashFolderService = new DiagramTrashFolderService();
+  const diagramTrashFolder: string = diagramTrashFolderService.getDiagramTrashFolder();
+
+  const fileSystemrepository: SolutionExplorerFileSystemRepository = new SolutionExplorerFileSystemRepository(diagramTrashFolder);
   const filesystemSolutionexplorerService: SolutionExplorerService = new SolutionExplorerService(fileSystemrepository);
 
   container.registerInstance('SolutionExplorerServiceFileSystem', filesystemSolutionexplorerService);

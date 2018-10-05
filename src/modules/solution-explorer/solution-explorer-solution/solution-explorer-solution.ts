@@ -27,8 +27,11 @@ import {SingleDiagramsSolutionExplorerService} from '../../solution-explorer-ser
 const ENTER_KEY: string = 'Enter';
 const ESCAPE_KEY: string = 'Escape';
 
-interface DiagramCreationState {
+interface DiagramCreationState extends IDiagramInputState {
   isCreateDiagramInputShown: boolean;
+}
+
+interface IDiagramInputState {
   currentDiagramInputValue: string;
 }
 
@@ -55,6 +58,9 @@ export class SolutionExplorerSolution {
     currentDiagramInputValue: undefined,
     isCreateDiagramInputShown: false,
   };
+  private _diagramRenamingState: IDiagramInputState = {
+    currentDiagramInputValue: undefined,
+  };
   private _refreshIntervalTask: any;
 
   private _diagramValidationRegExpList: IUserInputValidationRule = {
@@ -63,11 +69,28 @@ export class SolutionExplorerSolution {
     german: /^[äöüß]/i,
   };
 
-  private _diagramNameValidator: FluentRuleCustomizer<DiagramCreationState, DiagramCreationState> = ValidationRules
-      .ensure((state: DiagramCreationState) => state.currentDiagramInputValue)
+  private _currentlyRenamingDiagram: IDiagram | null = null;
+  private _diagramNameValidator: FluentRuleCustomizer<IDiagramInputState, IDiagramInputState> = ValidationRules
+      .ensure((state: IDiagramInputState) => state.currentDiagramInputValue)
       .required()
       .withMessage('Diagram name cannot be blank.')
-      .matches(/^[a-z0-9._ \-äöüß]+$/i)
+      .satisfies((input: string) => {
+        const inputAsCharArray: Array<string> = input.split('');
+
+        const diagramNamePassesNameChecks: boolean = !inputAsCharArray.some((letter: string) => {
+          for (const regExIndex in this._diagramValidationRegExpList) {
+            const letterIsInvalid: boolean = letter.match(this._diagramValidationRegExpList[regExIndex]) !== null;
+
+            if (letterIsInvalid) {
+              return false;
+            }
+          }
+
+          return true;
+        });
+
+        return diagramNamePassesNameChecks;
+      })
       .withMessage(`invalid-character \${$value}`)
       .then()
       .satisfies(async(input: string) => {
@@ -88,6 +111,7 @@ export class SolutionExplorerSolution {
   @bindable
   public solutionIsSingleDiagrams: boolean;
   public createNewDiagramInput: HTMLInputElement;
+  public _renameDiagramInput: HTMLInputElement;
 
   constructor(
     router: Router,
@@ -160,9 +184,55 @@ export class SolutionExplorerSolution {
   /*
    * Used when this is a single diagram solution explorer service.
    */
-  public async closeDiagram(diagram: IDiagram): Promise<void> {
+  public async closeDiagram(diagram: IDiagram, event: Event): Promise<void> {
+    event.stopPropagation();
+
     const singleDiagramService: SingleDiagramsSolutionExplorerService = this.solutionService as SingleDiagramsSolutionExplorerService;
     singleDiagramService.closeSingleDiagram(diagram);
+  }
+
+  public async deleteDiagram(diagram: IDiagram, event: Event): Promise<void> {
+    event.stopPropagation();
+
+    try {
+      await this.solutionService.deleteDiagram(diagram);
+    } catch (error) {
+      const message: string = `Unable to delete the diagram: ${error.message}`;
+      this._notificationService.showNotification(NotificationType.ERROR, message);
+    }
+
+    await this.updateSolution();
+  }
+
+  public async startRenamingOfDiagram(diagram: IDiagram, event: Event): Promise<void> {
+    event.stopPropagation();
+
+    if (this._currentlyRenamingDiagram !== null) {
+      return;
+    }
+
+    // Dont allow renaming diagram, if already creating another.
+    if (this._diagramCreationState.isCreateDiagramInputShown) {
+      return;
+    }
+
+    // This shows the input field.
+    this._currentlyRenamingDiagram = diagram;
+
+    // The templating update must happen before we can set the focus.
+    window.setTimeout(() => {
+      this._renameDiagramInput.focus();
+      this._diagramRenamingState.currentDiagramInputValue = diagram.name;
+      this._diagramNameValidator.on(this._diagramRenamingState);
+      this._validationController.validate();
+    }, 0);
+
+    document.addEventListener('click', this._onRenameDiagramClickEvent);
+    document.addEventListener('keyup', this._onRenameDiagramKeyupEvent);
+  }
+
+  public set renameDiagramInput(input: HTMLInputElement) {
+    this._renameDiagramInput = input;
   }
 
   /*
@@ -171,6 +241,11 @@ export class SolutionExplorerSolution {
    */
   public async startCreationOfNewDiagram(): Promise<void> {
     if (this._diagramCreationState.isCreateDiagramInputShown) {
+      return;
+    }
+
+    // Dont allow new diagram creation, if already renaming another diagram.
+    if (this._currentlyRenamingDiagram !== null) {
       return;
     }
 
@@ -191,8 +266,7 @@ export class SolutionExplorerSolution {
   }
 
   @computedFrom('_validationController.errors.length')
-  public get diagramCreationErrors(): Array<ValidateResult> {
-
+  public get diagramValidationErrors(): Array<ValidateResult> {
     const validationErrorPresent: boolean = this._validationController.errors.length >= 1;
     if (validationErrorPresent) {
       this._setInvalidCharacterMessage(this._validationController.errors);
@@ -202,8 +276,13 @@ export class SolutionExplorerSolution {
   }
 
   @computedFrom('_validationController.errors.length')
-  public get hasDiagramCreationErrors(): boolean {
+  public get hasValidationErrors(): boolean {
     return this._validationController.errors && this._validationController.errors.length > 0;
+  }
+
+  @computedFrom('_currentlyRenamingDiagram')
+  public get currentlyRenamingDiagramUri(): string {
+    return this._currentlyRenamingDiagram === null ? null : this._currentlyRenamingDiagram.uri;
   }
 
   public shouldFileIconBeShown(): boolean {
@@ -211,11 +290,11 @@ export class SolutionExplorerSolution {
   }
 
   public canRenameDiagram(): boolean {
-    return false;
+    return !this.solutionIsSingleDiagrams && this._openedSolution && !this._openedSolution.uri.startsWith('http');
   }
 
   public canDeleteDiagram(): boolean {
-    return false;
+    return !this.solutionIsSingleDiagrams && this._openedSolution && !this._openedSolution.uri.startsWith('http');
   }
 
   public get solutionIsNotLoaded(): boolean {
@@ -380,6 +459,56 @@ export class SolutionExplorerSolution {
   }
 
   /**
+   * The event listener used to handle mouse clicks during the diagram
+   * renaming.
+   *
+   * The listener will try to finish the diagram renaming if the user clicks
+   * on another element then the input. It will abort if there are any
+   * validation errors.
+   */
+  private _onRenameDiagramClickEvent = async(event: MouseEvent): Promise<void> => {
+    const inputWasClicked: boolean = event.target === this._renameDiagramInput;
+    if (inputWasClicked) {
+      return;
+    }
+
+    const inputWasNotValid: boolean = !await this._finishDiagramRenaming(true);
+    if (inputWasNotValid) {
+      this._resetDiagramRenaming();
+      return;
+    }
+
+    this.updateSolution();
+    this._resetDiagramRenaming();
+  }
+
+  /**
+   * The event listener used to handle keyboard events during the diagram
+   * renaming.
+   *
+   * The listener will try to finish the diagram creation if the user presses
+   * the enter key. It will abort the creation if the escape key is pressed. It
+   * will not abort the diagram renaming, if there are validation errors.
+   */
+  private _onRenameDiagramKeyupEvent = async(event: KeyboardEvent): Promise<void> => {
+    const pressedKey: string = event.key;
+
+    if (pressedKey === ENTER_KEY) {
+
+      const inputWasNotValid: boolean = !await this._finishDiagramRenaming(false);
+      if (inputWasNotValid) {
+        return;
+      }
+
+      this.updateSolution();
+      this._resetDiagramRenaming();
+
+    } else if (pressedKey === ESCAPE_KEY) {
+      this._resetDiagramRenaming();
+    }
+  }
+
+  /**
    * Checks, if the input contains any non empty values.
    *
    * @return true, if the input has some non empty value.
@@ -392,6 +521,40 @@ export class SolutionExplorerSolution {
                                 && inputValue !== '';
 
     return inputHasValue;
+  }
+
+  /**
+   * Finishes the diagram renaming process. This method will again run the
+   * validation and ensures that all input is correct. Otherwise an error is
+   * displayed to the user.
+   *
+   * If the validation passes, the diagram will be created and returned.
+   *
+   * @param silent if a notification should be shown on validation failure.
+   * @returns true if the diagram was renamed, false otherwise.
+   */
+  private async _finishDiagramRenaming(silent: boolean): Promise<boolean> {
+    const validationResult: ControllerValidateResult = await this._validationController.validate();
+    const inputWasNotValid: boolean = !validationResult.valid
+                                      || (this._validationController.errors
+                                          && this._validationController.errors.length > 0);
+
+    if (inputWasNotValid) {
+      if (!silent) {
+        const message: string = 'Please resolve all errors first.';
+        this._notificationService.showNotification(NotificationType.INFO, message);
+      }
+      return false;
+    }
+
+    try {
+      await this.solutionService.renameDiagram(this._currentlyRenamingDiagram, this._diagramRenamingState.currentDiagramInputValue);
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR, error.message);
+      return false;
+    }
+
+    return true;
   }
 
   /**
@@ -431,6 +594,24 @@ export class SolutionExplorerSolution {
     }
 
     return emptyDiagram;
+  }
+
+  /**
+   * Resets the diagram renaming state to its default. Any listeners will be
+   * removed and input values will be cleared.
+   */
+  private _resetDiagramRenaming(): void {
+    // Remove all used event listeners.
+    document.removeEventListener('click', this._onRenameDiagramClickEvent);
+    document.removeEventListener('keyup', this._onRenameDiagramKeyupEvent);
+
+    // Reset input field.
+    this._diagramRenamingState.currentDiagramInputValue = '';
+    this._renameDiagramInput.value = '';
+    // Hide input field.
+    this._currentlyRenamingDiagram = null;
+
+    ValidationRules.off(this._diagramRenamingState);
   }
 
   /**

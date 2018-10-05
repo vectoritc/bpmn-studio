@@ -10,6 +10,7 @@
 .diagram-create {
   padding: 2.5px 0px;
   list-style: none;
+  width: 100%;
 }
 
 .diagram-create__input-holder {
@@ -39,6 +40,39 @@
   list-style-type: disc;
 }
 
+.diagram-rename {
+  padding: 2.5px 0px;
+  list-style: none;
+  width: 100%;
+}
+
+.diagram-rename__input-holder {
+  flex: 1;
+  margin-right: 15px;
+}
+
+.diagram-rename__input-holder__input {
+  width: 100%;
+}
+
+.diagram-rename__input-holder__input--error {
+  border-color: red;
+}
+
+.diagram-rename__errors {
+  padding: 2px;
+  padding-left: 25px;
+
+  margin-right: 15px;
+  border: 2px solid red;
+  color: red;
+  border-top: none;
+}
+
+.diagram-rename__errors__error {
+  list-style-type: disc;
+}
+
 .diagram-entry {
   display: flex;
   padding: 2.5px 0px;
@@ -55,6 +89,7 @@
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .diagram-entry:hover .diagram-entry__name {

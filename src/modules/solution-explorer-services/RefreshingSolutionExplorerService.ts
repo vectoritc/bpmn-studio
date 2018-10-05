@@ -77,6 +77,14 @@ export class RefreshingSolutionExplorerService implements ISolutionExplorerServi
     return this._parent.saveDiagram(diagram, pathspec);
   }
 
+  public renameDiagram(diagram: IDiagram, newName: string): Promise<IDiagram> {
+    return this._parent.renameDiagram(diagram, newName);
+  }
+
+  public deleteDiagram(diagram: IDiagram): Promise<void> {
+    return this._parent.deleteDiagram(diagram);
+  }
+
   private _registerListeners(): void {
 
     this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, this._updateSolutionService);
