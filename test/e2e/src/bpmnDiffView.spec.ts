@@ -118,16 +118,16 @@ describe('bpmn-io compare view', () => {
 
     await BpmnDiffView.openDiffViewByClickOnButton(statusBarDiffViewButton);
 
-    const statusBarBeforeVsAfterButton: ElementFinder = statusBar.statusBarBeforeVsAfterButton;
-    const statusBarAfterVsBeforeButton: ElementFinder = statusBar.statusBarAfterVsBeforeButton;
+    const statusBarPreviousVsCurrentButton: ElementFinder = statusBar.statusBarPreviousVsCurrentButton;
+    const statusBarCurrentVsPreviousButton: ElementFinder = statusBar.statusBarCurrentVsPreviousButton;
 
-    await statusBarBeforeVsAfterButton.click();
+    await statusBarPreviousVsCurrentButton.click();
 
-    const statusBarBeforeVsAfterButtonIsEnabled: boolean = await statusBar.statusBarButtonIsEnabled(statusBarBeforeVsAfterButton);
-    expect(statusBarBeforeVsAfterButtonIsEnabled).toBeTruthy();
+    const statusBarPreviousVsCurrentButtonIsEnabled: boolean = await statusBar.statusBarButtonIsEnabled(statusBarPreviousVsCurrentButton);
+    expect(statusBarPreviousVsCurrentButtonIsEnabled).toBeTruthy();
 
-    const statusBarAfterVsBeforeButtonIsEnabled: boolean = await statusBar.statusBarButtonIsEnabled(statusBarAfterVsBeforeButton);
-    expect(statusBarAfterVsBeforeButtonIsEnabled).not.toBeTruthy();
+    const statusBarCurrentVsPreviousButtonIsEnabled: boolean = await statusBar.statusBarButtonIsEnabled(statusBarCurrentVsPreviousButton);
+    expect(statusBarCurrentVsPreviousButtonIsEnabled).not.toBeTruthy();
   });
 
   it('should be possible to click on `After vs. Before` button.', async() => {
@@ -135,16 +135,16 @@ describe('bpmn-io compare view', () => {
 
     await BpmnDiffView.openDiffViewByClickOnButton(statusBarDiffViewButton);
 
-    const statusBarBeforeVsAfterButton: ElementFinder = statusBar.statusBarBeforeVsAfterButton;
-    const statusBarAfterVsBeforeButton: ElementFinder = statusBar.statusBarAfterVsBeforeButton;
+    const statusBarPreviousVsCurrentButton: ElementFinder = statusBar.statusBarPreviousVsCurrentButton;
+    const statusBarCurrentVsPreviousButton: ElementFinder = statusBar.statusBarCurrentVsPreviousButton;
 
-    await statusBarAfterVsBeforeButton.click();
+    await statusBarCurrentVsPreviousButton.click();
 
-    const statusBarBeforeVsAfterButtonIsEnabled: boolean = await statusBar.statusBarButtonIsEnabled(statusBarBeforeVsAfterButton);
-    expect(statusBarBeforeVsAfterButtonIsEnabled).not.toBeTruthy();
+    const statusBarPreviousVsCurrentButtonIsEnabled: boolean = await statusBar.statusBarButtonIsEnabled(statusBarPreviousVsCurrentButton);
+    expect(statusBarPreviousVsCurrentButtonIsEnabled).not.toBeTruthy();
 
-    const statusBarAfterVsBeforeButtonIsEnabled: boolean = await statusBar.statusBarButtonIsEnabled(statusBarAfterVsBeforeButton);
-    expect(statusBarAfterVsBeforeButtonIsEnabled).toBeTruthy();
+    const statusBarCurrentVsPreviousButtonIsEnabled: boolean = await statusBar.statusBarButtonIsEnabled(statusBarCurrentVsPreviousButton);
+    expect(statusBarCurrentVsPreviousButtonIsEnabled).toBeTruthy();
   });
 
   it('should be possible to click on changes log button.', async() => {

@@ -36,6 +36,7 @@ export default {
     statusBar: {
       showDiagramViewButtons: 'statusbar:diagramviewbuttons:show',
       hideDiagramViewButtons: 'statusbar:diagramviewbuttons:hide',
+      setXmlIdentifier: 'statusbar:xmlIdentifier',
     },
     configPanel: {
       processEngineRouteChanged: 'configpanel:processEngineRoute:changed',
@@ -73,10 +74,12 @@ export default {
     bpmnio: {
       toggleXMLView: 'processdefdetail:xmlview:toggle',
       toggleDiffView: 'processdefdetail:diffview:toggle',
+      showDiffDestinationButton: 'processdefdetail:diffDestinationButton:toggle',
     },
     diffView: {
       changeDiffMode: 'diffview:diffmode:change',
       toggleChangeList: 'diffview:changelist:toggle',
+      setDiffDestination: 'diffview:diffDestination:set',
     },
     diagramChange: 'diagram:change',
     processSolutionPanel: {

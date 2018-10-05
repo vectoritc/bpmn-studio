@@ -2,15 +2,22 @@ import {inject} from 'aurelia-dependency-injection';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable} from 'aurelia-framework';
 
+import {IIdentity} from '@essential-projects/iam_contracts';
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
+import {ManagementApiClientService} from '@process-engine/management_api_client';
+import {ProcessModelExecution} from '@process-engine/management_api_contracts';
+import {diff} from 'bpmn-js-differ';
 
-import {defaultBpmnColors,
+import {
+  defaultBpmnColors,
   DiffMode,
+  IBpmnModdle,
   IBpmnModeler,
   IBpmnXmlSaveOptions,
   ICanvas,
   IChangeListEntry,
   IColorPickerColor,
+  IDefinition,
   IDiffChangeListData,
   IDiffChanges,
   IElementChange,
@@ -18,32 +25,40 @@ import {defaultBpmnColors,
   IEventFunction,
   IModeling,
   IShape,
-  NotificationType} from '../../contracts/index';
+  NotificationType,
+} from '../../contracts/index';
 import environment from '../../environment';
+import {AuthenticationService} from '../authentication/authentication.service';
 import {ElementNameService} from '../elementname/elementname.service';
 import {NotificationService} from '../notification/notification.service';
 
-@inject('NotificationService', EventAggregator)
+@inject('NotificationService', EventAggregator, 'ManagementApiClientService', AuthenticationService)
 export class BpmnDiffView {
 
-  @bindable() public xml: string;
-  @bindable({ changeHandler: 'savedXmlChanged' }) public savedxml: string;
-  @bindable() public changes: IDiffChanges;
+  @bindable() public currentXml: string;
+  @bindable() public previousXml: string;
+  @bindable() public savedXml: string;
+  @bindable() public processModelId: string;
+  @bindable() public deployedXml: string;
+  public xmlChanges: IDiffChanges;
   public leftCanvasModel: HTMLElement;
   public rightCanvasModel: HTMLElement;
   public lowerCanvasModel: HTMLElement;
-  public currentDiffMode: DiffMode = DiffMode.AfterVsBefore;
+  public currentDiffMode: DiffMode = DiffMode.CurrentVsPrevious;
   public diffModeTitle: string = '';
   public showChangeList: boolean;
   public noChangesExisting: boolean = true;
   public noChangesReason: string;
   public totalAmountOfChange: number;
+  public previousXmlIdentifier: string;
+  public currentXmlIdentifier: string;
   public changeListData: IDiffChangeListData = {
     removed: [],
     changed: [],
     added: [],
     layoutChanged: [],
   };
+  public showSavedXml: boolean = true;
 
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
@@ -55,11 +70,19 @@ export class BpmnDiffView {
   private _elementRegistry: IElementRegistry;
   private _subscriptions: Array<Subscription>;
   private _elementNameService: ElementNameService;
+  private _managementApiService: ManagementApiClientService;
+  private _authenticationService: AuthenticationService;
 
-  constructor(notificationService: NotificationService, eventAggregator: EventAggregator) {
+  constructor(notificationService: NotificationService,
+              eventAggregator: EventAggregator,
+              managementApiService: ManagementApiClientService,
+              authenticationService: AuthenticationService) {
+
     this._notificationService = notificationService;
     this._eventAggregator = eventAggregator;
     this._elementNameService = new ElementNameService();
+    this._managementApiService = managementApiService;
+    this._authenticationService = authenticationService;
   }
 
   public created(): void {
@@ -75,20 +98,33 @@ export class BpmnDiffView {
     this._startSynchronizingViewers();
   }
 
-  public attached(): void {
+  public async attached(): Promise<void> {
     this._leftViewer.attachTo(this.leftCanvasModel);
     this._rightViewer.attachTo(this.rightCanvasModel);
     this._lowerViewer.attachTo(this.lowerCanvasModel);
 
     this._syncAllViewers();
+    await this._updateXmlChanges();
 
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.diffView.changeDiffMode, (diffMode: DiffMode) => {
         this.currentDiffMode = diffMode;
         this._updateDiffView();
       }),
+
       this._eventAggregator.subscribe(environment.events.diffView.toggleChangeList, () => {
         this.showChangeList = !this.showChangeList;
+      }),
+
+      this._eventAggregator.subscribe(environment.events.diffView.setDiffDestination, (diffDestination: string) => {
+        const diffLastSavedXml: boolean = diffDestination === 'local';
+        const diffDeployedXml: boolean = diffDestination === 'deployed';
+
+        if (diffLastSavedXml) {
+          this._setSavedProcessModelAsPreviousXml();
+        } else if (diffDeployedXml) {
+          this._setDeployedProcessModelAsPreviousXml();
+        }
       }),
     ];
 
@@ -101,17 +137,89 @@ export class BpmnDiffView {
     }
   }
 
-  public xmlChanged(): void {
-    this._importXml(this.xml, this._rightViewer);
+  public async currentXmlChanged(): Promise<void> {
+    this._importXml(this.currentXml, this._leftViewer);
+
+    await this._updateXmlChanges();
+    this._updateDiffView();
   }
 
   public savedXmlChanged(): void {
-    this._importXml(this.savedxml, this._leftViewer);
+    if (this.showSavedXml) {
+      this._setSavedProcessModelAsPreviousXml();
+    }
   }
 
-  public changesChanged(): void {
+  public async processModelIdChanged(): Promise<void> {
+    const hasNoProcessModelId: boolean = this.processModelId === undefined;
+
+    if (hasNoProcessModelId) {
+      this.deployedXml = undefined;
+
+      return;
+    }
+
+    const identity: IIdentity = this._createIdentity();
+    const processModels: ProcessModelExecution.ProcessModelList = await this._managementApiService.getProcessModels(identity);
+
+    const deployedProcessModel: ProcessModelExecution.ProcessModel =
+      processModels.processModels.find((currentProcessModel: ProcessModelExecution.ProcessModel) => {
+        return currentProcessModel.id === this.processModelId;
+    });
+
+    const processModelIsDeployed: boolean = deployedProcessModel !== undefined;
+    this.deployedXml = (processModelIsDeployed)
+                                    ? deployedProcessModel.xml
+                                    : undefined;
+  }
+
+  public deployedXmlChanged(): void {
+    const processModelIsDeployed: boolean = this.deployedXml !== undefined;
+
+    this._eventAggregator.publish(environment.events.bpmnio.showDiffDestinationButton, processModelIsDeployed);
+  }
+
+  public async previousXmlChanged(): Promise<void> {
+    this._importXml(this.previousXml, this._rightViewer);
+
+    await this._updateXmlChanges();
     this._updateDiffView();
-    this._prepareChangesForChangeList();
+  }
+
+  public _setDeployedProcessModelAsPreviousXml(): void {
+    this.previousXml = this.deployedXml;
+
+    this.previousXmlIdentifier = 'Deployed';
+    this.currentXmlIdentifier = 'Filesystem';
+
+    this._eventAggregator.publish(environment.events.statusBar.setXmlIdentifier,
+      [
+        this.previousXmlIdentifier,
+        this.currentXmlIdentifier,
+      ]);
+  }
+
+  public _setSavedProcessModelAsPreviousXml(): void {
+    this.previousXml = this.savedXml;
+
+    this.previousXmlIdentifier = 'Previous';
+    this.currentXmlIdentifier = 'Current';
+
+    this._eventAggregator.publish(environment.events.statusBar.setXmlIdentifier,
+      [
+        this.previousXmlIdentifier,
+        this.currentXmlIdentifier,
+      ]);
+  }
+
+  public togglePreviousXml(): void {
+    this.showSavedXml = !this.showSavedXml;
+
+    if (this.showSavedXml) {
+      this._setSavedProcessModelAsPreviousXml();
+    } else {
+      this._setDeployedProcessModelAsPreviousXml();
+    }
   }
 
   private _syncAllViewers(): void {
@@ -122,6 +230,42 @@ export class BpmnDiffView {
     const changedViewbox: string = lowerCanvas.viewbox();
     leftCanvas.viewbox(changedViewbox);
     rightCanvas.viewbox(changedViewbox);
+  }
+
+  private async _updateXmlChanges(): Promise<void> {
+
+    /**
+     * TODO: This is a dirty fix, so that the model parser does not
+     * get an undefined string.
+     *
+     * We need to find out, where this value gets set to undefined
+     * and prevent this issue there.
+     */
+    const previousXmlIsNotDefined: boolean = this.previousXml === undefined;
+    if (previousXmlIsNotDefined) {
+      this.previousXml = this.currentXml;
+    }
+
+    const previousDefinitions: IDefinition = await this._getDefintionsFromXml(this.previousXml);
+    const newDefinitions: IDefinition = await this._getDefintionsFromXml(this.currentXml);
+
+    this.xmlChanges = diff(previousDefinitions, newDefinitions);
+    this._prepareChangesForChangeList();
+  }
+
+  private async _getDefintionsFromXml(xml: string): Promise<any> {
+
+    return new Promise((resolve: Function, reject: Function): void => {
+      const moddle: IBpmnModdle =  this._diffModeler.get('moddle');
+
+      moddle.fromXML(xml, (error: Error, definitions: IDefinition) => {
+        if (error) {
+          reject(error);
+        }
+
+        resolve(definitions);
+      });
+    });
   }
 
   private _getChangeListEntriesFromChanges(elementChanges: object): Array<IChangeListEntry> {
@@ -152,12 +296,12 @@ export class BpmnDiffView {
     this.changeListData.added = [];
     this.changeListData.layoutChanged = [];
 
-    const changedElement: object = this._removeElementsWithoutChanges(this.changes._changed);
+    const changedElement: object = this._removeElementsWithoutChanges(this.xmlChanges._changed);
 
-    this.changeListData.removed = this._getChangeListEntriesFromChanges(this.changes._removed);
+    this.changeListData.removed = this._getChangeListEntriesFromChanges(this.xmlChanges._removed);
     this.changeListData.changed = this._getChangeListEntriesFromChanges(changedElement);
-    this.changeListData.added = this._getChangeListEntriesFromChanges(this.changes._added);
-    this.changeListData.layoutChanged = this._getChangeListEntriesFromChanges(this.changes._layoutChanged);
+    this.changeListData.added = this._getChangeListEntriesFromChanges(this.xmlChanges._added);
+    this.changeListData.layoutChanged = this._getChangeListEntriesFromChanges(this.xmlChanges._layoutChanged);
 
     this.totalAmountOfChange = this.changeListData.removed.length +
                                 this.changeListData.changed.length +
@@ -181,16 +325,16 @@ export class BpmnDiffView {
     */
     const whitespaceAndNewLineRegex: RegExp = /\r?\n|\r|\s/g;
 
-    const unformattedXml: string = this.xml.replace(whitespaceAndNewLineRegex, '');
-    const unformattedSaveXml: string = this.savedxml.replace(whitespaceAndNewLineRegex, '');
+    const unformattedXml: string = this.currentXml.replace(whitespaceAndNewLineRegex, '');
+    const unformattedSaveXml: string = this.previousXml.replace(whitespaceAndNewLineRegex, '');
 
     const diagramIsUnchanged: boolean = unformattedSaveXml === unformattedXml;
 
     if (diagramIsUnchanged) {
-        this.noChangesReason = 'The two diagrams are identical.';
-      } else {
-        this.noChangesReason = 'The two diagrams are incomparable.';
-      }
+      this.noChangesReason = 'The two diagrams are identical.';
+    } else {
+      this.noChangesReason = 'The two diagrams are incomparable.';
+    }
   }
 
   private _createChangeListEntry(elementName: string, elementType: string): IChangeListEntry {
@@ -285,12 +429,12 @@ export class BpmnDiffView {
   }
 
   private _updateDiffView(): void {
-    if (this.currentDiffMode === DiffMode.AfterVsBefore) {
-      this._updateLowerDiff(this.xml);
-      this.diffModeTitle = 'After vs. Before';
-    } else if (this.currentDiffMode === DiffMode.BeforeVsAfter) {
-      this._updateLowerDiff(this.savedxml);
-      this.diffModeTitle = 'Before vs. After';
+    if (this.currentDiffMode === DiffMode.CurrentVsPrevious) {
+      this._updateLowerDiff(this.currentXml);
+      this.diffModeTitle = `${this.currentXmlIdentifier} vs. ${this.previousXmlIdentifier}`;
+    } else if (this.currentDiffMode === DiffMode.PreviousVsCurrent) {
+      this._updateLowerDiff(this.previousXml);
+      this.diffModeTitle = `${this.previousXmlIdentifier} vs. ${this.currentXmlIdentifier}`;
     } else {
       this.diffModeTitle = '';
     }
@@ -306,12 +450,12 @@ export class BpmnDiffView {
       return;
     }
 
-    const addedElements: Object = this.changes._added;
-    const removedElements: object = this.changes._removed;
-    const changedElements: object = this.changes._changed;
-    const layoutChangedElements: object = this.changes._layoutChanged;
+    const addedElements: Object = this.xmlChanges._added;
+    const removedElements: object = this.xmlChanges._removed;
+    const changedElements: object = this.xmlChanges._changed;
+    const layoutChangedElements: object = this.xmlChanges._layoutChanged;
 
-    const diffModeIsAfterVsBefore: boolean = this.currentDiffMode === DiffMode.AfterVsBefore;
+    const diffModeIsCurrentVsPrevious: boolean = this.currentDiffMode === DiffMode.CurrentVsPrevious;
 
     await this._importXml(xml, this._diffModeler);
     this._clearColors();
@@ -319,7 +463,7 @@ export class BpmnDiffView {
     this._markLayoutChangedElements(layoutChangedElements);
     this._markChangedElements(changedElements);
 
-    if (diffModeIsAfterVsBefore) {
+    if (diffModeIsCurrentVsPrevious) {
       this._markAddedElements(addedElements);
     } else {
       this._markRemovedElements(removedElements);
@@ -420,5 +564,20 @@ export class BpmnDiffView {
       stroke: color.border,
       fill: color.fill,
     });
+  }
+
+  /**
+   * Creates an identity using the authentication service.
+   *
+   * TODO: This needs to moved away from here in the future.
+   * @returns IIdentity created Identity
+   */
+  private _createIdentity(): IIdentity {
+    const accessToken: string = this._authenticationService.getAccessToken();
+    const identity: IIdentity = {
+      token: accessToken,
+    };
+
+    return identity;
   }
 }

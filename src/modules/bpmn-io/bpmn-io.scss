@@ -53,6 +53,14 @@
   text-align: center;
 }
 
+.tool--deactivated {
+  display: block;
+  padding: 2px;
+  opacity: 0.2;
+  color: #5e5e5e;
+  text-align: center;
+}
+
 /*
  * WINDOW
  *

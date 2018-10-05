@@ -15,6 +15,8 @@ export class StatusBar {
   public xmlIsShown: boolean = false;
   public showChangeList: boolean = false;
   public isEncryptedCommunication: boolean = false;
+  public currentXmlIdentifier: string;
+  public previousXmlIdentifier: string;
 
   public DiffMode: typeof DiffMode = DiffMode;
 
@@ -46,14 +48,18 @@ export class StatusBar {
       this.xmlIsShown = false;
       this.diffIsShown = false;
       this.showChangeList = false;
-      this.currentDiffMode = DiffMode.AfterVsBefore;
+      this.currentDiffMode = DiffMode.CurrentVsPrevious;
     });
 
     this._eventAggregator.subscribe(environment.events.configPanel.processEngineRouteChanged, (newProcessEngineRoute: string) => {
       this._setProcessEngineRoute(newProcessEngineRoute);
     });
 
-    this.currentDiffMode = DiffMode.AfterVsBefore;
+    this._eventAggregator.subscribe(environment.events.statusBar.setXmlIdentifier, (xmlIdentifier: Array<string>) => {
+      [this.previousXmlIdentifier, this.currentXmlIdentifier] = xmlIdentifier;
+    });
+
+    this.currentDiffMode = DiffMode.CurrentVsPrevious;
   }
 
   public toggleXMLView(): void {

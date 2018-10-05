@@ -38,17 +38,28 @@
         </div>
       </div>
       <bpmn-xml-view if.bind="initialLoadingFinished" show.bind="showXMLView" xml.bind="xmlForXmlView"></bpmn-xml-view>
-      <bpmn-diff-view if.bind="showDiffView" changes.bind="xmlChanges" savedxml.bind="savedXml" xml.bind="xmlForDiffView"></bpmn-diff-view>
+      <bpmn-diff-view if.bind="showDiffView" saved-xml.bind="savedXml" current-xml.bind="xmlForDiffView" process-model-id.bind="processModelId"></bpmn-diff-view>
     </div>
 
     <div class="bpmn-io-layout__tools-right">
       <div show.bind="!showXMLView && !showDiffView" class="tool-list tool-list--vertical">
-        <div ref="toggleButtonPropertyPanel" class="tool__right tool--active">
-          <button class="button menu-bar__menu-left--tool" click.delegate="togglePanel()" class.bind="showPropertyPanel ? 'button--active' : ''" title="Toggle visibility of the Property Panel">
+        <div ref="toggleButtonPropertyPanel" class="tool__right">
+          <button class="button menu-bar__menu-left--tool" class.bind="showPropertyPanel ? 'button--active' : ''" click.delegate="togglePanel()" title="Toggle visibility of the Property Panel">
             <i class="fas fa-sliders-h"></i>
           </button>
         </div>
       </div>
+      <div show.bind="showDiffView" class="tool-list tool-list--vertical">
+        <div if.bind="showDiffDestinationButton" class="tool__right" click.delegate="toggleDiffDestination()">
+          <i class="button fas fa-database" class.bind="diffDestinationIsLocal ? '' :  'button--active'"
+            title.bind="diffDestinationIsLocal ? 'Show difference to the deployed diagram' : 'Show difference to the last saved diagram'"></i>
+        </div>
+        <div if.bind="!showDiffDestinationButton" class="tool--deactivated">
+          <i class="fas fa-database"
+            title="This diagram has not been deployed yet"></i>
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
