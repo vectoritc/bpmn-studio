@@ -16,8 +16,12 @@ export class ServiceTaskSection implements ISection {
   public path: string = '/sections/service-task/service-task';
   public canHandleElement: boolean = false;
   public businessObjInPanel: IModdleElement;
-  @observable public selectedKind: string;
-  public selectedHttpMethod: string;
+  @observable({changeHandler: 'selectedHttpParamsChanged'}) public selectedKind: string;
+  @observable({changeHandler: 'selectedHttpParamsChanged'}) public selectedHttpMethod: string;
+  @observable({changeHandler: 'selectedHttpParamsChanged'}) public selectedHttpUrl: string;
+  @observable({changeHandler: 'selectedHttpParamsChanged'}) public selectedHttpBody: string;
+  @observable({changeHandler: 'selectedHttpParamsChanged'}) public selectedHttpAuth: string;
+  @observable({changeHandler: 'selectedHttpParamsChanged'}) public selectedHttpContentType: string;
 
   private _eventAggregator: EventAggregator;
   private _moddle: IBpmnModdle;
@@ -39,6 +43,10 @@ export class ServiceTaskSection implements ISection {
     return this._elementIsServiceTask(element);
   }
 
+  public selectedHttpParamsChanged(): void {
+    this._getProperty('params').value = this._getParamsFromInput();
+  }
+
   public selectedKindChanged(): void {
     console.log('before', this.businessObjInPanel);
 
@@ -57,6 +65,7 @@ export class ServiceTaskSection implements ISection {
     console.log(this.businessObjInPanel);
     const property: IProperty = this._getProperty('method');
     property.value = this.selectedHttpMethod;
+    this._getParamsFromInput();
   }
 
   private _elementIsServiceTask(element: IShape): boolean {
@@ -176,6 +185,24 @@ export class ServiceTaskSection implements ISection {
 
   private _publishDiagramChange(): void {
     this._eventAggregator.publish(environment.events.diagramChange);
+  }
+
+  private _getParamsFromInput(): string {
+    let params: string = '';
+
+    params = params + '"' + this.selectedHttpUrl + '"';
+
+    if (this.selectedHttpBody) {
+      params = params + ', "' + this.selectedHttpBody + '"';
+    }
+
+    if (this.selectedHttpAuth && this.selectedHttpContentType) {
+      params = params + ', {headers: {Authorization: "' + this.selectedHttpAuth + '", "Content-Type": "' + this.selectedHttpContentType + '"} }';
+    }
+
+    params = '[' + params + ' ]';
+
+    return params;
   }
 
 }

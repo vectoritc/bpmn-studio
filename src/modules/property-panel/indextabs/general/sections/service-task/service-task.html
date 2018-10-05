@@ -18,7 +18,7 @@
           <tr>
             <th>Method</th>
             <td>
-              <select class="props-input" value.bind="selectedHttpMethod" change.delegate="selectedHttpMethodChanged()">
+              <select class="props-input" value.bind="selectedHttpMethod">
                 <option value="null">-Choose Method-</option>
                 <option value="get">get</option>
                 <option value="post">post</option>
@@ -31,12 +31,6 @@
             <th>Url</th>
             <td>
               <input type="text" class="props-input name-input" value.bind="selectedHttpUrl">
-            </td>
-          </tr>
-          <tr>
-            <th>Header</th>
-            <td>
-              <input type="text" class="props-input name-input" value.bind="selectedHttpHeader">
             </td>
           </tr>
           <tr>
