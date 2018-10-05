@@ -177,8 +177,6 @@ export class ServiceTaskSection implements ISection {
       const extensionElements: IModdleElement = this._moddle.create('bpmn:ExtensionElements', {values: extensionValues});
       this.businessObjInPanel.extensionElements = extensionElements;
     }
-
-    console.log('init finished', this.businessObjInPanel);
   }
 
   private _publishDiagramChange(): void {
