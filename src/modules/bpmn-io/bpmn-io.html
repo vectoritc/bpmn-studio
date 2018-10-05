@@ -56,7 +56,7 @@
         </div>
         <div if.bind="!showDiffDestinationButton" class="tool--deactivated">
           <i class="fas fa-database"
-            title="This diagram has not been deployed yet"></i>
+            title.bind="openedFromProcessEngine ? 'This diagram was opened from a ProcessEngine' : 'This diagram has not been deployed yet'"></i>
         </div>
       </div>
 
