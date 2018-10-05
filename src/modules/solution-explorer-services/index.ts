@@ -5,7 +5,7 @@ import {SolutionExplorerFileSystemRepository} from '@process-engine/solutionexpl
 import {SolutionExplorerManagementApiRepository} from '@process-engine/solutionexplorer.repository.management_api';
 import {SolutionExplorerService} from '@process-engine/solutionexplorer.service';
 
-import { DiagramTrashFolderService } from './DiagramTrashFolderService';
+import {DiagramTrashFolderService} from './DiagramTrashFolderService';
 import {RefreshingSolutionExplorerService} from './RefreshingSolutionExplorerService';
 import {SolutionExplorerServiceFactory} from './SolutionExplorerServiceFactory';
 
