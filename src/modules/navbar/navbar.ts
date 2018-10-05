@@ -107,6 +107,16 @@ export class NavBar {
 
       this._eventAggregator.subscribe(environment.events.navBar.updateProcessName, (processName: string) => {
 
+        /**
+         * Only changing the navbar title here would lead to an
+         * inconsistent state, since currently the navbar held a reference
+         * to a Diagram like object.
+         *
+         * Since this object is passed around at some point, we need to create
+         * a new Diagram object when changing the navbar title.
+         *
+         * This will hopefully be obsolete once the navbar gets refactored.
+         */
         const updatedProcess: INavbarProcessInformation = ((): INavbarProcessInformation => {
           const latestSourceIsProcessEngine: boolean = this.latestSource === 'process-engine';
 
