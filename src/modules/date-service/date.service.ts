@@ -17,7 +17,7 @@ export class DateService {
     return formattedDate;
   }
 
-  public getDay(): DateService {
+  public day(): DateService {
     const day: string = `${this._date.getDate()}`;
 
     const dayIsOneChar: boolean = day.length === 1;
@@ -28,7 +28,7 @@ export class DateService {
     return this;
   }
 
-  public getMonth(): DateService {
+  public month(): DateService {
     const month: string = `${this._date.getMonth() + 1}`;
 
     const monthIsOneChar: boolean = month.length === 1;
@@ -39,7 +39,7 @@ export class DateService {
     return this;
   }
 
-  public getYear(): DateService {
+  public year(): DateService {
     const year: string = `${this._date.getFullYear()}`;
 
     this._year = year;
@@ -47,7 +47,7 @@ export class DateService {
     return this;
   }
 
-  public getHours(): DateService {
+  public hours(): DateService {
     const hours: string = `${this._date.getHours()}`;
 
     const hourIsOneChar: boolean = hours.length === 1;
@@ -58,7 +58,7 @@ export class DateService {
     return this;
   }
 
-  public getMinutes(): DateService {
+  public minutes(): DateService {
     const minute: string = `${this._date.getMinutes()}`;
 
     const minuteIsOneChar: boolean = minute.length === 1;
