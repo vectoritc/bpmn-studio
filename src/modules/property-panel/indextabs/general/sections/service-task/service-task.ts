@@ -48,18 +48,12 @@ export class ServiceTaskSection implements ISection {
   }
 
   public selectedKindChanged(): void {
-    console.log('before', this.businessObjInPanel);
-
     const httpServiceSelected: boolean = this.selectedKind === 'HttpService';
     if (httpServiceSelected) {
-      console.log('create called');
       this._createHttpProperties();
     } else {
-      console.log('delete called');
       this._deleteHttpProperties();
     }
-
-    console.log('after', this.businessObjInPanel);
   }
 
   public selectedHttpMethodChanged(): void {
@@ -220,17 +214,21 @@ export class ServiceTaskSection implements ISection {
       const bodyParam: string = splittedParamString[1].slice(splittedParamString[1].search('"') + 1, splittedParamString[1].lastIndexOf('"'));
       this.selectedHttpBody = bodyParam;
     }
-    
-    const authParamsGiven: boolean = splittedParamString.length > 2;
+
+    const authParamsPosition: number = 2;
+    const authParamsGiven: boolean = splittedParamString.length > authParamsPosition;
     if (authParamsGiven) {
-      const authSplitted: Array<string> = splittedParamString[2].split(':');
-      const authParam: string = authSplitted[2].slice(authSplitted[2].search('"') + 1, authSplitted[2].lastIndexOf('"'));
+      const authSplitted: Array<string> = splittedParamString[authParamsPosition].split(':');
+      const authParam: string = authSplitted[authParamsPosition]
+                                  .slice(authSplitted[authParamsPosition].search('"') + 1,
+                                         authSplitted[authParamsPosition].lastIndexOf('"'));
       this.selectedHttpAuth = authParam;
     }
 
-    const contentTypeParamsGiven: boolean = splittedParamString.length > 3;
+    const contentTypeParamsPosition: number = 3;
+    const contentTypeParamsGiven: boolean = splittedParamString.length > contentTypeParamsPosition;
     if (contentTypeParamsGiven) {
-      const contentTypeSplitted: Array<string> = splittedParamString[3].split(':');
+      const contentTypeSplitted: Array<string> = splittedParamString[contentTypeParamsPosition].split(':');
       const contentTypeParam: string = contentTypeSplitted[1].slice(contentTypeSplitted[1].search('"') + 1, contentTypeSplitted[1].search('}') - 1);
       this.selectedHttpContentType = contentTypeParam;
     }
