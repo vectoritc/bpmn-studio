@@ -50,7 +50,8 @@ export class ServiceTaskSection implements ISection {
   public selectedKindChanged(): void {
     console.log('before', this.businessObjInPanel);
 
-    if (this.selectedKind === 'HttpService') {
+    const httpServiceSelected: boolean = this.selectedKind === 'HttpService';
+    if (httpServiceSelected) {
       console.log('create called');
       this._createHttpProperties();
     } else {
@@ -111,6 +112,7 @@ export class ServiceTaskSection implements ISection {
 
   private _deleteHttpProperties(): void {
     const propertiesElement: IPropertiesElement = this._getPropertiesElement();
+
     propertiesElement.values.forEach((element: IProperty, index: number) => {
 
       if (element.name === 'method' || element.name === 'params') {
@@ -159,12 +161,14 @@ export class ServiceTaskSection implements ISection {
         return;
       }
     }
+
     const extensionValues: Array<IModdleElement> = [];
 
     const modulePropertyObject: Object = {
       name: 'module',
       value: '',
     };
+
     const moduleProperty: IProperty = this._moddle.create('camunda:Property', modulePropertyObject);
 
     const properties: Array<IProperty> = [];
@@ -211,18 +215,21 @@ export class ServiceTaskSection implements ISection {
     const urlParam: string = splittedParamString[0].slice(splittedParamString[0].search('"') + 1, splittedParamString[0].lastIndexOf('"'));
     this.selectedHttpUrl = urlParam;
 
-    if (splittedParamString.length > 1) {
+    const bodyParamsGiven: boolean = splittedParamString.length > 1;
+    if (bodyParamsGiven) {
       const bodyParam: string = splittedParamString[1].slice(splittedParamString[1].search('"') + 1, splittedParamString[1].lastIndexOf('"'));
       this.selectedHttpBody = bodyParam;
     }
-
-    if (splittedParamString.length > 2) {
+    
+    const authParamsGiven: boolean = splittedParamString.length > 2;
+    if (authParamsGiven) {
       const authSplitted: Array<string> = splittedParamString[2].split(':');
       const authParam: string = authSplitted[2].slice(authSplitted[2].search('"') + 1, authSplitted[2].lastIndexOf('"'));
       this.selectedHttpAuth = authParam;
     }
 
-    if (splittedParamString.length > 3) {
+    const contentTypeParamsGiven: boolean = splittedParamString.length > 3;
+    if (contentTypeParamsGiven) {
       const contentTypeSplitted: Array<string> = splittedParamString[3].split(':');
       const contentTypeParam: string = contentTypeSplitted[1].slice(contentTypeSplitted[1].search('"') + 1, contentTypeSplitted[1].search('}') - 1);
       this.selectedHttpContentType = contentTypeParam;
