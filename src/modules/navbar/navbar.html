@@ -62,13 +62,13 @@
         </button>
       </template>
       <template if.bind="showInspectTools">
-        <button class="button menu-bar__menu-center--action-button" class.bind="disableInspectCorrelationButton ? 'activeInspectButton' : ''" click.delegate="showInspectCorrelation()" disabled.bind="disableInspectCorrelationButton" title.bind="disableInspectCorrelationButton ? 'You are on the inspect correlation view' : 'Show Inspect Correlation'">
+        <button class="button menu-bar__menu-center--action-button" class.bind="disableInspectCorrelationButton ? 'button--active' : ''" click.delegate="showInspectCorrelation()" disabled.bind="disableInspectCorrelationButton" title.bind="disableInspectCorrelationButton ? 'You are on the inspect correlation view' : 'Show Inspect Correlation'">
           <i class="fas fa-search"></i>
         </button>
-        <button class="button menu-bar__menu-center--action-button" class.bind="disableDashboardButton ? 'activeInspectButton' : ''" click.delegate="showDashboard()" disabled.bind="disableDashboardButton" title.bind="disableDashboardButton ? 'You are on the dashboard' : 'Show Dashboard'">
+        <button class="button menu-bar__menu-center--action-button" class.bind="disableDashboardButton ? 'button--active' : ''" click.delegate="showDashboard()" disabled.bind="disableDashboardButton" title.bind="disableDashboardButton ? 'You are on the dashboard' : 'Show Dashboard'">
           <i class="fas fa-chalkboard"></i>
         </button>
-        <button class="button menu-bar__menu-center--action-button" class.bind="disableHeatmapButton ? 'activeInspectButton' : ''" click.delegate="showHeatmap()" disabled.bind="disableHeatmapButton" title.bind="disableHeatmapButton ? 'You are on the heatmap view' : 'Show Heatmap'">
+        <button class="button menu-bar__menu-center--action-button" class.bind="disableHeatmapButton ? 'button--active' : ''" click.delegate="showHeatmap()" disabled.bind="disableHeatmapButton" title.bind="disableHeatmapButton ? 'You are on the heatmap view' : 'Show Heatmap'">
           <i class="fas fa-chart-line"></i>
         </button>
       </template>
