@@ -48,11 +48,11 @@ export class LogViewer {
     const date: Date = new Date(time);
 
     const dateString: string = new DateService(date)
-                                .getYear()
-                                .getMonth()
-                                .getDay()
-                                .getHours()
-                                .getMinutes()
+                                .year()
+                                .month()
+                                .day()
+                                .hours()
+                                .minutes()
                                 .asFormattedDate();
 
     return dateString;
