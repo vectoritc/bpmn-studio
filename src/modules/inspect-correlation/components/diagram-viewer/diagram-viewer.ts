@@ -65,7 +65,12 @@ export class DiagramViewer {
     }
   }
 
-  public async correlationChanged(): Promise<void> {
+  public async correlationChanged(newValue: Correlation): Promise<void> {
+    const noCorrelation: boolean = newValue === undefined;
+    if (noCorrelation) {
+      return;
+    }
+
     this.xml = await this._getXmlByCorrelation(this.correlation);
 
     this._importXml();
