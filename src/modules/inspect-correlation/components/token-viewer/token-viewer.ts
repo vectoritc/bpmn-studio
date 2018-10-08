@@ -61,7 +61,7 @@ export class TokenViewer {
             for (const entry in historyEntry.payload[load]) {
               payloadEntry.values.push({
                 title: entry,
-                value: historyEntry.payload[load][entry],
+                value: JSON.stringify(historyEntry.payload[load][entry]),
               });
             }
 
