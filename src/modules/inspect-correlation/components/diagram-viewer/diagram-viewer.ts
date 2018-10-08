@@ -15,7 +15,6 @@ export class DiagramViewer {
   @bindable() public selectedFlowNode: IShape;
   public xmlIsNotSelected: boolean = true;
   public canvasModel: HTMLElement;
-  public showDiagram: boolean = true;
 
   private _notificationService: NotificationService;
   private _diagramViewer: IBpmnModeler;
