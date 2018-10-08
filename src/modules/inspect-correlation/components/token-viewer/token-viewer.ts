@@ -50,7 +50,8 @@ export class TokenViewer {
           payload: [],
         };
 
-        if (historyEntry.payload !== undefined) {
+        const historyEntryHasPayload: boolean = historyEntry.payload !== undefined;
+        if (historyEntryHasPayload) {
           for (const load in historyEntry.payload) {
             const payloadEntry: IPayLoadEntry = {
               name: load,
