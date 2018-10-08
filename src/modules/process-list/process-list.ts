@@ -122,10 +122,8 @@ export class ProcessList {
     this._router.navigateBack();
   }
 
-  public get shownProcesses(): Array<Correlation> {
-    return this.correlations.slice((this.currentPage - 1) * this.pageSize, this.pageSize * this.currentPage);
-  }
-
+  public get correlations(): Array<Correlation> {
+    return this._correlations.slice((this.currentPage - 1) * this.pageSize, this.pageSize * this.currentPage);
   }
 
   private _initializeGetProcesses(): void {
