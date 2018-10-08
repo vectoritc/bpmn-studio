@@ -27,12 +27,13 @@ export class TokenViewer {
     this.tokenEntries = [];
 
     // Check if the selected Element can have a token.
-    const elementHasNoToken: boolean = this.flowNode.type.includes('Lane') ||
-                                      this.flowNode.type.includes('Collaboration') ||
-                                      this.flowNode.type.includes('Participant');
+    const elementHasNoToken: boolean = this.flowNode.type.includes('Lane')
+                                    || this.flowNode.type.includes('Collaboration')
+                                    || this.flowNode.type.includes('Participant');
 
     if (elementHasNoToken) {
       this.showTokenEntries = false;
+
       return;
     }
 
