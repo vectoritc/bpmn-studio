@@ -36,39 +36,44 @@ export class TokenViewer {
       return;
     }
 
-    const tokenHistoryEntries: Array<TokenHistoryEntry> = await this._inspectCorrelationService
-      .getTokenForFlowNodeInstance(this.processModelId, this.correlation.id, this.flowNode.id);
+    try {
+      const tokenHistoryEntries: Array<TokenHistoryEntry> = await this._inspectCorrelationService
+        .getTokenForFlowNodeInstance(this.processModelId, this.correlation.id, this.flowNode.id);
 
-    tokenHistoryEntries.forEach((historyEntry: TokenHistoryEntry, index: number) => {
+      tokenHistoryEntries.forEach((historyEntry: TokenHistoryEntry, index: number) => {
 
-      const tokenEntry: ITokenEntry = {
-        entryNr: index,
-        eventType: historyEntry.tokenEventType,
-        createdAt: historyEntry.createdAt,
-        payload: [],
-      };
+        const tokenEntry: ITokenEntry = {
+          entryNr: index,
+          eventType: historyEntry.tokenEventType,
+          createdAt: historyEntry.createdAt,
+          payload: [],
+        };
 
-      if (historyEntry.payload !== undefined) {
-        for (const load in historyEntry.payload) {
-          const payloadEntry: IPayLoadEntry = {
-            name: load,
-            values: [],
-          };
+        if (historyEntry.payload !== undefined) {
+          for (const load in historyEntry.payload) {
+            const payloadEntry: IPayLoadEntry = {
+              name: load,
+              values: [],
+            };
 
-          for (const entry in historyEntry.payload[load]) {
-            payloadEntry.values.push({
-              title: entry,
-              value: historyEntry.payload[load][entry],
-            });
+            for (const entry in historyEntry.payload[load]) {
+              payloadEntry.values.push({
+                title: entry,
+                value: historyEntry.payload[load][entry],
+              });
+            }
+
+            tokenEntry.payload.push(payloadEntry);
           }
-
-          tokenEntry.payload.push(payloadEntry);
         }
-      }
 
-      this.tokenEntries.push(tokenEntry);
-    });
+        this.tokenEntries.push(tokenEntry);
+      });
 
-    this.showTokenEntries = true;
+      this.showTokenEntries = true;
+    } catch (error) {
+      this.showTokenEntries = false;
+    }
+
   }
 }
