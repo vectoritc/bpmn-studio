@@ -58,7 +58,6 @@ export class ProcessList {
     if (oldValueIsDefined) {
       this._initializeGetProcesses();
       await this.updateProcesses();
-      this.updateList();
     }
   }
 
@@ -90,22 +89,16 @@ export class ProcessList {
       this.correlations = this.allcorrelations;
     }
 
-    this.totalItems = this.correlations.length;
-  }
-
-  public updateList(): void {
-    this.correlations = this.allcorrelations;
+    this.totalItems = this._correlations.length;
   }
 
   public async attached(): Promise<void> {
     this._initializeGetProcesses();
 
     await this.updateProcesses();
-    this.updateList();
 
     this._getProcessesIntervalId = window.setInterval(async() => {
       await this.updateProcesses();
-      this.updateList();
     }, environment.processengine.dashboardPollingIntervalInMs);
 
     this._subscriptions = [
@@ -133,12 +126,6 @@ export class ProcessList {
     return this.correlations.slice((this.currentPage - 1) * this.pageSize, this.pageSize * this.currentPage);
   }
 
-  public get allcorrelations(): Array<Correlation> {
-    if (!this._processes) {
-      return [];
-    }
-
-    return this._processes;
   }
 
   private _initializeGetProcesses(): void {
