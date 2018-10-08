@@ -9,14 +9,14 @@
           <th>Process</th>
           <td>
             <select class="props-input" value.bind="selectedDiagram" change.delegate="updateCalledDiagram()">
-              <option model.bind="null">-Choose called Process-</option>
+              <option model.bind="null">-Choose called process-</option>
               <option repeat.for="diagram of allDiagrams"
                       model.bind="diagram" value="${diagram.id}">${diagram.name}</option>
             </select>
           </td>
         </tr>
       </table>
-      <button class="navigation-button" disabled.bind="!selectedDiagram" click.delegate="navigateToCalledDiagram()">Navigate to called Process</button>
+      <button class="navigation-button" disabled.bind="!selectedDiagram" click.delegate="navigateToCalledDiagram()">Navigate to called process</button>
     </div>
   </div>
 </template>
