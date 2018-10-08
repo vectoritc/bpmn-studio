@@ -23,7 +23,6 @@ export class ProcessList {
   @observable public currentPage: number = 0;
   public pageSize: number = 10;
   public totalItems: number;
-  public correlations: Array<Correlation>;
   public status: Array<string> = [];
   public succesfullRequested: boolean = false;
   public selectedState: HTMLSelectElement;
@@ -38,6 +37,7 @@ export class ProcessList {
   private _getProcesses: () => Promise<Array<Correlation>>;
   private _subscriptions: Array<Subscription>;
   private _processes: Array<Correlation>;
+  private _correlations: Array<Correlation> = [];
 
   constructor(managementApiService: IManagementApi,
               eventAggregator: EventAggregator,
