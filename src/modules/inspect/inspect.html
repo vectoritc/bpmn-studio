@@ -20,7 +20,8 @@
         <div if.bind="showInspectCorrelation"
              class="inspect-layout__tool"
              class.bind="tokenViewerButtonDisabled ? 'inspect-layout__tool--disabled' : showTokenViewer ? 'inspect-layout__tool--active' : ''"
-             disable.bind="tokenViewerButtonDisabled"
+             disabled.bind="tokenViewerButtonDisabled"
+             title.bind="showTokenViewer ? 'Hide token viewer' : 'Show token viewer'"
              click.delegate="toggleShowTokenViewer()">
           <i class="fas fa-book"></i>
       </div>
