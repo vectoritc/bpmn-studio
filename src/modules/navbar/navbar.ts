@@ -171,7 +171,7 @@ export class NavBar {
         this.diagramContainsUnsavedChanges = isDiagramChanged;
       }),
 
-      this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
+      this._eventAggregator.subscribe(environment.events.navBar.diagramSuccessfullySaved, () => {
         this.diagramContainsUnsavedChanges = false;
       }),
 

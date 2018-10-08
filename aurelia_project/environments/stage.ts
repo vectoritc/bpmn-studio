@@ -62,6 +62,7 @@ export default {
       toggleDashboardView: 'navbar:tools:inspectButtons:toggleDashboardView',
       toggleHeatmapView: 'navbar:tools:inspectButtons:toggleHeatmapView',
       toggleInspectCorrelationView: 'navbar:tools:inspectButtons:toggleInspectCorrelationView',
+      diagramSuccessfullySaved: 'navbar:diagram:saved',
     },
     processDefDetail: {
       printDiagram: 'processdefdetail:diagram:print',
