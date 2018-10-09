@@ -48,7 +48,7 @@
           <tr class.bind="!selectedHttpContentType ? 'props-table__row--disabled' : ''">
             <th>Authorization</th>
             <td>
-              <input type="text" class="props-input name-input" value.bind="selectedHttpAuth" disabled.bind="!selectedHttpContentType">
+              <input type="text" class="props-input name-input" value.bind="selectedHttpAuth" disabled.bind="!selectedHttpBody">
             </td>
           </tr>
         </template>
