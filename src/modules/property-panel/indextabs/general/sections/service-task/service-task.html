@@ -33,22 +33,22 @@
               <input type="text" class="props-input name-input" value.bind="selectedHttpUrl">
             </td>
           </tr>
-          <tr>
+          <tr class.bind="!selectedHttpUrl ? 'props-table__row--disabled' : ''">
             <th>Body</th>
             <td>
-              <input type="text" class="props-input name-input" value.bind="selectedHttpBody">
+              <input type="text" class="props-input name-input" value.bind="selectedHttpBody" disabled.bind="!selectedHttpUrl">
             </td>
           </tr>
-          <tr>
+          <tr class.bind="!selectedHttpBody ? 'props-table__row--disabled' : ''">
             <th>Content Type</th>
             <td>
-              <input type="text" class="props-input name-input" value.bind="selectedHttpContentType">
+              <input type="text" class="props-input name-input" value.bind="selectedHttpContentType" disabled.bind="!selectedHttpBody">
             </td>
           </tr>
-          <tr>
+          <tr class.bind="!selectedHttpContentType ? 'props-table__row--disabled' : ''">
             <th>Authorization</th>
             <td>
-              <input type="text" class="props-input name-input" value.bind="selectedHttpAuth">
+              <input type="text" class="props-input name-input" value.bind="selectedHttpAuth" disabled.bind="!selectedHttpContentType">
             </td>
           </tr>
         </template>

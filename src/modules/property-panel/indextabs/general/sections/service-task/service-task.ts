@@ -10,6 +10,12 @@ import {IBpmnModdle,
         IShape} from '../../../../../../contracts';
 import environment from '../../../../../../environment';
 
+interface IAuthParameters {
+  headers: {
+    'Content-Type'?: string,
+    Authorization?: string,
+  };
+}
 @inject(EventAggregator)
 export class ServiceTaskSection implements ISection {
 
@@ -33,9 +39,6 @@ export class ServiceTaskSection implements ISection {
   public activate(model: IPageModel): void {
     this.businessObjInPanel = model.elementInPanel.businessObject;
     this._moddle = model.modeler.get('moddle');
-  }
-
-  public attached(): void {
     this._initServiceTask();
   }
 
@@ -189,11 +192,34 @@ export class ServiceTaskSection implements ISection {
     params = params + '"' + this.selectedHttpUrl + '"';
 
     if (this.selectedHttpBody) {
-      params = params + ', "' + this.selectedHttpBody + '"';
+      params = params + ', ' + this.selectedHttpBody + '';
+    }
+
+    let header: IAuthParameters;
+
+    if (this.selectedHttpContentType && !this.selectedHttpAuth) {
+      header = {
+        headers: {
+          'Content-Type': this.selectedHttpContentType,
+        },
+      };
+
+      const stringifiedHeader: string = JSON.stringify(header);
+      params = params + ', ' + stringifiedHeader;
     }
 
     if (this.selectedHttpAuth && this.selectedHttpContentType) {
-      params = params + ', {headers: {Authorization: "' + this.selectedHttpAuth + '", "Content-Type": "' + this.selectedHttpContentType + '"}}';
+      header = {
+        headers: {
+          Authorization: this.selectedHttpAuth,
+          'Content-Type': this.selectedHttpContentType,
+        },
+      };
+
+      const stringifiedHeader: string = JSON.stringify(header);
+
+      // params = params + ', {headers: {Authorization: "' + this.selectedHttpAuth + '", "Content-Type": "' + this.selectedHttpContentType + '"}}';
+      params = params + ', ' + stringifiedHeader;
     }
 
     params = '[' + params + ']';
@@ -202,34 +228,76 @@ export class ServiceTaskSection implements ISection {
   }
 
   private _fillVariablesFromParam(params: string): void {
-    const splittedParamString: Array<string> = params.split(',');
 
-    const urlParam: string = splittedParamString[0].slice(splittedParamString[0].search('"') + 1, splittedParamString[0].lastIndexOf('"'));
-    this.selectedHttpUrl = urlParam;
+    const regex: RegExp = new RegExp(',(?=[^\}]*(?:\{|$))');
+
+    const splittedParamString: Array<string> = params.split(regex);
+
+    console.log(splittedParamString);
+
+    const urlParamsGiven: boolean = splittedParamString.length > 0;
+    if (urlParamsGiven) {
+      const hasDoubleQuotationMarks: boolean = splittedParamString[0].search('"') > 0;
+      const hasSingleQuotationMarks: boolean = splittedParamString[0].search('\'') > 0;
+
+      let urlParam: string;
+      if (hasDoubleQuotationMarks) {
+        urlParam = splittedParamString[0].slice(splittedParamString[0].search('"') + 1, splittedParamString[0].lastIndexOf('"'));
+      } else if (hasSingleQuotationMarks) {
+        urlParam = splittedParamString[0].slice(splittedParamString[0].search('\'') + 1, splittedParamString[0].lastIndexOf('\''));
+      }
+
+      this.selectedHttpUrl = urlParam;
+    }
 
     const bodyParamsGiven: boolean = splittedParamString.length > 1;
     if (bodyParamsGiven) {
-      const bodyParam: string = splittedParamString[1].slice(splittedParamString[1].search('"') + 1, splittedParamString[1].lastIndexOf('"'));
+      let bodyParam: string = splittedParamString[1].slice(1, splittedParamString[1].length);
+
+      const bodyIsLastParameter: boolean = bodyParam.endsWith(']');
+      if (bodyIsLastParameter) {
+        bodyParam = bodyParam.substring(0, bodyParam.length - 1);
+      }
+
       this.selectedHttpBody = bodyParam;
     }
 
-    const authParamsPosition: number = 2;
-    const authParamsGiven: boolean = splittedParamString.length > authParamsPosition;
-    if (authParamsGiven) {
-      const authSplitted: Array<string> = splittedParamString[authParamsPosition].split(':');
-      const authParam: string = authSplitted[authParamsPosition]
-                                  .slice(authSplitted[authParamsPosition].search('"') + 1,
-                                         authSplitted[authParamsPosition].lastIndexOf('"'));
-      this.selectedHttpAuth = authParam;
+    const headerParamsPosition: number = 2;
+    const headerParamsGiven: boolean = splittedParamString.length > headerParamsPosition;
+    if (headerParamsGiven) {
+
+      let headerParam: string = splittedParamString[headerParamsPosition];
+      const headerIsLastParameter: boolean = headerParam.endsWith(']');
+      if (headerIsLastParameter) {
+        headerParam = headerParam.substring(0, splittedParamString[2].length - 1);
+      }
+
+      const headerObject: IAuthParameters = JSON.parse(headerParam);
+
+      this.selectedHttpContentType = headerObject.headers['Content-Type'];
+      this.selectedHttpAuth = headerObject.headers['Authorization'];
+
+      console.log(headerObject);
+      console.log(this.selectedHttpContentType);
     }
 
-    const contentTypeParamsPosition: number = 3;
-    const contentTypeParamsGiven: boolean = splittedParamString.length > contentTypeParamsPosition;
-    if (contentTypeParamsGiven) {
-      const contentTypeSplitted: Array<string> = splittedParamString[contentTypeParamsPosition].split(':');
-      const contentTypeParam: string = contentTypeSplitted[1].slice(contentTypeSplitted[1].search('"') + 1, contentTypeSplitted[1].search('}') - 1);
-      this.selectedHttpContentType = contentTypeParam;
-    }
+    // const authParamsPosition: number = 2;
+    // const authParamsGiven: boolean = splittedParamString.length > authParamsPosition;
+    // if (authParamsGiven) {
+    //   const authSplitted: Array<string> = splittedParamString[authParamsPosition].split(':');
+    //   const authParam: string = authSplitted[authParamsPosition]
+    //                               .slice(authSplitted[authParamsPosition].search('"') + 1,
+    //                                      authSplitted[authParamsPosition].lastIndexOf('"'));
+    //   this.selectedHttpAuth = authParam;
+    // }
+
+    // const contentTypeParamsPosition: number = 3;
+    // const contentTypeParamsGiven: boolean = splittedParamString.length > contentTypeParamsPosition;
+    // if (contentTypeParamsGiven) {
+    //   const contentTypeSplitted: Array<string> = splittedParamString[contentTypeParamsPosition].split(':');
+    //   const contentTypeParam: string = contentTypeSplitted[1].slice(contentTypeSplitted[1].search('"') + 1, contentTypeSplitted[1].search('}') - 1);
+    //   this.selectedHttpContentType = contentTypeParam;
+    // }
   }
 
 }
