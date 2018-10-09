@@ -211,6 +211,18 @@ export class ServiceTaskSection implements ISection {
       params = params + ', ' + stringifiedHeader;
     }
 
+    if (this.selectedHttpAuth && !this.selectedHttpContentType) {
+      header = {
+        headers: {
+          Authorization: this.selectedHttpAuth,
+        },
+      };
+
+      const stringifiedHeader: string = JSON.stringify(header);
+
+      params = params + ', ' + stringifiedHeader;
+    }
+
     if (this.selectedHttpAuth && this.selectedHttpContentType) {
       header = {
         headers: {
