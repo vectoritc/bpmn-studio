@@ -284,7 +284,9 @@ export class ServiceTaskSection implements ISection {
         headerParam = headerParam.substring(0, splittedParamString[headerParamsPosition].length - 1);
       }
 
-      const headerObject: IAuthParameters = JSON.parse(headerParam);
+      const headerParamDoubleQuoted: string = headerParam.replace(/'/g, '"');
+
+      const headerObject: IAuthParameters = JSON.parse(headerParamDoubleQuoted);
 
       this.selectedHttpContentType = headerObject.headers['Content-Type'];
       this.selectedHttpAuth = headerObject.headers['Authorization'];
