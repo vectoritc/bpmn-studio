@@ -63,7 +63,7 @@ export class ServiceTaskSection implements ISection {
 
   public selectedKindChanged(): void {
     const httpServiceSelected: boolean = this.selectedKind === 'HttpService';
-    console.log('change', httpServiceSelected);
+
     if (httpServiceSelected) {
       this._createHttpProperties();
     } else {
