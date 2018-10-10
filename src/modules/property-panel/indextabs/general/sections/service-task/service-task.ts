@@ -1,5 +1,5 @@
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {inject, observable} from 'aurelia-framework';
+import {inject, ModuleAnalyzer, observable} from 'aurelia-framework';
 
 import {IBpmnModdle,
         IModdleElement,
@@ -63,6 +63,7 @@ export class ServiceTaskSection implements ISection {
 
   public selectedKindChanged(): void {
     const httpServiceSelected: boolean = this.selectedKind === 'HttpService';
+    console.log('change', httpServiceSelected);
     if (httpServiceSelected) {
       this._createHttpProperties();
     } else {
@@ -86,14 +87,26 @@ export class ServiceTaskSection implements ISection {
 
   private _createHttpProperties(): void {
 
+    const modulePropertyExists: boolean = this._getProperty('module') !== undefined;
     const methodPropertyExists: boolean = this._getProperty('method') !== undefined;
     const paramPropertyExists: boolean = this._getProperty('params') !== undefined;
 
-    if (methodPropertyExists && paramPropertyExists) {
+    if (methodPropertyExists && paramPropertyExists && modulePropertyExists) {
       return;
     }
 
     const propertiesElement: IPropertiesElement = this._getPropertiesElement();
+
+    if (!modulePropertyExists) {
+      const modulePropertyObject: Object = {
+        name: 'module',
+        value: 'HttpService',
+      };
+
+      const moduleProperty: IProperty = this._moddle.create('camunda:Property', modulePropertyObject);
+
+      propertiesElement.values.push(moduleProperty);
+    }
 
     if (!methodPropertyExists) {
       const methodPropertyObject: Object = {
@@ -116,22 +129,13 @@ export class ServiceTaskSection implements ISection {
 
       propertiesElement.values.push(paramProperty);
     }
-
-    this._getProperty('module').value = 'HttpService';
   }
 
   private _deleteHttpProperties(): void {
     const propertiesElement: IPropertiesElement = this._getPropertiesElement();
 
-    propertiesElement.values.forEach((element: IProperty, index: number) => {
-
-      if (element.name === 'method' || element.name === 'params') {
-        propertiesElement.values.splice(index, 1);
-      }
-
-      if (element.name === 'module') {
-        element.value = '';
-      }
+    propertiesElement.values = propertiesElement.values.filter((element: IProperty) => {
+      return element.name !== 'method' && element.name !== 'params' && element.name !== 'module';
     });
   }
 
