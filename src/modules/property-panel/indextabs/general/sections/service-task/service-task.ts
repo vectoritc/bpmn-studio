@@ -24,10 +24,10 @@ export class ServiceTaskSection implements ISection {
   public businessObjInPanel: IModdleElement;
   @observable public selectedKind: string;
   @observable public selectedHttpMethod: string;
-  @observable({changeHandler: 'selectedHttpParamsChanged'}) public selectedHttpUrl: string;
-  @observable({changeHandler: 'selectedHttpParamsChanged'}) public selectedHttpBody: string;
-  @observable({changeHandler: 'selectedHttpParamsChanged'}) public selectedHttpAuth: string;
-  @observable({changeHandler: 'selectedHttpParamsChanged'}) public selectedHttpContentType: string;
+  public selectedHttpUrl: string;
+  public selectedHttpBody: string;
+  public selectedHttpAuth: string;
+  public selectedHttpContentType: string;
 
   private _eventAggregator: EventAggregator;
   private _moddle: IBpmnModdle;
