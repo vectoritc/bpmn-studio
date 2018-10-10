@@ -198,7 +198,7 @@ export class TaskList {
 
     const userTaskList: UserTaskList = await this._managementApiService.getUserTasksForCorrelation(identity, correlationId);
 
-    const runningCorrelations: Array<Correlation> = await this._managementApiService.getAllActiveCorrelations(identity);
+    const runningCorrelations: Array<Correlation> = await this._managementApiService.getActiveCorrelations(identity);
 
     const correlation: Correlation = runningCorrelations.find((otherCorrelation: Correlation) => {
       return otherCorrelation.id === correlationId;
@@ -209,10 +209,11 @@ export class TaskList {
       throw new NotFoundError(`No correlation found with id ${correlationId}.`);
     }
 
+    // TODO: This needs to be refactored so that the correct ProcessModel will be used depending on the user task
     const processModelOfCorrelation: ProcessModelExecution.ProcessModel = await
       this
       ._managementApiService
-      .getProcessModelById(identity, correlation.processModelId);
+      .getProcessModelById(identity, correlation.processModels[0].name);
 
     const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = this._addProcessModelToUserTasks(userTaskList, processModelOfCorrelation);
 

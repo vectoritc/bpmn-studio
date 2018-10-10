@@ -14,7 +14,9 @@ def cleanup_workspace() {
 }
 
 pipeline {
-  agent any
+  agent {
+    label "macos"
+  }
   tools {
     nodejs "node-lts"
   }
@@ -71,7 +73,6 @@ pipeline {
       }
     }
     // stage('end to end tests') {
-    //   agent any
     //   steps {
     //     script {
     //       unstash('post_build')
@@ -133,6 +134,12 @@ pipeline {
             unstash('post_build_node_modules')
 
             sh('node --version')
+            
+            // We copy the node_modules folder from the slave running
+            // prepare and install steps. That slave may run another OS
+            // than linux. Some dependencies may not be installed if
+            // they have an os restriction in their package.json.
+            sh('npm install')
 
             sh('npm run jenkins-electron-install-app-deps')
             sh('npm run jenkins-electron-rebuild-native')
@@ -154,9 +161,11 @@ pipeline {
             unstash('post_build_node_modules')
 
             sh('node --version')
-            // we copy the node_modules folder from the main slave
-            // which runs linux. Some dependencies may not be installed
-            // if they have a os restriction in their package.json
+            
+            // We copy the node_modules folder from the slave running
+            // prepare and install steps. That slave may run another OS
+            // than macos. Some dependencies may not be installed if
+            // they have an os restriction in their package.json.
             sh('npm install')
 
             sh('npm run jenkins-electron-install-app-deps')
@@ -183,9 +192,7 @@ pipeline {
             unstash('post_build')
             bat('node --version')
 
-            // we copy the node_modules folder from the main slave
-            // which runs linux. Some dependencies may not be installed
-            // if they have a os restriction in their package.json
+            // On windows a complete reinstall is required.
             bat('npm install')
 
             bat('npm run jenkins-electron-rebuild-native')

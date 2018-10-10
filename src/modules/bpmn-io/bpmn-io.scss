@@ -18,6 +18,7 @@
   height: 100%;
   background: rgb(220, 219, 219);
   overflow-y: auto;
+  display: inline;
   -ms-overflow-style: none;
 }
 
@@ -49,17 +50,15 @@
 .tool__right {
   display: block;
   padding: 2px;
-  opacity: 0.5;
-  color: #5e5e5e;
   text-align: center;
 }
 
-.tool:hover {
-  opacity: 1;
-}
-
-.tool--active {
-  opacity: 1;
+.tool--deactivated {
+  display: block;
+  padding: 2px;
+  opacity: 0.2;
+  color: #5e5e5e;
+  text-align: center;
 }
 
 /*
@@ -120,14 +119,6 @@
   border: none;
 }
 
-.menu-bar__menu-left--tool:focus {
-  color: black;
-}
-
-.tool__right:hover {
-  opacity: 1;
-}
-
 .djs-palette-override {
   position: relative !important;
   left: auto !important;
@@ -147,13 +138,19 @@
   }
 
   .entry {
-    opacity: 0.5;
+    /*
+     * This is used instead of the global button class because the
+     * button class does not use important which is needed in this case
+     * to override the existing properties, given by bpmn.io.
+     */
+    color: #333 !important;
+    opacity: 0.5 !important;
   }
 
   .highlighted-entry,
   .entry:hover {
-    color: #000 !important;
-    opacity: 1;
+    color: #333 !important;
+    opacity: 1 !important;
   }
 
   .djs-palette-toggle {

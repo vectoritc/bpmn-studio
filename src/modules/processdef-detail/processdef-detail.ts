@@ -129,7 +129,7 @@ export class ProcessDefDetail {
 
     ];
 
-    this._eventAggregator.publish(environment.events.navBar.showTools, this.process);
+    this._eventAggregator.publish(environment.events.navBar.showTools);
     this._eventAggregator.publish(environment.events.navBar.enableStartButton);
     this._eventAggregator.publish(environment.events.navBar.disableDiagramUploadButton);
     this._eventAggregator.publish(environment.events.navBar.showProcessName, this.process);
@@ -228,11 +228,7 @@ export class ProcessDefDetail {
     }
   }
 
-  public detached(): void {
-    for (const subscription of this._subscriptions) {
-      subscription.dispose();
-    }
-
+  public deactivate(): void {
     this._eventAggregator.publish(environment.events.navBar.hideTools);
     this._eventAggregator.publish(environment.events.navBar.hideProcessName);
     this._eventAggregator.publish(environment.events.navBar.disableStartButton);
@@ -240,6 +236,12 @@ export class ProcessDefDetail {
     this._eventAggregator.publish(environment.events.navBar.enableDiagramUploadButton);
     this._eventAggregator.publish(environment.events.navBar.inspectNavigateToDashboard);
     this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
+  }
+
+  public detached(): void {
+    for (const subscription of this._subscriptions) {
+      subscription.dispose();
+    }
   }
 
   public async startProcess(): Promise<void> {
@@ -329,6 +331,7 @@ export class ProcessDefDetail {
                                                                                                                         this._processModelId);
 
     this.process = updatedProcessModel;
+
     this
       ._eventAggregator
       .publish(environment.events.navBar.updateProcess, this.process);
@@ -390,6 +393,7 @@ export class ProcessDefDetail {
 
       await this._managementApiClient.updateProcessDefinitionsByName(identity, this.process.id, payload);
       this._notificationService.showNotification(NotificationType.SUCCESS, 'File saved.');
+      this._eventAggregator.publish(environment.events.navBar.diagramSuccessfullySaved);
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, `Error while saving diagram: ${error.message}`);
     }
@@ -439,7 +443,7 @@ export class ProcessDefDetail {
    * Currently only form fields in the Property Panel are validated. This will cause
    * the following behaviour:
    *
-   * The user inserts an invalid string (e.g. he uses a already used Id for an element);
+   * The user inserts an invalid string (e.g. he uses a already used ID for an element);
    * The Aurelia validators will trigger; the validation event will arrive here;
    * if there are errors present, we will disable the tool buttons on the navbar.
    *

@@ -59,7 +59,7 @@ export class Dashboard {
       // Talk to Sebastian or Christoph first.
 
       await this._managementApiService.getProcessModels(identity);
-      await this._managementApiService.getAllActiveCorrelations(identity);
+      await this._managementApiService.getActiveCorrelations(identity);
 
     } catch (error) {
       const errorIsForbiddenError: boolean = isError(error, ForbiddenError);
@@ -76,7 +76,7 @@ export class Dashboard {
   private async _hasClaimsForProcessList(identity: IIdentity): Promise<boolean> {
     try {
 
-      await this._managementApiService.getAllActiveCorrelations(identity);
+      await this._managementApiService.getActiveCorrelations(identity);
 
     } catch (error) {
       const errorIsForbiddenError: boolean = isError(error, ForbiddenError);

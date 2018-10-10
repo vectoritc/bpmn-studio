@@ -1,0 +1,58 @@
+<template>
+  <require from="./service-task.css"></require>
+  <require from="../../../../styles/sections.css"></require>
+  <div class="section-panel panel--grow">
+    <div class="panel__heading">Service Task</div>
+    <div class="panel__content">
+      <table class="props-table">
+        <tr>
+          <th>Kind</th>
+          <td>
+            <select class="props-input" value.bind="selectedKind">
+              <option value="null">-Choose Kind-</option>
+              <option value="HttpService">HTTP REST Service</option>
+            </select>
+          </td>
+        </tr>
+        <template if.bind="selectedKind === 'HttpService'">
+          <tr>
+            <th>Method</th>
+            <td>
+              <select class="props-input" value.bind="selectedHttpMethod">
+                <option value="null">-Choose Method-</option>
+                <option value="get">GET</option>
+                <option value="post">POST</option>
+                <option value="put">UPDATE</option>
+                <option value="delete">DELETE</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <th>Url</th>
+            <td>
+              <input type="text" class="props-input name-input" value.bind="selectedHttpUrl" change.delegate="selectedHttpParamsChanged()">
+            </td>
+          </tr>
+          <tr class.bind="!selectedHttpUrl ? 'props-table__row--disabled' : ''">
+            <th>Body</th>
+            <td>
+              <input type="text" class="props-input name-input" value.bind="selectedHttpBody" change.delegate="selectedHttpParamsChanged()" disabled.bind="!selectedHttpUrl">
+            </td>
+          </tr>
+          <tr class.bind="!selectedHttpBody ? 'props-table__row--disabled' : ''">
+            <th>Content Type</th>
+            <td>
+              <input type="text" class="props-input name-input" value.bind="selectedHttpContentType" change.delegate="selectedHttpParamsChanged()" disabled.bind="!selectedHttpBody">
+            </td>
+          </tr>
+          <tr class.bind="!selectedHttpBody ? 'props-table__row--disabled' : ''">
+            <th>Authorization</th>
+            <td>
+              <input type="text" class="props-input name-input" value.bind="selectedHttpAuth" change.delegate="selectedHttpParamsChanged()" disabled.bind="!selectedHttpBody">
+            </td>
+          </tr>
+        </template>
+      </table>
+    </div>
+  </div>
+</template>

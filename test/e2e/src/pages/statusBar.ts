@@ -22,8 +22,8 @@ export class StatusBar {
   private _byStatusBarXMLViewButton: By = by.id('statusBarXMLViewButton');
   private _byStatusBarDiffViewButton: By = by.id('statusBarDiffViewButton');
   private _byStatusBarDisableDiffViewButton: By = by.id('statusBarDisableDiffViewButton');
-  private _byStatusBarBeforeVsAfterButton: By = by.id('statusBarBeforeVsAfter');
-  private _byStatusBarAfterVsBeforeButton: By = by.id('statusBarAfterVsBefore');
+  private _byStatusBarPreviousVsCurrentButton: By = by.id('statusBarPreviousVsCurrent');
+  private _byStatusBarCurrentVsPreviousButton: By = by.id('statusBarCurrentVsPrevious');
   private _byStatusBarChangesLogButton: By = by.id('statusBarChangesLog');
 
   public statusBarTag: ElementFinder = element(this._byTagName);
@@ -35,8 +35,8 @@ export class StatusBar {
   public statusBarXMLViewButton: ElementFinder = this.statusBarTag.element(this._byStatusBarXMLViewButton);
   public statusBarDiffViewButton: ElementFinder = this.statusBarTag.element(this._byStatusBarDiffViewButton);
   public statusBarDisableDiffViewButton: ElementFinder = this.statusBarTag.element(this._byStatusBarDisableDiffViewButton);
-  public statusBarBeforeVsAfterButton: ElementFinder = this.statusBarTag.element(this._byStatusBarBeforeVsAfterButton);
-  public statusBarAfterVsBeforeButton: ElementFinder = this.statusBarTag.element(this._byStatusBarAfterVsBeforeButton);
+  public statusBarPreviousVsCurrentButton: ElementFinder = this.statusBarTag.element(this._byStatusBarPreviousVsCurrentButton);
+  public statusBarCurrentVsPreviousButton: ElementFinder = this.statusBarTag.element(this._byStatusBarCurrentVsPreviousButton);
   public statusBarChangesLogButton: ElementFinder = this.statusBarTag.element(this._byStatusBarChangesLogButton);
 
   // Define Function

@@ -7,17 +7,19 @@
 
       <div class="solution-explorer-panel__header">
         <span class="solution-explorer-panel__header__name">Solution Explorer</span>
-        
+
         <div class="solution-explorer-panel__actions">
           <button
+            class="button"
             if.bind="canReadFromFileSystem()"
             click.delegate="openDiagram()"
             title="Open a diagram">
 
             <i class="fa fa-file"></i>
-          </button>  
+          </button>
 
           <button
+            class="button"
             if.bind="canReadFromFileSystem()"
             click.delegate="openSolution()"
             title="Open a solution">

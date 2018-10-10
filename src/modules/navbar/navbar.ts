@@ -1,18 +1,26 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {bindable, inject} from 'aurelia-framework';
+import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {RouteConfig, Router} from 'aurelia-router';
 
-import {IDiagram} from '@process-engine/solutionexplorer.contracts';
-
-import {IEventFunction, NotificationType} from '../../contracts/index';
+import {NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
+
+interface INavbarProcessInformation {
+  id?: string;
+  name?: string;
+  uri?: string;
+}
 
 @inject(Router, EventAggregator, 'NotificationService')
 export class NavBar {
 
   @bindable() public activeRouteName: string;
-  public process: IDiagram;
+
+  /**
+   * Todo: see below!
+   */
+  public process: INavbarProcessInformation;
   public diagramInfo: HTMLElement;
   public dropdown: HTMLElement;
   public solutionExplorerIsActive: boolean = true;
@@ -24,10 +32,13 @@ export class NavBar {
   public disableDiagramUploadButton: boolean = true;
   public disableHeatmapButton: boolean = true;
   public disableDashboardButton: boolean = false;
+  public disableInspectCorrelationButton: boolean = false;
   public diagramContainsUnsavedChanges: boolean = false;
   public inspectView: string = 'dashboard';
   public disableDesignLink: boolean = false;
   public latestSource: string;
+  public navbarTitle: string = '';
+  @bindable() public processOpenedFromProcessEngine: boolean = false;
 
   private _router: Router;
   private _eventAggregator: EventAggregator;
@@ -50,24 +61,40 @@ export class NavBar {
         this._dertermineActiveRoute();
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.showTools, (process: IDiagram) => {
+      this._eventAggregator.subscribe(environment.events.navBar.showTools, () => {
         this.showTools = true;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.showProcessName, (process: IDiagram) => {
+      this._eventAggregator.subscribe(environment.events.navBar.showProcessName, (process: INavbarProcessInformation) => {
         this.showProcessName = true;
+
+        /**
+         * TODO: See below
+         */
         this.process = process;
+
+        this._updateNavbarTitle();
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.hideTools, () => {
         this.showTools = false;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.updateProcess, (process: IDiagram) => {
-        const processIdIsUndefined: boolean = process.id === undefined;
+      this._eventAggregator.subscribe(environment.events.navBar.updateProcess, (process: INavbarProcessInformation) => {
 
+        /*
+         * TODO: Currently the process can be of one of two different types.
+         * One of them has an attribute 'name' which should be used for the
+         * navbar title. The other one does not have this attribute.
+         * At the moment we use the 'id' if there is no 'name'.
+         *
+         * Either the navbar or the processdef-detail needs a refactoring
+         * to prevent this issue!
+         *
+         * See https://github.com/process-engine/bpmn-studio/issues/962
+         * for more informations.
+         */
         this.process = process;
-        this.latestSource = processIdIsUndefined ? 'file-system' : 'process-engine';
         this.diagramContainsUnsavedChanges = false;
       }),
 
@@ -77,6 +104,47 @@ export class NavBar {
 
       this._eventAggregator.subscribe(environment.events.navBar.validationError, () => {
         this.validationError = true;
+      }),
+
+      this._eventAggregator.subscribe(environment.events.navBar.updateProcessName, (processName: string) => {
+        this.diagramContainsUnsavedChanges = false;
+
+        /**
+         * Only changing the navbar title here would lead to an
+         * inconsistent state, since currently the navbar held a reference
+         * to a Diagram like object.
+         *
+         * Since this object is passed around at some point, we need to create
+         * a new Diagram object when changing the navbar title.
+         *
+         * This will hopefully be obsolete once the navbar gets refactored.
+         */
+        const updatedProcess: INavbarProcessInformation = ((): INavbarProcessInformation => {
+          const latestSourceIsProcessEngine: boolean = this.latestSource === 'process-engine';
+
+          if (latestSourceIsProcessEngine) {
+            return {
+              id: processName,
+            };
+          } else {
+            return {
+              name: processName,
+            };
+          }
+
+        })();
+
+        const uriWasDefined: boolean = this.process.id !== undefined;
+        if (uriWasDefined) {
+          Object.assign(updatedProcess, {uri: this.process.uri});
+        }
+
+        this.process = updatedProcess;
+        this._updateNavbarTitle();
+      }),
+
+      this._eventAggregator.subscribe(environment.events.navBar.disableSaveButton, () => {
+        this.disableStartButton = true;
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.noValidationError, () => {
@@ -103,7 +171,7 @@ export class NavBar {
         this.diagramContainsUnsavedChanges = isDiagramChanged;
       }),
 
-      this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
+      this._eventAggregator.subscribe(environment.events.navBar.diagramSuccessfullySaved, () => {
         this.diagramContainsUnsavedChanges = false;
       }),
 
@@ -123,20 +191,40 @@ export class NavBar {
         this.showInspectTools = false;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.disableHeatmapAndEnableDashboardButton, () => {
+      this._eventAggregator.subscribe(environment.events.navBar.toggleHeatmapView, () => {
         this.disableHeatmapButton = true;
         this.disableDashboardButton = false;
+        this.disableInspectCorrelationButton = false;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.disableDashboardAndEnableHeatmapButton, () => {
+      this._eventAggregator.subscribe(environment.events.navBar.toggleDashboardView, () => {
         this.disableHeatmapButton = false;
         this.disableDashboardButton = true;
+        this.disableInspectCorrelationButton = false;
+      }),
+
+      this._eventAggregator.subscribe(environment.events.navBar.toggleInspectCorrelationView, () => {
+        this.disableHeatmapButton = false;
+        this.disableDashboardButton = false;
+        this.disableInspectCorrelationButton = true;
       }),
     ];
   }
 
   public detached(): void {
     this._disposeAllSubscriptions();
+  }
+
+  @computedFrom('processOpenedFromProcessEngine')
+  public get getClassNameForNavbarIcon(): string {
+    const iconClassName: string = ((): string => {
+      if (this.processOpenedFromProcessEngine) {
+        return 'fa-database';
+      } else {
+        return 'fa-folder';
+      }
+    })();
+    return iconClassName;
   }
 
   private _disposeAllSubscriptions(): void {
@@ -152,6 +240,7 @@ export class NavBar {
   public showDashboard(): void {
     this.disableDashboardButton = true;
     this.disableHeatmapButton = false;
+    this.disableInspectCorrelationButton = false;
 
     this._router.navigateToRoute('inspect', {
       processModelId: this.process.id,
@@ -159,12 +248,13 @@ export class NavBar {
       latestSource: this.latestSource,
     });
 
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToHeatmap, 'dashboard');
+    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, 'dashboard');
   }
 
   public showHeatmap(): void {
     this.disableHeatmapButton = true;
     this.disableDashboardButton = false;
+    this.disableInspectCorrelationButton = false;
 
     this._router.navigateToRoute('inspect', {
       processModelId: this.process.id,
@@ -172,7 +262,21 @@ export class NavBar {
       latestSource: this.latestSource,
     });
 
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToHeatmap, 'heatmap');
+    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, 'heatmap');
+  }
+
+  public showInspectCorrelation(): void {
+    this.disableHeatmapButton = false;
+    this.disableDashboardButton = false;
+    this.disableInspectCorrelationButton = true;
+
+    this._router.navigateToRoute('inspect', {
+      processModelId: this.process.id,
+      view: 'inspect-correlation',
+      latestSource: this.latestSource,
+    });
+
+    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, 'inspect-correlation');
   }
 
   public navigateToInspect(): void {
@@ -222,7 +326,6 @@ export class NavBar {
         diagramUri: this.process.uri,
       });
     }
-
   }
 
   public toggleSolutionExplorer(): void {
@@ -282,5 +385,33 @@ export class NavBar {
       return this._isRouteActive(route.name);
     });
     this.activeRouteName = activeRoute.name;
+  }
+
+  /**
+   * Updates the title of the navbar including the navbar icon which
+   * indicates, if the process was opened from the local filesystem
+   * or a remote ProcessEngine
+   */
+  private _updateNavbarTitle(): void {
+
+    const processIdIsUndefined: boolean = this.process.id === undefined;
+    this.latestSource = ((): string => {
+      if (processIdIsUndefined) {
+        return 'file-system';
+      } else {
+        return 'process-engine';
+      }
+    })();
+
+    const latestSourceIsProcessEngine: boolean = this.latestSource === 'process-engine';
+    this.navbarTitle = ((): string => {
+      if (latestSourceIsProcessEngine) {
+        return this.process.id;
+      } else {
+        return this.process.name;
+      }
+    })();
+
+    this.processOpenedFromProcessEngine = latestSourceIsProcessEngine;
   }
 }

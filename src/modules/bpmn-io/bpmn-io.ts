@@ -3,20 +3,17 @@ import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
-import {diff} from 'bpmn-js-differ';
 
-import {IBpmnModdle,
-        IBpmnModeler,
-        IBpmnXmlSaveOptions,
-        IDefinition,
-        IDiagramExportService,
-        IDiagramPrintService,
-        IDiffChanges,
-        IEditorActions,
-        IEventFunction,
-        IKeyboard,
-        NotificationType,
-      } from '../../contracts/index';
+import {
+  IBpmnModeler,
+  IBpmnXmlSaveOptions,
+  IDiagramExportService,
+  IDiagramPrintService,
+  IEditorActions,
+  IEventFunction,
+  IKeyboard,
+  NotificationType,
+} from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from './../notification/notification.service';
 import {DiagramExportService, DiagramPrintService} from './services/index';
@@ -34,17 +31,21 @@ export class BpmnIo {
 
   @bindable() public xml: string;
   @bindable({changeHandler: 'nameChanged'}) public name: string;
+  @bindable() public processModelId: string;
+  @bindable() public openedFromProcessEngine: boolean = true;
+
+  @observable public propertyPanelWidth: number;
 
   public savedXml: string;
-  public propertyPanelDisplay: string = 'inline';
+  public showPropertyPanel: boolean = false;
   public initialLoadingFinished: boolean = false;
   public showXMLView: boolean = false;
   public showDiffView: boolean = false;
-  public xmlChanges: IDiffChanges;
   public colorPickerLoaded: boolean = false;
-  @observable public propertyPanelWidth: number;
   public minCanvasWidth: number = 100;
   public minPropertyPanelWidth: number = 200;
+  public showDiffDestinationButton: boolean = false;
+  public diffDestinationIsLocal: boolean = true;
 
   /**
    * The following to variables are needed to fix a bug, where the command
@@ -180,8 +181,9 @@ export class BpmnIo {
         }, 0);
       }),
 
-      this._eventAggregator.subscribe(environment.events.bpmnio.toggleDiffView, () => {
-        this.toggleDiffView();
+      this._eventAggregator.subscribe(environment.events.bpmnio.toggleDiffView, async() => {
+        this._toggleDiffView();
+        this.xmlForDiffView = await this.getXML();
         setTimeout(() => { // This makes the function gets called after the XMLView is toggled
           this._hideOrShowPpForSpaceReasons();
         }, 0);
@@ -199,6 +201,7 @@ export class BpmnIo {
           this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
         }
       }),
+
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, async() => {
         try {
           const exportName: string = `${this.name}.svg`;
@@ -210,6 +213,7 @@ export class BpmnIo {
           this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
         }
       }),
+
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, async() => {
         try {
           const exportName: string = `${this.name}.png`;
@@ -221,6 +225,7 @@ export class BpmnIo {
           this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
         }
       }),
+
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, async() => {
         try {
           const exportName: string = `${this.name}.jpeg`;
@@ -233,6 +238,7 @@ export class BpmnIo {
         }
 
       }),
+
       this._eventAggregator.subscribe(`${environment.events.processDefDetail.printDiagram}`, async() => {
         await this._printHandler();
       }),
@@ -263,6 +269,10 @@ export class BpmnIo {
 
       this._eventAggregator.subscribe(environment.events.navBar.noValidationError, () => {
         this._diagramIsInvalid = false;
+      }),
+
+      this._eventAggregator.subscribe(environment.events.bpmnio.showDiffDestinationButton, (showDiffDestinationButton: boolean) => {
+        this.showDiffDestinationButton = showDiffDestinationButton;
       }),
     ];
 
@@ -324,25 +334,24 @@ export class BpmnIo {
       }
 
       this.toggleButtonPropertyPanel.classList.add('tool--active');
-      this.propertyPanelDisplay = 'inline';
+      this.showPropertyPanel = true;
       this._propertyPanelShouldOpen = false;
       window.localStorage.setItem('propertyPanelHideState', 'show');
     } else {
 
       this.toggleButtonPropertyPanel.classList.remove('tool--active');
-      this.propertyPanelDisplay = 'none';
+      this.showPropertyPanel = false;
       this._propertyPanelShouldOpen = true;
       window.localStorage.setItem('propertyPanelHideState', 'hide');
     }
   }
 
-  public async toggleDiffView(): Promise<void> {
-    if (!this.showDiffView) {
-      await this._updateXmlChanges();
-      this.showDiffView = true;
-    } else {
-      this.showDiffView = false;
-    }
+  public toggleDiffDestination(): void {
+    this.diffDestinationIsLocal = !this.diffDestinationIsLocal;
+
+    const diffDestination: string = this.diffDestinationIsLocal ? 'local' : 'deployed';
+
+    this._eventAggregator.publish(environment.events.diffView.setDiffDestination, diffDestination);
   }
 
   public resize(event: MouseEvent): void {
@@ -377,27 +386,8 @@ export class BpmnIo {
     return returnPromise;
   }
 
-  private async _updateXmlChanges(): Promise<void> {
-    this.xmlForDiffView = await this.getXML();
-
-    const previousDefinitions: IDefinition = await this._getDefintionsFromXml(this.savedXml);
-    const newDefinitions: IDefinition = await this._getDefintionsFromXml(this.xmlForDiffView);
-
-    this.xmlChanges = diff(previousDefinitions, newDefinitions);
-  }
-
-  private async _getDefintionsFromXml(xml: string): Promise<any> {
-    return new Promise((resolve: Function, reject: Function): void => {
-      const moddle: IBpmnModdle =  this.modeler.get('moddle');
-
-      moddle.fromXML(xml, (error: Error, definitions: IDefinition) => {
-        if (error) {
-          reject(error);
-        }
-
-        resolve(definitions);
-      });
-    });
+  private _toggleDiffView(): void {
+    this.showDiffView = !this.showDiffView;
   }
 
   private _setNewPropertyPanelWidthFromMousePosition(mousePosition: number): void {

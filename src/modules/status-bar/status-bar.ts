@@ -13,8 +13,12 @@ export class StatusBar {
   public diffIsShown: boolean = false;
   public currentDiffMode: DiffMode;
   public xmlIsShown: boolean = false;
+  public showInspectCorrelationButtons: boolean = false;
   public showChangeList: boolean = false;
   public isEncryptedCommunication: boolean = false;
+  public currentXmlIdentifier: string;
+  public previousXmlIdentifier: string;
+  public showInspectPanel: boolean = true;
 
   public DiffMode: typeof DiffMode = DiffMode;
 
@@ -46,14 +50,22 @@ export class StatusBar {
       this.xmlIsShown = false;
       this.diffIsShown = false;
       this.showChangeList = false;
-      this.currentDiffMode = DiffMode.AfterVsBefore;
+      this.currentDiffMode = DiffMode.CurrentVsPrevious;
     });
 
     this._eventAggregator.subscribe(environment.events.configPanel.processEngineRouteChanged, (newProcessEngineRoute: string) => {
       this._setProcessEngineRoute(newProcessEngineRoute);
     });
 
-    this.currentDiffMode = DiffMode.AfterVsBefore;
+    this._eventAggregator.subscribe(environment.events.statusBar.setXmlIdentifier, (xmlIdentifier: Array<string>) => {
+      [this.previousXmlIdentifier, this.currentXmlIdentifier] = xmlIdentifier;
+    });
+
+    this._eventAggregator.subscribe(environment.events.statusBar.showInspectCorrelationButtons, (showInspectCorrelation: boolean) => {
+      this.showInspectCorrelationButtons = showInspectCorrelation;
+    });
+
+    this.currentDiffMode = DiffMode.CurrentVsPrevious;
   }
 
   public toggleXMLView(): void {
@@ -82,6 +94,12 @@ export class StatusBar {
 
     this._eventAggregator.publish(environment.events.bpmnio.toggleDiffView);
     this.diffIsShown = !this.diffIsShown;
+  }
+
+  public toggleInspectPanel(): void {
+    this.showInspectPanel = !this.showInspectPanel;
+
+    this._eventAggregator.publish(environment.events.inspectCorrelation.showInspectPanel, this.showInspectPanel);
   }
 
   public navigateToSettings(): void {

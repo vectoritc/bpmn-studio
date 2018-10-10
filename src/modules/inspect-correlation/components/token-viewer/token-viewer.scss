@@ -1,0 +1,50 @@
+.token-viewer {
+  position: relative;
+  height: 100%;
+  overflow: auto;
+  background: #f7f7f7;
+  border-left: 2px solid #ccc;
+}
+
+.token-viewer__headline {
+  padding-top: 10px;
+  padding-left: 10px;
+  border-bottom: 1px solid #ccc;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.headline__node-id {
+  font-size: 16px;
+  font-weight: normal;
+}
+
+.token-viewer__token {
+  border: none;
+  font-size: 12px;
+}
+
+.token-viewer__empty-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  transform: translate(-50%, -50%);
+  font-size: 20px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.token-entry-container {
+  margin: 20px 5px;
+}
+
+.token-entry {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.payload__title {
+  margin-top: 5px;
+  text-decoration: underline;
+}

@@ -6,7 +6,7 @@
     <div class="solution-loading" if.bind="solutionIsNotLoaded">
       <i class="fa fa-spinner fa-spin"></i>
     </div>
-   
+
     <ul class="diagram-list">
 
       <li if.bind="_diagramCreationState.isCreateDiagramInputShown" class="diagram-create">
@@ -29,17 +29,19 @@
         <span class="diagram-entry__name">
           ${diagram.name}
         </span>
-        
+
         <div class="diagram-entry__actions">
           <button
+            class="button"
             if.bind="canRenameDiagram()"
             click.delegate="alert()"
             title="Rename the diagram">
-            
+
             <i class="fa fa-pencil-alt"></i>
           </button>
 
           <button
+            class="button"
             if.bind="solutionIsSingleDiagrams"
             click.delegate="closeDiagram(diagram)"
             title="Close the diagram">
@@ -48,6 +50,7 @@
           </button>
 
           <button
+            class="button"
             if.bind="canDeleteDiagram()"
             click.delegate="alert()"
             title="Delete the diagram">
