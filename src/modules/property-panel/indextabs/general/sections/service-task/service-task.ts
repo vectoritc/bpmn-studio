@@ -47,6 +47,16 @@ export class ServiceTaskSection implements ISection {
   }
 
   public selectedHttpParamsChanged(): void {
+    if (!this.selectedHttpBody) {
+      this.selectedHttpAuth = undefined;
+      this.selectedHttpContentType = undefined;
+    }
+    if (!this.selectedHttpUrl) {
+      this.selectedHttpBody = undefined;
+      this.selectedHttpAuth = undefined;
+      this.selectedHttpContentType = undefined;
+    }
+
     this._getProperty('params').value = this._getParamsFromInput();
     this._publishDiagramChange();
   }
