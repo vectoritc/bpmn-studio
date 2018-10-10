@@ -41,6 +41,13 @@ export class HeatmapService implements IHeatmapService {
     return this._heatmapRepository.getActiveTokensForFlowNode(flowNodeId);
   }
 
+  /**
+   *
+   * @param overlays IOverlay; The overlay module from bpmn-js
+   * @param elementRegistry IElementRegistry; The elementRegistry module from bpmn-js
+   *
+   * This method adds overlays for the activeTokens to the diagram viewer.
+   */
   public async addOverlays(overlays: IOverlay, elementRegistry: IElementRegistry): Promise<void> {
 
     let participantsTokenCount: number = 0;
@@ -107,6 +114,17 @@ export class HeatmapService implements IHeatmapService {
     return this._heatmapRepository.getProcess(processModelId);
   }
 
+  /**
+   *
+   * @param elementRegistry IElementRegistry; The elementRegistry module from bpmn-js
+   *
+   * This method finds all associations (IConnection) on flownodes which are defined with 'RT:'
+   * and returns them as IFlowNodeAssociation.
+   *
+   * A flowNodeAssociation contains the associationId, the elementId with which
+   * it is connected and the expected runtime.
+   *
+   */
   public getFlowNodeAssociations(elementRegistry: IElementRegistry): Array<IFlowNodeAssociation> {
 
     const flowNodeAssociations: Array<IFlowNodeAssociation> = [];
@@ -142,6 +160,19 @@ export class HeatmapService implements IHeatmapService {
     return flowNodeAssociations;
   }
 
+  /**
+   *
+   * @param associations Array<IFlowNodeAssociation>;
+   * @param flowNodeRuntimeInformation Array<FlowNodeRuntimeInformation>; RuntimeInformation which comes from the backend.
+   * @param modeler IBpmnModeler; The bpmn-js diagram modeler (only the modeler can color elements).
+   *
+   * Checks if the runtime for a flowNode is greater than expected and colors the element
+   * depending on the result.
+   *
+   * greater => red
+   * smaller => green
+   *
+   */
   public async getColoredXML(
     associations: Array<IFlowNodeAssociation>,
     flowNodeRuntimeInformation: Array<FlowNodeRuntimeInformation>,
@@ -186,6 +217,13 @@ export class HeatmapService implements IHeatmapService {
     });
   }
 
+  /**
+   *
+   * @param associations Array<IFlowNodeAssociation>; Expected runtime information.
+   * @param flowNodeRuntimeInformation Array<FlowNodeRuntimeInformation>; RuntimeInformation which comes from the backend.
+   *
+   * Returns the flowNodeRuntimeInformation from the elements which must get colored.
+   */
   private _getElementsToColor(
     associations: Array<IFlowNodeAssociation>,
     flowNodeRuntimeInformation: Array<FlowNodeRuntimeInformation>,
@@ -202,6 +240,14 @@ export class HeatmapService implements IHeatmapService {
     return elementsToColor;
   }
 
+  /**
+   *
+   * @param elementRegistry IElementRegistry;
+   * @param elementToColor FlowNodeRuntimeInformation | ITokenPositionAndCount | ActiveToken;
+   *
+   * Returns the IShape of an elements id.
+   * The IShape is needed by the IModeling module from bpmn-js to color an element.
+   */
   private _getShape(elementRegistry: IElementRegistry, elementToColor: FlowNodeRuntimeInformation | ITokenPositionAndCount | ActiveToken): IShape {
     const elementShape: IShape = elementRegistry.get(elementToColor.flowNodeId);
 

@@ -30,6 +30,15 @@ export class Heatmap {
     this._eventAggregator = eventAggregator;
   }
 
+  /**
+   * This method gets called if the processModelId was changed and
+   * removes the bpmn-js container from DOM and destroys the viewer.
+   *
+   * After that the the heatmap will be attached again for the new
+   * processModelId.
+   *
+   * Info: The used processModelId is binded by the inspect view.
+   */
   public processModelIdChanged(): void {
     const noProcessModelId: boolean = this.processModelId === undefined || this.processModelId === null;
     if (noProcessModelId) {
