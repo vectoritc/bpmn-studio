@@ -23,7 +23,6 @@ export class ProcessList {
   @observable public currentPage: number = 0;
   public pageSize: number = 10;
   public totalItems: number;
-  public correlations: Array<Correlation>;
   public status: Array<string> = [];
   public succesfullRequested: boolean = false;
   public selectedState: HTMLSelectElement;
@@ -34,10 +33,10 @@ export class ProcessList {
   private _notificationService: NotificationService;
   private _authenticationService: IAuthenticationService;
 
-  private _getProcessesIntervalId: number;
-  private _getProcesses: () => Promise<Array<Correlation>>;
+  private _getCorrelationsIntervalId: number;
+  private _getCorrelations: () => Promise<Array<Correlation>>;
   private _subscriptions: Array<Subscription>;
-  private _processes: Array<Correlation>;
+  private _correlations: Array<Correlation> = [];
 
   constructor(managementApiService: IManagementApi,
               eventAggregator: EventAggregator,
@@ -58,27 +57,26 @@ export class ProcessList {
     if (oldValueIsDefined) {
       this._initializeGetProcesses();
       await this.updateProcesses();
-      this.updateList();
     }
   }
 
   public activate(routeParameters: IProcessListRouteParameters): void {
     if (!routeParameters.processModelId) {
-      this._getProcesses = this.getAllProcesses;
+      this._getCorrelations = this.getAllActiveCorrelations;
     } else {
-      this._getProcesses = (): Promise<Array<Correlation>> => {
-        return this.getProcessesForProcessModel(routeParameters.processModelId);
+      this._getCorrelations = (): Promise<Array<Correlation>> => {
+        return this.getCorrelationsForProcessModel(routeParameters.processModelId);
       };
     }
   }
 
   public async updateProcesses(): Promise<void> {
     try {
-      const processes: Array<Correlation> = await this._getProcesses();
-      const processListWasUpdated: boolean = JSON.stringify(processes) !== JSON.stringify(this._processes);
+      const correlations: Array<Correlation> = await this._getCorrelations();
+      const correlationListWasUpdated: boolean = JSON.stringify(correlations) !== JSON.stringify(this._correlations);
 
-      if (processListWasUpdated) {
-        this._processes = processes;
+      if (correlationListWasUpdated) {
+        this._correlations = correlations;
       }
 
       this.succesfullRequested = true;
@@ -86,26 +84,20 @@ export class ProcessList {
       this._notificationService.showNotification(NotificationType.ERROR, `Error receiving process list: ${error.message}`);
     }
 
-    if (!this.correlations) {
-      this.correlations = this.allcorrelations;
+    if (!this._correlations) {
+      this._correlations = [];
     }
 
-    this.totalItems = this.correlations.length;
-  }
-
-  public updateList(): void {
-    this.correlations = this.allcorrelations;
+    this.totalItems = this._correlations.length;
   }
 
   public async attached(): Promise<void> {
     this._initializeGetProcesses();
 
     await this.updateProcesses();
-    this.updateList();
 
-    this._getProcessesIntervalId = window.setInterval(async() => {
+    this._getCorrelationsIntervalId = window.setInterval(async() => {
       await this.updateProcesses();
-      this.updateList();
     }, environment.processengine.dashboardPollingIntervalInMs);
 
     this._subscriptions = [
@@ -119,7 +111,7 @@ export class ProcessList {
   }
 
   public detached(): void {
-    clearInterval(this._getProcessesIntervalId);
+    clearInterval(this._getCorrelationsIntervalId);
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
@@ -129,33 +121,25 @@ export class ProcessList {
     this._router.navigateBack();
   }
 
-  public get shownProcesses(): Array<Correlation> {
-    return this.correlations.slice((this.currentPage - 1) * this.pageSize, this.pageSize * this.currentPage);
-  }
-
-  public get allcorrelations(): Array<Correlation> {
-    if (!this._processes) {
-      return [];
-    }
-
-    return this._processes;
+  public get correlations(): Array<Correlation> {
+    return this._correlations.slice((this.currentPage - 1) * this.pageSize, this.pageSize * this.currentPage);
   }
 
   private _initializeGetProcesses(): void {
-    const getProcessesIsUndefined: boolean = this._getProcesses === undefined;
+    const getProcessesIsUndefined: boolean = this._getCorrelations === undefined;
 
     if (getProcessesIsUndefined) {
-      this._getProcesses = this.getAllProcesses;
+      this._getCorrelations = this.getAllActiveCorrelations;
     }
   }
 
-  private async getAllProcesses(): Promise<Array<Correlation>> {
+  private async getAllActiveCorrelations(): Promise<Array<Correlation>> {
     const identity: IIdentity = this._getIdentity();
 
     return this._managementApiService.getActiveCorrelations(identity);
   }
 
-  private async getProcessesForProcessModel(processModelId: string): Promise<Array<Correlation>> {
+  private async getCorrelationsForProcessModel(processModelId: string): Promise<Array<Correlation>> {
     const identity: IIdentity = this._getIdentity();
 
     const runningCorrelations: Array<Correlation> = await this._managementApiService.getActiveCorrelations(identity);

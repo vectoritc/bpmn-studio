@@ -95,6 +95,7 @@ export class NavBar {
          * for more informations.
          */
         this.process = process;
+        this.diagramContainsUnsavedChanges = false;
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.hideProcessName, () => {
@@ -106,6 +107,7 @@ export class NavBar {
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.updateProcessName, (processName: string) => {
+        this.diagramContainsUnsavedChanges = false;
 
         /**
          * Only changing the navbar title here would lead to an
@@ -169,7 +171,7 @@ export class NavBar {
         this.diagramContainsUnsavedChanges = isDiagramChanged;
       }),
 
-      this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
+      this._eventAggregator.subscribe(environment.events.navBar.diagramSuccessfullySaved, () => {
         this.diagramContainsUnsavedChanges = false;
       }),
 

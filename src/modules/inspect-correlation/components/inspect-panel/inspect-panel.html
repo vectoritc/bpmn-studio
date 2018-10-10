@@ -19,7 +19,7 @@
           Log Viewer
         </button>
       </div>
-      <div class="inspect-panel__fullscreen-button" click.delegate="toggleFullscreen()">
+      <div class="button inspect-panel__fullscreen-button" click.delegate="toggleFullscreen()" title.bind="fullscreen ? 'Close full screen' : 'Open full screen'">
         <i class.bind="fullscreen ? 'fas fa-arrow-down' : 'fas fa-arrow-up'"></i>
       </div>
     </div>

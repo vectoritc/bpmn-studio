@@ -1,5 +1,5 @@
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {inject, observable} from 'aurelia-framework';
+import {inject, ModuleAnalyzer, observable} from 'aurelia-framework';
 
 import {IBpmnModdle,
         IModdleElement,
@@ -10,6 +10,12 @@ import {IBpmnModdle,
         IShape} from '../../../../../../contracts';
 import environment from '../../../../../../environment';
 
+interface IAuthParameters {
+  headers: {
+    'Content-Type'?: string,
+    Authorization?: string,
+  };
+}
 @inject(EventAggregator)
 export class ServiceTaskSection implements ISection {
 
@@ -18,10 +24,10 @@ export class ServiceTaskSection implements ISection {
   public businessObjInPanel: IModdleElement;
   @observable public selectedKind: string;
   @observable public selectedHttpMethod: string;
-  @observable({changeHandler: 'selectedHttpParamsChanged'}) public selectedHttpUrl: string;
-  @observable({changeHandler: 'selectedHttpParamsChanged'}) public selectedHttpBody: string;
-  @observable({changeHandler: 'selectedHttpParamsChanged'}) public selectedHttpAuth: string;
-  @observable({changeHandler: 'selectedHttpParamsChanged'}) public selectedHttpContentType: string;
+  public selectedHttpUrl: string;
+  public selectedHttpBody: string;
+  public selectedHttpAuth: string;
+  public selectedHttpContentType: string;
 
   private _eventAggregator: EventAggregator;
   private _moddle: IBpmnModdle;
@@ -33,9 +39,6 @@ export class ServiceTaskSection implements ISection {
   public activate(model: IPageModel): void {
     this.businessObjInPanel = model.elementInPanel.businessObject;
     this._moddle = model.modeler.get('moddle');
-  }
-
-  public attached(): void {
     this._initServiceTask();
   }
 
@@ -44,22 +47,38 @@ export class ServiceTaskSection implements ISection {
   }
 
   public selectedHttpParamsChanged(): void {
+    if (!this.selectedHttpBody) {
+      this.selectedHttpAuth = undefined;
+      this.selectedHttpContentType = undefined;
+    }
+    if (!this.selectedHttpUrl) {
+      this.selectedHttpBody = undefined;
+      this.selectedHttpAuth = undefined;
+      this.selectedHttpContentType = undefined;
+    }
+
     this._getProperty('params').value = this._getParamsFromInput();
+    this._publishDiagramChange();
   }
 
   public selectedKindChanged(): void {
     const httpServiceSelected: boolean = this.selectedKind === 'HttpService';
+
     if (httpServiceSelected) {
       this._createHttpProperties();
     } else {
       this._deleteHttpProperties();
     }
+    this._publishDiagramChange();
   }
 
   public selectedHttpMethodChanged(): void {
     const property: IProperty = this._getProperty('method');
-    property.value = this.selectedHttpMethod;
-    this._getParamsFromInput();
+    if (property !== undefined) {
+      property.value = this.selectedHttpMethod;
+      this._getParamsFromInput();
+      this._publishDiagramChange();
+    }
   }
 
   private _elementIsServiceTask(element: IShape): boolean {
@@ -70,14 +89,26 @@ export class ServiceTaskSection implements ISection {
 
   private _createHttpProperties(): void {
 
+    const modulePropertyExists: boolean = this._getProperty('module') !== undefined;
     const methodPropertyExists: boolean = this._getProperty('method') !== undefined;
     const paramPropertyExists: boolean = this._getProperty('params') !== undefined;
 
-    if (methodPropertyExists && paramPropertyExists) {
+    if (methodPropertyExists && paramPropertyExists && modulePropertyExists) {
       return;
     }
 
     const propertiesElement: IPropertiesElement = this._getPropertiesElement();
+
+    if (!modulePropertyExists) {
+      const modulePropertyObject: Object = {
+        name: 'module',
+        value: 'HttpService',
+      };
+
+      const moduleProperty: IProperty = this._moddle.create('camunda:Property', modulePropertyObject);
+
+      propertiesElement.values.push(moduleProperty);
+    }
 
     if (!methodPropertyExists) {
       const methodPropertyObject: Object = {
@@ -100,22 +131,13 @@ export class ServiceTaskSection implements ISection {
 
       propertiesElement.values.push(paramProperty);
     }
-
-    this._getProperty('module').value = 'HttpService';
   }
 
   private _deleteHttpProperties(): void {
     const propertiesElement: IPropertiesElement = this._getPropertiesElement();
 
-    propertiesElement.values.forEach((element: IProperty, index: number) => {
-
-      if (element.name === 'method' || element.name === 'params') {
-        propertiesElement.values.splice(index, 1);
-      }
-
-      if (element.name === 'module') {
-        element.value = '';
-      }
+    propertiesElement.values = propertiesElement.values.filter((element: IProperty) => {
+      return element.name !== 'method' && element.name !== 'params' && element.name !== 'module';
     });
   }
 
@@ -139,36 +161,39 @@ export class ServiceTaskSection implements ISection {
     return property;
   }
 
+  private _resetServiceTask(): void {
+    this.selectedKind = null;
+    this.selectedHttpAuth = undefined;
+    this.selectedHttpBody = undefined;
+    this.selectedHttpContentType = undefined;
+    this.selectedHttpMethod = undefined;
+    this.selectedHttpUrl = undefined;
+  }
+
   private _initServiceTask(): void {
+
     const extensionElementExists: boolean = this.businessObjInPanel.extensionElements !== undefined
                                           && this.businessObjInPanel.extensionElements.values !== undefined;
 
     if (extensionElementExists) {
-      const moduleProp: IProperty = this._getProperty('module');
-      const modulePropertyExists: boolean = moduleProp !== undefined;
+      const modulePropertyExists: boolean = this._getProperty('module') !== undefined;
 
       if (modulePropertyExists) {
-        this.selectedKind = moduleProp.value;
+        this.selectedKind = this._getProperty('module').value;
         this.selectedHttpMethod = this._getProperty('method').value;
 
         this._fillVariablesFromParam(this._getProperty('params').value);
-        return;
+      } else {
+        this._resetServiceTask();
       }
+      return;
     }
 
     const extensionValues: Array<IModdleElement> = [];
 
-    const modulePropertyObject: Object = {
-      name: 'module',
-      value: '',
-    };
-
-    const moduleProperty: IProperty = this._moddle.create('camunda:Property', modulePropertyObject);
-
     const properties: Array<IProperty> = [];
     const propertiesElement: IPropertiesElement = this._moddle.create('camunda:Properties', {values: properties});
 
-    propertiesElement.values.push(moduleProperty);
     extensionValues.push(propertiesElement);
 
     if (extensionElementExists) {
@@ -189,11 +214,45 @@ export class ServiceTaskSection implements ISection {
     params = params + '"' + this.selectedHttpUrl + '"';
 
     if (this.selectedHttpBody) {
-      params = params + ', "' + this.selectedHttpBody + '"';
+      params = params + ', ' + this.selectedHttpBody + '';
+    }
+
+    let header: IAuthParameters;
+
+    if (this.selectedHttpContentType && !this.selectedHttpAuth) {
+      header = {
+        headers: {
+          'Content-Type': this.selectedHttpContentType,
+        },
+      };
+
+      const stringifiedHeader: string = JSON.stringify(header);
+      params = params + ', ' + stringifiedHeader;
+    }
+
+    if (this.selectedHttpAuth && !this.selectedHttpContentType) {
+      header = {
+        headers: {
+          Authorization: this.selectedHttpAuth,
+        },
+      };
+
+      const stringifiedHeader: string = JSON.stringify(header);
+
+      params = params + ', ' + stringifiedHeader;
     }
 
     if (this.selectedHttpAuth && this.selectedHttpContentType) {
-      params = params + ', {headers: {Authorization: "' + this.selectedHttpAuth + '", "Content-Type": "' + this.selectedHttpContentType + '"}}';
+      header = {
+        headers: {
+          Authorization: this.selectedHttpAuth,
+          'Content-Type': this.selectedHttpContentType,
+        },
+      };
+
+      const stringifiedHeader: string = JSON.stringify(header);
+
+      params = params + ', ' + stringifiedHeader;
     }
 
     params = '[' + params + ']';
@@ -202,33 +261,54 @@ export class ServiceTaskSection implements ISection {
   }
 
   private _fillVariablesFromParam(params: string): void {
-    const splittedParamString: Array<string> = params.split(',');
 
-    const urlParam: string = splittedParamString[0].slice(splittedParamString[0].search('"') + 1, splittedParamString[0].lastIndexOf('"'));
-    this.selectedHttpUrl = urlParam;
+    const regex: RegExp = new RegExp(',(?=[^\}]*(?:\{|$))');
+
+    const splittedParamString: Array<string> = params.split(regex);
+
+    const urlParamsGiven: boolean = splittedParamString.length > 0;
+    if (urlParamsGiven) {
+      const hasDoubleQuotationMarks: boolean = splittedParamString[0].search('"') > 0;
+      const hasSingleQuotationMarks: boolean = splittedParamString[0].search('\'') > 0;
+
+      let urlParam: string;
+      if (hasDoubleQuotationMarks) {
+        urlParam = splittedParamString[0].slice(splittedParamString[0].search('"') + 1, splittedParamString[0].lastIndexOf('"'));
+      } else if (hasSingleQuotationMarks) {
+        urlParam = splittedParamString[0].slice(splittedParamString[0].search('\'') + 1, splittedParamString[0].lastIndexOf('\''));
+      }
+
+      this.selectedHttpUrl = urlParam;
+    }
 
     const bodyParamsGiven: boolean = splittedParamString.length > 1;
     if (bodyParamsGiven) {
-      const bodyParam: string = splittedParamString[1].slice(splittedParamString[1].search('"') + 1, splittedParamString[1].lastIndexOf('"'));
+      let bodyParam: string = splittedParamString[1].slice(1, splittedParamString[1].length);
+
+      const bodyIsLastParameter: boolean = bodyParam.endsWith(']');
+      if (bodyIsLastParameter) {
+        bodyParam = bodyParam.substring(0, bodyParam.length - 1);
+      }
+
       this.selectedHttpBody = bodyParam;
     }
 
-    const authParamsPosition: number = 2;
-    const authParamsGiven: boolean = splittedParamString.length > authParamsPosition;
-    if (authParamsGiven) {
-      const authSplitted: Array<string> = splittedParamString[authParamsPosition].split(':');
-      const authParam: string = authSplitted[authParamsPosition]
-                                  .slice(authSplitted[authParamsPosition].search('"') + 1,
-                                         authSplitted[authParamsPosition].lastIndexOf('"'));
-      this.selectedHttpAuth = authParam;
-    }
+    const headerParamsPosition: number = 2;
+    const headerParamsGiven: boolean = splittedParamString.length > headerParamsPosition;
+    if (headerParamsGiven) {
 
-    const contentTypeParamsPosition: number = 3;
-    const contentTypeParamsGiven: boolean = splittedParamString.length > contentTypeParamsPosition;
-    if (contentTypeParamsGiven) {
-      const contentTypeSplitted: Array<string> = splittedParamString[contentTypeParamsPosition].split(':');
-      const contentTypeParam: string = contentTypeSplitted[1].slice(contentTypeSplitted[1].search('"') + 1, contentTypeSplitted[1].search('}') - 1);
-      this.selectedHttpContentType = contentTypeParam;
+      let headerParam: string = splittedParamString[headerParamsPosition];
+      const headerIsLastParameter: boolean = headerParam.endsWith(']');
+      if (headerIsLastParameter) {
+        headerParam = headerParam.substring(0, splittedParamString[headerParamsPosition].length - 1);
+      }
+
+      const headerParamDoubleQuoted: string = headerParam.replace(/(\s*?{\s*?|\s*?,\s*?)(['"])?([a-zA-Z0-9]+)(['"])?:/g, '$1"$3":');
+
+      const headerObject: IAuthParameters = JSON.parse(headerParamDoubleQuoted);
+
+      this.selectedHttpContentType = headerObject.headers['Content-Type'];
+      this.selectedHttpAuth = headerObject.headers['Authorization'];
     }
   }
 

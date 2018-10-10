@@ -393,6 +393,7 @@ export class ProcessDefDetail {
 
       await this._managementApiClient.updateProcessDefinitionsByName(identity, this.process.id, payload);
       this._notificationService.showNotification(NotificationType.SUCCESS, 'File saved.');
+      this._eventAggregator.publish(environment.events.navBar.diagramSuccessfullySaved);
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, `Error while saving diagram: ${error.message}`);
     }

@@ -15,7 +15,6 @@ export class DiagramViewer {
   @bindable() public selectedFlowNode: IShape;
   public xmlIsNotSelected: boolean = true;
   public canvasModel: HTMLElement;
-  public showDiagram: boolean = true;
 
   private _notificationService: NotificationService;
   private _diagramViewer: IBpmnModeler;
@@ -41,7 +40,37 @@ export class DiagramViewer {
 
   }
 
-  public async correlationChanged(): Promise<void> {
+  public detached(): void {
+    const bjsContainer: Element = this.canvasModel.getElementsByClassName('bjs-container')[0];
+
+    const bjsContainerIsExisting: boolean = this.canvasModel !== undefined
+                                            && this.canvasModel !== null
+                                            && this.canvasModel.childElementCount > 1
+                                            && bjsContainer !== undefined
+                                            && bjsContainer !== null;
+
+    if (bjsContainerIsExisting) {
+      this.canvasModel.removeChild(bjsContainer);
+    }
+
+    const diagramViewerIsExisting: boolean = this._diagramViewer !== undefined;
+
+    if (diagramViewerIsExisting) {
+      this._diagramViewer.detach();
+      this._diagramViewer.destroy();
+
+      this._diagramViewer = undefined;
+      this.xml = undefined;
+      this.xmlIsNotSelected = true;
+    }
+  }
+
+  public async correlationChanged(newValue: Correlation): Promise<void> {
+    const noCorrelation: boolean = newValue === undefined;
+    if (noCorrelation) {
+      return;
+    }
+
     this.xml = await this._getXmlByCorrelation(this.correlation);
 
     this._importXml();

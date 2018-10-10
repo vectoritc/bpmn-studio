@@ -227,6 +227,7 @@ export class DiagramDetail {
       this._diagramHasChanged = false;
       this._notificationService
           .showNotification(NotificationType.SUCCESS, `File saved!`);
+      this._eventAggregator.publish(environment.events.navBar.diagramSuccessfullySaved);
     } catch (error) {
       this._notificationService
           .showNotification(NotificationType.ERROR, `Unable to save the file: ${error}.`);
