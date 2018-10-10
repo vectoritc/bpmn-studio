@@ -40,6 +40,7 @@ export class ServiceTaskSection implements ISection {
     this.businessObjInPanel = model.elementInPanel.businessObject;
     this._moddle = model.modeler.get('moddle');
     this._initServiceTask();
+    console.log('init called');
   }
 
   public isSuitableForElement(element: IShape): boolean {
@@ -63,7 +64,7 @@ export class ServiceTaskSection implements ISection {
 
   public selectedKindChanged(): void {
     const httpServiceSelected: boolean = this.selectedKind === 'HttpService';
-
+    console.log('test', httpServiceSelected);
     if (httpServiceSelected) {
       this._createHttpProperties();
     } else {
@@ -74,9 +75,11 @@ export class ServiceTaskSection implements ISection {
 
   public selectedHttpMethodChanged(): void {
     const property: IProperty = this._getProperty('method');
-    property.value = this.selectedHttpMethod;
-    this._getParamsFromInput();
-    this._publishDiagramChange();
+    if (property !== undefined) {
+      property.value = this.selectedHttpMethod;
+      this._getParamsFromInput();
+      this._publishDiagramChange();
+    }
   }
 
   private _elementIsServiceTask(element: IShape): boolean {
@@ -159,36 +162,39 @@ export class ServiceTaskSection implements ISection {
     return property;
   }
 
+  private _resetServiceTask(): void {
+    this.selectedKind = null;
+    this.selectedHttpAuth = undefined;
+    this.selectedHttpBody = undefined;
+    this.selectedHttpContentType = undefined;
+    this.selectedHttpMethod = undefined;
+    this.selectedHttpUrl = undefined;
+  }
+
   private _initServiceTask(): void {
+
     const extensionElementExists: boolean = this.businessObjInPanel.extensionElements !== undefined
                                           && this.businessObjInPanel.extensionElements.values !== undefined;
 
     if (extensionElementExists) {
-      const moduleProp: IProperty = this._getProperty('module');
-      const modulePropertyExists: boolean = moduleProp !== undefined;
+      const modulePropertyExists: boolean = this._getProperty('module') !== undefined;
 
       if (modulePropertyExists) {
-        this.selectedKind = moduleProp.value;
+        this.selectedKind = this._getProperty('module').value;
         this.selectedHttpMethod = this._getProperty('method').value;
 
         this._fillVariablesFromParam(this._getProperty('params').value);
-        return;
+      } else {
+        this._resetServiceTask();
       }
+      return;
     }
 
     const extensionValues: Array<IModdleElement> = [];
 
-    const modulePropertyObject: Object = {
-      name: 'module',
-      value: '',
-    };
-
-    const moduleProperty: IProperty = this._moddle.create('camunda:Property', modulePropertyObject);
-
     const properties: Array<IProperty> = [];
     const propertiesElement: IPropertiesElement = this._moddle.create('camunda:Properties', {values: properties});
 
-    propertiesElement.values.push(moduleProperty);
     extensionValues.push(propertiesElement);
 
     if (extensionElementExists) {
