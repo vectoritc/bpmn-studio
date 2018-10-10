@@ -40,7 +40,6 @@ export class ServiceTaskSection implements ISection {
     this.businessObjInPanel = model.elementInPanel.businessObject;
     this._moddle = model.modeler.get('moddle');
     this._initServiceTask();
-    console.log('init called');
   }
 
   public isSuitableForElement(element: IShape): boolean {
@@ -64,7 +63,7 @@ export class ServiceTaskSection implements ISection {
 
   public selectedKindChanged(): void {
     const httpServiceSelected: boolean = this.selectedKind === 'HttpService';
-    console.log('test', httpServiceSelected);
+
     if (httpServiceSelected) {
       this._createHttpProperties();
     } else {
