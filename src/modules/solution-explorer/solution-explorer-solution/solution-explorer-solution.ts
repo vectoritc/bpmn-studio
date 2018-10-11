@@ -27,11 +27,11 @@ import {SingleDiagramsSolutionExplorerService} from '../../solution-explorer-ser
 const ENTER_KEY: string = 'Enter';
 const ESCAPE_KEY: string = 'Escape';
 
-interface IDiagramInputState {
+interface IDiagramNameInputState {
   currentDiagramInputValue: string;
 }
 
-interface DiagramCreationState extends IDiagramInputState {
+interface DiagramCreationState extends IDiagramNameInputState {
   isCreateDiagramInputShown: boolean;
 }
 
@@ -58,7 +58,7 @@ export class SolutionExplorerSolution {
     currentDiagramInputValue: undefined,
     isCreateDiagramInputShown: false,
   };
-  private _diagramRenamingState: IDiagramInputState = {
+  private _diagramRenamingState: IDiagramNameInputState = {
     currentDiagramInputValue: undefined,
   };
   private _refreshIntervalTask: any;
@@ -70,8 +70,8 @@ export class SolutionExplorerSolution {
   };
 
   private _currentlyRenamingDiagram: IDiagram | null = null;
-  private _diagramNameValidator: FluentRuleCustomizer<IDiagramInputState, IDiagramInputState> = ValidationRules
-      .ensure((state: IDiagramInputState) => state.currentDiagramInputValue)
+  private _diagramNameValidator: FluentRuleCustomizer<IDiagramNameInputState, IDiagramNameInputState> = ValidationRules
+      .ensure((state: IDiagramNameInputState) => state.currentDiagramInputValue)
       .required()
       .withMessage('Diagram name cannot be blank.')
       .satisfies((input: string) => {
