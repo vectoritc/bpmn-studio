@@ -8,9 +8,9 @@
 }
 
 .diagram-create {
+  width: 100%;
   padding: 2.5px 0px;
   list-style: none;
-  width: 100%;
 }
 
 .diagram-create__input-holder {
@@ -41,9 +41,9 @@
 }
 
 .diagram-rename {
+  width: 100%;
   padding: 2.5px 0px;
   list-style: none;
-  width: 100%;
 }
 
 .diagram-rename__input-holder {
@@ -62,11 +62,10 @@
 .diagram-rename__errors {
   padding: 2px;
   padding-left: 25px;
-
   margin-right: 15px;
   border: 2px solid red;
-  color: red;
   border-top: none;
+  color: red;
 }
 
 .diagram-rename__errors__error {
