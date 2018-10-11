@@ -483,8 +483,8 @@ export class SolutionExplorerSolution {
     const inputWasNotValid: boolean = !await this._finishDiagramRenaming(true);
     if (inputWasNotValid) {
       this._resetDiagramRenaming();
-      return;
 
+      return;
     }
 
     this.updateSolution();
@@ -508,6 +508,7 @@ export class SolutionExplorerSolution {
     if (enterWasPressed) {
       const inputWasNotValid: boolean = !await this._finishDiagramRenaming(false);
       if (inputWasNotValid) {
+
         return;
       }
 
@@ -563,6 +564,7 @@ export class SolutionExplorerSolution {
       await this.solutionService.renameDiagram(this._currentlyRenamingDiagram, this._diagramRenamingState.currentDiagramInputValue);
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, error.message);
+
       return false;
     }
 
@@ -581,6 +583,7 @@ export class SolutionExplorerSolution {
     const inputHasNoValue: boolean = !this._hasNonEmptyValue(this.createNewDiagramInput);
     if (inputHasNoValue) {
       this._resetDiagramCreation();
+
       return;
     }
 
@@ -592,8 +595,8 @@ export class SolutionExplorerSolution {
     if (inputWasNotValid) {
       const message: string = 'Please resolve all errors first.';
       this._notificationService.showNotification(NotificationType.INFO, message);
-      return;
 
+      return;
     }
 
     const emptyDiagram: IDiagram = this._diagramCreationService
@@ -603,6 +606,7 @@ export class SolutionExplorerSolution {
       await this.solutionService.saveDiagram(emptyDiagram, emptyDiagram.uri);
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, error.message);
+
       return;
     }
 
