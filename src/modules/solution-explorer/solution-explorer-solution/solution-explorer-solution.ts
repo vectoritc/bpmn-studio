@@ -478,6 +478,7 @@ export class SolutionExplorerSolution {
     if (inputWasNotValid) {
       this._resetDiagramRenaming();
       return;
+
     }
 
     this.updateSolution();
@@ -548,6 +549,7 @@ export class SolutionExplorerSolution {
         const message: string = 'Please resolve all errors first.';
         this._notificationService.showNotification(NotificationType.INFO, message);
       }
+
       return false;
     }
 
@@ -585,6 +587,7 @@ export class SolutionExplorerSolution {
       const message: string = 'Please resolve all errors first.';
       this._notificationService.showNotification(NotificationType.INFO, message);
       return;
+
     }
 
     const emptyDiagram: IDiagram = this._diagramCreationService
