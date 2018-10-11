@@ -53,7 +53,7 @@ Main.execute = function () {
 
     const argumentIsFilePath = argv[1].endsWith('.bpmn');
     const argumentIsSignInRedirect = argv[1].startsWith('bpmn-studio://signin-oidc');
-    const argumentIsSignOutRefirect = argv[1].startsWith('bpmn-studio://signout-oidc');
+    const argumentIsSignOutRedirect = argv[1].startsWith('bpmn-studio://signout-oidc');
 
     if (argumentIsFilePath) {
       const filePath = argv[1];
@@ -62,7 +62,7 @@ Main.execute = function () {
       answerOpenFileEvent(filePath)
     }
 
-    if (argumentIsSignInRedirect || argumentIsSignOutRefirect) {
+    if (argumentIsSignInRedirect || argumentIsSignOutRedirect) {
       const redirectUrl = argv[1];
 
       Main._window.loadURL(`file://${__dirname}/../index.html`);
