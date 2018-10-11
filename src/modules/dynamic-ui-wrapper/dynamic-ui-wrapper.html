@@ -7,8 +7,8 @@
     <form-widget else user-task-config.bind="currentUserTask.data"></form-widget>
     <div class="dynamic-ui--button-wrapper">
       <button if.bind="cancelButtonText" class="btn btn-default dynamic-ui--button" click.delegate="handleButtonClick('cancel')">${cancelButtonText}</button>
-      <button if.bind="declineButtonText" class="btn btn-danger" click.delegate="handleButtonClick('decline')">${declineButtonText}</button>
-      <button if.bind="confirmButtonText" class="btn btn-success" click.delegate="handleButtonClick('proceed')" id="dynamic-ui-wrapper-continue-button">${confirmButtonText}</button>
+      <button if.bind="declineButtonText" class="btn btn-danger dynamic-ui--button dynamic-ui--button__decline" click.delegate="handleButtonClick('decline')">${declineButtonText}</button>
+      <button if.bind="confirmButtonText" class="btn btn-success dynamic-ui--button" click.delegate="handleButtonClick('proceed')" id="dynamic-ui-wrapper-continue-button">${confirmButtonText}</button>
     </div>
   </div>
 </template>
