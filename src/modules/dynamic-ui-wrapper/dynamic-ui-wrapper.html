@@ -5,8 +5,8 @@
   <div>
     <confirm-widget if.bind="currentControlType == 'confirm'" user-task-config.bind="currentUserTask.data"></confirm-widget>
     <form-widget else user-task-config.bind="currentUserTask.data"></form-widget>
-    <button if.bind="cancelButtonText" class="btn btn-default" click.delegate="handleButtonClick('cancel')">${cancelButtonText}</button>
-    <div if.bind="currentUserTask" class="btn-group" role="group">
+    <div class="dynamic-ui--button-wrapper">
+      <button if.bind="cancelButtonText" class="btn btn-default dynamic-ui--button" click.delegate="handleButtonClick('cancel')">${cancelButtonText}</button>
       <button if.bind="confirmButtonText" class="btn btn-success" click.delegate="handleButtonClick('proceed')" id="dynamic-ui-wrapper-continue-button">${confirmButtonText}</button>
       <button if.bind="declineButtonText" class="btn btn-danger" click.delegate="handleButtonClick('decline')">${declineButtonText}</button>
     </div>
