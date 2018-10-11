@@ -126,7 +126,7 @@ export class SolutionExplorerPanel {
     const uri: string = event.target.files[0].path;
     this.singleDiagramInput.value = '';
 
-    return this._openSingleDiagramOrDisplyError(uri);
+    return this._openSingleDiagramOrDisplayError(uri);
   }
 
   public async openDiagram(): Promise<void> {
@@ -147,7 +147,7 @@ export class SolutionExplorerPanel {
 
       const filePath: string = openedFile[0];
 
-      return this._openSingleDiagramOrDisplyError(filePath);
+      return this._openSingleDiagramOrDisplayError(filePath);
     });
   }
 
@@ -159,7 +159,7 @@ export class SolutionExplorerPanel {
     return (window as any).nodeRequire;
   }
 
-  private async _openSingleDiagramOrDisplyError(uri: string): Promise<void> {
+  private async _openSingleDiagramOrDisplayError(uri: string): Promise<void> {
     try {
       const openedDiagram: IDiagram = await this.solutionExplorerList.openSingleDiagram(uri);
       await this._navigateToDetailView(openedDiagram);
@@ -179,7 +179,7 @@ export class SolutionExplorerPanel {
 
   private _electronFileOpeningHook = async(_: Event, pathToFile: string): Promise<void> => {
     const uri: string = pathToFile;
-    this._openSingleDiagramOrDisplyError(uri);
+    this._openSingleDiagramOrDisplayError(uri);
   }
 
   private _registerElectronFileOpeningHooks(): void {
@@ -195,7 +195,7 @@ export class SolutionExplorerPanel {
     if (fileInfo.path) {
       // There was a file opened before BPMN-Studio was loaded, open it.
       const uri: string = fileInfo.path;
-      this._openSingleDiagramOrDisplyError(uri);
+      this._openSingleDiagramOrDisplayError(uri);
     }
   }
 
@@ -216,7 +216,7 @@ export class SolutionExplorerPanel {
 
     const openingPromises: Array<Promise<void>> = urisToOpen
       .map((uri: string): Promise<void> => {
-        return this._openSingleDiagramOrDisplyError(uri);
+        return this._openSingleDiagramOrDisplayError(uri);
       });
 
     await Promise.all(openingPromises);
