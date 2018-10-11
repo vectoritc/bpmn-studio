@@ -31,7 +31,6 @@ export class SolutionExplorerPanel {
   // Fields below are bound from the html view.
   public solutionExplorerList: SolutionExplorerList;
   public solutionInput: HTMLInputElement;
-  public singleDiagramInput: HTMLInputElement;
 
   constructor(
     eventAggregator: EventAggregator,
@@ -111,20 +110,7 @@ export class SolutionExplorerPanel {
     }
   }
 
-  /**
-   * Handles the file input change event for the single file input.
-   * @param event An event that holds the files that were "uploaded" by the user.
-   * Currently there is no type for this kind of event.
-   */
-  public async onSingleDiagramInputChange(event: IInputEvent): Promise<void> {
-    const uri: string = event.target.files[0].path;
-    this.singleDiagramInput.value = '';
-
-    return this._openSingleDiagramOrDisplyError(uri);
-  }
-
   public async openDiagram(): Promise<void> {
-    // this.singleDiagramInput.click();
     const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
 
     ipcRenderer.send('open_single_diagram');
