@@ -117,13 +117,13 @@ export class SolutionExplorerPanel {
   public async openDiagram(): Promise<void> {
     this._ipcRenderer.send('open_single_diagram');
 
-    this._ipcRenderer.once('import_opened_single_diagram', (event: Event, result: File) => {
+    this._ipcRenderer.once('import_opened_single_diagram', (event: Event, openedFile: File) => {
       const noFileSelected: boolean = openedFile === null;
       if (noFileSelected) {
         return;
       }
 
-      const filePath: string = result[0];
+      const filePath: string = openedFile[0];
 
       return this._openSingleDiagramOrDisplyError(filePath);
     });
