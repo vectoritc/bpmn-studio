@@ -64,8 +64,26 @@ export class SolutionExplorerSolution {
       .required()
       .withMessage('Diagram name cannot be blank.')
       .satisfies((input: string) => {
+        /**
+         * We cannot use the `match()` method from the aurelia Validator here
+         * because it offers no way to actually returns the current input
+         * and parse out the invalid characters from here.
+         *
+         * It is only possible to obtain the current input but it is used
+         * in some specialized aurelia string format which can't be handled
+         * like a primitive value.
+         */
 
-        if (input.length === 0) {
+        /**
+         * This is needed because otherwise the assertion would 'overlap'
+         * with the previous assertion.
+         *
+         * For whatever reason the aurelia validator does not seem to break
+         * after an assertion fail's and try to also validate the other
+         * registered assertions.
+         */
+        const diagramNameIsEmpty: boolean = input.length === 0;
+        if (diagramNameIsEmpty) {
           return true;
         }
 
@@ -274,11 +292,18 @@ export class SolutionExplorerSolution {
     }
   }
 
+  /**
+   * Build an error message which lists all invalid characters.
+   *
+   * @return A string with an error message that contains all invalid characters
+   * of a diagram name.
+   */
   private _buildInvalidCharactersMessage(): string {
     const invalidCharacters: Array<string> = this._invalidCharacters.split('');
-    const filteredInvalidCharacters: Array<string> = invalidCharacters.filter((current: string, index: number): boolean => {
-      return invalidCharacters.indexOf(current) === index;
-    });
+    const filteredInvalidCharacters: Array<string> =
+      invalidCharacters.filter((current: string, index: number): boolean => {
+        return invalidCharacters.indexOf(current) === index;
+      });
 
     return `Invalid Characters: ${filteredInvalidCharacters}`;
   }
