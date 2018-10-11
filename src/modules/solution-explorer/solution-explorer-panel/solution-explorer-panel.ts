@@ -118,7 +118,8 @@ export class SolutionExplorerPanel {
     this._ipcRenderer.send('open_single_diagram');
 
     this._ipcRenderer.once('import_opened_single_diagram', (event: Event, result: File) => {
-      if (result === null) {
+      const noFileSelected: boolean = openedFile === null;
+      if (noFileSelected) {
         return;
       }
 
