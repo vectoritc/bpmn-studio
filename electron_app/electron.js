@@ -374,7 +374,7 @@ Main._createMainWindow = function () {
 
   function setOpenSingleDiagram() {
     electron.ipcMain.on('open_single_diagram', (event) => {
-      const result = dialog.showOpenDialog({
+      const openedFile = dialog.showOpenDialog({
         filters: [
           {
             name: "BPMN",
@@ -387,7 +387,7 @@ Main._createMainWindow = function () {
         ]
       });
 
-      event.sender.send('import_opened_single_diagram', result);
+      event.sender.send('import_opened_single_diagram', openedFile);
     });
   }
 
