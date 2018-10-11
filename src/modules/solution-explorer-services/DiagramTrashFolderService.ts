@@ -1,6 +1,29 @@
+/**
+ * This service allows getting the folder where deleted diagrams should be
+ * written to.
+ */
 export class DiagramTrashFolderService {
 
+  private _diagramTrashFolder: string | null = null;
+
+  /**
+   * Gets the diagram trash folder location on the current platform. This
+   * method will ensure that the target folder exists.
+   *
+   * @return the folder to write deleted diagrams to.
+   */
   public getDiagramTrashFolder(): string {
+    if (this._diagramTrashFolder === null) {
+      this._initializeDiagramTrashFolder();
+    }
+
+    return this._diagramTrashFolder;
+  }
+
+  /**
+   * Initializes the diagram trash folder.
+   */
+  private _initializeDiagramTrashFolder(): void {
     const path: any = (window as any).nodeRequire('path');
     const os: any = (window as any).nodeRequire('os');
     const fs: any = (window as any).nodeRequire('fs');
@@ -11,8 +34,9 @@ export class DiagramTrashFolderService {
     const isMacOS: boolean = os.platform() === 'darwin';
     if (isMacOS) {
       const systemTrashFolder: string = path.join(homeFolder, '.Trash');
+      this._diagramTrashFolder = systemTrashFolder;
 
-      return systemTrashFolder;
+      return;
     }
 
     // On all other platforms we use the ~/.bpmn-studio/deleted-diagrams/ folder.
@@ -30,6 +54,6 @@ export class DiagramTrashFolderService {
       fs.mkdirSync(deletedDiagramsFolder);
     }
 
-    return deletedDiagramsFolder;
+    this._diagramTrashFolder = deletedDiagramsFolder;
   }
 }
