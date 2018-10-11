@@ -280,9 +280,6 @@ Main._initializeApplication = function () {
      */
     electron.ipcMain.on('waiting-for-double-file-click', (mainEvent) => {
       this.fileOpenMainEvent = mainEvent;
-      app.on('open-file', (event, path) => {
-        answerOpenFileEvent(path);
-      })
     });
 
     electron.ipcMain.on('get_opened_file', (event) => {
@@ -329,7 +326,7 @@ Main._createMainWindow = function () {
   // broken if we carry a file system link as the last item of the browser
   // history.
   Main._window.loadURL('/');
-
+  
   Main._window.on('closed', () => {
     Main._window = null;
   });
