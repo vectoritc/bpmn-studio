@@ -80,19 +80,6 @@ export class SolutionExplorerSolution {
          * like a primitive value.
          */
 
-        /**
-         * This is needed because otherwise the assertion would 'overlap'
-         * with the previous assertion.
-         *
-         * For whatever reason the aurelia validator does not seem to break
-         * after an assertion fail's and try to also validate the other
-         * registered assertions.
-         */
-        const diagramNameIsEmpty: boolean = input.length === 0;
-        if (diagramNameIsEmpty) {
-          return true;
-        }
-
         const inputLetters: Array<string> = input.split('');
         this._invalidCharacters = inputLetters.filter((letter: string) => {
           const rules: Array<RegExp> = Object.values(this._diagramValidationRegExpList);
