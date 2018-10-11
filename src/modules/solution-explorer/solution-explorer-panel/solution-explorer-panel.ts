@@ -44,7 +44,9 @@ export class SolutionExplorerPanel {
     this._notificationService = notificationService;
     this._router = router;
 
-    this._ipcRenderer =  (window as any).nodeRequire('electron').ipcRenderer;
+    if (this.canReadFromFileSystem()) {
+      this._ipcRenderer = (window as any).nodeRequire('electron').ipcRenderer;
+    }
   }
 
   public async bind(): Promise<void> {
@@ -128,7 +130,13 @@ export class SolutionExplorerPanel {
   }
 
   public async openDiagram(): Promise<void> {
-    // this.singleDiagramInput.click();
+    const canNotReadFromFileSystem: boolean = !this.canReadFromFileSystem();
+    if (canNotReadFromFileSystem) {
+      this.singleDiagramInput.click();
+
+      return;
+    }
+
     this._ipcRenderer.send('open_single_diagram');
 
     this._ipcRenderer.once('import_opened_single_diagram', (event: Event, openedFile: File) => {
