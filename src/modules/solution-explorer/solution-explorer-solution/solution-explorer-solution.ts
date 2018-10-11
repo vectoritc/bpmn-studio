@@ -207,7 +207,8 @@ export class SolutionExplorerSolution {
   public async startRenamingOfDiagram(diagram: IDiagram, event: Event): Promise<void> {
     event.stopPropagation();
 
-    if (this._currentlyRenamingDiagram !== null) {
+    const currentlyRenamingDiagram: boolean = this._currentlyRenamingDiagram !== null;
+    if (currentlyRenamingDiagram) {
       return;
     }
 
@@ -245,7 +246,8 @@ export class SolutionExplorerSolution {
     }
 
     // Dont allow new diagram creation, if already renaming another diagram.
-    if (this._currentlyRenamingDiagram !== null) {
+    const currentlyRenamingDiagram: boolean = this._currentlyRenamingDiagram !== null;
+    if (currentlyRenamingDiagram) {
       return;
     }
 
@@ -493,8 +495,10 @@ export class SolutionExplorerSolution {
   private _onRenameDiagramKeyupEvent = async(event: KeyboardEvent): Promise<void> => {
     const pressedKey: string = event.key;
 
-    if (pressedKey === ENTER_KEY) {
+    const enterWasPressed: boolean = pressedKey === ENTER_KEY;
+    const escapeWasPressed: boolean = pressedKey === ESCAPE_KEY;
 
+    if (enterWasPressed) {
       const inputWasNotValid: boolean = !await this._finishDiagramRenaming(false);
       if (inputWasNotValid) {
         return;
@@ -503,7 +507,7 @@ export class SolutionExplorerSolution {
       this.updateSolution();
       this._resetDiagramRenaming();
 
-    } else if (pressedKey === ESCAPE_KEY) {
+    } else if (escapeWasPressed) {
       this._resetDiagramRenaming();
     }
   }
