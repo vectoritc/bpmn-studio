@@ -56,12 +56,28 @@ export class SolutionExplorerSolution {
     isCreateDiagramInputShown: false,
   };
   private _refreshIntervalTask: any;
+
+  private _invalidCharacters: string;
+
   private _diagramNameValidator: FluentRuleCustomizer<DiagramCreationState, DiagramCreationState> = ValidationRules
       .ensure((state: DiagramCreationState) => state.currentDiagramInputValue)
       .required()
       .withMessage('Diagram name cannot be blank.')
-      .matches(/^[a-z0-9._ \-äöüß]+$/i)
-      .withMessage('The diagram name did not pass the input validation. Please consult the manual for valid names.')
+      .satisfies((input: string) => {
+
+        if (input.length === 0) {
+          return true;
+        }
+
+        const inputIsInvalid: boolean = input.match(/^[a-z0-9._ \-äöüß]+$/i) === null;
+        if (inputIsInvalid) {
+          this._invalidCharacters = input.replace(/[a-z0-9._ \-äöüß]+/gi, '');
+          return false;
+        }
+
+        return true;
+      })
+      .withMessage(`invalid-character`)
       .then()
       .satisfies(async(input: string) => {
         // The solution may have changed on the file system.
@@ -185,6 +201,13 @@ export class SolutionExplorerSolution {
 
   @computedFrom('_validationController.errors.length')
   public get diagramCreationErrors(): Array<ValidateResult> {
+
+    if (this._validationController.errors.length === 1) {
+      if (this._validationController.errors[0].message === 'invalid-character') {
+        this._validationController.errors[0].message = `Invalid Characters: ${this._invalidCharacters.split('')}`;
+      }
+    }
+
     return this._validationController.errors;
   }
 
