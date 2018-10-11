@@ -222,14 +222,16 @@ export class SolutionExplorerSolution {
   @computedFrom('_validationController.errors.length')
   public get diagramCreationErrors(): Array<ValidateResult> {
 
-    const validationErrorPresent: boolean = this._validationController.errors.length === 1;
+    const validationErrorPresent: boolean = this._validationController.errors.length >= 1;
 
     if (validationErrorPresent) {
-      const currentValidationError: ValidateResult = this._validationController.errors[0];
-      const validationErrorIsInvalidCharacter: boolean = currentValidationError.message === 'invalid-character';
 
-      if (validationErrorIsInvalidCharacter) {
-        currentValidationError.message = this._buildInvalidCharactersMessage();
+      for (const currentError of this._validationController.errors) {
+        const validationErrorIsInvalidCharacter: boolean = currentError.message === 'invalid-character';
+
+        if (validationErrorIsInvalidCharacter) {
+          currentError.message = this._getInvalidCharacterErrorMessage();
+        }
       }
     }
 
@@ -300,7 +302,7 @@ export class SolutionExplorerSolution {
    * @return A string with an error message that contains all invalid characters
    * of a diagram name.
    */
-  private _buildInvalidCharactersMessage(): string {
+  private _getInvalidCharacterErrorMessage(): string {
     const filteredInvalidCharacters: Array<string> =
       this._invalidCharacters.filter((current: string, index: number): boolean => {
         return this._invalidCharacters.indexOf(current) === index;
