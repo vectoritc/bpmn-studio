@@ -156,6 +156,10 @@ export class SolutionExplorerSolution {
     if (this.isCreateDiagramInputShown()) {
       this._resetDiagramCreation();
     }
+
+    if (this._isCurrenltyRenamingDiagram()) {
+      this._resetDiagramRenaming();
+    }
   }
 
   /**
@@ -207,13 +211,12 @@ export class SolutionExplorerSolution {
   public async startRenamingOfDiagram(diagram: IDiagram, event: Event): Promise<void> {
     event.stopPropagation();
 
-    const currentlyRenamingDiagram: boolean = this._currentlyRenamingDiagram !== null;
-    if (currentlyRenamingDiagram) {
+    if (this._isCurrenltyRenamingDiagram()) {
       return;
     }
 
     // Dont allow renaming diagram, if already creating another.
-    if (this._diagramCreationState.isCreateDiagramInputShown) {
+    if (this.isCreateDiagramInputShown()) {
       return;
     }
 
@@ -241,13 +244,12 @@ export class SolutionExplorerSolution {
    * diagram.
    */
   public async startCreationOfNewDiagram(): Promise<void> {
-    if (this._diagramCreationState.isCreateDiagramInputShown) {
+    if (this.isCreateDiagramInputShown()) {
       return;
     }
 
     // Dont allow new diagram creation, if already renaming another diagram.
-    const currentlyRenamingDiagram: boolean = this._currentlyRenamingDiagram !== null;
-    if (currentlyRenamingDiagram) {
+    if (this._isCurrenltyRenamingDiagram()) {
       return;
     }
 
@@ -265,6 +267,10 @@ export class SolutionExplorerSolution {
 
   public isCreateDiagramInputShown(): boolean {
     return this._diagramCreationState.isCreateDiagramInputShown;
+  }
+
+  public _isCurrenltyRenamingDiagram(): boolean {
+    return this._currentlyRenamingDiagram !== null;
   }
 
   @computedFrom('_validationController.errors.length')
