@@ -204,7 +204,7 @@ export class SolutionExplorerSolution {
 
     if (this._validationController.errors.length === 1) {
       if (this._validationController.errors[0].message === 'invalid-character') {
-        this._validationController.errors[0].message = `Invalid Characters: ${this._invalidCharacters.split('')}`;
+        this._validationController.errors[0].message = this._buildInvalidCharactersMessage();
       }
     }
 
@@ -267,6 +267,15 @@ export class SolutionExplorerSolution {
         this._eventAggregator.publish(environment.events.navBar.updateProcess, diagram);
       }
     }
+  }
+
+  private _buildInvalidCharactersMessage(): string {
+    const invalidCharacters: Array<string> = this._invalidCharacters.split('');
+    const filteredInvalidCharacters: Array<string> = invalidCharacters.filter((current: string, index: number): boolean => {
+      return invalidCharacters.indexOf(current) === index;
+    });
+
+    return `Invalid Characters: ${filteredInvalidCharacters}`;
   }
 
   /**
