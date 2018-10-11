@@ -18,7 +18,7 @@ import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/er
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
-import {IDiagramCreationService} from '../../../contracts';
+import {IDiagramCreationService, IUserInputValidationRule} from '../../../contracts';
 import {NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
@@ -57,7 +57,13 @@ export class SolutionExplorerSolution {
   };
   private _refreshIntervalTask: any;
 
-  private _invalidCharacters: string;
+  private _diagramValidationRegExpList: IUserInputValidationRule = {
+    alphanumeric: /^[a-z0-9]/i,
+    specialCharacters: /^[._ -]/i,
+    german: /^[äöüß]/i,
+  };
+
+  private _invalidCharacters: Array<string> = [];
 
   private _diagramNameValidator: FluentRuleCustomizer<DiagramCreationState, DiagramCreationState> = ValidationRules
       .ensure((state: DiagramCreationState) => state.currentDiagramInputValue)
@@ -87,9 +93,18 @@ export class SolutionExplorerSolution {
           return true;
         }
 
-        const inputIsInvalid: boolean = input.match(/^[a-z0-9._ \-äöüß]+$/i) === null;
+        const inputLetters: Array<string> = input.split('');
+        this._invalidCharacters = inputLetters.filter((letter: string) => {
+          const rules: Array<RegExp> = Object.values(this._diagramValidationRegExpList);
+          const letterIsInvalid: boolean = !rules.some((regExp: RegExp) => {
+            return letter.match(regExp) !== null;
+          });
+
+          return letterIsInvalid;
+        });
+
+        const inputIsInvalid: boolean = this._invalidCharacters.length > 0;
         if (inputIsInvalid) {
-          this._invalidCharacters = input.replace(/[a-z0-9._ \-äöüß]+/gi, '');
           return false;
         }
 
@@ -299,10 +314,9 @@ export class SolutionExplorerSolution {
    * of a diagram name.
    */
   private _buildInvalidCharactersMessage(): string {
-    const invalidCharacters: Array<string> = this._invalidCharacters.split('');
     const filteredInvalidCharacters: Array<string> =
-      invalidCharacters.filter((current: string, index: number): boolean => {
-        return invalidCharacters.indexOf(current) === index;
+      this._invalidCharacters.filter((current: string, index: number): boolean => {
+        return this._invalidCharacters.indexOf(current) === index;
       });
 
     return `Invalid Characters: ${filteredInvalidCharacters}`;
