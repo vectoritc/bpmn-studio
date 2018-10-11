@@ -71,8 +71,8 @@ export class SolutionExplorerSolution {
       .withMessage('Diagram name cannot be blank.')
       .satisfies((input: string) => {
         /**
-         * We cannot use the `match()` method from the aurelia Validator here
-         * because it offers no way to actually returns the current input
+         * We cannot use the `match()` method from the aurelia-validation packet
+         * because it offers no way to return the current input
          * and parse out the invalid characters from here.
          *
          * It is only possible to obtain the current input but it is used
