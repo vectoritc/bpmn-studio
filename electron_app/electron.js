@@ -336,8 +336,8 @@ Main._createMainWindow = function () {
 
   setOpenSingleDiagram();
 
-  const platformIsWindows = process.platform === 'win32';
 
+  const platformIsWindows = process.platform === 'win32';
   if (platformIsWindows) {
     Main._window.webContents.session.on('will-download', (event, downloadItem) => {
       const defaultFilename = downloadItem.getFilename();
