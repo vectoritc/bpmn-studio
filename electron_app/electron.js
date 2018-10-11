@@ -370,6 +370,23 @@ Main._createMainWindow = function () {
 
       downloadItem.setSavePath(filename);
     });
+
+    electron.ipcMain.on('open_single_diagram', (event) => {
+      const result = dialog.showOpenDialog({
+        filters: [
+          {
+            name: "BPMN",
+            extensions: ["bpmn", "xml"]
+          },
+          {
+            name: 'All Files',
+            extensions: ['*']
+          }
+        ]
+      });
+
+      event.sender.send('import_opened_single_diagram', result);
+    });
   }
 
   function setElectronMenubar() {

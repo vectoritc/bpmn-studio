@@ -124,7 +124,15 @@ export class SolutionExplorerPanel {
   }
 
   public async openDiagram(): Promise<void> {
-    this.singleDiagramInput.click();
+    // this.singleDiagramInput.click();
+    const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
+
+    ipcRenderer.send('open_single_diagram');
+    ipcRenderer.once('import_opened_single_diagram', (event: Event, result: File) => {
+      const filePath: string = result[0];
+
+      return this._openSingleDiagramOrDisplyError(filePath);
+    });
   }
 
   public async openSolution(): Promise<void> {
