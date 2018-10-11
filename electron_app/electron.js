@@ -334,6 +334,7 @@ Main._createMainWindow = function () {
     Main._window = null;
   });
 
+  setOpenSingleDiagram();
 
   const platformIsWindows = process.platform === 'win32';
 
@@ -372,22 +373,24 @@ Main._createMainWindow = function () {
     });
   }
 
-  electron.ipcMain.on('open_single_diagram', (event) => {
-    const result = dialog.showOpenDialog({
-      filters: [
-        {
-          name: "BPMN",
-          extensions: ["bpmn", "xml"]
-        },
-        {
-          name: 'All Files',
-          extensions: ['*']
-        }
-      ]
-    });
+  function setOpenSingleDiagram() {
+    electron.ipcMain.on('open_single_diagram', (event) => {
+      const result = dialog.showOpenDialog({
+        filters: [
+          {
+            name: "BPMN",
+            extensions: ["bpmn", "xml"]
+          },
+          {
+            name: 'All Files',
+            extensions: ['*']
+          }
+        ]
+      });
 
-    event.sender.send('import_opened_single_diagram', result);
-  });
+      event.sender.send('import_opened_single_diagram', result);
+    });
+  }
 
   function setElectronMenubar() {
 
