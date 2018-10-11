@@ -361,6 +361,8 @@ export class SolutionExplorerSolution {
   }
 
   /**
+   * Checks, if the input contains any non empty values.
+   *
    * @return true, if the input has some non empty value.
    */
   private _hasNonEmptyValue(input: HTMLInputElement): boolean {
