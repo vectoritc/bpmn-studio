@@ -18,6 +18,7 @@ import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/er
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
+import { ValidationError } from 'sequelize';
 import {IDiagramCreationService} from '../../../contracts';
 import {NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
@@ -202,9 +203,14 @@ export class SolutionExplorerSolution {
   @computedFrom('_validationController.errors.length')
   public get diagramCreationErrors(): Array<ValidateResult> {
 
-    if (this._validationController.errors.length === 1) {
-      if (this._validationController.errors[0].message === 'invalid-character') {
-        this._validationController.errors[0].message = this._buildInvalidCharactersMessage();
+    const validationErrorPresent: boolean = this._validationController.errors.length === 1;
+
+    if (validationErrorPresent) {
+      const currentValidationError: ValidateResult = this._validationController.errors[0];
+      const validationErrorIsInvalidCharacter: boolean = currentValidationError.message === 'invalid-character';
+
+      if (validationErrorIsInvalidCharacter) {
+        currentValidationError.message = this._buildInvalidCharactersMessage();
       }
     }
 
