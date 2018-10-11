@@ -16,6 +16,7 @@ const openAboutWindow = require('about-window').default;
 // following code tells the frontend the name and content of that file;
 // this 'get_opened_file' request is emmitted in src/main.ts.
 let filePath;
+let studioIsFirstLoaded = true;
 
 const Main = {};
 
@@ -260,7 +261,12 @@ Main._initializeApplication = function () {
 
       // for non-windows
       app.on('open-file', (event, path) => {
-        filePath = path;
+        if (studioIsFirstLoaded === true) {
+          filePath = path;
+        } else {
+          filePath = undefined;
+          answerOpenFileEvent(path);
+        }
       });
 
     });
@@ -280,6 +286,7 @@ Main._initializeApplication = function () {
      */
     electron.ipcMain.on('waiting-for-double-file-click', (mainEvent) => {
       this.fileOpenMainEvent = mainEvent;
+      studioIsFirstLoaded = false;
     });
 
     electron.ipcMain.on('get_opened_file', (event) => {
