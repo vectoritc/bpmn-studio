@@ -26,7 +26,7 @@ export class SolutionExplorerPanel {
   private _notificationService: NotificationService;
   private _router: Router;
   // TODO: Add typings
-  private _ipcRenderer: any;
+  private _ipcRenderer: any | null = null;
 
   private _subscriptions: Array<Subscription> = [];
 
