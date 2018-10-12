@@ -63,41 +63,12 @@ export class SolutionExplorerSolution {
     german: /^[äöüß]/i,
   };
 
-  private _invalidCharacters: Array<string> = [];
-
   private _diagramNameValidator: FluentRuleCustomizer<DiagramCreationState, DiagramCreationState> = ValidationRules
       .ensure((state: DiagramCreationState) => state.currentDiagramInputValue)
       .required()
       .withMessage('Diagram name cannot be blank.')
-      .satisfies((input: string) => {
-        /**
-         * We cannot use the `match()` method from the aurelia-validation packet
-         * because it offers no way to return the current input
-         * and parse out the invalid characters from here.
-         *
-         * It is only possible to obtain the current input but it is used
-         * in some specialized aurelia string format which can't be handled
-         * like a primitive value.
-         */
-
-        const inputLetters: Array<string> = input.split('');
-        this._invalidCharacters = inputLetters.filter((letter: string) => {
-          const rules: Array<RegExp> = Object.values(this._diagramValidationRegExpList);
-          const letterIsInvalid: boolean = !rules.some((regExp: RegExp) => {
-            return letter.match(regExp) !== null;
-          });
-
-          return letterIsInvalid;
-        });
-
-        const inputIsInvalid: boolean = this._invalidCharacters.length > 0;
-        if (inputIsInvalid) {
-          return false;
-        }
-
-        return true;
-      })
-      .withMessage(`invalid-character`)
+      .matches(/^[a-z0-9._ \-äöüß]+$/i)
+      .withMessage(`invalid-character \${$value}`)
       .then()
       .satisfies(async(input: string) => {
         // The solution may have changed on the file system.
@@ -227,10 +198,11 @@ export class SolutionExplorerSolution {
     if (validationErrorPresent) {
 
       for (const currentError of this._validationController.errors) {
-        const validationErrorIsInvalidCharacter: boolean = currentError.message === 'invalid-character';
+        const validationErrorIsInvalidCharacter: boolean = currentError.message.startsWith('invalid-character');
 
         if (validationErrorIsInvalidCharacter) {
-          currentError.message = this._getInvalidCharacterErrorMessage();
+          const invalidCharacters: Array<string> = this._getInvalidCharacters(currentError.message);
+          currentError.message = this._getInvalidCharacterErrorMessage(invalidCharacters);
         }
       }
     }
@@ -297,15 +269,38 @@ export class SolutionExplorerSolution {
   }
 
   /**
+   *  Searches in the given input string for all invalid characters and returns
+   *  them as a char array.
+   *
+   * @param input input that contains invalid characters.
+   * @param returns An array that contains all invalid characters.
+   */
+  private _getInvalidCharacters(input: string): Array<string> {
+    const inputLetters: Array<string> = input.split('');
+    const invalidCharacters: Array<string> = inputLetters.filter((letter: string) => {
+      const rules: Array<RegExp> = Object.values(this._diagramValidationRegExpList);
+      const letterIsInvalid: boolean = !rules.some((regExp: RegExp) => {
+        return letter.match(regExp) !== null;
+      });
+
+      return letterIsInvalid;
+    });
+
+    return invalidCharacters;
+  }
+
+  /**
    * Build an error message which lists all invalid characters.
    *
+   * @param invalidCharacters An array that contains all detected invalid
+   * characters.
    * @return A string with an error message that contains all invalid characters
    * of a diagram name.
    */
-  private _getInvalidCharacterErrorMessage(): string {
+  private _getInvalidCharacterErrorMessage(invalidCharacters: Array<string>): string {
     const filteredInvalidCharacters: Array<string> =
-      this._invalidCharacters.filter((current: string, index: number): boolean => {
-        return this._invalidCharacters.indexOf(current) === index;
+      invalidCharacters.filter((current: string, index: number): boolean => {
+        return invalidCharacters.indexOf(current) === index;
       });
 
     return `Invalid Characters: ${filteredInvalidCharacters}`;
