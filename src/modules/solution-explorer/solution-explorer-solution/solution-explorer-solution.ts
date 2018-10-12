@@ -194,17 +194,8 @@ export class SolutionExplorerSolution {
   public get diagramCreationErrors(): Array<ValidateResult> {
 
     const validationErrorPresent: boolean = this._validationController.errors.length >= 1;
-
     if (validationErrorPresent) {
-
-      for (const currentError of this._validationController.errors) {
-        const validationErrorIsInvalidCharacter: boolean = currentError.message.startsWith('invalid-character');
-
-        if (validationErrorIsInvalidCharacter) {
-          const invalidCharacters: Array<string> = this._getInvalidCharacters(currentError.message);
-          currentError.message = this._getInvalidCharacterErrorMessage(invalidCharacters);
-        }
-      }
+      this._setInvalidCharacterMessage(this._validationController.errors);
     }
 
     return this._validationController.errors;
@@ -264,6 +255,26 @@ export class SolutionExplorerSolution {
       if (navigationSuccessful) {
         // TODO: This should be moved into the diagram-detail component.
         this._eventAggregator.publish(environment.events.navBar.updateProcess, diagram);
+      }
+    }
+  }
+
+  /**
+   * Looks in the given Array of validation errors for an invalid character
+   * error message and replace the messages content with the acutal
+   * message and returns a reference to a new array with the mod
+   *
+   * TODO: This method should create a deep copy of an arra< that contains
+   * errors and return it instead of just modifying the reference.
+   *
+   */
+  private _setInvalidCharacterMessage(errors: Array<ValidateResult>): void {
+    for (const currentError of this._validationController.errors) {
+      const validationErrorIsInvalidCharacter: boolean = currentError.message.startsWith('invalid-character');
+
+      if (validationErrorIsInvalidCharacter) {
+        const invalidCharacters: Array<string> = this._getInvalidCharacters(currentError.message);
+        currentError.message = this._getInvalidCharacterErrorMessage(invalidCharacters);
       }
     }
   }
