@@ -198,6 +198,16 @@ export class SolutionExplorerSolution {
   public async deleteDiagram(diagram: IDiagram, event: Event): Promise<void> {
     event.stopPropagation();
 
+    if (this._isDiagramDetailViewOfDiagramOpen(diagram.uri)) {
+      const messageTitle: string = '<h4>Not supported while opened.</h4>';
+      const messageBody: string = 'Deleting of opened diagrams is currenlty not supported. Please switch to another diagram and try again.';
+      const message: string = `${messageTitle}\n${messageBody}`;
+
+      this._notificationService.showNotification(NotificationType.INFO, message);
+
+      return;
+    }
+
     try {
       await this.solutionService.deleteDiagram(diagram);
     } catch (error) {
@@ -210,6 +220,16 @@ export class SolutionExplorerSolution {
 
   public async startRenamingOfDiagram(diagram: IDiagram, event: Event): Promise<void> {
     event.stopPropagation();
+
+    if (this._isDiagramDetailViewOfDiagramOpen(diagram.uri)) {
+      const messageTitle: string = '<h4>Not supported while opened.</h4>';
+      const messageBody: string = 'Renaming of opened diagrams is currenlty not supported. Please switch to another diagram and try again.';
+      const message: string = `${messageTitle}\n${messageBody}`;
+
+      this._notificationService.showNotification(NotificationType.INFO, message);
+
+      return;
+    }
 
     if (this._isCurrenltyRenamingDiagram()) {
       return;
@@ -298,11 +318,15 @@ export class SolutionExplorerSolution {
   }
 
   public canRenameDiagram(): boolean {
-    return !this.solutionIsSingleDiagrams && this._openedSolution && !this._openedSolution.uri.startsWith('http');
+    return !this.solutionIsSingleDiagrams
+            && this._openedSolution
+            && !this._openedSolution.uri.startsWith('http');
   }
 
   public canDeleteDiagram(): boolean {
-    return !this.solutionIsSingleDiagrams && this._openedSolution && !this._openedSolution.uri.startsWith('http');
+    return !this.solutionIsSingleDiagrams
+            && this._openedSolution
+            && !this._openedSolution.uri.startsWith('http');
   }
 
   public get solutionIsNotLoaded(): boolean {
@@ -344,6 +368,26 @@ export class SolutionExplorerSolution {
         this._eventAggregator.publish(environment.events.navBar.updateProcess, diagram);
       }
     }
+  }
+
+  @computedFrom('_router.currentInstruction.config.name')
+  public get currentlyOpenedDiagramUri(): string {
+    const moduleName: string = this._router.currentInstruction.config.name;
+
+    const diagramDetailViewIsNotOpen: boolean = moduleName !== 'diagram-detail';
+    if (diagramDetailViewIsNotOpen) {
+      return undefined;
+    }
+
+    const queryParams: {diagramUri: string} = this._router.currentInstruction.queryParams;
+
+    return queryParams.diagramUri;
+  }
+
+  private _isDiagramDetailViewOfDiagramOpen(diagramUriToCheck: string): boolean {
+    const diagramIsOpened: boolean = diagramUriToCheck === this.currentlyOpenedDiagramUri;
+
+    return diagramIsOpened;
   }
 
   /**
