@@ -334,9 +334,9 @@ Main._createMainWindow = function () {
     Main._window = null;
   });
 
+  setOpenSingleDiagram();
 
   const platformIsWindows = process.platform === 'win32';
-
   if (platformIsWindows) {
     Main._window.webContents.session.on('will-download', (event, downloadItem) => {
       const defaultFilename = downloadItem.getFilename();
@@ -369,6 +369,25 @@ Main._createMainWindow = function () {
       }
 
       downloadItem.setSavePath(filename);
+    });
+  }
+
+  function setOpenSingleDiagram() {
+    electron.ipcMain.on('open_single_diagram', (event) => {
+      const openedFile = dialog.showOpenDialog({
+        filters: [
+          {
+            name: "BPMN",
+            extensions: ["bpmn", "xml"]
+          },
+          {
+            name: 'All Files',
+            extensions: ['*']
+          }
+        ]
+      });
+
+      event.sender.send('import_opened_single_diagram', openedFile);
     });
   }
 
