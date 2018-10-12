@@ -121,6 +121,10 @@ export class SolutionExplorerSolution {
   public detached(): void {
     clearInterval(this._refreshIntervalTask);
     this._disposeSubscriptions();
+
+    if (this.isCreateDiagramInputShown()) {
+      this._resetDiagramCreation();
+    }
   }
 
   /**
