@@ -31,7 +31,7 @@ interface IDiagramNameInputState {
   currentDiagramInputValue: string;
 }
 
-interface DiagramCreationState extends IDiagramNameInputState {
+interface IDiagramCreationState extends IDiagramNameInputState {
   isCreateDiagramInputShown: boolean;
 }
 
@@ -54,7 +54,7 @@ export class SolutionExplorerSolution {
   private _inspectView: string;
   private _subscriptions: Array<Subscription>;
   private _openedSolution: ISolution;
-  private _diagramCreationState: DiagramCreationState = {
+  private _diagramCreationState: IDiagramCreationState = {
     currentDiagramInputValue: undefined,
     isCreateDiagramInputShown: false,
   };
