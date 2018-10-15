@@ -91,19 +91,19 @@ export class SolutionExplorerSolution {
 
         return diagramNamePassesNameChecks;
       })
-      .withMessage(`invalid-character \${$value}`)
+      .withMessage(`Your diagram contains at least on invalid-character: \${$value}`)
       .satisfies((input: string) => {
         const diagramDoesNotStartWithWhitespace: boolean = !input.match(/^\s/);
 
         return diagramDoesNotStartWithWhitespace;
       })
-      .withMessage('The diagram name can not start with a whitespace.')
+      .withMessage('The diagram name can not start with a whitespace character.')
       .satisfies((input: string) => {
         const diagramDoesNotEndWithWhitespace: boolean = !input.match(/\s+$/);
 
         return diagramDoesNotEndWithWhitespace;
       })
-      .withMessage('The diagram name can not end with a withspace.')
+      .withMessage('The diagram name can not end with a whitespace character.')
       .then()
       .satisfies(async(input: string) => {
         // The solution may have changed on the file system.
@@ -413,7 +413,7 @@ export class SolutionExplorerSolution {
    *
    */
   private _setInvalidCharacterMessage(errors: Array<ValidateResult>): void {
-    const invalidCharacterString: string = 'invalid-character';
+    const invalidCharacterString: string = 'Your diagram contains at least on invalid-character: ';
 
     for (const currentError of this._validationController.errors) {
       const validationErrorIsInvalidCharacter: boolean = currentError.message.startsWith(invalidCharacterString);
