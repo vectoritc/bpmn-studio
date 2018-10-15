@@ -157,7 +157,7 @@ export class SolutionExplorerSolution {
       this._resetDiagramCreation();
     }
 
-    if (this._isCurrenltyRenamingDiagram()) {
+    if (this._isCurrentlyRenamingDiagram()) {
       this._resetDiagramRenaming();
     }
   }
@@ -200,7 +200,7 @@ export class SolutionExplorerSolution {
 
     if (this._isDiagramDetailViewOfDiagramOpen(diagram.uri)) {
       const messageTitle: string = '<h4>Not supported while opened.</h4>';
-      const messageBody: string = 'Deleting of opened diagrams is currenlty not supported. Please switch to another diagram and try again.';
+      const messageBody: string = 'Deleting of opened diagrams is currently not supported. Please switch to another diagram and try again.';
       const message: string = `${messageTitle}\n${messageBody}`;
 
       this._notificationService.showNotification(NotificationType.INFO, message);
@@ -224,7 +224,7 @@ export class SolutionExplorerSolution {
 
     if (this._isDiagramDetailViewOfDiagramOpen(diagram.uri)) {
       const messageTitle: string = '<h4>Not supported while opened.</h4>';
-      const messageBody: string = 'Renaming of opened diagrams is currenlty not supported. Please switch to another diagram and try again.';
+      const messageBody: string = 'Renaming of opened diagrams is currently not supported. Please switch to another diagram and try again.';
       const message: string = `${messageTitle}\n${messageBody}`;
 
       this._notificationService.showNotification(NotificationType.INFO, message);
@@ -232,7 +232,7 @@ export class SolutionExplorerSolution {
       return;
     }
 
-    if (this._isCurrenltyRenamingDiagram()) {
+    if (this._isCurrentlyRenamingDiagram()) {
       return;
     }
 
@@ -270,7 +270,7 @@ export class SolutionExplorerSolution {
     }
 
     // Dont allow new diagram creation, if already renaming another diagram.
-    if (this._isCurrenltyRenamingDiagram()) {
+    if (this._isCurrentlyRenamingDiagram()) {
       return;
     }
 
@@ -290,7 +290,7 @@ export class SolutionExplorerSolution {
     return this._diagramCreationState.isCreateDiagramInputShown;
   }
 
-  public _isCurrenltyRenamingDiagram(): boolean {
+  public _isCurrentlyRenamingDiagram(): boolean {
     return this._currentlyRenamingDiagram !== null;
   }
 
