@@ -31,8 +31,8 @@ export class Heatmap {
   }
 
   /**
-   * This method gets called if the processModelId was changed,
-   * removes the bpmn-js container from the DOM and destroys the viewer.
+   * This method gets called if the processModelId was changed.
+   * It removes the bpmn-js container from the DOM and destroys the viewer.
    *
    * After that the heatmap will be attached again for the new
    * processModelId.
