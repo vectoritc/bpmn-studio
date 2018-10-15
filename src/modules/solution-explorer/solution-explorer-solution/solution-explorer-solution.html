@@ -10,8 +10,8 @@
     <ul class="diagram-list">
 
       <li if.bind="_diagramCreationState.isCreateDiagramInputShown" class="diagram-create">
-        <div class="diagram-create__input-holder">
-          <input ref="createNewDiagramInput" class.bind="hasValidationErrors ? 'diagram-create__input-holder__input diagram-create__input-holder__input--error' : 'diagram-create__input-holder__input'" type="text" value.bind="_diagramCreationState.currentDiagramInputValue & validateOnChange">
+        <div class="input-holder">
+          <input ref="createNewDiagramInput" class.bind="hasValidationErrors ? 'input-holder__input input-holder__input--error' : 'input-holder__input'" type="text" value.bind="_diagramCreationState.currentDiagramInputValue & validateOnChange">
         </div>
         <ul if.bind="hasValidationErrors" class="diagram-create__errors">
           <li repeat.for="error of diagramValidationErrors" class="diagram-create__errors__error">${error.message}</li>
@@ -26,8 +26,8 @@
         id="diagramList-${diagram.name}">
 
         <div if.bind="currentlyRenamingDiagramUri === diagram.uri" class="diagram-rename-container">
-          <div class="diagram-rename-container__input-holder">
-            <input ref="renameDiagramInput" class.bind="hasValidationErrors ? 'diagram-rename-container__input-holder__input diagram-rename-container__input-holder__input--error' : 'diagram-rename-container__input-holder__input'" type="text" value.bind="_diagramRenamingState.currentDiagramInputValue & validateOnChange">
+          <div class="input-holder">
+            <input ref="renameDiagramInput" class.bind="hasValidationErrors ? 'input-holder__input input-holder__input--error' : 'input-holder__input'" type="text" value.bind="_diagramRenamingState.currentDiagramInputValue & validateOnChange">
           </div>
           <ul if.bind="hasValidationErrors" class="diagram-rename-container__errors">
             <li repeat.for="error of diagramValidationErrors" class="diagram-rename-container__errors__error">${error.message}</li>

@@ -13,16 +13,16 @@
   list-style: none;
 }
 
-.diagram-create__input-holder {
+.input-holder {
   flex: 1;
   margin-right: 15px;
 }
 
-.diagram-create__input-holder__input {
+.input-holder__input {
   width: 100%;
 }
 
-.diagram-create__input-holder__input--error {
+.input-holder__input--error {
   border-color: red;
 }
 
@@ -44,19 +44,6 @@
   width: 100%;
   padding: 2.5px 0px;
   list-style: none;
-}
-
-.diagram-rename-container__input-holder {
-  flex: 1;
-  margin-right: 15px;
-}
-
-.diagram-rename-container__input-holder__input {
-  width: 100%;
-}
-
-.diagram-rename-container__input-holder__input--error {
-  border-color: red;
 }
 
 .diagram-rename-container__errors {
