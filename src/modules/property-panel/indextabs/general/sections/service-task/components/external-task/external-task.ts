@@ -33,6 +33,11 @@ export class ExternalTask {
     this.selectedTopic = this.businessObjInPanel.topic;
   }
 
+  public modelChanged(): void {
+    this.businessObjInPanel = this.model.elementInPanel.businessObject;
+    this.selectedTopic = this.businessObjInPanel.topic;
+  }
+
   public selectedTopicChanged(): void {
     this.businessObjInPanel.topic = this.selectedTopic;
   }

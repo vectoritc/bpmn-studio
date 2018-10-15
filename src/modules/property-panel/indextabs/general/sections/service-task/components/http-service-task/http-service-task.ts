@@ -40,6 +40,12 @@ export class HttpServiceTask {
     this._initHttpServiceTask();
   }
 
+  public modelChanged(): void {
+    this.businessObjInPanel = this.model.elementInPanel.businessObject;
+
+    this._initHttpServiceTask();
+  }
+
   public selectedHttpParamsChanged(): void {
     if (!this.selectedHttpBody) {
       this.selectedHttpAuth = undefined;

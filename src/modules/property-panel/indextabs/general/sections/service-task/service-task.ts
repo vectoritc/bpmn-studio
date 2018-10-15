@@ -1,7 +1,6 @@
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject, observable} from 'aurelia-framework';
 
-import { TerminateEndEventReachedMessage } from '@process-engine/management_api_contracts/dist/data_models/messages/bpmn_events';
 import {IBpmnModdle,
         IExtensionElement,
         IModdleElement,
@@ -47,7 +46,7 @@ export class ServiceTaskSection implements ISection {
     return this._elementIsServiceTask(element);
   }
 
-  public selectedKindChanged(newKind: string, oldKind: string): void {
+  public selectedKindChanged(): void {
     const selectedKindIsHttpService: boolean = this.selectedKind === 'HttpService';
     const selectedKindIsExternalTask: boolean = this.selectedKind === 'external';
 
