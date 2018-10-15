@@ -40,10 +40,6 @@ export class HttpServiceTask {
     this._initHttpServiceTask();
   }
 
-  public detached(): void {
-    console.log('detached called');
-  }
-
   public selectedHttpParamsChanged(): void {
     if (!this.selectedHttpBody) {
       this.selectedHttpAuth = undefined;
