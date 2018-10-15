@@ -333,7 +333,7 @@ Main._createMainWindow = function () {
   // broken if we carry a file system link as the last item of the browser
   // history.
   Main._window.loadURL('/');
-  
+
   Main._window.on('closed', () => {
     Main._window = null;
   });
