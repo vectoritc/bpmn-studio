@@ -52,7 +52,7 @@ export class ServiceTaskSection implements ISection {
 
     if (selectedKindIsHttpService) {
       let moduleProperty: IProperty = this._getProperty('module');
-      const modulePropertyDoesNotExist: boolean = moduleProperty !== undefined;
+      const modulePropertyDoesNotExist: boolean = moduleProperty === undefined;
 
       if (modulePropertyDoesNotExist) {
         this._createModuleProperty();
@@ -115,8 +115,8 @@ export class ServiceTaskSection implements ISection {
   }
 
   private _initServiceTask(): void {
-    const extensionElementDoesNotExist: boolean = this.businessObjInPanel.extensionElements !== undefined
-                                         || this.businessObjInPanel.extensionElements.values !== undefined;
+    const extensionElementDoesNotExist: boolean = this.businessObjInPanel.extensionElements === undefined
+                                         || this.businessObjInPanel.extensionElements.values === undefined;
 
     if (extensionElementDoesNotExist) {
       this._createExtensionElement();
