@@ -13,8 +13,8 @@ export class DiagramTrashFolderService {
    * @return the folder to which deleted diagrams should be moved.
    */
   public getDiagramTrashFolder(): string {
-    const notInitialized: boolean = this._diagramTrashFolder === null;
-    if (notInitialized) {
+    const serviceIsNotInitialized: boolean = this._diagramTrashFolder === null;
+    if (serviceIsNotInitialized) {
       this._initializeDiagramTrashFolder();
     }
 

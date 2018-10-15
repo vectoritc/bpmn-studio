@@ -25,8 +25,8 @@ function registerFileSystem(container: Container): void {
   const diagramTrashFolderService: DiagramTrashFolderService = new DiagramTrashFolderService();
   const diagramTrashFolder: string = diagramTrashFolderService.getDiagramTrashFolder();
 
-  const fileSystemrepository: SolutionExplorerFileSystemRepository = new SolutionExplorerFileSystemRepository(diagramTrashFolder);
-  const filesystemSolutionexplorerService: SolutionExplorerService = new SolutionExplorerService(fileSystemrepository);
+  const fileSystemRepository: SolutionExplorerFileSystemRepository = new SolutionExplorerFileSystemRepository(diagramTrashFolder);
+  const filesystemSolutionexplorerService: SolutionExplorerService = new SolutionExplorerService(fileSystemRepository);
 
   container.registerInstance('SolutionExplorerServiceFileSystem', filesystemSolutionexplorerService);
 }
