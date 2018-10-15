@@ -211,8 +211,8 @@ export class SolutionExplorerSolution {
     try {
       await this.solutionService.deleteDiagram(diagram);
     } catch (error) {
-
       const message: string = `Unable to delete the diagram: ${error.message}`;
+
       this._notificationService.showNotification(NotificationType.ERROR, message);
     }
 
@@ -598,8 +598,8 @@ export class SolutionExplorerSolution {
 
     if (inputWasNotValid) {
       if (!silent) {
-
         const message: string = 'Please resolve all errors first.';
+
         this._notificationService.showNotification(NotificationType.INFO, message);
       }
 
