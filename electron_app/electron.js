@@ -16,6 +16,7 @@ const openAboutWindow = require('about-window').default;
 // following code tells the frontend the name and content of that file;
 // this 'get_opened_file' request is emmitted in src/main.ts.
 let filePath;
+let isInitialized = false;
 
 const Main = {};
 
@@ -53,7 +54,7 @@ Main.execute = function () {
 
     const argumentIsFilePath = argv[1].endsWith('.bpmn');
     const argumentIsSignInRedirect = argv[1].startsWith('bpmn-studio://signin-oidc');
-    const argumentIsSignOutRefirect = argv[1].startsWith('bpmn-studio://signout-oidc');
+    const argumentIsSignOutRedirect = argv[1].startsWith('bpmn-studio://signout-oidc');
 
     if (argumentIsFilePath) {
       const filePath = argv[1];
@@ -62,7 +63,7 @@ Main.execute = function () {
       answerOpenFileEvent(filePath)
     }
 
-    if (argumentIsSignInRedirect || argumentIsSignOutRefirect) {
+    if (argumentIsSignInRedirect || argumentIsSignOutRedirect) {
       const redirectUrl = argv[1];
 
       Main._window.loadURL(`file://${__dirname}/../index.html`);
@@ -260,7 +261,13 @@ Main._initializeApplication = function () {
 
       // for non-windows
       app.on('open-file', (event, path) => {
-        filePath = path;
+        filePath = isInitialized
+                   ? undefined
+                   : path;
+
+        if (isInitialized) {
+          answerOpenFileEvent(path);
+        }
       });
 
     });
@@ -280,9 +287,7 @@ Main._initializeApplication = function () {
      */
     electron.ipcMain.on('waiting-for-double-file-click', (mainEvent) => {
       this.fileOpenMainEvent = mainEvent;
-      app.on('open-file', (event, path) => {
-        answerOpenFileEvent(path);
-      })
+      isInitialized = true;
     });
 
     electron.ipcMain.on('get_opened_file', (event) => {
