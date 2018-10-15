@@ -2,6 +2,7 @@
   <require from="./service-task.css"></require>
   <require from="../../../../styles/sections.css"></require>
   <require from="./components/http-service-task/http-service-task"></require>
+  <require from="./components/external-task/external-task"></require>
   <div class="section-panel panel--grow">
     <div class="panel__heading">Service Task</div>
     <div class="panel__content">
@@ -20,4 +21,5 @@
     </div>
   </div>
   <http-service-task if.bind="selectedKind === 'HttpService'" model.bind="model"></http-service-task>
+  <external-task if.bind="selectedKind === 'external'" model.bind="model"></external-task>
 </template>
