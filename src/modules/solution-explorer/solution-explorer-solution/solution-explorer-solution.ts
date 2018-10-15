@@ -319,14 +319,10 @@ export class SolutionExplorerSolution {
         return invalidCharacters.indexOf(current) === index;
       });
 
-    const messagePrefix: string = ((): string => {
-      const onlyOneInvalidCharacterFound: boolean = filteredInvalidCharacters.length === 1;
-      if (onlyOneInvalidCharacterFound) {
-        return 'invalid character: ';
-      } else {
-        return 'invalid characters: ';
-      }
-    })();
+    const onlyOneInvalidCharacterFound: boolean = filteredInvalidCharacters.length === 1;
+    const messagePrefix: string = onlyOneInvalidCharacterFound
+                                  ? 'invalid character: '
+                                  : 'invalid characters: ';
 
     return `${messagePrefix} ${filteredInvalidCharacters}`;
   }
