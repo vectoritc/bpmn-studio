@@ -40,26 +40,26 @@
   list-style-type: disc;
 }
 
-.diagram-rename {
+.diagram-rename-container {
   width: 100%;
   padding: 2.5px 0px;
   list-style: none;
 }
 
-.diagram-rename__input-holder {
+.diagram-rename-container__input-holder {
   flex: 1;
   margin-right: 15px;
 }
 
-.diagram-rename__input-holder__input {
+.diagram-rename-container__input-holder__input {
   width: 100%;
 }
 
-.diagram-rename__input-holder__input--error {
+.diagram-rename-container__input-holder__input--error {
   border-color: red;
 }
 
-.diagram-rename__errors {
+.diagram-rename-container__errors {
   padding: 2px;
   padding-left: 25px;
   margin-right: 15px;
@@ -68,7 +68,7 @@
   color: red;
 }
 
-.diagram-rename__errors__error {
+.diagram-rename-container__errors__error {
   list-style-type: disc;
 }
 

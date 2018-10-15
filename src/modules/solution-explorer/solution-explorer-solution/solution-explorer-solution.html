@@ -25,12 +25,12 @@
         click.delegate="navigateToDetailView(diagram)"
         id="diagramList-${diagram.name}">
 
-        <div if.bind="currentlyRenamingDiagramUri === diagram.uri" class="diagram-rename">
-          <div class="diagram-rename__input-holder">
-            <input ref="renameDiagramInput" class.bind="hasValidationErrors ? 'diagram-rename__input-holder__input diagram-rename__input-holder__input--error' : 'diagram-rename__input-holder__input'" type="text" value.bind="_diagramRenamingState.currentDiagramInputValue & validateOnChange">
+        <div if.bind="currentlyRenamingDiagramUri === diagram.uri" class="diagram-rename-container">
+          <div class="diagram-rename-container__input-holder">
+            <input ref="renameDiagramInput" class.bind="hasValidationErrors ? 'diagram-rename-container__input-holder__input diagram-rename-container__input-holder__input--error' : 'diagram-rename-container__input-holder__input'" type="text" value.bind="_diagramRenamingState.currentDiagramInputValue & validateOnChange">
           </div>
-          <ul if.bind="hasValidationErrors" class="diagram-rename__errors">
-            <li repeat.for="error of diagramValidationErrors" class="diagram-rename__errors__error">${error.message}</li>
+          <ul if.bind="hasValidationErrors" class="diagram-rename-container__errors">
+            <li repeat.for="error of diagramValidationErrors" class="diagram-rename-container__errors__error">${error.message}</li>
           </ul>
         </div>
 
