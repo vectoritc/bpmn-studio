@@ -261,10 +261,12 @@ Main._initializeApplication = function () {
 
       // for non-windows
       app.on('open-file', (event, path) => {
-        if (studioIsFirstLoaded === true) {
-          filePath = path;
-        } else {
-          filePath = undefined;
+        filePath = studioIsFirstLoaded
+                   ? path
+                   : undefined;
+
+        const studioNotFirstLoaded = studioIsFirstLoaded === false;
+        if (studioNotFirstLoaded) {
           answerOpenFileEvent(path);
         }
       });
