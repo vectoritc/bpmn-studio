@@ -93,11 +93,15 @@ export class SolutionExplorerSolution {
       })
       .withMessage(`invalid-character \${$value}`)
       .satisfies((input: string) => {
-        return !input.match(/^\s/);
+        const diagramDoesNotStartWithWhitespace: boolean = !input.match(/^\s/);
+
+        return diagramDoesNotStartWithWhitespace;
       })
-      .withMessage('The diagram name can not start with a withspace.')
+      .withMessage('The diagram name can not start with a whitespace.')
       .satisfies((input: string) => {
-        return !input.match(/\s+$/);
+        const diagramDoesNotEndWithWhitespace: boolean = !input.match(/\s+$/);
+
+        return diagramDoesNotEndWithWhitespace;
       })
       .withMessage('The diagram name can not end with a withspace.')
       .then()
