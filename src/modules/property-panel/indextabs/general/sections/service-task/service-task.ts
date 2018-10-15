@@ -31,7 +31,7 @@ export class ServiceTaskSection implements ISection {
   private _eventAggregator: EventAggregator;
   private _moddle: IBpmnModdle;
 
-  constructor(eventAggregator: EventAggregator) {
+  constructor(eventAggregator?: EventAggregator) {
     this._eventAggregator = eventAggregator;
   }
 
