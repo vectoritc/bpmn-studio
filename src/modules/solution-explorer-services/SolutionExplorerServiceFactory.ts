@@ -24,8 +24,8 @@ export class SolutionExplorerServiceFactory {
   public async newFileSystemSolutionExplorer(): Promise<ISolutionExplorerService> {
     const diagramTrashFolder: string = this._diagramTrashFolderService.getDiagramTrashFolder();
 
-    const fileSystemrepository: SolutionExplorerFileSystemRepository = new SolutionExplorerFileSystemRepository(diagramTrashFolder);
-    const createdService: SolutionExplorerService = new SolutionExplorerService(fileSystemrepository);
+    const fileSystemRepository: SolutionExplorerFileSystemRepository = new SolutionExplorerFileSystemRepository(diagramTrashFolder);
+    const createdService: SolutionExplorerService = new SolutionExplorerService(fileSystemRepository);
 
     return createdService;
   }
