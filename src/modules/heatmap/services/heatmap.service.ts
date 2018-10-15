@@ -118,7 +118,7 @@ export class HeatmapService implements IHeatmapService {
    *
    * @param elementRegistry IElementRegistry; The elementRegistry module from bpmn-js
    *
-   * This method finds all associations (IConnection) on FlowNodes which are defined with 'RT:'
+   * This method finds all associations (IConnection) on flowNodes which are defined with 'RT:'
    * and returns them as IFlowNodeAssociation.
    *
    * A flowNodeAssociation contains the associationId, the elementId with which
@@ -245,7 +245,7 @@ export class HeatmapService implements IHeatmapService {
    * @param elementRegistry IElementRegistry;
    * @param elementToColor FlowNodeRuntimeInformation | ITokenPositionAndCount | ActiveToken;
    *
-   * Returns the IShape of an elements id.
+   * Returns the IShape of an element.
    * The IShape is needed by the IModeling module from bpmn-js to color an element.
    */
   private _getShape(elementRegistry: IElementRegistry, elementToColor: FlowNodeRuntimeInformation | ITokenPositionAndCount | ActiveToken): IShape {
