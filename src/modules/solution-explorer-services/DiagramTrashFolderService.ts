@@ -7,10 +7,10 @@ export class DiagramTrashFolderService {
   private _diagramTrashFolder: string | null = null;
 
   /**
-   * Gets the diagram trash folder location on the current platform. This
+   * Gets the trash folder location on the current platform. This
    * method will ensure that the target folder exists.
    *
-   * @return the folder to write deleted diagrams to.
+   * @return the folder to which deleted diagrams should be moved.
    */
   public getDiagramTrashFolder(): string {
     const notInitialized: boolean = this._diagramTrashFolder === null;
