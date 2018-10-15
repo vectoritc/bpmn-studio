@@ -324,7 +324,10 @@ export class SolutionExplorerSolution {
                                   ? 'invalid character: '
                                   : 'invalid characters: ';
 
-    return `${messagePrefix} ${filteredInvalidCharacters}`;
+    // Replaces the commas between the invalid characters by a space to increase readability.
+    const invalidCharacterString: string = `${filteredInvalidCharacters}`.replace(/(.)./g, '$1 ');
+
+    return `${messagePrefix} ${invalidCharacterString}`;
   }
 
   /**
