@@ -42,6 +42,7 @@ export class HttpServiceTask {
 
   public modelChanged(): void {
     this.businessObjInPanel = this.model.elementInPanel.businessObject;
+    this._moddle = this.model.modeler.get('moddle');
 
     this._initHttpServiceTask();
   }
