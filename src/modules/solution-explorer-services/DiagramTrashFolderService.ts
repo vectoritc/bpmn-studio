@@ -32,8 +32,8 @@ export class DiagramTrashFolderService {
     const homeFolder: string = os.homedir();
 
     // On macOS we can use the ~/.Trash/ folder.
-    const isMacOS: boolean = os.platform() === 'darwin';
-    if (isMacOS) {
+    const platformIsMacOS: boolean = os.platform() === 'darwin';
+    if (platformIsMacOS) {
       const systemTrashFolder: string = path.join(homeFolder, '.Trash');
       this._diagramTrashFolder = systemTrashFolder;
 
