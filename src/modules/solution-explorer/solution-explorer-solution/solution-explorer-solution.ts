@@ -96,6 +96,10 @@ export class SolutionExplorerSolution {
         return !input.match(/^\s/);
       })
       .withMessage('The diagram name can not start with a withspace.')
+      .satisfies((input: string) => {
+        return !input.match(/\s+$/);
+      })
+      .withMessage('The diagram name can not end with a withspace.')
       .then()
       .satisfies(async(input: string) => {
         // The solution may have changed on the file system.
