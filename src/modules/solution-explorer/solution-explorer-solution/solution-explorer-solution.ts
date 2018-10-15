@@ -18,7 +18,7 @@ import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/er
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
-import {IDiagramCreationService} from '../../../contracts';
+import {IDiagramCreationService, IUserInputValidationRule} from '../../../contracts';
 import {NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
@@ -56,12 +56,19 @@ export class SolutionExplorerSolution {
     isCreateDiagramInputShown: false,
   };
   private _refreshIntervalTask: any;
+
+  private _diagramValidationRegExpList: IUserInputValidationRule = {
+    alphanumeric: /^[a-z0-9]/i,
+    specialCharacters: /^[._ -]/i,
+    german: /^[äöüß]/i,
+  };
+
   private _diagramNameValidator: FluentRuleCustomizer<DiagramCreationState, DiagramCreationState> = ValidationRules
       .ensure((state: DiagramCreationState) => state.currentDiagramInputValue)
       .required()
       .withMessage('Diagram name cannot be blank.')
       .matches(/^[a-z0-9._ \-äöüß]+$/i)
-      .withMessage('The diagram name did not pass the input validation. Please consult the manual for valid names.')
+      .withMessage(`invalid-character \${$value}`)
       .then()
       .satisfies(async(input: string) => {
         // The solution may have changed on the file system.
@@ -185,6 +192,12 @@ export class SolutionExplorerSolution {
 
   @computedFrom('_validationController.errors.length')
   public get diagramCreationErrors(): Array<ValidateResult> {
+
+    const validationErrorPresent: boolean = this._validationController.errors.length >= 1;
+    if (validationErrorPresent) {
+      this._setInvalidCharacterMessage(this._validationController.errors);
+    }
+
     return this._validationController.errors;
   }
 
@@ -247,6 +260,77 @@ export class SolutionExplorerSolution {
   }
 
   /**
+   * Looks in the given Array of validation errors for an invalid character
+   * error message and replace the messages content with the acutal
+   * message and returns a reference to a new array with the mod
+   *
+   * TODO: This method should create a deep copy of an arra< that contains
+   * errors and return it instead of just modifying the reference.
+   *
+   */
+  private _setInvalidCharacterMessage(errors: Array<ValidateResult>): void {
+    const invalidCharacterString: string = 'invalid-character';
+
+    for (const currentError of this._validationController.errors) {
+      const validationErrorIsInvalidCharacter: boolean = currentError.message.startsWith(invalidCharacterString);
+
+      if (validationErrorIsInvalidCharacter) {
+        const invalidCharacters: Array<string> = this._getInvalidCharacters(currentError.message);
+
+        currentError.message = this._getInvalidCharacterErrorMessage(invalidCharacters);
+      }
+    }
+  }
+
+  /**
+   *  Searches in the given input string for all invalid characters and returns
+   *  them as a char array.
+   *
+   * @param input input that contains invalid characters.
+   * @param returns An array that contains all invalid characters.
+   */
+  private _getInvalidCharacters(input: string): Array<string> {
+    const inputLetters: Array<string> = input.split('');
+    const invalidCharacters: Array<string> = inputLetters.filter((letter: string) => {
+      const rules: Array<RegExp> = Object.values(this._diagramValidationRegExpList);
+      const letterIsInvalid: boolean = !rules.some((regExp: RegExp) => {
+        return letter.match(regExp) !== null;
+      });
+
+      return letterIsInvalid;
+    });
+
+    return invalidCharacters;
+  }
+
+  /**
+   * Build an error message which lists all invalid characters.
+   *
+   * @param invalidCharacters An array that contains all detected invalid
+   * characters.
+   * @return A string with an error message that contains all invalid characters
+   * of a diagram name.
+   */
+  private _getInvalidCharacterErrorMessage(invalidCharacters: Array<string>): string {
+
+    // This filters all duplicate invalid characters so that the list contains each character only once.
+    const filteredInvalidCharacters: Array<string> =
+      invalidCharacters.filter((current: string, index: number): boolean => {
+        return invalidCharacters.indexOf(current) === index;
+      });
+
+    const onlyOneInvalidCharacterFound: boolean = filteredInvalidCharacters.length === 1;
+    const messagePrefix: string = onlyOneInvalidCharacterFound
+                                  ? 'invalid character: '
+                                  : 'invalid characters: ';
+
+    // Replaces the commas between the invalid characters by a space to increase readability.
+    const invalidCharacterString: string = `${filteredInvalidCharacters}`.replace(/(.)./g, '$1 ');
+
+    return `${messagePrefix} ${invalidCharacterString}`;
+  }
+
+  /**
    * The event listener used to handle mouse clicks during the diagram
    * creation.
    *
@@ -296,6 +380,8 @@ export class SolutionExplorerSolution {
   }
 
   /**
+   * Checks, if the input contains any non empty values.
+   *
    * @return true, if the input has some non empty value.
    */
   private _hasNonEmptyValue(input: HTMLInputElement): boolean {
