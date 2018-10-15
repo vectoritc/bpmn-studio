@@ -115,3 +115,8 @@
   border: none;
   cursor: pointer;
 }
+
+.toast-message__headline {
+  width: calc(100% + 30px);
+  margin-left: -30px;
+}

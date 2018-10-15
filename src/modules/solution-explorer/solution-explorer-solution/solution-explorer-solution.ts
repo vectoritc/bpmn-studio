@@ -199,7 +199,7 @@ export class SolutionExplorerSolution {
     event.stopPropagation();
 
     if (this._isDiagramDetailViewOfDiagramOpen(diagram.uri)) {
-      const messageTitle: string = '<h4>Not supported while opened.</h4>';
+      const messageTitle: string = '<h4 class="toast-message__headline">Not supported while opened.</h4>';
       const messageBody: string = 'Deleting of opened diagrams is currently not supported. Please switch to another diagram and try again.';
       const message: string = `${messageTitle}\n${messageBody}`;
 
@@ -223,7 +223,7 @@ export class SolutionExplorerSolution {
     event.stopPropagation();
 
     if (this._isDiagramDetailViewOfDiagramOpen(diagram.uri)) {
-      const messageTitle: string = '<h4>Not supported while opened.</h4>';
+      const messageTitle: string = '<h4 class="toast-message__headline">Not supported while opened.</h4>';
       const messageBody: string = 'Renaming of opened diagrams is currently not supported. Please switch to another diagram and try again.';
       const message: string = `${messageTitle}\n${messageBody}`;
 
