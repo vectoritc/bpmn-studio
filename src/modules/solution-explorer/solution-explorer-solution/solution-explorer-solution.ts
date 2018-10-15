@@ -269,11 +269,14 @@ export class SolutionExplorerSolution {
    *
    */
   private _setInvalidCharacterMessage(errors: Array<ValidateResult>): void {
+    const invalidCharacterString: string = 'invalid-character';
+
     for (const currentError of this._validationController.errors) {
-      const validationErrorIsInvalidCharacter: boolean = currentError.message.startsWith('invalid-character');
+      const validationErrorIsInvalidCharacter: boolean = currentError.message.startsWith(invalidCharacterString);
 
       if (validationErrorIsInvalidCharacter) {
         const invalidCharacters: Array<string> = this._getInvalidCharacters(currentError.message);
+
         currentError.message = this._getInvalidCharacterErrorMessage(invalidCharacters);
       }
     }
