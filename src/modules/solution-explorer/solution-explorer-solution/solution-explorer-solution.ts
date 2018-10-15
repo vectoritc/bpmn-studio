@@ -553,7 +553,6 @@ export class SolutionExplorerSolution {
     if (enterWasPressed) {
       const inputWasNotValid: boolean = !await this._finishDiagramRenaming(false);
       if (inputWasNotValid) {
-
         return;
       }
 
