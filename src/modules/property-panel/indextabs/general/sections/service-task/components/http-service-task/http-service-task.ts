@@ -1,6 +1,7 @@
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 
+import { method } from 'bluebird';
 import {IBpmnModdle,
         IModdleElement,
         IPageModel,
@@ -48,11 +49,16 @@ export class HttpServiceTask {
   }
 
   public selectedHttpParamsChanged(): void {
-    if (!this.selectedHttpBody) {
+    const noHttpBodySelected: boolean = this.selectedHttpBody === undefined;
+
+    if (noHttpBodySelected) {
       this.selectedHttpAuth = undefined;
       this.selectedHttpContentType = undefined;
     }
-    if (!this.selectedHttpUrl) {
+
+    const noHttpUrlSelected: boolean = this.selectedHttpUrl === undefined;
+
+    if (noHttpUrlSelected) {
       this.selectedHttpBody = undefined;
       this.selectedHttpAuth = undefined;
       this.selectedHttpContentType = undefined;
@@ -64,11 +70,10 @@ export class HttpServiceTask {
 
   public selectedHttpMethodChanged(): void {
     const property: IProperty = this._getProperty('method');
-    if (property !== undefined) {
-      property.value = this.selectedHttpMethod;
-      this._getParamsFromInput();
-      this._publishDiagramChange();
-    }
+    property.value = this.selectedHttpMethod;
+
+    this._getParamsFromInput();
+    this._publishDiagramChange();
   }
 
   private _createProperty(propertyName: string): void {
@@ -93,11 +98,9 @@ export class HttpServiceTask {
   }
 
   private _getProperty(propertyName: string): IProperty {
-    let property: IProperty;
-
     const propertiesElement: IPropertiesElement = this._getPropertiesElement();
 
-    property = propertiesElement.values.find((element: IProperty) => {
+    const property: IProperty = propertiesElement.values.find((element: IProperty) => {
       return element.name === propertyName;
     });
 
@@ -130,13 +133,19 @@ export class HttpServiceTask {
 
     params = params + '"' + this.selectedHttpUrl + '"';
 
-    if (this.selectedHttpBody) {
+    const httpBodySelected: boolean = this.selectedHttpBody !== undefined;
+
+    if (httpBodySelected) {
       params = params + ', ' + this.selectedHttpBody + '';
     }
 
     let header: IAuthParameters;
+    const httpContentTypeSelected: boolean = this.selectedHttpContentType !== undefined;
+    const httpAuthorizationSelected: boolean = this.selectedHttpAuth !== undefined;
+    const noHttpAuthorizationSelected: boolean = this.selectedHttpAuth === undefined;
+    const noHttpContentTypeSelected: boolean = this.selectedHttpContentType === undefined;
 
-    if (this.selectedHttpContentType && !this.selectedHttpAuth) {
+    if (httpContentTypeSelected && noHttpAuthorizationSelected) {
       header = {
         headers: {
           'Content-Type': this.selectedHttpContentType,
@@ -147,7 +156,7 @@ export class HttpServiceTask {
       params = params + ', ' + stringifiedHeader;
     }
 
-    if (this.selectedHttpAuth && !this.selectedHttpContentType) {
+    if (httpAuthorizationSelected && noHttpContentTypeSelected) {
       header = {
         headers: {
           Authorization: this.selectedHttpAuth,
@@ -159,7 +168,7 @@ export class HttpServiceTask {
       params = params + ', ' + stringifiedHeader;
     }
 
-    if (this.selectedHttpAuth && this.selectedHttpContentType) {
+    if (httpContentTypeSelected && httpAuthorizationSelected) {
       header = {
         headers: {
           Authorization: this.selectedHttpAuth,
@@ -220,6 +229,11 @@ export class HttpServiceTask {
         headerParam = headerParam.substring(0, splittedParamString[headerParamsPosition].length - 1);
       }
 
+      /**
+       * This Regex replaces all single quotes with double quotes and adds double
+       * quotes to non quotet keys.
+       * This way we make sure that JSON.parse() can handle the given string.
+       */
       const headerParamDoubleQuoted: string = headerParam.replace(/(\s*?{\s*?|\s*?,\s*?)(['"])?([a-zA-Z0-9]+)(['"])?:/g, '$1"$3":');
 
       const headerObject: IAuthParameters = JSON.parse(headerParamDoubleQuoted);

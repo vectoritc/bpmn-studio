@@ -52,15 +52,14 @@ export class ServiceTaskSection implements ISection {
 
     if (selectedKindIsHttpService) {
       let moduleProperty: IProperty = this._getProperty('module');
-      const modulePropertyExists: boolean = moduleProperty !== undefined;
+      const modulePropertyDoesNotExist: boolean = moduleProperty !== undefined;
 
-      if (modulePropertyExists) {
-        moduleProperty.value = this.selectedKind;
-      } else {
+      if (modulePropertyDoesNotExist) {
         this._createModuleProperty();
-        moduleProperty = this._getProperty('module');
-        moduleProperty.value = this.selectedKind;
       }
+
+      moduleProperty = this._getProperty('module');
+      moduleProperty.value = this.selectedKind;
 
       this._resetExternalTaskValues();
 
@@ -116,16 +115,16 @@ export class ServiceTaskSection implements ISection {
   }
 
   private _initServiceTask(): void {
-    const extensionElementExists: boolean = this.businessObjInPanel.extensionElements !== undefined
-                                            && this.businessObjInPanel.extensionElements.values !== undefined;
+    const extensionElementDoesNotExist: boolean = this.businessObjInPanel.extensionElements !== undefined
+                                         || this.businessObjInPanel.extensionElements.values !== undefined;
 
-    if (!extensionElementExists) {
+    if (extensionElementDoesNotExist) {
       this._createExtensionElement();
     }
 
-    const propertyElementExists: boolean = this._getPropertiesElement() !== undefined;
+    const propertyElementDoesNotExists: boolean = this._getPropertiesElement() === undefined;
 
-    if (!propertyElementExists) {
+    if (propertyElementDoesNotExists) {
       this._createPropertiesElement();
     }
 
