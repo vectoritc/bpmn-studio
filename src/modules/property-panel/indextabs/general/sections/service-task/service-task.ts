@@ -118,11 +118,12 @@ export class ServiceTaskSection implements ISection {
   private _initServiceTask(): void {
     const extensionElementExists: boolean = this.businessObjInPanel.extensionElements !== undefined
                                             && this.businessObjInPanel.extensionElements.values !== undefined;
-    const propertyElementExists: boolean = this._getPropertiesElement() !== undefined;
 
     if (!extensionElementExists) {
       this._createExtensionElement();
     }
+
+    const propertyElementExists: boolean = this._getPropertiesElement() !== undefined;
 
     if (!propertyElementExists) {
       this._createPropertiesElement();
