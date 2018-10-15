@@ -312,6 +312,8 @@ export class SolutionExplorerSolution {
    * of a diagram name.
    */
   private _getInvalidCharacterErrorMessage(invalidCharacters: Array<string>): string {
+
+    // This filters all duplicate invalid characters so that the list contains each character only once.
     const filteredInvalidCharacters: Array<string> =
       invalidCharacters.filter((current: string, index: number): boolean => {
         return invalidCharacters.indexOf(current) === index;
