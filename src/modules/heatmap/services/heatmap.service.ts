@@ -118,7 +118,7 @@ export class HeatmapService implements IHeatmapService {
    *
    * @param elementRegistry IElementRegistry; The elementRegistry module from bpmn-js
    *
-   * This method finds all associations (IConnection) on flownodes which are defined with 'RT:'
+   * This method finds all associations (IConnection) on FlowNodes which are defined with 'RT:'
    * and returns them as IFlowNodeAssociation.
    *
    * A flowNodeAssociation contains the associationId, the elementId with which
