@@ -91,7 +91,7 @@ export class SolutionExplorerSolution {
 
         return diagramNamePassesNameChecks;
       })
-      .withMessage(`Your diagram contains at least on invalid-character: \${$value}`)
+      .withMessage(`Your diagram contains at least one invalid-character: \${$value}`)
       .satisfies((input: string) => {
         const diagramDoesNotStartWithWhitespace: boolean = !input.match(/^\s/);
 
@@ -413,7 +413,7 @@ export class SolutionExplorerSolution {
    *
    */
   private _setInvalidCharacterMessage(errors: Array<ValidateResult>): void {
-    const invalidCharacterString: string = 'Your diagram contains at least on invalid-character: ';
+    const invalidCharacterString: string = 'Your diagram contains at least one invalid-character: ';
 
     for (const currentError of this._validationController.errors) {
       const validationErrorIsInvalidCharacter: boolean = currentError.message.startsWith(invalidCharacterString);
