@@ -91,7 +91,19 @@ export class SolutionExplorerSolution {
 
         return diagramNamePassesNameChecks;
       })
-      .withMessage(`invalid-character \${$value}`)
+      .withMessage(`Your diagram contains at least one invalid-character: \${$value}`)
+      .satisfies((input: string) => {
+        const diagramDoesNotStartWithWhitespace: boolean = !input.match(/^\s/);
+
+        return diagramDoesNotStartWithWhitespace;
+      })
+      .withMessage('The diagram name can not start with a whitespace character.')
+      .satisfies((input: string) => {
+        const diagramDoesNotEndWithWhitespace: boolean = !input.match(/\s+$/);
+
+        return diagramDoesNotEndWithWhitespace;
+      })
+      .withMessage('The diagram name can not end with a whitespace character.')
       .then()
       .satisfies(async(input: string) => {
         // The solution may have changed on the file system.
@@ -401,7 +413,7 @@ export class SolutionExplorerSolution {
    *
    */
   private _setInvalidCharacterMessage(errors: Array<ValidateResult>): void {
-    const invalidCharacterString: string = 'invalid-character';
+    const invalidCharacterString: string = 'Your diagram contains at least one invalid-character: ';
 
     for (const currentError of this._validationController.errors) {
       const validationErrorIsInvalidCharacter: boolean = currentError.message.startsWith(invalidCharacterString);
@@ -451,10 +463,7 @@ export class SolutionExplorerSolution {
         return invalidCharacters.indexOf(current) === index;
       });
 
-    const onlyOneInvalidCharacterFound: boolean = filteredInvalidCharacters.length === 1;
-    const messagePrefix: string = onlyOneInvalidCharacterFound
-                                  ? 'invalid character: '
-                                  : 'invalid characters: ';
+    const messagePrefix: string = 'Your diagram contains at least one invalid-character: ';
 
     // Replaces the commas between the invalid characters by a space to increase readability.
     const invalidCharacterString: string = `${filteredInvalidCharacters}`.replace(/(.)./g, '$1 ');
