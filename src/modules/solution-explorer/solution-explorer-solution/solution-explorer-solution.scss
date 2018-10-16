@@ -8,20 +8,21 @@
 }
 
 .diagram-create {
+  width: 100%;
   padding: 2.5px 0px;
   list-style: none;
 }
 
-.diagram-create__input-holder {
+.input-holder {
   flex: 1;
   margin-right: 15px;
 }
 
-.diagram-create__input-holder__input {
+.input-holder__input {
   width: 100%;
 }
 
-.diagram-create__input-holder__input--error {
+.input-holder__input--error {
   border-color: red;
 }
 
@@ -36,6 +37,25 @@
 }
 
 .diagram-create__errors__error {
+  list-style-type: disc;
+}
+
+.diagram-rename-container {
+  width: 100%;
+  padding: 2.5px 0px;
+  list-style: none;
+}
+
+.rename-errors-container__error {
+  padding: 2px;
+  padding-left: 25px;
+  margin-right: 15px;
+  border: 2px solid red;
+  border-top: none;
+  color: red;
+}
+
+.rename-errors-container__error__error {
   list-style-type: disc;
 }
 
@@ -55,10 +75,13 @@
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  text-decoration: underline;
 }
 
-.diagram-entry:hover .diagram-entry__name {
+.diagram-entry:hover {
   text-decoration: underline;
+  display: flex;
 }
 
 .diagram-entry__actions {
@@ -71,7 +94,7 @@
   }
 }
 
-.diagram-entry:hover .diagram-entry__actions {
+.diagram-entry__actions {
   display: flex;
 }
 
@@ -80,4 +103,9 @@
   background: transparent;
   border: none;
   cursor: pointer;
+}
+
+.toast-message__headline {
+  width: calc(100% + 30px);
+  margin-left: -30px;
 }

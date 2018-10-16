@@ -10,11 +10,11 @@
     <ul class="diagram-list">
 
       <li if.bind="_diagramCreationState.isCreateDiagramInputShown" class="diagram-create">
-        <div class="diagram-create__input-holder">
-          <input ref="createNewDiagramInput" class.bind="hasDiagramCreationErrors ? 'diagram-create__input-holder__input diagram-create__input-holder__input--error' : 'diagram-create__input-holder__input'" type="text" value.bind="_diagramCreationState.currentDiagramInputValue & validateOnChange">
+        <div class="input-holder">
+          <input ref="createNewDiagramInput" class.bind="hasValidationErrors ? 'input-holder__input input-holder__input--error' : 'input-holder__input'" type="text" value.bind="_diagramCreationState.currentDiagramInputValue & validateOnChange">
         </div>
-        <ul if.bind="hasDiagramCreationErrors" class="diagram-create__errors">
-          <li repeat.for="error of diagramCreationErrors" class="diagram-create__errors__error">${error.message}</li>
+        <ul if.bind="hasValidationErrors" class="diagram-create__errors">
+          <li repeat.for="error of diagramValidationErrors" class="diagram-create__errors__error">${error.message}</li>
         </ul>
       </li>
 
@@ -25,39 +25,52 @@
         click.delegate="navigateToDetailView(diagram)"
         id="diagramList-${diagram.name}">
 
-        <i if.bind="shouldFileIconBeShown()" class="diagram-entry__icon fa fa-cogs"></i>
-        <span class="diagram-entry__name">
-          ${diagram.name}
-        </span>
-
-        <div class="diagram-entry__actions">
-          <button
-            class="button"
-            if.bind="canRenameDiagram()"
-            click.delegate="alert()"
-            title="Rename the diagram">
-
-            <i class="fa fa-pencil-alt"></i>
-          </button>
-
-          <button
-            class="button"
-            if.bind="solutionIsSingleDiagrams"
-            click.delegate="closeDiagram(diagram)"
-            title="Close the diagram">
-
-            <i class="fa fa-times"></i>
-          </button>
-
-          <button
-            class="button"
-            if.bind="canDeleteDiagram()"
-            click.delegate="alert()"
-            title="Delete the diagram">
-
-            <i class="fa fa-trash"></i>
-          </button>
+        <div if.bind="currentlyRenamingDiagramUri === diagram.uri" class="diagram-rename-container">
+          <div class="input-holder">
+            <input ref="renameDiagramInput" class.bind="hasValidationErrors ? 'input-holder__input input-holder__input--error' : 'input-holder__input'" type="text" value.bind="_diagramRenamingState.currentDiagramInputValue & validateOnChange">
+          </div>
+          <ul if.bind="hasValidationErrors" class="rename-errors-container__error">
+            <li repeat.for="error of diagramValidationErrors" class="rename-errors-container__error__error">${error.message}</li>
+          </ul>
         </div>
+
+        <template if.bind="currentlyRenamingDiagramUri !== diagram.uri">
+
+          <i if.bind="shouldFileIconBeShown()" class="diagram-entry__icon fa fa-cogs"></i>
+          <span class="diagram-entry__name">
+            ${diagram.name}
+          </span>
+
+          <div class="diagram-entry__actions">
+            <button
+              class.bind="diagram.uri !== currentlyOpenedDiagramUri ? 'button' : 'button button--disabled'"
+              if.bind="canRenameDiagram()"
+              click.delegate="startRenamingOfDiagram(diagram, $event)"
+              title.bind="diagram.uri !== currentlyOpenedDiagramUri ? 'Rename the diagram' : 'The diagram is currently open, it cant be renamed.'">
+
+              <i class="fa fa-pencil-alt"></i>
+            </button>
+
+            <button
+              class="button"
+              if.bind="solutionIsSingleDiagrams"
+              click.delegate="closeDiagram(diagram, $event)"
+              title="Close the diagram">
+
+              <i class="fa fa-times"></i>
+            </button>
+
+            <button
+              class.bind="diagram.uri !== currentlyOpenedDiagramUri ? 'button' : 'button button--disabled'"
+              if.bind="canDeleteDiagram()"
+              click.delegate="deleteDiagram(diagram, $event)"
+              title.bind="diagram.uri !== currentlyOpenedDiagramUri ? 'Delete the diagram' : 'The diagram is currently open, it cant be deleted.'">
+
+              <i class="fa fa-trash"></i>
+            </button>
+          </div>
+
+        </template>
 
       </li>
 
