@@ -56,6 +56,16 @@ export class ConfigPanel {
       this.baseRoute = baseRouteConfiguredInLocalStorage;
     }
 
+    const customOpenIdRoute: string = window.localStorage.getItem('openIdRoute');
+    const customOpenIdRouteSet: boolean = customOpenIdRoute !== null
+                                          && customOpenIdRoute !== undefined
+                                          && customOpenIdRoute !== '';
+
+    console.log(customOpenIdRoute);
+    if (customOpenIdRouteSet) {
+      this.config.openIdConnect.authority = customOpenIdRoute;
+    }
+
     this.isLoggedInToProcessEngine = this._authenticationService.isLoggedIn();
 
     this._subscriptions = [
@@ -86,6 +96,12 @@ export class ConfigPanel {
       window.localStorage.setItem('processEngineRoute', '');
     } else {
       window.localStorage.setItem('processEngineRoute', this.baseRoute);
+    }
+
+    if (this.config.openIdConnect.authority === window.localStorage.getItem('openIdRoute')) {
+      window.localStorage.setItem('openIdRoute', '');
+    } else {
+      window.localStorage.setItem('openIdRoute', this.config.openIdConnect.authority);
     }
 
     oidcConfig.userManagerSettings.authority = this.config.openIdConnect.authority;
