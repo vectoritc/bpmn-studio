@@ -463,10 +463,7 @@ export class SolutionExplorerSolution {
         return invalidCharacters.indexOf(current) === index;
       });
 
-    const onlyOneInvalidCharacterFound: boolean = filteredInvalidCharacters.length === 1;
-    const messagePrefix: string = onlyOneInvalidCharacterFound
-                                  ? 'invalid character: '
-                                  : 'invalid characters: ';
+    const messagePrefix: string = 'Your diagram contains at least one invalid-character: ';
 
     // Replaces the commas between the invalid characters by a space to increase readability.
     const invalidCharacterString: string = `${filteredInvalidCharacters}`.replace(/(.)./g, '$1 ');
