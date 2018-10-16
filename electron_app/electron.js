@@ -16,6 +16,7 @@ const openAboutWindow = require('about-window').default;
 // following code tells the frontend the name and content of that file;
 // this 'get_opened_file' request is emmitted in src/main.ts.
 let filePath;
+let isInitialized = false;
 
 const Main = {};
 
@@ -53,7 +54,7 @@ Main.execute = function () {
 
     const argumentIsFilePath = argv[1].endsWith('.bpmn');
     const argumentIsSignInRedirect = argv[1].startsWith('bpmn-studio://signin-oidc');
-    const argumentIsSignOutRefirect = argv[1].startsWith('bpmn-studio://signout-oidc');
+    const argumentIsSignOutRedirect = argv[1].startsWith('bpmn-studio://signout-oidc');
 
     if (argumentIsFilePath) {
       const filePath = argv[1];
@@ -62,7 +63,7 @@ Main.execute = function () {
       answerOpenFileEvent(filePath)
     }
 
-    if (argumentIsSignInRedirect || argumentIsSignOutRefirect) {
+    if (argumentIsSignInRedirect || argumentIsSignOutRedirect) {
       const redirectUrl = argv[1];
 
       Main._window.loadURL(`file://${__dirname}/../index.html`);
@@ -102,18 +103,7 @@ Main._initializeApplication = function () {
   });
 
   initializeDeepLinking();
-
-  const platformIsNotWindows = process.platform !== 'win32';
-  // The AutoUpdater gets not initialized on windows, because it is broken currently
-  // See https://github.com/process-engine/bpmn-studio/issues/715
-  if (platformIsNotWindows) {
-    initializeAutoUpdater();
-  } else {
-    electron.ipcMain.on('add_autoupdater_listener', (event) => {
-      event.sender.send('autoupdater_windows_notification');
-    });
-  }
-
+  initializeAutoUpdater();
   initializeFileOpenFeature();
 
   function initializeDeepLinking() {
@@ -260,7 +250,13 @@ Main._initializeApplication = function () {
 
       // for non-windows
       app.on('open-file', (event, path) => {
-        filePath = path;
+        filePath = isInitialized
+                   ? undefined
+                   : path;
+
+        if (isInitialized) {
+          answerOpenFileEvent(path);
+        }
       });
 
     });
@@ -280,9 +276,7 @@ Main._initializeApplication = function () {
      */
     electron.ipcMain.on('waiting-for-double-file-click', (mainEvent) => {
       this.fileOpenMainEvent = mainEvent;
-      app.on('open-file', (event, path) => {
-        answerOpenFileEvent(path);
-      })
+      isInitialized = true;
     });
 
     electron.ipcMain.on('get_opened_file', (event) => {
@@ -334,9 +328,9 @@ Main._createMainWindow = function () {
     Main._window = null;
   });
 
+  setOpenSingleDiagram();
 
   const platformIsWindows = process.platform === 'win32';
-
   if (platformIsWindows) {
     Main._window.webContents.session.on('will-download', (event, downloadItem) => {
       const defaultFilename = downloadItem.getFilename();
@@ -369,6 +363,25 @@ Main._createMainWindow = function () {
       }
 
       downloadItem.setSavePath(filename);
+    });
+  }
+
+  function setOpenSingleDiagram() {
+    electron.ipcMain.on('open_single_diagram', (event) => {
+      const openedFile = dialog.showOpenDialog({
+        filters: [
+          {
+            name: "BPMN",
+            extensions: ["bpmn", "xml"]
+          },
+          {
+            name: 'All Files',
+            extensions: ['*']
+          }
+        ]
+      });
+
+      event.sender.send('import_opened_single_diagram', openedFile);
     });
   }
 

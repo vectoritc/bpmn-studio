@@ -25,6 +25,8 @@ export class SolutionExplorerPanel {
   private _eventAggregator: EventAggregator;
   private _notificationService: NotificationService;
   private _router: Router;
+  // TODO: Add typings
+  private _ipcRenderer: any | null = null;
 
   private _subscriptions: Array<Subscription> = [];
 
@@ -41,6 +43,10 @@ export class SolutionExplorerPanel {
     this._eventAggregator = eventAggregator;
     this._notificationService = notificationService;
     this._router = router;
+
+    if (this.canReadFromFileSystem()) {
+      this._ipcRenderer = (window as any).nodeRequire('electron').ipcRenderer;
+    }
   }
 
   public async bind(): Promise<void> {
@@ -120,11 +126,29 @@ export class SolutionExplorerPanel {
     const uri: string = event.target.files[0].path;
     this.singleDiagramInput.value = '';
 
-    return this._openSingleDiagramOrDisplyError(uri);
+    return this._openSingleDiagramOrDisplayError(uri);
   }
 
   public async openDiagram(): Promise<void> {
-    this.singleDiagramInput.click();
+    const canNotReadFromFileSystem: boolean = !this.canReadFromFileSystem();
+    if (canNotReadFromFileSystem) {
+      this.singleDiagramInput.click();
+
+      return;
+    }
+
+    this._ipcRenderer.send('open_single_diagram');
+
+    this._ipcRenderer.once('import_opened_single_diagram', (event: Event, openedFile: File) => {
+      const noFileSelected: boolean = openedFile === null;
+      if (noFileSelected) {
+        return;
+      }
+
+      const filePath: string = openedFile[0];
+
+      return this._openSingleDiagramOrDisplayError(filePath);
+    });
   }
 
   public async openSolution(): Promise<void> {
@@ -135,7 +159,7 @@ export class SolutionExplorerPanel {
     return (window as any).nodeRequire;
   }
 
-  private async _openSingleDiagramOrDisplyError(uri: string): Promise<void> {
+  private async _openSingleDiagramOrDisplayError(uri: string): Promise<void> {
     try {
       const openedDiagram: IDiagram = await this.solutionExplorerList.openSingleDiagram(uri);
       await this._navigateToDetailView(openedDiagram);
@@ -155,35 +179,29 @@ export class SolutionExplorerPanel {
 
   private _electronFileOpeningHook = async(_: Event, pathToFile: string): Promise<void> => {
     const uri: string = pathToFile;
-    this._openSingleDiagramOrDisplyError(uri);
+    this._openSingleDiagramOrDisplayError(uri);
   }
 
   private _registerElectronFileOpeningHooks(): void {
-    // TODO: Add typings
-    const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
-
     // Register handler for double-click event fired from "electron.js".
-    ipcRenderer.on('double-click-on-file', this._electronFileOpeningHook);
+    this._ipcRenderer.on('double-click-on-file', this._electronFileOpeningHook);
 
     // Send event to signal the component is ready to handle the event.
-    ipcRenderer.send('waiting-for-double-file-click');
+    this._ipcRenderer.send('waiting-for-double-file-click');
 
     // Check if there was a double click before BPMN-Studio was loaded.
-    const fileInfo: IFile = ipcRenderer.sendSync('get_opened_file');
+    const fileInfo: IFile = this._ipcRenderer.sendSync('get_opened_file');
 
     if (fileInfo.path) {
       // There was a file opened before BPMN-Studio was loaded, open it.
       const uri: string = fileInfo.path;
-      this._openSingleDiagramOrDisplyError(uri);
+      this._openSingleDiagramOrDisplayError(uri);
     }
   }
 
   private _removeElectronFileOpeningHooks(): void {
-    // TODO: Add typings
-    const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
-
     // Register handler for double-click event fired from "electron.js".
-    ipcRenderer.removeListener('double-click-on-file', this._electronFileOpeningHook);
+    this._ipcRenderer.removeListener('double-click-on-file', this._electronFileOpeningHook);
   }
 
   private _openDiagramOnDropBehaviour: EventListener = async(event: DragEvent): Promise<void> => {
@@ -198,7 +216,7 @@ export class SolutionExplorerPanel {
 
     const openingPromises: Array<Promise<void>> = urisToOpen
       .map((uri: string): Promise<void> => {
-        return this._openSingleDiagramOrDisplyError(uri);
+        return this._openSingleDiagramOrDisplayError(uri);
       });
 
     await Promise.all(openingPromises);
