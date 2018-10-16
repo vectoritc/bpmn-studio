@@ -3,12 +3,7 @@ import {bindable} from 'aurelia-framework';
 import * as hljs from 'highlight.js';
 import 'highlightjs-line-numbers.js';
 
-const highlightEngine: {
-  // tslint:disable-next-line:prefer-method-signature
-  highlightBlock: (element: HTMLElement) => void;
-  // tslint:disable-next-line:prefer-method-signature
-  lineNumbersBlock: (element: HTMLElement) => void;
-} = hljs as hljs;
+const highlightEngine: hljs = hljs as hljs;
 
 export class BpmnXmlView {
 
@@ -17,6 +12,10 @@ export class BpmnXmlView {
   @bindable({ defaultBindingMode: bindingMode.oneWay }) public newXML: string;
 
   public attached(): void {
+    highlightEngine.configure({
+      languages: ['xml'],
+    });
+
     if (this.codeElement) {
       this.highlight();
     }
