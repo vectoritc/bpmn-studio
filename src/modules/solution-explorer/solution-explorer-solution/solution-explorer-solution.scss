@@ -76,26 +76,24 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  text-decoration: underline;
 }
 
-.diagram-entry:hover {
+.diagram-entry:hover .diagram-entry__name {
   text-decoration: underline;
-  display: flex;
 }
 
 .diagram-entry__actions {
   display: none;
 }
 
+.diagram-entry:hover .diagram-entry__actions {
+  display: flex;
+}
+
 @media (any-hover: none) {
   .diagram-entry__actions {
     display: flex;
   }
-}
-
-.diagram-entry__actions {
-  display: flex;
 }
 
 .diagram-entry__actions button {
