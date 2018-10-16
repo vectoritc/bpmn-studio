@@ -94,20 +94,36 @@ export class TokenViewer {
 
         const historyEntryHasPayload: boolean = historyEntry.payload !== undefined;
         if (historyEntryHasPayload) {
-          for (const load in historyEntry.payload) {
-            const payloadEntry: IPayLoadEntry = {
-              name: load,
-              values: [],
-            };
+          const payload: any = historyEntry.payload;
 
-            for (const entry in historyEntry.payload[load]) {
-              payloadEntry.values.push({
-                title: entry,
-                value: JSON.stringify(historyEntry.payload[load][entry]),
-              });
+          const payloadIsNotAnObjectOrArray: boolean = typeof payload !== 'object';
+          if (payloadIsNotAnObjectOrArray) {
+            tokenEntry.payload.push({name: '0', values: [{title: '0', value: payload}]});
+          } else {
+            for (const loadIndex in payload) {
+              const currentPayload: any = payload[loadIndex];
+              const payloadEntry: IPayLoadEntry = {
+                name: loadIndex,
+                values: [],
+              };
+
+              const entryIsNotAnObjectOrArray: boolean = typeof currentPayload !== 'object';
+              if (entryIsNotAnObjectOrArray) {
+                payloadEntry.values.push({
+                  title: '0',
+                  value: JSON.stringify(currentPayload),
+                });
+              } else {
+                for (const entryIndex in currentPayload) {
+                  payloadEntry.values.push({
+                    title: entryIndex,
+                    value: JSON.stringify(currentPayload[entryIndex]),
+                  });
+                }
+              }
+
+              tokenEntry.payload.push(payloadEntry);
             }
-
-            tokenEntry.payload.push(payloadEntry);
           }
         }
 
