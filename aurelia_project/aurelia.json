@@ -163,12 +163,14 @@
             "resources": []
           },
           "jquery",
+          "popper.js",
           {
             "name": "bootstrap",
             "path": "../node_modules/bootstrap/dist",
             "main": "js/bootstrap.min.js",
             "deps": [
-              "jquery"
+              "jquery",
+              "popper.js"
             ],
             "exports": "$",
             "resources": [
@@ -360,16 +362,17 @@
             "name": "socket.io-client",
             "path": "../node_modules/socket.io-client/dist",
             "main": "socket.io"
+          },
+          {
+            "name": "popper.js",
+            "path": "../node_moudles/popper.js/dist/",
+            "main": "popper.js"
           }
         ]
       }
     ],
     "copyFiles": {
-      "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2": "bootstrap/fonts",
-      "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff": "bootstrap/fonts",
-      "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf": "bootstrap/fonts",
       "node_modules/bootstrap/dist/css/bootstrap.css": "bootstrap/css",
-      "node_modules/bootstrap/dist/css/bootstrap-theme.css": "bootstrap/css",
       "src/resources/images/default-avatar.png": "src/resources/images",
       "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf": "@fortawesome/fontawesome-free/webfonts",
       "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff": "@fortawesome/fontawesome-free/webfonts",
