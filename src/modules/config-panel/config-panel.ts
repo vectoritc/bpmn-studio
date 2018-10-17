@@ -2,6 +2,7 @@ import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {Router} from 'aurelia-router';
+
 import {IAuthenticationService} from '../../contracts/authentication/IAuthenticationService';
 import {AuthenticationStateEvent, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
