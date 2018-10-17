@@ -61,7 +61,6 @@ export class ConfigPanel {
                                           && customOpenIdRoute !== undefined
                                           && customOpenIdRoute !== '';
 
-    console.log(customOpenIdRoute);
     if (customOpenIdRouteSet) {
       this.config.openIdConnect.authority = customOpenIdRoute;
     }

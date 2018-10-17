@@ -67,17 +67,19 @@ export class App {
     document.addEventListener('drop', this._preventDefaultBehaviour);
 
     const openIdConnectRoute: string = window.localStorage.getItem('openIdRoute');
+
     const openIdConnectRouteIsCustom: boolean = openIdConnectRoute !== null
-                                              && openIdConnectRoute !== undefined
-                                              && openIdConnectRoute !== '';
-    console.log(openIdConnectRoute);
+                                             && openIdConnectRoute !== undefined
+                                             && openIdConnectRoute !== '';
+
     if (openIdConnectRouteIsCustom) {
-    console.log('Custom Route');
-    environment.openIdConnect.authority = openIdConnectRoute;
-    this._openIdConnect.configuration.userManagerSettings.authority = openIdConnectRoute;
-    this._openIdConnect.userManager._settings._authority = openIdConnectRoute;
-    oidcConfig.userManagerSettings.authority = openIdConnectRoute;
-  }
+      environment.openIdConnect.authority = openIdConnectRoute;
+
+      this._openIdConnect.configuration.userManagerSettings.authority = openIdConnectRoute;
+      this._openIdConnect.userManager._settings._authority = openIdConnectRoute;
+
+      oidcConfig.userManagerSettings.authority = openIdConnectRoute;
+    }
   }
 
   public deactivate(): void {
