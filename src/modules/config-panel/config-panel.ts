@@ -10,6 +10,11 @@ import {NotificationService} from '../notification/notification.service';
 
 @inject(Router, 'NotificationService', EventAggregator, 'AuthenticationService', OpenIdConnect, 'InternalProcessEngineBaseRoute')
 export class ConfigPanel {
+  public isLoggedInToProcessEngine: boolean;
+  @bindable() public baseRoute: string;
+  public internalProcessEngineBaseRoute: string | null;
+  @bindable public authority: string;
+  public readonly defaultAuthority: string = 'http://localhost:5000';
 
   private _router: Router;
   private _notificationService: NotificationService;
@@ -19,12 +24,6 @@ export class ConfigPanel {
   // We use any here, because we need to call private members (see below)
   private _openIdConnect: OpenIdConnect | any;
   private _config: typeof environment = environment;
-
-  public isLoggedInToProcessEngine: boolean;
-  @bindable() public baseRoute: string;
-  public internalProcessEngineBaseRoute: string | null;
-  @bindable public authority: string;
-  public readonly defaultAuthority: string = 'http://localhost:5000';
 
   constructor(router: Router,
               notificationService: NotificationService,
