@@ -127,8 +127,8 @@
   },
   "peerDependencies": {},
   "devDependencies": {
-    "@essential-projects/iam_contracts": "^3.1.0",
     "@essential-projects/event_aggregator": "^2.0.0",
+    "@essential-projects/iam_contracts": "^3.1.0",
     "@fortawesome/fontawesome-free": "^5.1.0",
     "@process-engine/bpmn-js-custom-bundle": "^2.0.0",
     "@process-engine/process_engine_contracts": "^7.0.0",
