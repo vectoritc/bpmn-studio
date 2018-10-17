@@ -163,14 +163,17 @@
             "resources": []
           },
           "jquery",
-          "popper.js",
+          {
+            "name": "popper.js",
+            "path": "../node_modules/popper.js/dist/umd/",
+            "main": "popper.js"
+          },
           {
             "name": "bootstrap",
             "path": "../node_modules/bootstrap/dist",
-            "main": "js/bootstrap.min.js",
+            "main": "js/bootstrap.bundle.min.js",
             "deps": [
-              "jquery",
-              "popper.js"
+              "jquery"
             ],
             "exports": "$",
             "resources": [
@@ -362,11 +365,6 @@
             "name": "socket.io-client",
             "path": "../node_modules/socket.io-client/dist",
             "main": "socket.io"
-          },
-          {
-            "name": "popper.js",
-            "path": "../node_moudles/popper.js/dist/",
-            "main": "popper.js"
           }
         ]
       }
