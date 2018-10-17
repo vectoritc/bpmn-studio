@@ -104,7 +104,7 @@ export class TokenViewer {
                                           ? `"${payload}"`
                                           : payload;
 
-            tokenEntry.payload.push({name: '0', values: [{title: '0', value: payloadValue}]});
+            tokenEntry.payload.push({name: undefined, values: [{title: undefined, value: payloadValue}]});
           } else {
             for (const loadIndex in payload) {
               const currentPayload: any = payload[loadIndex];
@@ -122,7 +122,7 @@ export class TokenViewer {
                                               : currentPayload;
 
                 payloadEntry.values.push({
-                  title: '0',
+                  title: undefined,
                   value: payloadValue,
                 });
               } else {
