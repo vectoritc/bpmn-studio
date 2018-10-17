@@ -98,7 +98,13 @@ export class TokenViewer {
 
           const payloadIsNotAnObjectOrArray: boolean = typeof payload !== 'object';
           if (payloadIsNotAnObjectOrArray) {
-            tokenEntry.payload.push({name: '0', values: [{title: '0', value: payload}]});
+            const payloadIsString: boolean = typeof payload === 'string';
+
+            const payloadValue: string = payloadIsString
+                                          ? `"${payload}"`
+                                          : payload;
+
+            tokenEntry.payload.push({name: '0', values: [{title: '0', value: payloadValue}]});
           } else {
             for (const loadIndex in payload) {
               const currentPayload: any = payload[loadIndex];
@@ -109,9 +115,15 @@ export class TokenViewer {
 
               const entryIsNotAnObjectOrArray: boolean = typeof currentPayload !== 'object';
               if (entryIsNotAnObjectOrArray) {
+                const payloadIsString: boolean = typeof currentPayload === 'string';
+
+                const payloadValue: string = payloadIsString
+                                              ? `"${currentPayload}"`
+                                              : currentPayload;
+
                 payloadEntry.values.push({
                   title: '0',
-                  value: JSON.stringify(currentPayload),
+                  value: payloadValue,
                 });
               } else {
                 for (const entryIndex in currentPayload) {
