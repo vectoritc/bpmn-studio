@@ -56,6 +56,7 @@ export class CallActivitySection implements ISection {
 
   public updateCalledDiagram(): void {
     this._businessObjInPanel.calledElement = this.selectedDiagramId;
+
     this._publishDiagramChange();
   }
 
