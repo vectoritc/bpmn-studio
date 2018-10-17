@@ -127,9 +127,12 @@ export class TokenViewer {
                 });
               } else {
                 for (const entryIndex in currentPayload) {
+                  // tslint:disable-next-line no-magic-numbers
+                  const payloadEntryValue: string = JSON.stringify(currentPayload[entryIndex], null, 2);
+
                   payloadEntry.values.push({
                     title: entryIndex,
-                    value: JSON.stringify(currentPayload[entryIndex]),
+                    value:  payloadEntryValue,
                   });
                 }
               }
