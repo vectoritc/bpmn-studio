@@ -171,7 +171,7 @@
           {
             "name": "bootstrap",
             "path": "../node_modules/bootstrap/dist",
-            "main": "js/bootstrap.bundle.min.js",
+            "main": "js/bootstrap.min.js",
             "deps": [
               "jquery"
             ],
