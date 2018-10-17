@@ -101,10 +101,12 @@ export class ConfigPanel {
       window.localStorage.setItem('processEngineRoute', this.baseRoute);
     }
 
-    if (this.config.openIdConnect.authority === window.localStorage.getItem('openIdRoute')) {
-      window.localStorage.setItem('openIdRoute', '');
-    } else {
-      window.localStorage.setItem('openIdRoute', this.config.openIdConnect.authority);
+    const authorityIsSet: boolean = this.authority !== undefined
+                                 && this.authority !== null
+                                 && this.authority !== '';
+
+    if (authorityIsSet) {
+      window.localStorage.setItem('openIdRoute', this.authority);
     }
 
     oidcConfig.userManagerSettings.authority = this.authority;
