@@ -1,7 +1,7 @@
 <template>
   <require from="./diagram-tools-right.css"></require>
   <div class="diagram-tools-panel">
-    <div class="btn-group" ref="colorSelectionDropdownToggle">
+    <div class="dropdown" ref="colorSelectionDropdownToggle">
       <a class="button dropdown-toggle tool" class.bind="colorPickerEnabled ? '' : 'button--disabled tool--disabled'" disabled.bind="!colorPickerEnabled" data-toggle="dropdown" click.delegate="updateCustomColors()" title.bind="colorPickerEnabled ? 'Set a color for all selected elements' : 'Select an element to set a new color'">
         <i class="fas fa-eye-dropper"></i>
       </a>
