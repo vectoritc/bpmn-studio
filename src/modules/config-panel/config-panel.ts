@@ -23,6 +23,8 @@ export class ConfigPanel {
   public isLoggedInToProcessEngine: boolean;
   @bindable() public baseRoute: string;
   public internalProcessEngineBaseRoute: string | null;
+  @bindable public authority: string;
+  public readonly defaultAuthority: string = 'http://localhost:5000';
 
   constructor(router: Router,
               notificationService: NotificationService,
@@ -62,7 +64,7 @@ export class ConfigPanel {
                                           && customOpenIdRoute !== '';
 
     if (customOpenIdRouteSet) {
-      this.config.openIdConnect.authority = customOpenIdRoute;
+      this.authority = customOpenIdRoute;
     }
 
     this.isLoggedInToProcessEngine = this._authenticationService.isLoggedIn();
@@ -103,15 +105,23 @@ export class ConfigPanel {
       window.localStorage.setItem('openIdRoute', this.config.openIdConnect.authority);
     }
 
-    oidcConfig.userManagerSettings.authority = this.config.openIdConnect.authority;
+    oidcConfig.userManagerSettings.authority = this.authority;
 
     // This dirty way to update the settings is the only way during runtime
-    this._openIdConnect.configuration.userManagerSettings.authority = this.config.openIdConnect.authority;
-    this._openIdConnect.userManager._settings._authority = this.config.openIdConnect.authority;
+    this._openIdConnect.configuration.userManagerSettings.authority = this.authority;
+    this._openIdConnect.userManager._settings._authority = this.authority;
 
     this._notificationService.showNotification(NotificationType.SUCCESS, 'Successfully saved settings!');
 
     this._router.navigateBack();
+  }
+
+  public authorityChanged(): void {
+    this.config.openIdConnect.authority = this.authority;
+  }
+
+  public setDefaultAuthority(): void {
+    this.authority = this.defaultAuthority;
   }
 
   public cancelUpdate(): void {
