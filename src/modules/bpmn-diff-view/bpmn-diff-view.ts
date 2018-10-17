@@ -436,7 +436,6 @@ export class BpmnDiffView {
       this._updateLowerDiff(this.currentXml);
       this.diffModeTitle = `${this.currentXmlIdentifier} vs. ${this.previousXmlIdentifier}`;
     } else if (diffModeIsOldVsNew) {
-      console.log(this.currentDiffMode);
       this._updateLowerDiff(this.previousXml);
       this.diffModeTitle = `${this.previousXmlIdentifier} vs. ${this.currentXmlIdentifier}`;
     } else {
