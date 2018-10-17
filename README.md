@@ -20,7 +20,7 @@ Engine verbunden werden, um diese Diagramme auszuführen.
 
 ### Voraussetzungen
 
-* Node `active LTS`
+* Node [active LTS](https://github.com/nodejs/Release#release-schedule)
 * Laufende ProcessEngine
 
 ### Setup/Installation
