@@ -82,6 +82,10 @@ export class ProcessDefDetail {
     this._processModelId = routeParameters.processModelId;
     this._diagramHasChanged = false;
     await this._refreshProcess();
+    const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
+    if (isRunningInElectron) {
+      this._prepareSaveModalForClosing();
+    }
   }
 
   public attached(): void {
@@ -322,6 +326,47 @@ export class ProcessDefDetail {
     } else {
       await this.showSelectStartEventDialog();
     }
+  }
+
+  private _prepareSaveModalForClosing(): void {
+    const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
+
+    ipcRenderer.on('show-close-modal', () => {
+      const leaveWithoutSaving: EventListenerOrEventListenerObject =  (): void => {
+        this.showSaveOnLeaveModal = false;
+        this._diagramHasChanged = false;
+
+        ipcRenderer.send('can-not-close', false);
+        ipcRenderer.send('close-bpmn-studio');
+      };
+
+      const leaveWithSaving: EventListenerOrEventListenerObject = async(): Promise<void> => {
+        if (this._diagramIsInvalid) {
+          return;
+        }
+
+        this.showSaveOnLeaveModal = false;
+        await this._saveDiagram();
+        this._diagramHasChanged = false;
+
+        ipcRenderer.send('close-bpmn-studio');
+      };
+
+      const doNotLeave: EventListenerOrEventListenerObject = (): void => {
+        this.showSaveOnLeaveModal = false;
+
+        document.getElementById('dontSaveButtonLeaveView').removeEventListener('click', leaveWithoutSaving);
+        document.getElementById('saveButtonLeaveView').addEventListener('click', leaveWithSaving);
+
+        return;
+      };
+
+      document.getElementById('dontSaveButtonLeaveView').addEventListener('click', leaveWithoutSaving);
+      document.getElementById('saveButtonLeaveView').addEventListener('click', leaveWithSaving );
+      document.getElementById('cancelButtonLeaveView').addEventListener('click', doNotLeave);
+
+      this.showSaveOnLeaveModal = true;
+    });
   }
 
   private async _refreshProcess(): Promise<ProcessModelExecution.ProcessModel> {

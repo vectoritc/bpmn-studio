@@ -18,6 +18,8 @@ const openAboutWindow = require('about-window').default;
 let filePath;
 let isInitialized = false;
 
+let canNotClose = false;
+
 const Main = {};
 
 /**
@@ -324,7 +326,25 @@ Main._createMainWindow = function () {
   // history.
   Main._window.loadURL('/');
 
-  Main._window.on('closed', () => {
+  Main._window.on('close', (event) => {
+    if (canNotClose) {
+      event.preventDefault();
+
+      Main._window.webContents.send('show-close-modal');
+
+      return false;
+    }
+  });
+
+  electron.ipcMain.on('close-bpmn-studio', (event) => {
+    Main._window.close();
+  });
+
+  electron.ipcMain.on('can-not-close', (event, data) => {
+    canNotClose = data;
+  });
+
+  Main._window.on('closed', (event) => {
     Main._window = null;
   });
 

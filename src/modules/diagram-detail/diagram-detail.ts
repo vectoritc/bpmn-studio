@@ -70,6 +70,11 @@ export class DiagramDetail {
     this.diagram = await this._solutionExplorerService.openSingleDiagram(routeParameters.diagramUri, this._identity);
 
     this._diagramHasChanged = false;
+
+    const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
+    if (isRunningInElectron) {
+      this._prepareSaveModalForClosing();
+    }
   }
 
   public attached(): void {
@@ -206,6 +211,47 @@ export class DiagramDetail {
       this._notificationService
           .showNotification(NotificationType.ERROR, `Unable to update diagram: ${error}.`);
     }
+  }
+
+  private _prepareSaveModalForClosing(): void {
+    const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
+
+    ipcRenderer.on('show-close-modal', () => {
+      const leaveWithoutSaving: EventListenerOrEventListenerObject =  (): void => {
+        this.showUnsavedChangesModal = false;
+        this._diagramHasChanged = false;
+
+        ipcRenderer.send('can-not-close', false);
+        ipcRenderer.send('close-bpmn-studio');
+      };
+
+      const leaveWithSaving: EventListenerOrEventListenerObject = async(): Promise<void> => {
+        if (this._diagramIsInvalid) {
+          return;
+        }
+
+        this.showUnsavedChangesModal = false;
+        await this._saveDiagram();
+        this._diagramHasChanged = false;
+
+        ipcRenderer.send('close-bpmn-studio');
+      };
+
+      const doNotLeave: EventListenerOrEventListenerObject = (): void => {
+        this.showUnsavedChangesModal = false;
+
+        document.getElementById('dontSaveButtonLeaveView').removeEventListener('click', leaveWithoutSaving);
+        document.getElementById('saveButtonLeaveView').addEventListener('click', leaveWithSaving);
+
+        return;
+      };
+
+      document.getElementById('dontSaveButtonLeaveView').addEventListener('click', leaveWithoutSaving);
+      document.getElementById('saveButtonLeaveView').addEventListener('click', leaveWithSaving );
+      document.getElementById('cancelButtonLeaveView').addEventListener('click', doNotLeave);
+
+      this.showUnsavedChangesModal = true;
+    });
   }
 
   /**
