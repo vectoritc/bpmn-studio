@@ -20,7 +20,7 @@ Engine verbunden werden, um diese Diagramme auszuführen.
 
 ### Voraussetzungen
 
-* Node `>= 6.1.0`
+* Node (active LTS)
 * Laufende ProcessEngine
 
 ### Setup/Installation
