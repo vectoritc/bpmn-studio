@@ -18,8 +18,8 @@ export class ConfigPanel {
   private _subscriptions: Array<Subscription>;
   // We use any here, because we need to call private members (see below)
   private _openIdConnect: OpenIdConnect | any;
+  private _config: typeof environment = environment;
 
-  public config: typeof environment = environment;
   public isLoggedInToProcessEngine: boolean;
   @bindable() public baseRoute: string;
   public internalProcessEngineBaseRoute: string | null;
@@ -43,7 +43,7 @@ export class ConfigPanel {
   }
 
   public attached(): void {
-    this.baseRoute = this.config.baseRoute;
+    this.baseRoute = this._config.baseRoute;
 
     // If there is a route set in the localstorage, we prefer this setting.
     const customProcessEngineRoute: string = window.localStorage.getItem('processEngineRoute');
@@ -117,7 +117,7 @@ export class ConfigPanel {
   }
 
   public authorityChanged(): void {
-    this.config.openIdConnect.authority = this.authority;
+    this._config.openIdConnect.authority = this.authority;
   }
 
   public setDefaultAuthority(): void {
