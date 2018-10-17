@@ -93,7 +93,9 @@ export class ConfigPanel {
     }
 
     this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, this.baseRoute);
-    if (this.baseRoute === window.localStorage.getItem('InternalProcessEngineRoute')) {
+
+    const baseRouteIsInternalProcessEngine: boolean = this.baseRoute === window.localStorage.getItem('InternalProcessEngineRoute');
+    if (baseRouteIsInternalProcessEngine) {
       window.localStorage.setItem('processEngineRoute', '');
     } else {
       window.localStorage.setItem('processEngineRoute', this.baseRoute);
