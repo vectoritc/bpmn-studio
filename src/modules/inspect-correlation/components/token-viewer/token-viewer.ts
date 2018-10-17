@@ -67,90 +67,79 @@ export class TokenViewer {
       return;
     }
 
-    try {
-      /**
-       * Currently, the backend does not offer a method to obtain all
-       * flow nodes of a correlation.
-       *
-       * Because of this, this method will throw a 404 error when the user
-       * views the ProcessToken of a flow node and then switch to a
-       * correlation, where this flow node does not exists.
-       *
-       * TODO: As soon as the backend supports this feature, we should
-       * check if the flow node that we want to access exists, to avoid 404
-       * errors.
-       */
-      const tokenHistoryEntries: Array<TokenHistoryEntry> = await this._inspectCorrelationService
-        .getTokenForFlowNodeInstance(this.processModelId, this.correlation.id, this.flowNode.id);
+    const tokenHistoryEntries: Array<TokenHistoryEntry> = await this._inspectCorrelationService
+      .getTokenForFlowNodeInstance(this.processModelId, this.correlation.id, this.flowNode.id);
 
-      tokenHistoryEntries.forEach((historyEntry: TokenHistoryEntry, index: number) => {
-
-        const tokenEntry: ITokenEntry = {
-          entryNr: index,
-          eventType: historyEntry.tokenEventType,
-          createdAt: historyEntry.createdAt,
-          payload: [],
-        };
-
-        const historyEntryHasPayload: boolean = historyEntry.payload !== undefined;
-        if (historyEntryHasPayload) {
-          const payload: any = historyEntry.payload;
-
-          const payloadIsNotAnObjectOrArray: boolean = typeof payload !== 'object';
-          if (payloadIsNotAnObjectOrArray) {
-            const payloadIsString: boolean = typeof payload === 'string';
-
-            const payloadValue: string = payloadIsString
-                                          ? `"${payload}"`
-                                          : payload;
-
-            tokenEntry.payload.push({name: undefined, values: [{title: undefined, value: payloadValue}]});
-          } else {
-            for (const loadIndex in payload) {
-              const currentPayload: any = payload[loadIndex];
-              const payloadEntry: IPayLoadEntry = {
-                name: loadIndex,
-                values: [],
-              };
-
-              const entryIsNotAnObjectOrArray: boolean = typeof currentPayload !== 'object';
-              if (entryIsNotAnObjectOrArray) {
-                const payloadIsString: boolean = typeof currentPayload === 'string';
-
-                const payloadValue: string = payloadIsString
-                                              ? `"${currentPayload}"`
-                                              : currentPayload;
-
-                payloadEntry.values.push({
-                  title: undefined,
-                  value: payloadValue,
-                });
-              } else {
-                for (const entryIndex in currentPayload) {
-                  // tslint:disable-next-line no-magic-numbers
-                  const payloadEntryValue: string = JSON.stringify(currentPayload[entryIndex], null, 2);
-
-                  payloadEntry.values.push({
-                    title: entryIndex,
-                    value:  payloadEntryValue,
-                  });
-                }
-              }
-
-              tokenEntry.payload.push(payloadEntry);
-            }
-          }
-        }
-
-        this.tokenEntries.push(tokenEntry);
-      });
-
-      this.showTokenEntries = true;
-      this.shouldShowFlowNodeId = true;
-    } catch (error) {
+    const elementHasNoToken: boolean = tokenHistoryEntries === undefined;
+    if (elementHasNoToken) {
       this.showTokenEntries = false;
-      this.shouldShowFlowNodeId = false;
+
+      return;
     }
 
+    tokenHistoryEntries.forEach((historyEntry: TokenHistoryEntry, index: number) => {
+
+      const tokenEntry: ITokenEntry = {
+        entryNr: index,
+        eventType: historyEntry.tokenEventType,
+        createdAt: historyEntry.createdAt,
+        payload: [],
+      };
+
+      const historyEntryHasPayload: boolean = historyEntry.payload !== undefined;
+      if (historyEntryHasPayload) {
+        const payload: any = historyEntry.payload;
+
+        const payloadIsNotAnObjectOrArray: boolean = typeof payload !== 'object';
+        if (payloadIsNotAnObjectOrArray) {
+          const payloadIsString: boolean = typeof payload === 'string';
+
+          const payloadValue: string = payloadIsString
+                                        ? `"${payload}"`
+                                        : payload;
+
+          tokenEntry.payload.push({name: undefined, values: [{title: undefined, value: payloadValue}]});
+        } else {
+          for (const loadIndex in payload) {
+            const currentPayload: any = payload[loadIndex];
+            const payloadEntry: IPayLoadEntry = {
+              name: loadIndex,
+              values: [],
+            };
+
+            const entryIsNotAnObjectOrArray: boolean = typeof currentPayload !== 'object';
+            if (entryIsNotAnObjectOrArray) {
+              const payloadIsString: boolean = typeof currentPayload === 'string';
+
+              const payloadValue: string = payloadIsString
+                                            ? `"${currentPayload}"`
+                                            : currentPayload;
+
+              payloadEntry.values.push({
+                title: undefined,
+                value: payloadValue,
+              });
+            } else {
+              for (const entryIndex in currentPayload) {
+                // tslint:disable-next-line no-magic-numbers
+                const payloadEntryValue: string = JSON.stringify(currentPayload[entryIndex], null, 2);
+
+                payloadEntry.values.push({
+                  title: entryIndex,
+                  value:  payloadEntryValue,
+                });
+              }
+            }
+
+            tokenEntry.payload.push(payloadEntry);
+          }
+        }
+      }
+
+      this.tokenEntries.push(tokenEntry);
+    });
+
+    this.showTokenEntries = true;
+    this.shouldShowFlowNodeId = true;
   }
 }
