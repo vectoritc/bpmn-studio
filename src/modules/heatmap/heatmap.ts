@@ -114,7 +114,7 @@ export class Heatmap {
 
     const overlays: IOverlay = this._viewer.get('overlays');
 
-    this._heatmapService.addOverlays(overlays, elementRegistry);
+    this._heatmapService.addOverlays(overlays, elementRegistry, this._processModel.id);
 
     const dashboardIsNotShown: boolean = !this.dashboardIsShown;
     if (dashboardIsNotShown) {
