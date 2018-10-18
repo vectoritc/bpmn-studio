@@ -56,17 +56,6 @@ export class TokenViewer {
     this.firstElementSelected = true;
     this.tokenEntries = [];
 
-    // Check if the selected Element can have a token.
-    const elementCanNotHaveAToken: boolean = this.flowNode.type.includes('Lane')
-                                          || this.flowNode.type.includes('Collaboration')
-                                          || this.flowNode.type.includes('Participant');
-
-    if (elementCanNotHaveAToken) {
-      this.showTokenEntries = false;
-
-      return;
-    }
-
     const tokenHistoryEntries: Array<TokenHistoryEntry> = await this._inspectCorrelationService
       .getTokenForFlowNodeInstance(this.processModelId, this.correlation.id, this.flowNode.id);
 
