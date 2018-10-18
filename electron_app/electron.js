@@ -488,6 +488,15 @@ Main._createMainWindow = function () {
           role: "toggledevtools"
         }
       ]
+    }, {
+      label: "Help",
+      submenu: [{
+        label: "Documentation",
+        click: () => {
+          const documentation_url = 'https://www.process-engine.io/documentation/';
+          electron.shell.openExternal(documentation_url);
+        }
+      }]
     }];
 
     electron.Menu.setApplicationMenu(electron.Menu.buildFromTemplate(template));
