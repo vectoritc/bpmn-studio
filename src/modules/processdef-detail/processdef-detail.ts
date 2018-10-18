@@ -356,9 +356,8 @@ export class ProcessDefDetail {
         this.showSaveOnLeaveModal = false;
 
         document.getElementById('dontSaveButtonLeaveView').removeEventListener('click', leaveWithoutSaving);
-        document.getElementById('saveButtonLeaveView').addEventListener('click', leaveWithSaving);
-
-        return;
+        document.getElementById('saveButtonLeaveView').removeEventListener('click', leaveWithSaving);
+        document.getElementById('cancelButtonLeaveView').removeEventListener('click', doNotLeave);
       };
 
       document.getElementById('dontSaveButtonLeaveView').addEventListener('click', leaveWithoutSaving);
