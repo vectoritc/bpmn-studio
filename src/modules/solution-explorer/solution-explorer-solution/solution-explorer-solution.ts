@@ -419,7 +419,9 @@ export class SolutionExplorerSolution {
       const validationErrorIsInvalidCharacter: boolean = currentError.message.startsWith(invalidCharacterString);
 
       if (validationErrorIsInvalidCharacter) {
-        const invalidCharacters: Array<string> = this._getInvalidCharacters(currentError.message);
+        const inputToValidate: string = currentError.message.replace(invalidCharacterString, '');
+
+        const invalidCharacters: Array<string> = this._getInvalidCharacters(inputToValidate);
 
         currentError.message = this._getInvalidCharacterErrorMessage(invalidCharacters);
       }
