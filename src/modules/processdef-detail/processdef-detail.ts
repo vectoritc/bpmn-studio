@@ -333,9 +333,6 @@ export class ProcessDefDetail {
 
     ipcRenderer.on('show-close-modal', () => {
       const leaveWithoutSaving: EventListenerOrEventListenerObject =  (): void => {
-        this.showSaveOnLeaveModal = false;
-        this._diagramHasChanged = false;
-
         ipcRenderer.send('can-not-close', false);
         ipcRenderer.send('close-bpmn-studio');
       };
