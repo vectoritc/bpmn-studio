@@ -496,6 +496,12 @@ Main._createMainWindow = function () {
           const documentation_url = 'https://www.process-engine.io/documentation/';
           electron.shell.openExternal(documentation_url);
         }
+      }, {
+        label: "Release Notes",
+          click: () => {
+            const currentReleaseNotesUrl = 'https://github.com/process-engine/bpmn-studio/releases/latest'
+            electron.shell.openExternal(currentReleaseNotesUrl);
+          }
       }]
     }];
 
