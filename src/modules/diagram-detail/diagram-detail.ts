@@ -1,5 +1,5 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {inject} from 'aurelia-framework';
+import {inject, observable} from 'aurelia-framework';
 import {Redirect, Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
@@ -32,6 +32,7 @@ export class DiagramDetail {
   public showUnsavedChangesModal: boolean = false;
   public showSaveBeforeDeployModal: boolean = false;
 
+  @observable({ changeHandler: 'diagramHasChangedChanged'}) private _diagramHasChanged: boolean;
   private _solutionExplorerService: ISolutionExplorerService;
   private _managementClient: IManagementApi;
   private _authenticationService: IAuthenticationService;
@@ -39,9 +40,9 @@ export class DiagramDetail {
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
   private _router: Router;
-  private _diagramHasChanged: boolean;
   private _validationController: ValidationController;
   private _diagramIsInvalid: boolean = false;
+  private _ipcRenderer: any;
 
   // This identity is used for the filesystem actions. Needs to be refactored.
   private _identity: any;
@@ -213,13 +214,22 @@ export class DiagramDetail {
     }
   }
 
-  private _prepareSaveModalForClosing(): void {
-    const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
+  public diagramHasChangedChanged(): void {
+    const isRunningInElectron: boolean = this._ipcRenderer !== undefined;
+    if (isRunningInElectron) {
+      const canNotClose: boolean = this._diagramHasChanged;
 
-    ipcRenderer.on('show-close-modal', () => {
+      this._ipcRenderer.send('can-not-close', canNotClose);
+    }
+  }
+
+  private _prepareSaveModalForClosing(): void {
+    this._ipcRenderer = (window as any).nodeRequire('electron').ipcRenderer;
+
+    this._ipcRenderer.on('show-close-modal', () => {
       const leaveWithoutSaving: EventListenerOrEventListenerObject =  (): void => {
-        ipcRenderer.send('can-not-close', false);
-        ipcRenderer.send('close-bpmn-studio');
+        this._ipcRenderer.send('can-not-close', false);
+        this._ipcRenderer.send('close-bpmn-studio');
       };
 
       const leaveWithSaving: EventListenerOrEventListenerObject = async(): Promise<void> => {
@@ -231,7 +241,7 @@ export class DiagramDetail {
         await this._saveDiagram();
         this._diagramHasChanged = false;
 
-        ipcRenderer.send('close-bpmn-studio');
+        this._ipcRenderer.send('close-bpmn-studio');
       };
 
       const doNotLeave: EventListenerOrEventListenerObject = (): void => {

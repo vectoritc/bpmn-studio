@@ -1,5 +1,5 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {bindable, computedFrom, inject, observable} from 'aurelia-framework';
+import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {RouteConfig, Router} from 'aurelia-router';
 
 import {NotificationType} from '../../contracts/index';
@@ -33,7 +33,7 @@ export class NavBar {
   public disableHeatmapButton: boolean = true;
   public disableDashboardButton: boolean = false;
   public disableInspectCorrelationButton: boolean = false;
-  @observable public diagramContainsUnsavedChanges: boolean = false;
+  public diagramContainsUnsavedChanges: boolean = false;
   public inspectView: string = 'dashboard';
   public disableDesignLink: boolean = false;
   public latestSource: string;
@@ -44,7 +44,6 @@ export class NavBar {
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
   private _notificationService: NotificationService;
-  private _ipcRenderer: any;
 
   constructor(router: Router, eventAggregator: EventAggregator, notificationService: NotificationService) {
     this._router = router;
@@ -210,24 +209,10 @@ export class NavBar {
         this.disableInspectCorrelationButton = true;
       }),
     ];
-
-    const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
-    if (isRunningInElectron) {
-      this._ipcRenderer = (window as any).nodeRequire('electron').ipcRenderer;
-    }
   }
 
   public detached(): void {
     this._disposeAllSubscriptions();
-  }
-
-  public diagramContainsUnsavedChangesChanged(): void {
-    const isRunningInElectron: boolean = this._ipcRenderer !== undefined;
-    if (isRunningInElectron) {
-      const canNotClose: boolean = this.diagramContainsUnsavedChanges;
-
-      this._ipcRenderer.send('can-not-close', canNotClose);
-    }
   }
 
   @computedFrom('processOpenedFromProcessEngine')
