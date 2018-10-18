@@ -18,7 +18,7 @@ const openAboutWindow = require('about-window').default;
 let filePath;
 let isInitialized = false;
 
-let canNotClose = false;
+let canNotCloseApplication = false;
 
 const Main = {};
 
@@ -327,7 +327,7 @@ Main._createMainWindow = function () {
   Main._window.loadURL('/');
 
   Main._window.on('close', (event) => {
-    if (canNotClose) {
+    if (canNotCloseApplication) {
       event.preventDefault();
 
       Main._window.webContents.send('show-close-modal');
@@ -341,7 +341,7 @@ Main._createMainWindow = function () {
   });
 
   electron.ipcMain.on('can-not-close', (event, data) => {
-    canNotClose = data;
+    canNotCloseApplication = data;
   });
 
   Main._window.on('closed', (event) => {
