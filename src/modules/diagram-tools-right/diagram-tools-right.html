@@ -21,7 +21,7 @@
             <i class="fas fa-stop" css="color: ${borderColor ? borderColor : 'black'};"></i> Border color <i class="fas fa-eyedropper border-colorpicker__eyedropper"></i>
           </a>
         </li>
-        <li><a click.delegate="removeColor()"><i class="fas fa-stop none"></i> None</a></li>
+        <li class="dropdown-item"><a click.delegate="removeColor()"><i class="fas fa-stop none"></i> None</a></li>
       </ul>
     </div>
     <a class="button tool" class.bind="distributeElementsEnabled ? '' : 'button--disabled tool--disabled'" title.bind="distributeElementsEnabled ? 'Distribute Elements Vertically' : 'Select at least three elements to distribute them vertically'" click.delegate="distributeElementsVertically()" disabled.bind="!distributeElementsEnabled">
