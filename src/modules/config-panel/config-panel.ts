@@ -11,11 +11,11 @@ import {NotificationService} from '../notification/notification.service';
 
 @inject(Router, 'NotificationService', EventAggregator, 'AuthenticationService', OpenIdConnect, 'InternalProcessEngineBaseRoute')
 export class ConfigPanel {
-  public isLoggedInToProcessEngine: boolean;
   @bindable public baseRoute: string;
-  public internalProcessEngineBaseRoute: string | null;
   @bindable public authority: string;
   public readonly defaultAuthority: string = 'http://localhost:5000';
+  public isLoggedInToProcessEngine: boolean;
+  public internalProcessEngineBaseRoute: string | null;
 
   private _router: Router;
   private _notificationService: NotificationService;
