@@ -19,7 +19,7 @@ export class CallActivitySection implements ISection {
   public path: string = '/sections/call-activity/call-activity';
   public canHandleElement: boolean = false;
   public allDiagrams: Array<IDiagram>;
-  public selectedDiagram: IDiagram;
+  public selectedDiagramId: string;
 
   private _businessObjInPanel: ICallActivityElement;
   private _generalService: GeneralService;
@@ -34,10 +34,10 @@ export class CallActivitySection implements ISection {
 
   public async activate(model: IPageModel): Promise<void> {
     this._businessObjInPanel = model.elementInPanel.businessObject;
+
     await this._getAllDiagrams();
-    this.selectedDiagram = this.allDiagrams.find((diagram: IDiagram) => {
-      return diagram.id === this._businessObjInPanel.calledElement;
-    });
+
+    this.selectedDiagramId = this._businessObjInPanel.calledElement;
   }
 
   public isSuitableForElement(element: IShape): boolean {
@@ -50,12 +50,13 @@ export class CallActivitySection implements ISection {
 
   public navigateToCalledDiagram(): void {
     this._router.navigateToRoute('processdef-detail', {
-      processModelId: this.selectedDiagram.id,
+      processModelId: this.selectedDiagramId,
     });
   }
 
   public updateCalledDiagram(): void {
-    this._businessObjInPanel.calledElement = this.selectedDiagram.id;
+    this._businessObjInPanel.calledElement = this.selectedDiagramId;
+
     this._publishDiagramChange();
   }
 

@@ -48,7 +48,7 @@ export class HeatmapService implements IHeatmapService {
    *
    * This method adds overlays for the activeTokens to the diagram viewer.
    */
-  public async addOverlays(overlays: IOverlay, elementRegistry: IElementRegistry): Promise<void> {
+  public async addOverlays(overlays: IOverlay, elementRegistry: IElementRegistry, processModelId: string): Promise<void> {
 
     let participantsTokenCount: number = 0;
 
@@ -67,7 +67,7 @@ export class HeatmapService implements IHeatmapService {
       });
 
     const elementsForOverlays: Array<IShape> = this._getElementsForOverlays(elementRegistry);
-    const activeTokenListArray: Array<Array<ActiveToken>> = await this._getActiveTokenListArray(elementsForOverlays);
+    const activeTokenListArray: Array<Array<ActiveToken>> = await this._getActiveTokenListArray(elementsForOverlays, processModelId);
 
     this._addShapeTypeToActiveToken(activeTokenListArray, elementsForOverlays);
 
@@ -311,11 +311,17 @@ export class HeatmapService implements IHeatmapService {
     return medianRunTimeInMs;
   }
 
-  private async _getActiveTokenListArray(elementsForOverlays: Array<IShape>): Promise<Array<Array<ActiveToken>>> {
+  private async _getActiveTokenListArray(elementsForOverlays: Array<IShape>, processModelId: string): Promise<Array<Array<ActiveToken>>> {
     const promisesForElements: Array<Promise<Array<ActiveToken>>> = elementsForOverlays.map(async(element: IShape) => {
       const elementsActiveTokens: Array<ActiveToken> = await this.getActiveTokensForFlowNode(element.id);
 
-      return elementsActiveTokens;
+      const elementActiveTokensForProcessModel: Array<ActiveToken> = elementsActiveTokens.filter((token: ActiveToken) => {
+        const tokenIsInProcessModel: boolean = token.processModelId === processModelId;
+
+        return tokenIsInProcessModel;
+      });
+
+      return elementActiveTokensForProcessModel;
     });
 
     const activeTokenListArrayForAllElements: Array<Array<ActiveToken>> = await Promise.all(promisesForElements);
