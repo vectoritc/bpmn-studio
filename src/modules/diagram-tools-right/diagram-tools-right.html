@@ -6,18 +6,18 @@
         <i class="fas fa-eye-dropper"></i>
       </a>
       <ul class="dropdown-menu pull-left color-dropdown">
-        <li><a click.delegate="setColorRed()"><i class="fas fa-stop red"></i> Red</a></li>
-        <li><a click.delegate="setColorBlue()"><i class="fas fa-stop blue"></i> Blue</a></li>
-        <li><a click.delegate="setColorGreen()"><i class="fas fa-stop green"></i> Green</a></li>
-        <li><a click.delegate="setColorPurple()"><i class="fas fa-stop purple"></i> Purple</a></li>
-        <li><a click.delegate="setColorOrange()"><i class="fas fa-stop orange"></i> Orange</a></li>
-        <li>
-          <a show.bind="colorPickerLoaded" class="fill-colorpicker--border" click.delegate="setPickedColor()" ref="colorPickerFill">
+        <li class="dropdown-item"><a click.delegate="setColorRed()"><i class="fas fa-stop red"></i> Red</a></li>
+        <li class="dropdown-item"><a click.delegate="setColorBlue()"><i class="fas fa-stop blue"></i> Blue</a></li>
+        <li class="dropdown-item"><a click.delegate="setColorGreen()"><i class="fas fa-stop green"></i> Green</a></li>
+        <li class="dropdown-item"><a click.delegate="setColorPurple()"><i class="fas fa-stop purple"></i> Purple</a></li>
+        <li class="dropdown-item"><a click.delegate="setColorOrange()"><i class="fas fa-stop orange"></i> Orange</a></li>
+        <li class="dropdown-item fill-colorpicker--border">
+          <a show.bind="colorPickerLoaded" click.delegate="setPickedColor()" ref="colorPickerFill">
             <i class="fas fa-stop" css="color: ${fillColor ? fillColor : 'white'};"></i> Fill color <i class="fas fa-eyedropper fill-colorpicker__eyedropper"></i>
           </a>
         </li>
-        <li>
-          <a show.bind="colorPickerLoaded" class="border-colorpicker--border" click.delegate="setPickedColor()" ref="colorPickerBorder">
+        <li class="dropdown-item border-colorpicker--border">
+          <a show.bind="colorPickerLoaded" click.delegate="setPickedColor()" ref="colorPickerBorder">
             <i class="fas fa-stop" css="color: ${borderColor ? borderColor : 'black'};"></i> Border color <i class="fas fa-eyedropper border-colorpicker__eyedropper"></i>
           </a>
         </li>
