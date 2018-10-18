@@ -340,7 +340,7 @@ Main._createMainWindow = function () {
     Main._window.close();
   });
 
-  electron.ipcMain.on('can-not-close', (event, data) => {
+  electron.ipcMain.on('can-not-close', (event, canCloseResult) => {
     canNotCloseApplication = data;
   });
 
