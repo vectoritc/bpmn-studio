@@ -155,6 +155,9 @@ export class DiagramToolsRight {
       return;
     }
 
+    this.fillColor = color.fill;
+    this.borderColor = color.border;
+
     modeling.setColor(selectedElements, {
       fill: color.fill,
       stroke: color.border,
