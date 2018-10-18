@@ -10,8 +10,8 @@
   padding-top: 5px;
 }
 
-.config-panel__panel {
-  padding: 20px 20px 20px 20px;
+.config-panel__card {
+  margin-bottom: 20px;
 }
 
 .use-internal-processengine {
@@ -19,7 +19,7 @@
   text-decoration: underline;
 }
 
-.config-panel__panel__alert {
+.config-panel__card__alert {
   margin-top: 10px;
   margin-bottom: 0;
 }

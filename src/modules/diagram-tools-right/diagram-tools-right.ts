@@ -22,6 +22,7 @@ export class DiagramToolsRight {
   @bindable()
   public modeler: IBpmnModeler;
   public colorSelectionDropdownToggle: HTMLElement;
+  public colorSelectionDropdown: HTMLElement;
 
   public distributeElementsEnabled: boolean;
   public colorPickerEnabled: boolean = true;
@@ -54,6 +55,11 @@ export class DiagramToolsRight {
       const userSelectedDiagramElement: boolean = selectedElements.length > 0;
 
       this.colorPickerEnabled = userSelectedDiagramElement;
+
+      if (userSelectedDiagramElement) {
+        this.borderColor = selectedElements[0].businessObject.di.stroke;
+        this.fillColor = selectedElements[0].businessObject.di.fill;
+      }
 
       /**
        * The distribute elements feature only can do it's thing, if the
@@ -122,8 +128,6 @@ export class DiagramToolsRight {
 
     $(this.colorPickerFill).spectrum('set', this.fillColor);
     $(this.colorPickerBorder).spectrum('set', this.borderColor);
-
-    document.addEventListener('click', this.colorSelectionDropdownClickListener);
   }
 
   public distributeElementsVertically(): void {
@@ -149,6 +153,9 @@ export class DiagramToolsRight {
 
       return;
     }
+
+    this.fillColor = color.fill;
+    this.borderColor = color.border;
 
     modeling.setColor(selectedElements, {
       fill: color.fill,
@@ -254,10 +261,13 @@ export class DiagramToolsRight {
     $(this.colorPickerFill).spectrum(colorPickerFillSettings);
 
     const changeColorSelectionHiding: (event: JQueryEventObject) => void = (event: Event): void => {
-        const isDragStartEvent: boolean = event.type === 'dragstart';
+      const isDragStartEvent: boolean = event.type === 'dragstart';
 
-        this._preventColorSelectionFromHiding = isDragStartEvent;
-      };
+      this._preventColorSelectionFromHiding = isDragStartEvent;
+      if (isDragStartEvent) {
+        document.addEventListener('click', this.colorSelectionDropdownClickListener);
+      }
+    };
 
     // This is used to prevent the color selection dropdown from hiding when a colorpicker is still visible
     $(this.colorPickerFill).on('dragstart.spectrum', changeColorSelectionHiding);
@@ -295,8 +305,10 @@ export class DiagramToolsRight {
 
   public colorSelectionDropdownClickListener: IEventFunction =  (): void => {
     if (this._preventColorSelectionFromHiding) {
-      this.colorSelectionDropdownToggle.classList.add('open');
+      this.colorSelectionDropdown.classList.add('color-selection-dropdown--show');
+      this._preventColorSelectionFromHiding = false;
     } else {
+      this.colorSelectionDropdown.classList.remove('color-selection-dropdown--show');
       document.removeEventListener('click', this.colorSelectionDropdownClickListener);
     }
   }
