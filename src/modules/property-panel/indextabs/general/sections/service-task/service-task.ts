@@ -35,6 +35,7 @@ export class ServiceTaskSection implements ISection {
   }
 
   public activate(model: IPageModel): void {
+    this.selectedKind = '';
     this.businessObjInPanel = model.elementInPanel.businessObject;
     this.model = model;
     this._moddle = model.modeler.get('moddle');
