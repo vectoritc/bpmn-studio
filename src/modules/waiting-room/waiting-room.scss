@@ -3,6 +3,7 @@
 }
 
 .waiting-room__title {
+  width: 100%;
   text-align: center;
 }
 
@@ -13,7 +14,8 @@
 }
 
 .waiting-room__button-row {
-  margin-top: 40px;
+  display: block;
+  margin: 40px auto;
   text-align: center;
 }
 
