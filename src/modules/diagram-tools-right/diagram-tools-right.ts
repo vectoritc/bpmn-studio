@@ -55,6 +55,11 @@ export class DiagramToolsRight {
 
       this.colorPickerEnabled = userSelectedDiagramElement;
 
+      if (userSelectedDiagramElement) {
+        this.borderColor = selectedElements[0].businessObject.di.stroke;
+        this.fillColor = selectedElements[0].businessObject.di.fill;
+      }
+
       /**
        * The distribute elements feature only can do it's thing, if the
        * user selects more than two elements.
