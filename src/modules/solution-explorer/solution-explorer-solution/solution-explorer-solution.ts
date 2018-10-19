@@ -115,10 +115,10 @@ export class SolutionExplorerSolution {
         await this.updateSolution();
 
         const diagramUri: string = `${this._openedSolution.uri}/${input}.bpmn`;
-        const diagramWithIdDoesNotExists: boolean = this.
+        const diagramWithUriDoesNotExist: boolean = this.
           _findURIObject(this._openedSolution.diagrams, diagramUri) === undefined;
 
-        const newDiagramNameIsValid: boolean = diagramWithIdDoesNotExists;
+        const newDiagramNameIsValid: boolean = diagramWithUriDoesNotExist;
 
         return newDiagramNameIsValid;
       })
