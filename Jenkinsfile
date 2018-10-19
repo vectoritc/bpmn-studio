@@ -14,9 +14,7 @@ def cleanup_workspace() {
 }
 
 pipeline {
-  agent {
-    label "macos"
-  }
+  agent any
   tools {
     nodejs "node-lts"
   }
