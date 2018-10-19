@@ -109,11 +109,15 @@ export class SolutionExplorerSolution {
         // The solution may have changed on the file system.
         await this.updateSolution();
 
+        const diagramNameIsTheSame: boolean = this._currentlyRenamingDiagram.name === input;
+
         const diagramUri: string = `${this._openedSolution.uri}/${input}.bpmn`;
         const diagramWithIdDoesNotExists: boolean = this.
           _findURIObject(this._openedSolution.diagrams, diagramUri) === undefined;
 
-        return diagramWithIdDoesNotExists;
+        const newDiagramNameIsValid: boolean = diagramWithIdDoesNotExists || diagramNameIsTheSame;
+
+        return newDiagramNameIsValid;
       })
       .withMessage('A diagram with that name already exists.');
 
