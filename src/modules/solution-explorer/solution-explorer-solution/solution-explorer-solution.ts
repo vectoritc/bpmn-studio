@@ -118,9 +118,7 @@ export class SolutionExplorerSolution {
         const diagramWithUriDoesNotExist: boolean = this.
           _findURIObject(this._openedSolution.diagrams, diagramUri) === undefined;
 
-        const newDiagramNameIsValid: boolean = diagramWithUriDoesNotExist;
-
-        return newDiagramNameIsValid;
+        return diagramWithUriDoesNotExist;
       })
       .withMessage('A diagram with that name already exists.');
 
