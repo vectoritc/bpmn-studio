@@ -13,13 +13,15 @@
           Event Type: <span class="token-entry">${entry.eventType}</span>
         </div>
         <div repeat.for="load of entry.payload" class="token-entry__payload">
-          <div class="payload__title" if.bind="load.name !== undefined">
-            ${load.name}
+          <div if.bind="load.name !== undefined">
+            <div class="payload__title">
+              ${load.name}
+            </div>
+            <template repeat.for="value of load.values">
+              <pre class="payload__name">- ${value.title} : ${value.value}</pre>
+            </template>
           </div>
-          <template repeat.for="value of load.values">
-            <pre if.bind="value.title !== undefined" class="payload__name">- ${value.title} : ${value.value}</pre>
-            <pre else class="payload__name">- ${value.value}</pre>
-          </template>
+          <div else class="payload__name">- ${load.values[0].value}</div>
         </div>
         </span>
       </div>
