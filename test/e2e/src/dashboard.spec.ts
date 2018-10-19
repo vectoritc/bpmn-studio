@@ -267,16 +267,16 @@ describe('Dashboard view', () => {
     // Should be in waiting room
     expect(currentBrowserUrl).toContain(waitingRoomUrl);
 
-    const dashboardLink: string = dashboard.dashboardLink;
-    const urlContainsDashboardLink: Function = expectedConditions.urlContains(dashboardLink);
+    const inspectLink: string = dashboard.inspectLink;
+    const urlContainsInspectLink: Function = expectedConditions.urlContains(inspectLink);
 
     // Should be in dashboard view
     await browser.driver
     .wait(() => {
       browser
-      .wait(urlContainsDashboardLink, taskListTimeoutMS);
+      .wait(urlContainsInspectLink, taskListTimeoutMS);
 
-      return dashboardLink;
+      return inspectLink;
     });
   });
 });
