@@ -94,25 +94,23 @@ export class BasicsSection implements ISection {
   }
 
   public changeName(index: number): void {
-    const propertyElement: IProperty = this._propertiesElement.values[index];
-
-    if (propertyElement.value === '' && propertyElement.name === '') {
-      this.removeProperty(index);
-    }
-
     this._propertiesElement.values[index].name = this.newNames[index];
+    this._checkAndRemoveEmptyProperties(index);
     this._publishDiagramChange();
   }
 
   public changeValue(index: number): void {
     this._propertiesElement.values[index].value = this.newValues[index];
+    this._checkAndRemoveEmptyProperties(index);
+    this._publishDiagramChange();
+  }
 
+  private _checkAndRemoveEmptyProperties(index: number): void {
     const propertyElement: IProperty = this._propertiesElement.values[index];
-    if (propertyElement.value === '' && propertyElement.name === '') {
+    const propertyIsEmpty: boolean = propertyElement.value === '' && propertyElement.name === '';
+    if (propertyIsEmpty) {
       this.removeProperty(index);
     }
-
-    this._publishDiagramChange();
   }
 
   private _reloadProperties(): void {
