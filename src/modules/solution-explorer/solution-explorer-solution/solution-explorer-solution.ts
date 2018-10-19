@@ -109,7 +109,7 @@ export class SolutionExplorerSolution {
         // The solution may have changed on the file system.
         await this.updateSolution();
 
-        const diagramNameIsTheSame: boolean = this._currentlyRenamingDiagram.name === input;
+        const diagramNameIsUnchanged: boolean = this._currentlyRenamingDiagram.name === input;
 
         const diagramUri: string = `${this._openedSolution.uri}/${input}.bpmn`;
         const diagramWithIdDoesNotExists: boolean = this.
