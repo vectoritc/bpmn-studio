@@ -1,5 +1,5 @@
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {inject} from 'aurelia-framework';
+import {bindable, BindingEngine, ICollectionObserverSplice, inject, observable} from 'aurelia-framework';
 
 import {
   IBpmnModdle,
@@ -21,6 +21,9 @@ export class BasicsSection implements ISection {
   public properties: Array<IProperty> = [];
   public newNames: Array<string> = [];
   public newValues: Array<string> = [];
+
+  @bindable() public keyInputFields: Array<HTMLInputElement> = [];
+  @bindable() public valueInputFields: Array<HTMLInputElement> = [];
 
   private _businessObjInPanel: IModdleElement;
   private _moddle: IBpmnModdle;
@@ -77,6 +80,31 @@ export class BasicsSection implements ISection {
     this._publishDiagramChange();
   }
 
+  /**
+   * TODO: This is used to check, if the user created a new Extension Property
+   * and adds an event listener to the new textbox element.
+   *
+   * This here is necessary, because when the user clicks on the
+   * 'addProperty' button, aurelia hasn't created and attached the new
+   * textbox to the dom yet.
+   *
+   * When aurelia tries to obtain the value of the focus property we can
+   * be sure, that the textbox was created and attached to the dom.
+   *
+   * Im sure that they are better ways to do that.
+   *
+   *
+   * @param index Index of the newly created textbox.
+   */
+  public textboxLoaded(index: number): boolean {
+    const createdInputField: HTMLInputElement = this.keyInputFields[index];
+
+    createdInputField.onblur = (): void => {
+      this._checkAndRemoveEmptyProperties(index);
+    };
+    return true;
+  }
+
   public removeProperty(index: number): void {
     const propertyIsLast: boolean = this._propertiesElement.values.length === 1;
 
@@ -97,12 +125,17 @@ export class BasicsSection implements ISection {
     this._propertiesElement.values[index].name = this.newNames[index];
     this._checkAndRemoveEmptyProperties(index);
     this._publishDiagramChange();
+    console.log('called');
   }
 
   public changeValue(index: number): void {
     this._propertiesElement.values[index].value = this.newValues[index];
     this._checkAndRemoveEmptyProperties(index);
     this._publishDiagramChange();
+  }
+
+  public keyInputFieldsBlub(): void {
+    console.log('meh');
   }
 
   private _checkAndRemoveEmptyProperties(index: number): void {
@@ -117,6 +150,9 @@ export class BasicsSection implements ISection {
     this.properties = [];
     this.newNames = [];
     this.newValues = [];
+
+    this.keyInputFields = [];
+    this.valueInputFields = [];
 
     const businessObjectHasNoExtensionElements: boolean = this._businessObjInPanel.extensionElements === undefined
                                                        || this._businessObjInPanel.extensionElements === null;
