@@ -620,6 +620,11 @@ export class SolutionExplorerSolution {
       return false;
     }
 
+    const filenameWasNotChanged: boolean = this._currentlyRenamingDiagram.name === this._diagramRenamingState.currentDiagramInputValue;
+    if (filenameWasNotChanged) {
+      return true;
+    }
+
     try {
       await this.solutionService.renameDiagram(this._currentlyRenamingDiagram, this._diagramRenamingState.currentDiagramInputValue);
     } catch (error) {
