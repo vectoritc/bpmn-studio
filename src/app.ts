@@ -1,6 +1,7 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {Router, RouterConfiguration} from 'aurelia-router';
+import 'bootstrap';
 
 import {OpenIdConnect} from 'aurelia-open-id-connect';
 
