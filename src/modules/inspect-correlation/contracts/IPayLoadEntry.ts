@@ -1,7 +1,6 @@
+import {IPayLoadEntryValue} from './index';
+
 export interface IPayLoadEntry {
-  name: string;
-  values: Array<{
-    title: string,
-    value: string,
-  }>;
+  name?: string;
+  values: Array<IPayLoadEntryValue>;
 }

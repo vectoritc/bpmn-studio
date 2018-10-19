@@ -2,7 +2,7 @@ import {bindable, inject} from 'aurelia-framework';
 
 import {Correlation, TokenHistoryEntry} from '@process-engine/management_api_contracts';
 import {IShape} from '../../../../contracts';
-import {IInspectCorrelationService, IPayLoadEntry, ITokenEntry} from '../../contracts';
+import {IInspectCorrelationService, IPayLoadEntry, IPayLoadEntryValue, ITokenEntry} from '../../contracts';
 
 @inject('InspectCorrelationService')
 export class TokenViewer {
