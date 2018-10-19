@@ -15,6 +15,7 @@ export default {
   },
   openIdConnect: {
     authority: 'http://localhost:5000',
+    defaultAuthority: 'http://localhost:5000'
   },
   processengine: {
     waitingRoomPollingIntervalInMs: 200,

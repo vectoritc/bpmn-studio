@@ -9,11 +9,12 @@ import environment from './environment';
 import {AuthenticationService} from './modules/authentication/authentication.service';
 import {NotificationService} from './modules/notification/notification.service';
 
+import {oidcConfig} from './open-id-connect-configuration';
 @inject(OpenIdConnect, 'AuthenticationService', 'NotificationService', EventAggregator)
 export class App {
   public showSolutionExplorer: boolean = false;
 
-  private _openIdConnect: OpenIdConnect;
+  private _openIdConnect: OpenIdConnect | any;
   private _authenticationService: AuthenticationService;
   private _router: Router;
   private _notificationService: NotificationService;
@@ -64,6 +65,25 @@ export class App {
     */
     document.addEventListener('dragover', this._preventDefaultBehaviour);
     document.addEventListener('drop', this._preventDefaultBehaviour);
+
+    const openIdConnectRoute: string = window.localStorage.getItem('openIdRoute');
+
+    const openIdConnectRouteIsCustom: boolean = openIdConnectRoute !== null
+                                             && openIdConnectRoute !== undefined
+                                             && openIdConnectRoute !== '';
+
+    if (openIdConnectRouteIsCustom) {
+      /*
+      * TODO: The environment variables should not carry state. This should be done via a configurationService.
+      * https://github.com/process-engine/bpmn-studio/issues/673
+      */
+      environment.openIdConnect.authority = openIdConnectRoute;
+
+      this._openIdConnect.configuration.userManagerSettings.authority = openIdConnectRoute;
+      this._openIdConnect.userManager._settings._authority = openIdConnectRoute;
+
+      oidcConfig.userManagerSettings.authority = openIdConnectRoute;
+    }
   }
 
   public deactivate(): void {
