@@ -106,14 +106,19 @@ export class SolutionExplorerSolution {
       .withMessage('The diagram name can not end with a whitespace character.')
       .then()
       .satisfies(async(input: string) => {
+        const diagramNameIsUnchanged: boolean = this._currentlyRenamingDiagram.name === input;
+        if (diagramNameIsUnchanged) {
+          return true;
+        }
+
         // The solution may have changed on the file system.
         await this.updateSolution();
 
         const diagramUri: string = `${this._openedSolution.uri}/${input}.bpmn`;
-        const diagramWithIdDoesNotExists: boolean = this.
+        const diagramWithUriDoesNotExist: boolean = this.
           _findURIObject(this._openedSolution.diagrams, diagramUri) === undefined;
 
-        return diagramWithIdDoesNotExists;
+        return diagramWithUriDoesNotExist;
       })
       .withMessage('A diagram with that name already exists.');
 
@@ -614,6 +619,11 @@ export class SolutionExplorerSolution {
       }
 
       return false;
+    }
+
+    const filenameWasNotChanged: boolean = this._currentlyRenamingDiagram.name === this._diagramRenamingState.currentDiagramInputValue;
+    if (filenameWasNotChanged) {
+      return true;
     }
 
     try {
