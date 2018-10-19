@@ -58,11 +58,11 @@ export class ConfigPanel {
     }
 
     const customOpenIdRoute: string = window.localStorage.getItem('openIdRoute');
-    const customOpenIdRouteSet: boolean = customOpenIdRoute !== null
-                                          && customOpenIdRoute !== undefined
-                                          && customOpenIdRoute !== '';
+    const customOpenIdRouteIsSet: boolean = customOpenIdRoute !== null
+                                         && customOpenIdRoute !== undefined
+                                         && customOpenIdRoute !== '';
 
-    if (customOpenIdRouteSet) {
+    if (customOpenIdRouteIsSet) {
       this.authority = customOpenIdRoute;
     }
 
