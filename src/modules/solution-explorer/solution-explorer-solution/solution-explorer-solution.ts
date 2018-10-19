@@ -619,7 +619,7 @@ export class SolutionExplorerSolution {
     try {
       await this.solutionService.renameDiagram(this._currentlyRenamingDiagram, this._diagramRenamingState.currentDiagramInputValue);
     } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, error.message);
+      this._notificationService.showNotification(NotificationType.WARNING, error.message);
 
       return false;
     }
