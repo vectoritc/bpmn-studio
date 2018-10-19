@@ -13,7 +13,7 @@ import {NotificationService} from '../notification/notification.service';
 export class ConfigPanel {
   @bindable public baseRoute: string;
   @bindable public authority: string;
-  public readonly defaultAuthority: string = 'http://localhost:5000';
+  public readonly defaultAuthority: string = environment.openIdConnect.defaultAuthority;
   public isLoggedInToProcessEngine: boolean;
   public internalProcessEngineBaseRoute: string | null;
 
@@ -24,7 +24,6 @@ export class ConfigPanel {
   private _subscriptions: Array<Subscription>;
   // We use any here, because we need to call private members (see below)
   private _openIdConnect: OpenIdConnect | any;
-  private _config: typeof environment = environment;
 
   constructor(router: Router,
               notificationService: NotificationService,
@@ -43,7 +42,7 @@ export class ConfigPanel {
   }
 
   public attached(): void {
-    this.baseRoute = this._config.baseRoute;
+    this.baseRoute = environment.baseRoute;
 
     // If there is a route set in the localstorage, we prefer this setting.
     const customProcessEngineRoute: string = window.localStorage.getItem('processEngineRoute');
@@ -125,7 +124,7 @@ export class ConfigPanel {
      * TODO: The environment variables should not carry state. This should be done via a configurationService.
      * https://github.com/process-engine/bpmn-studio/issues/673
      */
-    this._config.openIdConnect.authority = this.authority;
+    environment.openIdConnect.authority = this.authority;
   }
 
   public setDefaultAuthority(): void {
