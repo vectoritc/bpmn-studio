@@ -121,6 +121,10 @@ export class ConfigPanel {
   }
 
   public authorityChanged(): void {
+    /*
+     * TODO: The environment variables should not carry state. This should be done via a configurationService.
+     * https://github.com/process-engine/bpmn-studio/issues/673
+     */
     this._config.openIdConnect.authority = this.authority;
   }
 

@@ -73,6 +73,10 @@ export class App {
                                              && openIdConnectRoute !== '';
 
     if (openIdConnectRouteIsCustom) {
+      /*
+      * TODO: The environment variables should not carry state. This should be done via a configurationService.
+      * https://github.com/process-engine/bpmn-studio/issues/673
+      */
       environment.openIdConnect.authority = openIdConnectRoute;
 
       this._openIdConnect.configuration.userManagerSettings.authority = openIdConnectRoute;
