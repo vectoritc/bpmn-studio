@@ -1,6 +1,6 @@
-import {IPayLoadEntryValue} from './index';
+import {IPayloadEntryValue} from './index';
 
-export interface IPayLoadEntry {
+export interface IPayloadEntry {
   name?: string;
-  values: Array<IPayLoadEntryValue>;
+  values: Array<IPayloadEntryValue>;
 }

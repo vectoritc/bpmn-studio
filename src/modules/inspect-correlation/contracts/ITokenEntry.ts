@@ -1,8 +1,8 @@
-import {IPayLoadEntry} from './index';
+import {IPayloadEntry} from './index';
 
 export interface ITokenEntry {
   entryNr: number;
   eventType: string;
   createdAt: Date;
-  payload: Array<IPayLoadEntry>;
+  payload: Array<IPayloadEntry>;
 }

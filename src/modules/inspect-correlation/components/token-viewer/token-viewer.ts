@@ -2,7 +2,7 @@ import {bindable, inject} from 'aurelia-framework';
 
 import {Correlation, TokenHistoryEntry} from '@process-engine/management_api_contracts';
 import {IShape} from '../../../../contracts';
-import {IInspectCorrelationService, IPayLoadEntry, IPayLoadEntryValue, ITokenEntry} from '../../contracts';
+import {IInspectCorrelationService, IPayloadEntry, IPayloadEntryValue, ITokenEntry} from '../../contracts';
 
 @inject('InspectCorrelationService')
 export class TokenViewer {
@@ -81,7 +81,7 @@ export class TokenViewer {
         return;
       }
 
-      const tokenEntryPayload: Array<IPayLoadEntry> = this._convertHistoryEntryPayloadToTokenEntryPayload(historyEntryPayload);
+      const tokenEntryPayload: Array<IPayloadEntry> = this._convertHistoryEntryPayloadToTokenEntryPayload(historyEntryPayload);
 
       const tokenEntry: ITokenEntry = {
         entryNr: index,
@@ -96,16 +96,16 @@ export class TokenViewer {
     return tokenEntries;
   }
 
-  private _convertHistoryEntryPayloadToTokenEntryPayload(tokenEntryPayload: any): Array<IPayLoadEntry> {
-    const formattedTokenEntryPayload: Array<IPayLoadEntry> = [];
+  private _convertHistoryEntryPayloadToTokenEntryPayload(tokenEntryPayload: any): Array<IPayloadEntry> {
+    const formattedTokenEntryPayload: Array<IPayloadEntry> = [];
 
     const payloadIsNotAnObjectOrArray: boolean = typeof tokenEntryPayload !== 'object';
     if (payloadIsNotAnObjectOrArray) {
-      const payloadEntry: IPayLoadEntry = this._getPayloadEntryForNonObject(tokenEntryPayload);
+      const payloadEntry: IPayloadEntry = this._getPayloadEntryForNonObject(tokenEntryPayload);
 
       formattedTokenEntryPayload.push(payloadEntry);
     } else {
-      const payloadEntries: Array<IPayLoadEntry> = this._getAllPayloadEntriesForObject(tokenEntryPayload);
+      const payloadEntries: Array<IPayloadEntry> = this._getAllPayloadEntriesForObject(tokenEntryPayload);
 
       formattedTokenEntryPayload.push(...payloadEntries);
     }
@@ -113,13 +113,13 @@ export class TokenViewer {
     return formattedTokenEntryPayload;
   }
 
-  private _getAllPayloadEntriesForObject(payload: any): Array<IPayLoadEntry> {
-    const payloadEntries: Array<IPayLoadEntry> = [];
+  private _getAllPayloadEntriesForObject(payload: any): Array<IPayloadEntry> {
+    const payloadEntries: Array<IPayloadEntry> = [];
 
     for (const loadIndex in payload) {
       const currentLoad: any = payload[loadIndex];
 
-      const payloadEntry: IPayLoadEntry = this._getPayloadEntryForObject(currentLoad, loadIndex);
+      const payloadEntry: IPayloadEntry = this._getPayloadEntryForObject(currentLoad, loadIndex);
 
       payloadEntries.push(payloadEntry);
     }
@@ -127,19 +127,19 @@ export class TokenViewer {
     return payloadEntries;
   }
 
-  private _getPayloadEntryForObject(load: any, loadName: string): IPayLoadEntry {
-    const payloadEntry: IPayLoadEntry = {
+  private _getPayloadEntryForObject(load: any, loadName: string): IPayloadEntry {
+    const payloadEntry: IPayloadEntry = {
       name: loadName,
       values: [],
     };
 
     const entryIsNotAnObject: boolean = typeof load !== 'object';
     if (entryIsNotAnObject) {
-      const payloadEntryValues: Array<IPayLoadEntryValue> = this._getPayloadEntryValuesForNonObject(load);
+      const payloadEntryValues: Array<IPayloadEntryValue> = this._getPayloadEntryValuesForNonObject(load);
 
       payloadEntry.values = payloadEntryValues;
     } else {
-      const payloadEntryValues: Array<IPayLoadEntryValue> = this._getPayloadEntryValuesForObject(load);
+      const payloadEntryValues: Array<IPayloadEntryValue> = this._getPayloadEntryValuesForObject(load);
 
       payloadEntry.values = payloadEntryValues;
     }
@@ -147,8 +147,8 @@ export class TokenViewer {
     return payloadEntry;
   }
 
-  private _getPayloadEntryValuesForObject(payload: any): Array<IPayLoadEntryValue> {
-    const payloadEntryValues: Array<IPayLoadEntryValue> = [];
+  private _getPayloadEntryValuesForObject(payload: any): Array<IPayloadEntryValue> {
+    const payloadEntryValues: Array<IPayloadEntryValue> = [];
 
     for (const entryIndex in payload) {
       // tslint:disable-next-line no-magic-numbers
@@ -163,24 +163,24 @@ export class TokenViewer {
     return payloadEntryValues;
   }
 
-  private _getPayloadEntryForNonObject(payload: any): IPayLoadEntry {
+  private _getPayloadEntryForNonObject(payload: any): IPayloadEntry {
     const payloadEntryValues: any = this._getPayloadEntryValuesForNonObject(payload);
 
-    const payloadEntry: IPayLoadEntry = {
+    const payloadEntry: IPayloadEntry = {
       values: payloadEntryValues,
     };
 
     return payloadEntry;
   }
 
-  private _getPayloadEntryValuesForNonObject(payload: any): Array<IPayLoadEntryValue> {
+  private _getPayloadEntryValuesForNonObject(payload: any): Array<IPayloadEntryValue> {
     const payloadIsString: boolean = typeof payload === 'string';
 
     const payloadEntryValue: string = payloadIsString
                                   ? `"${payload}"`
                                   : payload;
 
-    const payloadEntryValues: Array<IPayLoadEntryValue> = [
+    const payloadEntryValues: Array<IPayloadEntryValue> = [
       { value: payloadEntryValue },
     ];
 

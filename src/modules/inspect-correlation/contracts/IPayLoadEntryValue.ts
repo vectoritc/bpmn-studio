@@ -1,4 +1,4 @@
-export interface IPayLoadEntryValue {
+export interface IPayloadEntryValue {
   title?: string;
   value: string;
 }
