@@ -5,8 +5,8 @@
         <span>Token</span>
         <span class="headline__node-id">${flowNode.id}</span>
       </div>
-      <span if.bind="!showTokenEntries && firstElementSelected" class="token-viewer__empty-message">There is no token for this element.</span>
-      <span if.bind="!firstElementSelected && !showTokenEntries" class="token-viewer__empty-message">Select an element to view token.</span>
+      <span if.bind="!showTokenEntries && flowNode === undefined" class="token-viewer__empty-message">There is no token for this element.</span>
+      <span if.bind="flowNode !== undefined && !showTokenEntries" class="token-viewer__empty-message">Select an element to view token.</span>
       <template repeat.for="entry of tokenEntries">
         <div class="token-entry-container">
           <div class="token-entry__event-type">
