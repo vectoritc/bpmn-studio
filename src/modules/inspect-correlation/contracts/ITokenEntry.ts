@@ -1,4 +1,4 @@
-import {IPayLoadEntry} from './IPayLoadEntry';
+import {IPayLoadEntry} from './index';
 
 export interface ITokenEntry {
   entryNr: number;
