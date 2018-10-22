@@ -392,17 +392,26 @@ export class SolutionExplorerSolution {
   public get currentlyOpenedDiagramUri(): string {
     const moduleName: string = this._router.currentInstruction.config.name;
 
-    const diagramDetailViewIsNotOpen: boolean = moduleName !== 'diagram-detail';
-    if (diagramDetailViewIsNotOpen) {
-      return undefined;
+    const diagramDetailViewIsOpen: boolean = moduleName === 'diagram-detail';
+    if (diagramDetailViewIsOpen) {
+      const queryParams: {diagramUri: string} = this._router.currentInstruction.queryParams;
+
+      return queryParams.diagramUri;
     }
 
-    const queryParams: {diagramUri: string} = this._router.currentInstruction.queryParams;
+    // TODO: The code below needs to get updated, once we implement multiple remote solutions.
+    const processDefDetailViewIsOpen: boolean = moduleName === 'processdef-detail';
+    if (processDefDetailViewIsOpen) {
+      const params: {processModelId: string} = this._router.currentInstruction.params;
 
-    return queryParams.diagramUri;
+      return environment.baseRoute + '/api/management/v1/' + params.processModelId;
+    }
+
+    return undefined;
   }
 
   private _isDiagramDetailViewOfDiagramOpen(diagramUriToCheck: string): boolean {
+
     const diagramIsOpened: boolean = diagramUriToCheck === this.currentlyOpenedDiagramUri;
 
     return diagramIsOpened;
