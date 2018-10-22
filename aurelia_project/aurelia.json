@@ -100,7 +100,6 @@
       {
         "name": "vendor-bundle.js",
         "prepend": [
-          "node_modules/popper.js/dist/umd/popper.js",
           "node_modules/bluebird/js/browser/bluebird.core.js",
           "node_modules/aurelia-cli/lib/resources/scripts/configure-bluebird.js",
           "node_modules/requirejs/require.js",
@@ -165,14 +164,9 @@
           },
           "jquery",
           {
-            "name": "popper.js",
-            "path": "../node_modules/popper.js/dist/umd/",
-            "main": "popper.js"
-          },
-          {
             "name": "bootstrap",
             "path": "../node_modules/bootstrap/dist",
-            "main": "js/bootstrap.bundle.min.js",
+            "main": "js/bootstrap.bundle.min",
             "deps": [
               "jquery"
             ],
