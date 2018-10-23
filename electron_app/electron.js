@@ -349,6 +349,7 @@ Main._createMainWindow = function () {
   });
 
   setOpenSingleDiagram();
+  setOpenSolutions();
 
   const platformIsWindows = process.platform === 'win32';
   if (platformIsWindows) {
@@ -405,6 +406,18 @@ Main._createMainWindow = function () {
     });
   }
 
+  function setOpenSolutions() {
+    electron.ipcMain.on('open_solution', (event) => {
+      const openedFile = dialog.showOpenDialog({
+        properties: [
+          'openDirectory'
+        ]
+      });
+
+      event.sender.send('import_opened_solution', openedFile);
+    });
+  }
+
   function setElectronMenubar() {
 
     let template = [{
@@ -433,6 +446,24 @@ Main._createMainWindow = function () {
           label: "Quit",
           role: "quit"
         }
+      ]
+    }, {
+      label: "File",
+      submenu: [
+        {
+          label: "Open Diagram",
+          accelerator: "CmdOrCtrl+O",
+          click: () => {
+            Main._window.webContents.send('menubar__start_opening_diagram');
+          },
+        },
+        {
+          label: "Open Solution",
+          accelerator: "CmdOrCtrl+Shift+O",
+          click: () => {
+            Main._window.webContents.send('menubar__start_opening_solution');
+          },
+        },
       ]
     }, {
       label: "Edit",
