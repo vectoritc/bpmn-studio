@@ -106,7 +106,7 @@ export class SolutionExplorerSolution {
       .withMessage('The diagram name can not end with a whitespace character.')
       .then()
       .satisfies(async(input: string) => {
-        const diagramNameIsUnchanged: boolean = this._currentlyRenamingDiagram.name === input;
+        const diagramNameIsUnchanged: boolean = this._currentlyRenamingDiagram && this._currentlyRenamingDiagram.name === input;
         if (diagramNameIsUnchanged) {
           return true;
         }
