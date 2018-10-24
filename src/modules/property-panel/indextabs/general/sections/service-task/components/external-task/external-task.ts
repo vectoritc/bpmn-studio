@@ -5,8 +5,8 @@ import environment from '../../../../../../../../environment';
 import {
   IBpmnModdle,
   IPageModel,
-  IProperty,
   IPropertiesElement,
+  IProperty,
   IServiceTaskElement,
 } from '../../../../../../../../contracts';
 
