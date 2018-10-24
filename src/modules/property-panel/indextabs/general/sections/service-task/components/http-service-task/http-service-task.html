@@ -25,19 +25,22 @@
         <tr class.bind="!selectedHttpUrl ? 'props-table__row--disabled' : ''">
           <th>Body</th>
           <td>
-            <input type="text" class="props-input name-input" value.bind="selectedHttpBody" change.delegate="selectedHttpParamsChanged()" disabled.bind="!selectedHttpUrl">
+            <textarea class="props-textarea name-input" value.bind="selectedHttpBody" change.delegate="selectedHttpParamsChanged()"
+              disabled.bind="!selectedHttpUrl"></textarea>
           </td>
         </tr>
         <tr class.bind="!selectedHttpBody ? 'props-table__row--disabled' : ''">
           <th>Content Type</th>
           <td>
-            <input type="text" class="props-input name-input" value.bind="selectedHttpContentType" change.delegate="selectedHttpParamsChanged()" disabled.bind="!selectedHttpBody">
+            <input type="text" class="props-input name-input" value.bind="selectedHttpContentType" change.delegate="selectedHttpParamsChanged()"
+              disabled.bind="!selectedHttpBody">
           </td>
         </tr>
         <tr class.bind="!selectedHttpBody ? 'props-table__row--disabled' : ''">
           <th>Authorization</th>
           <td>
-            <input type="text" class="props-input name-input" value.bind="selectedHttpAuth" change.delegate="selectedHttpParamsChanged()" disabled.bind="!selectedHttpBody">
+            <input type="text" class="props-input name-input" value.bind="selectedHttpAuth" change.delegate="selectedHttpParamsChanged()"
+              disabled.bind="!selectedHttpBody">
           </td>
         </tr>
       </table>
