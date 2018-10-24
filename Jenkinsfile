@@ -184,7 +184,10 @@ pipeline {
         }
         stage('Build on Windows') {
           agent {
-            label "windows"
+            node {
+              label "windows"
+              customWorkspace "ws/b${System.currentTimeMillis()}"
+            }
           }
           steps {
             unstash('post_build')
