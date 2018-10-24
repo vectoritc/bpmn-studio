@@ -401,7 +401,9 @@ export class SolutionExplorerSolution {
 
     // TODO: The code below needs to get updated, once we implement multiple remote solutions.
     const processDefDetailViewIsOpen: boolean = moduleName === 'processdef-detail';
-    if (processDefDetailViewIsOpen) {
+    const inspectViewIsOpen: boolean = moduleName === 'inspect';
+
+    if (processDefDetailViewIsOpen || inspectViewIsOpen) {
       const params: {processModelId: string} = this._router.currentInstruction.params;
 
       return environment.baseRoute + '/api/management/v1/' + params.processModelId;
