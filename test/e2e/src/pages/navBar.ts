@@ -23,7 +23,7 @@ export class NavBar {
   private _byStatusBarRight: By = by.id('navBarRight');
   private _byLoginButton: By = by.id('userLoginButton');
   private _bySolutionExplorerButton: By = by.id('navbarSolutionExplorerButton');
-  private _byActiveSolutionExplorer: By = by.className('solution-explorer--active');
+  private _byActiveButton: By = by.css('#navbarSolutionExplorerButton.button--active');
   private _byThinkLink: By = by.id('navbarThinkLink');
   private _byDesignLink: By = by.id('navbarDesignLink');
   private _byInspectLink: By = by.id('navbarInspectLink');
@@ -36,7 +36,7 @@ export class NavBar {
   public navBarLogInButton: ElementFinder = this.navBarTag.element(this._byLoginButton);
 
   public navBarSolutionExplorerButton: ElementFinder = this.navBarTag.element(this._bySolutionExplorerButton);
-  public navBarActiveSolutionExplorer: ElementArrayFinder = this.navBarTag.all(this._byActiveSolutionExplorer);
+  public navBarActiveSolutionExplorer: ElementArrayFinder = this.navBarTag.all(this._byActiveButton);
 
   public navBarThinkLink: ElementFinder = this.navBarTag.element(this._byThinkLink);
   public navBarDesignLink: ElementFinder = this.navBarTag.element(this._byDesignLink);

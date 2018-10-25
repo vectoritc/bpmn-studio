@@ -1,5 +1,5 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {inject} from 'aurelia-framework';
+import {inject, observable} from 'aurelia-framework';
 import {Redirect, Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
@@ -32,6 +32,7 @@ export class DiagramDetail {
   public showUnsavedChangesModal: boolean = false;
   public showSaveBeforeDeployModal: boolean = false;
 
+  @observable({ changeHandler: 'diagramHasChangedChanged'}) private _diagramHasChanged: boolean;
   private _solutionExplorerService: ISolutionExplorerService;
   private _managementClient: IManagementApi;
   private _authenticationService: IAuthenticationService;
@@ -39,9 +40,9 @@ export class DiagramDetail {
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
   private _router: Router;
-  private _diagramHasChanged: boolean;
   private _validationController: ValidationController;
   private _diagramIsInvalid: boolean = false;
+  private _ipcRenderer: any;
 
   // This identity is used for the filesystem actions. Needs to be refactored.
   private _identity: any;
@@ -70,6 +71,11 @@ export class DiagramDetail {
     this.diagram = await this._solutionExplorerService.openSingleDiagram(routeParameters.diagramUri, this._identity);
 
     this._diagramHasChanged = false;
+
+    const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
+    if (isRunningInElectron) {
+      this._prepareSaveModalForClosing();
+    }
   }
 
   public attached(): void {
@@ -198,6 +204,7 @@ export class DiagramDetail {
 
       // Since a new processmodel was uploaded, we need to refresh any processmodel lists.
       this._eventAggregator.publish(environment.events.refreshProcessDefs);
+      this._eventAggregator.publish(environment.events.diagramDetail.onDiagramDeployed);
 
       this._router.navigateToRoute('processdef-detail', {
         processModelId: processModelId,
@@ -206,6 +213,52 @@ export class DiagramDetail {
       this._notificationService
           .showNotification(NotificationType.ERROR, `Unable to update diagram: ${error}.`);
     }
+  }
+
+  public diagramHasChangedChanged(): void {
+    const isRunningInElectron: boolean = this._ipcRenderer !== undefined;
+    if (isRunningInElectron) {
+      const canNotClose: boolean = this._diagramHasChanged;
+
+      this._ipcRenderer.send('can-not-close', canNotClose);
+    }
+  }
+
+  private _prepareSaveModalForClosing(): void {
+    this._ipcRenderer = (window as any).nodeRequire('electron').ipcRenderer;
+
+    this._ipcRenderer.on('show-close-modal', () => {
+      const leaveWithoutSaving: EventListenerOrEventListenerObject =  (): void => {
+        this._ipcRenderer.send('can-not-close', false);
+        this._ipcRenderer.send('close-bpmn-studio');
+      };
+
+      const leaveWithSaving: EventListenerOrEventListenerObject = async(): Promise<void> => {
+        if (this._diagramIsInvalid) {
+          return;
+        }
+
+        this.showUnsavedChangesModal = false;
+        await this._saveDiagram();
+        this._diagramHasChanged = false;
+
+        this._ipcRenderer.send('close-bpmn-studio');
+      };
+
+      const doNotLeave: EventListenerOrEventListenerObject = (): void => {
+        this.showUnsavedChangesModal = false;
+
+        document.getElementById('dontSaveButtonLeaveView').removeEventListener('click', leaveWithoutSaving);
+        document.getElementById('saveButtonLeaveView').removeEventListener('click', leaveWithSaving);
+        document.getElementById('cancelButtonLeaveView').removeEventListener('click', doNotLeave);
+      };
+
+      document.getElementById('dontSaveButtonLeaveView').addEventListener('click', leaveWithoutSaving);
+      document.getElementById('saveButtonLeaveView').addEventListener('click', leaveWithSaving );
+      document.getElementById('cancelButtonLeaveView').addEventListener('click', doNotLeave);
+
+      this.showUnsavedChangesModal = true;
+    });
   }
 
   /**

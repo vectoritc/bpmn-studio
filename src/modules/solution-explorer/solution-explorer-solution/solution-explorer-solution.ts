@@ -106,14 +106,19 @@ export class SolutionExplorerSolution {
       .withMessage('The diagram name can not end with a whitespace character.')
       .then()
       .satisfies(async(input: string) => {
+        const diagramNameIsUnchanged: boolean = this._currentlyRenamingDiagram && this._currentlyRenamingDiagram.name === input;
+        if (diagramNameIsUnchanged) {
+          return true;
+        }
+
         // The solution may have changed on the file system.
         await this.updateSolution();
 
         const diagramUri: string = `${this._openedSolution.uri}/${input}.bpmn`;
-        const diagramWithIdDoesNotExists: boolean = this.
+        const diagramWithUriDoesNotExist: boolean = this.
           _findURIObject(this._openedSolution.diagrams, diagramUri) === undefined;
 
-        return diagramWithIdDoesNotExists;
+        return diagramWithUriDoesNotExist;
       })
       .withMessage('A diagram with that name already exists.');
 
@@ -387,17 +392,28 @@ export class SolutionExplorerSolution {
   public get currentlyOpenedDiagramUri(): string {
     const moduleName: string = this._router.currentInstruction.config.name;
 
-    const diagramDetailViewIsNotOpen: boolean = moduleName !== 'diagram-detail';
-    if (diagramDetailViewIsNotOpen) {
-      return undefined;
+    const diagramDetailViewIsOpen: boolean = moduleName === 'diagram-detail';
+    if (diagramDetailViewIsOpen) {
+      const queryParams: {diagramUri: string} = this._router.currentInstruction.queryParams;
+
+      return queryParams.diagramUri;
     }
 
-    const queryParams: {diagramUri: string} = this._router.currentInstruction.queryParams;
+    // TODO: The code below needs to get updated, once we implement multiple remote solutions.
+    const processDefDetailViewIsOpen: boolean = moduleName === 'processdef-detail';
+    const inspectViewIsOpen: boolean = moduleName === 'inspect';
 
-    return queryParams.diagramUri;
+    if (processDefDetailViewIsOpen || inspectViewIsOpen) {
+      const params: {processModelId: string} = this._router.currentInstruction.params;
+
+      return environment.baseRoute + '/api/management/v1/' + params.processModelId;
+    }
+
+    return undefined;
   }
 
   private _isDiagramDetailViewOfDiagramOpen(diagramUriToCheck: string): boolean {
+
     const diagramIsOpened: boolean = diagramUriToCheck === this.currentlyOpenedDiagramUri;
 
     return diagramIsOpened;
@@ -616,10 +632,15 @@ export class SolutionExplorerSolution {
       return false;
     }
 
+    const filenameWasNotChanged: boolean = this._currentlyRenamingDiagram.name === this._diagramRenamingState.currentDiagramInputValue;
+    if (filenameWasNotChanged) {
+      return true;
+    }
+
     try {
       await this.solutionService.renameDiagram(this._currentlyRenamingDiagram, this._diagramRenamingState.currentDiagramInputValue);
     } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, error.message);
+      this._notificationService.showNotification(NotificationType.WARNING, error.message);
 
       return false;
     }

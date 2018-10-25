@@ -86,6 +86,9 @@ export class SolutionExplorerPanel {
           }
         },
       ),
+      this._eventAggregator.subscribe(environment.events.diagramDetail.onDiagramDeployed, () => {
+        this._refreshSolutions();
+      }),
     ];
   }
 
@@ -110,11 +113,7 @@ export class SolutionExplorerPanel {
     const uri: string = event.target.files[0].path;
     this.solutionInput.value = '';
 
-    try {
-      await this.solutionExplorerList.openSolution(uri);
-    } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, error.message);
-    }
+    this._openSolutionOrDisplayError(uri);
   }
 
   /**
@@ -139,7 +138,7 @@ export class SolutionExplorerPanel {
 
     this._ipcRenderer.send('open_single_diagram');
 
-    this._ipcRenderer.once('import_opened_single_diagram', (event: Event, openedFile: File) => {
+    this._ipcRenderer.once('import_opened_single_diagram', async(event: Event, openedFile: File) => {
       const noFileSelected: boolean = openedFile === null;
       if (noFileSelected) {
         return;
@@ -147,16 +146,45 @@ export class SolutionExplorerPanel {
 
       const filePath: string = openedFile[0];
 
-      return this._openSingleDiagramOrDisplayError(filePath);
+      await this._openSingleDiagramOrDisplayError(filePath);
     });
   }
 
   public async openSolution(): Promise<void> {
-    this.solutionInput.click();
+    const canNotReadFromFileSystem: boolean = !this.canReadFromFileSystem();
+    if (canNotReadFromFileSystem) {
+      this.solutionInput.click();
+
+      return;
+    }
+
+    this._ipcRenderer.send('open_solution');
+
+    this._ipcRenderer.once('import_opened_solution', async(event: Event, openedFolder: File) => {
+      const noFolderSelected: boolean = openedFolder === null;
+      if (noFolderSelected) {
+        return;
+      }
+
+      const folderPath: string = openedFolder[0];
+      await this._openSolutionOrDisplayError(folderPath);
+    });
   }
 
   public canReadFromFileSystem(): boolean {
     return (window as any).nodeRequire;
+  }
+
+  private async _refreshSolutions(): Promise<void> {
+    return this.solutionExplorerList.refreshSolutions();
+  }
+
+  private async _openSolutionOrDisplayError(uri: string): Promise<void> {
+    try {
+      await this.solutionExplorerList.openSolution(uri);
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR, error.message);
+    }
   }
 
   private async _openSingleDiagramOrDisplayError(uri: string): Promise<void> {
@@ -182,9 +210,20 @@ export class SolutionExplorerPanel {
     this._openSingleDiagramOrDisplayError(uri);
   }
 
+  private _electronOnMenuOpenDiagramHook = async(_: Event): Promise<void> => {
+    this.openDiagram();
+  }
+
+  private _electronOnMenuOpenSolutionHook = async(_: Event): Promise<void> => {
+    this.openSolution();
+  }
+
   private _registerElectronFileOpeningHooks(): void {
     // Register handler for double-click event fired from "electron.js".
     this._ipcRenderer.on('double-click-on-file', this._electronFileOpeningHook);
+
+    this._ipcRenderer.on('menubar__start_opening_diagram', this._electronOnMenuOpenDiagramHook);
+    this._ipcRenderer.on('menubar__start_opening_solution', this._electronOnMenuOpenSolutionHook);
 
     // Send event to signal the component is ready to handle the event.
     this._ipcRenderer.send('waiting-for-double-file-click');
@@ -202,6 +241,9 @@ export class SolutionExplorerPanel {
   private _removeElectronFileOpeningHooks(): void {
     // Register handler for double-click event fired from "electron.js".
     this._ipcRenderer.removeListener('double-click-on-file', this._electronFileOpeningHook);
+
+    this._ipcRenderer.removeListener('menubar__start_opening_diagram', this._electronOnMenuOpenDiagramHook);
+    this._ipcRenderer.removeListener('menubar__start_opening_solution', this._electronOnMenuOpenSolutionHook);
   }
 
   private _openDiagramOnDropBehaviour: EventListener = async(event: DragEvent): Promise<void> => {

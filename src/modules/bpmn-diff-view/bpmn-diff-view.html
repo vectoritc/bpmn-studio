@@ -30,25 +30,25 @@
           <table class="change-list-table">
             <tr repeat.for="removedElement of changeListData.removed">
               <td class="change-list-table__entry">
-                <span class="label label-red">Removed</span> - ${removedElement.type}
+                <span class="badge badge-red">Removed</span> - ${removedElement.type}
                 <span if.bind="removedElement.name !== ''">with the name ${removedElement.name}</span>
               </td>
             </tr>
             <tr repeat.for="changedElement of changeListData.changed">
               <td class="change-list-table__entry">
-                <span class="label label-orange">Change</span> - ${changedElement.type}
+                <span class="badge badge-orange">Change</span> - ${changedElement.type}
                 <span if.bind="changedElement.name !== ''">with the name ${changedElement.name}</span>
               </td>
             </tr>
             <tr repeat.for="addedElement of changeListData.added">
               <td class="change-list-table__entry">
-                <span class="label label-green">Added</span> - ${addedElement.type}
+                <span class="badge badge-green">Added</span> - ${addedElement.type}
                 <span if.bind="addedElement.name !== ''">with the name ${addedElement.name}</span>
               </td>
             </tr>
             <tr repeat.for="layoutChangedElement of changeListData.layoutChanged">
               <td class="change-list-table__entry">
-                <span class="label label-purple">Layout Changed</span> - ${layoutChangedElement.type}
+                <span class="badge badge-purple">Layout Changed</span> - ${layoutChangedElement.type}
                 <span if.bind="layoutChangedElement.name !== ''">with the name ${layoutChangedElement.name}</span>
               </td>
             </tr>

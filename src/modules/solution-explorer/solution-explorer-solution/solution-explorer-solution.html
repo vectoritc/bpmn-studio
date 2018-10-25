@@ -20,7 +20,7 @@
 
       <li
         repeat.for="diagram of openedDiagrams"
-        class="diagram-entry"
+        class.bind="diagram.uri === currentlyOpenedDiagramUri ? 'diagram-entry diagram-entry--highlight' : 'diagram-entry'"
         title="${diagram.name}"
         click.delegate="navigateToDetailView(diagram)"
         id="diagramList-${diagram.name}">

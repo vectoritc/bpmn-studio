@@ -18,6 +18,8 @@ const openAboutWindow = require('about-window').default;
 let filePath;
 let isInitialized = false;
 
+let canNotCloseApplication = false;
+
 const Main = {};
 
 /**
@@ -324,11 +326,30 @@ Main._createMainWindow = function () {
   // history.
   Main._window.loadURL('/');
 
-  Main._window.on('closed', () => {
+  Main._window.on('close', (event) => {
+    if (canNotCloseApplication) {
+      event.preventDefault();
+
+      Main._window.webContents.send('show-close-modal');
+
+      return false;
+    }
+  });
+
+  electron.ipcMain.on('close-bpmn-studio', (event) => {
+    Main._window.close();
+  });
+
+  electron.ipcMain.on('can-not-close', (event, canCloseResult) => {
+    canNotCloseApplication = canCloseResult;
+  });
+
+  Main._window.on('closed', (event) => {
     Main._window = null;
   });
 
   setOpenSingleDiagram();
+  setOpenSolutions();
 
   const platformIsWindows = process.platform === 'win32';
   if (platformIsWindows) {
@@ -385,6 +406,18 @@ Main._createMainWindow = function () {
     });
   }
 
+  function setOpenSolutions() {
+    electron.ipcMain.on('open_solution', (event) => {
+      const openedFile = dialog.showOpenDialog({
+        properties: [
+          'openDirectory'
+        ]
+      });
+
+      event.sender.send('import_opened_solution', openedFile);
+    });
+  }
+
   function setElectronMenubar() {
 
     let template = [{
@@ -413,6 +446,24 @@ Main._createMainWindow = function () {
           label: "Quit",
           role: "quit"
         }
+      ]
+    }, {
+      label: "File",
+      submenu: [
+        {
+          label: "Open Diagram",
+          accelerator: "CmdOrCtrl+O",
+          click: () => {
+            Main._window.webContents.send('menubar__start_opening_diagram');
+          },
+        },
+        {
+          label: "Open Solution",
+          accelerator: "CmdOrCtrl+Shift+O",
+          click: () => {
+            Main._window.webContents.send('menubar__start_opening_solution');
+          },
+        },
       ]
     }, {
       label: "Edit",
@@ -468,6 +519,22 @@ Main._createMainWindow = function () {
           role: "toggledevtools"
         }
       ]
+    }, {
+      label: "Help",
+      submenu: [{
+        label: "Documentation",
+        click: () => {
+          const documentation_url = 'https://www.process-engine.io/documentation/';
+          electron.shell.openExternal(documentation_url);
+        }
+      }, {
+        label: "Release Notes for Current Version",
+          click: () => {
+            const currentVersion = electron.app.getVersion();
+            const currentReleaseNotesUrl = `https://github.com/process-engine/bpmn-studio/releases/tag/v${currentVersion}`
+            electron.shell.openExternal(currentReleaseNotesUrl);
+          }
+      }]
     }];
 
     electron.Menu.setApplicationMenu(electron.Menu.buildFromTemplate(template));

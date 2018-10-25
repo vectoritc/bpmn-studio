@@ -1,5 +1,5 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {inject} from 'aurelia-framework';
+import {inject, observable} from 'aurelia-framework';
 import {activationStrategy, Redirect, Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
@@ -50,18 +50,19 @@ export class ProcessDefDetail {
   // TODO: Explain what dropdown this is and find a better name.
   public dropdownMenu: HTMLSelectElement;
 
+  @observable({ changeHandler: 'diagramHasChangedChanged'}) private _diagramHasChanged: boolean = false;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
   private _processModelId: string;
   private _router: Router;
-  private _diagramHasChanged: boolean = false;
   private _validationController: ValidationController;
   // Used to control the modal view; shows the modal view for pressing the play button.
   private _startButtonPressed: boolean = false;
   private _authenticationService: IAuthenticationService;
   private _diagramIsInvalid: boolean = false;
   private _managementApiClient: IManagementApi;
+  private _ipcRenderer: any;
 
   constructor(eventAggregator: EventAggregator,
               router: Router,
@@ -82,6 +83,10 @@ export class ProcessDefDetail {
     this._processModelId = routeParameters.processModelId;
     this._diagramHasChanged = false;
     await this._refreshProcess();
+    const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
+    if (isRunningInElectron) {
+      this._prepareSaveModalForClosing();
+    }
   }
 
   public attached(): void {
@@ -309,6 +314,15 @@ export class ProcessDefDetail {
 
   }
 
+  public diagramHasChangedChanged(): void {
+    const isRunningInElectron: boolean = this._ipcRenderer !== undefined;
+    if (isRunningInElectron) {
+      const canNotClose: boolean = this._diagramHasChanged;
+
+      this._ipcRenderer.send('can-not-close', canNotClose);
+    }
+  }
+
   /**
    * Opens a modal, if the diagram has unsaved changes and ask the user,
    * if he wants to save his changes. This is necessary to
@@ -322,6 +336,43 @@ export class ProcessDefDetail {
     } else {
       await this.showSelectStartEventDialog();
     }
+  }
+
+  private _prepareSaveModalForClosing(): void {
+    this._ipcRenderer = (window as any).nodeRequire('electron').ipcRenderer;
+
+    this._ipcRenderer.on('show-close-modal', () => {
+      const leaveWithoutSaving: EventListenerOrEventListenerObject =  (): void => {
+        this._ipcRenderer.send('can-not-close', false);
+        this._ipcRenderer.send('close-bpmn-studio');
+      };
+
+      const leaveWithSaving: EventListenerOrEventListenerObject = async(): Promise<void> => {
+        if (this._diagramIsInvalid) {
+          return;
+        }
+
+        this.showSaveOnLeaveModal = false;
+        await this._saveDiagram();
+        this._diagramHasChanged = false;
+
+        this._ipcRenderer.send('close-bpmn-studio');
+      };
+
+      const doNotLeave: EventListenerOrEventListenerObject = (): void => {
+        this.showSaveOnLeaveModal = false;
+
+        document.getElementById('dontSaveButtonLeaveView').removeEventListener('click', leaveWithoutSaving);
+        document.getElementById('saveButtonLeaveView').removeEventListener('click', leaveWithSaving);
+        document.getElementById('cancelButtonLeaveView').removeEventListener('click', doNotLeave);
+      };
+
+      document.getElementById('dontSaveButtonLeaveView').addEventListener('click', leaveWithoutSaving);
+      document.getElementById('saveButtonLeaveView').addEventListener('click', leaveWithSaving );
+      document.getElementById('cancelButtonLeaveView').addEventListener('click', doNotLeave);
+
+      this.showSaveOnLeaveModal = true;
+    });
   }
 
   private async _refreshProcess(): Promise<ProcessModelExecution.ProcessModel> {
