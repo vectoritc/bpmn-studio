@@ -528,9 +528,10 @@ Main._createMainWindow = function () {
           electron.shell.openExternal(documentation_url);
         }
       }, {
-        label: "Release Notes",
+        label: "Release Notes for Current Version",
           click: () => {
-            const currentReleaseNotesUrl = 'https://github.com/process-engine/bpmn-studio/releases/latest'
+            const currentVersion = electron.app.getVersion();
+            const currentReleaseNotesUrl = `https://github.com/process-engine/bpmn-studio/releases/tag/v${currentVersion}`
             electron.shell.openExternal(currentReleaseNotesUrl);
           }
       }]
