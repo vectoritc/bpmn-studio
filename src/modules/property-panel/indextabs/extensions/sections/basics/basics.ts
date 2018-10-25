@@ -80,28 +80,18 @@ export class BasicsSection implements ISection {
     this._publishDiagramChange();
   }
 
-  /**
-   * TODO: This is used to check, if the user created a new Extension Property
-   * and adds an event listener to the new textbox element.
-   *
-   * This here is necessary, because when the user clicks on the
-   * 'addProperty' button, aurelia hasn't created and attached the new
-   * textbox to the dom yet.
-   *
-   * When aurelia tries to obtain the value of the focus property we can
-   * be sure, that the textbox was created and attached to the dom.
-   *
-   * Im sure that they are better ways to do that.
-   *
-   *
-   * @param index Index of the newly created textbox.
-   */
   public keyFieldBlurred(index: number, event: FocusEvent): void {
-    const createdInputField: HTMLInputElement = this.keyInputFields[index];
-    const target: HTMLElement = event.relatedTarget as HTMLElement;
-    const targetId: string = target.id;
+    const targetElement: HTMLElement = event.relatedTarget as HTMLElement;
+    const targetIsNoInputField: boolean = !(targetElement instanceof HTMLInputElement);
 
-    if (targetId !== index.toString()) {
+    if (targetIsNoInputField) {
+      this._checkAndRemoveEmptyProperties(index);
+      return;
+    }
+
+    const targetId: string = targetElement.id;
+    const indexAsString: string = index.toString();
+    if (targetId !== indexAsString) {
       this._checkAndRemoveEmptyProperties(index);
     }
   }
