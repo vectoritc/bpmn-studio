@@ -1,5 +1,5 @@
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {bindable, BindingEngine, ICollectionObserverSplice, inject, observable} from 'aurelia-framework';
+import {inject} from 'aurelia-framework';
 
 import {
   IBpmnModdle,
