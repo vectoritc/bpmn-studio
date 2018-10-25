@@ -21,6 +21,7 @@ export class BasicsSection implements ISection {
   public properties: Array<IProperty> = [];
   public newNames: Array<string> = [];
   public newValues: Array<string> = [];
+  public shouldFocus: boolean = false;
 
   private _businessObjInPanel: IModdleElement;
   private _moddle: IBpmnModdle;
@@ -75,6 +76,7 @@ export class BasicsSection implements ISection {
     this._propertiesElement.values.push(bpmnProperty);
     this.properties.push(bpmnProperty);
     this._publishDiagramChange();
+    this.shouldFocus = true;
   }
 
   public keyFieldBlurred(index: number, event: FocusEvent): void {
@@ -134,6 +136,7 @@ export class BasicsSection implements ISection {
     this.properties = [];
     this.newNames = [];
     this.newValues = [];
+    this.shouldFocus = false;
 
     const businessObjectHasNoExtensionElements: boolean = this._businessObjInPanel.extensionElements === undefined
                                                        || this._businessObjInPanel.extensionElements === null;
