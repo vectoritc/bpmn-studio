@@ -86,9 +86,9 @@ export class BasicsSection implements ISection {
       return;
     }
 
-    const targetId: string = targetElement.id;
+    const targetFieldIndex: string = targetElement.getAttribute('data-fieldIndex');
     const indexAsString: string = index.toString();
-    const targetValueFieldNotRelated: boolean = targetId !== indexAsString;
+    const targetValueFieldNotRelated: boolean = targetFieldIndex !== indexAsString;
     if (targetValueFieldNotRelated) {
       this._checkAndRemoveEmptyProperties(index);
     }
