@@ -96,13 +96,14 @@ export class BasicsSection implements ISection {
    *
    * @param index Index of the newly created textbox.
    */
-  public textboxLoaded(index: number): boolean {
+  public keyFieldBlurred(index: number, event: FocusEvent): void {
     const createdInputField: HTMLInputElement = this.keyInputFields[index];
+    const target: HTMLElement = event.relatedTarget as HTMLElement;
+    const targetId: string = target.id;
 
-    createdInputField.onblur = (): void => {
+    if (targetId !== index.toString()) {
       this._checkAndRemoveEmptyProperties(index);
-    };
-    return true;
+    }
   }
 
   public removeProperty(index: number): void {
