@@ -49,7 +49,7 @@ export class ExternalTask {
     this._publishDiagramChange();
   }
 
-  private _getPayloadFromModel(): string {
+  private _getPayloadFromModel(): string | undefined {
     const payloadProperty: IProperty = this._getProperty('payload');
 
     const payloadPropertyExists: boolean = payloadProperty !== undefined;
