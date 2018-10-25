@@ -79,7 +79,7 @@ export class ExternalTask {
   private _createProperty(propertyName: string): IProperty {
     const propertiesElement: IPropertiesElement = this._getPropertiesElement();
 
-    const propertyObject: Object = {
+    const propertyObject: any = {
       name: propertyName,
       value: '',
     };
@@ -93,7 +93,10 @@ export class ExternalTask {
 
   private _getPropertiesElement(): IPropertiesElement {
     const propertiesElement: IPropertiesElement = this.businessObjInPanel.extensionElements.values.find((element: IPropertiesElement) => {
-      return element.$type === 'camunda:Properties' && element.values !== undefined;
+      const elementIsCamundaProperties: boolean = element.$type === 'camunda:Properties';
+      const elementContainsValues: boolean = element.values !== undefined;
+
+      return elementIsCamundaProperties && elementContainsValues;
     });
 
     return propertiesElement;
