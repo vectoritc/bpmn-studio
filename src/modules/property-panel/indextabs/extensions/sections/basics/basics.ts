@@ -134,9 +134,6 @@ export class BasicsSection implements ISection {
     this.newNames = [];
     this.newValues = [];
 
-    this.keyInputFields = [];
-    this.valueInputFields = [];
-
     const businessObjectHasNoExtensionElements: boolean = this._businessObjInPanel.extensionElements === undefined
                                                        || this._businessObjInPanel.extensionElements === null;
 
