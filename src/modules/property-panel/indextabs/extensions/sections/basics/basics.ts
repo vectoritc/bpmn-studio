@@ -126,17 +126,12 @@ export class BasicsSection implements ISection {
     this._propertiesElement.values[index].name = this.newNames[index];
     this._checkAndRemoveEmptyProperties(index);
     this._publishDiagramChange();
-    console.log('called');
   }
 
   public changeValue(index: number): void {
     this._propertiesElement.values[index].value = this.newValues[index];
     this._checkAndRemoveEmptyProperties(index);
     this._publishDiagramChange();
-  }
-
-  public keyInputFieldsBlub(): void {
-    console.log('meh');
   }
 
   private _checkAndRemoveEmptyProperties(index: number): void {
