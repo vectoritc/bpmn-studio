@@ -86,6 +86,9 @@ export class SolutionExplorerPanel {
           }
         },
       ),
+      this._eventAggregator.subscribe(environment.events.diagramDetail.onDiagramDeployed, () => {
+        this._refreshSolutions();
+      }),
     ];
   }
 
@@ -170,6 +173,10 @@ export class SolutionExplorerPanel {
 
   public canReadFromFileSystem(): boolean {
     return (window as any).nodeRequire;
+  }
+
+  private async _refreshSolutions(): Promise<void> {
+    return this.solutionExplorerList.refreshSolutions();
   }
 
   private async _openSolutionOrDisplayError(uri: string): Promise<void> {
