@@ -11,7 +11,7 @@ export default {
   },
   openIdConnect: {
     authority: 'http://localhost:5000',
-    defaultAuthority: 'http://localhost:5000'
+    defaultAuthority: 'http://localhost:5000',
   },
   processengine: {
     waitingRoomPollingIntervalInMs: 200,
@@ -64,6 +64,9 @@ export default {
       toggleHeatmapView: 'navbar:tools:inspectButtons:toggleHeatmapView',
       toggleInspectCorrelationView: 'navbar:tools:inspectButtons:toggleInspectCorrelationView',
       diagramSuccessfullySaved: 'navbar:diagram:saved',
+    },
+    diagramDetail: {
+      onDiagramDeployed: 'diagramdetail:diagram:ondeployed',
     },
     processDefDetail: {
       printDiagram: 'processdefdetail:diagram:print',
