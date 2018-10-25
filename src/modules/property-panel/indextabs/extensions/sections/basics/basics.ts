@@ -22,9 +22,6 @@ export class BasicsSection implements ISection {
   public newNames: Array<string> = [];
   public newValues: Array<string> = [];
 
-  @bindable() public keyInputFields: Array<HTMLInputElement> = [];
-  @bindable() public valueInputFields: Array<HTMLInputElement> = [];
-
   private _businessObjInPanel: IModdleElement;
   private _moddle: IBpmnModdle;
   private _propertiesElement: IPropertiesElement;
