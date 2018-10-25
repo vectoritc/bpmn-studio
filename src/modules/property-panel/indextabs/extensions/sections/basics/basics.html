@@ -12,10 +12,10 @@
       <table>
         <tr repeat.for="property of properties" index.bind="$index">
           <td class="key-value-column-left">
-            <input ref="keyInputFields[$index]" id="${$index}" blur.trigger="keyFieldBlurred($index, $event)" type="text" class="key-value-input" value.bind="newNames[$index]" placeholder="Name" change.delegate="changeName($index)">
+            <input  id="${$index}" focus.one-time="true" blur.trigger="keyFieldBlurred($index, $event)" type="text" class="key-value-input" value.bind="newNames[$index]" placeholder="Name" change.delegate="changeName($index)">
           </td>
           <td class="key-value-column-right">
-            <input ref="valueInputFields[$index]" id="${$index}" type="text" class="key-value-input" value.bind="newValues[$index]" placeholder="Value" change.delegate="changeValue($index)">
+            <input id="${$index}" type="text" class="key-value-input" value.bind="newValues[$index]" placeholder="Value" change.delegate="changeValue($index)">
           </td>
           <td>
             <button class="button key-value-delete-button" click.delegate="removeProperty($index)">
