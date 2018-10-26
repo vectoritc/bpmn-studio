@@ -22,6 +22,7 @@ export class ProcessSection {
   public newNames: Array<string> = [];
   public newValues: Array<string> = [];
   public properties: Array<IProperty> = [];
+  public shouldFocus: boolean = false;
 
   private _businessObjInPanel: IModdleElement;
   private _moddle: IBpmnModdle;
@@ -82,6 +83,7 @@ export class ProcessSection {
     this._propertiesElement.values.push(bpmnProperty);
     this.properties.push(bpmnProperty);
     this._publishDiagramChange();
+    this.shouldFocus = true;
   }
 
   public removeProperty(index: number): void {
@@ -139,6 +141,7 @@ export class ProcessSection {
     this.properties = [];
     this.newNames = [];
     this.newValues = [];
+    this.shouldFocus = false;
 
     const businessObjectHasNoExtensionElements: boolean = this._businessObjInPanel.processRef.extensionElements === undefined
                                                        || this._businessObjInPanel.processRef.extensionElements === null;
@@ -177,6 +180,7 @@ export class ProcessSection {
       this.newValues.push(property.value);
       this.properties.push(property);
     }
+
   }
 
   private _getPropertiesElement(): IPropertiesElement {
