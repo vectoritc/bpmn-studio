@@ -94,7 +94,6 @@ export default {
     },
     inspectView: {
       showInspectPanel: 'inspectView:inspectPanel:show',
-      correlationUpdated: 'inspect:correlationList:correlationUpdated',
     },
   },
   baseRoute: processEngineRoute,

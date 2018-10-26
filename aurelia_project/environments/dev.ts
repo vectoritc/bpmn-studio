@@ -98,7 +98,6 @@ export default {
     },
     inspect: {
       shouldDisableTokenViewerButton: 'inspect:tokenViewerButton:disable',
-      correlationUpdated: 'inspect:correlationList:correlationUpdated',
     },
     inspectCorrelation: {
       showInspectPanel: 'inspectCorrelation:inspectPanel:show',
