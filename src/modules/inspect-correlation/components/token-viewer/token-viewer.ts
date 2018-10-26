@@ -1,7 +1,6 @@
 import {bindable, inject} from 'aurelia-framework';
 
 import {Correlation, TokenHistoryEntry} from '@process-engine/management_api_contracts';
-
 import {IShape} from '../../../../contracts';
 import {IInspectCorrelationService, IPayLoadEntry, ITokenEntry} from '../../contracts';
 
@@ -21,8 +20,18 @@ export class TokenViewer {
     this._inspectCorrelationService = inspectCorrelationService;
   }
 
-  public async flowNodeChanged(): Promise<void> {
+  public correlationChanged(newCorrelation: Correlation): void {
+    const correlationWasNotInitialOpened: boolean = this.flowNode !== undefined;
+    if (correlationWasNotInitialOpened) {
+      this.updateFlowNode();
+    }
+  }
 
+  public async flowNodeChanged(): Promise<void> {
+    this.updateFlowNode();
+  }
+
+  public async updateFlowNode(): Promise<void> {
     this.firstElementSelected = true;
     this.tokenEntries = [];
 
