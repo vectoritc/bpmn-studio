@@ -1,10 +1,14 @@
-import {bindable, bindingMode} from 'aurelia-framework';
+import {bindable, bindingMode, inject} from 'aurelia-framework';
+
+import {EventAggregator} from 'aurelia-event-aggregator';
 
 import {Correlation} from '@process-engine/management_api_contracts';
 
 import {CorrelationListSortProperty, ICorrelationSortSettings, ICorrelationTableEntry} from '../../../../../../contracts/index';
+import environment from '../../../../../../environment';
 import {DateService} from '../../../../../date-service/date.service';
 
+@inject(EventAggregator)
 export class CorrelationList {
   @bindable({ defaultBindingMode: bindingMode.twoWay }) public selectedCorrelation: Correlation;
   @bindable({ changeHandler: 'correlationsChanged' }) public correlations: Array<Correlation>;
@@ -16,9 +20,16 @@ export class CorrelationList {
   };
 
   private _tableData: Array<ICorrelationTableEntry> = [];
+  private _eventAggregator: EventAggregator;
+
+  constructor(eventAggregagor: EventAggregator) {
+    this._eventAggregator = eventAggregagor;
+  }
 
   public selectCorrelation(selectedTableEntry: ICorrelationTableEntry): void {
-    this.selectedCorrelation = this._getCorrelationForTableEntry(selectedTableEntry);
+    const newCorrelation: Correlation = this._getCorrelationForTableEntry(selectedTableEntry);
+    this._eventAggregator.publish(environment.events.inspect.correlationUpdated, newCorrelation);
+    this.selectedCorrelation = newCorrelation;
   }
 
   public correlationsChanged(correlations: Array<Correlation>): void {
