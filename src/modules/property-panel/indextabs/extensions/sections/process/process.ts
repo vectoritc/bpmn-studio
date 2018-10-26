@@ -74,6 +74,11 @@ export class ProcessSection {
       this._propertiesElement = this._getPropertiesElement();
     }
 
+    const propertyValuesUndefined: boolean = this._propertiesElement.values === undefined;
+    if (propertyValuesUndefined) {
+      this._propertiesElement.values = [];
+    }
+
     this._propertiesElement.values.push(bpmnProperty);
     this.properties.push(bpmnProperty);
     this._publishDiagramChange();
