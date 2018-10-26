@@ -105,6 +105,30 @@ export class ProcessSection {
     this._propertiesElement.values[index].value = this.newValues[index];
     this._publishDiagramChange();
   }
+  public inputFieldBlurred(index: number, event: FocusEvent): void {
+    const targetElement: HTMLElement = event.relatedTarget as HTMLElement;
+    const targetIsNoInputField: boolean = !(targetElement instanceof HTMLInputElement);
+
+    if (targetIsNoInputField) {
+      this._checkAndRemoveEmptyProperties(index);
+      return;
+    }
+
+    const targetFieldIndex: string = targetElement.getAttribute('data-fieldIndex');
+    const indexAsString: string = index.toString();
+    const targetValueFieldNotRelated: boolean = targetFieldIndex !== indexAsString;
+    if (targetValueFieldNotRelated) {
+      this._checkAndRemoveEmptyProperties(index);
+    }
+  }
+
+  private _checkAndRemoveEmptyProperties(index: number): void {
+    const propertyElement: IProperty = this._propertiesElement.values[index];
+    const propertyIsEmpty: boolean = propertyElement.value === '' && propertyElement.name === '';
+    if (propertyIsEmpty) {
+      this.removeProperty(index);
+    }
+  }
 
   private _reloadProperties(): void {
     this.properties = [];

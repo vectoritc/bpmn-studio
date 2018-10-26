@@ -132,10 +132,6 @@ export class BasicsSection implements ISection {
     }
   }
 
-  private _clickedAway(index: number, event: FocusEvent) {
-
-  }
-
   private _reloadProperties(): void {
     this.properties = [];
     this.newNames = [];
