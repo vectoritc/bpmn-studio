@@ -79,7 +79,7 @@ export class BasicsSection implements ISection {
     this.shouldFocus = true;
   }
 
-  public keyFieldBlurred(index: number, event: FocusEvent): void {
+  public inputFieldBlurred(index: number, event: FocusEvent): void {
     const targetElement: HTMLElement = event.relatedTarget as HTMLElement;
     const targetIsNoInputField: boolean = !(targetElement instanceof HTMLInputElement);
 
@@ -130,6 +130,10 @@ export class BasicsSection implements ISection {
     if (propertyIsEmpty) {
       this.removeProperty(index);
     }
+  }
+
+  private _clickedAway(index: number, event: FocusEvent) {
+
   }
 
   private _reloadProperties(): void {
