@@ -364,6 +364,11 @@ export class BpmnIo {
     const shouldShowXmlView: boolean = !this.showXMLView;
     if (shouldShowXmlView) {
       this.xmlForXmlView = await this.getXML();
+
+      /**
+       * We need to detach the modeler here becuase otherwise, he would
+       * consume all shortcuts such as cmd/ctrl + c.
+       */
       this.modeler.detach();
     } else {
       this.modeler.attachTo(this.canvasModel);
