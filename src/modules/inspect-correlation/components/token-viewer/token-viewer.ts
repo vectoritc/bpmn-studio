@@ -13,6 +13,7 @@ export class TokenViewer {
   public tokenEntries: Array<ITokenEntry> = [];
   public showTokenEntries: boolean = false;
   public firstElementSelected: boolean = false;
+  public shouldShowFlowNodeId: boolean = false;
 
   private _inspectCorrelationService: IInspectCorrelationService;
 
@@ -28,6 +29,9 @@ export class TokenViewer {
 
     const flowNodeIsSequenceFlow: boolean = this.flowNode.type === 'bpmn:SequenceFlow';
     if (flowNodeIsSequenceFlow) {
+      this.shouldShowFlowNodeId = false;
+      this.showTokenEntries = false;
+      this.tokenEntries = [];
       return;
     }
 
@@ -37,6 +41,9 @@ export class TokenViewer {
   public async flowNodeChanged(newFlowNode: IShape): Promise<void> {
     const flowNodeIsSequenceFlow: boolean = newFlowNode.type === 'bpmn:SequenceFlow';
     if (flowNodeIsSequenceFlow) {
+      this.shouldShowFlowNodeId = false;
+      this.showTokenEntries = false;
+      this.tokenEntries = [];
       return;
     }
 
@@ -106,8 +113,10 @@ export class TokenViewer {
       });
 
       this.showTokenEntries = true;
+      this.shouldShowFlowNodeId = true;
     } catch (error) {
       this.showTokenEntries = false;
+      this.shouldShowFlowNodeId = false;
     }
 
   }
