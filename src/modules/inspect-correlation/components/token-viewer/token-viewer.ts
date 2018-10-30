@@ -21,13 +21,25 @@ export class TokenViewer {
   }
 
   public correlationChanged(newCorrelation: Correlation): void {
-    const correlationWasNotInitialOpened: boolean = this.flowNode !== undefined;
-    if (correlationWasNotInitialOpened) {
-      this.updateFlowNode();
+    const correlationWasInitialOpened: boolean = this.flowNode === undefined;
+    if (correlationWasInitialOpened) {
+      return;
     }
+
+    const flowNodeIsSequenceFlow: boolean = this.flowNode.type === 'bpmn:SequenceFlow';
+    if (flowNodeIsSequenceFlow) {
+      return;
+    }
+
+    this.updateFlowNode();
   }
 
-  public async flowNodeChanged(): Promise<void> {
+  public async flowNodeChanged(newFlowNode: IShape): Promise<void> {
+    const flowNodeIsSequenceFlow: boolean = newFlowNode.type === 'bpmn:SequenceFlow';
+    if (flowNodeIsSequenceFlow) {
+      return;
+    }
+
     this.updateFlowNode();
   }
 
