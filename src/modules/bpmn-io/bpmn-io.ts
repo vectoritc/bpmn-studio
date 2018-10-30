@@ -364,6 +364,9 @@ export class BpmnIo {
     const shouldShowXmlView: boolean = !this.showXMLView;
     if (shouldShowXmlView) {
       this.xmlForXmlView = await this.getXML();
+      this.modeler.detach();
+    } else {
+      this.modeler.attachTo(this.canvasModel);
     }
 
     this.showXMLView = !this.showXMLView;
