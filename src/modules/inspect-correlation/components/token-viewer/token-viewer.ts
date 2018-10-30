@@ -47,6 +47,18 @@ export class TokenViewer {
     }
 
     try {
+      /**
+       * Currently, the backend does not offer a method to obtain all
+       * flow nodes of a correlation.
+       *
+       * Because of this, this method will throw a 404 error when the user
+       * views the ProcessToken of a flow node and then switch to a
+       * Correlations, where this flow node does not exists.
+       *
+       * TODO: As soon as the backend supports this feature, we should
+       * check if the flow node that we want to access exists, to avoid 404
+       * errors.
+       */
       const tokenHistoryEntries: Array<TokenHistoryEntry> = await this._inspectCorrelationService
         .getTokenForFlowNodeInstance(this.processModelId, this.correlation.id, this.flowNode.id);
 
