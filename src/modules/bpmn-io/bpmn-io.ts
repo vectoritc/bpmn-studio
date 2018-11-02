@@ -366,7 +366,7 @@ export class BpmnIo {
       this.xmlForXmlView = await this.getXML();
 
       /**
-       * We need to detach the modeler here becuase otherwise, he would
+       * We need to detach the modeler here because otherwise, he would
        * consume all shortcuts such as cmd/ctrl + c.
        */
       this.modeler.detach();
