@@ -86,6 +86,17 @@ export class TaskDynamicUi {
     return this._userTask;
   }
 
+  @computedFrom('_userTask')
+  public get userTaskName(): string {
+    const nonWhiteSpaceRegex: RegExp = /\S/;
+    const userTaskNameSet: boolean = nonWhiteSpaceRegex.test(this._userTask.name);
+    const userTaskDisplayName: string = userTaskNameSet
+      ? this._userTask.name
+      : this._userTask.id;
+
+    return userTaskDisplayName;
+  }
+
   private _finishTask(action: string): void {
     this._router.navigateToRoute('waiting-room', {
       correlationId: this._userTask.correlationId,
