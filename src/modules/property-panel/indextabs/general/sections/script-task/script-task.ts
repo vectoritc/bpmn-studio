@@ -24,22 +24,14 @@ export class ScriptTaskSection implements ISection {
     return this._elementIsScriptTask(element);
   }
 
-  public updateFormat(): void {
-    this._publishDiagramChange();
-  }
-
   public updateScript(): void {
-    this._publishDiagramChange();
-  }
-
-  public updateResultVariable(): void {
     this._publishDiagramChange();
   }
 
   private _elementIsScriptTask(element: IShape): boolean {
     return element !== undefined
-        && element.businessObject !== undefined
-        && element.businessObject.$type === 'bpmn:ScriptTask';
+      && element.businessObject !== undefined
+      && element.businessObject.$type === 'bpmn:ScriptTask';
   }
 
   private _publishDiagramChange(): void {
