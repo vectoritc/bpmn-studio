@@ -1,3 +1,14 @@
 .dynamic-ui {
-  margin: 20px 60px;
+  //margin: 20px 60px;
+  padding-top: 20px;
+  padding-right: 20px;
+  padding-bottom: 5px;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.dynamic-ui--wrapper {
+  margin-left: 20px;
+  padding-bottom: 20px;
+  height: 100%;
 }
