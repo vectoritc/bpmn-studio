@@ -89,8 +89,8 @@ export class TaskDynamicUi {
   @computedFrom('_userTask')
   public get userTaskName(): string {
     const nonWhiteSpaceRegex: RegExp = /\S/;
-    const userTaskNameSet: boolean = nonWhiteSpaceRegex.test(this._userTask.name);
-    const userTaskDisplayName: string = userTaskNameSet
+    const userTaskNameIsSet: boolean = nonWhiteSpaceRegex.test(this._userTask.name);
+    const userTaskDisplayName: string = userTaskNameIsSet
       ? this._userTask.name
       : this._userTask.id;
 
