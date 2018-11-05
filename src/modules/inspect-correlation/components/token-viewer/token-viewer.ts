@@ -22,8 +22,8 @@ export class TokenViewer {
   }
 
   public correlationChanged(newCorrelation: Correlation): void {
-    const correlationWasInitialOpened: boolean = this.flowNode === undefined;
-    if (correlationWasInitialOpened) {
+    const correlationWasInitiallyOpened: boolean = this.flowNode === undefined;
+    if (correlationWasInitiallyOpened) {
       return;
     }
 
