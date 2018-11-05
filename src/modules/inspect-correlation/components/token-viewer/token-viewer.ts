@@ -39,7 +39,7 @@ export class TokenViewer {
     this.updateFlowNode();
   }
 
-  public async flowNodeChanged(newFlowNode: IShape): Promise<void> {
+  public flowNodeChanged(newFlowNode: IShape): Promise<void> {
     const flowNodeIsSequenceFlow: boolean = newFlowNode.type === 'bpmn:SequenceFlow';
     if (flowNodeIsSequenceFlow) {
       this.shouldShowFlowNodeId = false;
