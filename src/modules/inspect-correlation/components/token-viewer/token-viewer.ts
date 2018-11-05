@@ -74,7 +74,7 @@ export class TokenViewer {
        *
        * Because of this, this method will throw a 404 error when the user
        * views the ProcessToken of a flow node and then switch to a
-       * Correlations, where this flow node does not exists.
+       * correlation, where this flow node does not exists.
        *
        * TODO: As soon as the backend supports this feature, we should
        * check if the flow node that we want to access exists, to avoid 404
