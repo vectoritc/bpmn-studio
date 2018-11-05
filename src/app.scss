@@ -65,8 +65,13 @@ a:hover {
   opacity: 0.1;
 }
 
+
 .btn-default {
   background-color: #fff;
   border-color: #ccc;
   color: #333;
+}
+
+.btn-default:hover {
+  background-color: #eee;
 }
