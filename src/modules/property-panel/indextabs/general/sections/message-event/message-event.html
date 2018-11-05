@@ -16,7 +16,7 @@
         <tr>
           <th>Message</th>
           <td>
-            <select class="props-input" value.bind="selectedId" change.delegate="updateMessage()">
+            <select class="props-input props-select" value.bind="selectedId" change.delegate="updateMessage()">
               <option model.bind="null">-Choose Message-</option>
               <option repeat.for="message of messages"
                       model.bind="message.id" value="${message.id}">${message.name} (id: ${message.id})</option>
