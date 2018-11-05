@@ -18,7 +18,8 @@
               ${load.name}
             </div>
             <template repeat.for="value of load.values">
-              <pre class="payload__name">- ${value.title} : ${value.value}</pre>
+              <pre if.bind="value.title !== undefined" class="payload__name">- ${value.title}: ${value.value}</pre>
+              <pre else class="payload__name">- ${value.value}</pre>
             </template>
           </div>
           <div else class="payload__name">- ${load.values[0].value}</div>
