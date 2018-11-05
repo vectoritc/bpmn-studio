@@ -32,6 +32,7 @@ export class TokenViewer {
       this.shouldShowFlowNodeId = false;
       this.showTokenEntries = false;
       this.tokenEntries = [];
+
       return;
     }
 
@@ -44,6 +45,7 @@ export class TokenViewer {
       this.shouldShowFlowNodeId = false;
       this.showTokenEntries = false;
       this.tokenEntries = [];
+
       return;
     }
 
