@@ -98,7 +98,7 @@
     "@process-engine/kpi_api_contracts": "^0.1.2",
     "@process-engine/management_api_client": "0.11.2",
     "@process-engine/management_api_contracts": "0.12.1",
-    "@process-engine/process_engine_runtime": "2.8.0",
+    "@process-engine/process_engine_runtime": "2.9.0-419a7519-b95",
     "@process-engine/solutionexplorer.contracts": "1.0.0",
     "@process-engine/solutionexplorer.repository.contracts": "3.0.0",
     "@process-engine/solutionexplorer.repository.filesystem": "3.0.0",
