@@ -178,7 +178,7 @@ export class TokenViewer {
 
     const payloadEntryValue: string = payloadIsString
                                   ? `"${payload}"`
-                                  : payload;
+                                  : payload.toString();
 
     const payloadEntryValues: Array<IPayloadEntryValue> = [
       { value: payloadEntryValue },
