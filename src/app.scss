@@ -70,3 +70,11 @@ a:hover {
   border-color: #ccc;
   color: #333;
 }
+
+.btn-default:hover {
+  background-color: #eee;
+}
+
+.modal-backdrop {
+  opacity: 0.3 !important;
+}
