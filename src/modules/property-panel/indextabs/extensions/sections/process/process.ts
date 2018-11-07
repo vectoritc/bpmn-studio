@@ -22,6 +22,7 @@ export class ProcessSection {
   public newNames: Array<string> = [];
   public newValues: Array<string> = [];
   public properties: Array<IProperty> = [];
+  public shouldFocus: boolean = false;
 
   private _businessObjInPanel: IModdleElement;
   private _moddle: IBpmnModdle;
@@ -74,9 +75,15 @@ export class ProcessSection {
       this._propertiesElement = this._getPropertiesElement();
     }
 
+    const propertyValuesUndefined: boolean = this._propertiesElement.values === undefined;
+    if (propertyValuesUndefined) {
+      this._propertiesElement.values = [];
+    }
+
     this._propertiesElement.values.push(bpmnProperty);
     this.properties.push(bpmnProperty);
     this._publishDiagramChange();
+    this.shouldFocus = true;
   }
 
   public removeProperty(index: number): void {
@@ -105,11 +112,37 @@ export class ProcessSection {
     this._propertiesElement.values[index].value = this.newValues[index];
     this._publishDiagramChange();
   }
+  public inputFieldBlurred(index: number, event: FocusEvent): void {
+    const targetElement: HTMLElement = event.relatedTarget as HTMLElement;
+    const targetIsNoInputField: boolean = !(targetElement instanceof HTMLInputElement);
+
+    if (targetIsNoInputField) {
+      this._checkAndRemoveEmptyProperties(index);
+
+      return;
+    }
+
+    const targetFieldIndex: string = targetElement.getAttribute('data-fieldIndex');
+    const indexAsString: string = index.toString();
+    const targetValueFieldNotRelated: boolean = targetFieldIndex !== indexAsString;
+    if (targetValueFieldNotRelated) {
+      this._checkAndRemoveEmptyProperties(index);
+    }
+  }
+
+  private _checkAndRemoveEmptyProperties(index: number): void {
+    const propertyElement: IProperty = this._propertiesElement.values[index];
+    const propertyIsEmpty: boolean = propertyElement.value === '' && propertyElement.name === '';
+    if (propertyIsEmpty) {
+      this.removeProperty(index);
+    }
+  }
 
   private _reloadProperties(): void {
     this.properties = [];
     this.newNames = [];
     this.newValues = [];
+    this.shouldFocus = false;
 
     const businessObjectHasNoExtensionElements: boolean = this._businessObjInPanel.processRef.extensionElements === undefined
                                                        || this._businessObjInPanel.processRef.extensionElements === null;
@@ -148,6 +181,7 @@ export class ProcessSection {
       this.newValues.push(property.value);
       this.properties.push(property);
     }
+
   }
 
   private _getPropertiesElement(): IPropertiesElement {
