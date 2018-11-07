@@ -190,51 +190,35 @@ Main._initializeApplication = function () {
 
     const prereleaseRegex = /\d+\.\d+\.\d+-pre-b\d+/;
 
-    const installButtonText = 'Install';
-    const dismissButtonText = 'Dismiss';
+    electron.ipcMain.on('app_ready', (event) => {
 
-    autoUpdater.checkForUpdates();
+      autoUpdater.checkForUpdates();
 
-    const currentVersion = electron.app.getVersion();
-    const currentVersionIsPrerelease = prereleaseRegex.test(currentVersion);
+      const currentVersion = electron.app.getVersion();
+      const currentVersionIsPrerelease = prereleaseRegex.test(currentVersion);
 
-    autoUpdater.allowPrerelease = currentVersionIsPrerelease;
+      autoUpdater.allowPrerelease = currentVersionIsPrerelease;
 
-    console.log(`CurrentVersion: ${currentVersion}, CurrentVersionIsPrerelease: ${currentVersionIsPrerelease}`);
+      console.log(`CurrentVersion: ${currentVersion}, CurrentVersionIsPrerelease: ${currentVersionIsPrerelease}`);
 
-    autoUpdater.addListener('error', (error) => {
-      const notification = notifier.notify('Update error', {
-        message: 'Update failed',
-        buttons: [dismissButtonText],
-      });
-      notification.on('buttonClicked', (text, buttonIndex, options) => {
-        notification.close();
-      });
-    });
-
-    autoUpdater.addListener('update-available', (info) => {
-      notifier.notify('Update available', {
-        message: 'Started downloading',
-        buttons: [dismissButtonText],
-      });
-    });
-
-    autoUpdater.addListener('update-downloaded', (info) => {
-      const notification = notifier.notify('Update ready', {
-        message: 'Update ready for installation',
-        duration: '60000',
-        buttons: [installButtonText, dismissButtonText],
+      autoUpdater.addListener('error', (error) => {
+        event.sender.send('update_error')
       });
 
-      notification.on('buttonClicked', (text, buttonIndex, options) => {
-        const installButtonClicked = text === installButtonText;
-        if (installButtonClicked) {
+      autoUpdater.addListener('update-available', (info) => {
+        event.sender.send('update_available')
+      });
+
+      autoUpdater.addListener('update-downloaded', (info) => {
+        event.sender.send('update_downloaded');
+
+        electron.ipcMain.on('quit_and_install', (event) => {
           autoUpdater.quitAndInstall();
-        } else {
-          notification.close();
-        }
-      })
-    });
+        });
+      });
+    })
+
+
 
   }
 

@@ -89,7 +89,6 @@ export function configure(aurelia: Aurelia): void {
       const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
       // subscribe to processengine status
       ipcRenderer.send('add_internal_processengine_status_listener');
-      ipcRenderer.send('add_autoupdater_listener');
 
       // wait for status to be reported
 
@@ -109,6 +108,18 @@ export function configure(aurelia: Aurelia): void {
         const notificationService: NotificationService = aurelia.container.get('NotificationService');
 
         notificationService.showNonDisappearingNotification(NotificationType.ERROR, errorMessage);
+      });
+    }
+
+    if ((window as any).nodeRequire) {
+      const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
+
+      ipcRenderer.send('app_ready');
+
+      ipcRenderer.on('update_error', (event: any) => {
+        const notificationService: NotificationService = aurelia.container.get('NotificationService');
+
+        notificationService.showNotification(NotificationType.INFO, 'Update available');
       });
     }
   });
