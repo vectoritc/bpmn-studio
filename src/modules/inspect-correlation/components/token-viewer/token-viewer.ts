@@ -56,6 +56,15 @@ export class TokenViewer {
     this.firstElementSelected = true;
     this.tokenEntries = [];
 
+    const correlationIsNotSelected: boolean = this.correlation === undefined;
+    if (correlationIsNotSelected) {
+      this.tokenEntries = undefined;
+      this.showTokenEntries = false;
+      this.shouldShowFlowNodeId = false;
+
+      return;
+    }
+
     const tokenHistoryEntries: Array<TokenHistoryEntry> = await this._inspectCorrelationService
       .getTokenForFlowNodeInstance(this.processModelId, this.correlation.id, this.flowNode.id);
 
