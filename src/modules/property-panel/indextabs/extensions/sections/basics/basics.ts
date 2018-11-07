@@ -85,6 +85,7 @@ export class BasicsSection implements ISection {
 
     if (targetIsNoInputField) {
       this._checkAndRemoveEmptyProperties(index);
+
       return;
     }
 

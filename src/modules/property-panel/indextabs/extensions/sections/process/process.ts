@@ -118,6 +118,7 @@ export class ProcessSection {
 
     if (targetIsNoInputField) {
       this._checkAndRemoveEmptyProperties(index);
+
       return;
     }
 
