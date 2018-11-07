@@ -113,13 +113,20 @@ export function configure(aurelia: Aurelia): void {
 
     if ((window as any).nodeRequire) {
       const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
+      const notificationService: NotificationService = aurelia.container.get('NotificationService');
 
       ipcRenderer.send('app_ready');
 
       ipcRenderer.on('update_error', (event: any) => {
-        const notificationService: NotificationService = aurelia.container.get('NotificationService');
+        notificationService.showNotification(NotificationType.INFO, 'Update Error');
+      });
 
-        notificationService.showNotification(NotificationType.INFO, 'Update available');
+      ipcRenderer.on('update_available', (event: any) => {
+        notificationService.showNotification(NotificationType.INFO, 'Update available, started downloading.');
+      });
+
+      ipcRenderer.on('update_downloaded', (event: any) => {
+        notificationService.showNonDisappearingNotification(NotificationType.INFO, 'Update ready!');
       });
     }
   });
