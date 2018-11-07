@@ -1,7 +1,6 @@
 import {bindable, inject} from 'aurelia-framework';
 
 import {Correlation, TokenHistoryEntry} from '@process-engine/management_api_contracts';
-
 import {IShape} from '../../../../contracts';
 import {IInspectCorrelationService, IPayLoadEntry, ITokenEntry} from '../../contracts';
 
@@ -14,6 +13,7 @@ export class TokenViewer {
   public tokenEntries: Array<ITokenEntry> = [];
   public showTokenEntries: boolean = false;
   public firstElementSelected: boolean = false;
+  public shouldShowFlowNodeId: boolean = false;
 
   private _inspectCorrelationService: IInspectCorrelationService;
 
@@ -21,8 +21,38 @@ export class TokenViewer {
     this._inspectCorrelationService = inspectCorrelationService;
   }
 
-  public async flowNodeChanged(): Promise<void> {
+  public correlationChanged(newCorrelation: Correlation): void {
+    const correlationWasInitiallyOpened: boolean = this.flowNode === undefined;
+    if (correlationWasInitiallyOpened) {
+      return;
+    }
 
+    const flowNodeIsSequenceFlow: boolean = this.flowNode.type === 'bpmn:SequenceFlow';
+    if (flowNodeIsSequenceFlow) {
+      this.shouldShowFlowNodeId = false;
+      this.showTokenEntries = false;
+      this.tokenEntries = [];
+
+      return;
+    }
+
+    this.updateFlowNode();
+  }
+
+  public flowNodeChanged(newFlowNode: IShape): Promise<void> {
+    const flowNodeIsSequenceFlow: boolean = newFlowNode.type === 'bpmn:SequenceFlow';
+    if (flowNodeIsSequenceFlow) {
+      this.shouldShowFlowNodeId = false;
+      this.showTokenEntries = false;
+      this.tokenEntries = [];
+
+      return;
+    }
+
+    this.updateFlowNode();
+  }
+
+  public async updateFlowNode(): Promise<void> {
     this.firstElementSelected = true;
     this.tokenEntries = [];
 
@@ -38,6 +68,18 @@ export class TokenViewer {
     }
 
     try {
+      /**
+       * Currently, the backend does not offer a method to obtain all
+       * flow nodes of a correlation.
+       *
+       * Because of this, this method will throw a 404 error when the user
+       * views the ProcessToken of a flow node and then switch to a
+       * correlation, where this flow node does not exists.
+       *
+       * TODO: As soon as the backend supports this feature, we should
+       * check if the flow node that we want to access exists, to avoid 404
+       * errors.
+       */
       const tokenHistoryEntries: Array<TokenHistoryEntry> = await this._inspectCorrelationService
         .getTokenForFlowNodeInstance(this.processModelId, this.correlation.id, this.flowNode.id);
 
@@ -73,8 +115,10 @@ export class TokenViewer {
       });
 
       this.showTokenEntries = true;
+      this.shouldShowFlowNodeId = true;
     } catch (error) {
       this.showTokenEntries = false;
+      this.shouldShowFlowNodeId = false;
     }
 
   }

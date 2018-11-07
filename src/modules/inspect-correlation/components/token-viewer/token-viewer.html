@@ -1,7 +1,7 @@
 <template>
   <require from="./token-viewer.css"></require>
   <div class="token-viewer">
-      <div class="token-viewer__headline">
+      <div show.bind="shouldShowFlowNodeId" class="token-viewer__headline">
         <span>Token</span>
         <span class="headline__node-id">${flowNode.id}</span>
       </div>
