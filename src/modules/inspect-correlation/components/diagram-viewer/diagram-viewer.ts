@@ -4,7 +4,17 @@ import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {Correlation} from '@process-engine/management_api_contracts';
 import {CorrelationProcessModel} from '@process-engine/management_api_contracts';
 
-import {IBpmnModeler, IEvent, IShape, NotificationType} from '../../../../contracts/index';
+import {
+  defaultBpmnColors,
+  IBpmnModeler,
+  IBpmnXmlSaveOptions,
+  IColorPickerColor,
+  IElementRegistry,
+  IEvent,
+  IModeling,
+  IShape,
+  NotificationType,
+} from '../../../../contracts/index';
 import {NotificationService} from '../../../notification/notification.service';
 
 @inject('NotificationService', 'ManagementApiClientService', 'AuthenticationService')
@@ -17,13 +27,18 @@ export class DiagramViewer {
   public canvasModel: HTMLElement;
 
   private _notificationService: NotificationService;
+  private _elementRegistry: IElementRegistry;
+  private _diagramModeler: IBpmnModeler;
   private _diagramViewer: IBpmnModeler;
+  private _modeling: IModeling;
+  private _uncoloredXml: string;
 
   constructor(notificationService: NotificationService) {
     this._notificationService = notificationService;
   }
 
   public attached(): void {
+    this._diagramModeler = new bundle.modeler();
     this._diagramViewer = new bundle.viewer({
       additionalModules:
       [
@@ -32,9 +47,19 @@ export class DiagramViewer {
       ],
     });
 
+    this._modeling = this._diagramModeler.get('modeling');
+    this._elementRegistry = this._diagramModeler.get('elementRegistry');
+
     this._diagramViewer.attachTo(this.canvasModel);
 
-    this._diagramViewer.on('element.click', (event: IEvent) => {
+    this._diagramViewer.on('element.click', async(event: IEvent) => {
+
+      await this._importXml(this._diagramModeler, this._uncoloredXml);
+      this._colorElements(event.element, defaultBpmnColors.orange);
+      const colorizedXml: string = await this._getXmlFromModeler();
+
+      this._importXml(this._diagramViewer, colorizedXml);
+
       this.selectedFlowNode = event.element;
     });
 
@@ -73,7 +98,12 @@ export class DiagramViewer {
 
     this.xml = await this._getXmlByCorrelation(this.correlation);
 
-    this._importXml();
+    await this._importXml(this._diagramModeler, this.xml);
+    this._clearColors();
+    console.log('done');
+    this._uncoloredXml = await this._getXmlFromModeler();
+
+    await this._importXml(this._diagramViewer, this._uncoloredXml);
   }
 
   public processModelIdChanged(): void {
@@ -99,7 +129,36 @@ export class DiagramViewer {
     return xmlForCorrelation;
   }
 
-  private async _importXml(): Promise<void> {
+  private _clearColors(): void {
+    const elementsToColor: Array<IShape> = this._elementRegistry.filter((element: IShape): boolean => {
+      const elementHasFillColor: boolean = element.businessObject.di.fill !== undefined;
+      const elementHasBorderColor: boolean = element.businessObject.di.stroke !== undefined;
+
+      const elementHasColor: boolean = elementHasFillColor || elementHasBorderColor;
+
+      return elementHasColor;
+    });
+
+    this._modeling.setColor(elementsToColor, {
+      stroke: defaultBpmnColors.none.border,
+      fill: defaultBpmnColors.none.fill,
+    });
+  }
+
+  private _colorElements(elementToColor: IShape, color: IColorPickerColor): void {
+    const noElementsToColorize: boolean = elementToColor === undefined;
+
+    if (noElementsToColorize) {
+      return;
+    }
+
+    this._modeling.setColor(elementToColor, {
+      stroke: color.border,
+      fill: color.fill,
+    });
+  }
+
+  private async _importXml(modeler: IBpmnModeler, xml: string): Promise<void> {
     const xmlIsNotLoaded: boolean = (this.xml === undefined || this.xml === null);
 
     if (xmlIsNotLoaded) {
@@ -110,7 +169,7 @@ export class DiagramViewer {
     }
 
     const xmlImportPromise: Promise<void> = new Promise((resolve: Function, reject: Function): void => {
-      this._diagramViewer.importXML(this.xml, (importXmlError: Error) => {
+      modeler.importXML(xml, (importXmlError: Error) => {
         if (importXmlError) {
           reject(importXmlError);
 
@@ -121,5 +180,25 @@ export class DiagramViewer {
     });
 
     return xmlImportPromise;
+  }
+
+  private async _getXmlFromModeler(): Promise<string> {
+    const saveXmlPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void =>  {
+      const xmlSaveOptions: IBpmnXmlSaveOptions = {
+        format: true,
+      };
+
+      this._diagramModeler.saveXML(xmlSaveOptions, async(saveXmlError: Error, xml: string) => {
+        if (saveXmlError) {
+          reject(saveXmlError);
+
+          return;
+        }
+
+        resolve(xml);
+      });
+    });
+
+    return saveXmlPromise;
   }
 }
