@@ -92,6 +92,9 @@ while read line; do
   currentOutLine=${currentOutLine/🗃/":card_file_box: "}
   currentOutLine=${currentOutLine/🚸/":children_crossing: "}
   currentOutLine=${currentOutLine/🏗/":building_construction: "}
+  currentOutLine=${currentOutLine/⚗️/":alembic: "}
+  currentOutLine=${currentOutLine/🔍/":mag: "}
+
 
   outLines+=("$currentOutLine")
 
