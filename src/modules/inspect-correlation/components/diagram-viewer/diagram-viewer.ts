@@ -169,7 +169,7 @@ export class DiagramViewer {
   }
 
   private async _importXml(modeler: IBpmnModeler, xml: string): Promise<void> {
-    const xmlIsNotLoaded: boolean = (this.xml === undefined || this.xml === null);
+    const xmlIsNotLoaded: boolean = (xml === undefined || xml === null);
 
     if (xmlIsNotLoaded) {
       const notificationMessage: string = 'The xml could not be loaded. Please try to reopen the Diff View or reload the Detail View.';
