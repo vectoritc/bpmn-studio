@@ -30,8 +30,6 @@ export class InspectCorrelation {
   private _inspectCorrelationService: IInspectCorrelationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
-  private _menuBarHeight: number = 40;
-  private _minInspectPanelHeight: number = 250;
 
   constructor(inspectCorrelationService: IInspectCorrelationService,
               eventAggregator: EventAggregator) {
@@ -111,10 +109,16 @@ export class InspectCorrelation {
 
   public resizeInspectPanel(mouseEvent: MouseEvent): void {
     const mouseYPosition: number = mouseEvent.clientY;
-    const inspectPanelHeightWithStatusBar: number = this.bottomPanelResizeDiv.parentElement.parentElement.clientHeight + this._menuBarHeight;
+
+    const menuBarHeight: number = 40;
+    const inspectCorrelation: HTMLElement = this.bottomPanelResizeDiv.parentElement.parentElement;
+    const inspectPanelHeightWithStatusBar: number = inspectCorrelation.clientHeight + menuBarHeight;
+
+    const minInspectPanelHeight: number = 250;
+
     const newBottomPanelHeight: number = inspectPanelHeightWithStatusBar - mouseYPosition;
 
-    this.bottomPanelHeight = Math.max(newBottomPanelHeight, this._minInspectPanelHeight);
+    this.bottomPanelHeight = Math.max(newBottomPanelHeight, minInspectPanelHeight);
   }
 
   public resizeTokenViewer(mouseEvent: MouseEvent): void {
