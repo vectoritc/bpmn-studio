@@ -101,6 +101,7 @@ export class DiagramViewer {
     if (elementSelected) {
       const elementsToColorize: Array<IShape> = this._elementRegistry.filter((element: IShape) => {
         const isSelectedElement: boolean = element.id === this.selectedFlowNode.id;
+
         return isSelectedElement;
       });
 
@@ -146,8 +147,10 @@ export class DiagramViewer {
 
     const elementToColorize: IShape = this._elementRegistry.filter((element: IShape): boolean => {
       const isSelectedElement: boolean = element.id === selectedElement.id;
+
       return isSelectedElement;
     })[0];
+
     this._colorElement(elementToColorize, defaultBpmnColors.grey);
 
     const colorizedXml: string = await this._getXmlFromModeler();
