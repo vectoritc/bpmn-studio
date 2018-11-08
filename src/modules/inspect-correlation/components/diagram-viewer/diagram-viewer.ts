@@ -136,7 +136,7 @@ export class DiagramViewer {
   }
 
   private _clearColors(): void {
-    const elementsToColor: Array<IShape> = this._elementRegistry.filter((element: IShape): boolean => {
+    const elementsWithColor: Array<IShape> = this._elementRegistry.filter((element: IShape): boolean => {
       const elementHasFillColor: boolean = element.businessObject.di.fill !== undefined;
       const elementHasBorderColor: boolean = element.businessObject.di.stroke !== undefined;
 
@@ -145,7 +145,12 @@ export class DiagramViewer {
       return elementHasColor;
     });
 
-    this._modeling.setColor(elementsToColor, {
+    const noElementsWithColor: boolean = elementsWithColor.length === 0;
+    if (noElementsWithColor) {
+      return;
+    }
+
+    this._modeling.setColor(elementsWithColor, {
       stroke: defaultBpmnColors.none.border,
       fill: defaultBpmnColors.none.fill,
     });
