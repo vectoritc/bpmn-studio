@@ -95,7 +95,6 @@ while read line; do
   currentOutLine=${currentOutLine/⚗️/":alembic: "}
   currentOutLine=${currentOutLine/🔍/":mag: "}
 
-
   outLines+=("$currentOutLine")
 
 done <"$commitMessageFile"
