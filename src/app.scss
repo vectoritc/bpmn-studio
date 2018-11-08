@@ -83,3 +83,9 @@ a:hover {
 .modal-backdrop {
   opacity: 0.3 !important;
 }
+
+.dropdown-item {
+   background-color: transparent !important;
+   color: black !important;
+   user-select: none;
+}
