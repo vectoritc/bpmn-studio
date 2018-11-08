@@ -80,14 +80,12 @@ export class TokenViewer {
   }
 
   private _getRawTokenEntriesForFlowNode(tokenHistoryEntries: Array<TokenHistoryEntry>): Array<IRawTokenEntry> {
-    const tokenEntries: Array<IRawTokenEntry> = [];
-
     const elementHasNoToken: boolean = tokenHistoryEntries === undefined;
     if (elementHasNoToken) {
-      return tokenEntries;
+      return [];
     }
 
-    tokenHistoryEntries.forEach((historyEntry: TokenHistoryEntry, index: number) => {
+    return tokenHistoryEntries.map((historyEntry: TokenHistoryEntry, index: number) => {
       // tslint:disable-next-line no-magic-numbers
       const payloadAsString: string = JSON.stringify(historyEntry.payload, null, 2);
 
@@ -98,10 +96,8 @@ export class TokenViewer {
         payload: payloadAsString,
       };
 
-      tokenEntries.push(tokenEntry);
+      return tokenEntry;
     });
-    
-    return tokenEntries;
   }
 
   private _getBeautifiedTokenEntriesForFlowNode(tokenHistoryEntries: Array<TokenHistoryEntry>): Array<ITokenEntry> {
