@@ -172,7 +172,7 @@ export class DiagramViewer {
     const xmlIsNotLoaded: boolean = (xml === undefined || xml === null);
 
     if (xmlIsNotLoaded) {
-      const notificationMessage: string = 'The xml could not be loaded. Please try to reopen the Diff View or reload the Detail View.';
+      const notificationMessage: string = 'The xml could not be loaded. Please try to reopen the Inspect Correlation View.';
       this._notificationService.showNotification(NotificationType.ERROR, notificationMessage);
 
       return;
