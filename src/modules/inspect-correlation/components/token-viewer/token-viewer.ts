@@ -39,7 +39,7 @@ export class TokenViewer {
       return;
     }
 
-    this.updateFlowNode();
+    this._updateFlowNode();
   }
 
   public flowNodeChanged(newFlowNode: IShape): Promise<void> {
@@ -53,10 +53,9 @@ export class TokenViewer {
       return;
     }
 
-    this.updateFlowNode();
+    this._updateFlowNode();
   }
-
-  public async updateFlowNode(): Promise<void> {
+  private async _updateFlowNode(): Promise<void> {
     this.firstElementSelected = true;
     this.tokenEntries = [];
 
