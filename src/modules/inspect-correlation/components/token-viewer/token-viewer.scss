@@ -106,7 +106,7 @@ input:checked + .token-viewer-switch-slider {
   background-color: #565656;
 }
 
-input:checked + .token-viewer-switch-slider:before {
+input:checked + .token-viewer-switch--slider:before {
   transform: translateX(13px);
   -webkit-transform: translateX(13px);
   -ms-transform: translateX(13px);
