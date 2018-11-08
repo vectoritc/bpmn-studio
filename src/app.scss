@@ -75,6 +75,10 @@ a:hover {
   background-color: #eee;
 }
 
+.btn-default:focus {
+  box-shadow: none;
+}
+
 .modal-backdrop {
   opacity: 0.3 !important;
 }
