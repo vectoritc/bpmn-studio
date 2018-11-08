@@ -55,6 +55,7 @@ export class TokenViewer {
 
     this._updateFlowNode();
   }
+
   private async _updateFlowNode(): Promise<void> {
     this.firstElementSelected = true;
     this.tokenEntries = [];
