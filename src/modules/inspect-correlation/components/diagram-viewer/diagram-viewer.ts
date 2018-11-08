@@ -100,7 +100,6 @@ export class DiagramViewer {
 
     await this._importXml(this._diagramModeler, this.xml);
     this._clearColors();
-    console.log('done');
     this._uncoloredXml = await this._getXmlFromModeler();
 
     await this._importXml(this._diagramViewer, this._uncoloredXml);
