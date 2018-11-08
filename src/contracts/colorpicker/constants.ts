@@ -29,7 +29,7 @@ export const defaultBpmnColors: IDefaultBpmnColors = {
   grey: {
     border: '#000000',
     fill: '#cccccc',
-  }
+  },
 
   none: {
     fill: null,
