@@ -47,6 +47,7 @@ a:hover {
 .button {
   color: #333;
   opacity: 0.5;
+  cursor: default;
 }
 
 .button:hover {
@@ -71,10 +72,20 @@ a:hover {
   color: #333;
 }
 
-.btn-default:hover {
+.btn-default:hover:enabled {
   background-color: #eee;
+}
+
+.btn-default:focus {
+  box-shadow: none;
 }
 
 .modal-backdrop {
   opacity: 0.3 !important;
+}
+
+.dropdown-item {
+   background-color: transparent !important;
+   color: black !important;
+   user-select: none;
 }
