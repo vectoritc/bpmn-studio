@@ -156,14 +156,13 @@ export class DiagramViewer {
     });
   }
 
-  private _colorElements(elementToColor: IShape, color: IColorPickerColor): void {
-    const noElementsToColorize: boolean = elementToColor === undefined;
-
+  private _colorElement(element: IShape, color: IColorPickerColor): void {
+    const noElementsToColorize: boolean = element === undefined;
     if (noElementsToColorize) {
       return;
     }
 
-    this._modeling.setColor(elementToColor, {
+    this._modeling.setColor(element, {
       stroke: color.border,
       fill: color.fill,
     });
