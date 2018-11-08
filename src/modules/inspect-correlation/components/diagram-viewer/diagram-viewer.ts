@@ -100,7 +100,8 @@ export class DiagramViewer {
     const elementSelected: boolean = this.selectedFlowNode !== undefined;
     if (elementSelected) {
       const elementsToColorize: Array<IShape> = this._elementRegistry.filter((element: IShape) => {
-        return element.id === this.selectedFlowNode.id;
+        const isSelectedElement: boolean = element.id === this.selectedFlowNode.id;
+        return isSelectedElement;
       });
 
       const correlationHasSameElementASelected: boolean = elementsToColorize.length > 0;
@@ -144,7 +145,8 @@ export class DiagramViewer {
     await this._importXml(this._diagramModeler, this._uncoloredXml);
 
     const elementToColorize: IShape = this._elementRegistry.filter((element: IShape): boolean => {
-      return element.id === selectedElement.id;
+      const isSelectedElement: boolean = element.id === selectedElement.id;
+      return isSelectedElement;
     })[0];
     this._colorElement(elementToColorize, defaultBpmnColors.grey);
 
