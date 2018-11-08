@@ -17,12 +17,14 @@ export class InspectCorrelation {
   @bindable() public selectedCorrelation: Correlation;
   @bindable() public inspectPanelFullscreen: boolean = false;
   @observable public bottomPanelHeight: number = 250;
+  @observable public tokenViewerWidth: number = 250;
 
   public correlations: Array<Correlation>;
   public token: string;
   public showInspectPanel: boolean = true;
   public showTokenViewer: boolean = false;
   public bottomPanelResizeDiv: HTMLDivElement;
+  public rightPanelResizeDiv: HTMLDivElement;
   public selectedFlowNode: IShape;
 
   private _inspectCorrelationService: IInspectCorrelationService;
@@ -73,6 +75,24 @@ export class InspectCorrelation {
       document.addEventListener('mousemove', mousemoveFunction);
       document.addEventListener('mouseup', mouseUpFunction);
     });
+
+    this.rightPanelResizeDiv.addEventListener('mousedown', (mouseDownEvent: Event) => {
+      const windowEvent: Event = mouseDownEvent || window.event;
+      windowEvent.cancelBubble = true;
+
+      const mousemoveFunction: IEventFunction = (mouseMoveEvent: MouseEvent): void => {
+        this.resizeTokenViewer(mouseMoveEvent);
+        document.getSelection().empty();
+      };
+
+      const mouseUpFunction: IEventFunction = (): void => {
+        document.removeEventListener('mousemove', mousemoveFunction);
+        document.removeEventListener('mouseup', mouseUpFunction);
+      };
+
+      document.addEventListener('mousemove', mousemoveFunction);
+      document.addEventListener('mouseup', mouseUpFunction);
+    });
   }
 
   public detached(): void {
@@ -95,5 +115,26 @@ export class InspectCorrelation {
     const newBottomPanelHeight: number = inspectPanelHeightWithStatusBar - mouseYPosition;
 
     this.bottomPanelHeight = Math.max(newBottomPanelHeight, this._minInspectPanelHeight);
+  }
+
+  public resizeTokenViewer(mouseEvent: MouseEvent): void {
+    const mouseXPosition: number = mouseEvent.clientX;
+
+    const inspectCorrelation: HTMLElement = this.bottomPanelResizeDiv.parentElement.parentElement;
+    const minSpaceForDiagramViewer: number = 300;
+
+    const windowWidth: number = window.innerWidth;
+    const rightToolbarWidth: number = 36;
+
+    const minTokenViewerWidth: number = 250;
+    const maxTokenViewerWidth: number = inspectCorrelation.clientWidth - minSpaceForDiagramViewer;
+
+    const newTokenViewerWidth: number = windowWidth - mouseXPosition - rightToolbarWidth;
+
+    /*
+     * This sets the new width of the token viewer to the minimum or maximum width,
+     * if the new width is smaller than the minimum or bigger than the maximum width.
+     */
+    this.tokenViewerWidth = Math.min(maxTokenViewerWidth, Math.max(newTokenViewerWidth, minTokenViewerWidth));
   }
 }

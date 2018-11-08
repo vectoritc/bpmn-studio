@@ -50,6 +50,14 @@
   flex-shrink: 0;
 }
 
+.inspect-correlation__right-panel__resize-div {
+  z-index: 1;
+  width: 6px;
+  margin-right: -4px;
+  cursor: col-resize;
+  flex-shrink: 0;
+}
+
 .inspect-correlation__upper-panel {
   display: flex;
   flex-grow: 1;
@@ -60,7 +68,7 @@
 }
 
 .inspect-correlation__token-viewer {
-  width: 250px;
+  max-width: calc(100% - 300px);
   flex-shrink: 0;
 }
 
