@@ -97,6 +97,23 @@ export class DiagramViewer {
     this._clearColors();
     this._uncoloredXml = await this._getXmlFromModeler();
 
+    const elementSelected: boolean = this.selectedFlowNode !== undefined;
+    if (elementSelected) {
+      const elementsToColorize: Array<IShape> = this._elementRegistry.filter((element: IShape) => {
+        return element.id === this.selectedFlowNode.id;
+      });
+
+      const correlationHasSameElementASelected: boolean = elementsToColorize.length > 0;
+      if (correlationHasSameElementASelected) {
+        this._colorizeSelection(this.selectedFlowNode);
+
+        const colorizedXml: string = await this._getXmlFromModeler();
+        await this._importXml(this._diagramViewer, colorizedXml);
+
+        return;
+      }
+    }
+
     await this._importXml(this._diagramViewer, this._uncoloredXml);
   }
 
