@@ -179,11 +179,6 @@ export class DiagramViewer {
   }
 
   private _colorElement(element: IShape, color: IColorPickerColor): void {
-    const noElementsToColorize: boolean = element === undefined;
-    if (noElementsToColorize) {
-      return;
-    }
-
     this._modeling.setColor(element, {
       stroke: color.border,
       fill: color.fill,
