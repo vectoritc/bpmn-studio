@@ -3,3 +3,4 @@ export * from './IInspect-correlation.service';
 export * from './IPayloadEntry';
 export * from './IPayloadEntryValue';
 export * from './ITokenEntry';
+export * from './IRawTokenEntry';

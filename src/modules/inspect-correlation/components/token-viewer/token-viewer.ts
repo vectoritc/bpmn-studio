@@ -2,7 +2,7 @@ import {bindable, inject} from 'aurelia-framework';
 
 import {Correlation, TokenHistoryEntry} from '@process-engine/management_api_contracts';
 import {IShape} from '../../../../contracts';
-import {IInspectCorrelationService, IPayloadEntry, IPayloadEntryValue, ITokenEntry} from '../../contracts';
+import {IInspectCorrelationService, IPayloadEntry, IPayloadEntryValue, IRawTokenEntry, ITokenEntry} from '../../contracts';
 
 @inject('InspectCorrelationService')
 export class TokenViewer {
@@ -10,10 +10,12 @@ export class TokenViewer {
   @bindable() public processModelId: string;
   @bindable() public flowNode: IShape;
   @bindable() public token: string;
+  @bindable() public showBeautifiedToken: boolean = true;
   public tokenEntries: Array<ITokenEntry> = [];
   public showTokenEntries: boolean = false;
   public firstElementSelected: boolean = false;
   public shouldShowFlowNodeId: boolean = false;
+  public rawTokenEntries: Array<IRawTokenEntry>;
 
   private _inspectCorrelationService: IInspectCorrelationService;
 
@@ -32,11 +34,12 @@ export class TokenViewer {
       this.shouldShowFlowNodeId = false;
       this.showTokenEntries = false;
       this.tokenEntries = [];
+      this.rawTokenEntries = [];
 
       return;
     }
 
-    this.updateFlowNode();
+    this._updateFlowNode();
   }
 
   public flowNodeChanged(newFlowNode: IShape): Promise<void> {
@@ -45,20 +48,22 @@ export class TokenViewer {
       this.shouldShowFlowNodeId = false;
       this.showTokenEntries = false;
       this.tokenEntries = [];
+      this.rawTokenEntries = [];
 
       return;
     }
 
-    this.updateFlowNode();
+    this._updateFlowNode();
   }
 
-  public async updateFlowNode(): Promise<void> {
+  private async _updateFlowNode(): Promise<void> {
     this.firstElementSelected = true;
     this.tokenEntries = [];
 
     const correlationIsNotSelected: boolean = this.correlation === undefined;
     if (correlationIsNotSelected) {
       this.tokenEntries = undefined;
+      this.rawTokenEntries = undefined;
       this.showTokenEntries = false;
       this.shouldShowFlowNodeId = false;
 
@@ -68,13 +73,35 @@ export class TokenViewer {
     const tokenHistoryEntries: Array<TokenHistoryEntry> = await this._inspectCorrelationService
       .getTokenForFlowNodeInstance(this.processModelId, this.correlation.id, this.flowNode.id);
 
-    this.tokenEntries = this._getTokenEntriesForFlowNode(tokenHistoryEntries);
+    this.tokenEntries = this._getBeautifiedTokenEntriesForFlowNode(tokenHistoryEntries);
+    this.rawTokenEntries = this._getRawTokenEntriesForFlowNode(tokenHistoryEntries);
 
     this.showTokenEntries = this.tokenEntries.length > 0;
     this.shouldShowFlowNodeId = this.tokenEntries.length > 0;
   }
 
-  private _getTokenEntriesForFlowNode(tokenHistoryEntries: Array<TokenHistoryEntry>): Array<ITokenEntry> {
+  private _getRawTokenEntriesForFlowNode(tokenHistoryEntries: Array<TokenHistoryEntry>): Array<IRawTokenEntry> {
+    const elementHasNoToken: boolean = tokenHistoryEntries === undefined;
+    if (elementHasNoToken) {
+      return [];
+    }
+
+    return tokenHistoryEntries.map((historyEntry: TokenHistoryEntry, index: number) => {
+      // tslint:disable-next-line no-magic-numbers
+      const payloadAsString: string = JSON.stringify(historyEntry.payload, null, 2);
+
+      const tokenEntry: IRawTokenEntry = {
+        entryNr: index,
+        eventType: historyEntry.tokenEventType,
+        createdAt: historyEntry.createdAt,
+        payload: payloadAsString,
+      };
+
+      return tokenEntry;
+    });
+  }
+
+  private _getBeautifiedTokenEntriesForFlowNode(tokenHistoryEntries: Array<TokenHistoryEntry>): Array<ITokenEntry> {
     const tokenEntries: Array<ITokenEntry> = [];
 
     const elementHasNoToken: boolean = tokenHistoryEntries === undefined;
