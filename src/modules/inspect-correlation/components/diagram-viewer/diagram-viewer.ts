@@ -53,12 +53,7 @@ export class DiagramViewer {
     this._diagramViewer.attachTo(this.canvasModel);
 
     this._diagramViewer.on('element.click', async(event: IEvent) => {
-
-      await this._importXml(this._diagramModeler, this._uncoloredXml);
-      this._colorElements(event.element, defaultBpmnColors.orange);
-      const colorizedXml: string = await this._getXmlFromModeler();
-
-      this._importXml(this._diagramViewer, colorizedXml);
+      await this._colorizeSelection(event.element);
 
       this.selectedFlowNode = event.element;
     });
@@ -126,6 +121,18 @@ export class DiagramViewer {
     const xmlForCorrelation: string = processModelForCorrelation.xml;
 
     return xmlForCorrelation;
+  }
+
+  private async _colorizeSelection(selectedElement: IShape): Promise<void> {
+    await this._importXml(this._diagramModeler, this._uncoloredXml);
+
+    const elementToColorize: IShape = this._elementRegistry.filter((element: IShape): boolean => {
+      return element.id === selectedElement.id;
+    })[0];
+    this._colorElement(elementToColorize, defaultBpmnColors.grey);
+
+    const colorizedXml: string = await this._getXmlFromModeler();
+    this._importXml(this._diagramViewer, colorizedXml);
   }
 
   private _clearColors(): void {
