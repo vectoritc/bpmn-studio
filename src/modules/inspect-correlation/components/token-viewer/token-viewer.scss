@@ -66,13 +66,16 @@
   display: inline-block;
   width: 30px;
   height: 17px;
+  margin-bottom: 0;
+  vertical-align: text-bottom;
+  user-select: none;
 }
 
-/* 
+/*
  * Hide default HTML checkbox
  */
 .token-viewer-switch input {
-  opacity: 0;
+  display: none;
 }
 
 .token-viewer-switch--slider {
