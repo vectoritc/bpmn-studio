@@ -16,7 +16,7 @@
         <tr>
           <th>Error</th>
           <td>
-            <select class="props-input" value.bind="selectedId" change.delegate="updateError()">
+            <select class="props-input props-select" value.bind="selectedId" change.delegate="updateError()">
               <option model.bind="null">-Choose Error-</option>
               <option repeat.for="error of errors"
                       model.bind="error.id" value="${error.id}">${error.name} (id: ${error.id})</option>

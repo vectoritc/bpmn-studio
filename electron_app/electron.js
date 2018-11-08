@@ -410,7 +410,8 @@ Main._createMainWindow = function () {
     electron.ipcMain.on('open_solution', (event) => {
       const openedFile = dialog.showOpenDialog({
         properties: [
-          'openDirectory'
+          'openDirectory',
+          'createDirectory'
         ]
       });
 

@@ -22,17 +22,6 @@
   cursor: pointer;
 }
 
-.custom-button {
-  margin-top: 10px;
-  margin-bottom: 10px;
-  background-color: white;
-  border: 1px solid darkgray;
-}
-
-.custom-button:focus {
-  border-color: black;
-}
-
 .login-modal__dialog {
   position: relative;
   top: 20%;
@@ -42,12 +31,4 @@
 
 .login-modal__show-modal {
   display: block;
-}
-
-.login-modal-button {
-  margin: 10px 0;
-  padding: 5px 10px;
-  background-color: white;
-  border: 1px solid darkgray;
-  border-radius: 4px;
 }

@@ -16,7 +16,7 @@
         <tr>
           <th>Escalation</th>
           <td>
-            <select class="props-input" value.bind="selectedId" change.delegate="updateEscalation()">
+            <select class="props-input props-select" value.bind="selectedId" change.delegate="updateEscalation()">
               <option model.bind="null">-Choose Escalation-</option>
               <option repeat.for="escalation of escalations"
                       model.bind="escalation.id" value="${escalation.id}">${escalation.name} (id: ${escalation.id})</option>
