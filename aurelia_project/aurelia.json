@@ -193,12 +193,6 @@
             ]
           },
           {
-            "name": "addict-ioc",
-            "path": "../node_modules/addict-ioc/dist/amd",
-            "main": "index.js"
-          },
-          "node-uuid",
-          {
             "name": "bluebird",
             "main": "./js/browser/bluebird",
             "path": "../node_modules/bluebird"
@@ -217,11 +211,6 @@
             "name": "proxy-polyfill",
             "main": "proxy.min.js",
             "path": "../node_modules/proxy-polyfill"
-          },
-          {
-            "name": "uuid-browser",
-            "path": "../node_modules/uuid-browser",
-            "main": "index.js"
           },
           "ms",
           "downloadjs",
