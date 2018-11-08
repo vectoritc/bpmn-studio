@@ -100,6 +100,7 @@ export class TokenViewer {
 
       tokenEntries.push(tokenEntry);
     });
+    
     return tokenEntries;
   }
 
