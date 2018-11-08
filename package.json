@@ -136,7 +136,7 @@
     "@types/node": "^6.0.45",
     "@types/spectrum": "^1.5.29",
     "@types/toastr": "^2.1.35",
-    "addict-ioc": "^2.3.4",
+    "addict-ioc": "2.3.4",
     "aurelia-animator-css": "^1.0.2",
     "aurelia-bootstrap": "^0.1.20",
     "aurelia-bootstrapper": "^2.3.0",
