@@ -35,18 +35,26 @@
   max-height: calc(100% - 150px);
 }
 
-.inspect-correlation__bottom-panel__fullscreen {
+.inspect-correlation__bottom-panel--fullscreen {
   height: 100% !important;
   max-height: 100%;
 }
 
-.inspect-correlation__bottom-panel__resize-div {
+.inspect-correlation__bottom-resize-div {
   z-index: 1;
   height: 9px;
   width: 100%;
   margin-top: -4px;
   margin-bottom: -4px;
   cursor: row-resize;
+  flex-shrink: 0;
+}
+
+.inspect-correlation__right-resize-div {
+  z-index: 1;
+  width: 6px;
+  margin-right: -4px;
+  cursor: col-resize;
   flex-shrink: 0;
 }
 
@@ -60,7 +68,7 @@
 }
 
 .inspect-correlation__token-viewer {
-  width: 250px;
+  max-width: calc(100% - 300px);
   flex-shrink: 0;
 }
 
