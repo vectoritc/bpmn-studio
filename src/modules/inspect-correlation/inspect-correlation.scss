@@ -35,12 +35,12 @@
   max-height: calc(100% - 150px);
 }
 
-.inspect-correlation__bottom-panel__fullscreen {
+.inspect-correlation__bottom-panel--fullscreen {
   height: 100% !important;
   max-height: 100%;
 }
 
-.inspect-correlation__bottom-panel__resize-div {
+.inspect-correlation__bottom-resize-div {
   z-index: 1;
   height: 9px;
   width: 100%;
@@ -50,7 +50,7 @@
   flex-shrink: 0;
 }
 
-.inspect-correlation__right-panel__resize-div {
+.inspect-correlation__right-resize-div {
   z-index: 1;
   width: 6px;
   margin-right: -4px;
