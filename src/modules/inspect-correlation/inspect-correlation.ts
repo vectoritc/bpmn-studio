@@ -61,7 +61,7 @@ export class InspectCorrelation {
       windowEvent.cancelBubble = true;
 
       const mousemoveFunction: IEventFunction = (mouseMoveEvent: MouseEvent): void => {
-        this.resizeInspectPanel(mouseMoveEvent);
+        this._resizeInspectPanel(mouseMoveEvent);
         document.getSelection().empty();
       };
 
@@ -79,7 +79,7 @@ export class InspectCorrelation {
       windowEvent.cancelBubble = true;
 
       const mousemoveFunction: IEventFunction = (mouseMoveEvent: MouseEvent): void => {
-        this.resizeTokenViewer(mouseMoveEvent);
+        this._resizeTokenViewer(mouseMoveEvent);
         document.getSelection().empty();
       };
 
@@ -107,7 +107,7 @@ export class InspectCorrelation {
     this._eventAggregator.publish(environment.events.navBar.updateProcessName, this.processModelId);
   }
 
-  public resizeInspectPanel(mouseEvent: MouseEvent): void {
+  private _resizeInspectPanel(mouseEvent: MouseEvent): void {
     const mouseYPosition: number = mouseEvent.clientY;
 
     const menuBarHeight: number = 40;
@@ -121,7 +121,7 @@ export class InspectCorrelation {
     this.bottomPanelHeight = Math.max(newBottomPanelHeight, minInspectPanelHeight);
   }
 
-  public resizeTokenViewer(mouseEvent: MouseEvent): void {
+  private _resizeTokenViewer(mouseEvent: MouseEvent): void {
     const mouseXPosition: number = mouseEvent.clientX;
 
     const inspectCorrelation: HTMLElement = this.bottomPanelResizeDiv.parentElement.parentElement;
