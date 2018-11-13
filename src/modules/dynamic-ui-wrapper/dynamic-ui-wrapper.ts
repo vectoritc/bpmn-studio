@@ -107,14 +107,14 @@ export class DynamicUiWrapper {
     const identity: IIdentity = this._getIdentity();
 
     const correlationId: string = this.currentUserTask.correlationId;
-    const processModelId: string = this.currentUserTask.processModelId;
-    const userTaskId: string = this.currentUserTask.id;
+    const processInstanceId: string = this.currentUserTask.processInstanceId;
+    const userTaskInstanceId: string = this.currentUserTask.flowNodeInstanceId;
     const userTaskResult: UserTaskResult = this._getUserTaskResults();
 
     this._dynamicUiService.finishUserTask(identity,
-                                          processModelId,
+                                          processInstanceId,
                                           correlationId,
-                                          userTaskId,
+                                          userTaskInstanceId,
                                           userTaskResult);
 
     this.currentUserTask = undefined;
