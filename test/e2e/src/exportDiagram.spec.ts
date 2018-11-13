@@ -26,6 +26,7 @@ describe('Export BPMN diagram', () => {
 
   const aureliaUrl: string = browser.params.aureliaUrl;
   const defaultTimeoutMS: number = browser.params.defaultTimeoutMS;
+  const downloadTimeoutMS: number = browser.params.downloadTimeoutMS;
 
   const expectedConditions: ProtractorExpectedConditions = protractor.ExpectedConditions;
 
@@ -129,6 +130,42 @@ describe('Export BPMN diagram', () => {
     await browser.sleep(sleepTime);
 
     const fileExists: boolean = fs.existsSync(`downloads/${processModelId}.svg`);
+    expect(fileExists).toBeTruthy();
+  });
+
+  it('should be possible to export diagram as PNG.', async() => {
+    // Show export menu
+    await navBar.clickAtNavbarExportButton();
+
+    await navBar.clickAtNavbarExportAsPNGButton();
+
+    await browser.sleep(downloadTimeoutMS);
+
+    const fileExists: boolean = fs.existsSync(`downloads/${processModelId}.png`);
+    expect(fileExists).toBeTruthy();
+  });
+
+  it('should be possible to export diagram as JPEG.', async() => {
+    // Show export menu
+    await navBar.clickAtNavbarExportButton();
+
+    await navBar.clickAtNavbarExportAsJPEGButton();
+
+    await browser.sleep(downloadTimeoutMS);
+
+    const fileExists: boolean = fs.existsSync(`downloads/${processModelId}.jpeg`);
+    expect(fileExists).toBeTruthy();
+  });
+
+  it('should be possible to export diagram as BPMN.', async() => {
+    // Show export menu
+    await navBar.clickAtNavbarExportButton();
+
+    await navBar.clickAtNavbarExportAsBPMNButton();
+
+    await browser.sleep(downloadTimeoutMS);
+
+    const fileExists: boolean = fs.existsSync(`downloads/${processModelId}.bpmn`);
     expect(fileExists).toBeTruthy();
   });
 

@@ -48,6 +48,7 @@ exports.config = {
     aureliaUrl: string = 'http://localhost:9000',
     processEngineUrl: string = 'http://localhost:8000',
     defaultTimeoutMS: number = 10000,
+    downloadTimeoutMS: number = 3000,
   },
 
   framework: 'jasmine',

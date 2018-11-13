@@ -77,4 +77,12 @@ export class NavBar {
     return this.navbarExportAsJPEGButton.click();
   }
 
+  public async clickAtNavbarExportAsPNGButton(): promise.Promise<void> {
+    return this.navbarExportAsPNGButton.click();
+  }
+
+  public async clickAtNavbarExportAsBPMNButton(): promise.Promise<void> {
+    return this.navbarExportAsBPMNButton.click();
+  }
+
 }
