@@ -49,8 +49,8 @@ Engine verbunden werden, um diese Diagramme auszuführen.
 **TL;DR Tests**
 
 1. `npm start`
-1. `npm run integration-test-init`
-1. `npm run integration-test`
+1. `npm run test-init`
+1. `npm run test`
 
 ## Wie kann ich das Projekt benutzen?
 
