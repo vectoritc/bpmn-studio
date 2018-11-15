@@ -15,12 +15,15 @@ import {
 } from 'aurelia-validation';
 
 import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/errors_ts';
+import {IIdentity} from '@essential-projects/iam_contracts';
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
-import {IDiagramCreationService, IUserInputValidationRule} from '../../../contracts';
+import {ManagementApiClientService} from '@process-engine/management_api_client';
+import {IAuthenticationService, IDiagramCreationService, IUserInputValidationRule} from '../../../contracts';
 import {NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
+import {AuthenticationService} from '../../authentication/authentication.service';
 import {NotificationService} from '../../notification/notification.service';
 import {SingleDiagramsSolutionExplorerService} from '../../solution-explorer-services/SingleDiagramsSolutionExplorerService';
 
@@ -41,6 +44,8 @@ interface IDiagramCreationState extends IDiagramNameInputState {
   NewInstance.of(ValidationController),
   'DiagramCreationService',
   'NotificationService',
+  AuthenticationService,
+  'ManagementApiClientService',
 )
 export class SolutionExplorerSolution {
 
@@ -49,6 +54,8 @@ export class SolutionExplorerSolution {
   private _validationController: ValidationController;
   private _diagramCreationService: IDiagramCreationService;
   private _notificationService: NotificationService;
+  private _managementApiClient: ManagementApiClientService;
+  private _authenticationService: IAuthenticationService;
 
   private _diagramRoute: string = 'processdef-detail';
   private _inspectView: string;
@@ -136,12 +143,16 @@ export class SolutionExplorerSolution {
     validationController: ValidationController,
     diagramCreationService: IDiagramCreationService,
     notificationService: NotificationService,
+    authenticationService: IAuthenticationService,
+    managementApiClient: ManagementApiClientService,
   ) {
     this._router = router;
     this._eventAggregator = eventAggregator;
     this._validationController = validationController;
     this._diagramCreationService = diagramCreationService;
     this._notificationService = notificationService;
+    this._authenticationService = authenticationService;
+    this._managementApiClient = managementApiClient;
   }
 
   public attached(): void {
@@ -740,4 +751,12 @@ export class SolutionExplorerSolution {
     }
   }
 
+  private _createIdentity(): IIdentity {
+    const accessToken: string = this._authenticationService.getAccessToken();
+    const identity: IIdentity = {
+      token: accessToken,
+    };
+
+    return identity;
+  }
 }
