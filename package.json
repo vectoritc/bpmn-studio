@@ -102,7 +102,7 @@
     "@process-engine/solutionexplorer.contracts": "1.0.0",
     "@process-engine/solutionexplorer.repository.contracts": "3.0.0",
     "@process-engine/solutionexplorer.repository.filesystem": "3.0.0",
-    "@process-engine/solutionexplorer.repository.management_api": "2.0.0",
+    "@process-engine/solutionexplorer.repository.management_api": "feature~add_delete_functionality",
     "@process-engine/solutionexplorer.service": "3.0.0",
     "@process-engine/solutionexplorer.service.contracts": "3.0.0",
     "about-window": "^1.12.1",
