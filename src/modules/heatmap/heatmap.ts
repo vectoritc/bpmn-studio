@@ -30,6 +30,15 @@ export class Heatmap {
     this._eventAggregator = eventAggregator;
   }
 
+  /**
+   * This method gets called if the processModelId was changed.
+   * It removes the bpmn-js container from the DOM and destroys the viewer.
+   *
+   * After that the heatmap will be attached again for the new
+   * processModelId.
+   *
+   * Info: The used processModelId is bound by the inspect view.
+   */
   public processModelIdChanged(): void {
     const noProcessModelId: boolean = this.processModelId === undefined || this.processModelId === null;
     if (noProcessModelId) {
@@ -105,7 +114,7 @@ export class Heatmap {
 
     const overlays: IOverlay = this._viewer.get('overlays');
 
-    this._heatmapService.addOverlays(overlays, elementRegistry);
+    this._heatmapService.addOverlays(overlays, elementRegistry, this._processModel.id);
 
     const dashboardIsNotShown: boolean = !this.dashboardIsShown;
     if (dashboardIsNotShown) {

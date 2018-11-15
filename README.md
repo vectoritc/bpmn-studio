@@ -20,7 +20,7 @@ Engine verbunden werden, um diese Diagramme auszuführen.
 
 ### Voraussetzungen
 
-* Node `>= 6.1.0`
+* Node [active LTS](https://github.com/nodejs/Release#release-schedule)
 * Laufende ProcessEngine
 
 ### Setup/Installation
@@ -49,8 +49,8 @@ Engine verbunden werden, um diese Diagramme auszuführen.
 **TL;DR Tests**
 
 1. `npm start`
-1. `npm run integration-test-init`
-1. `npm run integration-test`
+1. `npm run test-init`
+1. `npm run test`
 
 ## Wie kann ich das Projekt benutzen?
 

@@ -41,7 +41,14 @@ export class HeatmapService implements IHeatmapService {
     return this._heatmapRepository.getActiveTokensForFlowNode(flowNodeId);
   }
 
-  public async addOverlays(overlays: IOverlay, elementRegistry: IElementRegistry): Promise<void> {
+  /**
+   *
+   * @param overlays IOverlay; The overlay module from bpmn-js
+   * @param elementRegistry IElementRegistry; The elementRegistry module from bpmn-js
+   *
+   * This method adds overlays for the activeTokens to the diagram viewer.
+   */
+  public async addOverlays(overlays: IOverlay, elementRegistry: IElementRegistry, processModelId: string): Promise<void> {
 
     let participantsTokenCount: number = 0;
 
@@ -60,7 +67,7 @@ export class HeatmapService implements IHeatmapService {
       });
 
     const elementsForOverlays: Array<IShape> = this._getElementsForOverlays(elementRegistry);
-    const activeTokenListArray: Array<Array<ActiveToken>> = await this._getActiveTokenListArray(elementsForOverlays);
+    const activeTokenListArray: Array<Array<ActiveToken>> = await this._getActiveTokenListArray(elementsForOverlays, processModelId);
 
     this._addShapeTypeToActiveToken(activeTokenListArray, elementsForOverlays);
 
@@ -107,6 +114,17 @@ export class HeatmapService implements IHeatmapService {
     return this._heatmapRepository.getProcess(processModelId);
   }
 
+  /**
+   *
+   * @param elementRegistry IElementRegistry; The elementRegistry module from bpmn-js
+   *
+   * This method finds all associations (IConnection) on flowNodes which are defined with 'RT:'
+   * and returns them as IFlowNodeAssociation.
+   *
+   * A flowNodeAssociation contains the associationId, the elementId with which
+   * it is connected and the expected runtime.
+   *
+   */
   public getFlowNodeAssociations(elementRegistry: IElementRegistry): Array<IFlowNodeAssociation> {
 
     const flowNodeAssociations: Array<IFlowNodeAssociation> = [];
@@ -142,6 +160,19 @@ export class HeatmapService implements IHeatmapService {
     return flowNodeAssociations;
   }
 
+  /**
+   *
+   * @param associations Array<IFlowNodeAssociation>;
+   * @param flowNodeRuntimeInformation Array<FlowNodeRuntimeInformation>; RuntimeInformation which comes from the backend.
+   * @param modeler IBpmnModeler; The bpmn-js diagram modeler (only the modeler can color elements).
+   *
+   * Checks if the runtime for a flowNode is greater than expected and colors the element
+   * depending on the result.
+   *
+   * greater => red
+   * smaller => green
+   *
+   */
   public async getColoredXML(
     associations: Array<IFlowNodeAssociation>,
     flowNodeRuntimeInformation: Array<FlowNodeRuntimeInformation>,
@@ -186,6 +217,13 @@ export class HeatmapService implements IHeatmapService {
     });
   }
 
+  /**
+   *
+   * @param associations Array<IFlowNodeAssociation>; Expected runtime information.
+   * @param flowNodeRuntimeInformation Array<FlowNodeRuntimeInformation>; RuntimeInformation which comes from the backend.
+   *
+   * Returns the flowNodeRuntimeInformation from the elements which must get colored.
+   */
   private _getElementsToColor(
     associations: Array<IFlowNodeAssociation>,
     flowNodeRuntimeInformation: Array<FlowNodeRuntimeInformation>,
@@ -202,6 +240,14 @@ export class HeatmapService implements IHeatmapService {
     return elementsToColor;
   }
 
+  /**
+   *
+   * @param elementRegistry IElementRegistry;
+   * @param elementToColor FlowNodeRuntimeInformation | ITokenPositionAndCount | ActiveToken;
+   *
+   * Returns the IShape of an element.
+   * The IShape is needed by the IModeling module from bpmn-js to color an element.
+   */
   private _getShape(elementRegistry: IElementRegistry, elementToColor: FlowNodeRuntimeInformation | ITokenPositionAndCount | ActiveToken): IShape {
     const elementShape: IShape = elementRegistry.get(elementToColor.flowNodeId);
 
@@ -265,11 +311,17 @@ export class HeatmapService implements IHeatmapService {
     return medianRunTimeInMs;
   }
 
-  private async _getActiveTokenListArray(elementsForOverlays: Array<IShape>): Promise<Array<Array<ActiveToken>>> {
+  private async _getActiveTokenListArray(elementsForOverlays: Array<IShape>, processModelId: string): Promise<Array<Array<ActiveToken>>> {
     const promisesForElements: Array<Promise<Array<ActiveToken>>> = elementsForOverlays.map(async(element: IShape) => {
       const elementsActiveTokens: Array<ActiveToken> = await this.getActiveTokensForFlowNode(element.id);
 
-      return elementsActiveTokens;
+      const elementActiveTokensForProcessModel: Array<ActiveToken> = elementsActiveTokens.filter((token: ActiveToken) => {
+        const tokenIsInProcessModel: boolean = token.processModelId === processModelId;
+
+        return tokenIsInProcessModel;
+      });
+
+      return elementActiveTokensForProcessModel;
     });
 
     const activeTokenListArrayForAllElements: Array<Array<ActiveToken>> = await Promise.all(promisesForElements);

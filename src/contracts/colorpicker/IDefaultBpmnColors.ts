@@ -6,5 +6,6 @@ export interface IDefaultBpmnColors {
   green: IColorPickerColor;
   purple: IColorPickerColor;
   orange: IColorPickerColor;
+  grey: IColorPickerColor;
   none: IColorPickerColor;
 }

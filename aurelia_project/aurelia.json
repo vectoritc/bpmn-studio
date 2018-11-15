@@ -166,7 +166,7 @@
           {
             "name": "bootstrap",
             "path": "../node_modules/bootstrap/dist",
-            "main": "js/bootstrap.min.js",
+            "main": "js/bootstrap.bundle.min",
             "deps": [
               "jquery"
             ],
@@ -193,12 +193,6 @@
             ]
           },
           {
-            "name": "addict-ioc",
-            "path": "../node_modules/addict-ioc/dist/amd",
-            "main": "index.js"
-          },
-          "node-uuid",
-          {
             "name": "bluebird",
             "main": "./js/browser/bluebird",
             "path": "../node_modules/bluebird"
@@ -217,11 +211,6 @@
             "name": "proxy-polyfill",
             "main": "proxy.min.js",
             "path": "../node_modules/proxy-polyfill"
-          },
-          {
-            "name": "uuid-browser",
-            "path": "../node_modules/uuid-browser",
-            "main": "index.js"
           },
           "ms",
           "downloadjs",
@@ -365,11 +354,7 @@
       }
     ],
     "copyFiles": {
-      "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff2": "bootstrap/fonts",
-      "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.woff": "bootstrap/fonts",
-      "node_modules/bootstrap/dist/fonts/glyphicons-halflings-regular.ttf": "bootstrap/fonts",
       "node_modules/bootstrap/dist/css/bootstrap.css": "bootstrap/css",
-      "node_modules/bootstrap/dist/css/bootstrap-theme.css": "bootstrap/css",
       "src/resources/images/default-avatar.png": "src/resources/images",
       "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf": "@fortawesome/fontawesome-free/webfonts",
       "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff": "@fortawesome/fontawesome-free/webfonts",

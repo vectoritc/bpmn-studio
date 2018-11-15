@@ -118,16 +118,16 @@ describe('bpmn-io compare view', () => {
 
     await BpmnDiffView.openDiffViewByClickOnButton(statusBarDiffViewButton);
 
-    const statusBarPreviousVsCurrentButton: ElementFinder = statusBar.statusBarPreviousVsCurrentButton;
-    const statusBarCurrentVsPreviousButton: ElementFinder = statusBar.statusBarCurrentVsPreviousButton;
+    const statusBarOldVsNewButton: ElementFinder = statusBar.statusBarOldVsNewButton;
+    const statusBarNewVsOldButton: ElementFinder = statusBar.statusBarNewVsOldButton;
 
-    await statusBarPreviousVsCurrentButton.click();
+    await statusBarOldVsNewButton.click();
 
-    const statusBarPreviousVsCurrentButtonIsEnabled: boolean = await statusBar.statusBarButtonIsEnabled(statusBarPreviousVsCurrentButton);
-    expect(statusBarPreviousVsCurrentButtonIsEnabled).toBeTruthy();
+    const statusBarOldVsNewButtonIsEnabled: boolean = await statusBar.statusBarButtonIsEnabled(statusBarOldVsNewButton);
+    expect(statusBarOldVsNewButtonIsEnabled).toBeTruthy();
 
-    const statusBarCurrentVsPreviousButtonIsEnabled: boolean = await statusBar.statusBarButtonIsEnabled(statusBarCurrentVsPreviousButton);
-    expect(statusBarCurrentVsPreviousButtonIsEnabled).not.toBeTruthy();
+    const statusBarNewVsOldButtonIsEnabled: boolean = await statusBar.statusBarButtonIsEnabled(statusBarNewVsOldButton);
+    expect(statusBarNewVsOldButtonIsEnabled).not.toBeTruthy();
   });
 
   it('should be possible to click on `After vs. Before` button.', async() => {
@@ -135,16 +135,16 @@ describe('bpmn-io compare view', () => {
 
     await BpmnDiffView.openDiffViewByClickOnButton(statusBarDiffViewButton);
 
-    const statusBarPreviousVsCurrentButton: ElementFinder = statusBar.statusBarPreviousVsCurrentButton;
-    const statusBarCurrentVsPreviousButton: ElementFinder = statusBar.statusBarCurrentVsPreviousButton;
+    const statusBarOldVsNewButton: ElementFinder = statusBar.statusBarOldVsNewButton;
+    const statusBarNewVsOldButton: ElementFinder = statusBar.statusBarNewVsOldButton;
 
-    await statusBarCurrentVsPreviousButton.click();
+    await statusBarNewVsOldButton.click();
 
-    const statusBarPreviousVsCurrentButtonIsEnabled: boolean = await statusBar.statusBarButtonIsEnabled(statusBarPreviousVsCurrentButton);
-    expect(statusBarPreviousVsCurrentButtonIsEnabled).not.toBeTruthy();
+    const statusBarOldVsNewButtonIsEnabled: boolean = await statusBar.statusBarButtonIsEnabled(statusBarOldVsNewButton);
+    expect(statusBarOldVsNewButtonIsEnabled).not.toBeTruthy();
 
-    const statusBarCurrentVsPreviousButtonIsEnabled: boolean = await statusBar.statusBarButtonIsEnabled(statusBarCurrentVsPreviousButton);
-    expect(statusBarCurrentVsPreviousButtonIsEnabled).toBeTruthy();
+    const statusBarNewVsOldButtonIsEnabled: boolean = await statusBar.statusBarButtonIsEnabled(statusBarNewVsOldButton);
+    expect(statusBarNewVsOldButtonIsEnabled).toBeTruthy();
   });
 
   it('should be possible to click on changes log button.', async() => {

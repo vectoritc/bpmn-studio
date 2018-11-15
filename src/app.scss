@@ -3,12 +3,18 @@ body {
   height: 100%;
   overflow: hidden; // As soon as our styling is clean this can be removed
   font-size: 14px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 a:focus,
 button:focus,
 input:focus {
   outline: none !important;
+}
+
+// We don't want our bootstrap 4 dropdowns to display the caret at the end of the button
+.dropdown-toggle::after {
+  display: none;
 }
 
 a:hover {
@@ -41,6 +47,7 @@ a:hover {
 .button {
   color: #333;
   opacity: 0.5;
+  cursor: default;
 }
 
 .button:hover {
@@ -57,4 +64,28 @@ a:hover {
 
 .button--disabled:hover {
   opacity: 0.1;
+}
+
+.btn-default {
+  background-color: #fff;
+  border-color: #ccc;
+  color: #333;
+}
+
+.btn-default:hover:enabled {
+  background-color: #eee;
+}
+
+.btn-default:focus {
+  box-shadow: none;
+}
+
+.modal-backdrop {
+  opacity: 0.3 !important;
+}
+
+.dropdown-item {
+   background-color: transparent !important;
+   color: black !important;
+   user-select: none;
 }

@@ -16,6 +16,9 @@ const openAboutWindow = require('about-window').default;
 // following code tells the frontend the name and content of that file;
 // this 'get_opened_file' request is emmitted in src/main.ts.
 let filePath;
+let isInitialized = false;
+
+let canNotCloseApplication = false;
 
 const Main = {};
 
@@ -53,7 +56,7 @@ Main.execute = function () {
 
     const argumentIsFilePath = argv[1].endsWith('.bpmn');
     const argumentIsSignInRedirect = argv[1].startsWith('bpmn-studio://signin-oidc');
-    const argumentIsSignOutRefirect = argv[1].startsWith('bpmn-studio://signout-oidc');
+    const argumentIsSignOutRedirect = argv[1].startsWith('bpmn-studio://signout-oidc');
 
     if (argumentIsFilePath) {
       const filePath = argv[1];
@@ -62,7 +65,7 @@ Main.execute = function () {
       answerOpenFileEvent(filePath)
     }
 
-    if (argumentIsSignInRedirect || argumentIsSignOutRefirect) {
+    if (argumentIsSignInRedirect || argumentIsSignOutRedirect) {
       const redirectUrl = argv[1];
 
       Main._window.loadURL(`file://${__dirname}/../index.html`);
@@ -102,18 +105,7 @@ Main._initializeApplication = function () {
   });
 
   initializeDeepLinking();
-
-  const platformIsNotWindows = process.platform !== 'win32';
-  // The AutoUpdater gets not initialized on windows, because it is broken currently
-  // See https://github.com/process-engine/bpmn-studio/issues/715
-  if (platformIsNotWindows) {
-    initializeAutoUpdater();
-  } else {
-    electron.ipcMain.on('add_autoupdater_listener', (event) => {
-      event.sender.send('autoupdater_windows_notification');
-    });
-  }
-
+  initializeAutoUpdater();
   initializeFileOpenFeature();
 
   function initializeDeepLinking() {
@@ -260,7 +252,13 @@ Main._initializeApplication = function () {
 
       // for non-windows
       app.on('open-file', (event, path) => {
-        filePath = path;
+        filePath = isInitialized
+                   ? undefined
+                   : path;
+
+        if (isInitialized) {
+          answerOpenFileEvent(path);
+        }
       });
 
     });
@@ -280,9 +278,7 @@ Main._initializeApplication = function () {
      */
     electron.ipcMain.on('waiting-for-double-file-click', (mainEvent) => {
       this.fileOpenMainEvent = mainEvent;
-      app.on('open-file', (event, path) => {
-        answerOpenFileEvent(path);
-      })
+      isInitialized = true;
     });
 
     electron.ipcMain.on('get_opened_file', (event) => {
@@ -330,13 +326,32 @@ Main._createMainWindow = function () {
   // history.
   Main._window.loadURL('/');
 
-  Main._window.on('closed', () => {
+  Main._window.on('close', (event) => {
+    if (canNotCloseApplication) {
+      event.preventDefault();
+
+      Main._window.webContents.send('show-close-modal');
+
+      return false;
+    }
+  });
+
+  electron.ipcMain.on('close-bpmn-studio', (event) => {
+    Main._window.close();
+  });
+
+  electron.ipcMain.on('can-not-close', (event, canCloseResult) => {
+    canNotCloseApplication = canCloseResult;
+  });
+
+  Main._window.on('closed', (event) => {
     Main._window = null;
   });
 
+  setOpenSingleDiagram();
+  setOpenSolutions();
 
   const platformIsWindows = process.platform === 'win32';
-
   if (platformIsWindows) {
     Main._window.webContents.session.on('will-download', (event, downloadItem) => {
       const defaultFilename = downloadItem.getFilename();
@@ -372,6 +387,38 @@ Main._createMainWindow = function () {
     });
   }
 
+  function setOpenSingleDiagram() {
+    electron.ipcMain.on('open_single_diagram', (event) => {
+      const openedFile = dialog.showOpenDialog({
+        filters: [
+          {
+            name: "BPMN",
+            extensions: ["bpmn", "xml"]
+          },
+          {
+            name: 'All Files',
+            extensions: ['*']
+          }
+        ]
+      });
+
+      event.sender.send('import_opened_single_diagram', openedFile);
+    });
+  }
+
+  function setOpenSolutions() {
+    electron.ipcMain.on('open_solution', (event) => {
+      const openedFile = dialog.showOpenDialog({
+        properties: [
+          'openDirectory',
+          'createDirectory'
+        ]
+      });
+
+      event.sender.send('import_opened_solution', openedFile);
+    });
+  }
+
   function setElectronMenubar() {
 
     let template = [{
@@ -400,6 +447,24 @@ Main._createMainWindow = function () {
           label: "Quit",
           role: "quit"
         }
+      ]
+    }, {
+      label: "File",
+      submenu: [
+        {
+          label: "Open Diagram",
+          accelerator: "CmdOrCtrl+O",
+          click: () => {
+            Main._window.webContents.send('menubar__start_opening_diagram');
+          },
+        },
+        {
+          label: "Open Solution",
+          accelerator: "CmdOrCtrl+Shift+O",
+          click: () => {
+            Main._window.webContents.send('menubar__start_opening_solution');
+          },
+        },
       ]
     }, {
       label: "Edit",
@@ -455,6 +520,22 @@ Main._createMainWindow = function () {
           role: "toggledevtools"
         }
       ]
+    }, {
+      label: "Help",
+      submenu: [{
+        label: "Documentation",
+        click: () => {
+          const documentation_url = 'https://www.process-engine.io/documentation/';
+          electron.shell.openExternal(documentation_url);
+        }
+      }, {
+        label: "Release Notes for Current Version",
+          click: () => {
+            const currentVersion = electron.app.getVersion();
+            const currentReleaseNotesUrl = `https://github.com/process-engine/bpmn-studio/releases/tag/v${currentVersion}`
+            electron.shell.openExternal(currentReleaseNotesUrl);
+          }
+      }]
     }];
 
     electron.Menu.setApplicationMenu(electron.Menu.buildFromTemplate(template));

@@ -196,7 +196,6 @@ export class AuthenticationService implements IAuthenticationService {
   }
 
   private async _isIdentityServerReachable(): Promise<boolean> {
-
     const request: Request = new Request(`${environment.openIdConnect.authority}/.well-known/openid-configuration`, {
       method: 'GET',
       mode: 'cors',

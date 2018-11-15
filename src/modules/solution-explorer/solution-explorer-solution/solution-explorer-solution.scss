@@ -1,6 +1,5 @@
 .diagram-list {
-  padding-right: 5px;
-  padding-left: 22px;
+  padding: 0;
 }
 
 .solution-loading {
@@ -8,28 +7,29 @@
 }
 
 .diagram-create {
-  padding: 2.5px 0px;
+  width: 100%;
+  padding: 2.5px 0;
+  padding-left: 22px;
   list-style: none;
 }
 
-.diagram-create__input-holder {
+.diagram-create .input-holder {
   flex: 1;
-  margin-right: 15px;
+  margin-right: 5px;
 }
 
-.diagram-create__input-holder__input {
+.input-holder__input {
   width: 100%;
 }
 
-.diagram-create__input-holder__input--error {
+.input-holder__input--error {
   border-color: red;
 }
 
 .diagram-create__errors {
   padding: 2px;
-  padding-left: 25px;
-
-  margin-right: 15px;
+  padding-left: 22px;
+  margin-left: 0;
   border: 2px solid red;
   color: red;
   border-top: none;
@@ -39,10 +39,38 @@
   list-style-type: disc;
 }
 
+.diagram-rename-container {
+  width: 100%;
+  padding: 2.5px 0px;
+  list-style: none;
+}
+
+.diagram-rename-container .input-holder {
+  flex: 1;
+  margin-right: 0;
+}
+
+.rename-errors-container__error {
+  padding: 2px;
+  padding-left: 25px;
+  margin-right: 15px;
+  border: 2px solid red;
+  border-top: none;
+  color: red;
+}
+
+.rename-errors-container__error__error {
+  list-style-type: disc;
+}
+
 .diagram-entry {
   display: flex;
-  padding: 2.5px 0px;
+  padding: 2.5px 5px 2.5px 22px;
   cursor: pointer;
+}
+
+.diagram-entry--highlight {
+  background-color: #e6e6e6;
 }
 
 .diagram-entry__icon {
@@ -55,6 +83,7 @@
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .diagram-entry:hover .diagram-entry__name {
@@ -65,19 +94,24 @@
   display: none;
 }
 
+.diagram-entry:hover .diagram-entry__actions {
+  display: flex;
+}
+
 @media (any-hover: none) {
   .diagram-entry__actions {
     display: flex;
   }
 }
 
-.diagram-entry:hover .diagram-entry__actions {
-  display: flex;
-}
-
 .diagram-entry__actions button {
   padding: 0 2px;
   background: transparent;
   border: none;
-  cursor: pointer;
+  cursor: default;
+}
+
+.toast-message__headline {
+  width: calc(100% + 30px);
+  margin-left: -30px;
 }

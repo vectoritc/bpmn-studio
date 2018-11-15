@@ -107,17 +107,6 @@ export function configure(aurelia: Aurelia): void {
 
         notificationService.showNonDisappearingNotification(NotificationType.ERROR, errorMessage);
       });
-
-      ipcRenderer.on('autoupdater_windows_notification', () => {
-        // tslint:disable-next-line: max-line-length
-        const targetHref: string = `<a href="javascript:nodeRequire('open')('https://github.com/process-engine/bpmn-studio/issues/715')">click here</a>`;
-
-        const infoMessage: string = `The autoupdater is currently unavailable for the Windows platform.
-         There is more information about this here: ${targetHref}.`;
-        const notificationService: NotificationService = aurelia.container.get('NotificationService');
-
-        notificationService.showNonDisappearingNotification(NotificationType.INFO, infoMessage);
-      });
     }
   });
 }

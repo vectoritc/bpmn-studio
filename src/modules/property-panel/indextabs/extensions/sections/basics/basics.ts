@@ -21,6 +21,7 @@ export class BasicsSection implements ISection {
   public properties: Array<IProperty> = [];
   public newNames: Array<string> = [];
   public newValues: Array<string> = [];
+  public shouldFocus: boolean = false;
 
   private _businessObjInPanel: IModdleElement;
   private _moddle: IBpmnModdle;
@@ -75,6 +76,25 @@ export class BasicsSection implements ISection {
     this._propertiesElement.values.push(bpmnProperty);
     this.properties.push(bpmnProperty);
     this._publishDiagramChange();
+    this.shouldFocus = true;
+  }
+
+  public inputFieldBlurred(index: number, event: FocusEvent): void {
+    const targetElement: HTMLElement = event.relatedTarget as HTMLElement;
+    const targetIsNoInputField: boolean = !(targetElement instanceof HTMLInputElement);
+
+    if (targetIsNoInputField) {
+      this._checkAndRemoveEmptyProperties(index);
+
+      return;
+    }
+
+    const targetFieldIndex: string = targetElement.getAttribute('data-fieldIndex');
+    const indexAsString: string = index.toString();
+    const targetValueFieldNotRelated: boolean = targetFieldIndex !== indexAsString;
+    if (targetValueFieldNotRelated) {
+      this._checkAndRemoveEmptyProperties(index);
+    }
   }
 
   public removeProperty(index: number): void {
@@ -95,18 +115,29 @@ export class BasicsSection implements ISection {
 
   public changeName(index: number): void {
     this._propertiesElement.values[index].name = this.newNames[index];
+    this._checkAndRemoveEmptyProperties(index);
     this._publishDiagramChange();
   }
 
   public changeValue(index: number): void {
     this._propertiesElement.values[index].value = this.newValues[index];
+    this._checkAndRemoveEmptyProperties(index);
     this._publishDiagramChange();
+  }
+
+  private _checkAndRemoveEmptyProperties(index: number): void {
+    const propertyElement: IProperty = this._propertiesElement.values[index];
+    const propertyIsEmpty: boolean = propertyElement.value === '' && propertyElement.name === '';
+    if (propertyIsEmpty) {
+      this.removeProperty(index);
+    }
   }
 
   private _reloadProperties(): void {
     this.properties = [];
     this.newNames = [];
     this.newValues = [];
+    this.shouldFocus = false;
 
     const businessObjectHasNoExtensionElements: boolean = this._businessObjInPanel.extensionElements === undefined
                                                        || this._businessObjInPanel.extensionElements === null;

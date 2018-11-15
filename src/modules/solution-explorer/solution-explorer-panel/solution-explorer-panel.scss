@@ -1,14 +1,12 @@
 .solution-explorer {
-  padding-bottom: 45px;
-
-  min-width: 200px;
+  display: block;
   width: 250px;
   height: 100%;
-
-  display: block;
-
+  min-width: 200px;
+  padding-bottom: 45px;
   background-color: #f7f7f7;
   border-right: 2px solid #dcdbdb;
+  user-select: none;
 }
 
 .solution-explorer-panel {
@@ -36,7 +34,6 @@
   padding: 0 2px;
   background: transparent;
   border: none;
-  cursor: pointer;
   vertical-align: middle;
 }
 

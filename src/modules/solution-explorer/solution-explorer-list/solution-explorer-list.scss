@@ -33,6 +33,7 @@
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .solution-entry__header__actions {
@@ -56,5 +57,5 @@
 }
 
 .solution-entry__header__actions button:hover {
-  cursor: pointer;
+  cursor: default;
 }

@@ -14,6 +14,7 @@ export class Dashboard {
 
   // Define Links, Urls, Classes
   public dashboardLink: string = '/dashboard';
+  public inspectLink: string = '/inspect';
   private _domProcessIdPrefix: string = 'processList-';
   private _domProcessClassName: string = 'process-list-item';
 
@@ -26,7 +27,7 @@ export class Dashboard {
   private _byDomTaskClassName: By = by.className(this._domTaskClassName);
   private _byIdTaskListContainer: By = by.id('taskListContainer');
   private _byIdDynamicUiWrapper: By = by.id('dynamic-ui-wrapper-continue-button');
-  private _byProcessListItemModelId: By = by.className('process-list-item-model-id');
+  private _byProcessListItemModelName: By = by.className('process-list-item-modelname');
   private _byProcessListItemUserTasks: By = by.className('process-list-item-user-tasks');
   private _byTaskListContinueButton: By = by.className('task-list-continue-button');
 
@@ -75,7 +76,7 @@ export class Dashboard {
     const firstProcessRunningListItemsById: ElementFinder = this.firstProcessRunningListItemsById(correlationId);
 
     return firstProcessRunningListItemsById
-            .element(this._byProcessListItemModelId);
+            .element(this._byProcessListItemModelName);
   }
 
   public openProcessModelByClickOnModelIdInProcessRunningList(correlationId: string): promise.Promise<void> {

@@ -44,7 +44,7 @@ export class BpmnDiffView {
   public leftCanvasModel: HTMLElement;
   public rightCanvasModel: HTMLElement;
   public lowerCanvasModel: HTMLElement;
-  public currentDiffMode: DiffMode = DiffMode.CurrentVsPrevious;
+  public currentDiffMode: DiffMode = DiffMode.NewVsOld;
   public diffModeTitle: string = '';
   public showChangeList: boolean;
   public noChangesExisting: boolean = true;
@@ -202,8 +202,8 @@ export class BpmnDiffView {
   public _setSavedProcessModelAsPreviousXml(): void {
     this.previousXml = this.savedXml;
 
-    this.previousXmlIdentifier = 'Previous';
-    this.currentXmlIdentifier = 'Current';
+    this.previousXmlIdentifier = 'Old';
+    this.currentXmlIdentifier = 'New';
 
     this._eventAggregator.publish(environment.events.statusBar.setXmlIdentifier,
       [
@@ -429,10 +429,13 @@ export class BpmnDiffView {
   }
 
   private _updateDiffView(): void {
-    if (this.currentDiffMode === DiffMode.CurrentVsPrevious) {
+    const diffModeIsNewVsOld: boolean = this.currentDiffMode === DiffMode.NewVsOld;
+    const diffModeIsOldVsNew: boolean = this.currentDiffMode === DiffMode.OldVsNew;
+
+    if (diffModeIsNewVsOld) {
       this._updateLowerDiff(this.currentXml);
       this.diffModeTitle = `${this.currentXmlIdentifier} vs. ${this.previousXmlIdentifier}`;
-    } else if (this.currentDiffMode === DiffMode.PreviousVsCurrent) {
+    } else if (diffModeIsOldVsNew) {
       this._updateLowerDiff(this.previousXml);
       this.diffModeTitle = `${this.previousXmlIdentifier} vs. ${this.currentXmlIdentifier}`;
     } else {
@@ -455,7 +458,7 @@ export class BpmnDiffView {
     const changedElements: object = this.xmlChanges._changed;
     const layoutChangedElements: object = this.xmlChanges._layoutChanged;
 
-    const diffModeIsCurrentVsPrevious: boolean = this.currentDiffMode === DiffMode.CurrentVsPrevious;
+    const diffModeIsCurrentVsPrevious: boolean = this.currentDiffMode === DiffMode.NewVsOld;
 
     await this._importXml(xml, this._diffModeler);
     this._clearColors();
