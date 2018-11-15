@@ -236,12 +236,25 @@ export class SolutionExplorerSolution {
       return;
     }
 
-    try {
-      await this.solutionService.deleteDiagram(diagram);
-    } catch (error) {
-      const message: string = `Unable to delete the diagram: ${error.message}`;
+    const isDeployedDiagram: boolean = diagram.uri.startsWith('http');
+    if (isDeployedDiagram) {
+      try {
+        const identity: IIdentity = this._createIdentity();
 
-      this._notificationService.showNotification(NotificationType.ERROR, message);
+        await this._managementApiClient.deleteProcessDefinitionsByProcessModelId(identity, diagram.id);
+      } catch (error) {
+        const message: string = `Unable to delete the diagram: ${error.message}`;
+
+        this._notificationService.showNotification(NotificationType.ERROR, message);
+      }
+    } else {
+      try {
+        await this.solutionService.deleteDiagram(diagram);
+      } catch (error) {
+        const message: string = `Unable to delete the diagram: ${error.message}`;
+
+        this._notificationService.showNotification(NotificationType.ERROR, message);
+      }
     }
 
     await this.updateSolution();
@@ -353,9 +366,7 @@ export class SolutionExplorerSolution {
   }
 
   public canDeleteDiagram(): boolean {
-    return !this.solutionIsSingleDiagrams
-            && this._openedSolution
-            && !this._openedSolution.uri.startsWith('http');
+    return !this.solutionIsSingleDiagrams && this._openedSolution !== undefined;
   }
 
   public get solutionIsNotLoaded(): boolean {
