@@ -342,9 +342,7 @@ export class SolutionExplorerSolution {
   }
 
   public canDeleteDiagram(): boolean {
-    return !this.solutionIsSingleDiagrams
-            && this._openedSolution
-            && !this._openedSolution.uri.startsWith('http');
+    return !this.solutionIsSingleDiagrams && this._openedSolution !== undefined;
   }
 
   public get solutionIsNotLoaded(): boolean {
@@ -739,5 +737,4 @@ export class SolutionExplorerSolution {
       subscription.dispose();
     }
   }
-
 }
