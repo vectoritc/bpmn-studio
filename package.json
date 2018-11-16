@@ -44,7 +44,7 @@
       "node_modules/@process-engine/process_engine_runtime/sequelize/migrations/**/*"
     ],
     "nsis": {
-      "perMachine": true,
+      "perMachine": false,
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "runAfterFinish": false
