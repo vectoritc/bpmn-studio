@@ -28,6 +28,11 @@ interface IUserTaskWithProcessModel {
   processModel: ProcessModelExecution.ProcessModel;
 }
 
+interface IManualTaskWithProcessModel {
+  manualTask: ManualTask;
+  processModel: ProcessModelExecution.ProcessModel;
+}
+
 @inject(EventAggregator, 'ManagementApiClientService', Router, 'NotificationService', 'AuthenticationService')
 export class TaskList {
 
