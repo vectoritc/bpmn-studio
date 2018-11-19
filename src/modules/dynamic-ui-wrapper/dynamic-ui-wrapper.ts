@@ -4,6 +4,7 @@ import {Router} from 'aurelia-router';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
 import {
+  ManualTask,
   UserTask,
   UserTaskFormField,
   UserTaskFormFieldType,
@@ -26,7 +27,9 @@ export class DynamicUiWrapper {
   public declineButtonText: string = 'Decline';
   public onButtonClick: (action: 'cancel' | 'proceed' | 'decline') => void;
   @bindable({changeHandler: 'userTaskChanged'}) public currentUserTask: UserTask;
-  @bindable() public currentControlType: string;
+  @bindable({changeHandler: 'manualTaskChanged'}) public currentManualTask: ManualTask;
+  @bindable() public showConfirm: boolean = false;
+  @bindable() public showForms: boolean = false;
 
   private _router: Router;
 
@@ -42,17 +45,15 @@ export class DynamicUiWrapper {
     this._router = router;
   }
 
-  public async handleButtonClick(action: 'cancel' | 'proceed'): Promise<void> {
+  public async handleButtonClick(action: 'cancel' | 'proceed' | 'decline'): Promise<void> {
     const actionCanceled: boolean = action === 'cancel';
 
     if (actionCanceled) {
-      this._cancelUserTask();
+      this._cancelTask();
       return;
     }
 
-    const continueConfirmTask: boolean = this.currentControlType === 'confirm';
-
-    if (continueConfirmTask) {
+    if (this.showConfirm) {
       const formFields: Array<UserTaskFormField> = this.currentUserTask.data.formFields;
 
       const booleanFormFieldIndex: number = formFields.findIndex((formField: UserTaskFormField) => {
@@ -64,9 +65,13 @@ export class DynamicUiWrapper {
       if (hasBooleanFormField) {
         (formFields[booleanFormFieldIndex] as IBooleanFormField).value = action === 'proceed';
       }
-    }
 
-    this._finishUserTask(action);
+      this._finishUserTask(action);
+    } else if (this.showForms) {
+      this._finishUserTask(action);
+    } else {
+      this._finishManualTask();
+    }
   }
 
   public userTaskChanged(newUserTask: UserTask): void {
@@ -75,9 +80,10 @@ export class DynamicUiWrapper {
       return;
     }
 
-    this.currentControlType = newUserTask.data.preferredControl;
+    this.showConfirm = newUserTask.data.preferredControl !== undefined;
+    this.showForms = newUserTask.data.preferredControl === undefined;
 
-    if (this.currentControlType === 'confirm') {
+    if (this.showConfirm) {
       this.confirmButtonText = 'Confirm';
       this.declineButtonText = 'Decline';
     } else {
@@ -86,9 +92,20 @@ export class DynamicUiWrapper {
     }
   }
 
-  private _cancelUserTask(): void {
+  public manualTaskChanged(newManualTask: ManualTask): void {
+    const isManualTaskEmpty: boolean = newManualTask === undefined;
+    if (isManualTaskEmpty) {
+      return;
+    }
+
+    this.confirmButtonText = 'Continue';
+    this.declineButtonText = '';
+  }
+
+  private _cancelTask(): void {
+    const correlationId: string = this.currentUserTask ? this.currentUserTask.correlationId : this.currentManualTask.correlationId;
     this._router.navigateToRoute('task-list-correlation', {
-      correlationId: this.currentUserTask.correlationId,
+      correlationId: correlationId,
     });
   }
 
@@ -118,6 +135,32 @@ export class DynamicUiWrapper {
                                           userTaskResult);
 
     this.currentUserTask = undefined;
+  }
+
+  private _finishManualTask(): void {
+    const hasNoCurrentManualTask: boolean = this.currentManualTask === undefined;
+
+    if (hasNoCurrentManualTask) {
+      return;
+    }
+
+    const hasOnButtonClickFunction: boolean = this.onButtonClick !== undefined;
+    if (hasOnButtonClickFunction) {
+      this.onButtonClick('proceed');
+    }
+
+    const identity: IIdentity = this._getIdentity();
+
+    const correlationId: string = this.currentManualTask.correlationId;
+    const processInstanceId: string = this.currentManualTask.processInstanceId;
+    const manualTaskInstanceId: string = this.currentManualTask.flowNodeInstanceId;
+
+    this._dynamicUiService.finishManualTask(identity,
+                                            processInstanceId,
+                                            correlationId,
+                                            manualTaskInstanceId);
+
+    this.currentManualTask = undefined;
   }
 
   private _getUserTaskResults(): UserTaskResult {

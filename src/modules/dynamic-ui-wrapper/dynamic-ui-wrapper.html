@@ -3,8 +3,8 @@
   <require from="../form-widget/form-widget"></require>
   <require from="../confirm-widget/confirm-widget"></require>
   <div>
-    <confirm-widget if.bind="currentControlType == 'confirm'" user-task-config.bind="currentUserTask.data"></confirm-widget>
-    <form-widget else user-task-config.bind="currentUserTask.data"></form-widget>
+    <confirm-widget if.bind="showConfirm" user-task-config.bind="currentUserTask.data"></confirm-widget>
+    <form-widget if.bind="showForms" user-task-config.bind="currentUserTask.data"></form-widget>
     <div class="dynamic-ui__button--wrapper">
       <button if.bind="cancelButtonText" class="btn btn-default dynamic-ui__button" click.delegate="handleButtonClick('cancel')">${cancelButtonText}</button>
       <button if.bind="confirmButtonText" class="btn btn-success dynamic-ui__button" click.delegate="handleButtonClick('proceed')" id="dynamic-ui-wrapper-continue-button">${confirmButtonText}</button>
