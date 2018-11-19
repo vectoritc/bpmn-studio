@@ -93,6 +93,7 @@ export class WaitingRoom {
     const nextUserTask: UserTask = userTasksForCorrelation.userTasks[0];
 
     this._renderTaskCallback(nextUserTask);
+
     return true;
   }
 
@@ -110,6 +111,7 @@ export class WaitingRoom {
     const nextManualTask: ManualTask = manualTasksForCorrelation.manualTasks[0];
 
     this._renderTaskCallback(nextManualTask);
+
     return true;
   }
 

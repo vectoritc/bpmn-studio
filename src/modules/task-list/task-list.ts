@@ -108,6 +108,7 @@ export class TaskList {
 
   public detached(): void {
     clearInterval(this._getTasksIntervalId);
+
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
