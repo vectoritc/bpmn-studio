@@ -2,6 +2,8 @@ import {IIdentity} from '@essential-projects/iam_contracts';
 import {
   Correlation,
   IManagementApi,
+  ManualTask,
+  ManualTaskList,
   UserTask,
   UserTaskList,
 } from '@process-engine/management_api_contracts';
@@ -64,9 +66,10 @@ export class WaitingRoom {
   private async _startPolling(): Promise<void> {
     this._pollingTimer = setTimeout(async() => {
       const noUserTaskFound: boolean = !(await this._pollUserTasksForCorrelation());
+      const noManualTaskFound: boolean = !(await this._pollManualTasksForCorrelation());
       const correlationIsStillActive: boolean = await this._pollIsCorrelationStillActive();
 
-      if (noUserTaskFound && correlationIsStillActive) {
+      if (noUserTaskFound && noManualTaskFound && correlationIsStillActive) {
         this._startPolling();
       }
     }, environment.processengine.waitingRoomPollingIntervalInMs);
@@ -89,7 +92,24 @@ export class WaitingRoom {
 
     const nextUserTask: UserTask = userTasksForCorrelation.userTasks[0];
 
-    this._renderUserTaskCallback(nextUserTask);
+    this._renderTaskCallback(nextUserTask);
+    return true;
+  }
+
+  private async _pollManualTasksForCorrelation(): Promise<boolean> {
+
+    const identity: IIdentity = this._getIdentity();
+    const manualTasksForCorrelation: ManualTaskList = await this._managementApiClient
+                                                                 .getManualTasksForCorrelation(identity, this._correlationId);
+
+    const manualTaskListHasNoManualTask: boolean = manualTasksForCorrelation.manualTasks.length <= 0;
+    if (manualTaskListHasNoManualTask) {
+      return false;
+    }
+
+    const nextManualTask: ManualTask = manualTasksForCorrelation.manualTasks[0];
+
+    this._renderTaskCallback(nextManualTask);
     return true;
   }
 
@@ -109,12 +129,12 @@ export class WaitingRoom {
     return !correlationIsNotActive;
   }
 
-  private _renderUserTaskCallback(userTask: UserTask): void {
+  private _renderTaskCallback(task: UserTask | ManualTask): void {
     this._notificationService.showNotification(NotificationType.SUCCESS, 'Process continued.');
 
     this._router.navigateToRoute('task-dynamic-ui', {
-      processModelId: userTask.processModelId,
-      userTaskId: userTask.id,
+      processModelId: task.processModelId,
+      taskId: task.id,
     });
   }
 
