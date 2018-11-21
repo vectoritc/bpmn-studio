@@ -138,14 +138,14 @@ export class DynamicUiWrapper {
   }
 
   private _finishManualTask(): void {
-    const hasNoCurrentManualTask: boolean = this.currentManualTask === undefined;
+    const noManualTaskKnown: boolean = this.currentManualTask === undefined;
 
-    if (hasNoCurrentManualTask) {
+    if (noManualTaskKnown) {
       return;
     }
 
-    const hasOnButtonClickFunction: boolean = this.onButtonClick !== undefined;
-    if (hasOnButtonClickFunction) {
+    const noClickHandlerRegistered: boolean = this.onButtonClick !== undefined;
+    if (noClickHandlerRegistered) {
       this.onButtonClick('proceed');
     }
 

@@ -103,8 +103,8 @@ export class WaitingRoom {
     const manualTasksForCorrelation: ManualTaskList = await this._managementApiClient
                                                                  .getManualTasksForCorrelation(identity, this._correlationId);
 
-    const manualTaskListHasNoManualTask: boolean = manualTasksForCorrelation.manualTasks.length <= 0;
-    if (manualTaskListHasNoManualTask) {
+    const manualTaskListIsEmpty: boolean = manualTasksForCorrelation.manualTasks.length <= 0;
+    if (manualTaskListIsEmpty) {
       return false;
     }
 
