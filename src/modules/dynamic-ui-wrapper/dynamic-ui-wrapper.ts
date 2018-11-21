@@ -102,6 +102,14 @@ export class DynamicUiWrapper {
     this.declineButtonText = '';
   }
 
+  public get isHandlingManualTask(): boolean {
+    return this.currentManualTask !== undefined;
+  }
+
+  public get isHandlingUserTask(): boolean {
+    return this.currentUserTask !== undefined;
+  }
+
   private _cancelTask(): void {
     const correlationId: string = this.currentUserTask ? this.currentUserTask.correlationId : this.currentManualTask.correlationId;
     this._router.navigateToRoute('task-list-correlation', {
@@ -110,9 +118,9 @@ export class DynamicUiWrapper {
   }
 
   private _finishUserTask(action: 'cancel' | 'proceed' | 'decline'): void {
-    const hasNoCurrentUserTask: boolean = this.currentUserTask === undefined;
+    const noUserTaskKnown: boolean = !this.isHandlingUserTask;
 
-    if (hasNoCurrentUserTask) {
+    if (noUserTaskKnown) {
       return;
     }
 
@@ -138,7 +146,7 @@ export class DynamicUiWrapper {
   }
 
   private _finishManualTask(): void {
-    const noManualTaskKnown: boolean = this.currentManualTask === undefined;
+    const noManualTaskKnown: boolean = !this.isHandlingManualTask;
 
     if (noManualTaskKnown) {
       return;
