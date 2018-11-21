@@ -133,7 +133,8 @@ export class TaskList {
   }
 
   public get tasks(): Array<IUserTaskWithProcessModel> {
-    if (this._userTasks === undefined) {
+    const noTasksExisitng: boolean = this._userTasks === undefined;
+    if (noTasksExisitng) {
       return [];
     }
     // TODO: Reimplement filtering
