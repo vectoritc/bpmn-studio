@@ -182,7 +182,7 @@ export class TaskList {
         } catch (error) {
           if (isError(error, NotFoundError)) {
             // the management api returns a 404 if there is no instance of a process model running.
-            return Promise.resolve([]);
+            return [];
           }
           throw error;
         }
