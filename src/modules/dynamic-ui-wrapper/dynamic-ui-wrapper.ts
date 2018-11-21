@@ -28,8 +28,8 @@ export class DynamicUiWrapper {
   public onButtonClick: (action: 'cancel' | 'proceed' | 'decline') => void;
   @bindable({changeHandler: 'userTaskChanged'}) public currentUserTask: UserTask;
   @bindable({changeHandler: 'manualTaskChanged'}) public currentManualTask: ManualTask;
-  @bindable() public showConfirm: boolean = false;
-  @bindable() public showForms: boolean = false;
+  @bindable() public isConfirmUserTask: boolean = false;
+  @bindable() public isFormUserTask: boolean = false;
 
   private _router: Router;
 
@@ -53,7 +53,7 @@ export class DynamicUiWrapper {
       return;
     }
 
-    if (this.showConfirm) {
+    if (this.isConfirmUserTask) {
       const formFields: Array<UserTaskFormField> = this.currentUserTask.data.formFields;
 
       const booleanFormFieldIndex: number = formFields.findIndex((formField: UserTaskFormField) => {
@@ -67,7 +67,7 @@ export class DynamicUiWrapper {
       }
 
       this._finishUserTask(action);
-    } else if (this.showForms) {
+    } else if (this.isFormUserTask) {
       this._finishUserTask(action);
     } else {
       this._finishManualTask();
@@ -80,10 +80,10 @@ export class DynamicUiWrapper {
       return;
     }
 
-    this.showConfirm = newUserTask.data.preferredControl.toLowerCase() === 'confirm';
-    this.showForms = !this.showConfirm;
+    this.isConfirmUserTask = newUserTask.data.preferredControl.toLowerCase() === 'confirm';
+    this.isFormUserTask = !this.isConfirmUserTask;
 
-    if (this.showConfirm) {
+    if (this.isConfirmUserTask) {
       this.confirmButtonText = 'Confirm';
       this.declineButtonText = 'Decline';
     } else {
