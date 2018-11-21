@@ -92,7 +92,7 @@ export class WaitingRoom {
 
     const nextUserTask: UserTask = userTasksForCorrelation.userTasks[0];
 
-    this._renderTaskCallback(nextUserTask);
+    this._renderUserTaskCallback(nextUserTask);
 
     return true;
   }
@@ -110,7 +110,7 @@ export class WaitingRoom {
 
     const nextManualTask: ManualTask = manualTasksForCorrelation.manualTasks[0];
 
-    this._renderTaskCallback(nextManualTask);
+    this._renderManualTaskCallback(nextManualTask);
 
     return true;
   }
@@ -131,7 +131,16 @@ export class WaitingRoom {
     return !correlationIsNotActive;
   }
 
-  private _renderTaskCallback(task: UserTask | ManualTask): void {
+  private _renderUserTaskCallback(task: UserTask): void {
+    this._notificationService.showNotification(NotificationType.SUCCESS, 'Process continued.');
+
+    this._router.navigateToRoute('task-dynamic-ui', {
+      processModelId: task.processModelId,
+      taskId: task.id,
+    });
+  }
+
+  private _renderManualTaskCallback(task: ManualTask): void {
     this._notificationService.showNotification(NotificationType.SUCCESS, 'Process continued.');
 
     this._router.navigateToRoute('task-dynamic-ui', {
