@@ -45,7 +45,7 @@ export class DynamicUiWrapper {
     this._router = router;
   }
 
-  public async handleButtonClick(action: 'cancel' | 'proceed' | 'decline'): Promise<void> {
+  public async handleUserTaskButtonClick(action: 'cancel' | 'proceed' | 'decline'): Promise<void> {
     const actionCanceled: boolean = action === 'cancel';
 
     if (actionCanceled) {
@@ -69,9 +69,19 @@ export class DynamicUiWrapper {
       this._finishUserTask(action);
     } else if (this.isFormUserTask) {
       this._finishUserTask(action);
-    } else {
-      this._finishManualTask();
     }
+  }
+
+  public async handleManualTaskButtonClick(action: 'cancel' | 'proceed'): Promise<void> {
+    const actionCanceled: boolean = action === 'cancel';
+
+    if (actionCanceled) {
+      this._cancelTask();
+
+      return;
+    }
+
+    this._finishManualTask();
   }
 
   public userTaskChanged(newUserTask: UserTask): void {
