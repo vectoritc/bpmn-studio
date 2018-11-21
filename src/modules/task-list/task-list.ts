@@ -166,6 +166,7 @@ export class TaskList {
             // the management api returns a 404 if there is no instance of a process model running.
             return Promise.resolve([]);
           }
+
           throw error;
         }
       });
