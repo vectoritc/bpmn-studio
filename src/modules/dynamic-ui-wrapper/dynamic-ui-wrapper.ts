@@ -80,8 +80,8 @@ export class DynamicUiWrapper {
       return;
     }
 
-    this.showConfirm = newUserTask.data.preferredControl !== undefined;
-    this.showForms = newUserTask.data.preferredControl === undefined;
+    this.showConfirm = newUserTask.data.preferredControl.toLowerCase() === 'confirm';
+    this.showForms = !this.showConfirm;
 
     if (this.showConfirm) {
       this.confirmButtonText = 'Confirm';
