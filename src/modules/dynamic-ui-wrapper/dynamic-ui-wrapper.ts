@@ -50,6 +50,7 @@ export class DynamicUiWrapper {
 
     if (actionCanceled) {
       this._cancelTask();
+
       return;
     }
 
@@ -122,6 +123,7 @@ export class DynamicUiWrapper {
 
   private _cancelTask(): void {
     const correlationId: string = this.currentUserTask ? this.currentUserTask.correlationId : this.currentManualTask.correlationId;
+
     this._router.navigateToRoute('task-list-correlation', {
       correlationId: correlationId,
     });
