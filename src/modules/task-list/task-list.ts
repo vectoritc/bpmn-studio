@@ -188,12 +188,15 @@ export class TaskList {
         }
      });
 
-    const fullPromise: Array<Promise<Array<IUserTaskWithProcessModel & IManualTaskWithProcessModel>>> = []
+    const promisesForAllTasksForAllProcessModels: Array<Promise<Array<IUserTaskWithProcessModel & IManualTaskWithProcessModel>>> = []
       .concat(promisesForAllUserTasks, promisesForAllManualTasks);
-    const taskListArray: Array<Array<IUserTaskWithProcessModel & IManualTaskWithProcessModel>> = await Promise.all(fullPromise);
-    const flattenedTasks: Array<IUserTaskWithProcessModel & IManualTaskWithProcessModel> = [].concat(...taskListArray);
 
-    return flattenedTasks;
+    const allTasksForAllProcessModels: Array<Array<IUserTaskWithProcessModel & IManualTaskWithProcessModel>> =
+      await Promise.all(promisesForAllTasksForAllProcessModels);
+
+    const allTasks: Array<IUserTaskWithProcessModel & IManualTaskWithProcessModel> = [].concat(...allTasksForAllProcessModels);
+
+    return allTasks;
   }
 
   private async _getTasksForProcessModel(processModelId: string): Promise<Array<IUserTaskWithProcessModel & IManualTaskWithProcessModel>> {
