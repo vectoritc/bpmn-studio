@@ -91,7 +91,12 @@ export class DynamicUiWrapper {
       return;
     }
 
-    this.isConfirmUserTask = newUserTask.data.preferredControl.toLowerCase() === 'confirm';
+    const preferredControlSet: boolean = newUserTask.data.preferredControl !== undefined;
+
+    this.isConfirmUserTask = preferredControlSet
+      ? newUserTask.data.preferredControl.toLowerCase() === 'confirm'
+      : false;
+
     this.isFormUserTask = !this.isConfirmUserTask;
 
     if (this.isConfirmUserTask) {
