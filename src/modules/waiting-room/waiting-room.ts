@@ -69,7 +69,8 @@ export class WaitingRoom {
       const noManualTaskFound: boolean = !(await this._pollManualTasksForCorrelation());
       const correlationIsStillActive: boolean = await this._pollIsCorrelationStillActive();
 
-      if (noUserTaskFound && noManualTaskFound && correlationIsStillActive) {
+      const shouldKeepPolling: boolean = noUserTaskFound && noManualTaskFound && correlationIsStillActive;
+      if (shouldKeepPolling) {
         this._startPolling();
       }
     }, environment.processengine.waitingRoomPollingIntervalInMs);
