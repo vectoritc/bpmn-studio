@@ -6,22 +6,22 @@
       <table class="table table-striped table-bordered">
         <tr>
           <th>Process Model ID</th>
-          <th>User Task ID</th>
+          <th>Task ID</th>
           <th></th>
         </tr>
         <tr repeat.for="entry of shownTasks" class="task-list-item" id="taskList-${entry.processModel.id}">
           <td>
             <a route-href="route: processdef-detail; params.bind: { processModelId: entry.processModel.id }" >${entry.processModel.id}</a>
           </td>
-          <td>${entry.userTask.id}</td>
+          <td>${entry.userTask.id ? entry.userTask.id : entry.manualTask.id}</td>
           <td class="task-list__last-table-cell">
-            <button class="btn btn-success task-list-continue-button" click.delegate="continueUserTask(entry)">Continue</button>
+            <button class="btn btn-success task-list-continue-button" click.delegate="continueTask(entry)">Continue</button>
           </td>
         </tr>
       </table>
       <div class="col-md-12 col-xs-12 pagination">
         <aubs-pagination page-size.bind="pageSize" total-items.bind="totalItems" current-page.bind="currentPage"
-          boundary-links.bind="true" click.delegate="updateUserTasks()">
+          boundary-links.bind="true" click.delegate="updateTasks()">
         </aubs-pagination>
       </div>
     </div>
