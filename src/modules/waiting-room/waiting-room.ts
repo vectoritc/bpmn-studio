@@ -86,7 +86,7 @@ export class WaitingRoom {
     const userTasksForCorrelation: UserTaskList = await this._managementApiClient.getUserTasksForCorrelation(identity,
                                                                                                              this._correlationId);
 
-    const userTaskListHasNoUserTask: boolean = userTasksForCorrelation.userTasks.length <= 0;
+    const userTaskListHasNoUserTask: boolean = userTasksForCorrelation.userTasks.length === 0;
     if (userTaskListHasNoUserTask) {
       return false;
     }
@@ -104,7 +104,7 @@ export class WaitingRoom {
     const manualTasksForCorrelation: ManualTaskList = await this._managementApiClient
                                                                  .getManualTasksForCorrelation(identity, this._correlationId);
 
-    const manualTaskListIsEmpty: boolean = manualTasksForCorrelation.manualTasks.length <= 0;
+    const manualTaskListIsEmpty: boolean = manualTasksForCorrelation.manualTasks.length === 0;
     if (manualTaskListIsEmpty) {
       return false;
     }
