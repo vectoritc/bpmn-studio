@@ -189,16 +189,19 @@ export class TaskList {
         }
      });
 
+    type UserAndManualTasksWithProcessModels = Array<IUserTaskWithProcessModel & IManualTaskWithProcessModel>;
+    type PromisesForUserAndManualTasks = Promise<UserAndManualTasksWithProcessModels>;
+
     // Concatentate the array of promises with the UserTasks and the array of promises wuth the ManualTasks to one array
-    const promisesForAllTasksForAllProcessModels: Array<Promise<Array<IUserTaskWithProcessModel & IManualTaskWithProcessModel>>> = []
+    const promisesForAllTasksForAllProcessModels: Array<PromisesForUserAndManualTasks> = []
       .concat(promisesForAllUserTasks, promisesForAllManualTasks);
 
     // Await all promises
-    const allTasksForAllProcessModels: Array<Array<IUserTaskWithProcessModel & IManualTaskWithProcessModel>> =
+    const allTasksForAllProcessModels: Array<UserAndManualTasksWithProcessModels> =
       await Promise.all(promisesForAllTasksForAllProcessModels);
 
     // Move all tasks from arrays in arrays to a single array
-    const allTasks: Array<IUserTaskWithProcessModel & IManualTaskWithProcessModel> = [].concat(...allTasksForAllProcessModels);
+    const allTasks: UserAndManualTasksWithProcessModels = [].concat(...allTasksForAllProcessModels);
 
     return allTasks;
   }
