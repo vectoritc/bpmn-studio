@@ -23,7 +23,15 @@ export class CorrelationList {
 
   public correlationsChanged(correlations: Array<Correlation>): void {
     this._convertCorrelationsIntoTableData(correlations);
-    this.sortList(CorrelationListSortProperty.Number);
+
+    const sortSettingsExisitng: boolean = this.sortSettings.sortProperty !== undefined;
+    if (sortSettingsExisitng) {
+      this.sortSettings.ascending = !this.sortSettings.ascending;
+
+      this.sortList(this.sortSettings.sortProperty);
+    } else {
+      this.sortList(CorrelationListSortProperty.Number);
+    }
   }
 
   private _convertCorrelationsIntoTableData(correlations: Array<Correlation>): void {
