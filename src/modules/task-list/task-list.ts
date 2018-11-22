@@ -138,11 +138,6 @@ export class TaskList {
       return [];
     }
 
-    // TODO: Reimplement filtering
-    // return this._userTasks.filter((entry: UserTask): boolean => {
-    //   return entry.state === 'wait';
-    // });
-
     return this._userTasks;
   }
 
