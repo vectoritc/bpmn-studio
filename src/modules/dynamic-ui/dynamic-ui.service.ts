@@ -78,7 +78,7 @@ export class DynamicUiService implements IDynamicUiService {
 
     const manualTaskList: ManualTaskList = await this._managementApiClient.getManualTasksForProcessModel(identity, processModelId);
 
-    return  manualTaskList.manualTasks.find((manualTask: ManualTask) => {
+    return manualTaskList.manualTasks.find((manualTask: ManualTask) => {
     return manualTask.id === manualTaskId;
    });
   }
