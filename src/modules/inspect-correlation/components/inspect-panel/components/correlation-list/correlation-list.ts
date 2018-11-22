@@ -23,6 +23,9 @@ export class CorrelationList {
 
   public correlationsChanged(correlations: Array<Correlation>): void {
     this._convertCorrelationsIntoTableData(correlations);
+
+    this.sortSettings.sortProperty = undefined;
+
     this.sortList(CorrelationListSortProperty.Number);
   }
 
