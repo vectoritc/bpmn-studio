@@ -2,6 +2,8 @@ import {IIdentity} from '@essential-projects/iam_contracts';
 import {
   Correlation,
   IManagementApi,
+  ManualTask,
+  ManualTaskList,
   UserTask,
   UserTaskList,
 } from '@process-engine/management_api_contracts';
@@ -64,9 +66,11 @@ export class WaitingRoom {
   private async _startPolling(): Promise<void> {
     this._pollingTimer = setTimeout(async() => {
       const noUserTaskFound: boolean = !(await this._pollUserTasksForCorrelation());
+      const noManualTaskFound: boolean = !(await this._pollManualTasksForCorrelation());
       const correlationIsStillActive: boolean = await this._pollIsCorrelationStillActive();
 
-      if (noUserTaskFound && correlationIsStillActive) {
+      const shouldKeepPolling: boolean = noUserTaskFound && noManualTaskFound && correlationIsStillActive;
+      if (shouldKeepPolling) {
         this._startPolling();
       }
     }, environment.processengine.waitingRoomPollingIntervalInMs);
@@ -82,7 +86,7 @@ export class WaitingRoom {
     const userTasksForCorrelation: UserTaskList = await this._managementApiClient.getUserTasksForCorrelation(identity,
                                                                                                              this._correlationId);
 
-    const userTaskListHasNoUserTask: boolean = userTasksForCorrelation.userTasks.length <= 0;
+    const userTaskListHasNoUserTask: boolean = userTasksForCorrelation.userTasks.length === 0;
     if (userTaskListHasNoUserTask) {
       return false;
     }
@@ -90,6 +94,25 @@ export class WaitingRoom {
     const nextUserTask: UserTask = userTasksForCorrelation.userTasks[0];
 
     this._renderUserTaskCallback(nextUserTask);
+
+    return true;
+  }
+
+  private async _pollManualTasksForCorrelation(): Promise<boolean> {
+
+    const identity: IIdentity = this._getIdentity();
+    const manualTasksForCorrelation: ManualTaskList = await this._managementApiClient
+                                                                 .getManualTasksForCorrelation(identity, this._correlationId);
+
+    const manualTaskListIsEmpty: boolean = manualTasksForCorrelation.manualTasks.length === 0;
+    if (manualTaskListIsEmpty) {
+      return false;
+    }
+
+    const nextManualTask: ManualTask = manualTasksForCorrelation.manualTasks[0];
+
+    this._renderManualTaskCallback(nextManualTask);
+
     return true;
   }
 
@@ -109,12 +132,21 @@ export class WaitingRoom {
     return !correlationIsNotActive;
   }
 
-  private _renderUserTaskCallback(userTask: UserTask): void {
+  private _renderUserTaskCallback(task: UserTask): void {
     this._notificationService.showNotification(NotificationType.SUCCESS, 'Process continued.');
 
     this._router.navigateToRoute('task-dynamic-ui', {
-      processModelId: userTask.processModelId,
-      userTaskId: userTask.id,
+      processModelId: task.processModelId,
+      taskId: task.id,
+    });
+  }
+
+  private _renderManualTaskCallback(task: ManualTask): void {
+    this._notificationService.showNotification(NotificationType.SUCCESS, 'Process continued.');
+
+    this._router.navigateToRoute('task-dynamic-ui', {
+      processModelId: task.processModelId,
+      taskId: task.id,
     });
   }
 

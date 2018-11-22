@@ -401,7 +401,7 @@ export class ProcessDefDetail {
 
   private async _updateProcessStartEvents(): Promise<void> {
     const identity: IIdentity = this._getIdentity();
-    const startEventResponse: EventList = await this._managementApiClient.getEventsForProcessModel(identity, this.process.id);
+    const startEventResponse: EventList = await this._managementApiClient.getStartEventsForProcessModel(identity, this.process.id);
 
     this.processesStartEvents = startEventResponse.events;
   }

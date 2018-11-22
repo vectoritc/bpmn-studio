@@ -1,7 +1,7 @@
 {
   "name": "bpmn-studio",
   "description": "An Aurelia application for designing BPMN diagrams, which can also be connected to a process engine to execute these diagrams.",
-  "version": "4.10.0",
+  "version": "4.11.0",
   "author": {
     "name": "process-engine",
     "email": "hello@process-engine.io",
@@ -44,7 +44,7 @@
       "node_modules/@process-engine/process_engine_runtime/sequelize/migrations/**/*"
     ],
     "nsis": {
-      "perMachine": true,
+      "perMachine": false,
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "runAfterFinish": false
@@ -94,11 +94,11 @@
   "dependencies": {
     "@essential-projects/errors_ts": "~1.4.0",
     "@essential-projects/http_contracts": "~2.3.1",
-    "@process-engine/consumer_api_contracts": "~0.20.0",
+    "@process-engine/consumer_api_contracts": "~1.2.1",
     "@process-engine/kpi_api_contracts": "~0.2.0",
-    "@process-engine/management_api_client": "0.14.0",
-    "@process-engine/management_api_contracts": "0.15.0",
-    "@process-engine/process_engine_runtime": "2.10.0-387d3caf-b105",
+    "@process-engine/management_api_client": "1.2.0",
+    "@process-engine/management_api_contracts": "1.2.1",
+    "@process-engine/process_engine_runtime": "3.1.0",
     "@process-engine/solutionexplorer.contracts": "1.0.0",
     "@process-engine/solutionexplorer.repository.contracts": "3.0.0",
     "@process-engine/solutionexplorer.repository.filesystem": "3.0.0",
@@ -131,7 +131,7 @@
     "@essential-projects/iam_contracts": "~3.2.0",
     "@fortawesome/fontawesome-free": "^5.1.0",
     "@process-engine/bpmn-js-custom-bundle": "^2.0.0",
-    "@process-engine/process_engine_contracts": "^7.0.0",
+    "@process-engine/process_engine_contracts": "feature~implement_manual-task",
     "@types/jasmine": "^2.2.0",
     "@types/node": "^6.0.45",
     "@types/spectrum": "^1.5.29",
@@ -142,6 +142,7 @@
     "aurelia-cli": "^0.30.1",
     "aurelia-fetch-client": "^1.1.2",
     "aurelia-protractor-plugin": "^1.0.6",
+    "aurelia-route-recognizer": "1.2.0",
     "aurelia-templating-resources": "1.7.1",
     "aurelia-testing": "^1.0.0-beta.3.0.1",
     "aurelia-tools": "^1.0.0",

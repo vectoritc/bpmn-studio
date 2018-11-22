@@ -52,6 +52,8 @@ pipeline {
           sh('npm install')
           sh('npm rebuild node-sass')
         }
+
+        archiveArtifacts('package-lock.json')
       }
     }
     stage('lint') {
