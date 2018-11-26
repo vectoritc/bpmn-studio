@@ -4,7 +4,7 @@ import {bindable, inject} from 'aurelia-framework';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
 import environment from '../../environment';
-import {Dashboard} from '../dashboard/dashboard';
+import {Dashboard} from './dashboard/dashboard';
 
 export interface IInspectRouteParameters {
   processModelId?: string;
