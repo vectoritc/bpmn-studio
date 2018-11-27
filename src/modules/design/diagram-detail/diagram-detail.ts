@@ -9,7 +9,7 @@ import {ProcessModelExecution} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
-import {IAuthenticationService, IModdleElement, NotificationType} from '../../../contracts/index';
+import {IActiveSolutionAndDiagramService, IAuthenticationService, IModdleElement, ISolutionEntry, NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
@@ -22,6 +22,8 @@ interface RouteParameters {
         'ManagementApiClientService',
         'AuthenticationService',
         'NotificationService',
+        'ActiveSolutionAndDiagramService',
+        'InternalProcessEngineBaseRoute',
         EventAggregator,
         Router,
         ValidationController)
@@ -34,6 +36,7 @@ export class DiagramDetail {
 
   @observable({ changeHandler: 'diagramHasChangedChanged'}) private _diagramHasChanged: boolean;
   private _solutionExplorerService: ISolutionExplorerService;
+  private _internalProcessEngineBaseRoute: string | null;
   private _managementClient: IManagementApi;
   private _authenticationService: IAuthenticationService;
   private _notificationService: NotificationService;
@@ -43,6 +46,7 @@ export class DiagramDetail {
   private _validationController: ValidationController;
   private _diagramIsInvalid: boolean = false;
   private _ipcRenderer: any;
+  private _activeSolutionAndDiagramService: IActiveSolutionAndDiagramService;
 
   // This identity is used for the filesystem actions. Needs to be refactored.
   private _identity: any;
@@ -51,6 +55,8 @@ export class DiagramDetail {
               managementClient: IManagementApi,
               authenticationService: IAuthenticationService,
               notificationService: NotificationService,
+              activeSolutionAndDiagramService: IActiveSolutionAndDiagramService,
+              internalProcessEngineBaseRoute: string | null,
               eventAggregator: EventAggregator,
               router: Router,
               validationController: ValidationController) {
@@ -58,6 +64,8 @@ export class DiagramDetail {
     this._managementClient = managementClient;
     this._authenticationService = authenticationService;
     this._notificationService = notificationService;
+    this._activeSolutionAndDiagramService = activeSolutionAndDiagramService;
+    this._internalProcessEngineBaseRoute = internalProcessEngineBaseRoute;
     this._eventAggregator = eventAggregator;
     this._router = router;
     this._validationController = validationController;
@@ -68,7 +76,7 @@ export class DiagramDetail {
   }
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
-    this.diagram = await this._solutionExplorerService.openSingleDiagram(routeParameters.diagramUri, this._identity);
+    this.diagram = await this._activeSolutionAndDiagramService.getActiveDiagram();
 
     this._diagramHasChanged = false;
 
@@ -107,6 +115,12 @@ export class DiagramDetail {
       this._eventAggregator.subscribe(environment.events.navBar.noValidationError, () => {
         this._diagramIsInvalid = false;
       }),
+      this._eventAggregator.subscribe(environment.events.navBar.updateActiveSolutionAndDiagram,
+        ({solutionEntry, diagram}: any) => {
+          this.diagram = diagram;
+
+          this.updateDetailView();
+        }),
     ];
   }
 
@@ -167,6 +181,11 @@ export class DiagramDetail {
     }
   }
 
+  public updateDetailView(): void {
+    this._eventAggregator.publish(environment.events.navBar.showProcessName, this.diagram);
+    this._eventAggregator.publish(environment.events.navBar.updateProcess, this.diagram);
+  }
+
   /**
    * Saves the current diagram to disk and deploys it to the
    * process engine.
@@ -201,20 +220,27 @@ export class DiagramDetail {
     const identity: IIdentity = this._getIdentity();
 
     try {
-      await this
-        ._managementClient
-        .updateProcessDefinitionsByName(identity, processModelId, payload);
+
+      const solutionToDeployTo: ISolutionEntry = this._activeSolutionAndDiagramService.getSolutionEntryForUri(this._internalProcessEngineBaseRoute);
+
+      this.diagram.id = processModelId;
+
+      await solutionToDeployTo.service.saveDiagram(this.diagram, this._internalProcessEngineBaseRoute);
+      this._activeSolutionAndDiagramService.setActiveSolutionAndDiagram(solutionToDeployTo, this.diagram);
+
+      this._eventAggregator.publish(environment.events.navBar.updateActiveSolutionAndDiagram,
+        {
+          solutionEntry: solutionToDeployTo,
+          diagram: this.diagram,
+        });
 
       this._notificationService
           .showNotification(NotificationType.SUCCESS, 'Diagram was successfully uploaded to the connected ProcessEngine.');
 
       // Since a new processmodel was uploaded, we need to refresh any processmodel lists.
       this._eventAggregator.publish(environment.events.refreshProcessDefs);
-      this._eventAggregator.publish(environment.events.diagramDetail.onDiagramDeployed);
+      this._eventAggregator.publish(environment.events.diagramDetail.onDiagramDeployed, processModelId);
 
-      this._router.navigateToRoute('processdef-detail', {
-        processModelId: processModelId,
-      });
     } catch (error) {
       this._notificationService
           .showNotification(NotificationType.ERROR, `Unable to update diagram: ${error}.`);
@@ -268,11 +294,12 @@ export class DiagramDetail {
   }
 
   /**
-   * Saves the current diagram to disk.
+   * Saves the current diagram.
    */
   private async _saveDiagram(): Promise<void> {
 
     if (this._diagramIsInvalid) {
+      // TODO: Try to get some more information out of this: Why was it invalid? This message is not very helpful to the user.
       this._notificationService.showNotification(NotificationType.WARNING, `The diagram could not be saved because it is invalid!`);
 
       return;
@@ -282,7 +309,9 @@ export class DiagramDetail {
       const xml: string = await this.bpmnio.getXML();
       this.diagram.xml = xml;
 
-      this._solutionExplorerService.saveSingleDiagram(this.diagram, this._identity);
+      const activeSolution: ISolutionEntry = this._activeSolutionAndDiagramService.getActiveSolutionEntry();
+      await activeSolution.service.saveDiagram(this.diagram);
+
       this._diagramHasChanged = false;
       this._notificationService
           .showNotification(NotificationType.SUCCESS, `File saved!`);

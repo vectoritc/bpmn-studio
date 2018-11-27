@@ -29,8 +29,8 @@ export class GeneralService {
     return this._generalRepository.getAllDiagrams();
   }
 
-  public updateDiagram(diagram: IDiagram): Promise<IDiagram> {
-    return this._generalRepository.updateDiagram(diagram);
-  }
+  // public updateDiagram(diagram: IDiagram): Promise<IDiagram> {
+  //   return this._generalRepository.updateDiagram(diagram);
+  // }
 
 }
