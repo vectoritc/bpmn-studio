@@ -61,13 +61,13 @@ export class RefreshingSolutionExplorerService implements ISolutionExplorerServi
     return this._parent.loadDiagram(diagramName);
   }
 
-  public openSingleDiagram(pathToDiagram: string, identity: IIdentity): Promise<IDiagram> {
-    return this._parent.openSingleDiagram(pathToDiagram, identity);
-  }
+  // public openSingleDiagram(pathToDiagram: string, identity: IIdentity): Promise<IDiagram> {
+  //   return this._parent.openSingleDiagram(pathToDiagram, identity);
+  // }
 
-  public saveSingleDiagram(diagramToSave: IDiagram, identity: IIdentity, path?: string): Promise<IDiagram> {
-    return this._parent.saveSingleDiagram(diagramToSave, identity, path);
-  }
+  // public saveSingleDiagram(diagramToSave: IDiagram, identity: IIdentity, path?: string): Promise<IDiagram> {
+  //   return this._parent.saveSingleDiagram(diagramToSave, identity, path);
+  // }
 
   public saveSolution(solution: ISolution, pathspec?: string): Promise<void> {
     return this._parent.saveSolution(solution, pathspec);
