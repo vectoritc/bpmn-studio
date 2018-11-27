@@ -68,6 +68,7 @@ export default {
       toggleHeatmapView: 'navbar:tools:inspectButtons:toggleHeatmapView',
       toggleInspectCorrelationView: 'navbar:tools:inspectButtons:toggleInspectCorrelationView',
       diagramSuccessfullySaved: 'navbar:diagram:saved',
+      updateActiveSolutionAndDiagram: 'navbar:activeSolution:diagram:update',
     },
     diagramDetail: {
       onDiagramDeployed: 'diagramdetail:diagram:ondeployed',
