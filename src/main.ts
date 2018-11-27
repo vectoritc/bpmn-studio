@@ -65,6 +65,7 @@ export function configure(aurelia: Aurelia): void {
     .feature('modules/inspect/inspect-correlation')
     .feature('modules/diagram-creation-service')
     .feature('modules/inspect/heatmap')
+    .feature('services')
     .plugin('aurelia-bootstrap')
     .plugin('aurelia-validation')
     .plugin('aurelia-open-id-connect', () => oidcConfig);
