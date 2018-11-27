@@ -2,7 +2,8 @@ import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {RouteConfig, Router} from 'aurelia-router';
 
-import {NotificationType} from '../../contracts/index';
+import { IDiagram, ISolution } from '@process-engine/solutionexplorer.contracts';
+import {ISolutionEntry, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
@@ -21,6 +22,10 @@ export class NavBar {
    * Todo: see below!
    */
   public process: INavbarProcessInformation;
+
+  public activeSolutionEntry: ISolutionEntry;
+  public activeDiagram: IDiagram;
+
   public diagramInfo: HTMLElement;
   public dropdown: HTMLElement;
   public solutionExplorerIsActive: boolean = true;
@@ -143,29 +148,25 @@ export class NavBar {
         this._updateNavbarTitle();
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.disableSaveButton, () => {
-        this.disableStartButton = true;
-      }),
+      // this._eventAggregator.subscribe(environment.events.navBar.disableSaveButton, () => {
+      //   this.disableStartButton = true;
+      // }),
 
       this._eventAggregator.subscribe(environment.events.navBar.noValidationError, () => {
         this.validationError = false;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.disableStartButton, () => {
-        this.disableStartButton = true;
-      }),
+      // this._eventAggregator.subscribe(environment.events.navBar.enableStartButton, () => {
+      //   this.disableStartButton = false;
+      // }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.enableStartButton, () => {
-        this.disableStartButton = false;
-      }),
+      // this._eventAggregator.subscribe(environment.events.navBar.disableDiagramUploadButton, () => {
+      //   this.disableDiagramUploadButton = true;
+      // }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.disableDiagramUploadButton, () => {
-        this.disableDiagramUploadButton = true;
-      }),
-
-      this._eventAggregator.subscribe(environment.events.navBar.enableDiagramUploadButton, () => {
-        this.disableDiagramUploadButton = false;
-      }),
+      // this._eventAggregator.subscribe(environment.events.navBar.enableDiagramUploadButton, () => {
+      //   this.disableDiagramUploadButton = false;
+      // }),
 
       this._eventAggregator.subscribe(environment.events.differsFromOriginal, (isDiagramChanged: boolean) => {
         this.diagramContainsUnsavedChanges = isDiagramChanged;
@@ -207,6 +208,14 @@ export class NavBar {
         this.disableHeatmapButton = false;
         this.disableDashboardButton = false;
         this.disableInspectCorrelationButton = true;
+      }),
+
+      this._eventAggregator.subscribe(environment.events.navBar.updateActiveSolutionAndDiagram, ({solutionEntry, diagram}: any) => {
+        this.activeDiagram = diagram;
+        this.activeSolutionEntry = solutionEntry;
+
+        this._updateNavbarTitle();
+        this._updateNavbarTools();
       }),
     ];
   }
@@ -288,21 +297,8 @@ export class NavBar {
       return;
     }
 
-    const activeRouteIsNotProcessEngineRoute: boolean = this.activeRouteName !== 'processdef-detail';
-
-    const processModelId: string = (this.process && !activeRouteIsNotProcessEngineRoute)
-                                  ? this.process.id
-                                  : undefined;
-
-    if (activeRouteIsNotProcessEngineRoute) {
-      this.showInspectTools = false;
-      this.showProcessName = false;
-    }
-
     this._router.navigateToRoute('inspect', {
-      processModelId: processModelId,
       view: this.inspectView,
-      latestSource: undefined,
     });
   }
 
@@ -394,24 +390,25 @@ export class NavBar {
    */
   private _updateNavbarTitle(): void {
 
-    const processIdIsUndefined: boolean = this.process.id === undefined;
-    this.latestSource = ((): string => {
-      if (processIdIsUndefined) {
-        return 'file-system';
-      } else {
-        return 'process-engine';
-      }
-    })();
+    const activeSolutionIsRemoteSolution: boolean = this.activeSolutionEntry.uri.startsWith('http');
 
-    const latestSourceIsProcessEngine: boolean = this.latestSource === 'process-engine';
     this.navbarTitle = ((): string => {
-      if (latestSourceIsProcessEngine) {
-        return this.process.id;
+      if (activeSolutionIsRemoteSolution) {
+        return this.activeDiagram.id;
       } else {
-        return this.process.name;
+        return this.activeDiagram.name;
       }
     })();
 
-    this.processOpenedFromProcessEngine = latestSourceIsProcessEngine;
+    this.processOpenedFromProcessEngine = activeSolutionIsRemoteSolution;
   }
+
+  private _updateNavbarTools(): void {
+    const activeSolutionIsRemoteSolution: boolean = this.activeSolutionEntry.uri.startsWith('http');
+
+    this.disableStartButton = !activeSolutionIsRemoteSolution;
+    this.disableDiagramUploadButton = activeSolutionIsRemoteSolution;
+
+  }
+
 }
