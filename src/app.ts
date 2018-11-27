@@ -149,14 +149,14 @@ export class App {
         route: ['processdef', 'processdef/:page?'],
         title: 'Process Definition List',
         name: 'processdef-list',
-        moduleId: 'modules/processdef-list/processdef-list',
+        moduleId: 'modules/think/processdef-list/processdef-list',
         nav: true,
       },
       {
         route: ['dashboard'],
         title: 'Dashboard',
         name: 'dashboard',
-        moduleId: 'modules/dashboard/dashboard',
+        moduleId: 'modules/inspect/dashboard/dashboard',
         nav: true,
       },
       {
@@ -177,7 +177,7 @@ export class App {
         route: ['process', 'processdef/:processModelId/process'],
         title: 'Process Instance List',
         name: 'process-list',
-        moduleId: 'modules/process-list/process-list',
+        moduleId: 'modules/inspect/process-list/process-list',
         nav: true,
       },
       {
@@ -190,13 +190,13 @@ export class App {
         route: ['processdef/:processModelId/detail'],
         title: 'ProcessDef Detail',
         name: 'processdef-detail',
-        moduleId: 'modules/processdef-detail/processdef-detail',
+        moduleId: 'modules/design/processdef-detail/processdef-detail',
       },
       {
         route: ['diagram/detail'],
         title: 'Diagram Detail',
         name: 'diagram-detail',
-        moduleId: 'modules/diagram-detail/diagram-detail',
+        moduleId: 'modules/design/diagram-detail/diagram-detail',
       },
       {
         route: 'configuration',
