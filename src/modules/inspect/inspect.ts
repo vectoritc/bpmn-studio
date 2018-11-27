@@ -3,20 +3,20 @@ import {bindable, inject} from 'aurelia-framework';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
+import {IActiveSolutionAndDiagramService, ISolutionEntry} from '../../contracts';
 import environment from '../../environment';
 import {Dashboard} from './dashboard/dashboard';
 
 export interface IInspectRouteParameters {
-  processModelId?: string;
   view?: string;
-  latestSource?: string;
 }
 
-@inject(EventAggregator)
+@inject(EventAggregator, 'ActiveSolutionAndDiagramService')
 export class Inspect {
 
   @bindable() public processModelId: string;
   @bindable() public showDashboard: boolean = true;
+  @bindable() public activeDiagram: IDiagram;
   public showHeatmap: boolean = false;
   public showInspectCorrelation: boolean = false;
   public dashboard: Dashboard;
@@ -25,32 +25,23 @@ export class Inspect {
 
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
+  private _activeSolutionAndDiagramService: IActiveSolutionAndDiagramService;
+  private _activeSolutionEntry: ISolutionEntry;
 
-  constructor(eventAggregator: EventAggregator) {
+  constructor(eventAggregator: EventAggregator, activateSolutionAndDiagramService: IActiveSolutionAndDiagramService) {
     this._eventAggregator = eventAggregator;
+    this._activeSolutionAndDiagramService = activateSolutionAndDiagramService;
   }
 
   public activate(routeParameters: IInspectRouteParameters): void {
 
-    const noRouteParameters: boolean = routeParameters.processModelId === undefined
-                                    || routeParameters.view === undefined;
-
-    if (noRouteParameters) {
-      return;
-    }
-
-    this.processModelId = routeParameters.processModelId;
-    const process: IDiagram = {
-      name: this.processModelId,
-      xml: '',
-      uri: '',
-      id: this.processModelId,
-    };
+    this.activeDiagram = this._activeSolutionAndDiagramService.getActiveDiagram();
+    this._activeSolutionEntry = this._activeSolutionAndDiagramService.getActiveSolutionEntry();
 
     const routeViewIsDashboard: boolean = routeParameters.view === 'dashboard';
     const routeViewIsHeatmap: boolean = routeParameters.view === 'heatmap';
     const routeViewIsInspectCorrelation: boolean = routeParameters.view === 'inspect-correlation';
-    const latestSourceIsPE: boolean = routeParameters.latestSource === 'process-engine';
+    const latestSourceIsPE: boolean = this._activeSolutionEntry.uri.startsWith('http');
 
     if (routeViewIsDashboard) {
       this.showHeatmap = false;
@@ -68,12 +59,10 @@ export class Inspect {
       if (latestSourceIsPE) {
         this._eventAggregator.publish(environment.events.navBar.showInspectButtons);
         this._eventAggregator.publish(environment.events.navBar.toggleDashboardView);
-        this._eventAggregator.publish(environment.events.navBar.showProcessName, process);
       }
     } else if (routeViewIsHeatmap) {
       this._eventAggregator.publish(environment.events.navBar.showInspectButtons);
       this._eventAggregator.publish(environment.events.navBar.toggleHeatmapView);
-      this._eventAggregator.publish(environment.events.navBar.showProcessName, process);
 
       this.showDashboard = false;
       this.showHeatmap = true;
