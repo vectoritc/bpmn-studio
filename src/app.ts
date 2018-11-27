@@ -211,7 +211,7 @@ export class App {
         moduleId: 'modules/waiting-room/waiting-room',
       },
       {
-        route: ['inspect', 'inspect/:processModelId?/:view?/:latestSource?'],
+        route: ['inspect', 'inspect/:view?'],
         title: 'Inspect',
         name: 'inspect',
         moduleId: 'modules/inspect/inspect',
