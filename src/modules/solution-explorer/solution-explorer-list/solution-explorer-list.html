@@ -35,6 +35,7 @@
         </div>
 
         <solution-explorer-solution
+          displayed-solution-entry.bind="solutionEntry"
           solution-service.bind="solutionEntry.service"
           solution-is-single-diagrams.bind="solutionEntry.isSingleDiagramService"
           view-model.ref="solutionEntryViewModels[solutionEntry.uri]">

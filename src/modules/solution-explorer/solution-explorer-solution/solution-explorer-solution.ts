@@ -18,7 +18,7 @@ import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/er
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
-import {IDiagramCreationService, IUserInputValidationRule} from '../../../contracts';
+import {IActiveSolutionAndDiagramService, IDiagramCreationService, ISolutionEntry, IUserInputValidationRule} from '../../../contracts';
 import {NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
@@ -41,6 +41,7 @@ interface IDiagramCreationState extends IDiagramNameInputState {
   NewInstance.of(ValidationController),
   'DiagramCreationService',
   'NotificationService',
+  'ActiveSolutionAndDiagramService',
 )
 export class SolutionExplorerSolution {
 
@@ -49,6 +50,7 @@ export class SolutionExplorerSolution {
   private _validationController: ValidationController;
   private _diagramCreationService: IDiagramCreationService;
   private _notificationService: NotificationService;
+  private _activeSolutionAndDiagramService: IActiveSolutionAndDiagramService;
 
   private _diagramRoute: string = 'processdef-detail';
   private _inspectView: string;
@@ -123,10 +125,9 @@ export class SolutionExplorerSolution {
       .withMessage('A diagram with that name already exists.');
 
   // Fields below are bound from the html view.
-  @bindable
-  public solutionService: ISolutionExplorerService;
-  @bindable
-  public solutionIsSingleDiagrams: boolean;
+  @bindable public solutionService: ISolutionExplorerService;
+  @bindable public solutionIsSingleDiagrams: boolean;
+  @bindable public displayedSolutionEntry: ISolutionEntry;
   public createNewDiagramInput: HTMLInputElement;
   public _renameDiagramInput: HTMLInputElement;
 
@@ -136,12 +137,14 @@ export class SolutionExplorerSolution {
     validationController: ValidationController,
     diagramCreationService: IDiagramCreationService,
     notificationService: NotificationService,
+    activeSolutionAndDiagramService: IActiveSolutionAndDiagramService,
   ) {
     this._router = router;
     this._eventAggregator = eventAggregator;
     this._validationController = validationController;
     this._diagramCreationService = diagramCreationService;
     this._notificationService = notificationService;
+    this._activeSolutionAndDiagramService = activeSolutionAndDiagramService;
   }
 
   public attached(): void {
@@ -164,6 +167,7 @@ export class SolutionExplorerSolution {
     this._refreshIntervalTask = setInterval(async() =>  {
       this.updateSolution();
     }, environment.processengine.solutionExplorerPollingIntervalInMs);
+
   }
 
   public detached(): void {
@@ -360,30 +364,14 @@ export class SolutionExplorerSolution {
   // TODO: This method is copied all over the place.
   public async navigateToDetailView(diagram: IDiagram): Promise<void> {
     // TODO: Remove this if cause if we again have one detail view.
-    const diagramIsOpenedFromRemote: boolean = diagram.uri.startsWith('http');
 
-    if (diagramIsOpenedFromRemote) {
-      await this._router.navigateToRoute(this._diagramRoute, {
-        processModelId: diagram.id,
-        view: this._inspectView,
-      });
+    this._activeSolutionAndDiagramService.setActiveSolutionAndDiagram(this.displayedSolutionEntry, diagram);
 
-    } else {
-
-      const navigationResult: (false | PipelineResult) | (true | PipelineResult) = await this._router.navigateToRoute('diagram-detail', {
-        diagramUri: diagram.uri,
-      });
-
-      // This is needed, because navigateToRoute returns an object even though a boolean should be returned
-      const navigationSuccessful: boolean = (typeof(navigationResult) === 'boolean')
-        ? navigationResult
-        : (navigationResult as PipelineResult).completed;
-
-      if (navigationSuccessful) {
-        // TODO: This should be moved into the diagram-detail component.
-        this._eventAggregator.publish(environment.events.navBar.updateProcess, diagram);
-      }
-    }
+    this._eventAggregator.publish(environment.events.navBar.updateActiveSolutionAndDiagram, {
+      solutionEntry: this.displayedSolutionEntry,
+      diagram: diagram,
+    });
+    this._router.navigateToRoute('diagram-detail');
   }
 
   @computedFrom('_router.currentInstruction.config.name')

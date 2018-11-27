@@ -4,7 +4,7 @@ import {PipelineResult, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {IFile, IInputEvent} from '../../../contracts';
+import {IActiveSolutionAndDiagramService, IFile, IInputEvent, ISolutionEntry} from '../../../contracts';
 import {AuthenticationStateEvent, NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
@@ -19,7 +19,7 @@ import {SolutionExplorerList} from '../solution-explorer-list/solution-explorer-
  *  - Refreshing on login/logout
  *  - Updating the remote processengine uri if needed
  */
-@inject(EventAggregator, 'NotificationService', Router)
+@inject(EventAggregator, 'NotificationService', Router, 'ActiveSolutionAndDiagramService')
 export class SolutionExplorerPanel {
 
   private _eventAggregator: EventAggregator;
@@ -27,8 +27,8 @@ export class SolutionExplorerPanel {
   private _router: Router;
   // TODO: Add typings
   private _ipcRenderer: any | null = null;
-
   private _subscriptions: Array<Subscription> = [];
+  private _activeSolutionAndDiagramService: IActiveSolutionAndDiagramService;
 
   // Fields below are bound from the html view.
   public solutionExplorerList: SolutionExplorerList;
@@ -39,10 +39,12 @@ export class SolutionExplorerPanel {
     eventAggregator: EventAggregator,
     notificationService: NotificationService,
     router: Router,
+    activeSolutionAndDiagramService: IActiveSolutionAndDiagramService,
   ) {
     this._eventAggregator = eventAggregator;
     this._notificationService = notificationService;
     this._router = router;
+    this._activeSolutionAndDiagramService = activeSolutionAndDiagramService;
 
     if (this.canReadFromFileSystem()) {
       this._ipcRenderer = (window as any).nodeRequire('electron').ipcRenderer;
@@ -190,15 +192,18 @@ export class SolutionExplorerPanel {
   private async _openSingleDiagramOrDisplayError(uri: string): Promise<void> {
     try {
       const openedDiagram: IDiagram = await this.solutionExplorerList.openSingleDiagram(uri);
-      await this._navigateToDetailView(openedDiagram);
+      const solution: ISolutionEntry = this.solutionExplorerList.getSingleDiagramSolutionEntry();
+
+      await this._navigateToDetailView(openedDiagram, solution);
 
     } catch (error) {
       // The diagram may already be opened.
       const diagram: IDiagram | null = await this.solutionExplorerList.getOpenedSingleDiagramByURI(uri);
+      const solution: ISolutionEntry = this.solutionExplorerList.getSingleDiagramSolutionEntry();
 
       const diagramWithURIIsAlreadyOpened: boolean = diagram !== null;
       if (diagramWithURIIsAlreadyOpened) {
-        return this._navigateToDetailView(diagram);
+        return this._navigateToDetailView(diagram, solution);
       }
 
       this._notificationService.showNotification(NotificationType.ERROR, error.message);
@@ -279,30 +284,16 @@ export class SolutionExplorerPanel {
   }
 
   // TODO: This method is copied all over the place.
-  private async _navigateToDetailView(diagram: IDiagram): Promise<void> {
+  private async _navigateToDetailView(diagram: IDiagram, solution: ISolutionEntry): Promise<void> {
     // TODO: Remove this if cause if we again have one detail view.
-    const diagramIsOpenedFromRemote: boolean = diagram.uri.startsWith('http');
+    this._activeSolutionAndDiagramService.setActiveSolutionAndDiagram(solution, diagram);
 
-    if (diagramIsOpenedFromRemote) {
-      await this._router.navigateToRoute('processdef-detail', {
-        processModelId: diagram.id,
-      });
+    this._eventAggregator.publish(environment.events.navBar.updateActiveSolutionAndDiagram, {
+      solutionEntry: solution,
+      diagram: diagram,
+    });
 
-    } else {
+    await this._router.navigateToRoute('diagram-detail');
 
-      const navigationResult: (false | PipelineResult) | (true | PipelineResult) = await this._router.navigateToRoute('diagram-detail', {
-        diagramUri: diagram.uri,
-      });
-
-      // This is needed, because navigateToRoute returns an object even though a boolean should be returned
-      const navigationSuccessful: boolean = (typeof(navigationResult) === 'boolean')
-        ? navigationResult
-        : (navigationResult as PipelineResult).completed;
-
-      if (navigationSuccessful) {
-        // TODO: This should be moved into the diagram-detail component.
-        this._eventAggregator.publish(environment.events.navBar.updateProcess, diagram);
-      }
-    }
   }
 }
