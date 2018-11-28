@@ -49,8 +49,8 @@ export class CallActivitySection implements ISection {
   }
 
   public navigateToCalledDiagram(): void {
-    this._router.navigateToRoute('processdef-detail', {
-      processModelId: this.selectedDiagramId,
+    this._router.navigateToRoute('diagram-detail', {
+      diagramName: this.selectedDiagramId,
     });
   }
 
