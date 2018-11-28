@@ -118,7 +118,7 @@ export class TaskDynamicUi {
   private _finishTask(action: string): void {
     const task: UserTask | ManualTask = this._userTask === undefined ? this._manualTask : this._userTask;
 
-    this._router.navigateToRoute('rename', {
+    this._router.navigateToRoute('live-execution-tracker', {
       correlationId: task.correlationId,
       processModelId: task.processModelId,
     });

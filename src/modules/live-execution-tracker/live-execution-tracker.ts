@@ -31,7 +31,7 @@ interface RouteParameters {
 }
 
 @inject(Router, 'NotificationService', 'AuthenticationService', 'ManagementApiClientService', 'InspectCorrelationService')
-export class Rename {
+export class LiveExecutionTracker {
   public canvasModel: HTMLElement;
 
   private _diagramModeler: IBpmnModeler;
