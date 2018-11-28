@@ -194,8 +194,9 @@ export class LiveExecutionTracker {
     const activeTokensForFlowNode: Array<ActiveToken> = await this._managementApiClient.getActiveTokensForFlowNode(identity, elementId);
 
     const activeTokenForFlowNodeInstance: ActiveToken = activeTokensForFlowNode.find((token: ActiveToken) => {
-      return token.correlationId === this._correlationId
-      && token.processModelId === this._processModelId;
+      const activeTokenIsFromCorrectInstance: boolean = token.correlationId === this._correlationId
+                                                     && token.processModelId === this._processModelId;
+      return activeTokenIsFromCorrectInstance;
     });
 
     return activeTokenForFlowNodeInstance !== undefined;
@@ -206,7 +207,9 @@ export class LiveExecutionTracker {
 
     const correlation: Correlation = await this._managementApiClient.getCorrelationById(identity, this._correlationId);
     const processModelFromCorrelation: CorrelationProcessModel = correlation.processModels.find((processModel: CorrelationProcessModel) => {
-      return processModel.name === this._processModelId;
+      const processModelIsSearchedProcessModel: boolean = processModel.name === this._processModelId;
+
+      return processModelIsSearchedProcessModel;
     });
 
     const xmlFromProcessModel: string = processModelFromCorrelation.xml;
