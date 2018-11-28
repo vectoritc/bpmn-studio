@@ -305,9 +305,8 @@ export class NavBar {
   }
 
   public navigateToDesigner(): void {
-    const processIsUndefined: boolean = this.process === undefined;
-    const latestSourceIsPE: boolean = this.latestSource === 'process-engine';
-    const latestSourceIsFS: boolean = this.latestSource === 'file-system';
+
+    const processIsUndefined: boolean = this.activeDiagram === undefined;
 
     if (processIsUndefined) {
       this._notificationService.showNotification(NotificationType.INFO, 'In order to open the designer, you have to select a diagram first!');
@@ -315,15 +314,10 @@ export class NavBar {
       return;
     }
 
-    if (latestSourceIsPE) {
-      this._router.navigateToRoute('processdef-detail', {
-        processModelId: this.process.id,
-      });
-    } else if (latestSourceIsFS) {
-      this._router.navigateToRoute('diagram-detail', {
-        diagramUri: this.process.uri,
-      });
-    }
+    this._router.navigateToRoute('diagram-detail', {
+      diagramName: this.activeDiagram.name,
+    });
+
   }
 
   public toggleSolutionExplorer(): void {

@@ -43,6 +43,7 @@ export class Inspect {
     const routeViewIsDashboard: boolean = routeParameters.view === 'dashboard';
     const routeViewIsHeatmap: boolean = routeParameters.view === 'heatmap';
     const routeViewIsInspectCorrelation: boolean = routeParameters.view === 'inspect-correlation';
+
     const latestSourceIsPE: boolean = this._activeSolutionEntry.uri.startsWith('http');
 
     if (routeViewIsDashboard) {
