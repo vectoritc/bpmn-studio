@@ -132,6 +132,14 @@ export class ProcessDefDetail {
       }),
       //#endregion
 
+      this._eventAggregator.subscribe(environment.events.navBar.validationError, () => {
+        this._diagramIsInvalid = true;
+      }),
+
+      this._eventAggregator.subscribe(environment.events.navBar.noValidationError, () => {
+        this._diagramIsInvalid = false;
+      }),
+
     ];
 
     this._eventAggregator.publish(environment.events.navBar.showTools);

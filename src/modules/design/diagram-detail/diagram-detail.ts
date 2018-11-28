@@ -101,6 +101,12 @@ export class DiagramDetail {
       this._eventAggregator.subscribe(environment.events.differsFromOriginal, (savingNeeded: boolean) => {
         this._diagramHasChanged = savingNeeded;
       }),
+      this._eventAggregator.subscribe(environment.events.navBar.validationError, () => {
+        this._diagramIsInvalid = true;
+      }),
+      this._eventAggregator.subscribe(environment.events.navBar.noValidationError, () => {
+        this._diagramIsInvalid = false;
+      }),
     ];
   }
 
