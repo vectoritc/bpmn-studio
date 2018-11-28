@@ -18,7 +18,7 @@ import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/er
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
-import {IActiveSolutionAndDiagramService, IDiagramCreationService, ISolutionEntry, IUserInputValidationRule} from '../../../contracts';
+import {IDiagramCreationService, ISolutionEntry, ISolutionService, IUserInputValidationRule} from '../../../contracts';
 import {NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
@@ -41,7 +41,7 @@ interface IDiagramCreationState extends IDiagramNameInputState {
   NewInstance.of(ValidationController),
   'DiagramCreationService',
   'NotificationService',
-  'ActiveSolutionAndDiagramService',
+  'SolutionService',
 )
 export class SolutionExplorerSolution {
 
@@ -50,7 +50,7 @@ export class SolutionExplorerSolution {
   private _validationController: ValidationController;
   private _diagramCreationService: IDiagramCreationService;
   private _notificationService: NotificationService;
-  private _activeSolutionAndDiagramService: IActiveSolutionAndDiagramService;
+  private _solutionService: ISolutionService;
 
   private _diagramRoute: string = 'diagram-detail';
   private _inspectView: string;
@@ -137,14 +137,14 @@ export class SolutionExplorerSolution {
     validationController: ValidationController,
     diagramCreationService: IDiagramCreationService,
     notificationService: NotificationService,
-    activeSolutionAndDiagramService: IActiveSolutionAndDiagramService,
+    solutionService: ISolutionService,
   ) {
     this._router = router;
     this._eventAggregator = eventAggregator;
     this._validationController = validationController;
     this._diagramCreationService = diagramCreationService;
     this._notificationService = notificationService;
-    this._activeSolutionAndDiagramService = activeSolutionAndDiagramService;
+    this._solutionService = solutionService;
   }
 
   public attached(): void {
@@ -364,7 +364,7 @@ export class SolutionExplorerSolution {
   // TODO: This method is copied all over the place.
   public async navigateToDetailView(diagram: IDiagram): Promise<void> {
     // TODO: Remove this if cause if we again have one detail view.
-    this._activeSolutionAndDiagramService.setActiveSolutionAndDiagram(this.displayedSolutionEntry, diagram);
+    this._solutionService.setActiveSolution(this.displayedSolutionEntry);
 
     this._eventAggregator.publish(environment.events.navBar.updateActiveSolutionAndDiagram, {
       solutionEntry: this.displayedSolutionEntry,

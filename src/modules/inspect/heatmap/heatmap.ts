@@ -3,16 +3,11 @@ import {bindable, inject} from 'aurelia-framework';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {FlowNodeRuntimeInformation} from '@process-engine/kpi_api_contracts';
-import {ProcessModelExecution} from '@process-engine/management_api_contracts';
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import { IDiagram } from '@process-engine/solutionexplorer.contracts';
 import {IBpmnModeler, IElementRegistry, IOverlay} from '../../../contracts/index';
 import environment from '../../../environment';
 import {IFlowNodeAssociation, IHeatmapService} from './contracts';
-
-interface RouteParameters {
-  processModelId: string;
-}
 
 @inject('HeatmapService', EventAggregator)
 export class Heatmap {
@@ -20,7 +15,6 @@ export class Heatmap {
   @bindable() public activeDiagram: IDiagram;
   @bindable() public dashboardIsShown: string;
 
-  private _processModel: ProcessModelExecution.ProcessModel;
   private _heatmapService: IHeatmapService;
   private _modeler: IBpmnModeler;
   private _viewer: IBpmnModeler;
@@ -31,15 +25,6 @@ export class Heatmap {
     this._eventAggregator = eventAggregator;
   }
 
-  /**
-   * This method gets called if the processModelId was changed.
-   * It removes the bpmn-js container from the DOM and destroys the viewer.
-   *
-   * After that the heatmap will be attached again for the new
-   * processModelId.
-   *
-   * Info: The used processModelId is bound by the inspect view.
-   */
   public activeDiagramChanged(): void {
 
     const attachedViewer: Element = document.getElementsByClassName('bjs-container')[0];

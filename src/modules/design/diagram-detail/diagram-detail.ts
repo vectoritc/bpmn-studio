@@ -9,26 +9,25 @@ import {ProcessModelExecution} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
-import {IActiveSolutionAndDiagramService,
-        IAuthenticationService,
-        IElementRegistry,
+import {IElementRegistry,
         IExtensionElement,
         IFormElement,
         IModdleElement,
         IShape,
         ISolutionEntry,
+        ISolutionService,
         NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
 
 interface RouteParameters {
-  diagramUri: string;
+  diagramName?: string;
 }
 
 @inject('ManagementApiClientService',
         'NotificationService',
-        'ActiveSolutionAndDiagramService',
+        'SolutionService',
         'InternalProcessEngineBaseRoute',
         EventAggregator,
         Router,
@@ -54,18 +53,18 @@ export class DiagramDetail {
   private _validationController: ValidationController;
   private _diagramIsInvalid: boolean = false;
   private _ipcRenderer: any;
-  private _activeSolutionAndDiagramService: IActiveSolutionAndDiagramService;
+  private _solutionService: ISolutionService;
   private _managementApiClient: IManagementApi;
 
   constructor(managementApiClient: IManagementApi,
               notificationService: NotificationService,
-              activeSolutionAndDiagramService: IActiveSolutionAndDiagramService,
+              solutionService: ISolutionService,
               internalProcessEngineBaseRoute: string | null,
               eventAggregator: EventAggregator,
               router: Router,
               validationController: ValidationController) {
     this._notificationService = notificationService;
-    this._activeSolutionAndDiagramService = activeSolutionAndDiagramService;
+    this._solutionService = solutionService;
     this._internalProcessEngineBaseRoute = internalProcessEngineBaseRoute;
     this._eventAggregator = eventAggregator;
     this._router = router;
@@ -77,9 +76,16 @@ export class DiagramDetail {
     return 'replace';
   }
 
-  public async activate(): Promise<void> {
-    this.activeDiagram = await this._activeSolutionAndDiagramService.getActiveDiagram();
-    this._activeSolutionEntry = await this._activeSolutionAndDiagramService.getActiveSolutionEntry();
+  public async activate(routeParameters: RouteParameters): Promise<void> {
+    this._activeSolutionEntry = await this._solutionService.getActiveSolutionEntry();
+
+    const diagramNameIsSet: boolean = routeParameters.diagramName !== undefined;
+
+    if (diagramNameIsSet) {
+      this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
+    } else {
+      return;
+    }
 
     this._diagramHasChanged = false;
 
@@ -216,12 +222,12 @@ export class DiagramDetail {
 
     try {
 
-      const solutionToDeployTo: ISolutionEntry = this._activeSolutionAndDiagramService.getSolutionEntryForUri(this._internalProcessEngineBaseRoute);
+      const solutionToDeployTo: ISolutionEntry = this._solutionService.getSolutionEntryForUri(this._internalProcessEngineBaseRoute);
 
       this.activeDiagram.id = processModelId;
 
       await solutionToDeployTo.service.saveDiagram(this.activeDiagram, this._internalProcessEngineBaseRoute);
-      this._activeSolutionAndDiagramService.setActiveSolutionAndDiagram(solutionToDeployTo, this.activeDiagram);
+      this._solutionService.setActiveSolution(solutionToDeployTo);
 
       this._eventAggregator.publish(environment.events.navBar.updateActiveSolutionAndDiagram,
         {
@@ -463,7 +469,7 @@ export class DiagramDetail {
       const xml: string = await this.bpmnio.getXML();
       this.activeDiagram.xml = xml;
 
-      const activeSolution: ISolutionEntry = this._activeSolutionAndDiagramService.getActiveSolutionEntry();
+      const activeSolution: ISolutionEntry = this._solutionService.getActiveSolutionEntry();
       await activeSolution.service.saveDiagram(this.activeDiagram);
 
       this._diagramHasChanged = false;

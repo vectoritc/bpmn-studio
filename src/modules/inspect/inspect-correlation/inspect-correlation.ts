@@ -36,8 +36,6 @@ export class InspectCorrelation {
   }
 
   public attached(): void {
-    this._eventAggregator.publish(environment.events.statusBar.showInspectViewButtons, true);
-    this._eventAggregator.publish(environment.events.navBar.updateProcessName);
     this._eventAggregator.publish(environment.events.statusBar.showInspectCorrelationButtons, true);
 
     this._subscriptions = [
@@ -87,7 +85,6 @@ export class InspectCorrelation {
   }
 
   public detached(): void {
-    this._eventAggregator.publish(environment.events.statusBar.showInspectViewButtons, false);
     this._eventAggregator.publish(environment.events.statusBar.showInspectCorrelationButtons, false);
 
     for (const subscription of this._subscriptions) {
@@ -97,7 +94,6 @@ export class InspectCorrelation {
 
   public async activeDiagramChanged(): Promise<void> {
     this.correlations = await this._inspectCorrelationService.getAllCorrelationsForProcessModelId(this.activeDiagram.id);
-    this._eventAggregator.publish(environment.events.navBar.updateProcessName);
   }
 
   private _resizeInspectPanel(mouseEvent: MouseEvent): void {

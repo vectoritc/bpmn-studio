@@ -61,7 +61,6 @@ export class NavBar {
 
       this._eventAggregator.subscribe(environment.events.navBar.showProcessName, () => {
         this.showProcessName = true;
-
         this._updateNavbarTitle();
       }),
 
@@ -75,11 +74,6 @@ export class NavBar {
 
       this._eventAggregator.subscribe(environment.events.navBar.validationError, () => {
         this.validationError = true;
-      }),
-
-      this._eventAggregator.subscribe(environment.events.navBar.updateProcessName, () => {
-        this.diagramContainsUnsavedChanges = false;
-        this._updateNavbarTitle();
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.noValidationError, () => {

@@ -4,7 +4,7 @@ import {PipelineResult, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {IActiveSolutionAndDiagramService, IFile, IInputEvent, ISolutionEntry} from '../../../contracts';
+import {IFile, IInputEvent, ISolutionEntry, ISolutionService} from '../../../contracts';
 import {AuthenticationStateEvent, NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
@@ -19,7 +19,7 @@ import {SolutionExplorerList} from '../solution-explorer-list/solution-explorer-
  *  - Refreshing on login/logout
  *  - Updating the remote processengine uri if needed
  */
-@inject(EventAggregator, 'NotificationService', Router, 'ActiveSolutionAndDiagramService')
+@inject(EventAggregator, 'NotificationService', Router, 'SolutionService')
 export class SolutionExplorerPanel {
 
   private _eventAggregator: EventAggregator;
@@ -28,7 +28,7 @@ export class SolutionExplorerPanel {
   // TODO: Add typings
   private _ipcRenderer: any | null = null;
   private _subscriptions: Array<Subscription> = [];
-  private _activeSolutionAndDiagramService: IActiveSolutionAndDiagramService;
+  private _solutionService: ISolutionService;
 
   // Fields below are bound from the html view.
   public solutionExplorerList: SolutionExplorerList;
@@ -39,12 +39,12 @@ export class SolutionExplorerPanel {
     eventAggregator: EventAggregator,
     notificationService: NotificationService,
     router: Router,
-    activeSolutionAndDiagramService: IActiveSolutionAndDiagramService,
+    solutionService: ISolutionService,
   ) {
     this._eventAggregator = eventAggregator;
     this._notificationService = notificationService;
     this._router = router;
-    this._activeSolutionAndDiagramService = activeSolutionAndDiagramService;
+    this._solutionService = solutionService;
 
     if (this.canReadFromFileSystem()) {
       this._ipcRenderer = (window as any).nodeRequire('electron').ipcRenderer;
@@ -286,7 +286,7 @@ export class SolutionExplorerPanel {
   // TODO: This method is copied all over the place.
   private async _navigateToDetailView(diagram: IDiagram, solution: ISolutionEntry): Promise<void> {
     // TODO: Remove this if cause if we again have one detail view.
-    this._activeSolutionAndDiagramService.setActiveSolutionAndDiagram(solution, diagram);
+    this._solutionService.setActiveSolution(solution);
 
     this._eventAggregator.publish(environment.events.navBar.updateActiveSolutionAndDiagram, {
       solutionEntry: solution,

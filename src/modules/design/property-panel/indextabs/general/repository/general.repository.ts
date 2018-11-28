@@ -3,19 +3,18 @@ import {inject} from 'aurelia-framework';
 import {IIdentity} from '@essential-projects/iam_contracts';
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 
-import {IActiveSolutionAndDiagramService, ISolutionEntry} from '../../../../../../contracts';
+import {ISolutionEntry, ISolutionService} from '../../../../../../contracts';
 
-@inject('ActiveSolutionAndDiagramService')
+@inject('SolutionService')
 export class GeneralRepository {
-  private _activeSolutionAndDiagramService: IActiveSolutionAndDiagramService;
-  private _identity: IIdentity;
+  private _solutionService: ISolutionService;
 
-  constructor(activeSolutionAndDiagramService: IActiveSolutionAndDiagramService) {
-    this._activeSolutionAndDiagramService = activeSolutionAndDiagramService;
+  constructor(solutionService: ISolutionService) {
+    this._solutionService = solutionService;
   }
 
   public async getAllDiagrams(): Promise<Array<IDiagram>> {
-    const solutionEntry: ISolutionEntry = await this._activeSolutionAndDiagramService.getActiveSolutionEntry();
+    const solutionEntry: ISolutionEntry = await this._solutionService.getActiveSolutionEntry();
     const solution: ISolution = await solutionEntry.service.loadSolution();
 
     const allDiagramsInSolution: Array<IDiagram> = solution.diagrams;

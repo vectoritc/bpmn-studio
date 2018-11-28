@@ -5,10 +5,10 @@ import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
 import {
-  IActiveSolutionAndDiagramService,
   IAuthenticationService,
   IDiagramValidationService,
   ISolutionEntry,
+  ISolutionService,
 } from '../../../contracts';
 import {SingleDiagramsSolutionExplorerService} from '../../solution-explorer-services/SingleDiagramsSolutionExplorerService';
 import {SolutionExplorerServiceFactory} from '../../solution-explorer-services/SolutionExplorerServiceFactory';
@@ -18,13 +18,13 @@ interface IUriToViewModelMap {
   [key: string]: SolutionExplorerSolution;
 }
 
-@inject('SolutionExplorerServiceFactory', 'AuthenticationService', 'DiagramValidationService', 'ActiveSolutionAndDiagramService')
+@inject('SolutionExplorerServiceFactory', 'AuthenticationService', 'DiagramValidationService', 'SolutionService')
 export class SolutionExplorerList {
 
   private _solutionExplorerServiceFactory: SolutionExplorerServiceFactory;
   private _authenticationService: IAuthenticationService;
   private _diagramValidationService: IDiagramValidationService;
-  private _activeSolutionAndDiagramService: IActiveSolutionAndDiagramService;
+  private _solutionService: ISolutionService;
   /*
    * Contains all opened solutions.
    */
@@ -45,12 +45,12 @@ export class SolutionExplorerList {
     solutionExplorerServiceFactory: SolutionExplorerServiceFactory,
     authenticationService: IAuthenticationService,
     diagramValidationService: IDiagramValidationService,
-    activeSolutionAndDiagramService: IActiveSolutionAndDiagramService,
+    solutionService: ISolutionService,
   ) {
     this._solutionExplorerServiceFactory = solutionExplorerServiceFactory;
     this._authenticationService = authenticationService;
     this._diagramValidationService = diagramValidationService;
-    this._activeSolutionAndDiagramService = activeSolutionAndDiagramService;
+    this._solutionService = solutionService;
 
     const canReadFromFileSystem: boolean = (window as any).nodeRequire;
     if (canReadFromFileSystem) {
@@ -275,7 +275,7 @@ export class SolutionExplorerList {
       identity,
     };
 
-    this._activeSolutionAndDiagramService.addSolutionEntry(entry);
+    this._solutionService.addSolutionEntry(entry);
 
     if (insertAtBeginning) {
       this._openedSolutions.splice(1, 0, entry);

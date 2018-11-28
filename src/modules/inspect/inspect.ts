@@ -3,17 +3,16 @@ import {bindable, inject} from 'aurelia-framework';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {IActiveSolutionAndDiagramService, ISolutionEntry} from '../../contracts';
+import {ISolutionEntry, ISolutionService} from '../../contracts';
 import environment from '../../environment';
 import {Dashboard} from './dashboard/dashboard';
 
 export interface IInspectRouteParameters {
-  processModelId?: string;
   view?: string;
-  latestSource?: string;
+  diagramName?: string;
 }
 
-@inject(EventAggregator, 'ActiveSolutionAndDiagramService')
+@inject(EventAggregator, 'SolutionService')
 export class Inspect {
 
   @bindable() public processModelId: string;
@@ -27,17 +26,17 @@ export class Inspect {
 
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
-  private _activeSolutionAndDiagramService: IActiveSolutionAndDiagramService;
+  private _solutionService: ISolutionService;
   private _activeSolutionEntry: ISolutionEntry;
 
-  constructor(eventAggregator: EventAggregator, activateSolutionAndDiagramService: IActiveSolutionAndDiagramService) {
+  constructor(eventAggregator: EventAggregator, solutionService: ISolutionService) {
     this._eventAggregator = eventAggregator;
-    this._activeSolutionAndDiagramService = activateSolutionAndDiagramService;
+    this._solutionService = solutionService;
   }
 
-  public activate(routeParameters: IInspectRouteParameters): void {
-    this.activeDiagram = this._activeSolutionAndDiagramService.getActiveDiagram();
-    this._activeSolutionEntry = this._activeSolutionAndDiagramService.getActiveSolutionEntry();
+  public async activate(routeParameters: IInspectRouteParameters): Promise<void> {
+    this._activeSolutionEntry = await this._solutionService.getActiveSolutionEntry();
+    this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
 
     const routeViewIsDashboard: boolean = routeParameters.view === 'dashboard';
     const routeViewIsHeatmap: boolean = routeParameters.view === 'heatmap';
