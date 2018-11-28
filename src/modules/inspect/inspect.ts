@@ -35,6 +35,7 @@ export class Inspect {
   }
 
   public async activate(routeParameters: IInspectRouteParameters): Promise<void> {
+
     this._activeSolutionEntry = await this._solutionService.getActiveSolutionEntry();
     this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
 

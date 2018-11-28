@@ -77,6 +77,7 @@ export class DiagramDetail {
   }
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
+
     this._activeSolutionEntry = await this._solutionService.getActiveSolutionEntry();
 
     const diagramNameIsSet: boolean = routeParameters.diagramName !== undefined;
