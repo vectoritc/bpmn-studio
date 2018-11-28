@@ -49,7 +49,6 @@ export class LiveExecutionTracker {
   private _processModelId: string;
 
   private _pollingTimer: NodeJS.Timer;
-  private _activeTokens: Array<ActiveToken>;
 
   constructor(router: Router,
               notificationService: NotificationService,
@@ -86,7 +85,6 @@ export class LiveExecutionTracker {
 
     const xml: string = await this._getXml();
     const colorizedXml: string = await this._colorizeXml(xml);
-    this._activeTokens = await this._getActiveTokensForProcessInstance();
 
     await this._importXml(this._diagramViewer, colorizedXml);
 
@@ -183,21 +181,6 @@ export class LiveExecutionTracker {
     const colorizedXml: string = await this._exportXml(this._diagramModeler);
 
     return colorizedXml;
-  }
-
-  private async _getActiveTokensForProcessInstance(): Promise<Array<ActiveToken>> {
-    const identity: IIdentity = this._getIdentity();
-
-    const activeTokensForProcessModel: Array<ActiveToken> = await this._managementApiClient
-      .getActiveTokensForProcessModel(identity, this._processModelId);
-
-    const activeTokensForProcessInstance: Array<ActiveToken> = activeTokensForProcessModel.filter((activeToken: ActiveToken) => {
-      const activeTokenIsFromCorrectCorrelation: boolean = activeToken.correlationId === this._correlationId;
-
-      return activeTokenIsFromCorrectCorrelation;
-    });
-
-    return activeTokensForProcessInstance;
   }
 
   private _colorizeElements(elements: Array<IShape>, color: IColorPickerColor): void {
@@ -317,7 +300,6 @@ export class LiveExecutionTracker {
     this._pollingTimer = setTimeout(async() => {
       const xml: string = await this._getXml();
       const colorizedXml: string = await this._colorizeXml(xml);
-      this._activeTokens = await this._getActiveTokensForProcessInstance();
 
       const previousXml: string = await this._exportXml(this._diagramViewer);
 
