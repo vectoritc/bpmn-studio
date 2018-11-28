@@ -88,9 +88,11 @@ export class LiveExecutionTracker {
     const colorizedXml: string = await this._colorizeXml(xml);
     this._activeTokens = await this._getActiveTokensForProcessInstance();
 
-    this._importXml(this._diagramViewer, colorizedXml);
+    await this._importXml(this._diagramViewer, colorizedXml);
 
     this._diagramViewer.on('element.click', this._elementClickHandler);
+
+    this._startPolling();
   }
 
   private _elementClickHandler: (event: IEvent) => Promise<void> = async(event: IEvent) => {
@@ -309,16 +311,11 @@ export class LiveExecutionTracker {
 
   private async _startPolling(): Promise<void> {
     this._pollingTimer = setTimeout(async() => {
-      const activeTokensForProcessInstance: Array<ActiveToken> = await this._getActiveTokensForProcessInstance();
+      const xml: string = await this._getXml();
+      const colorizedXml: string = await this._colorizeXml(xml);
+      this._activeTokens = await this._getActiveTokensForProcessInstance();
 
-      const activeTokensChanged: boolean = this._activeTokens !== activeTokensForProcessInstance;
-      if (activeTokensChanged) {
-        const xml: string = await this._getXml();
-        const colorizedXml: string = await this._colorizeXml(xml);
-        this._activeTokens = await this._getActiveTokensForProcessInstance();
-
-        this._importXml(this._diagramViewer, colorizedXml);
-      }
+      this._importXml(this._diagramViewer, colorizedXml);
 
       const correlationIsStillActive: boolean = await this._isCorrelationStillActive();
 
