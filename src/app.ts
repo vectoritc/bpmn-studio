@@ -187,7 +187,7 @@ export class App {
         moduleId: 'modules/task-dynamic-ui/task-dynamic-ui',
       },
       {
-        route: ['diagram/detail'],
+        route: ['diagram/detail/:diagramName?'],
         title: 'Diagram Detail',
         name: 'diagram-detail',
         moduleId: 'modules/design/diagram-detail/diagram-detail',
