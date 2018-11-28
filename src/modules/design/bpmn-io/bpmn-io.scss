@@ -140,7 +140,7 @@
   .entry {
     /*
      * This is used instead of the global button class because the
-     * button class does not use important which is needed in this case
+     * button class does not use '!important' which is needed in this case
      * to override the existing properties, given by bpmn.io.
      */
     color: #333 !important;
