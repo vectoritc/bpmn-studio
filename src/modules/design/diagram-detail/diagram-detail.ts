@@ -273,7 +273,7 @@ export class DiagramDetail {
   private async _saveDiagram(): Promise<void> {
 
     if (this._diagramIsInvalid) {
-      this._notificationService.showNotification(NotificationType.WARNING, `The could not be saved because it is invalid!`);
+      this._notificationService.showNotification(NotificationType.WARNING, `The diagram could not be saved because it is invalid!`);
 
       return;
     }

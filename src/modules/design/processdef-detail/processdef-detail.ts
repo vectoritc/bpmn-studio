@@ -430,7 +430,7 @@ export class ProcessDefDetail {
     this._dropInvalidFormData();
 
     if (this._diagramIsInvalid) {
-      this._notificationService.showNotification(NotificationType.WARNING, `The could not be saved because it is invalid!`);
+      this._notificationService.showNotification(NotificationType.WARNING, `The diagram could not be saved because it is invalid!`);
 
       /**
        * TODO: Maybe we can reject this promise with some kind of 'ValidationError'
