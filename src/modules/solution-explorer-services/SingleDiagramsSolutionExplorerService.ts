@@ -102,11 +102,6 @@ export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerS
     return Promise.resolve();
   }
 
-  // public saveSingleDiagram(diagramToSave: IDiagram, identity: IIdentity, path?: string): Promise<IDiagram> {
-  //   return this._solutionExplorerToOpenDiagrams
-  //     .saveSingleDiagram(diagramToSave, identity, path);
-  // }
-
   public renameDiagram(diagram: IDiagram, newName: string): Promise<IDiagram> {
     throw new Error('Method not supported.');
   }
