@@ -55,8 +55,6 @@ export class Heatmap {
       },
     });
 
-    // this._eventAggregator.publish(environment.events.navBar.updateProcess, this._processModel);
-
     await this._pushXmlToBpmnModeler(this.activeDiagram.xml, this._modeler);
 
     const elementRegistry: IElementRegistry  = this._modeler.get('elementRegistry');

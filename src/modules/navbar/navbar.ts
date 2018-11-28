@@ -88,10 +88,6 @@ export class NavBar {
         this.diagramContainsUnsavedChanges = false;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.inspectNavigateToHeatmap, () => {
-        this.inspectView = 'heatmap';
-      }),
-
       this._eventAggregator.subscribe(environment.events.navBar.inspectNavigateToDashboard, () => {
         this.inspectView = 'dashboard';
       }),

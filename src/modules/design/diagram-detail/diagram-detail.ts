@@ -99,8 +99,6 @@ export class DiagramDetail {
   public attached(): void {
 
     this._eventAggregator.publish(environment.events.navBar.showTools);
-    this._eventAggregator.publish(environment.events.navBar.enableDiagramUploadButton);
-    this._eventAggregator.publish(environment.events.navBar.disableStartButton);
     this._eventAggregator.publish(environment.events.navBar.showProcessName);
 
     this._eventAggregator.publish(environment.events.statusBar.showDiagramViewButtons);
@@ -181,9 +179,7 @@ export class DiagramDetail {
   public deactivate(): void {
     this._eventAggregator.publish(environment.events.navBar.hideTools);
     this._eventAggregator.publish(environment.events.navBar.hideProcessName);
-    this._eventAggregator.publish(environment.events.navBar.enableStartButton);
     this._eventAggregator.publish(environment.events.navBar.noValidationError);
-    this._eventAggregator.publish(environment.events.navBar.disableDiagramUploadButton);
     this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
   }
 
