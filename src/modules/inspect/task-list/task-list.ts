@@ -119,10 +119,18 @@ export class TaskList {
   }
 
   public continueTask(taskWithProcessModel: IUserTaskWithProcessModel & IManualTaskWithProcessModel): void {
+    const correlationId: string = taskWithProcessModel.userTask
+      ? taskWithProcessModel.userTask.correlationId
+      : taskWithProcessModel.manualTask.correlationId;
+
     const processModelId: string = taskWithProcessModel.processModel.id;
-    const taskId: string = taskWithProcessModel.userTask ? taskWithProcessModel.userTask.id : taskWithProcessModel.manualTask.id;
+
+    const taskId: string = taskWithProcessModel.userTask
+      ? taskWithProcessModel.userTask.id
+      : taskWithProcessModel.manualTask.id;
 
     this._router.navigateToRoute('task-dynamic-ui', {
+      correlationId: correlationId,
       processModelId: processModelId,
       taskId: taskId,
     });
