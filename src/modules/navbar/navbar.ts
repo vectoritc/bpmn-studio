@@ -82,25 +82,9 @@ export class NavBar {
         this._updateNavbarTitle();
       }),
 
-      // this._eventAggregator.subscribe(environment.events.navBar.disableSaveButton, () => {
-      //   this.disableStartButton = true;
-      // }),
-
       this._eventAggregator.subscribe(environment.events.navBar.noValidationError, () => {
         this.validationError = false;
       }),
-
-      // this._eventAggregator.subscribe(environment.events.navBar.enableStartButton, () => {
-      //   this.disableStartButton = false;
-      // }),
-
-      // this._eventAggregator.subscribe(environment.events.navBar.disableDiagramUploadButton, () => {
-      //   this.disableDiagramUploadButton = true;
-      // }),
-
-      // this._eventAggregator.subscribe(environment.events.navBar.enableDiagramUploadButton, () => {
-      //   this.disableDiagramUploadButton = false;
-      // }),
 
       this._eventAggregator.subscribe(environment.events.differsFromOriginal, (isDiagramChanged: boolean) => {
         this.diagramContainsUnsavedChanges = isDiagramChanged;
