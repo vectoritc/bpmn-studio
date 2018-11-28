@@ -2,6 +2,7 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
 
 import {Correlation} from '@process-engine/management_api_contracts';
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
 import {InspectPanelTab} from '../../../../../contracts/index';
 import environment from '../../../../../environment';
@@ -11,7 +12,7 @@ export class InspectPanel {
   @bindable() public correlations: Array<Correlation>;
   @bindable() public selectedCorrelation: Correlation;
   @bindable() public fullscreen: boolean = false;
-  @bindable() public processModelId: string;
+  @bindable() public activeDiagram: IDiagram;
   public InspectPanelTab: typeof InspectPanelTab = InspectPanelTab;
   public showCorrelationList: boolean = true;
   public showLogViewer: boolean;
@@ -28,7 +29,7 @@ export class InspectPanel {
     this._eventAggregator.publish(environment.events.inspect.shouldDisableTokenViewerButton, this.fullscreen);
   }
 
-  public processModelIdChanged(): void {
+  public activeDiagramChanged(): void {
     this.selectedCorrelation = undefined;
 
     this.showLogViewer = false;
