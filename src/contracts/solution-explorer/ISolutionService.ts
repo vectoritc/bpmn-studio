@@ -2,7 +2,7 @@ import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
 import {ISolutionEntry} from './ISolutionEntry';
 
-export interface IActiveSolutionAndDiagramService {
+export interface ISolutionService {
   /**
    * Adds a SolutionEntry to the service.
    * @param solutionEntry The SolutionEntry to add.
@@ -21,20 +21,14 @@ export interface IActiveSolutionAndDiagramService {
   getActiveSolutionEntry(): ISolutionEntry;
 
   /**
-   * Gets the currently active diagram.
-   */
-  getActiveDiagram(): IDiagram;
-
-  /**
    * Gets a specific SolutionEntry identified by its uri.
    * @param uri The uri of the searched SolutionEntry.
    */
   getSolutionEntryForUri(uri: string): ISolutionEntry;
 
   /**
-   * Sets the combination of the new SolutionEntry and diagram.
+   * Sets the active Solution
    * @param solution The new active SolutionEntry.
-   * @param diagram The new active diagram.
    */
-  setActiveSolutionAndDiagram(solution: ISolutionEntry, diagram: IDiagram): void;
+  setActiveSolution(solution: ISolutionEntry): void;
 }
