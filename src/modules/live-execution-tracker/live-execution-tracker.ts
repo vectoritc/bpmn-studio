@@ -356,8 +356,6 @@ export class LiveExecutionTracker {
 
   private _correlationEnded(): void {
     this._notificationService.showNotification(NotificationType.INFO, 'Process stopped.');
-
-    this._router.navigateToRoute('inspect');
   }
 
   private _getIdentity(): IIdentity {
