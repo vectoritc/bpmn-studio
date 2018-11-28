@@ -18,7 +18,7 @@ export default {
     defaultAuthority: 'http://localhost:5000',
   },
   processengine: {
-    waitingRoomPollingIntervalInMs: 200,
+    liveExecutionTrackerPollingIntervalInMs: 1000,
     solutionExplorerPollingIntervalInMs: 5000,
     processDefListPollingIntervalInMs: 5000,
     dashboardPollingIntervalInMs: 1500,
