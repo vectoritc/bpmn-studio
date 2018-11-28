@@ -14,7 +14,6 @@ import {
   IBpmnModeler,
   IBpmnXmlSaveOptions,
   IColorPickerColor,
-  IDefaultBpmnColors,
   IElementRegistry,
   IEvent,
   IModdleElement,
