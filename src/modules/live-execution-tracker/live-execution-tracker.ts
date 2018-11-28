@@ -21,6 +21,7 @@ import {
   IShape,
   NotificationType,
 } from '../../contracts/index';
+import environment from '../../environment';
 import {IInspectCorrelationService} from '../inspect/inspect-correlation/contracts';
 import {NotificationService} from '../notification/notification.service';
 
@@ -46,6 +47,9 @@ export class LiveExecutionTracker {
 
   private _correlationId: string;
   private _processModelId: string;
+
+  private _pollingTimer: NodeJS.Timer;
+  private _activeTokens: Array<ActiveToken>;
 
   constructor(router: Router,
               notificationService: NotificationService,
@@ -82,6 +86,7 @@ export class LiveExecutionTracker {
 
     const xml: string = await this._getXml();
     const colorizedXml: string = await this._colorizeXml(xml);
+    this._activeTokens = await this._getActiveTokensForProcessInstance();
 
     this._importXml(this._diagramViewer, colorizedXml);
 
@@ -166,6 +171,21 @@ export class LiveExecutionTracker {
     const colorizedXml: string = await this._exportXml(this._diagramModeler);
 
     return colorizedXml;
+  }
+
+  private async _getActiveTokensForProcessInstance(): Promise<Array<ActiveToken>> {
+    const identity: IIdentity = this._getIdentity();
+
+    const activeTokensForProcessModel: Array<ActiveToken> = await this._managementApiClient
+      .getActiveTokensForProcessModel(identity, this._processModelId);
+
+    const activeTokensForProcessInstance: Array<ActiveToken> = activeTokensForProcessModel.filter((activeToken: ActiveToken) => {
+      const activeTokenIsFromCorrectCorrelation: boolean = activeToken.correlationId === this._correlationId;
+
+      return activeTokenIsFromCorrectCorrelation;
+    });
+
+    return activeTokensForProcessInstance;
   }
 
   private _colorizeElements(elements: Array<IShape>, color: IColorPickerColor): void {
@@ -279,6 +299,49 @@ export class LiveExecutionTracker {
     });
 
     return saveXmlPromise;
+  }
+
+  private async _startPolling(): Promise<void> {
+    this._pollingTimer = setTimeout(async() => {
+      const activeTokensForProcessInstance: Array<ActiveToken> = await this._getActiveTokensForProcessInstance();
+
+      const activeTokensChanged: boolean = this._activeTokens !== activeTokensForProcessInstance;
+      if (activeTokensChanged) {
+        const xml: string = await this._getXml();
+        const colorizedXml: string = await this._colorizeXml(xml);
+        this._activeTokens = await this._getActiveTokensForProcessInstance();
+
+        this._importXml(this._diagramViewer, colorizedXml);
+      }
+
+      const correlationIsStillActive: boolean = await this._isCorrelationStillActive();
+
+      if (correlationIsStillActive) {
+        this._startPolling();
+      }
+    }, environment.processengine.liveExecutionTrackerPollingIntervalInMs);
+  }
+
+  private async _isCorrelationStillActive(): Promise<boolean> {
+    const identity: IIdentity = this._getIdentity();
+
+    const allActiveCorrelations: Array<Correlation> = await this._managementApiClient.getActiveCorrelations(identity);
+
+    const correlationIsNotActive: boolean = !allActiveCorrelations.some((activeCorrelation: Correlation) => {
+      return activeCorrelation.id === this._correlationId;
+    });
+
+    if (correlationIsNotActive) {
+      this._correlationEnded();
+    }
+
+    return !correlationIsNotActive;
+ }
+
+  private _correlationEnded(): void {
+    this._notificationService.showNotification(NotificationType.INFO, 'Process stopped.');
+
+    this._router.navigateToRoute('inspect');
   }
 
   private _getIdentity(): IIdentity {
