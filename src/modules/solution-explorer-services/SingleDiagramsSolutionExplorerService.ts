@@ -110,8 +110,13 @@ export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerS
     throw new Error('Method not supported.');
   }
 
-  public loadDiagram(diagramName: string): Promise<IDiagram> {
-    throw new Error('Method not supported.');
+  public async loadDiagram(diagramName: string): Promise<IDiagram> {
+
+    const diagramToLoad: IDiagram = this._openedDiagrams.find((diagram: IDiagram) => {
+                                      return diagram.name === diagramName;
+                                    });
+
+    return diagramToLoad;
   }
 
   public saveSolution(solution: ISolution, pathspec?: string): Promise<void> {
