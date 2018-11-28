@@ -298,7 +298,9 @@ export class NavBar {
     }
 
     this._router.navigateToRoute('inspect', {
+      processModelId: this.process.id,
       view: this.inspectView,
+      latestSource: this.latestSource,
     });
   }
 

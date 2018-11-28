@@ -8,7 +8,9 @@ import environment from '../../environment';
 import {Dashboard} from './dashboard/dashboard';
 
 export interface IInspectRouteParameters {
+  processModelId?: string;
   view?: string;
+  latestSource?: string;
 }
 
 @inject(EventAggregator, 'ActiveSolutionAndDiagramService')
