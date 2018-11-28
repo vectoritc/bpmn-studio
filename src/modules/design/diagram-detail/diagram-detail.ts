@@ -265,7 +265,7 @@ export class DiagramDetail {
 
       const correlationId: string = response.correlationId;
 
-      this._router.navigateToRoute('waiting-room', {
+      this._router.navigateToRoute('rename', {
         correlationId: correlationId,
         processModelId: this.activeDiagram.id,
       });

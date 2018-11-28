@@ -199,10 +199,10 @@ export class App {
         moduleId: 'modules/config-panel/config-panel',
       },
       {
-        route: 'waitingroom/:correlationId/:processModelId',
-        title: 'Waiting Room',
-        name: 'waiting-room',
-        moduleId: 'modules/waiting-room/waiting-room',
+        route: 'rename/:correlationId/:processModelId',
+        title: 'Rename',
+        name: 'rename',
+        moduleId: 'modules/rename/rename',
       },
       {
         route: ['inspect', 'inspect/:view?/:diagramName?'],
