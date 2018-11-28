@@ -95,6 +95,10 @@ export class LiveExecutionTracker {
     this._startPolling();
   }
 
+  public detached(): void {
+    this._stopPolling();
+  }
+
   private _elementClickHandler: (event: IEvent) => Promise<void> = async(event: IEvent) => {
     const clickedElement: IShape = event.element;
 
@@ -323,6 +327,10 @@ export class LiveExecutionTracker {
         this._startPolling();
       }
     }, environment.processengine.liveExecutionTrackerPollingIntervalInMs);
+  }
+
+  private _stopPolling(): void {
+    clearTimeout(this._pollingTimer);
   }
 
   private async _isCorrelationStillActive(): Promise<boolean> {
