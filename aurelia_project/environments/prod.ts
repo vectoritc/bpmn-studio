@@ -38,7 +38,6 @@ export default {
       showDiagramViewButtons: 'statusbar:diagramviewbuttons:show',
       hideDiagramViewButtons: 'statusbar:diagramviewbuttons:hide',
       setXmlIdentifier: 'statusbar:xmlIdentifier',
-      showInspectViewButtons: 'statusbar:inspectviewbuttons',
       showInspectCorrelationButtons: 'statusbar:inspectcorrelationbuttons',
     },
     configPanel: {
