@@ -372,6 +372,7 @@ export class SolutionExplorerSolution {
     });
 
     this._router.navigateToRoute(this._diagramRoute, {
+      view: this._inspectView,
       diagramName: diagram.name,
     });
 

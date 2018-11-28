@@ -184,7 +184,7 @@ export class NavBar {
     this.disableInspectCorrelationButton = false;
 
     this._router.navigateToRoute('inspect', {
-      processModelId: this.activeDiagram.id,
+      diagramName: this.activeDiagram.name,
       view: 'heatmap',
       latestSource: this.latestSource,
     });
@@ -198,7 +198,7 @@ export class NavBar {
     this.disableInspectCorrelationButton = true;
 
     this._router.navigateToRoute('inspect', {
-      processModelId: this.activeDiagram.id,
+      diagramName: this.activeDiagram.name,
       view: 'inspect-correlation',
       latestSource: this.latestSource,
     });
@@ -216,7 +216,7 @@ export class NavBar {
     }
 
     this._router.navigateToRoute('inspect', {
-      processModelId: this.activeDiagram.id,
+      diagramName: this.activeDiagram.name,
       view: this.inspectView,
       latestSource: this.latestSource,
     });

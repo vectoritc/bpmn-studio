@@ -41,7 +41,7 @@ export class Heatmap {
    * Info: The used processModelId is bound by the inspect view.
    */
   public activeDiagramChanged(): void {
-    console.log('diagram changes', this.activeDiagram);
+
     const attachedViewer: Element = document.getElementsByClassName('bjs-container')[0];
 
     const viewerContainerIsAttached: boolean = this.viewerContainer !== undefined

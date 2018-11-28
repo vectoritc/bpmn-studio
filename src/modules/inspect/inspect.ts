@@ -36,7 +36,6 @@ export class Inspect {
   }
 
   public activate(routeParameters: IInspectRouteParameters): void {
-    console.log('inspect activate', routeParameters);
     this.activeDiagram = this._activeSolutionAndDiagramService.getActiveDiagram();
     this._activeSolutionEntry = this._activeSolutionAndDiagramService.getActiveSolutionEntry();
 
