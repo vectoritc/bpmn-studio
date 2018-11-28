@@ -158,10 +158,7 @@ export class LiveExecutionTracker {
 
           elementsWithTokenHistory.push(incomingElemenAsShape);
         }
-
-        continue;
       }
-
     }
 
     this._colorizeElements(elementsWithActiveToken, defaultBpmnColors.orange);
