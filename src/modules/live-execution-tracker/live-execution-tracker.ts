@@ -90,26 +90,32 @@ export class LiveExecutionTracker {
 
     this._importXml(this._diagramViewer, colorizedXml);
 
-    this._diagramViewer.on('element.click', async(event: IEvent) => {
-      const element: IShape = event.element;
+    this._diagramViewer.on('element.click', this._elementClickHandler);
+  }
 
-      const elementIsNotAUserOrManualTask: boolean = element.type !== 'bpmn:UserTask'
-                                              && element.type !== 'bpmn:ManualTask';
+  private _elementClickHandler: (event: IEvent) => Promise<void> = async(event: IEvent) => {
+    const clickedElement: IShape = event.element;
 
-      if (elementIsNotAUserOrManualTask) {
-        return;
-      }
+    const clickedElementIsNotAUserOrManualTask: boolean = clickedElement.type !== 'bpmn:UserTask'
+    && clickedElement.type !== 'bpmn:ManualTask';
 
-      const elementHasNoActiveToken: boolean = !(await this._hasElementActiveToken(element.id));
-      if (elementHasNoActiveToken) {
-        return;
-      }
+    if (clickedElementIsNotAUserOrManualTask) {
+      return;
+    }
 
-      this._router.navigateToRoute('task-dynamic-ui', {
-        correlationId: this._correlationId,
-        processModelId: this._processModelId,
-        taskId: element.id,
-      });
+    this._handleTask(clickedElement);
+  }
+
+  private async _handleTask(element: IShape): Promise<void> {
+    const elementHasNoActiveToken: boolean = !(await this._hasElementActiveToken(element.id));
+    if (elementHasNoActiveToken) {
+      return;
+    }
+
+    this._router.navigateToRoute('task-dynamic-ui', {
+      correlationId: this._correlationId,
+      processModelId: this._processModelId,
+      taskId: element.id,
     });
   }
 
