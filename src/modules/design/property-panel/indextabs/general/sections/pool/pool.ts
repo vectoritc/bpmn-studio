@@ -32,8 +32,8 @@ export class PoolSection implements ISection {
 
   public activate(model: IPageModel): void {
 
-    const noProcessRef: boolean = model.elementInPanel.businessObject.processRef === undefined;
-    if (noProcessRef) {
+    const noProcessReferencePresent: boolean = model.elementInPanel.businessObject.processRef === undefined;
+    if (noProcessReferencePresent) {
       return;
     }
 
