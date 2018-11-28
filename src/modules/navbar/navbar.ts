@@ -7,21 +7,10 @@ import {ISolutionEntry, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
-interface INavbarProcessInformation {
-  id?: string;
-  name?: string;
-  uri?: string;
-}
-
 @inject(Router, EventAggregator, 'NotificationService')
 export class NavBar {
 
   @bindable() public activeRouteName: string;
-
-  /**
-   * Todo: see below!
-   */
-  public process: INavbarProcessInformation;
 
   public activeSolutionEntry: ISolutionEntry;
   public activeDiagram: IDiagram;
@@ -70,13 +59,8 @@ export class NavBar {
         this.showTools = true;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.showProcessName, (process: INavbarProcessInformation) => {
+      this._eventAggregator.subscribe(environment.events.navBar.showProcessName, () => {
         this.showProcessName = true;
-
-        /**
-         * TODO: See below
-         */
-        this.process = process;
 
         this._updateNavbarTitle();
       }),
@@ -85,21 +69,8 @@ export class NavBar {
         this.showTools = false;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.updateProcess, (process: INavbarProcessInformation) => {
+      this._eventAggregator.subscribe(environment.events.navBar.updateProcess, () => {
 
-        /*
-         * TODO: Currently the process can be of one of two different types.
-         * One of them has an attribute 'name' which should be used for the
-         * navbar title. The other one does not have this attribute.
-         * At the moment we use the 'id' if there is no 'name'.
-         *
-         * Either the navbar or the processdef-detail needs a refactoring
-         * to prevent this issue!
-         *
-         * See https://github.com/process-engine/bpmn-studio/issues/962
-         * for more informations.
-         */
-        this.process = process;
         this.diagramContainsUnsavedChanges = false;
       }),
 
@@ -113,38 +84,6 @@ export class NavBar {
 
       this._eventAggregator.subscribe(environment.events.navBar.updateProcessName, (processName: string) => {
         this.diagramContainsUnsavedChanges = false;
-
-        /**
-         * Only changing the navbar title here would lead to an
-         * inconsistent state, since currently the navbar held a reference
-         * to a Diagram like object.
-         *
-         * Since this object is passed around at some point, we need to create
-         * a new Diagram object when changing the navbar title.
-         *
-         * This will hopefully be obsolete once the navbar gets refactored.
-         */
-        const updatedProcess: INavbarProcessInformation = ((): INavbarProcessInformation => {
-          const latestSourceIsProcessEngine: boolean = this.latestSource === 'process-engine';
-
-          if (latestSourceIsProcessEngine) {
-            return {
-              id: processName,
-            };
-          } else {
-            return {
-              name: processName,
-            };
-          }
-
-        })();
-
-        const uriWasDefined: boolean = this.process.id !== undefined;
-        if (uriWasDefined) {
-          Object.assign(updatedProcess, {uri: this.process.uri});
-        }
-
-        this.process = updatedProcess;
         this._updateNavbarTitle();
       }),
 
@@ -252,7 +191,7 @@ export class NavBar {
     this.disableInspectCorrelationButton = false;
 
     this._router.navigateToRoute('inspect', {
-      processModelId: this.process.id,
+      processModelId: this.activeDiagram.id,
       view: 'dashboard',
       latestSource: this.latestSource,
     });
@@ -266,7 +205,7 @@ export class NavBar {
     this.disableInspectCorrelationButton = false;
 
     this._router.navigateToRoute('inspect', {
-      processModelId: this.process.id,
+      processModelId: this.activeDiagram.id,
       view: 'heatmap',
       latestSource: this.latestSource,
     });
@@ -280,7 +219,7 @@ export class NavBar {
     this.disableInspectCorrelationButton = true;
 
     this._router.navigateToRoute('inspect', {
-      processModelId: this.process.id,
+      processModelId: this.activeDiagram.id,
       view: 'inspect-correlation',
       latestSource: this.latestSource,
     });
@@ -298,7 +237,7 @@ export class NavBar {
     }
 
     this._router.navigateToRoute('inspect', {
-      processModelId: this.process.id,
+      processModelId: this.activeDiagram.id,
       view: this.inspectView,
       latestSource: this.latestSource,
     });
