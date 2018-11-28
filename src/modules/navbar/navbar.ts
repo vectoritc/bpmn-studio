@@ -164,7 +164,7 @@ export class NavBar {
     this.disableInspectCorrelationButton = false;
 
     this._router.navigateToRoute('inspect', {
-      processModelId: this.activeDiagram.id,
+      diagramName: this.activeDiagram.name,
       view: 'dashboard',
       latestSource: this.latestSource,
     });
