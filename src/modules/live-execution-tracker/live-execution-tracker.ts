@@ -319,7 +319,12 @@ export class LiveExecutionTracker {
       const colorizedXml: string = await this._colorizeXml(xml);
       this._activeTokens = await this._getActiveTokensForProcessInstance();
 
-      this._importXml(this._diagramViewer, colorizedXml);
+      const previousXml: string = await this._exportXml(this._diagramViewer);
+
+      const xmlChanged: boolean = previousXml !== colorizedXml;
+      if (xmlChanged) {
+        this._importXml(this._diagramViewer, colorizedXml);
+      }
 
       const correlationIsStillActive: boolean = await this._isCorrelationStillActive();
 
