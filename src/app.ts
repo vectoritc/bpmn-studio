@@ -187,12 +187,6 @@ export class App {
         moduleId: 'modules/task-dynamic-ui/task-dynamic-ui',
       },
       {
-        route: ['processdef/:processModelId/detail'],
-        title: 'ProcessDef Detail',
-        name: 'processdef-detail',
-        moduleId: 'modules/design/processdef-detail/processdef-detail',
-      },
-      {
         route: ['diagram/detail'],
         title: 'Diagram Detail',
         name: 'diagram-detail',
