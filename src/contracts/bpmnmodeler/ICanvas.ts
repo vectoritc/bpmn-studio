@@ -11,4 +11,6 @@ export interface ICanvas {
   * @returns The current viewbox.
   */
   viewbox(viewbox?: string): string;
+
+  zoom(zoomLevel: number, element: IShape): void;
 }
