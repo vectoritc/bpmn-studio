@@ -58,7 +58,7 @@ export class WaitingRoom {
   }
 
   public navigateToDetailView(): void {
-    this._router.navigateToRoute('processdef-detail', {
+    this._router.navigateToRoute('diagram-detail', {
       processModelId: this._processModelId,
     });
   }
