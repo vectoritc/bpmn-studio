@@ -5,6 +5,7 @@ import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {FlowNodeRuntimeInformation} from '@process-engine/kpi_api_contracts';
 import {ProcessModelExecution} from '@process-engine/management_api_contracts';
 
+import { IDiagram } from '@process-engine/solutionexplorer.contracts';
 import {IBpmnModeler, IElementRegistry, IOverlay} from '../../../contracts/index';
 import environment from '../../../environment';
 import {IFlowNodeAssociation, IHeatmapService} from './contracts';
@@ -16,7 +17,7 @@ interface RouteParameters {
 @inject('HeatmapService', EventAggregator)
 export class Heatmap {
   public viewerContainer: HTMLDivElement;
-  @bindable() public processModelId: string;
+  @bindable() public activeDiagram: IDiagram;
   @bindable() public dashboardIsShown: string;
 
   private _processModel: ProcessModelExecution.ProcessModel;
@@ -39,50 +40,38 @@ export class Heatmap {
    *
    * Info: The used processModelId is bound by the inspect view.
    */
-  public processModelIdChanged(): void {
-    const noProcessModelId: boolean = this.processModelId === undefined || this.processModelId === null;
-    if (noProcessModelId) {
-      return;
-    }
+  // public activeDiagramChanged(): void {
+  //   const attachedViewer: Element = document.getElementsByClassName('bjs-container')[0];
 
-    const attachedViewer: Element = document.getElementsByClassName('bjs-container')[0];
+  //   const viewerContainerIsAttached: boolean = this.viewerContainer !== undefined
+  //                                           && this.viewerContainer !== null
+  //                                           && this.viewerContainer.childElementCount > 1
+  //                                           && attachedViewer !== undefined
+  //                                           && attachedViewer !== null;
 
-    const viewerContainerIsAttached: boolean = this.viewerContainer !== undefined
-                                            && this.viewerContainer !== null
-                                            && this.viewerContainer.childElementCount > 1
-                                            && attachedViewer !== undefined
-                                            && attachedViewer !== null;
+  //   if (viewerContainerIsAttached) {
+  //     this.viewerContainer.removeChild(attachedViewer);
+  //   }
 
-    if (viewerContainerIsAttached) {
-      this.viewerContainer.removeChild(attachedViewer);
-    }
+  //   const viewerIsInitialized: boolean = this._viewer !== undefined;
+  //   if (viewerIsInitialized) {
+  //     this._viewer.detach();
+  //     this._viewer.destroy();
+  //   }
 
-    const viewerIsInitialized: boolean = this._viewer !== undefined;
-    if (viewerIsInitialized) {
-      this._viewer.detach();
-      this._viewer.destroy();
-    }
-
-    this.attached();
-  }
+  //   this.attached();
+  // }
 
   public async attached(): Promise<void> {
-    const noProcessModelId: boolean = this.processModelId === undefined || this.processModelId === null;
-    if (noProcessModelId) {
-      return;
-    }
-
     this._modeler = new bundle.modeler({
       moddleExtensions: {
         camunda: bundle.camundaModdleDescriptor,
       },
     });
 
-    this._processModel = await this._heatmapService.getProcess(this.processModelId);
+    // this._eventAggregator.publish(environment.events.navBar.updateProcess, this._processModel);
 
-    this._eventAggregator.publish(environment.events.navBar.updateProcess, this._processModel);
-
-    await this._pushXmlToBpmnModeler(this._processModel.xml, this._modeler);
+    await this._pushXmlToBpmnModeler(this.activeDiagram.xml, this._modeler);
 
     const elementRegistry: IElementRegistry  = this._modeler.get('elementRegistry');
 
@@ -98,7 +87,7 @@ export class Heatmap {
 
     const flowNodeRuntimeInformation: Array<FlowNodeRuntimeInformation> = await this
       ._heatmapService
-      .getRuntimeInformationForProcessModel(this.processModelId);
+      .getRuntimeInformationForProcessModel(this.activeDiagram.id);
 
     const xml: string = await this._heatmapService.getColoredXML(associations, flowNodeRuntimeInformation, this._modeler);
 
@@ -114,11 +103,11 @@ export class Heatmap {
 
     const overlays: IOverlay = this._viewer.get('overlays');
 
-    this._heatmapService.addOverlays(overlays, elementRegistry, this._processModel.id);
+    this._heatmapService.addOverlays(overlays, elementRegistry, this.activeDiagram.id);
 
     const dashboardIsNotShown: boolean = !this.dashboardIsShown;
     if (dashboardIsNotShown) {
-      this._eventAggregator.publish(environment.events.navBar.showProcessName, this._processModel);
+      this._eventAggregator.publish(environment.events.navBar.showProcessName, this.activeDiagram);
     }
 
     this._viewer.attachTo(this.viewerContainer);
