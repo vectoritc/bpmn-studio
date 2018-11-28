@@ -13,6 +13,7 @@ import {
   IAuthenticationService,
   IBpmnModeler,
   IBpmnXmlSaveOptions,
+  ICanvas,
   IColorPickerColor,
   IElementRegistry,
   IEvent,
@@ -38,6 +39,7 @@ export class LiveExecutionTracker {
   private _diagramViewer: IBpmnModeler;
   private _modeling: IModeling;
   private _elementRegistry: IElementRegistry;
+  private _viewerCanvas: ICanvas;
 
   private _router: Router;
   private _notificationService: NotificationService;
@@ -49,6 +51,7 @@ export class LiveExecutionTracker {
   private _processModelId: string;
 
   private _pollingTimer: NodeJS.Timer;
+  private _elementsWithActiveTokens: Array<IShape>;
 
   constructor(router: Router,
               notificationService: NotificationService,
@@ -80,6 +83,7 @@ export class LiveExecutionTracker {
 
     this._modeling = this._diagramModeler.get('modeling');
     this._elementRegistry = this._diagramModeler.get('elementRegistry');
+    this._viewerCanvas = this._diagramViewer.get('canvas');
 
     this._diagramViewer.attachTo(this.canvasModel);
 
@@ -87,6 +91,9 @@ export class LiveExecutionTracker {
     const colorizedXml: string = await this._colorizeXml(xml);
 
     await this._importXml(this._diagramViewer, colorizedXml);
+    if (this._elementsWithActiveTokens !== undefined && this._elementsWithActiveTokens.length > 0) {
+      this._viewerCanvas.zoom(1.5, this._elementsWithActiveTokens[0]);
+    }
 
     this._diagramViewer.on('element.click', this._elementClickHandler);
 
@@ -175,6 +182,7 @@ export class LiveExecutionTracker {
       }
     }
 
+    this._elementsWithActiveTokens = elementsWithActiveToken;
     this._colorizeElements(elementsWithActiveToken, defaultBpmnColors.orange);
     this._colorizeElements(elementsWithTokenHistory, defaultBpmnColors.green);
 
