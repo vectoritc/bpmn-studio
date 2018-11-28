@@ -364,14 +364,15 @@ export class SolutionExplorerSolution {
   // TODO: This method is copied all over the place.
   public async navigateToDetailView(diagram: IDiagram): Promise<void> {
     // TODO: Remove this if cause if we again have one detail view.
-
     this._activeSolutionAndDiagramService.setActiveSolutionAndDiagram(this.displayedSolutionEntry, diagram);
 
     this._eventAggregator.publish(environment.events.navBar.updateActiveSolutionAndDiagram, {
       solutionEntry: this.displayedSolutionEntry,
       diagram: diagram,
     });
-    this._router.navigateToRoute('diagram-detail');
+    this._router.navigateToRoute('diagram-detail', {
+      diagramName: diagram.name,
+    });
   }
 
   @computedFrom('_router.currentInstruction.config.name')

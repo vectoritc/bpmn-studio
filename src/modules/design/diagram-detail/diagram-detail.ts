@@ -181,11 +181,6 @@ export class DiagramDetail {
     }
   }
 
-  public updateDetailView(): void {
-    this._eventAggregator.publish(environment.events.navBar.showProcessName, this.diagram);
-    this._eventAggregator.publish(environment.events.navBar.updateProcess, this.diagram);
-  }
-
   /**
    * Saves the current diagram to disk and deploys it to the
    * process engine.
@@ -216,8 +211,6 @@ export class DiagramDetail {
       return definition.$type === 'bpmn:Process';
     });
     const processModelId: string = processModel.id;
-
-    const identity: IIdentity = this._getIdentity();
 
     try {
 
@@ -333,15 +326,6 @@ export class DiagramDetail {
     } else {
       await this.uploadProcess();
     }
-  }
-
-  private _getIdentity(): IIdentity {
-    const accessToken: string = this._authenticationService.getAccessToken();
-    const identity: IIdentity = {
-      token: accessToken,
-    };
-
-    return identity;
   }
 
   private _handleFormValidateEvents(event: ValidateEvent): void {

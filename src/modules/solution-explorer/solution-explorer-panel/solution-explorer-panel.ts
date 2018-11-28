@@ -293,7 +293,9 @@ export class SolutionExplorerPanel {
       diagram: diagram,
     });
 
-    await this._router.navigateToRoute('diagram-detail');
+    await this._router.navigateToRoute('diagram-detail', {
+      diagramName: diagram.name,
+    });
 
   }
 }
