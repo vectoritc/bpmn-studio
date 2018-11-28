@@ -52,7 +52,7 @@ export class SolutionExplorerSolution {
   private _notificationService: NotificationService;
   private _activeSolutionAndDiagramService: IActiveSolutionAndDiagramService;
 
-  private _diagramRoute: string = 'processdef-detail';
+  private _diagramRoute: string = 'diagram-detail';
   private _inspectView: string;
   private _subscriptions: Array<Subscription>;
   private _openedSolution: ISolution;
@@ -160,7 +160,7 @@ export class SolutionExplorerSolution {
       }),
 
       this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToDesigner, () => {
-        this._diagramRoute = 'processdef-detail';
+        this._diagramRoute = 'diagram-detail';
       }),
     ];
 
@@ -370,9 +370,11 @@ export class SolutionExplorerSolution {
       solutionEntry: this.displayedSolutionEntry,
       diagram: diagram,
     });
-    this._router.navigateToRoute('diagram-detail', {
+
+    this._router.navigateToRoute(this._diagramRoute, {
       diagramName: diagram.name,
     });
+
   }
 
   @computedFrom('_router.currentInstruction.config.name')

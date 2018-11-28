@@ -40,27 +40,28 @@ export class Heatmap {
    *
    * Info: The used processModelId is bound by the inspect view.
    */
-  // public activeDiagramChanged(): void {
-  //   const attachedViewer: Element = document.getElementsByClassName('bjs-container')[0];
+  public activeDiagramChanged(): void {
+    console.log('diagram changes', this.activeDiagram);
+    const attachedViewer: Element = document.getElementsByClassName('bjs-container')[0];
 
-  //   const viewerContainerIsAttached: boolean = this.viewerContainer !== undefined
-  //                                           && this.viewerContainer !== null
-  //                                           && this.viewerContainer.childElementCount > 1
-  //                                           && attachedViewer !== undefined
-  //                                           && attachedViewer !== null;
+    const viewerContainerIsAttached: boolean = this.viewerContainer !== undefined
+                                            && this.viewerContainer !== null
+                                            && this.viewerContainer.childElementCount > 1
+                                            && attachedViewer !== undefined
+                                            && attachedViewer !== null;
 
-  //   if (viewerContainerIsAttached) {
-  //     this.viewerContainer.removeChild(attachedViewer);
-  //   }
+    if (viewerContainerIsAttached) {
+      this.viewerContainer.removeChild(attachedViewer);
+    }
 
-  //   const viewerIsInitialized: boolean = this._viewer !== undefined;
-  //   if (viewerIsInitialized) {
-  //     this._viewer.detach();
-  //     this._viewer.destroy();
-  //   }
+    const viewerIsInitialized: boolean = this._viewer !== undefined;
+    if (viewerIsInitialized) {
+      this._viewer.detach();
+      this._viewer.destroy();
+    }
 
-  //   this.attached();
-  // }
+    this.attached();
+  }
 
   public async attached(): Promise<void> {
     this._modeler = new bundle.modeler({
