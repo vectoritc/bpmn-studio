@@ -31,6 +31,8 @@ interface RouteParameters {
   processModelId: string;
 }
 
+type ElementWithIncomingElements = Array<IShape>;
+
 @inject(Router, 'NotificationService', 'AuthenticationService', 'ManagementApiClientService', 'InspectCorrelationService')
 export class LiveExecutionTracker {
   public canvasModel: HTMLElement;
@@ -135,70 +137,111 @@ export class LiveExecutionTracker {
 
     this._clearColors();
 
-    const allElements: Array<IShape> = this._elementRegistry.getAll();
+    const allElements: Array<IShape> = this._elementRegistry.filter((element: IShape): boolean => {
+      const elementCanHaveAToken: boolean = element.type !== 'bpmn:SequenceFlow'
+                                        && element.type !== 'bpmn:Collaboration'
+                                        && element.type !== 'bpmn:Participant'
+                                        && element.type !== 'bpmn:Lane'
+                                        && element.type !== 'label';
 
-    const elementsWithActiveToken: Array<IShape> = [];
-    const elementsWithTokenHistory: Array<IShape> = [];
+      return elementCanHaveAToken;
+    });
 
-    for (const element of allElements) {
-      const elementCanNotHaveAToken: boolean = element.type === 'bpmn:SequenceFlow'
-                                            || element.type === 'bpmn:Collaboration'
-                                            || element.type === 'bpmn:Participant'
-                                            || element.type === 'bpmn:Lane'
-                                            || element.type === 'label';
+    const elementsWithIncomingElementsWithActiveTokenPromises: Array<Promise<ElementWithIncomingElements>> =
+      this._getElementsWithActiveToken(allElements);
 
-      if (elementCanNotHaveAToken) {
-        continue;
+    const elementsWithIncomingElementWithTokenHistoryPromises: Array<Promise<ElementWithIncomingElements>> =
+    this._getElementsWithTokenHistory(allElements);
+
+    const elementsWithIncomingElementsWithActiveToken: Array<ElementWithIncomingElements> =
+      await Promise.all(elementsWithIncomingElementsWithActiveTokenPromises);
+
+    const elementsWithIncomingElementsWithTokenHistory: Array<ElementWithIncomingElements> =
+      await Promise.all(elementsWithIncomingElementWithTokenHistoryPromises);
+
+    const elementsWithActiveToken: Array<IShape> = [].concat(...elementsWithIncomingElementsWithActiveToken);
+
+    const elementsWithTokenHistory: Array<IShape> = [].concat(...elementsWithIncomingElementsWithTokenHistory).filter((element: IShape) => {
+      if (element === undefined) {
+        return false;
       }
 
-      const elementHasActiveToken: boolean = await this._hasElementActiveToken(element.id);
+      const elementHasNoActiveToken: boolean = elementsWithActiveToken.find((elementWithActiveToken: IShape) => {
+        return element.id === elementWithActiveToken.id;
+      }) === undefined;
 
-      if (elementHasActiveToken) {
-        elementsWithActiveToken.push(element);
+      return elementHasNoActiveToken;
+    });
 
-        const incomignElementsAsIModdleElement: Array<IModdleElement> = element.businessObject.incoming;
-
-        const elementHasIncomingElements: boolean = incomignElementsAsIModdleElement === undefined;
-        if (elementHasIncomingElements) {
-          continue;
-        }
-
-        for (const incomingElement of incomignElementsAsIModdleElement) {
-          const incomingElemenAsShape: IShape = this._elementRegistry.get(incomingElement.id);
-
-          elementsWithTokenHistory.push(incomingElemenAsShape);
-        }
-
-        continue;
-      }
-
-      const elementHasTokenHistory: boolean = await this._hasElementTokenHistory(element.id);
-
-      if (elementHasTokenHistory) {
-        elementsWithTokenHistory.push(element);
-
-        const incomignElementsAsIModdleElement: Array<IModdleElement> = element.businessObject.incoming;
-
-        const elementHasIncomingElements: boolean = incomignElementsAsIModdleElement === undefined;
-        if (elementHasIncomingElements) {
-          continue;
-        }
-
-        for (const incomingElement of incomignElementsAsIModdleElement) {
-          const incomingElemenAsShape: IShape = this._elementRegistry.get(incomingElement.id);
-
-          elementsWithTokenHistory.push(incomingElemenAsShape);
-        }
-      }
-    }
-
-    this._elementsWithActiveTokens = elementsWithActiveToken;
     this._colorizeElements(elementsWithActiveToken, defaultBpmnColors.orange);
-    this._colorizeElements(elementsWithTokenHistory, defaultBpmnColors.green);
 
     const colorizedXml: string = await this._exportXml(this._diagramModeler);
 
     return colorizedXml;
+  }
+
+  private _getElementsWithActiveToken(elements: Array<IShape>): Array<Promise<ElementWithIncomingElements>> {
+    const elementsWithActiveToken: Array<Promise<ElementWithIncomingElements>> = [];
+
+    for (const element of elements) {
+      const elementWithIncomingElements: Promise<ElementWithIncomingElements> = this._getElementWithIncomingElementsWithActiveToken(element);
+
+      elementsWithActiveToken.push(elementWithIncomingElements);
+    }
+
+    return elementsWithActiveToken;
+  }
+
+  private async _getElementWithIncomingElementsWithActiveToken(element: IShape): Promise<ElementWithIncomingElements> {
+    const elementWithIncomingElements: Array<IShape> = [];
+
+    const elementHasNoActiveToken: boolean = !(await this._hasElementActiveToken(element.id));
+    if (elementHasNoActiveToken) {
+      return [];
+    }
+
+    elementWithIncomingElements.push(element);
+
+    return elementWithIncomingElements;
+  }
+
+  private _getElementsWithTokenHistory(elements: Array<IShape>): Array<Promise<ElementWithIncomingElements>> {
+    const elementsWithTokenHistory: Array<Promise<ElementWithIncomingElements>> = [];
+
+    for (const element of elements) {
+      const elementWithIncomingElements: Promise<ElementWithIncomingElements> = this._getElementWithIncomingElementsWithTokenHistory(element);
+
+      elementsWithTokenHistory.push(elementWithIncomingElements);
+    }
+
+    return elementsWithTokenHistory;
+  }
+
+  private async _getElementWithIncomingElementsWithTokenHistory(element: IShape): Promise<ElementWithIncomingElements> {
+    const elementWithIncomingElements: Array<IShape> = [];
+
+    const elementHasNoTokenHistory: boolean = !(await this._hasElementTokenHistory(element.id));
+
+    if (elementHasNoTokenHistory) {
+      return [];
+    }
+
+    elementWithIncomingElements.push(element);
+
+    const incomignElementsAsIModdleElement: Array<IModdleElement> = element.businessObject.incoming;
+
+    const elementHasIncomingElements: boolean = incomignElementsAsIModdleElement === undefined;
+    if (elementHasIncomingElements) {
+      return elementWithIncomingElements;
+    }
+
+    for (const incomingElement of incomignElementsAsIModdleElement) {
+      const incomingElemenAsShape: IShape = this._elementRegistry.get(incomingElement.id);
+
+      elementWithIncomingElements.push(incomingElemenAsShape);
+    }
+
+    return elementWithIncomingElements;
   }
 
   private _colorizeElements(elements: Array<IShape>, color: IColorPickerColor): void {
