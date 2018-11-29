@@ -316,6 +316,8 @@ export class LiveExecutionTracker {
 
   private async _startPolling(): Promise<void> {
     this._pollingTimer = setTimeout(async() => {
+      const correlationIsStillActive: boolean = await this._isCorrelationStillActive();
+
       const xml: string = await this._getXml();
       const colorizedXml: string = await this._colorizeXml(xml);
 
@@ -325,8 +327,6 @@ export class LiveExecutionTracker {
       if (xmlChanged) {
         this._importXml(this._diagramViewer, colorizedXml);
       }
-
-      const correlationIsStillActive: boolean = await this._isCorrelationStillActive();
 
       if (correlationIsStillActive) {
         this._startPolling();
