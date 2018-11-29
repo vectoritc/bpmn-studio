@@ -52,7 +52,6 @@ export class LiveExecutionTracker {
 
   private _pollingTimer: NodeJS.Timer;
   private _attached: boolean;
-  private _elementsWithActiveTokens: Array<IShape>;
 
   constructor(router: Router,
               notificationService: NotificationService,
@@ -94,9 +93,6 @@ export class LiveExecutionTracker {
     const colorizedXml: string = await this._colorizeXml(xml);
 
     await this._importXml(this._diagramViewer, colorizedXml);
-    if (this._elementsWithActiveTokens !== undefined && this._elementsWithActiveTokens.length > 0) {
-      this._viewerCanvas.zoom(1.5, this._elementsWithActiveTokens[0]);
-    }
 
     this._diagramViewer.on('element.click', this._elementClickHandler);
 
