@@ -224,7 +224,10 @@ export class DiagramDetail {
       this.activeDiagram.id = processModelId;
 
       await solutionToDeployTo.service.saveDiagram(this.activeDiagram, this._internalProcessEngineBaseRoute);
+
       this._solutionService.setActiveSolution(solutionToDeployTo);
+      this._activeSolutionEntry = solutionToDeployTo;
+      this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(processModelId);
 
       this._eventAggregator.publish(environment.events.navBar.updateActiveSolutionAndDiagram,
         {
