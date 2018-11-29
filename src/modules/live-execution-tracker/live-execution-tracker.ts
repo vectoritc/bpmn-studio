@@ -78,6 +78,7 @@ export class LiveExecutionTracker {
       [
         bundle.ZoomScrollModule,
         bundle.MoveCanvasModule,
+        bundle.MiniMap,
       ],
     });
 
