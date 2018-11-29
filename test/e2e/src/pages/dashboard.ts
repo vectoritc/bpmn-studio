@@ -79,7 +79,7 @@ export class Dashboard {
             .element(this._byProcessListItemModelName);
   }
 
-  public openProcessModelByClickOnModelIdInProcessRunningList(correlationId: string): promise.Promise<void> {
+  public async openProcessModelByClickOnModelIdInProcessRunningList(correlationId: string): promise.Promise<void> {
     const hyperlinkOfProcessRunningListItemByCorrelationId: ElementFinder = this.hyperlinkOfProcessRunningListItemByCorrelationId(correlationId);
 
     return hyperlinkOfProcessRunningListItemByCorrelationId.click();
