@@ -101,6 +101,12 @@ export class DiagramDetail {
       this._eventAggregator.subscribe(environment.events.differsFromOriginal, (savingNeeded: boolean) => {
         this._diagramHasChanged = savingNeeded;
       }),
+      this._eventAggregator.subscribe(environment.events.navBar.validationError, () => {
+        this._diagramIsInvalid = true;
+      }),
+      this._eventAggregator.subscribe(environment.events.navBar.noValidationError, () => {
+        this._diagramIsInvalid = false;
+      }),
     ];
   }
 
@@ -267,7 +273,7 @@ export class DiagramDetail {
   private async _saveDiagram(): Promise<void> {
 
     if (this._diagramIsInvalid) {
-      this._notificationService.showNotification(NotificationType.WARNING, `The could not be saved because it is invalid!`);
+      this._notificationService.showNotification(NotificationType.WARNING, `The diagram could not be saved because it is invalid!`);
 
       return;
     }

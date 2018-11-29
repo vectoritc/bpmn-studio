@@ -132,6 +132,14 @@ export class ProcessDefDetail {
       }),
       //#endregion
 
+      this._eventAggregator.subscribe(environment.events.navBar.validationError, () => {
+        this._diagramIsInvalid = true;
+      }),
+
+      this._eventAggregator.subscribe(environment.events.navBar.noValidationError, () => {
+        this._diagramIsInvalid = false;
+      }),
+
     ];
 
     this._eventAggregator.publish(environment.events.navBar.showTools);
@@ -422,7 +430,7 @@ export class ProcessDefDetail {
     this._dropInvalidFormData();
 
     if (this._diagramIsInvalid) {
-      this._notificationService.showNotification(NotificationType.WARNING, `The could not be saved because it is invalid!`);
+      this._notificationService.showNotification(NotificationType.WARNING, `The diagram could not be saved because it is invalid!`);
 
       /**
        * TODO: Maybe we can reject this promise with some kind of 'ValidationError'

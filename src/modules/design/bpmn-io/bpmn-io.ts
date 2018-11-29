@@ -10,8 +10,11 @@ import {
   IDiagramExportService,
   IDiagramPrintService,
   IEditorActions,
+  IElementRegistry,
+  IEvent,
   IEventFunction,
   IKeyboard,
+  IShape,
   NotificationType,
 } from '../../../contracts/index';
 import environment from '../../../environment';
@@ -19,6 +22,7 @@ import {NotificationService} from '../../notification/notification.service';
 import {DiagramExportService, DiagramPrintService} from './services/index';
 
 const sideBarRightSize: number = 35;
+const elementRegistryTimeoutMilliseconds: number = 50;
 
 @inject('NotificationService', EventAggregator)
 export class BpmnIo {
@@ -120,6 +124,13 @@ export class BpmnIo {
     this.modeler.on('commandStack.changed', () => {
       this._eventAggregator.publish(environment.events.diagramChange);
     }, handlerPriority);
+
+    this.modeler.on(['shape.added', 'shape.removed'], (element: IEvent) => {
+      const shapeIsParticipant: boolean = element.element.type === 'bpmn:Participant';
+      if (shapeIsParticipant) {
+        this._checkForMultipleParticipants();
+      }
+    });
 
     this._diagramPrintService = new DiagramPrintService();
     this._diagramExportService = new DiagramExportService();
@@ -392,6 +403,25 @@ export class BpmnIo {
       });
     });
     return returnPromise;
+  }
+
+  private _checkForMultipleParticipants(): void {
+    const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
+
+    setTimeout(() => {
+      const participants: Array<IShape> = elementRegistry.filter((element: IShape) => {
+        return element.type === 'bpmn:Participant';
+      });
+
+      const multipleParticipants: boolean = participants.length > 1;
+
+      const eventToPublish: string = multipleParticipants
+                                     ? environment.events.navBar.validationError
+                                     : environment.events.navBar.noValidationError;
+
+      this._eventAggregator.publish(eventToPublish);
+
+    }, elementRegistryTimeoutMilliseconds);
   }
 
   private _toggleDiffView(): void {
