@@ -22,7 +22,7 @@ import {NotificationService} from '../../notification/notification.service';
 import {DiagramExportService, DiagramPrintService} from './services/index';
 
 const sideBarRightSize: number = 35;
-const elementRegistryTimeout: number = 50;
+const elementRegistryTimeoutMilliSeconds: number = 50;
 
 @inject('NotificationService', EventAggregator)
 export class BpmnIo {
@@ -414,12 +414,14 @@ export class BpmnIo {
       });
 
       const multipleParticipants: boolean = participants.length > 1;
-      if (multipleParticipants) {
-        this._eventAggregator.publish(environment.events.navBar.validationError);
-      } else {
-        this._eventAggregator.publish(environment.events.navBar.noValidationError);
-      }
-    }, elementRegistryTimeout);
+
+      const eventToPublish: string = multipleParticipants
+                                     ? environment.events.navBar.validationError
+                                     : environment.events.navBar.noValidationError;
+
+      this._eventAggregator.publish(eventToPublish);
+
+    }, elementRegistryTimeoutMilliSeconds);
   }
 
   private _toggleDiffView(): void {
