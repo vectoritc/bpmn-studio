@@ -30,8 +30,8 @@ export class ProcessModel {
     return '/processdef/' + processModel + '/task/Task_0k8m2if/dynamic-ui';
   }
 
-  public static waitingroomUrl(processModelId: string, correlationId: string): string {
-    return '/waitingroom/' + correlationId + '/' + processModelId;
+  public static liveExecutionTrackerUrl(processModelId: string, correlationId: string): string {
+    return '/correlation/' + correlationId + '/processModel/' + processModelId + '/live-execution-tracker';
   }
 
   public getProcessModelId(): string {
