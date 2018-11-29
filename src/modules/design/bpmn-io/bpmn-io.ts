@@ -22,7 +22,7 @@ import {NotificationService} from '../../notification/notification.service';
 import {DiagramExportService, DiagramPrintService} from './services/index';
 
 const sideBarRightSize: number = 35;
-const elementRegistryTimeoutMilliSeconds: number = 50;
+const elementRegistryTimeoutMilliseconds: number = 50;
 
 @inject('NotificationService', EventAggregator)
 export class BpmnIo {
@@ -421,7 +421,7 @@ export class BpmnIo {
 
       this._eventAggregator.publish(eventToPublish);
 
-    }, elementRegistryTimeoutMilliSeconds);
+    }, elementRegistryTimeoutMilliseconds);
   }
 
   private _toggleDiffView(): void {
