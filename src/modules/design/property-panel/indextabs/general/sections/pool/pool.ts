@@ -31,6 +31,12 @@ export class PoolSection implements ISection {
   }
 
   public activate(model: IPageModel): void {
+
+    const noProcessReferencePresent: boolean = model.elementInPanel.businessObject.processRef === undefined;
+    if (noProcessReferencePresent) {
+      return;
+    }
+
     if (this.validationError) {
       this.businessObjInPanel.processRef.id = this._previousProcessRefId;
       this.validationController.validate();
