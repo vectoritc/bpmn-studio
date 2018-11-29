@@ -80,13 +80,13 @@ export class DiagramDetail {
 
     this._activeSolutionEntry = await this._solutionService.getActiveSolutionEntry();
 
-    const diagramNameIsSet: boolean = routeParameters.diagramName !== undefined;
+    const diagramNameIsNotSet: boolean = routeParameters.diagramName === undefined;
 
-    if (diagramNameIsSet) {
-      this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
-    } else {
+    if (diagramNameIsNotSet) {
       return;
     }
+
+    this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
 
     this._diagramHasChanged = false;
 
@@ -346,7 +346,9 @@ export class DiagramDetail {
   public async showSelectStartEventDialog(): Promise<void> {
     await this._updateProcessStartEvents();
 
-    if (this.processesStartEvents.length === 1) {
+    const onlyOneStarteventAvailable: boolean = this.processesStartEvents.length === 1;
+
+    if (onlyOneStarteventAvailable) {
       this.selectedStartEventId = this.processesStartEvents[0].id;
       this.startProcess();
 
@@ -417,7 +419,7 @@ export class DiagramDetail {
     this._diagramIsInvalid = false;
   }
 
-    /**
+  /**
    * In the current implementation this method only checks for UserTasks that have
    * empty or otherwise not allowed FormData in them.
    *
@@ -431,7 +433,10 @@ export class DiagramDetail {
     const registry: IElementRegistry = this.bpmnio.modeler.get('elementRegistry');
 
     registry.forEach((element: IShape) => {
-      if (element.type === 'bpmn:UserTask') {
+
+      const elementIsUserTask: boolean = element.type === 'bpmn:UserTask';
+
+      if (elementIsUserTask) {
         const businessObj: IModdleElement = element.businessObject;
 
         if (businessObj.extensionElements) {
@@ -445,7 +450,9 @@ export class DiagramDetail {
             return keepThisValue;
           });
 
-          if (extensions.values.length === 0) {
+          const noExtensionValuesSet: boolean = extensions.values.length === 0;
+
+          if (noExtensionValuesSet) {
             delete businessObj.extensionElements;
           }
         }

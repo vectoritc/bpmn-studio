@@ -1,6 +1,5 @@
 import {inject} from 'aurelia-framework';
 
-import {IIdentity} from '@essential-projects/iam_contracts';
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 
 import {ISolutionEntry, ISolutionService} from '../../../../../../contracts';
