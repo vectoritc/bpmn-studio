@@ -111,7 +111,7 @@ export class LiveExecutionTracker {
     const clickedElement: IShape = event.element;
 
     const clickedElementIsNotAUserOrManualTask: boolean = clickedElement.type !== 'bpmn:UserTask'
-    && clickedElement.type !== 'bpmn:ManualTask';
+                                                       && clickedElement.type !== 'bpmn:ManualTask';
 
     if (clickedElementIsNotAUserOrManualTask) {
       return;
