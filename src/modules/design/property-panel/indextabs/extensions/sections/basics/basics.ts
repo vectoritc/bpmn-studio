@@ -40,7 +40,7 @@ export class BasicsSection implements ISection {
 
   public isSuitableForElement(element: IShape): boolean {
     const elementIsUndefined: boolean = element === undefined
-                                            || element.businessObject === undefined;
+                                     || element.businessObject === undefined;
 
     if (elementIsUndefined) {
       return false;
