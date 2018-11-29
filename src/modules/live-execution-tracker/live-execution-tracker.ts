@@ -148,25 +148,15 @@ export class LiveExecutionTracker {
       return elementCanHaveAToken;
     });
 
-    const elementsWithIncomingElementsWithActiveTokenPromises: Array<Promise<ElementWithIncomingElements>> =
-      this._getElementsWithActiveToken(allElements);
-
     const elementsWithIncomingElementWithTokenHistoryPromises: Array<Promise<ElementWithIncomingElements>> =
     this._getElementsWithTokenHistory(allElements);
 
-    const elementsWithIncomingElementsWithActiveToken: Array<ElementWithIncomingElements> =
-      await Promise.all(elementsWithIncomingElementsWithActiveTokenPromises);
+    const elementsWithActiveToken: Array<IShape> = await this._getElementsWithActiveToken(allElements);
 
     const elementsWithIncomingElementsWithTokenHistory: Array<ElementWithIncomingElements> =
       await Promise.all(elementsWithIncomingElementWithTokenHistoryPromises);
 
-    const elementsWithActiveToken: Array<IShape> = [].concat(...elementsWithIncomingElementsWithActiveToken);
-
     const elementsWithTokenHistory: Array<IShape> = [].concat(...elementsWithIncomingElementsWithTokenHistory).filter((element: IShape) => {
-      if (element === undefined) {
-        return false;
-      }
-
       const elementHasNoActiveToken: boolean = elementsWithActiveToken.find((elementWithActiveToken: IShape) => {
         return element.id === elementWithActiveToken.id;
       }) === undefined;
@@ -174,6 +164,7 @@ export class LiveExecutionTracker {
       return elementHasNoActiveToken;
     });
 
+    this._colorizeElements(elementsWithTokenHistory, defaultBpmnColors.green);
     this._colorizeElements(elementsWithActiveToken, defaultBpmnColors.orange);
 
     const colorizedXml: string = await this._exportXml(this._diagramModeler);
@@ -181,29 +172,25 @@ export class LiveExecutionTracker {
     return colorizedXml;
   }
 
-  private _getElementsWithActiveToken(elements: Array<IShape>): Array<Promise<ElementWithIncomingElements>> {
-    const elementsWithActiveToken: Array<Promise<ElementWithIncomingElements>> = [];
+  private async _getElementsWithActiveToken(elements: Array<IShape>): Promise<Array<IShape>> {
+    const identity: IIdentity = this._getIdentity();
 
-    for (const element of elements) {
-      const elementWithIncomingElements: Promise<ElementWithIncomingElements> = this._getElementWithIncomingElementsWithActiveToken(element);
+    const activeTokensForProcessModel: Array<ActiveToken> = await this._managementApiClient.getActiveTokensForProcessModel(identity,
+                                                                                                                           this._processModelId);
 
-      elementsWithActiveToken.push(elementWithIncomingElements);
-    }
+    const activeTokensForProcessInstance: Array<ActiveToken> = activeTokensForProcessModel.filter((activeToken: ActiveToken) => {
+      return activeToken.correlationId === this._correlationId;
+    });
+
+    const elementsWithActiveToken: Array<IShape> = activeTokensForProcessInstance.map((activeToken: ActiveToken): IShape => {
+      const elementWithActiveToken: IShape = elements.find((element: IShape) => {
+        return element.id === activeToken.flowNodeId;
+      });
+
+      return elementWithActiveToken;
+    });
 
     return elementsWithActiveToken;
-  }
-
-  private async _getElementWithIncomingElementsWithActiveToken(element: IShape): Promise<ElementWithIncomingElements> {
-    const elementWithIncomingElements: Array<IShape> = [];
-
-    const elementHasNoActiveToken: boolean = !(await this._hasElementActiveToken(element.id));
-    if (elementHasNoActiveToken) {
-      return [];
-    }
-
-    elementWithIncomingElements.push(element);
-
-    return elementWithIncomingElements;
   }
 
   private _getElementsWithTokenHistory(elements: Array<IShape>): Array<Promise<ElementWithIncomingElements>> {
