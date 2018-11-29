@@ -23,6 +23,7 @@ export class Inspect {
   public dashboard: Dashboard;
   public showTokenViewer: boolean = false;
   public tokenViewerButtonDisabled: boolean = false;
+  public diagramIsSet: boolean = false;
 
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
@@ -39,14 +40,11 @@ export class Inspect {
 
     this._activeSolutionEntry = await this._solutionService.getActiveSolutionEntry();
 
-    const activeSolutionIsSet: boolean = this._activeSolutionEntry !== undefined;
-    if (activeSolutionIsSet) {
-      this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
-    } else {
-      const connectedProcessEngineRoute: string = window.localStorage.getItem('processEngineRoute');
-      const remoteSolutionEntry: ISolutionEntry = this._solutionService.getSolutionEntryForUri(connectedProcessEngineRoute);
+    const diagramNameSet: boolean = routeParameters.diagramName !== undefined;
 
-      this._solutionService.setActiveSolution(remoteSolutionEntry);
+    if (diagramNameSet) {
+      this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
+      this.diagramIsSet = true;
     }
 
     const routeViewIsDashboard: boolean = routeParameters.view === 'dashboard';

@@ -277,6 +277,12 @@ export class SolutionExplorerList {
 
     this._solutionService.addSolutionEntry(entry);
 
+    const entryIsRemoteSolution: boolean = entry.uri.startsWith('http');
+
+    if (entryIsRemoteSolution) {
+      this._solutionService.setActiveSolution(entry);
+    }
+
     if (insertAtBeginning) {
       this._openedSolutions.splice(1, 0, entry);
     } else {

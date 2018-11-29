@@ -84,7 +84,7 @@ export class ProcessDefList {
 
   public showDetails(processModelId: string): void {
     this._router.navigateToRoute('diagram-detail', {
-      processModelId: processModelId,
+      diagramName: processModelId,
     });
   }
 

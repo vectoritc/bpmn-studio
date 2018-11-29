@@ -2,7 +2,7 @@ import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {RouteConfig, Router} from 'aurelia-router';
 
-import { IDiagram, ISolution } from '@process-engine/solutionexplorer.contracts';
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionEntry, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
