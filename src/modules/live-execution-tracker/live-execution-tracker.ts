@@ -19,6 +19,7 @@ import {
   IEvent,
   IModdleElement,
   IModeling,
+  IOverlay,
   IShape,
   NotificationType,
 } from '../../contracts/index';
@@ -42,6 +43,7 @@ export class LiveExecutionTracker {
   private _modeling: IModeling;
   private _elementRegistry: IElementRegistry;
   private _viewerCanvas: ICanvas;
+  private _overlay: IOverlay;
 
   private _router: Router;
   private _notificationService: NotificationService;
@@ -88,6 +90,7 @@ export class LiveExecutionTracker {
     this._modeling = this._diagramModeler.get('modeling');
     this._elementRegistry = this._diagramModeler.get('elementRegistry');
     this._viewerCanvas = this._diagramViewer.get('canvas');
+    this._overlay = this._diagramViewer.get('overlays');
 
     this._diagramViewer.attachTo(this.canvasModel);
 
@@ -167,9 +170,31 @@ export class LiveExecutionTracker {
     this._colorizeElements(elementsWithTokenHistory, defaultBpmnColors.green);
     this._colorizeElements(elementsWithActiveToken, defaultBpmnColors.orange);
 
+    this._addOverlaysToUserAndManualTasks(elementsWithActiveToken);
+
     const colorizedXml: string = await this._exportXml(this._diagramModeler);
 
     return colorizedXml;
+  }
+
+  private _addOverlaysToUserAndManualTasks(elements: Array<IShape>): void {
+
+    for (const element of elements) {
+      const clickedElementIsNotAUserOrManualTask: boolean = element.type !== 'bpmn:UserTask'
+                                                         && element.type !== 'bpmn:ManualTask';
+
+      if (clickedElementIsNotAUserOrManualTask) {
+        continue;
+      }
+
+      this._overlay.add(element, {
+        position: {
+          left: 44,
+          top: 30,
+        },
+        html: `<i class="fas fa-play play-task-button"></i>`,
+      });
+    }
   }
 
   private async _getElementsWithActiveToken(elements: Array<IShape>): Promise<Array<IShape>> {

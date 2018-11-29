@@ -11,3 +11,12 @@
   position: relative;
   height: calc(100% - 20px);
 }
+
+.play-task-button {
+  cursor: pointer;
+  opacity: 0.1;
+}
+
+.play-task-button:hover {
+  opacity: 1;
+}
