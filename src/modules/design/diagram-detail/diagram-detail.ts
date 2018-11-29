@@ -88,6 +88,12 @@ export class DiagramDetail {
 
     this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
 
+    this._eventAggregator.publish(environment.events.navBar.updateActiveSolutionAndDiagram,
+      {
+        solutionEntry: this._activeSolutionEntry,
+        diagram: this.activeDiagram,
+      });
+
     this._diagramHasChanged = false;
 
     const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);

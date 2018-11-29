@@ -205,8 +205,17 @@ export class NavBar {
       return;
     }
 
+    let diagramName: string;
+    const diagramIsNotSelect: boolean = this.activeDiagram === undefined;
+
+    if (diagramIsNotSelect) {
+      diagramName = undefined;
+    } else {
+      diagramName = this.activeDiagram.name;
+    }
+
     this._router.navigateToRoute('inspect', {
-      diagramName: this.activeDiagram.name,
+      diagramName: diagramName,
       view: this.inspectView,
       latestSource: this.latestSource,
     });

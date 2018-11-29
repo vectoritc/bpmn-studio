@@ -5,6 +5,7 @@ import {Router} from 'aurelia-router';
 import {IIdentity} from '@essential-projects/iam_contracts';
 import {Correlation, CorrelationProcessModel, IManagementApi} from '@process-engine/management_api_contracts';
 
+import { IDiagram } from '@process-engine/solutionexplorer.contracts';
 import {
   AuthenticationStateEvent,
   IAuthenticationService,
@@ -115,10 +116,6 @@ export class ProcessList {
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
-  }
-
-  public goBack(): void {
-    this._router.navigateBack();
   }
 
   public get correlations(): Array<Correlation> {

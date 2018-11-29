@@ -29,7 +29,8 @@ export class Inspect {
   private _solutionService: ISolutionService;
   private _activeSolutionEntry: ISolutionEntry;
 
-  constructor(eventAggregator: EventAggregator, solutionService: ISolutionService) {
+  constructor(eventAggregator: EventAggregator,
+              solutionService: ISolutionService) {
     this._eventAggregator = eventAggregator;
     this._solutionService = solutionService;
   }
@@ -37,13 +38,22 @@ export class Inspect {
   public async activate(routeParameters: IInspectRouteParameters): Promise<void> {
 
     this._activeSolutionEntry = await this._solutionService.getActiveSolutionEntry();
-    this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
+
+    const activeSolutionIsSet: boolean = this._activeSolutionEntry !== undefined;
+    if (activeSolutionIsSet) {
+      this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
+    } else {
+      const connectedProcessEngineRoute: string = window.localStorage.getItem('processEngineRoute');
+      const remoteSolutionEntry: ISolutionEntry = this._solutionService.getSolutionEntryForUri(connectedProcessEngineRoute);
+
+      this._solutionService.setActiveSolution(remoteSolutionEntry);
+    }
 
     const routeViewIsDashboard: boolean = routeParameters.view === 'dashboard';
     const routeViewIsHeatmap: boolean = routeParameters.view === 'heatmap';
     const routeViewIsInspectCorrelation: boolean = routeParameters.view === 'inspect-correlation';
 
-    const latestSourceIsPE: boolean = this._activeSolutionEntry.uri.startsWith('http');
+    const latestSourceIsPE: boolean = this._activeSolutionEntry !== undefined && this._activeSolutionEntry.uri.startsWith('http');
 
     if (routeViewIsDashboard) {
       this.showHeatmap = false;
