@@ -7,7 +7,7 @@ import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 
 import {Correlation, CorrelationProcessModel, IManagementApi, TokenHistoryEntry} from '@process-engine/management_api_contracts';
 
-import { ActiveToken } from '@process-engine/kpi_api_contracts';
+import {ActiveToken} from '@process-engine/kpi_api_contracts';
 import {
   defaultBpmnColors,
   IAuthenticationService,
