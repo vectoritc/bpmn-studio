@@ -23,3 +23,4 @@ export {IOverlayPosition} from './IOverlayPosition';
 export {IDefaultOverlayPositions} from './IDefaultOverlayPositions';
 export {IInternalEvent} from './IInternalEvent';
 export {IDescriptor} from './IDescriptor';
+export {IViewbox, IInnerViewbox, IOuterViewbox} from './IViewbox';

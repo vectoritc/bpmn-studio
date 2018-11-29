@@ -141,6 +141,16 @@ export class LiveExecutionTracker {
     const elementsWithTokenHistory: Array<IShape> = [];
 
     for (const element of allElements) {
+      const elementCanNotHaveAToken: boolean = element.type === 'bpmn:SequenceFlow'
+                                            || element.type === 'bpmn:Collaboration'
+                                            || element.type === 'bpmn:Participant'
+                                            || element.type === 'bpmn:Lane'
+                                            || element.type === 'label';
+
+      if (elementCanNotHaveAToken) {
+        continue;
+      }
+
       const elementHasActiveToken: boolean = await this._hasElementActiveToken(element.id);
 
       if (elementHasActiveToken) {
