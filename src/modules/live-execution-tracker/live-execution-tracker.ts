@@ -95,6 +95,7 @@ export class LiveExecutionTracker {
     const colorizedXml: string = await this._colorizeXml(xml);
 
     await this._importXml(this._diagramViewer, colorizedXml);
+    this._viewerCanvas.zoom('fit-viewport');
 
     this._diagramViewer.on('element.click', this._elementClickHandler);
 
