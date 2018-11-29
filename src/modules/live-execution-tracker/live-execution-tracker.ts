@@ -51,6 +51,7 @@ export class LiveExecutionTracker {
   private _processModelId: string;
 
   private _pollingTimer: NodeJS.Timer;
+  private _attached: boolean;
   private _elementsWithActiveTokens: Array<IShape>;
 
   constructor(router: Router,
@@ -72,6 +73,7 @@ export class LiveExecutionTracker {
   }
 
   public async attached(): Promise<void> {
+    this._attached = true;
     this._diagramModeler = new bundle.modeler();
     this._diagramViewer = new bundle.viewer({
       additionalModules:
@@ -102,6 +104,7 @@ export class LiveExecutionTracker {
   }
 
   public detached(): void {
+    this._attached = false;
     this._stopPolling();
   }
 
@@ -329,7 +332,7 @@ export class LiveExecutionTracker {
         this._importXml(this._diagramViewer, colorizedXml);
       }
 
-      if (correlationIsStillActive) {
+      if (correlationIsStillActive && this._attached) {
         this._startPolling();
       }
     }, environment.processengine.liveExecutionTrackerPollingIntervalInMs);
