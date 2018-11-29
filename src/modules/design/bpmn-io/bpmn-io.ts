@@ -434,6 +434,7 @@ export class BpmnIo {
     for (let i: number = 0; i < randomIdLength; i++) {
       randomId += possible.charAt(Math.floor(Math.random() * possible.length));
     }
+
     return randomId;
   }
 
