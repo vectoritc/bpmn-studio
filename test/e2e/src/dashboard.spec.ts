@@ -114,7 +114,7 @@ describe('Dashboard view', () => {
 
     await dashboard.openProcessModelByClickOnModelIdInProcessRunningList(correlationId);
 
-    const processModelUrl: string = ProcessModel.processModelUrl(processModelId);
+    const processModelUrl: string = ProcessModel.getProcessModelUrl();
     const currentBrowserUrl: string = await browser.getCurrentUrl();
 
     expect(currentBrowserUrl).toContain(processModelUrl);

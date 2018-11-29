@@ -94,7 +94,7 @@ describe('Process definition list', () => {
      });
 
     const currentBrowserUrl: string = await browser.getCurrentUrl();
-    const processModelLink: string = ProcessModel.getProcessModelLink();
+    const processModelLink: string = ProcessModel.getProcessModelUrl();
 
     expect(currentBrowserUrl).toContain(processModelLink);
   });
