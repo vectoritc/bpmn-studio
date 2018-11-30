@@ -153,7 +153,10 @@ export class WaitingRoom {
   private _correlationEndCallback: ((correlationId: string) => void) = (correlationId: string): void => {
     this._notificationService.showNotification(NotificationType.INFO, 'Process stopped.');
 
-    this._router.navigateToRoute('inspect');
+    this._router.navigateToRoute('inspect', {
+      diagramName: this._processModelId,
+      view: 'dashboard',
+    });
   }
 
   private _getIdentity(): IIdentity {
