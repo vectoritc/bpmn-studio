@@ -5,7 +5,6 @@ import {Router} from 'aurelia-router';
 import {IIdentity} from '@essential-projects/iam_contracts';
 import {Correlation, CorrelationProcessModel, IManagementApi} from '@process-engine/management_api_contracts';
 
-import { IDiagram } from '@process-engine/solutionexplorer.contracts';
 import {
   AuthenticationStateEvent,
   IAuthenticationService,

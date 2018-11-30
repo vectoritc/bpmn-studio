@@ -387,16 +387,15 @@ export class DiagramDetail {
   /**
    * Opens a modal, if the diagram has unsaved changes and ask the user,
    * if he wants to save his changes. This is necessary to
-   * execute the Process.
+   * execute the process.
    *
    * If there are no unsaved changes, no modal will be displayed.
    */
   private async _showStartDialog(): Promise<void> {
-    if (this._diagramHasChanged) {
-      this.showSaveForStartModal = true;
-    } else {
-      await this.showSelectStartEventDialog();
-    }
+
+    this._diagramHasChanged
+      ? this.showSaveForStartModal = true
+      : await this.showSelectStartEventDialog();
   }
 
   private _handleFormValidateEvents(event: ValidateEvent): void {

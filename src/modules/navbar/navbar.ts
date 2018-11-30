@@ -30,7 +30,6 @@ export class NavBar {
   public diagramContainsUnsavedChanges: boolean = false;
   public inspectView: string = 'dashboard';
   public disableDesignLink: boolean = false;
-  public latestSource: string;
   public navbarTitle: string = '';
   @bindable() public processOpenedFromProcessEngine: boolean = false;
 
@@ -109,7 +108,9 @@ export class NavBar {
         this.disableInspectCorrelationButton = true;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.updateActiveSolutionAndDiagram, ({solutionEntry, diagram}: any) => {
+      this._eventAggregator.subscribe(environment.events.navBar.updateActiveSolutionAndDiagram,
+        ({solutionEntry, diagram}: {solutionEntry: ISolutionEntry, diagram: IDiagram}) => {
+
         this.activeDiagram = diagram;
         this.activeSolutionEntry = solutionEntry;
 
@@ -153,7 +154,6 @@ export class NavBar {
     this._router.navigateToRoute('inspect', {
       diagramName: this.activeDiagram.name,
       view: 'dashboard',
-      latestSource: this.latestSource,
     });
 
     this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, 'dashboard');
@@ -167,7 +167,6 @@ export class NavBar {
     this._router.navigateToRoute('inspect', {
       diagramName: this.activeDiagram.name,
       view: 'heatmap',
-      latestSource: this.latestSource,
     });
 
     this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, 'heatmap');
@@ -181,7 +180,6 @@ export class NavBar {
     this._router.navigateToRoute('inspect', {
       diagramName: this.activeDiagram.name,
       view: 'inspect-correlation',
-      latestSource: this.latestSource,
     });
 
     this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, 'inspect-correlation');
@@ -199,16 +197,13 @@ export class NavBar {
     let diagramName: string;
     const diagramIsNotSelect: boolean = this.activeDiagram === undefined;
 
-    if (diagramIsNotSelect) {
-      diagramName = undefined;
-    } else {
-      diagramName = this.activeDiagram.name;
-    }
+    diagramIsNotSelect
+      ? diagramName = undefined
+      : diagramName = this.activeDiagram.name;
 
     this._router.navigateToRoute('inspect', {
       diagramName: diagramName,
       view: this.inspectView,
-      latestSource: this.latestSource,
     });
   }
 
