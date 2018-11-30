@@ -21,3 +21,5 @@ export {IOverlay} from './IOverlay';
 export {IOverlayDescriptor} from './IOverlayDescriptor';
 export {IOverlayPosition} from './IOverlayPosition';
 export {IDefaultOverlayPositions} from './IDefaultOverlayPositions';
+export {IInternalEvent} from './IInternalEvent';
+export {IDescriptor} from './IDescriptor';
