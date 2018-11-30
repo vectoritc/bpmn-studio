@@ -33,4 +33,5 @@ export interface IModdleElement {
   text?: string;
   incoming?: Array<IModdleElement>;
   outgoing?: Array<IModdleElement>;
+  sourceRef?: IModdleElement;
 }
