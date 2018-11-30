@@ -6,8 +6,8 @@ import {IManagementApi} from '@process-engine/management_api_contracts';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
 import {IAuthenticationService, NotificationType} from '../../contracts/index';
+import {TaskList} from '../inspect/task-list/task-list';
 import {NotificationService} from '../notification/notification.service';
-import {TaskList} from '../task-list/task-list';
 
 interface ITaskListRouteParameters {
   processModelId?: string;
