@@ -12,11 +12,20 @@
   height: calc(100% - 20px);
 }
 
+.play-task-button-container {
+  width: 98px;
+  height: 78px;
+  cursor: pointer;
+}
+
 .play-task-button {
+  position: absolute;
+  top: 30px;
+  left: 44px;
   cursor: pointer;
   opacity: 0.1;
 }
 
-.play-task-button:hover {
+.play-task-button-container:hover .play-task-button {
   opacity: 1;
 }

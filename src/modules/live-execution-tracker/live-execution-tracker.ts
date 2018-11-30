@@ -189,10 +189,10 @@ export class LiveExecutionTracker {
 
       this._overlay.add(element, {
         position: {
-          left: 44,
-          top: 30,
+          left: 0,
+          top: 0,
         },
-        html: `<i class="fas fa-play play-task-button"></i>`,
+        html: `<div class="play-task-button-container"><i class="fas fa-play play-task-button"></i></div>`,
       });
     }
   }
