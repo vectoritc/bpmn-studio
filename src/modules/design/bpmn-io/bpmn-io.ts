@@ -415,7 +415,9 @@ export class BpmnIo {
   }
 
   private _renameFormFields(event: IInternalEvent): IInternalEvent {
-    const formFields: Array<IModdleElement> = event.descriptor.businessObject.extensionElements.values[0].fields.filter((field: IModdleElement) => {
+    const allFields: Array<IModdleElement> = event.descriptor.businessObject.extensionElements.values[0].fields;
+
+    const formFields: Array<IModdleElement> = allFields.filter((field: IModdleElement) => {
       return field.$type === 'camunda:FormField';
     });
 
