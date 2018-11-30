@@ -46,8 +46,6 @@ export default {
     navBar: {
       showTools: 'navbar:tools:show',
       hideTools: 'navbar:tools:hide',
-      showProcessName: 'navbar:processName:show',
-      hideProcessName: 'navbar:processName:hide',
       validationError: 'navbar:validationError:true',
       noValidationError: 'navbar:validationError:false',
       inspectNavigateToDashboard: 'navbar:inspectLink:navigateToDashboard',

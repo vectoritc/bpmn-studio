@@ -59,17 +59,8 @@ export class NavBar {
         this.showTools = true;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.showProcessName, () => {
-        this.showProcessName = true;
-        this._updateNavbarTitle();
-      }),
-
       this._eventAggregator.subscribe(environment.events.navBar.hideTools, () => {
         this.showTools = false;
-      }),
-
-      this._eventAggregator.subscribe(environment.events.navBar.hideProcessName, () => {
-        this.showProcessName = false;
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.validationError, () => {

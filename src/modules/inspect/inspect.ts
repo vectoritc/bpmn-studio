@@ -107,7 +107,6 @@ export class Inspect {
     this._eventAggregator.publish(environment.events.navBar.inspectNavigateToDashboard);
     this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToDesigner);
     this._eventAggregator.publish(environment.events.navBar.hideInspectButtons);
-    this._eventAggregator.publish(environment.events.navBar.hideProcessName);
 
     for (const subscription of this._subscriptions) {
       subscription.dispose();
