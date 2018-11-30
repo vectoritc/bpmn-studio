@@ -83,6 +83,16 @@ export class ProcessModel {
     this._http.post(requestDestination, requestPayload, requestHeaders);
   }
 
+  public async deleteProcessModel(processModelId: string): Promise<void> {
+
+    const requestDestination: string = `/api/management/v1/process_models/${processModelId}/delete`;
+    const requestHeaders: any = {
+      authorization: 'Bearer ZHVtbXlfdG9rZW4=',
+    };
+
+    await this._http.delete(requestDestination, requestHeaders);
+  }
+
   public postProcessModelWithUserTask(processModel?: string): void {
     let currentModel: string = this.getProcessModelId();
     if (processModel !== undefined) {

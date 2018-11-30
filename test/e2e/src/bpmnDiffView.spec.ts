@@ -45,6 +45,12 @@ describe('bpmn-io compare view', () => {
     processModel.postProcessModelWithUserTask(processModelId);
   });
 
+  afterAll(() => {
+    processModelId = processModel.getProcessModelId();
+
+    processModel.deleteProcessModel(processModelId);
+  });
+
   beforeEach(async() => {
     const getRouterViewContainer: ElementFinder = general.getRouterViewContainer;
     const visibilityOfRouterViewContainer: Function = expectedConditions.visibilityOf(getRouterViewContainer);
