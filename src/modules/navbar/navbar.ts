@@ -252,7 +252,7 @@ export class NavBar {
   }
 
   public startProcess(): void {
-    if (this.validationError) {
+    if (this.validationError || this.disableStartButton) {
       return;
     }
 
@@ -260,7 +260,7 @@ export class NavBar {
   }
 
   public uploadProcess(): void {
-    if (this.validationError) {
+    if (this.validationError || this.disableDiagramUploadButton) {
       return;
     }
 
@@ -305,7 +305,7 @@ export class NavBar {
 
     this.disableStartButton = !activeSolutionIsRemoteSolution;
     this.disableDiagramUploadButton = activeSolutionIsRemoteSolution;
-
+    this.disableDiagramUploadButton = activeSolutionIsRemoteSolution;
   }
 
 }
