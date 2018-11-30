@@ -138,6 +138,7 @@ export class DiagramDetail {
         document.getElementById('dontSaveButtonLeaveView').addEventListener('click', () => {
           this.showUnsavedChangesModal = false;
           this._diagramHasChanged = false;
+          this._eventAggregator.publish(environment.events.navBar.diagramChangesResolved);
           resolve(true);
         });
         document.getElementById('saveButtonLeaveView').addEventListener('click', () => {
@@ -474,7 +475,7 @@ export class DiagramDetail {
       this._diagramHasChanged = false;
       this._notificationService
           .showNotification(NotificationType.SUCCESS, `File saved!`);
-      this._eventAggregator.publish(environment.events.navBar.diagramSuccessfullySaved);
+      this._eventAggregator.publish(environment.events.navBar.diagramChangesResolved);
     } catch (error) {
       this._notificationService
           .showNotification(NotificationType.ERROR, `Unable to save the file: ${error}.`);
