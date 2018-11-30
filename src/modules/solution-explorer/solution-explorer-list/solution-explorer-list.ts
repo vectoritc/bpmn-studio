@@ -197,6 +197,7 @@ export class SolutionExplorerList {
       );
 
     const identity: IIdentity = this._createIdentityForSolutionExplorer();
+
     this._addSolutionEntry(uriOfSingleDiagramService, this._singleDiagramService, identity, true);
   }
 

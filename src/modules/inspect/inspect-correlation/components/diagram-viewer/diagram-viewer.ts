@@ -121,7 +121,9 @@ export class DiagramViewer {
   }
 
   public activeDiagramChanged(): void {
-    if (this._diagramViewer === undefined) {
+    const diagramViewerIsNotSet: boolean = this._diagramViewer === undefined;
+
+    if (diagramViewerIsNotSet) {
       return;
     }
 

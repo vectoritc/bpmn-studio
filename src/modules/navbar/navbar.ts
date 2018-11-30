@@ -194,12 +194,11 @@ export class NavBar {
       return;
     }
 
-    let diagramName: string;
     const diagramIsNotSelect: boolean = this.activeDiagram === undefined;
 
-    diagramIsNotSelect
-      ? diagramName = undefined
-      : diagramName = this.activeDiagram.name;
+    const diagramName: string = diagramIsNotSelect
+      ? undefined
+      : this.activeDiagram.name;
 
     this._router.navigateToRoute('inspect', {
       diagramName: diagramName,
