@@ -379,7 +379,7 @@ export class SolutionExplorerSolution {
 
       if (activeRouteIsInspect) {
         this._notificationService.showNotification(NotificationType.INFO,
-          'There are currently no runtime informations about this process available.');
+          'There are currently no runtime information about this process available.');
       }
     }
 

@@ -151,12 +151,13 @@ export class NavBar {
     this.disableHeatmapButton = false;
     this.disableInspectCorrelationButton = false;
 
+    this.inspectView = 'dashboard';
+    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, this.inspectView);
+
     this._router.navigateToRoute('inspect', {
       diagramName: this.activeDiagram.name,
-      view: 'dashboard',
+      view: this.inspectView,
     });
-
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, 'dashboard');
   }
 
   public showHeatmap(): void {
@@ -164,12 +165,13 @@ export class NavBar {
     this.disableDashboardButton = false;
     this.disableInspectCorrelationButton = false;
 
+    this.inspectView = 'heatmap';
+    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, this.inspectView);
+
     this._router.navigateToRoute('inspect', {
       diagramName: this.activeDiagram.name,
-      view: 'heatmap',
+      view: this.inspectView,
     });
-
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, 'heatmap');
   }
 
   public showInspectCorrelation(): void {
@@ -177,12 +179,14 @@ export class NavBar {
     this.disableDashboardButton = false;
     this.disableInspectCorrelationButton = true;
 
+    this.inspectView = 'inspect-correlation';
+    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, this.inspectView);
+
     this._router.navigateToRoute('inspect', {
       diagramName: this.activeDiagram.name,
-      view: 'inspect-correlation',
+      view: this.inspectView,
     });
 
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, 'inspect-correlation');
   }
 
   public navigateToInspect(): void {
@@ -193,6 +197,8 @@ export class NavBar {
     if (activeRouteIsInspect) {
       return;
     }
+
+    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, this.inspectView);
 
     const diagramIsNotSelect: boolean = this.activeDiagram === undefined;
 
