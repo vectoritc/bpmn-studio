@@ -3,11 +3,9 @@ import {inject, observable} from 'aurelia-framework';
 import {Redirect, Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
-import {IIdentity} from '@essential-projects/iam_contracts';
 import {Event, EventList, IManagementApi} from '@process-engine/management_api_contracts';
 import {ProcessModelExecution} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
-import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
 import {IElementRegistry,
         IExtensionElement,
@@ -28,7 +26,6 @@ interface RouteParameters {
 @inject('ManagementApiClientService',
         'NotificationService',
         'SolutionService',
-        'InternalProcessEngineBaseRoute',
         EventAggregator,
         Router,
         ValidationController)
@@ -45,7 +42,6 @@ export class DiagramDetail {
 
   @observable({ changeHandler: 'diagramHasChangedChanged'}) private _diagramHasChanged: boolean;
   private _activeSolutionEntry: ISolutionEntry;
-  private _internalProcessEngineBaseRoute: string | null;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
@@ -59,13 +55,11 @@ export class DiagramDetail {
   constructor(managementApiClient: IManagementApi,
               notificationService: NotificationService,
               solutionService: ISolutionService,
-              internalProcessEngineBaseRoute: string | null,
               eventAggregator: EventAggregator,
               router: Router,
               validationController: ValidationController) {
     this._notificationService = notificationService;
     this._solutionService = solutionService;
-    this._internalProcessEngineBaseRoute = internalProcessEngineBaseRoute;
     this._eventAggregator = eventAggregator;
     this._router = router;
     this._validationController = validationController;
@@ -126,12 +120,6 @@ export class DiagramDetail {
       this._eventAggregator.subscribe(environment.events.navBar.noValidationError, () => {
         this._diagramIsInvalid = false;
       }),
-      this._eventAggregator.subscribe(environment.events.navBar.updateActiveSolutionAndDiagram,
-        ({solutionEntry, diagram}: any) => {
-          this.diagram = diagram;
-
-          this.updateDetailView();
-        }),
       this._eventAggregator.subscribe(environment.events.processDefDetail.startProcess, () => {
         this._showStartDialog();
       }),
