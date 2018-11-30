@@ -56,6 +56,7 @@ export class LiveExecutionTracker {
 
   private _pollingTimer: NodeJS.Timer;
   private _attached: boolean;
+  private _previousElementIdsWithActiveToken: Array<string> = [];
 
   constructor(router: Router,
               notificationService: NotificationService,
@@ -172,12 +173,20 @@ export class LiveExecutionTracker {
 
     this._addOverlaysToUserAndManualTasks(elementsWithActiveToken);
 
+    this._previousElementIdsWithActiveToken = elementsWithActiveToken.map((element: IShape) => element.id).sort();
+
     const colorizedXml: string = await this._exportXml(this._diagramModeler);
 
     return colorizedXml;
   }
 
   private _addOverlaysToUserAndManualTasks(elements: Array<IShape>): void {
+    const elementIds: Array<string> =  elements.map((element: IShape) => element.id).sort();
+
+    const elementsWithActiveTokenDidNotChange: boolean = elementIds.toString() === this._previousElementIdsWithActiveToken.toString();
+    if (elementsWithActiveTokenDidNotChange) {
+      return;
+    }
 
     this._overlay.clear();
 
