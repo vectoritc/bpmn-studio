@@ -153,7 +153,7 @@ export class LiveExecutionTracker {
     });
 
     const elementsWithIncomingElementWithTokenHistoryPromises: Array<Promise<ElementWithIncomingElements>> =
-    this._getElementsWithTokenHistory(allElements);
+      this._getElementsWithTokenHistory(allElements);
 
     const elementsWithActiveToken: Array<IShape> = await this._getElementsWithActiveToken(allElements);
 
