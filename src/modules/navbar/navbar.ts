@@ -311,7 +311,6 @@ export class NavBar {
 
     this.disableStartButton = !activeSolutionIsRemoteSolution;
     this.disableDiagramUploadButton = activeSolutionIsRemoteSolution;
-    this.disableDiagramUploadButton = activeSolutionIsRemoteSolution;
   }
 
 }

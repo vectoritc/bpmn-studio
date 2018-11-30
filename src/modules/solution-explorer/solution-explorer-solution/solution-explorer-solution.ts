@@ -373,7 +373,9 @@ export class SolutionExplorerSolution {
 
     const diagramIsNoRemoteDiagram: boolean = !diagram.uri.startsWith('http');
     if (diagramIsNoRemoteDiagram) {
+
       this._inspectView = 'dashboard';
+      this._eventAggregator.publish(environment.events.navBar.inspectNavigateToDashboard);
 
       const activeRouteIsInspect: boolean = this._diagramRoute === 'inspect';
 
