@@ -252,17 +252,43 @@ export class LiveExecutionTracker {
 
     elementWithIncomingElements.push(element);
 
-    const incomignElementsAsIModdleElement: Array<IModdleElement> = element.businessObject.incoming;
+    const incomingElementsAsIModdleElement: Array<IModdleElement> = element.businessObject.incoming;
 
-    const elementHasIncomingElements: boolean = incomignElementsAsIModdleElement === undefined;
+    const elementHasIncomingElements: boolean = incomingElementsAsIModdleElement === undefined;
     if (elementHasIncomingElements) {
       return elementWithIncomingElements;
     }
 
-    for (const incomingElement of incomignElementsAsIModdleElement) {
+    for (const incomingElement of incomingElementsAsIModdleElement) {
       const incomingElementAsShape: IShape = this._elementRegistry.get(incomingElement.id);
+      const sourceOfIncomingElement: IShape = incomingElementAsShape.source;
 
-      elementWithIncomingElements.push(incomingElemenAsShape);
+      const incomignElementHasNoSource: boolean = sourceOfIncomingElement === undefined;
+      if (incomignElementHasNoSource) {
+        continue;
+      }
+
+      const previousElementIsTask: boolean = sourceOfIncomingElement.type.includes('Task');
+
+      if (previousElementIsTask) {
+        const elementHasActiveToken: boolean = await this._hasElementActiveToken(sourceOfIncomingElement.id);
+
+        if (elementHasActiveToken) {
+          continue;
+        }
+
+        elementWithIncomingElements.push(incomingElementAsShape);
+
+      } else {
+        elementWithIncomingElements.push(incomingElementAsShape);
+
+        const sourceHasNoTokenHistory: boolean = !(await this._hasElementTokenHistory(sourceOfIncomingElement.id));
+        if (sourceHasNoTokenHistory) {
+          elementWithIncomingElements.push(sourceOfIncomingElement);
+        }
+
+        continue;
+      }
     }
 
     return elementWithIncomingElements;
