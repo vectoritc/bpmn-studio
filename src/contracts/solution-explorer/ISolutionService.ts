@@ -21,7 +21,7 @@ export interface ISolutionService {
   getActiveSolutionEntry(): ISolutionEntry;
 
   /**
-   * Gets a specific SolutionEntry identified by its uri.
+   * Gets a specific SolutionEntry identified by its URI.
    * @param uri The uri of the searched SolutionEntry.
    */
   getSolutionEntryForUri(uri: string): ISolutionEntry;

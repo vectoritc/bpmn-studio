@@ -96,11 +96,6 @@ export class Heatmap {
 
     this._heatmapService.addOverlays(overlays, elementRegistry, this.activeDiagram.id);
 
-    // const dashboardIsNotShown: boolean = !this.dashboardIsShown;
-    // if (dashboardIsNotShown) {
-    //   this._eventAggregator.publish(environment.events.navBar.showProcessName, this.activeDiagram);
-    // }
-
     this._viewer.attachTo(this.viewerContainer);
   }
 

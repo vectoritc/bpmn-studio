@@ -81,7 +81,6 @@ export class DiagramDetail {
     this._activeSolutionEntry = await this._solutionService.getActiveSolutionEntry();
 
     const diagramNameIsNotSet: boolean = routeParameters.diagramName === undefined;
-
     if (diagramNameIsNotSet) {
       return;
     }
@@ -444,7 +443,8 @@ export class DiagramDetail {
       if (elementIsUserTask) {
         const businessObj: IModdleElement = element.businessObject;
 
-        if (businessObj.extensionElements) {
+        const businessObjHasExtensionElements: boolean = businessObj.extensionElements !== undefined;
+        if (businessObjHasExtensionElements) {
           const extensions: IExtensionElement = businessObj.extensionElements;
 
           extensions.values = extensions.values.filter((value: IFormElement) => {

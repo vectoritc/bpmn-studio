@@ -1,4 +1,3 @@
-import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionEntry, ISolutionService} from '../contracts';
 
 export class SolutionService implements ISolutionService {
