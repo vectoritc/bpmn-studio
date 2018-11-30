@@ -225,11 +225,12 @@ export class DiagramDetail {
 
     try {
 
-      const solutionToDeployTo: ISolutionEntry = this._solutionService.getSolutionEntryForUri(this._internalProcessEngineBaseRoute);
+      const connectedProcessEngineRoute: string = window.localStorage.getItem('processEngineRoute');
+      const solutionToDeployTo: ISolutionEntry = this._solutionService.getSolutionEntryForUri(connectedProcessEngineRoute);
 
       this.activeDiagram.id = processModelId;
 
-      await solutionToDeployTo.service.saveDiagram(this.activeDiagram, this._internalProcessEngineBaseRoute);
+      await solutionToDeployTo.service.saveDiagram(this.activeDiagram, connectedProcessEngineRoute);
 
       this._solutionService.setActiveSolution(solutionToDeployTo);
       this._activeSolutionEntry = solutionToDeployTo;

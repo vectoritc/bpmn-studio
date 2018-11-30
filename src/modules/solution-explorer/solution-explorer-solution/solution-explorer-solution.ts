@@ -371,6 +371,12 @@ export class SolutionExplorerSolution {
       diagram: diagram,
     });
 
+    const diagramIsNoRemoteDiagram: boolean = !diagram.uri.startsWith('http');
+
+    if (diagramIsNoRemoteDiagram) {
+      this._inspectView = 'dashboard';
+    }
+
     this._router.navigateToRoute(this._diagramRoute, {
       view: this._inspectView,
       diagramName: diagram.name,

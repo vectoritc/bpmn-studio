@@ -304,6 +304,7 @@ export class NavBar {
   private _updateNavbarTitle(): void {
 
     const activeSolutionIsRemoteSolution: boolean = this.activeSolutionEntry.uri.startsWith('http');
+    this.showProcessName = this.activeDiagram.name !== undefined;
 
     this.navbarTitle = ((): string => {
       if (activeSolutionIsRemoteSolution) {

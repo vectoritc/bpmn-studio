@@ -49,6 +49,13 @@ export class Heatmap {
   }
 
   public async attached(): Promise<void> {
+
+    const diagramIsNoRemoteDiagram: boolean = !this.activeDiagram.uri.startsWith('http');
+
+    if (diagramIsNoRemoteDiagram) {
+      return;
+    }
+
     this._modeler = new bundle.modeler({
       moddleExtensions: {
         camunda: bundle.camundaModdleDescriptor,

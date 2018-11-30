@@ -23,7 +23,6 @@ export class Inspect {
   public dashboard: Dashboard;
   public showTokenViewer: boolean = false;
   public tokenViewerButtonDisabled: boolean = false;
-  public diagramIsSet: boolean = false;
 
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
@@ -40,18 +39,17 @@ export class Inspect {
 
     this._activeSolutionEntry = await this._solutionService.getActiveSolutionEntry();
 
-    const diagramNameSet: boolean = routeParameters.diagramName !== undefined;
+    const diagramNameIsSet: boolean = routeParameters.diagramName !== undefined;
 
-    if (diagramNameSet) {
+    if (diagramNameIsSet) {
       this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
-      this.diagramIsSet = true;
     }
 
     const routeViewIsDashboard: boolean = routeParameters.view === 'dashboard';
     const routeViewIsHeatmap: boolean = routeParameters.view === 'heatmap';
     const routeViewIsInspectCorrelation: boolean = routeParameters.view === 'inspect-correlation';
 
-    const latestSourceIsPE: boolean = this._activeSolutionEntry !== undefined && this._activeSolutionEntry.uri.startsWith('http');
+    const latestSourceIsPE: boolean = this._activeSolutionEntry.uri.startsWith('http');
 
     if (routeViewIsDashboard) {
       this.showHeatmap = false;
@@ -68,8 +66,10 @@ export class Inspect {
 
       if (latestSourceIsPE) {
         this._eventAggregator.publish(environment.events.navBar.showInspectButtons);
-        this._eventAggregator.publish(environment.events.navBar.toggleDashboardView);
+      } else {
+        this._eventAggregator.publish(environment.events.navBar.hideInspectButtons);
       }
+      this._eventAggregator.publish(environment.events.navBar.toggleDashboardView);
     } else if (routeViewIsHeatmap) {
       this._eventAggregator.publish(environment.events.navBar.showInspectButtons);
       this._eventAggregator.publish(environment.events.navBar.toggleHeatmapView);
