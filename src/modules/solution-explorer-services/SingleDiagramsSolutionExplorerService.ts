@@ -80,8 +80,10 @@ export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerS
 
     await this._solutionExplorerToOpenDiagrams.openSolution(uri.substring(0, uri.lastIndexOf('/')), identity);
 
-    const diagram: IDiagram = await this._solutionExplorerToOpenDiagrams
-      .loadDiagram(uri.substring(uri.lastIndexOf('/') + 1, uri.length - bpmnFileEndingLength));
+    const fileName: string = uri.replace(/^.*[\\\/]/, '');
+    const fileNameWithoutEnding: string = fileName.replace('.bpmn', '');
+
+    const diagram: IDiagram = await this._solutionExplorerToOpenDiagrams.loadDiagram(fileNameWithoutEnding);
 
     await this._validationService
       .validate(diagram.xml)
