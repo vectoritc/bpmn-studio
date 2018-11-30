@@ -260,7 +260,7 @@ export class LiveExecutionTracker {
     }
 
     for (const incomingElement of incomignElementsAsIModdleElement) {
-      const incomingElemenAsShape: IShape = this._elementRegistry.get(incomingElement.id);
+      const incomingElementAsShape: IShape = this._elementRegistry.get(incomingElement.id);
 
       elementWithIncomingElements.push(incomingElemenAsShape);
     }
