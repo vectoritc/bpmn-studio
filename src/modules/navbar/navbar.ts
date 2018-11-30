@@ -292,11 +292,9 @@ export class NavBar {
     this.showProcessName = this.activeDiagram.name !== undefined;
 
     this.navbarTitle = ((): string => {
-      if (activeSolutionIsRemoteSolution) {
-        return this.activeDiagram.id;
-      } else {
-        return this.activeDiagram.name;
-      }
+      return activeSolutionIsRemoteSolution
+        ? this.activeDiagram.id
+        : this.activeDiagram.name;
     })();
 
     this.processOpenedFromProcessEngine = activeSolutionIsRemoteSolution;
