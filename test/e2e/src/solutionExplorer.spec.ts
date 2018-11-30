@@ -73,7 +73,7 @@ describe('Solution Explorer', () => {
   });
 
   it('should be possible to open a process diagram.', async() => {
-    const getProcessModelLink: string = ProcessModel.getProcessModelLink();
+    const getProcessModelLink: string = ProcessModel.getProcessModelUrl();
 
     await solutionExplorer.openProcessModelByClick(processModelId);
 

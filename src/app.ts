@@ -187,13 +187,7 @@ export class App {
         moduleId: 'modules/task-dynamic-ui/task-dynamic-ui',
       },
       {
-        route: ['processdef/:processModelId/detail'],
-        title: 'ProcessDef Detail',
-        name: 'processdef-detail',
-        moduleId: 'modules/design/processdef-detail/processdef-detail',
-      },
-      {
-        route: ['diagram/detail'],
+        route: ['diagram/detail/:diagramName?'],
         title: 'Diagram Detail',
         name: 'diagram-detail',
         moduleId: 'modules/design/diagram-detail/diagram-detail',
@@ -211,7 +205,7 @@ export class App {
         moduleId: 'modules/waiting-room/waiting-room',
       },
       {
-        route: ['inspect', 'inspect/:processModelId?/:view?/:latestSource?'],
+        route: ['inspect', 'inspect/:view?/:diagramName?'],
         title: 'Inspect',
         name: 'inspect',
         moduleId: 'modules/inspect/inspect',

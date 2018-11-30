@@ -3,6 +3,7 @@ import {bindable, inject} from 'aurelia-framework';
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {Correlation} from '@process-engine/management_api_contracts';
 import {CorrelationProcessModel} from '@process-engine/management_api_contracts';
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
 import {
   defaultBpmnColors,
@@ -21,7 +22,7 @@ import {NotificationService} from '../../../../notification/notification.service
 export class DiagramViewer {
   @bindable() public correlation: Correlation;
   @bindable() public xml: string;
-  @bindable() public processModelId: string;
+  @bindable() public activeDiagram: IDiagram;
   @bindable() public selectedFlowNode: IShape;
   public xmlIsNotSelected: boolean = true;
   public canvasModel: HTMLElement;
@@ -119,8 +120,10 @@ export class DiagramViewer {
     await this._importXml(this._diagramViewer, this._uncoloredXml);
   }
 
-  public processModelIdChanged(): void {
-    if (this._diagramViewer === undefined) {
+  public activeDiagramChanged(): void {
+    const diagramViewerIsNotSet: boolean = this._diagramViewer === undefined;
+
+    if (diagramViewerIsNotSet) {
       return;
     }
 
@@ -134,7 +137,7 @@ export class DiagramViewer {
 
   private async _getXmlByCorrelation(correlation: Correlation): Promise<string> {
     const processModelForCorrelation: CorrelationProcessModel = correlation.processModels.find((processModel: CorrelationProcessModel) => {
-      return processModel.name === this.processModelId;
+      return processModel.name === this.activeDiagram.id;
     });
 
     const xmlForCorrelation: string = processModelForCorrelation.xml;

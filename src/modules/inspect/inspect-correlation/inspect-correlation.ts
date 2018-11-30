@@ -2,18 +2,15 @@ import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 
 import {Correlation} from '@process-engine/management_api_contracts';
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
 import {IEventFunction, IShape} from '../../../contracts/index';
 import environment from '../../../environment';
 import {IInspectCorrelationService} from './contracts';
 
-interface RouteParameters {
-  processModelId: string;
-}
-
 @inject('InspectCorrelationService', EventAggregator)
 export class InspectCorrelation {
-  @bindable() public processModelId: string;
+  @bindable() public activeDiagram: IDiagram;
   @bindable() public selectedCorrelation: Correlation;
   @bindable() public inspectPanelFullscreen: boolean = false;
   @observable public bottomPanelHeight: number = 250;
@@ -38,13 +35,7 @@ export class InspectCorrelation {
     this._eventAggregator = eventAggregator;
   }
 
-  public async activate(routeParameters: RouteParameters): Promise<void> {
-    this.processModelId = routeParameters.processModelId;
-  }
-
   public attached(): void {
-    this._eventAggregator.publish(environment.events.statusBar.showInspectViewButtons, true);
-    this._eventAggregator.publish(environment.events.navBar.updateProcessName, this.processModelId);
     this._eventAggregator.publish(environment.events.statusBar.showInspectCorrelationButtons, true);
 
     this._subscriptions = [
@@ -94,7 +85,6 @@ export class InspectCorrelation {
   }
 
   public detached(): void {
-    this._eventAggregator.publish(environment.events.statusBar.showInspectViewButtons, false);
     this._eventAggregator.publish(environment.events.statusBar.showInspectCorrelationButtons, false);
 
     for (const subscription of this._subscriptions) {
@@ -102,9 +92,8 @@ export class InspectCorrelation {
     }
   }
 
-  public async processModelIdChanged(): Promise<void> {
-    this.correlations = await this._inspectCorrelationService.getAllCorrelationsForProcessModelId(this.processModelId);
-    this._eventAggregator.publish(environment.events.navBar.updateProcessName, this.processModelId);
+  public async activeDiagramChanged(): Promise<void> {
+    this.correlations = await this._inspectCorrelationService.getAllCorrelationsForProcessModelId(this.activeDiagram.id);
   }
 
   private _resizeInspectPanel(mouseEvent: MouseEvent): void {

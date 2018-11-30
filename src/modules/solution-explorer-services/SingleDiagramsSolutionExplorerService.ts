@@ -15,6 +15,7 @@ import {IDiagramValidationService} from '../../contracts';
  *
  * To remove a diagram from the solution, call use #closeSingleDiagram().
  */
+
 export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerService {
 
   private _validationService: IDiagramValidationService;
@@ -71,13 +72,18 @@ export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerS
 
   public async openSingleDiagram(uri: string, identity: IIdentity): Promise<IDiagram> {
     const uriAlreadyOpened: boolean = this._findOfDiagramWithURI(uri) >= 0;
+    const bpmnFileEndingLength: number = 5;
 
     if (uriAlreadyOpened) {
       throw new Error('This diagram is already opened.');
     }
 
-    const diagram: IDiagram = await this._solutionExplorerToOpenDiagrams
-      .openSingleDiagram(uri, identity);
+    await this._solutionExplorerToOpenDiagrams.openSolution(uri.substring(0, uri.lastIndexOf('/')), identity);
+
+    const fileName: string = uri.replace(/^.*[\\\/]/, '');
+    const fileNameWithoutEnding: string = fileName.replace('.bpmn', '');
+
+    const diagram: IDiagram = await this._solutionExplorerToOpenDiagrams.loadDiagram(fileNameWithoutEnding);
 
     await this._validationService
       .validate(diagram.xml)
@@ -98,11 +104,6 @@ export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerS
     return Promise.resolve();
   }
 
-  public saveSingleDiagram(diagramToSave: IDiagram, identity: IIdentity, path?: string): Promise<IDiagram> {
-    return this._solutionExplorerToOpenDiagrams
-      .saveSingleDiagram(diagramToSave, identity, path);
-  }
-
   public renameDiagram(diagram: IDiagram, newName: string): Promise<IDiagram> {
     throw new Error('Method not supported.');
   }
@@ -111,8 +112,13 @@ export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerS
     throw new Error('Method not supported.');
   }
 
-  public loadDiagram(diagramName: string): Promise<IDiagram> {
-    throw new Error('Method not supported.');
+  public async loadDiagram(diagramName: string): Promise<IDiagram> {
+
+    const diagramToLoad: IDiagram = this._openedDiagrams.find((diagram: IDiagram) => {
+                                      return diagram.name === diagramName;
+                                    });
+
+    return diagramToLoad;
   }
 
   public saveSolution(solution: ISolution, pathspec?: string): Promise<void> {
@@ -120,7 +126,7 @@ export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerS
   }
 
   public saveDiagram(diagram: IDiagram): Promise<void> {
-    throw new Error('Method not supported.');
+    return this._solutionExplorerToOpenDiagrams.saveDiagram(diagram);
   }
 
   private _findOfDiagramWithURI(uri: string): number {

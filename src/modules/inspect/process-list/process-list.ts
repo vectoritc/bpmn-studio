@@ -117,10 +117,6 @@ export class ProcessList {
     }
   }
 
-  public goBack(): void {
-    this._router.navigateBack();
-  }
-
   public get correlations(): Array<Correlation> {
     return this._correlations.slice((this.currentPage - 1) * this.pageSize, this.pageSize * this.currentPage);
   }

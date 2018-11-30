@@ -18,8 +18,8 @@ export class ProcessModel {
     return '/processdef';
   }
 
-  public static processModelUrl(processModel: string): string {
-    return '/processdef/' + processModel + '/detail';
+  public static getProcessModelUrl(): string {
+    return '/diagram/detail';
   }
 
   public static userTasksUrl(correlationId: string): string {
