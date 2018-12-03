@@ -50,8 +50,12 @@ export class Heatmap {
 
   public async attached(): Promise<void> {
 
-    const diagramIsNoRemoteDiagram: boolean = !this.activeDiagram.uri.startsWith('http');
+    const noActiveDiagram: boolean = this.activeDiagram === undefined;
+    if (noActiveDiagram) {
+      return;
+    }
 
+    const diagramIsNoRemoteDiagram: boolean = !this.activeDiagram.uri.startsWith('http');
     if (diagramIsNoRemoteDiagram) {
       return;
     }
