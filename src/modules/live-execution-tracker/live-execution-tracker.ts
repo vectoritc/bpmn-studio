@@ -325,6 +325,7 @@ export class LiveExecutionTracker {
 
     let correlation: Correlation;
     try {
+      // This is necessary because the managementApi sometimes throws an error when the correlation is not yet existing.
       correlation = await this._managementApiClient.getCorrelationById(identity, this._correlationId);
     } catch (error) {
       // tslint:disable-next-line no-magic-numbers
