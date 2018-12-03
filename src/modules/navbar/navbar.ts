@@ -156,7 +156,7 @@ export class NavBar {
     this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, this.inspectView);
 
     this._router.navigateToRoute('inspect', {
-      diagramName: this.activeDiagram.name,
+      diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
       view: this.inspectView,
     });
   }
@@ -170,7 +170,7 @@ export class NavBar {
     this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, this.inspectView);
 
     this._router.navigateToRoute('inspect', {
-      diagramName: this.activeDiagram.name,
+      diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
       view: this.inspectView,
     });
   }
@@ -184,7 +184,7 @@ export class NavBar {
     this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, this.inspectView);
 
     this._router.navigateToRoute('inspect', {
-      diagramName: this.activeDiagram.name,
+      diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
       view: this.inspectView,
     });
 
