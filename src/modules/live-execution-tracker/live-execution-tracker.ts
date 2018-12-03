@@ -194,16 +194,11 @@ export class LiveExecutionTracker {
   private async _getElementsWithActiveToken(elements: Array<IShape>): Promise<Array<IShape>> {
     const identity: IIdentity = this._getIdentity();
 
-    const activeTokensForProcessModel: Array<ActiveToken> = await this._managementApiClient.getActiveTokensForProcessModel(identity,
-                                                                                                                           this._processModelId);
+    this._activeTokens = await this._managementApiClient.getActiveTokensForCorrelationAndProcessModel(identity,
+                                                                                                      this._correlationId,
+                                                                                                      this._processModelId);
 
-    const activeTokensForProcessInstance: Array<ActiveToken> = activeTokensForProcessModel.filter((activeToken: ActiveToken) => {
-      return activeToken.correlationId === this._correlationId;
-    });
-
-    this._activeTokens = activeTokensForProcessInstance;
-
-    const elementsWithActiveToken: Array<IShape> = activeTokensForProcessInstance.map((activeToken: ActiveToken): IShape => {
+    const elementsWithActiveToken: Array<IShape> = this._activeTokens.map((activeToken: ActiveToken): IShape => {
       const elementWithActiveToken: IShape = elements.find((element: IShape) => {
         return element.id === activeToken.flowNodeId;
       });
