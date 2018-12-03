@@ -364,12 +364,8 @@ export class SolutionExplorerSolution {
   // TODO: This method is copied all over the place.
   public async navigateToDetailView(diagram: IDiagram): Promise<void> {
     // TODO: Remove this if cause if we again have one detail view.
-    this._solutionService.setActiveSolution(this.displayedSolutionEntry);
-
-    this._eventAggregator.publish(environment.events.navBar.updateActiveSolutionAndDiagram, {
-      solutionEntry: this.displayedSolutionEntry,
-      diagram: diagram,
-    });
+    this._solutionService.setActiveSolutionEntry(this.displayedSolutionEntry);
+    this._solutionService.setActiveDiagram(diagram);
 
     const diagramIsNoRemoteDiagram: boolean = !diagram.uri.startsWith('http');
     if (diagramIsNoRemoteDiagram) {

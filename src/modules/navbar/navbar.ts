@@ -3,11 +3,11 @@ import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {RouteConfig, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
-import {ISolutionEntry, NotificationType} from '../../contracts/index';
+import {ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
-@inject(Router, EventAggregator, 'NotificationService')
+@inject(Router, EventAggregator, 'NotificationService', 'SolutionService')
 export class NavBar {
 
   @bindable() public activeRouteName: string;
@@ -37,11 +37,13 @@ export class NavBar {
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
   private _notificationService: NotificationService;
+  private _solutionService: ISolutionService;
 
-  constructor(router: Router, eventAggregator: EventAggregator, notificationService: NotificationService) {
+  constructor(router: Router, eventAggregator: EventAggregator, notificationService: NotificationService, solutionService: ISolutionService) {
     this._router = router;
     this._eventAggregator = eventAggregator;
     this._notificationService = notificationService;
+    this._solutionService = solutionService;
   }
 
   public attached(): void {
@@ -108,11 +110,10 @@ export class NavBar {
         this.disableInspectCorrelationButton = true;
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.updateActiveSolutionAndDiagram,
-        ({solutionEntry, diagram}: {solutionEntry: ISolutionEntry, diagram: IDiagram}) => {
+      this._eventAggregator.subscribe(environment.events.navBar.updateActiveSolutionAndDiagram, () => {
 
-        this.activeDiagram = diagram;
-        this.activeSolutionEntry = solutionEntry;
+        this.activeDiagram = this._solutionService.getActiveDiagram();
+        this.activeSolutionEntry = this._solutionService.getActiveSolutionEntry();
 
         this._updateNavbarTitle();
         this._updateNavbarTools();
@@ -293,15 +294,19 @@ export class NavBar {
    * or a remote ProcessEngine
    */
   private _updateNavbarTitle(): void {
+    const noActiveDiagram: boolean = this.activeDiagram === undefined;
+
+    if (noActiveDiagram) {
+      this.showProcessName = false;
+      this.navbarTitle = '';
+
+      return;
+    }
 
     const activeSolutionIsRemoteSolution: boolean = this.activeSolutionEntry.uri.startsWith('http');
     this.showProcessName = this.activeDiagram.name !== undefined;
 
-    this.navbarTitle = ((): string => {
-      return activeSolutionIsRemoteSolution
-        ? this.activeDiagram.id
-        : this.activeDiagram.name;
-    })();
+    this.navbarTitle = activeSolutionIsRemoteSolution ? this.activeDiagram.id : this.activeDiagram.name;
 
     this.processOpenedFromProcessEngine = activeSolutionIsRemoteSolution;
   }

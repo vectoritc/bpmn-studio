@@ -72,20 +72,15 @@ export class DiagramDetail {
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
 
-    this._activeSolutionEntry = await this._solutionService.getActiveSolutionEntry();
 
     const diagramNameIsNotSet: boolean = routeParameters.diagramName === undefined;
     if (diagramNameIsNotSet) {
       return;
     }
 
+    this._activeSolutionEntry = await this._solutionService.getActiveSolutionEntry();
     this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
 
-    this._eventAggregator.publish(environment.events.navBar.updateActiveSolutionAndDiagram,
-      {
-        solutionEntry: this._activeSolutionEntry,
-        diagram: this.activeDiagram,
-      });
 
     this._diagramHasChanged = false;
 
@@ -213,20 +208,16 @@ export class DiagramDetail {
 
       const connectedProcessEngineRoute: string = window.localStorage.getItem('processEngineRoute');
       const solutionToDeployTo: ISolutionEntry = this._solutionService.getSolutionEntryForUri(connectedProcessEngineRoute);
+      this._activeSolutionEntry = solutionToDeployTo;
 
       this.activeDiagram.id = processModelId;
 
-      await solutionToDeployTo.service.saveDiagram(this.activeDiagram, connectedProcessEngineRoute);
+      await this._activeSolutionEntry.service.saveDiagram(this.activeDiagram, connectedProcessEngineRoute);
 
-      this._solutionService.setActiveSolution(solutionToDeployTo);
-      this._activeSolutionEntry = solutionToDeployTo;
+      this._solutionService.setActiveSolutionEntry(this._activeSolutionEntry);
       this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(processModelId);
 
-      this._eventAggregator.publish(environment.events.navBar.updateActiveSolutionAndDiagram,
-        {
-          solutionEntry: solutionToDeployTo,
-          diagram: this.activeDiagram,
-        });
+      this._solutionService.setActiveDiagram(this.activeDiagram);
 
       this._notificationService
           .showNotification(NotificationType.SUCCESS, 'Diagram was successfully uploaded to the connected ProcessEngine.');
