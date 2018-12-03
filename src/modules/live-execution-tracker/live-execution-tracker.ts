@@ -153,11 +153,11 @@ export class LiveExecutionTracker {
     const elementsWithActiveToken: Array<IShape> = await this._getElementsWithActiveToken(allElements);
     const elementsWithTokenHistory: Array<IShape> = await this._getElementsWithTokenHistory(allElements);
 
-    this._previousElementIdsWithActiveToken = elementsWithActiveToken.map((element: IShape) => element.id).sort();
-
     this._colorizeElements(elementsWithTokenHistory, defaultBpmnColors.green);
     this._colorizeElements(elementsWithActiveToken, defaultBpmnColors.orange);
     this._addOverlaysToUserAndManualTasks(elementsWithActiveToken);
+
+    this._previousElementIdsWithActiveToken = elementsWithActiveToken.map((element: IShape) => element.id).sort();
 
     const colorizedXml: string = await this._exportXml(this._diagramModeler);
     return colorizedXml;
