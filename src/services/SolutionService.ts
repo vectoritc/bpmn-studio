@@ -49,5 +49,4 @@ export class SolutionService implements ISolutionService {
     this._eventAggregator.publish(environment.events.navBar.updateActiveSolutionAndDiagram);
 
   }
-  }
 }
