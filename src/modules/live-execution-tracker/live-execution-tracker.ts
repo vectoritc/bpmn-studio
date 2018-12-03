@@ -96,6 +96,7 @@ export class LiveExecutionTracker {
     const colorizedXml: string = await this._colorizeXml(xml);
 
     await this._importXml(this._diagramViewer, colorizedXml);
+
     this._viewerCanvas.zoom('fit-viewport');
 
     this._diagramViewer.on('element.click', this._elementClickHandler);
@@ -408,10 +409,9 @@ export class LiveExecutionTracker {
     this._pollingTimer = setTimeout(async() => {
       const correlationIsStillActive: boolean = await this._isCorrelationStillActive();
 
+      const previousXml: string = await this._exportXml(this._diagramViewer);
       const xml: string = await this._getXml();
       const colorizedXml: string = await this._colorizeXml(xml);
-
-      const previousXml: string = await this._exportXml(this._diagramViewer);
 
       const xmlChanged: boolean = previousXml !== colorizedXml;
       if (xmlChanged) {
