@@ -24,7 +24,6 @@ import {
   NotificationType,
 } from '../../contracts/index';
 import environment from '../../environment';
-import {IInspectCorrelationService} from '../inspect/inspect-correlation/contracts';
 import {NotificationService} from '../notification/notification.service';
 
 interface RouteParameters {
@@ -32,9 +31,9 @@ interface RouteParameters {
   processModelId: string;
 }
 
-type ElementWithIncomingElements = Array<IShape>;
+type TokenHistory = Array<TokenHistoryEntry>;
 
-@inject(Router, 'NotificationService', 'AuthenticationService', 'ManagementApiClientService', 'InspectCorrelationService')
+@inject(Router, 'NotificationService', 'AuthenticationService', 'ManagementApiClientService')
 export class LiveExecutionTracker {
   public canvasModel: HTMLElement;
 
@@ -49,7 +48,6 @@ export class LiveExecutionTracker {
   private _notificationService: NotificationService;
   private _authenticationService: IAuthenticationService;
   private _managementApiClient: IManagementApi;
-  private _inspectCorrelationService: IInspectCorrelationService;
 
   private _correlationId: string;
   private _processModelId: string;
@@ -57,18 +55,17 @@ export class LiveExecutionTracker {
   private _pollingTimer: NodeJS.Timer;
   private _attached: boolean;
   private _previousElementIdsWithActiveToken: Array<string> = [];
+  private _activeTokens: Array<ActiveToken>;
 
   constructor(router: Router,
               notificationService: NotificationService,
               authenticationService: IAuthenticationService,
-              managementApiClient: IManagementApi,
-              inspectCorrelationService: IInspectCorrelationService) {
+              managementApiClient: IManagementApi) {
 
     this._router = router;
     this._notificationService = notificationService;
     this._authenticationService = authenticationService;
     this._managementApiClient = managementApiClient;
-    this._inspectCorrelationService = inspectCorrelationService;
   }
 
   public activate(routeParameters: RouteParameters): void {
@@ -125,7 +122,7 @@ export class LiveExecutionTracker {
   }
 
   private async _handleTask(element: IShape): Promise<void> {
-    const elementHasNoActiveToken: boolean = !(await this._hasElementActiveToken(element.id));
+    const elementHasNoActiveToken: boolean = !this._hasElementActiveToken(element.id);
     if (elementHasNoActiveToken) {
       return;
     }
@@ -152,31 +149,16 @@ export class LiveExecutionTracker {
       return elementCanHaveAToken;
     });
 
-    const elementsWithIncomingElementWithTokenHistoryPromises: Array<Promise<ElementWithIncomingElements>> =
-      this._getElementsWithTokenHistory(allElements);
-
     const elementsWithActiveToken: Array<IShape> = await this._getElementsWithActiveToken(allElements);
-
-    const elementsWithIncomingElementsWithTokenHistory: Array<ElementWithIncomingElements> =
-      await Promise.all(elementsWithIncomingElementWithTokenHistoryPromises);
-
-    const elementsWithTokenHistory: Array<IShape> = [].concat(...elementsWithIncomingElementsWithTokenHistory).filter((element: IShape) => {
-      const elementHasNoActiveToken: boolean = elementsWithActiveToken.find((elementWithActiveToken: IShape) => {
-        return element.id === elementWithActiveToken.id;
-      }) === undefined;
-
-      return elementHasNoActiveToken;
-    });
-
-    this._colorizeElements(elementsWithTokenHistory, defaultBpmnColors.green);
-    this._colorizeElements(elementsWithActiveToken, defaultBpmnColors.orange);
-
-    this._addOverlaysToUserAndManualTasks(elementsWithActiveToken);
+    const elementsWithTokenHistory: Array<IShape> = await this._getElementsWithTokenHistory(allElements);
 
     this._previousElementIdsWithActiveToken = elementsWithActiveToken.map((element: IShape) => element.id).sort();
 
-    const colorizedXml: string = await this._exportXml(this._diagramModeler);
+    this._colorizeElements(elementsWithTokenHistory, defaultBpmnColors.green);
+    this._colorizeElements(elementsWithActiveToken, defaultBpmnColors.orange);
+    this._addOverlaysToUserAndManualTasks(elementsWithActiveToken);
 
+    const colorizedXml: string = await this._exportXml(this._diagramModeler);
     return colorizedXml;
   }
 
@@ -218,6 +200,8 @@ export class LiveExecutionTracker {
       return activeToken.correlationId === this._correlationId;
     });
 
+    this._activeTokens = activeTokensForProcessInstance;
+
     const elementsWithActiveToken: Array<IShape> = activeTokensForProcessInstance.map((activeToken: ActiveToken): IShape => {
       const elementWithActiveToken: IShape = elements.find((element: IShape) => {
         return element.id === activeToken.flowNodeId;
@@ -229,22 +213,33 @@ export class LiveExecutionTracker {
     return elementsWithActiveToken;
   }
 
-  private _getElementsWithTokenHistory(elements: Array<IShape>): Array<Promise<ElementWithIncomingElements>> {
-    const elementsWithTokenHistory: Array<Promise<ElementWithIncomingElements>> = [];
+  private async _getElementsWithTokenHistory(elements: Array<IShape>): Promise<Array<IShape>> {
+    const allTokenHistories: Array<TokenHistory> = await this._managementApiClient.getTokensForCorrelationAndProcessModel(
+      this._getIdentity(),
+      this._correlationId,
+      this._processModelId);
 
-    for (const element of elements) {
-      const elementWithIncomingElements: Promise<ElementWithIncomingElements> = this._getElementWithIncomingElementsWithTokenHistory(element);
+    const elementsWithTokenHistory: Array<IShape> = [];
 
-      elementsWithTokenHistory.push(elementWithIncomingElements);
+    for (const tokenHistory of allTokenHistories) {
+      const elementFromTokenHistory: IShape = elements.find((element: IShape) => {
+        return element.id === tokenHistory[0].flowNodeId;
+      });
+
+      const elementWithIncomingElements: Array<IShape> = this._getElementWithIncomingElements(elementFromTokenHistory, allTokenHistories);
+
+      elementsWithTokenHistory.push(...elementWithIncomingElements);
     }
 
     return elementsWithTokenHistory;
   }
 
-  private async _getElementWithIncomingElementsWithTokenHistory(element: IShape): Promise<ElementWithIncomingElements> {
+  private _getElementWithIncomingElements(element: IShape,
+                                          tokenHistories: Array<TokenHistory>): Array<IShape> {
+
     const elementWithIncomingElements: Array<IShape> = [];
 
-    const elementHasNoTokenHistory: boolean = !(await this._hasElementTokenHistory(element.id));
+    const elementHasNoTokenHistory: boolean = !this._hasElementTokenHistory(element.id, tokenHistories);
 
     if (elementHasNoTokenHistory) {
       return [];
@@ -271,7 +266,7 @@ export class LiveExecutionTracker {
       const previousElementIsTask: boolean = sourceOfIncomingElement.type.includes('Task');
 
       if (previousElementIsTask) {
-        const elementHasActiveToken: boolean = await this._hasElementActiveToken(sourceOfIncomingElement.id);
+        const elementHasActiveToken: boolean = this._hasElementActiveToken(sourceOfIncomingElement.id);
 
         if (elementHasActiveToken) {
           continue;
@@ -282,7 +277,7 @@ export class LiveExecutionTracker {
       } else {
         elementWithIncomingElements.push(incomingElementAsShape);
 
-        const sourceHasNoTokenHistory: boolean = !(await this._hasElementTokenHistory(sourceOfIncomingElement.id));
+        const sourceHasNoTokenHistory: boolean = !this._hasElementTokenHistory(sourceOfIncomingElement.id, tokenHistories);
         if (sourceHasNoTokenHistory) {
           elementWithIncomingElements.push(sourceOfIncomingElement);
         }
@@ -306,22 +301,24 @@ export class LiveExecutionTracker {
     });
   }
 
-  private async _hasElementTokenHistory(elementId: string): Promise<boolean> {
-    const token: Array<TokenHistoryEntry> = await this._inspectCorrelationService
-      .getTokenForFlowNodeInstance(this._processModelId, this._correlationId, elementId);
+  private _hasElementTokenHistory(elementId: string, tokenHistories: Array<TokenHistory>): boolean {
 
-    return token !== undefined && token.length > 0;
+    const tokenHistoryFromFlowNodeInstanceFound: boolean = tokenHistories.find((tokenHistory: TokenHistory) => {
+      const tokenHistoryIsFromFlowNodeInstance: boolean = tokenHistory[0].flowNodeId === elementId;
+
+      return tokenHistoryIsFromFlowNodeInstance;
+    }) !== undefined;
+
+    return tokenHistoryFromFlowNodeInstanceFound;
   }
 
-  private async _hasElementActiveToken(elementId: string): Promise<boolean> {
+  private _hasElementActiveToken(elementId: string): boolean {
     const identity: IIdentity = this._getIdentity();
 
-    const activeTokensForFlowNode: Array<ActiveToken> = await this._managementApiClient.getActiveTokensForFlowNode(identity, elementId);
+    const activeTokenForFlowNodeInstance: ActiveToken = this._activeTokens.find((activeToken: ActiveToken) => {
+      const activeTokenIsFromFlowNodeInstance: boolean = activeToken.flowNodeId === elementId;
 
-    const activeTokenForFlowNodeInstance: ActiveToken = activeTokensForFlowNode.find((token: ActiveToken) => {
-      const activeTokenIsFromCorrectInstance: boolean = token.correlationId === this._correlationId
-                                                     && token.processModelId === this._processModelId;
-      return activeTokenIsFromCorrectInstance;
+      return activeTokenIsFromFlowNodeInstance;
     });
 
     return activeTokenForFlowNodeInstance !== undefined;
