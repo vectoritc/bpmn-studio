@@ -51,6 +51,10 @@ export class DiagramDetail {
   private _ipcRenderer: any;
   private _solutionService: ISolutionService;
   private _managementApiClient: IManagementApi;
+  private _ipcRendererEventListeners: Array<{
+                                              name: string,
+                                              function: Function,
+                                            }> = [];
 
   constructor(managementApiClient: IManagementApi,
               notificationService: NotificationService,
@@ -169,6 +173,10 @@ export class DiagramDetail {
     this._eventAggregator.publish(environment.events.navBar.hideTools);
     this._eventAggregator.publish(environment.events.navBar.noValidationError);
     this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
+
+    for (const eventListener of this._ipcRendererEventListeners) {
+      this._ipcRenderer.removeListener(eventListener.name, eventListener.function);
+    }
   }
 
   public detached(): void {
@@ -282,7 +290,9 @@ export class DiagramDetail {
   private _prepareSaveModalForClosing(): void {
     this._ipcRenderer = (window as any).nodeRequire('electron').ipcRenderer;
 
-    this._ipcRenderer.on('show-close-modal', () => {
+    const showCloseModalEventName: string = 'show-close-modal';
+
+    const showCloseModalFunction: Function = (): void => {
       const leaveWithoutSaving: EventListenerOrEventListenerObject =  (): void => {
         this._ipcRenderer.send('can-not-close', false);
         this._ipcRenderer.send('close-bpmn-studio');
@@ -313,7 +323,14 @@ export class DiagramDetail {
       document.getElementById('cancelButtonLeaveView').addEventListener('click', doNotLeave);
 
       this.showUnsavedChangesModal = true;
-    });
+    };
+
+    this._ipcRenderer.on(showCloseModalEventName, showCloseModalFunction);
+    this._ipcRendererEventListeners.push({
+                                            name: showCloseModalEventName,
+                                            function: showCloseModalFunction,
+                                        });
+
   }
 
   public async saveChangesBeforeStart(): Promise<void> {
