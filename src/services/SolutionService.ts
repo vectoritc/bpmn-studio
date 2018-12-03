@@ -37,6 +37,8 @@ export class SolutionService implements ISolutionService {
 
   public setActiveSolutionEntry(solution: ISolutionEntry): void {
     this._activeSolution = solution;
+  }
+
   public getActiveDiagram(): IDiagram {
     return this._activeDiagram;
   }
