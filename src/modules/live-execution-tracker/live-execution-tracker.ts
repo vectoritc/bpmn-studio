@@ -92,7 +92,7 @@ export class LiveExecutionTracker {
 
     this._diagramViewer.attachTo(this.canvasModel);
 
-    const xml: string = await this._getXml();
+    const xml: string = await this._getXml(0);
     const colorizedXml: string = await this._colorizeXml(xml);
 
     await this._importXml(this._diagramViewer, colorizedXml);
@@ -320,10 +320,22 @@ export class LiveExecutionTracker {
     return activeTokenForFlowNodeInstance !== undefined;
   }
 
-  private async _getXml(): Promise<string> {
+  private async _getXml(retryCount: number): Promise<string> {
     const identity: IIdentity = this._getIdentity();
 
-    const correlation: Correlation = await this._managementApiClient.getCorrelationById(identity, this._correlationId);
+    let correlation: Correlation;
+    try {
+      correlation = await this._managementApiClient.getCorrelationById(identity, this._correlationId);
+    } catch (error) {
+      // tslint:disable-next-line no-magic-numbers
+      const retriedEnough: boolean = retryCount > 5;
+      if (retriedEnough) {
+        throw error;
+      }
+
+      return this._getXml(retryCount++);
+    }
+
     const processModelFromCorrelation: CorrelationProcessModel = correlation.processModels.find((processModel: CorrelationProcessModel) => {
       const processModelIsSearchedProcessModel: boolean = processModel.name === this._processModelId;
 
@@ -405,7 +417,7 @@ export class LiveExecutionTracker {
       const correlationIsStillActive: boolean = await this._isCorrelationStillActive();
 
       const previousXml: string = await this._exportXml(this._diagramViewer);
-      const xml: string = await this._getXml();
+      const xml: string = await this._getXml(0);
       const colorizedXml: string = await this._colorizeXml(xml);
 
       const xmlChanged: boolean = previousXml !== colorizedXml;
