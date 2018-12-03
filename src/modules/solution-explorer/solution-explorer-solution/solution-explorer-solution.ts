@@ -161,6 +161,7 @@ export class SolutionExplorerSolution {
 
       this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToDesigner, () => {
         this._diagramRoute = 'diagram-detail';
+        this._inspectView = undefined;
       }),
     ];
 
