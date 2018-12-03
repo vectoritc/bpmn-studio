@@ -23,6 +23,11 @@ interface RouteParameters {
   diagramName?: string;
 }
 
+type EventListener = {
+  name: string,
+  function: Function,
+};
+
 @inject('ManagementApiClientService',
         'NotificationService',
         'SolutionService',
@@ -51,10 +56,7 @@ export class DiagramDetail {
   private _ipcRenderer: any;
   private _solutionService: ISolutionService;
   private _managementApiClient: IManagementApi;
-  private _ipcRendererEventListeners: Array<{
-                                              name: string,
-                                              function: Function,
-                                            }> = [];
+  private _ipcRendererEventListeners: Array<EventListener> = [];
 
   constructor(managementApiClient: IManagementApi,
               notificationService: NotificationService,
