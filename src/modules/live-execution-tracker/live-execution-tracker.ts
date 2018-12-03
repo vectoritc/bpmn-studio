@@ -174,10 +174,10 @@ export class LiveExecutionTracker {
     this._overlay.clear();
 
     for (const element of elements) {
-      const clickedElementIsNotAUserOrManualTask: boolean = element.type !== 'bpmn:UserTask'
-                                                         && element.type !== 'bpmn:ManualTask';
+      const elementIsNotAUserOrManualTask: boolean = element.type !== 'bpmn:UserTask'
+                                                  && element.type !== 'bpmn:ManualTask';
 
-      if (clickedElementIsNotAUserOrManualTask) {
+      if (elementIsNotAUserOrManualTask) {
         continue;
       }
 
