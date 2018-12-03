@@ -75,6 +75,7 @@ export class DiagramDetail {
 
     const diagramNameIsNotSet: boolean = routeParameters.diagramName === undefined;
     if (diagramNameIsNotSet) {
+      this._router.navigateBack();
       return;
     }
 
