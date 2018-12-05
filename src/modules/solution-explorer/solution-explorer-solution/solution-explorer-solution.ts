@@ -220,7 +220,7 @@ export class SolutionExplorerSolution {
   public async deleteDiagram(diagram: IDiagram, event: Event): Promise<void> {
     event.stopPropagation();
 
-    if (this._isDiagramDetailViewOfDiagramOpen(diagram.uri)) {
+    if (this._isDiagramDetailViewOfDiagramOpen(diagram.name)) {
       const messageTitle: string = '<h4 class="toast-message__headline">Not supported while opened.</h4>';
       const messageBody: string = 'Deleting of opened diagrams is currently not supported. Please switch to another diagram and try again.';
       const message: string = `${messageTitle}\n${messageBody}`;
@@ -244,7 +244,7 @@ export class SolutionExplorerSolution {
   public async startRenamingOfDiagram(diagram: IDiagram, event: Event): Promise<void> {
     event.stopPropagation();
 
-    if (this._isDiagramDetailViewOfDiagramOpen(diagram.uri)) {
+    if (this._isDiagramDetailViewOfDiagramOpen(diagram.name)) {
       const messageTitle: string = '<h4 class="toast-message__headline">Not supported while opened.</h4>';
       const messageBody: string = 'Renaming of opened diagrams is currently not supported. Please switch to another diagram and try again.';
       const message: string = `${messageTitle}\n${messageBody}`;
@@ -390,32 +390,21 @@ export class SolutionExplorerSolution {
   }
 
   @computedFrom('_router.currentInstruction.config.name')
-  public get currentlyOpenedDiagramUri(): string {
+  public get currentlyOpenedDiagramName(): string {
     const moduleName: string = this._router.currentInstruction.config.name;
 
     const diagramDetailViewIsOpen: boolean = moduleName === 'diagram-detail';
     if (diagramDetailViewIsOpen) {
-      const queryParams: {diagramUri: string} = this._router.currentInstruction.queryParams;
+      const params: {diagramName: string} = this._router.currentInstruction.params;
 
-      return queryParams.diagramUri;
-    }
-
-    // TODO: The code below needs to get updated, once we implement multiple remote solutions.
-    const processDefDetailViewIsOpen: boolean = moduleName === 'processdef-detail';
-    const inspectViewIsOpen: boolean = moduleName === 'inspect';
-
-    if (processDefDetailViewIsOpen || inspectViewIsOpen) {
-      const params: {processModelId: string} = this._router.currentInstruction.params;
-
-      return environment.baseRoute + '/api/management/v1/' + params.processModelId;
+      return params.diagramName;
     }
 
     return undefined;
   }
 
-  private _isDiagramDetailViewOfDiagramOpen(diagramUriToCheck: string): boolean {
-
-    const diagramIsOpened: boolean = diagramUriToCheck === this.currentlyOpenedDiagramUri;
+  private _isDiagramDetailViewOfDiagramOpen(diagramNameToCheck: string): boolean {
+    const diagramIsOpened: boolean = diagramNameToCheck === this.currentlyOpenedDiagramName;
 
     return diagramIsOpened;
   }
