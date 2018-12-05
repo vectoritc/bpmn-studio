@@ -141,7 +141,7 @@ export class LiveExecutionTracker {
 
     const elementsWithActiveTokenDidNotChange: boolean = elementIds.toString() === this._previousElementIdsWithActiveToken.toString();
     if (elementsWithActiveTokenDidNotChange) {
-      return; < ;
+      return;
     }
 
     for (const elementId of this._elementsWithEventListeners) {
