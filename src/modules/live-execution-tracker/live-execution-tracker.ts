@@ -16,7 +16,6 @@ import {
   ICanvas,
   IColorPickerColor,
   IElementRegistry,
-  IEvent,
   IModdleElement,
   IModeling,
   IOverlay,
@@ -56,6 +55,8 @@ export class LiveExecutionTracker {
   private _attached: boolean;
   private _previousElementIdsWithActiveToken: Array<string> = [];
   private _activeTokens: Array<ActiveToken>;
+
+  private _elementsWithEventListeners: Array<string> = [];
 
   constructor(router: Router,
               notificationService: NotificationService,
@@ -99,40 +100,12 @@ export class LiveExecutionTracker {
 
     this._viewerCanvas.zoom('fit-viewport');
 
-    this._diagramViewer.on('element.click', this._elementClickHandler);
-
     this._startPolling();
   }
 
   public detached(): void {
     this._attached = false;
     this._stopPolling();
-  }
-
-  private _elementClickHandler: (event: IEvent) => Promise<void> = async(event: IEvent) => {
-    const clickedElement: IShape = event.element;
-
-    const clickedElementIsNotAUserOrManualTask: boolean = clickedElement.type !== 'bpmn:UserTask'
-                                                       && clickedElement.type !== 'bpmn:ManualTask';
-
-    if (clickedElementIsNotAUserOrManualTask) {
-      return;
-    }
-
-    this._handleTask(clickedElement);
-  }
-
-  private async _handleTask(element: IShape): Promise<void> {
-    const elementHasNoActiveToken: boolean = !this._hasElementActiveToken(element.id);
-    if (elementHasNoActiveToken) {
-      return;
-    }
-
-    this._router.navigateToRoute('task-dynamic-ui', {
-      correlationId: this._correlationId,
-      processModelId: this._processModelId,
-      taskId: element.id,
-    });
   }
 
   private async _colorizeXml(xml: string): Promise<string> {
@@ -168,9 +141,14 @@ export class LiveExecutionTracker {
 
     const elementsWithActiveTokenDidNotChange: boolean = elementIds.toString() === this._previousElementIdsWithActiveToken.toString();
     if (elementsWithActiveTokenDidNotChange) {
-      return;
+      return; < ;
     }
 
+    for (const elementId of this._elementsWithEventListeners) {
+      document.getElementById(elementId).removeEventListener('click', this._handleElementClick);
+    }
+
+    this._elementsWithEventListeners = [];
     this._overlay.clear();
 
     for (const element of elements) {
@@ -186,10 +164,25 @@ export class LiveExecutionTracker {
           left: 0,
           top: 0,
         },
-        html: `<div class="play-task-button-container"><i class="fas fa-play play-task-button"></i></div>`,
+        html: `<div class="play-task-button-container" id="${element.id}"><i class="fas fa-play play-task-button"></i></div>`,
       });
+
+      document.getElementById(element.id).addEventListener('click', this._handleElementClick);
+
+      this._elementsWithEventListeners.push(element.id);
     }
   }
+
+  private _handleElementClick: (event: MouseEvent) => void =
+    (event: MouseEvent): void => {
+      const elementId: string = (event.target as any).id;
+
+      this._router.navigateToRoute('task-dynamic-ui', {
+        correlationId: this._correlationId,
+        processModelId: this._processModelId,
+        taskId: elementId,
+      });
+    }
 
   private async _getElementsWithActiveToken(elements: Array<IShape>): Promise<Array<IShape>> {
     const identity: IIdentity = this._getIdentity();
@@ -423,7 +416,7 @@ export class LiveExecutionTracker {
 
       const xmlChanged: boolean = previousXml !== colorizedXml;
       if (xmlChanged) {
-        this._importXml(this._diagramViewer, colorizedXml);
+        await this._importXml(this._diagramViewer, colorizedXml);
       }
 
       if (correlationIsStillActive && this._attached) {
