@@ -94,7 +94,13 @@ export class LiveExecutionTracker {
 
     this._diagramViewer.attachTo(this.canvasModel);
 
-    const xml: string = await this._getXml(0);
+    const xml: string = await this._getXml();
+
+    const couldNotGetXml: boolean = xml === undefined;
+    if (couldNotGetXml) {
+      return;
+    }
+
     const colorizedXml: string = await this._colorizeXml(xml);
 
     await this._importXml(this._diagramViewer, colorizedXml);
@@ -343,21 +349,30 @@ export class LiveExecutionTracker {
     return activeTokenForFlowNodeInstance !== undefined;
   }
 
-  private async _getXml(retryCount: number): Promise<string> {
+  private async _getXml(): Promise<string> {
     const identity: IIdentity = this._getIdentity();
 
-    let correlation: Correlation;
-    try {
-      // This is necessary because the managementApi sometimes throws an error when the correlation is not yet existing.
-      correlation = await this._managementApiClient.getCorrelationById(identity, this._correlationId);
-    } catch (error) {
+    // This is necessary because the managementApi sometimes throws an error when the correlation is not yet existing.
+    const getCorrelation: () => Promise<Correlation> = async(): Promise<Correlation> => {
       // tslint:disable-next-line no-magic-numbers
-      const retriedEnough: boolean = retryCount > 5;
-      if (retriedEnough) {
-        throw error;
+      for (let retries: number = 0; retries < 5; retries++) {
+        try {
+          return await this._managementApiClient.getCorrelationById(identity, this._correlationId);
+        } catch {
+          // Do nothing;
+        }
       }
 
-      return this._getXml(retryCount++);
+      this._notificationService.showNotification(NotificationType.ERROR, 'Could not get correlation. Please try to start the process again.');
+
+      return undefined;
+    };
+
+    const correlation: Correlation = await getCorrelation();
+
+    const errorGettingCorrelation: boolean = correlation === undefined;
+    if (errorGettingCorrelation) {
+      return;
     }
 
     const processModelFromCorrelation: CorrelationProcessModel = correlation.processModels.find((processModel: CorrelationProcessModel) => {
@@ -441,7 +456,12 @@ export class LiveExecutionTracker {
       const correlationIsStillActive: boolean = await this._isCorrelationStillActive();
 
       const previousXml: string = await this._exportXml(this._diagramViewer);
-      const xml: string = await this._getXml(0);
+      const xml: string = await this._getXml();
+      const couldNotGetXml: boolean = xml === undefined;
+      if (couldNotGetXml) {
+        return;
+      }
+
       const colorizedXml: string = await this._colorizeXml(xml);
 
       const xmlChanged: boolean = previousXml !== colorizedXml;
