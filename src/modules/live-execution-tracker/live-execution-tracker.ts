@@ -145,10 +145,17 @@ export class LiveExecutionTracker {
       return;
     }
 
-    const elementIds: Array<string> =  elements.map((element: IShape) => element.id).sort();
+    const activeManualAndUserTasks: Array<IShape> = elements.filter((element: IShape) => {
+      const elementIsAUserOrManualTask: boolean = element.type === 'bpmn:UserTask'
+                                               || element.type === 'bpmn:ManualTask';
 
-    const elementsWithActiveTokenDidNotChange: boolean = elementIds.toString() === this._previousElementIdsWithActiveToken.toString();
-    const allActiveElementsHaveAnOverlay: boolean = elementIds.length === this._overlays._overlays.length;
+      return elementIsAUserOrManualTask;
+    })
+
+    const activeManualAndUserTaskIds: Array<string> =  activeManualAndUserTasks.map((element: IShape) => element.id).sort();
+
+    const elementsWithActiveTokenDidNotChange: boolean = activeManualAndUserTaskIds.toString() === this._previousElementIdsWithActiveToken.toString();
+    const allActiveElementsHaveAnOverlay: boolean = activeManualAndUserTaskIds.length === Object.keys(this._overlays._overlays).length;
 
     if (elementsWithActiveTokenDidNotChange && allActiveElementsHaveAnOverlay) {
       return;
@@ -161,14 +168,7 @@ export class LiveExecutionTracker {
     this._elementsWithEventListeners = [];
     this._overlays.clear();
 
-    for (const element of elements) {
-      const elementIsNotAUserOrManualTask: boolean = element.type !== 'bpmn:UserTask'
-                                                  && element.type !== 'bpmn:ManualTask';
-
-      if (elementIsNotAUserOrManualTask) {
-        continue;
-      }
-
+    for (const element of activeManualAndUserTasks) {
       this._overlays.add(element, {
         position: {
           left: 0,
