@@ -20,7 +20,7 @@
 
       <li
         repeat.for="diagram of openedDiagrams"
-        class.bind="diagram.uri === currentlyOpenedDiagramUri ? 'diagram-entry diagram-entry--highlight' : 'diagram-entry'"
+        class.bind="diagram.name === currentlyOpenedDiagramName ? 'diagram-entry diagram-entry--highlight' : 'diagram-entry'"
         title="${diagram.name}"
         click.delegate="navigateToDetailView(diagram)"
         id="diagramList-${diagram.name}">
@@ -43,10 +43,10 @@
 
           <div class="diagram-entry__actions">
             <button
-              class.bind="diagram.uri !== currentlyOpenedDiagramUri ? 'button' : 'button button--disabled'"
+              class.bind="diagram.name !== currentlyOpenedDiagramName ? 'button' : 'button button--disabled'"
               if.bind="canRenameDiagram()"
               click.delegate="startRenamingOfDiagram(diagram, $event)"
-              title.bind="diagram.uri !== currentlyOpenedDiagramUri ? 'Rename the diagram' : 'The diagram is currently open, it cant be renamed.'">
+              title.bind="diagram.name !== currentlyOpenedDiagramName ? 'Rename the diagram' : 'The diagram is currently open, it cant be renamed.'">
 
               <i class="fa fa-pencil-alt"></i>
             </button>
@@ -61,10 +61,10 @@
             </button>
 
             <button
-              class.bind="diagram.uri !== currentlyOpenedDiagramUri ? 'button' : 'button button--disabled'"
+              class.bind="diagram.name !== currentlyOpenedDiagramName ? 'button' : 'button button--disabled'"
               if.bind="canDeleteDiagram()"
               click.delegate="deleteDiagram(diagram, $event)"
-              title.bind="diagram.uri !== currentlyOpenedDiagramUri ? 'Delete the diagram' : 'The diagram is currently open, it cant be deleted.'">
+              title.bind="diagram.name !== currentlyOpenedDiagramName ? 'Delete the diagram' : 'The diagram is currently open, it cant be deleted.'">
 
               <i class="fa fa-trash"></i>
             </button>
