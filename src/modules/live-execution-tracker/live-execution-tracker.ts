@@ -138,7 +138,7 @@ export class LiveExecutionTracker {
 
   private _addOverlaysToUserAndManualTasks(elements: Array<IShape>): void {
     const liveExecutionTrackerIsNotAttached: boolean = !this._attached;
-    if(liveExecutionTrackerIsNotAttached) {
+    if (liveExecutionTrackerIsNotAttached) {
       return;
     }
 
