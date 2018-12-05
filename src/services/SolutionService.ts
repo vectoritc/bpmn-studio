@@ -10,6 +10,7 @@ export class SolutionService implements ISolutionService {
   private _allSolutionEntries: Array<ISolutionEntry> = [];
   private _activeSolution: ISolutionEntry;
   private _activeDiagram: IDiagram;
+
   constructor(eventAggregator: EventAggregator) {
     this._eventAggregator = eventAggregator;
   }

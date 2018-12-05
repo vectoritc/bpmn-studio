@@ -72,7 +72,6 @@ export class DiagramDetail {
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
 
-
     const diagramNameIsNotSet: boolean = routeParameters.diagramName === undefined;
     if (diagramNameIsNotSet) {
       this._router.navigateBack();
