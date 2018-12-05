@@ -137,6 +137,11 @@ export class LiveExecutionTracker {
   }
 
   private _addOverlaysToUserAndManualTasks(elements: Array<IShape>): void {
+    const liveExecutionTrackerIsNotAttached: boolean = !this._attached;
+    if(liveExecutionTrackerIsNotAttached) {
+      return;
+    }
+
     const elementIds: Array<string> =  elements.map((element: IShape) => element.id).sort();
 
     const elementsWithActiveTokenDidNotChange: boolean = elementIds.toString() === this._previousElementIdsWithActiveToken.toString();
