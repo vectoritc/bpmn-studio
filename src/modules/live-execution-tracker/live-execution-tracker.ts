@@ -121,7 +121,11 @@ export class LiveExecutionTracker {
     // Import the xml to the modeler to add colors to it
     await this._importXml(this._diagramModeler, xml);
 
-    // Remove all colors if the diagram has already colored elements
+    /*
+     * Remove all colors if the diagram has already colored elements.
+     * For example, if the user has some elements colored orange and is running the diagram, one would think in LiveExecutionTracker that the element
+     *  is active although it is not active.
+    */
     this._clearColors();
 
     // Get all Elements that can have a token
