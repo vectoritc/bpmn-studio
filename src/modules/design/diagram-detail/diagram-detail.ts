@@ -82,7 +82,6 @@ export class DiagramDetail {
     this._activeSolutionEntry = await this._solutionService.getActiveSolutionEntry();
     this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
 
-
     this._diagramHasChanged = false;
 
     const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
