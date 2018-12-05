@@ -21,6 +21,7 @@ import {
   IOverlays,
   IShape,
   NotificationType,
+  IEvent,
 } from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
@@ -97,6 +98,8 @@ export class LiveExecutionTracker {
     const colorizedXml: string = await this._colorizeXml(xml);
 
     await this._importXml(this._diagramViewer, colorizedXml);
+
+    this._diagramViewer.on('element.click', this._elementClickHandler);
 
     this._viewerCanvas.zoom('fit-viewport');
 
@@ -189,7 +192,27 @@ export class LiveExecutionTracker {
         processModelId: this._processModelId,
         taskId: elementId,
       });
+    };
+
+  private _elementClickHandler: (event: IEvent) => Promise<void> = async(event: IEvent) => {
+    const clickedElement: IShape = event.element;
+      const clickedElementIsNotAUserOrManualTask: boolean = clickedElement.type !== 'bpmn:UserTask'
+                                                        && clickedElement.type !== 'bpmn:ManualTask';
+      if (clickedElementIsNotAUserOrManualTask) {
+      return;
     }
+
+    const elementHasNoActiveToken: boolean = !this._hasElementActiveToken(clickedElement.id);
+    if (elementHasNoActiveToken) {
+      return;
+    }
+
+    this._router.navigateToRoute('task-dynamic-ui', {
+      correlationId: this._correlationId,
+      processModelId: this._processModelId,
+      taskId: clickedElement.id,
+    });
+  }
 
   private async _getElementsWithActiveToken(elements: Array<IShape>): Promise<Array<IShape>> {
     const identity: IIdentity = this._getIdentity();
