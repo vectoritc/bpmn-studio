@@ -16,12 +16,12 @@ import {
   ICanvas,
   IColorPickerColor,
   IElementRegistry,
+  IEvent,
   IModdleElement,
   IModeling,
   IOverlays,
   IShape,
   NotificationType,
-  IEvent,
 } from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
@@ -150,7 +150,7 @@ export class LiveExecutionTracker {
                                                || element.type === 'bpmn:ManualTask';
 
       return elementIsAUserOrManualTask;
-    })
+    });
 
     const activeManualAndUserTaskIds: Array<string> =  activeManualAndUserTasks.map((element: IShape) => element.id).sort();
 
@@ -192,13 +192,13 @@ export class LiveExecutionTracker {
         processModelId: this._processModelId,
         taskId: elementId,
       });
-    };
+    }
 
   private _elementClickHandler: (event: IEvent) => Promise<void> = async(event: IEvent) => {
     const clickedElement: IShape = event.element;
-      const clickedElementIsNotAUserOrManualTask: boolean = clickedElement.type !== 'bpmn:UserTask'
+    const clickedElementIsNotAUserOrManualTask: boolean = clickedElement.type !== 'bpmn:UserTask'
                                                         && clickedElement.type !== 'bpmn:ManualTask';
-      if (clickedElementIsNotAUserOrManualTask) {
+    if (clickedElementIsNotAUserOrManualTask) {
       return;
     }
 
