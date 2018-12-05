@@ -118,10 +118,13 @@ export class LiveExecutionTracker {
   }
 
   private async _colorizeXml(xml: string): Promise<string> {
+    // Import the xml to the modeler to add colors to it
     await this._importXml(this._diagramModeler, xml);
 
+    // Remove all colors if the diagram has already colored elements
     this._clearColors();
 
+    // Get all Elements that can have a token
     const allElements: Array<IShape> = this._elementRegistry.filter((element: IShape): boolean => {
       const elementCanHaveAToken: boolean = element.type !== 'bpmn:SequenceFlow'
                                          && element.type !== 'bpmn:Collaboration'
@@ -132,15 +135,19 @@ export class LiveExecutionTracker {
       return elementCanHaveAToken;
     });
 
+    // Get all elements that already have a token and all that have an active token.
     const elementsWithActiveToken: Array<IShape> = await this._getElementsWithActiveToken(allElements);
     const elementsWithTokenHistory: Array<IShape> = await this._getElementsWithTokenHistory(allElements);
 
+    // Colorize the found elements and add overlay to those that can be started.
     this._colorizeElements(elementsWithTokenHistory, defaultBpmnColors.green);
     this._colorizeElements(elementsWithActiveToken, defaultBpmnColors.orange);
     this._addOverlaysToUserAndManualTasks(elementsWithActiveToken);
 
+    // Get the elementIds of the elements with an active token and sort them alphabetically
     this._previousElementIdsWithActiveToken = elementsWithActiveToken.map((element: IShape) => element.id).sort();
 
+    // Export the colored xml from the modeler
     const colorizedXml: string = await this._exportXml(this._diagramModeler);
     return colorizedXml;
   }
