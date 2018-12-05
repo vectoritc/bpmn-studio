@@ -199,7 +199,7 @@ export class App {
         moduleId: 'modules/config-panel/config-panel',
       },
       {
-        route: 'correlation/:correlationId/processModel/:processModelId/live-execution-tracker',
+        route: 'correlation/:correlationId/processmodel/:processModelId/live-execution-tracker',
         title: 'Live Execution Tracker',
         name: 'live-execution-tracker',
         moduleId: 'modules/live-execution-tracker/live-execution-tracker',
