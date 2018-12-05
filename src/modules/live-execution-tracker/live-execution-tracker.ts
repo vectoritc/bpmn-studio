@@ -349,8 +349,6 @@ export class LiveExecutionTracker {
   }
 
   private _hasElementActiveToken(elementId: string): boolean {
-    const identity: IIdentity = this._getIdentity();
-
     const activeTokenForFlowNodeInstance: ActiveToken = this._activeTokens.find((activeToken: ActiveToken) => {
       const activeTokenIsFromFlowNodeInstance: boolean = activeToken.flowNodeId === elementId;
 
