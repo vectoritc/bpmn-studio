@@ -18,7 +18,7 @@ import {
   IElementRegistry,
   IModdleElement,
   IModeling,
-  IOverlay,
+  IOverlays,
   IShape,
   NotificationType,
 } from '../../contracts/index';
@@ -41,7 +41,7 @@ export class LiveExecutionTracker {
   private _modeling: IModeling;
   private _elementRegistry: IElementRegistry;
   private _viewerCanvas: ICanvas;
-  private _overlay: IOverlay;
+  private _overlays: IOverlays;
 
   private _router: Router;
   private _notificationService: NotificationService;
@@ -89,7 +89,7 @@ export class LiveExecutionTracker {
     this._modeling = this._diagramModeler.get('modeling');
     this._elementRegistry = this._diagramModeler.get('elementRegistry');
     this._viewerCanvas = this._diagramViewer.get('canvas');
-    this._overlay = this._diagramViewer.get('overlays');
+    this._overlays = this._diagramViewer.get('overlays');
 
     this._diagramViewer.attachTo(this.canvasModel);
 
@@ -149,7 +149,7 @@ export class LiveExecutionTracker {
     }
 
     this._elementsWithEventListeners = [];
-    this._overlay.clear();
+    this._overlays.clear();
 
     for (const element of elements) {
       const elementIsNotAUserOrManualTask: boolean = element.type !== 'bpmn:UserTask'
@@ -159,7 +159,7 @@ export class LiveExecutionTracker {
         continue;
       }
 
-      this._overlay.add(element, {
+      this._overlays.add(element, {
         position: {
           left: 0,
           top: 0,

@@ -5,7 +5,8 @@ import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {FlowNodeRuntimeInformation} from '@process-engine/kpi_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {IBpmnModeler, IElementRegistry, IOverlay} from '../../../contracts/index';
+import {IBpmnModeler, IElementRegistry, IOverlays} from '../../../contracts/index';
+import environment from '../../../environment';
 import {IFlowNodeAssociation, IHeatmapService} from './contracts';
 
 @inject('HeatmapService')
@@ -93,7 +94,7 @@ export class Heatmap {
 
     await this._pushXmlToBpmnModeler(xml, this._viewer);
 
-    const overlays: IOverlay = this._viewer.get('overlays');
+    const overlays: IOverlays = this._viewer.get('overlays');
 
     this._heatmapService.addOverlays(overlays, elementRegistry, this.activeDiagram.id);
 

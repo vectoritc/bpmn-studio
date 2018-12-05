@@ -1,7 +1,7 @@
 import {ActiveToken, FlowNodeRuntimeInformation} from '@process-engine/kpi_api_contracts';
 import {ProcessModelExecution} from '@process-engine/management_api_contracts';
 import {IFlowNodeAssociation} from '.';
-import {IBpmnModeler, IElementRegistry, IOverlay} from '../../../../contracts';
+import {IBpmnModeler, IElementRegistry, IOverlays} from '../../../../contracts';
 
 export interface IHeatmapService {
   getRuntimeInformationForProcessModel(processModelId: string): Promise<Array<FlowNodeRuntimeInformation>>;
@@ -13,5 +13,5 @@ export interface IHeatmapService {
     modeler: IBpmnModeler,
    ): Promise<string>;
   getActiveTokensForFlowNode(flowNodeId: string): Promise<Array<ActiveToken>>;
-  addOverlays(overlays: IOverlay, elementRegistry: IElementRegistry, processModelId: string): void;
+  addOverlays(overlays: IOverlays, elementRegistry: IElementRegistry, processModelId: string): void;
 }
