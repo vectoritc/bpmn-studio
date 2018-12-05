@@ -56,6 +56,7 @@ export class LiveExecutionTracker {
   private _attached: boolean;
   private _previousElementIdsWithActiveToken: Array<string> = [];
   private _activeTokens: Array<ActiveToken>;
+  private _retryCount: number = 5;
 
   private _elementsWithEventListeners: Array<string> = [];
 
@@ -364,7 +365,7 @@ export class LiveExecutionTracker {
     // This is necessary because the managementApi sometimes throws an error when the correlation is not yet existing.
     const getCorrelation: () => Promise<Correlation> = async(): Promise<Correlation> => {
       // tslint:disable-next-line no-magic-numbers
-      for (let retries: number = 0; retries < 5; retries++) {
+      for (let retries: number = 0; retries < this._retryCount; retries++) {
         try {
           return await this._managementApiClient.getCorrelationById(identity, this._correlationId);
         } catch {
