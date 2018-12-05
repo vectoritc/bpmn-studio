@@ -10,8 +10,8 @@ import {
   IConnection,
   IElementRegistry,
   IModeling,
+  IOverlayManager,
   IOverlayPosition,
-  IOverlays,
   IShape,
 } from '../../../../contracts/index';
 import {
@@ -43,12 +43,12 @@ export class HeatmapService implements IHeatmapService {
 
   /**
    *
-   * @param overlays IOverlays; The overlay module from bpmn-js
+   * @param overlays IOverlayManager; The overlay module from bpmn-js
    * @param elementRegistry IElementRegistry; The elementRegistry module from bpmn-js
    *
    * This method adds overlays for the activeTokens to the diagram viewer.
    */
-  public async addOverlays(overlays: IOverlays, elementRegistry: IElementRegistry, processModelId: string): Promise<void> {
+  public async addOverlays(overlays: IOverlayManager, elementRegistry: IElementRegistry, processModelId: string): Promise<void> {
 
     let participantsTokenCount: number = 0;
 

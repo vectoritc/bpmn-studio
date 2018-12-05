@@ -19,7 +19,7 @@ import {
   IEvent,
   IModdleElement,
   IModeling,
-  IOverlays,
+  IOverlayManager,
   IShape,
   NotificationType,
 } from '../../contracts/index';
@@ -42,7 +42,7 @@ export class LiveExecutionTracker {
   private _modeling: IModeling;
   private _elementRegistry: IElementRegistry;
   private _viewerCanvas: ICanvas;
-  private _overlays: IOverlays;
+  private _overlays: IOverlayManager;
 
   private _router: Router;
   private _notificationService: NotificationService;
