@@ -140,7 +140,9 @@ export class LiveExecutionTracker {
     const elementIds: Array<string> =  elements.map((element: IShape) => element.id).sort();
 
     const elementsWithActiveTokenDidNotChange: boolean = elementIds.toString() === this._previousElementIdsWithActiveToken.toString();
-    if (elementsWithActiveTokenDidNotChange) {
+    const allActiveElementsHaveAnOverlay: boolean = elementIds.length === this._overlays._overlays.length;
+
+    if (elementsWithActiveTokenDidNotChange && allActiveElementsHaveAnOverlay) {
       return;
     }
 
