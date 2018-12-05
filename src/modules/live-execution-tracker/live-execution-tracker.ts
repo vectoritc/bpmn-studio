@@ -171,8 +171,8 @@ export class LiveExecutionTracker {
     for (const element of activeManualAndUserTasks) {
       this._overlays.add(element, {
         position: {
-          left: 0,
-          top: 0,
+          left: -1,
+          top: -1,
         },
         html: `<div class="play-task-button-container" id="${element.id}"><i class="fas fa-play play-task-button"></i></div>`,
       });
