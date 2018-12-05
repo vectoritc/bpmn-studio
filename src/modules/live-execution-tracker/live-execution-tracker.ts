@@ -124,10 +124,10 @@ export class LiveExecutionTracker {
 
     const allElements: Array<IShape> = this._elementRegistry.filter((element: IShape): boolean => {
       const elementCanHaveAToken: boolean = element.type !== 'bpmn:SequenceFlow'
-                                        && element.type !== 'bpmn:Collaboration'
-                                        && element.type !== 'bpmn:Participant'
-                                        && element.type !== 'bpmn:Lane'
-                                        && element.type !== 'label';
+                                         && element.type !== 'bpmn:Collaboration'
+                                         && element.type !== 'bpmn:Participant'
+                                         && element.type !== 'bpmn:Lane'
+                                         && element.type !== 'label';
 
       return elementCanHaveAToken;
     });
