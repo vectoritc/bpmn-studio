@@ -8,7 +8,6 @@ import {
   Correlation,
   CorrelationProcessModel,
   IManagementApi,
-  TokenHistoryEntry,
 } from '@process-engine/management_api_contracts';
 
 import {ActiveToken} from '@process-engine/kpi_api_contracts';
@@ -35,8 +34,6 @@ type RouteParameters = {
   correlationId: string;
   processModelId: string;
 };
-
-type TokenHistory = Array<TokenHistoryEntry>;
 
 @inject(Router, 'NotificationService', 'AuthenticationService', 'ManagementApiClientService')
 export class LiveExecutionTracker {
