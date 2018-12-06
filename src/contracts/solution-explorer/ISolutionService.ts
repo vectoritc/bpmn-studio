@@ -13,7 +13,7 @@ export interface ISolutionService {
    * Closes the given SolutionEntry and deletes it from the service.
    * @param solutionEntry The SolutionEntry to close.
    */
-  closeSolutionEntry(solutionEntry: ISolutionEntry): void;
+  removeSolutionEntry(solutionEntry: ISolutionEntry): void;
 
   /**
    * Gets the currently active SolutionEntry.
@@ -30,5 +30,16 @@ export interface ISolutionService {
    * Sets the active Solution
    * @param solution The new active SolutionEntry.
    */
-  setActiveSolution(solution: ISolutionEntry): void;
+  setActiveSolutionEntry(solution: ISolutionEntry): void;
+
+  /**
+   * Gets the currently active Diagram.
+   */
+  getActiveDiagram(): IDiagram;
+
+  /**
+   * Sets the active Diagram
+   * @param solution The new active Diagram.
+   */
+  setActiveDiagram(diagram: IDiagram): void;
 }

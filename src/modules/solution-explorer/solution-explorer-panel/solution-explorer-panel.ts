@@ -1,6 +1,6 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
-import {PipelineResult, Router} from 'aurelia-router';
+import {Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
@@ -285,13 +285,8 @@ export class SolutionExplorerPanel {
 
   // TODO: This method is copied all over the place.
   private async _navigateToDetailView(diagram: IDiagram, solution: ISolutionEntry): Promise<void> {
-    // TODO: Remove this if cause if we again have one detail view.
-    this._solutionService.setActiveSolution(solution);
-
-    this._eventAggregator.publish(environment.events.navBar.updateActiveSolutionAndDiagram, {
-      solutionEntry: solution,
-      diagram: diagram,
-    });
+    this._solutionService.setActiveSolutionEntry(solution);
+    this._solutionService.setActiveDiagram(diagram);
 
     await this._router.navigateToRoute('diagram-detail', {
       diagramName: diagram.name,

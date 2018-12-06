@@ -161,6 +161,7 @@ export class SolutionExplorerSolution {
 
       this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToDesigner, () => {
         this._diagramRoute = 'diagram-detail';
+        this._inspectView = undefined;
       }),
     ];
 
@@ -363,13 +364,8 @@ export class SolutionExplorerSolution {
 
   // TODO: This method is copied all over the place.
   public async navigateToDetailView(diagram: IDiagram): Promise<void> {
-    // TODO: Remove this if cause if we again have one detail view.
-    this._solutionService.setActiveSolution(this.displayedSolutionEntry);
-
-    this._eventAggregator.publish(environment.events.navBar.updateActiveSolutionAndDiagram, {
-      solutionEntry: this.displayedSolutionEntry,
-      diagram: diagram,
-    });
+    this._solutionService.setActiveSolutionEntry(this.displayedSolutionEntry);
+    this._solutionService.setActiveDiagram(diagram);
 
     const diagramIsNoRemoteDiagram: boolean = !diagram.uri.startsWith('http');
     if (diagramIsNoRemoteDiagram) {
@@ -392,32 +388,19 @@ export class SolutionExplorerSolution {
 
   }
 
-  @computedFrom('_router.currentInstruction.config.name')
+  @computedFrom('_solutionService._activeDiagram')
   public get currentlyOpenedDiagramUri(): string {
-    const moduleName: string = this._router.currentInstruction.config.name;
+    const activeDiagram: IDiagram = this._solutionService.getActiveDiagram();
+    const noDiagramWasOpened: boolean = activeDiagram === undefined || activeDiagram === null;
 
-    const diagramDetailViewIsOpen: boolean = moduleName === 'diagram-detail';
-    if (diagramDetailViewIsOpen) {
-      const queryParams: {diagramUri: string} = this._router.currentInstruction.queryParams;
-
-      return queryParams.diagramUri;
+    if (noDiagramWasOpened) {
+      return undefined;
     }
 
-    // TODO: The code below needs to get updated, once we implement multiple remote solutions.
-    const processDefDetailViewIsOpen: boolean = moduleName === 'processdef-detail';
-    const inspectViewIsOpen: boolean = moduleName === 'inspect';
-
-    if (processDefDetailViewIsOpen || inspectViewIsOpen) {
-      const params: {processModelId: string} = this._router.currentInstruction.params;
-
-      return environment.baseRoute + '/api/management/v1/' + params.processModelId;
-    }
-
-    return undefined;
+    return activeDiagram.uri;
   }
 
   private _isDiagramDetailViewOfDiagramOpen(diagramUriToCheck: string): boolean {
-
     const diagramIsOpened: boolean = diagramUriToCheck === this.currentlyOpenedDiagramUri;
 
     return diagramIsOpened;

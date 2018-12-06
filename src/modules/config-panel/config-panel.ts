@@ -4,12 +4,12 @@ import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {Router} from 'aurelia-router';
 
 import {IAuthenticationService} from '../../contracts/authentication/IAuthenticationService';
-import {AuthenticationStateEvent, NotificationType} from '../../contracts/index';
+import {AuthenticationStateEvent, ISolutionService, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {oidcConfig} from '../../open-id-connect-configuration';
 import {NotificationService} from '../notification/notification.service';
 
-@inject(Router, 'NotificationService', EventAggregator, 'AuthenticationService', OpenIdConnect, 'InternalProcessEngineBaseRoute')
+@inject(Router, 'NotificationService', EventAggregator, 'AuthenticationService', OpenIdConnect, 'InternalProcessEngineBaseRoute', 'SolutionService')
 export class ConfigPanel {
   @bindable public baseRoute: string;
   @bindable public authority: string;
@@ -24,6 +24,7 @@ export class ConfigPanel {
   private _subscriptions: Array<Subscription>;
   // We use any here, because we need to call private members (see below)
   private _openIdConnect: OpenIdConnect | any;
+  private _solutionService: ISolutionService;
 
   constructor(router: Router,
               notificationService: NotificationService,
@@ -31,6 +32,7 @@ export class ConfigPanel {
               authenticationService: IAuthenticationService,
               openIdConnect: OpenIdConnect,
               internalProcessEngineBaseRoute: string | null,
+              solutionService: ISolutionService,
             ) {
 
     this._router = router;
@@ -39,6 +41,7 @@ export class ConfigPanel {
     this._authenticationService = authenticationService;
     this._openIdConnect = openIdConnect;
     this.internalProcessEngineBaseRoute = internalProcessEngineBaseRoute;
+    this._solutionService = solutionService;
   }
 
   public attached(): void {
@@ -92,6 +95,12 @@ export class ConfigPanel {
     }
 
     this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, this.baseRoute);
+
+    /**
+     * The active diagram is set to undefined here, because we don't know whether
+     * the new ProcessEngine where we are connected to has also the diagram.
+     */
+    this._solutionService.setActiveDiagram(undefined);
 
     const baseRouteIsInternalProcessEngine: boolean = this.baseRoute === window.localStorage.getItem('InternalProcessEngineRoute');
     if (baseRouteIsInternalProcessEngine) {

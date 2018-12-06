@@ -6,10 +6,9 @@ import {FlowNodeRuntimeInformation} from '@process-engine/kpi_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
 import {IBpmnModeler, IElementRegistry, IOverlay} from '../../../contracts/index';
-import environment from '../../../environment';
 import {IFlowNodeAssociation, IHeatmapService} from './contracts';
 
-@inject('HeatmapService', EventAggregator)
+@inject('HeatmapService')
 export class Heatmap {
   public viewerContainer: HTMLDivElement;
   @bindable() public activeDiagram: IDiagram;
@@ -18,11 +17,9 @@ export class Heatmap {
   private _heatmapService: IHeatmapService;
   private _modeler: IBpmnModeler;
   private _viewer: IBpmnModeler;
-  private _eventAggregator: EventAggregator;
 
-  constructor(heatmapService: IHeatmapService, eventAggregator: EventAggregator) {
+  constructor(heatmapService: IHeatmapService) {
     this._heatmapService = heatmapService;
-    this._eventAggregator = eventAggregator;
   }
 
   public activeDiagramChanged(): void {
@@ -50,8 +47,12 @@ export class Heatmap {
 
   public async attached(): Promise<void> {
 
-    const diagramIsNoRemoteDiagram: boolean = !this.activeDiagram.uri.startsWith('http');
+    const noActiveDiagram: boolean = this.activeDiagram === undefined;
+    if (noActiveDiagram) {
+      return;
+    }
 
+    const diagramIsNoRemoteDiagram: boolean = !this.activeDiagram.uri.startsWith('http');
     if (diagramIsNoRemoteDiagram) {
       return;
     }
