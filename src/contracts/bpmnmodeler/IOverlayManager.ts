@@ -1,9 +1,9 @@
+import {IOverlay} from './IOverlay';
 import {IOverlayDescriptor} from './IOverlayDescriptor';
-import {IOverlays} from './IOverlays';
 import {IShape} from './IShape';
 
 export interface IOverlayManager {
-  _overlays: IOverlays;
+  _overlays: Map<string, IOverlay>;
 
   add(elementOrElementId: string | IShape, overlayDescriptor: IOverlayDescriptor): void;
   remove(elementOrElementId: string | IShape): void;
