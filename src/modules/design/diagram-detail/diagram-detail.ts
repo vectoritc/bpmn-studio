@@ -75,13 +75,13 @@ export class DiagramDetail {
     const diagramNameIsNotSet: boolean = routeParameters.diagramName === undefined;
     if (diagramNameIsNotSet) {
       this._router.navigateBack();
-
       return;
     }
 
     this._activeSolutionEntry = await this._solutionService.getActiveSolutionEntry();
     this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
 
+    this._solutionService.setActiveDiagram(this.activeDiagram);
     this._diagramHasChanged = false;
 
     const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
