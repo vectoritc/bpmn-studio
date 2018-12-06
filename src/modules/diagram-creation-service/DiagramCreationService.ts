@@ -35,7 +35,7 @@ export class DiagramCreationService implements IDiagramCreationService {
         <bpmn:collaboration id="Collaboration_1cidyxu" name="">
             <bpmn:participant id="Participant_0px403d" name="${processModelId}" processRef="${processModelId}" />
         </bpmn:collaboration>
-        <bpmn:process id="${processModelId}" name="${processModelId}" isExecutable="false">
+        <bpmn:process id="${processModelId}" name="${processModelId}" isExecutable="true">
             <bpmn:laneSet>
                 <bpmn:lane id="Lane_1xzf0d3" name="Lane">
                     <bpmn:flowNodeRef>
