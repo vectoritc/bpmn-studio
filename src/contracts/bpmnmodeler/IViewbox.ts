@@ -1,3 +1,6 @@
+import {IInnerViewbox} from './IInnerViewbox';
+import {IOuterViewbox} from './IOuterViewbox';
+
 export interface IViewbox {
   width: number;
   height: number;
@@ -6,18 +9,4 @@ export interface IViewbox {
   scale: number;
   inner: IInnerViewbox;
   outer: IOuterViewbox;
-}
-
-export interface IInnerViewbox {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-
-export interface IOuterViewbox {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
 }
