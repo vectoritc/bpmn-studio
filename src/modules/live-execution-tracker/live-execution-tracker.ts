@@ -5,9 +5,9 @@ import {IIdentity} from '@essential-projects/iam_contracts';
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 
 import {
-  Correlation, 
+  Correlation,
   CorrelationProcessModel,
-  IManagementApi, 
+  IManagementApi,
   TokenHistoryEntry,
 } from '@process-engine/management_api_contracts';
 
@@ -108,7 +108,7 @@ export class LiveExecutionTracker {
 
     const colorizedXml: string = await this._colorizeXml(xml);
 
-    await this._importXml(this._diagramViewer, colorizedXml);
+    await this._importXmlIntoDiagramViewer(colorizedXml);
 
     this._diagramViewer.on('element.click', this._elementClickHandler);
 
@@ -124,7 +124,7 @@ export class LiveExecutionTracker {
 
   private async _colorizeXml(xml: string): Promise<string> {
     // Import the xml to the modeler to add colors to it
-    await this._importXml(this._diagramModeler, xml);
+    await this._importXmlIntoDiagramModeler(xml);
 
     /*
      * Remove all colors if the diagram has already colored elements.
@@ -421,7 +421,7 @@ export class LiveExecutionTracker {
     });
   }
 
-  private async _importXml(modeler: IBpmnModeler, xml: string): Promise<void> {
+  private async _importXmlIntoDiagramViewer(xml: string): Promise<void> {
     const xmlIsNotLoaded: boolean = (xml === undefined || xml === null);
 
     if (xmlIsNotLoaded) {
@@ -432,7 +432,31 @@ export class LiveExecutionTracker {
     }
 
     const xmlImportPromise: Promise<void> = new Promise((resolve: Function, reject: Function): void => {
-      modeler.importXML(xml, (importXmlError: Error) => {
+      this._diagramViewer.importXML(xml, (importXmlError: Error) => {
+        if (importXmlError) {
+          reject(importXmlError);
+
+          return;
+        }
+        resolve();
+      });
+    });
+
+    return xmlImportPromise;
+  }
+
+  private async _importXmlIntoDiagramModeler(xml: string): Promise<void> {
+    const xmlIsNotLoaded: boolean = (xml === undefined || xml === null);
+
+    if (xmlIsNotLoaded) {
+      const notificationMessage: string = 'The xml could not be loaded. Please try to start the process again.';
+      this._notificationService.showNotification(NotificationType.ERROR, notificationMessage);
+
+      return;
+    }
+
+    const xmlImportPromise: Promise<void> = new Promise((resolve: Function, reject: Function): void => {
+      this._diagramModeler.importXML(xml, (importXmlError: Error) => {
         if (importXmlError) {
           reject(importXmlError);
 
@@ -480,7 +504,7 @@ export class LiveExecutionTracker {
 
       const xmlChanged: boolean = previousXml !== colorizedXml;
       if (xmlChanged) {
-        await this._importXml(this._diagramViewer, colorizedXml);
+        await this._importXmlIntoDiagramViewer(colorizedXml);
       }
 
       if (correlationIsStillActive && this._attached) {
