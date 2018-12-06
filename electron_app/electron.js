@@ -419,8 +419,6 @@ Main._createMainWindow = function () {
     });
   }
 
-  
-
   function setElectronMenubar() {
 
     const getApplicationMenu = () => {
