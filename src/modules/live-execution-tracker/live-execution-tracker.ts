@@ -133,7 +133,7 @@ export class LiveExecutionTracker {
     */
     this._clearColors();
 
-    // Get all Elements that can have a token
+    // Get all elements that can have a token
     const allElements: Array<IShape> = this._elementRegistry.filter((element: IShape): boolean => {
       const elementCanHaveAToken: boolean = element.type !== 'bpmn:SequenceFlow'
                                          && element.type !== 'bpmn:Collaboration'
