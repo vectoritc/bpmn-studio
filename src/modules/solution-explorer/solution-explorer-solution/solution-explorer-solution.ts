@@ -220,7 +220,7 @@ export class SolutionExplorerSolution {
   public async deleteDiagram(diagram: IDiagram, event: Event): Promise<void> {
     event.stopPropagation();
 
-    if (this._isDiagramDetailViewOfDiagramOpen(diagram.name)) {
+    if (this._isDiagramDetailViewOfDiagramOpen(diagram.uri)) {
       const messageTitle: string = '<h4 class="toast-message__headline">Not supported while opened.</h4>';
       const messageBody: string = 'Deleting of opened diagrams is currently not supported. Please switch to another diagram and try again.';
       const message: string = `${messageTitle}\n${messageBody}`;
@@ -244,7 +244,7 @@ export class SolutionExplorerSolution {
   public async startRenamingOfDiagram(diagram: IDiagram, event: Event): Promise<void> {
     event.stopPropagation();
 
-    if (this._isDiagramDetailViewOfDiagramOpen(diagram.name)) {
+    if (this._isDiagramDetailViewOfDiagramOpen(diagram.uri)) {
       const messageTitle: string = '<h4 class="toast-message__headline">Not supported while opened.</h4>';
       const messageBody: string = 'Renaming of opened diagrams is currently not supported. Please switch to another diagram and try again.';
       const message: string = `${messageTitle}\n${messageBody}`;
@@ -388,25 +388,24 @@ export class SolutionExplorerSolution {
 
   }
 
-  @computedFrom('_router.currentInstruction.config.name')
-  public get currentlyOpenedDiagramName(): string {
-    const moduleName: string = this._router.currentInstruction.config.name;
+  // @computedFrom('_router.currentInstruction.config.name')
+  @computedFrom('_solutionService._activeDiagram')
+  public get currentlyOpenedDiagramUri(): string {
+    const activeDiagram: IDiagram = this._solutionService.getActiveDiagram();
+    const noDiagramWasOpened: boolean = activeDiagram === undefined || activeDiagram === null;
 
-    const diagramDetailViewIsOpen: boolean = moduleName === 'diagram-detail';
-    if (diagramDetailViewIsOpen) {
-      const params: {diagramName: string} = this._router.currentInstruction.params;
-
-      return params.diagramName;
+    if (noDiagramWasOpened) {
+      return undefined;
     }
 
-    return undefined;
+    return activeDiagram.uri;
   }
 
-  private _isDiagramDetailViewOfDiagramOpen(diagramNameToCheck: string): boolean {
-    const diagramIsOpened: boolean = diagramNameToCheck === this.currentlyOpenedDiagramName;
+  private _isDiagramDetailViewOfDiagramOpen(diagramUriToCheck: string): boolean {
+    const diagramIsOpened: boolean = diagramUriToCheck === this.currentlyOpenedDiagramUri;
 
     return diagramIsOpened;
-  }
+}
 
   /**
    * Looks in the given Array of validation errors for an invalid character
