@@ -23,7 +23,7 @@ interface RouteParameters {
   diagramName?: string;
 }
 
-type EventListener = {
+type IEventListener = {
   name: string,
   function: Function,
 };
@@ -56,7 +56,7 @@ export class DiagramDetail {
   private _ipcRenderer: any;
   private _solutionService: ISolutionService;
   private _managementApiClient: IManagementApi;
-  private _ipcRendererEventListeners: Array<EventListener> = [];
+  private _ipcRendererEventListeners: Array<IEventListener> = [];
 
   constructor(managementApiClient: IManagementApi,
               notificationService: NotificationService,
