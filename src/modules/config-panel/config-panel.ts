@@ -120,7 +120,7 @@ export class ConfigPanel {
 
     this._notificationService.showNotification(NotificationType.SUCCESS, 'Successfully saved settings!');
 
-    this._router.navigateToRoute('start-page');
+    this._router.navigateBack();
   }
 
   public authorityChanged(): void {
