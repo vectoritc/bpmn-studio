@@ -157,7 +157,7 @@ export class LiveExecutionTracker {
     this._previousElementIdsWithActiveToken = elementsWithActiveToken.map((element: IShape) => element.id).sort();
 
     // Export the colored xml from the modeler
-    const colorizedXml: string = await this._exportXml(this._diagramModeler);
+    const colorizedXml: string = await this._exportXmlFromDiagramModeler();
     return colorizedXml;
   }
 
@@ -469,13 +469,33 @@ export class LiveExecutionTracker {
     return xmlImportPromise;
   }
 
-  private async _exportXml(modeler: IBpmnModeler): Promise<string> {
+  private async _exportXmlFromDiagramModeler(): Promise<string> {
     const saveXmlPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void =>  {
       const xmlSaveOptions: IBpmnXmlSaveOptions = {
         format: true,
       };
 
-      modeler.saveXML(xmlSaveOptions, async(saveXmlError: Error, xml: string) => {
+      this._diagramModeler.saveXML(xmlSaveOptions, async(saveXmlError: Error, xml: string) => {
+        if (saveXmlError) {
+          reject(saveXmlError);
+
+          return;
+        }
+
+        resolve(xml);
+      });
+    });
+
+    return saveXmlPromise;
+  }
+
+  private async _exportXmlFromDiagramViewer(): Promise<string> {
+    const saveXmlPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void =>  {
+      const xmlSaveOptions: IBpmnXmlSaveOptions = {
+        format: true,
+      };
+
+      this._diagramViewer.saveXML(xmlSaveOptions, async(saveXmlError: Error, xml: string) => {
         if (saveXmlError) {
           reject(saveXmlError);
 
@@ -493,7 +513,7 @@ export class LiveExecutionTracker {
     this._pollingTimer = setTimeout(async() => {
       const correlationIsStillActive: boolean = await this._isCorrelationStillActive();
 
-      const previousXml: string = await this._exportXml(this._diagramViewer);
+      const previousXml: string = await this._exportXmlFromDiagramViewer();
       const xml: string = await this._getXml();
       const couldNotGetXml: boolean = xml === undefined;
       if (couldNotGetXml) {
