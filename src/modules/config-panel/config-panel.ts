@@ -95,6 +95,11 @@ export class ConfigPanel {
     }
 
     this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, this.baseRoute);
+
+    /**
+     * The active diagram is set to undefined here, because we don't know whether
+     * the new ProcessEngine where we are connected to has also the diagram.
+     */
     this._solutionService.setActiveDiagram(undefined);
 
     const baseRouteIsInternalProcessEngine: boolean = this.baseRoute === window.localStorage.getItem('InternalProcessEngineRoute');
