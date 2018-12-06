@@ -254,8 +254,10 @@ export class LiveExecutionTracker {
   }
 
   private async _getElementsWithTokenHistory(elements: Array<IShape>): Promise<Array<IShape>> {
+    const identity: IIdentity = this._getIdentity();
+
     const tokenHistoryGroups: TokenHistoryGroup = await this._managementApiClient.getTokensForCorrelationAndProcessModel(
-      this._getIdentity(),
+      identity,
       this._correlationId,
       this._processModelId);
 
