@@ -285,7 +285,6 @@ export class SolutionExplorerPanel {
 
   // TODO: This method is copied all over the place.
   private async _navigateToDetailView(diagram: IDiagram, solution: ISolutionEntry): Promise<void> {
-    // TODO: Remove this if cause if we again have one detail view.
     this._solutionService.setActiveSolutionEntry(solution);
     this._solutionService.setActiveDiagram(diagram);
 
