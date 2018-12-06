@@ -30,10 +30,10 @@ import {
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
-interface RouteParameters {
+type RouteParameters = {
   correlationId: string;
   processModelId: string;
-}
+};
 
 type TokenHistory = Array<TokenHistoryEntry>;
 
