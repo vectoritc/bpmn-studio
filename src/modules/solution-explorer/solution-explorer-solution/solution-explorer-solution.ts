@@ -404,7 +404,7 @@ export class SolutionExplorerSolution {
     const diagramIsOpened: boolean = diagramUriToCheck === this.currentlyOpenedDiagramUri;
 
     return diagramIsOpened;
-}
+  }
 
   /**
    * Looks in the given Array of validation errors for an invalid character
