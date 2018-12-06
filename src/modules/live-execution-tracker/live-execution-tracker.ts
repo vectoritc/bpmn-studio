@@ -208,7 +208,7 @@ export class LiveExecutionTracker {
 
   private _handleElementClick: (event: MouseEvent) => void =
     (event: MouseEvent): void => {
-      const elementId: string = (event.target as any).id;
+      const elementId: string = (event.target as HTMLDivElement).id;
 
       this._router.navigateToRoute('task-dynamic-ui', {
         correlationId: this._correlationId,
