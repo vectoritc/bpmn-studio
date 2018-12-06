@@ -12,6 +12,7 @@ import {
 } from '@process-engine/management_api_contracts';
 
 import {ActiveToken} from '@process-engine/kpi_api_contracts';
+import {TokenHistoryGroup} from '@process-engine/management_api_contracts/dist/data_models/token_history/token_history_group';
 import {
   defaultBpmnColors,
   IAuthenticationService,
@@ -256,19 +257,19 @@ export class LiveExecutionTracker {
   }
 
   private async _getElementsWithTokenHistory(elements: Array<IShape>): Promise<Array<IShape>> {
-    const allTokenHistories: Array<TokenHistory> = await this._managementApiClient.getTokensForCorrelationAndProcessModel(
+    const tokenHistoryGroups: TokenHistoryGroup = await this._managementApiClient.getTokensForCorrelationAndProcessModel(
       this._getIdentity(),
       this._correlationId,
       this._processModelId);
 
     const elementsWithTokenHistory: Array<IShape> = [];
 
-    for (const tokenHistory of allTokenHistories) {
+    for (const flowNodeId in tokenHistoryGroups) {
       const elementFromTokenHistory: IShape = elements.find((element: IShape) => {
-        return element.id === tokenHistory[0].flowNodeId;
+        return element.id === flowNodeId;
       });
 
-      const elementWithIncomingElements: Array<IShape> = this._getElementWithIncomingElements(elementFromTokenHistory, allTokenHistories);
+      const elementWithIncomingElements: Array<IShape> = this._getElementWithIncomingElements(elementFromTokenHistory, tokenHistoryGroups);
 
       elementsWithTokenHistory.push(...elementWithIncomingElements);
     }
@@ -277,11 +278,11 @@ export class LiveExecutionTracker {
   }
 
   private _getElementWithIncomingElements(element: IShape,
-                                          tokenHistories: Array<TokenHistory>): Array<IShape> {
+                                          tokenHistoryGroups: TokenHistoryGroup): Array<IShape> {
 
     const elementWithIncomingElements: Array<IShape> = [];
 
-    const elementHasNoTokenHistory: boolean = !this._hasElementTokenHistory(element.id, tokenHistories);
+    const elementHasNoTokenHistory: boolean = !this._hasElementTokenHistory(element.id, tokenHistoryGroups);
 
     if (elementHasNoTokenHistory) {
       return [];
@@ -319,7 +320,7 @@ export class LiveExecutionTracker {
       } else {
         elementWithIncomingElements.push(incomingElementAsShape);
 
-        const sourceHasNoTokenHistory: boolean = !this._hasElementTokenHistory(sourceOfIncomingElement.id, tokenHistories);
+        const sourceHasNoTokenHistory: boolean = !this._hasElementTokenHistory(sourceOfIncomingElement.id, tokenHistoryGroups);
         if (sourceHasNoTokenHistory) {
           elementWithIncomingElements.push(sourceOfIncomingElement);
         }
@@ -343,13 +344,9 @@ export class LiveExecutionTracker {
     });
   }
 
-  private _hasElementTokenHistory(elementId: string, tokenHistories: Array<TokenHistory>): boolean {
+  private _hasElementTokenHistory(elementId: string, tokenHistoryGroups: TokenHistoryGroup): boolean {
 
-    const tokenHistoryFromFlowNodeInstanceFound: boolean = tokenHistories.find((tokenHistory: TokenHistory) => {
-      const tokenHistoryIsFromFlowNodeInstance: boolean = tokenHistory[0].flowNodeId === elementId;
-
-      return tokenHistoryIsFromFlowNodeInstance;
-    }) !== undefined;
+    const tokenHistoryFromFlowNodeInstanceFound: boolean = tokenHistoryGroups.get(elementId) !== undefined;
 
     return tokenHistoryFromFlowNodeInstanceFound;
   }
