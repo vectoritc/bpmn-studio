@@ -388,7 +388,6 @@ export class SolutionExplorerSolution {
 
   }
 
-  // @computedFrom('_router.currentInstruction.config.name')
   @computedFrom('_solutionService._activeDiagram')
   public get currentlyOpenedDiagramUri(): string {
     const activeDiagram: IDiagram = this._solutionService.getActiveDiagram();
