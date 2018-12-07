@@ -1,0 +1,32 @@
+.live-execution-tracker {
+  position: relative;
+  height: calc(50% - 14px);
+  margin-bottom: 21px;
+  overflow: hidden;
+  background: #f7f7f7;
+  border: 1px solid #ccc;
+}
+
+.live-execution-tracker__body {
+  position: relative;
+  height: calc(100% - 20px);
+}
+
+.play-task-button-container {
+  width: 102px;
+  height: 82px;
+  cursor: pointer;
+}
+
+.play-task-button {
+  position: absolute;
+  top: 30px;
+  left: 44px;
+  cursor: pointer;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.play-task-button-container:hover .play-task-button {
+  opacity: 1;
+}

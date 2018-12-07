@@ -181,7 +181,7 @@ export class App {
         nav: true,
       },
       {
-        route: ['processdef/:processModelId/task/:taskId/dynamic-ui'],
+        route: ['correlation/:correlationId/processmodel/:processModelId/task/:taskId/dynamic-ui'],
         title: 'Task Dynamic UI',
         name: 'task-dynamic-ui',
         moduleId: 'modules/task-dynamic-ui/task-dynamic-ui',
@@ -199,10 +199,10 @@ export class App {
         moduleId: 'modules/config-panel/config-panel',
       },
       {
-        route: 'waitingroom/:correlationId/:processModelId',
-        title: 'Waiting Room',
-        name: 'waiting-room',
-        moduleId: 'modules/waiting-room/waiting-room',
+        route: 'correlation/:correlationId/processmodel/:processModelId/live-execution-tracker',
+        title: 'Live Execution Tracker',
+        name: 'live-execution-tracker',
+        moduleId: 'modules/live-execution-tracker/live-execution-tracker',
       },
       {
         route: ['inspect', 'inspect/:view?/:diagramName?'],

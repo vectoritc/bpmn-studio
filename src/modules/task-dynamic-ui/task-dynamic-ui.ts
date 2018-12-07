@@ -11,14 +11,19 @@ import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
 import {NotificationService} from '../notification/notification.service';
 
 interface RouteParameters {
-  taskId: string;
+  correlationId: string;
   processModelId: string;
+  taskId: string;
 }
 
 @inject(EventAggregator, 'DynamicUiService', Router, 'NotificationService', 'AuthenticationService')
 export class TaskDynamicUi {
 
   public dynamicUiWrapper: DynamicUiWrapper;
+
+  private _correlationId: string;
+  private _processModelId: string;
+  private _taskId: string;
 
   private _eventAggregator: EventAggregator;
   private _router: Router;
@@ -28,8 +33,6 @@ export class TaskDynamicUi {
   private _subscriptions: Array<Subscription>;
   private _userTask: UserTask;
   private _manualTask: ManualTask;
-  private _taskId: string;
-  private _processModelId: string;
 
   constructor(eventAggregator: EventAggregator,
               dynamicUiService: IDynamicUiService,
@@ -47,8 +50,9 @@ export class TaskDynamicUi {
   public activate(routeParameters: RouteParameters): void {
     // This is called when starting tasks
 
-    this._taskId = routeParameters.taskId;
+    this._correlationId = routeParameters.correlationId;
     this._processModelId = routeParameters.processModelId;
+    this._taskId = routeParameters.taskId;
 
     this.getTask();
   }
@@ -113,7 +117,8 @@ export class TaskDynamicUi {
 
   private _finishTask(action: string): void {
     const task: UserTask | ManualTask = this._userTask === undefined ? this._manualTask : this._userTask;
-    this._router.navigateToRoute('waiting-room', {
+
+    this._router.navigateToRoute('live-execution-tracker', {
       correlationId: task.correlationId,
       processModelId: task.processModelId,
     });
@@ -123,20 +128,39 @@ export class TaskDynamicUi {
     const identity: IIdentity = this._getIdentity();
 
     try {
-      if (this._processModelId !== undefined) {
-        this._userTask = await this._dynamicUiService
-                                    .getUserTaskByProcessModelId(identity, this._taskId, this._processModelId);
+      const correlationNotGiven: boolean = this._correlationId === undefined;
+      const processModelIdNotGiven: boolean = this._processModelId === undefined;
 
-        this._manualTask = await this._dynamicUiService
-                                     .getManualTaskByProcessModelId(identity, this._taskId, this._processModelId);
-
-        this._userTask === undefined ? this.setDynamicUIWrapperManualTask() : this.setDynamicUIWrapperUserTask();
-
-      } else {
-        throw Error('CorrelationId or ProcessModelId must be given.');
+      if (correlationNotGiven) {
+        throw Error(`Invalid Correlation ID: ${this._correlationId}`);
       }
+      if (processModelIdNotGiven) {
+        throw Error(`Invalid ProcessModel ID: ${this._processModelId}`);
+      }
+
+      this._userTask = await this._dynamicUiService
+                                  .getUserTask(identity, this._correlationId, this._processModelId, this._taskId);
+
+      const userTaskFound: boolean = this._userTask !== undefined;
+      if (userTaskFound) {
+        this.setDynamicUIWrapperUserTask();
+
+        return;
+      }
+
+      this._manualTask = await this._dynamicUiService
+                                    .getManualTask(identity, this._correlationId, this._processModelId, this._taskId);
+
+      const manualTaskFound: boolean = this._manualTask !== undefined;
+      if (manualTaskFound) {
+        this.setDynamicUIWrapperManualTask();
+
+        return;
+      }
+
+      throw new Error(`No UserTask or ManualTask with ID ${this._taskId} found!`);
     } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, `Failed to refresh user task: ${error.message}`);
+      this._notificationService.showNotification(NotificationType.ERROR, `Failed to refresh task: ${error.message}`);
       throw error;
     }
   }

@@ -25,6 +25,7 @@ import {
   IEventFunction,
   IModeling,
   IShape,
+  IViewbox,
   NotificationType,
 } from '../../../contracts/index';
 import environment from '../../../environment';
@@ -227,7 +228,7 @@ export class BpmnDiffView {
     const leftCanvas: ICanvas = this._leftViewer.get('canvas');
     const rightCanvas: ICanvas = this._rightViewer.get('canvas');
 
-    const changedViewbox: string = lowerCanvas.viewbox();
+    const changedViewbox: IViewbox = lowerCanvas.viewbox();
     leftCanvas.viewbox(changedViewbox);
     rightCanvas.viewbox(changedViewbox);
   }
@@ -375,7 +376,7 @@ export class BpmnDiffView {
     const changingCanvasContainer: HTMLElement = changingCanvas._container;
 
     const adjustViewboxes: IEventFunction = (): void => {
-      const changedViewbox: string = changingCanvas.viewbox();
+      const changedViewbox: IViewbox = changingCanvas.viewbox();
       firstCanvas.viewbox(changedViewbox);
       secondCanvas.viewbox(changedViewbox);
     };

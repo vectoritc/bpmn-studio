@@ -1,6 +1,13 @@
-import {IOverlayDescriptor} from './IOverlayDescriptor';
+import {IOverlayPosition} from './IOverlayPosition';
+import {IShape} from './IShape';
 
 export interface IOverlay {
-  add(elementOrElementId: string, overlayDescriptor: IOverlayDescriptor): void;
-  remove(elemenId: string): void;
+  element: IShape;
+  html: string;
+  htmlContainer: HTMLElement;
+  id: string;
+  position: IOverlayPosition;
+  scale: boolean;
+  show: boolean;
+  type: string;
 }

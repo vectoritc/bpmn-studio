@@ -16,7 +16,8 @@
               <a route-href="route: diagram-detail; params.bind: { diagramName: correlation.processModels[0].name }" class="process-list-item-modelname">${correlation.processModels[0].name}</a>
             </td>
             <td class="process-list__last-table-cell">
-              <a route-href="route: task-list-correlation; params.bind: { correlationId: correlation.id }" class="process-list-item-user-tasks">Tasks</a>
+              <a route-href="route: task-list-correlation; params.bind: { correlationId: correlation.id }" class="process-list-item-user-tasks btn btn-default">Tasks</a>
+              <a route-href="route: live-execution-tracker; params.bind: { correlationId: correlation.id, processModelId: correlation.processModels[0].name}" class="btn btn-default">Live Execution Tracking</a>
             </td>
           </tr>
         </table>

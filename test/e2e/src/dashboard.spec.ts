@@ -232,7 +232,7 @@ describe('Dashboard view', () => {
       });
   });
 
-  it('should be in waiting room when click continue in an opened user task.', async() => {
+  it('should be in live execution tracker when click continue in an opened user task.', async() => {
     const firstTaskWaitingById: ElementFinder = dashboard.firstTaskWaitingById(processModelId);
     const visibilityOfFirstTaskWaitingById: Function = expectedConditions.visibilityOf(firstTaskWaitingById);
 
@@ -261,22 +261,10 @@ describe('Dashboard view', () => {
     await dashboard.continueUserTaskByClickOnDynamicUiWrapperContinueButton();
 
     const correlationId: string = processModel.getCorrelationId();
-    const waitingRoomUrl: string = ProcessModel.waitingroomUrl(processModelId, correlationId);
+    const liveExecutionTrackerUrl: string = ProcessModel.liveExecutionTrackerUrl(processModelId, correlationId);
     const currentBrowserUrl: string = await browser.getCurrentUrl();
 
-    // Should be in waiting room
-    expect(currentBrowserUrl).toContain(waitingRoomUrl);
-
-    const inspectLink: string = dashboard.inspectLink;
-    const urlContainsInspectLink: Function = expectedConditions.urlContains(inspectLink);
-
-    // Should be in dashboard view
-    await browser.driver
-    .wait(() => {
-      browser
-      .wait(urlContainsInspectLink, taskListTimeoutMS);
-
-      return inspectLink;
-    });
+    // Should be in live execution tracker
+    expect(currentBrowserUrl).toContain(liveExecutionTrackerUrl);
   });
 });
