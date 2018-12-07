@@ -98,7 +98,7 @@
     "@process-engine/kpi_api_contracts": "1.1.0",
     "@process-engine/management_api_client": "1.5.0",
     "@process-engine/management_api_contracts": "1.5.0",
-    "@process-engine/process_engine_runtime": "feature~improve_getting-token-for-correlation-and-processmodel",
+    "@process-engine/process_engine_runtime": "4.0.0",
     "@process-engine/solutionexplorer.contracts": "1.0.0",
     "@process-engine/solutionexplorer.repository.contracts": "4.0.0",
     "@process-engine/solutionexplorer.repository.filesystem": "4.0.0",
