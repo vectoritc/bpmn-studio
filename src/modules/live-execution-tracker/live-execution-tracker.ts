@@ -345,7 +345,7 @@ export class LiveExecutionTracker {
 
   private _hasElementTokenHistory(elementId: string, tokenHistoryGroups: TokenHistoryGroup): boolean {
 
-    const tokenHistoryFromFlowNodeInstanceFound: boolean = tokenHistoryGroups.get(elementId) !== undefined;
+    const tokenHistoryFromFlowNodeInstanceFound: boolean = tokenHistoryGroups[elementId] !== undefined;
 
     return tokenHistoryFromFlowNodeInstanceFound;
   }
