@@ -8,10 +8,10 @@ import {
   Correlation,
   CorrelationProcessModel,
   IManagementApi,
+  TokenHistoryGroup,
 } from '@process-engine/management_api_contracts';
 
 import {ActiveToken} from '@process-engine/kpi_api_contracts';
-import {TokenHistoryGroup} from '@process-engine/management_api_contracts/dist/data_models/token_history/token_history_group';
 import {
   defaultBpmnColors,
   IAuthenticationService,
