@@ -223,7 +223,22 @@ export class DiagramDetail {
 
       this.activeDiagram.id = processModelId;
 
-      await this._activeSolutionEntry.service.saveDiagram(this.activeDiagram, connectedProcessEngineRoute);
+      const bpmnFileSuffix: string = '.bpmn';
+      const removeBPMNSuffix: (filename: string) => string = (filename: string): string => {
+        if (filename.endsWith(bpmnFileSuffix)) {
+          return filename.slice(0, bpmnFileSuffix.length);
+        }
+        return filename;
+      };
+
+      const copyOfDiagram: IDiagram = {
+        id: this.activeDiagram.id,
+        name: this.activeDiagram.name,
+        uri: removeBPMNSuffix(this.activeDiagram.uri),
+        xml: this.activeDiagram.xml,
+      };
+
+      await this._activeSolutionEntry.service.saveDiagram(copyOfDiagram, connectedProcessEngineRoute);
 
       this._solutionService.setActiveSolutionEntry(this._activeSolutionEntry);
       this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(processModelId);
