@@ -367,6 +367,13 @@ export class SolutionExplorerSolution {
     const diagramIsNoRemoteDiagram: boolean = !diagram.uri.startsWith('http');
     if (diagramIsNoRemoteDiagram) {
       this._inspectView = 'dashboard';
+      this._eventAggregator.publish(environment.events.navBar.inspectNavigateToDashboard);
+
+      const activeRouteIsInspect: boolean = this._diagramRoute === 'inspect';
+      if (activeRouteIsInspect) {
+        this._notificationService.showNotification(NotificationType.INFO,
+          'There are currently no runtime information about this process available.');
+      }
     }
 
     const navigationResult: boolean | PipelineResult = await this._router.navigateToRoute(this._diagramRoute, {
@@ -386,15 +393,6 @@ export class SolutionExplorerSolution {
     this._solutionService.setActiveSolutionEntry(this.displayedSolutionEntry);
     this._solutionService.setActiveDiagram(diagram);
 
-    if (diagramIsNoRemoteDiagram) {
-      this._eventAggregator.publish(environment.events.navBar.inspectNavigateToDashboard);
-
-      const activeRouteIsInspect: boolean = this._diagramRoute === 'inspect';
-      if (activeRouteIsInspect) {
-        this._notificationService.showNotification(NotificationType.INFO,
-          'There are currently no runtime information about this process available.');
-      }
-    }
   }
 
   @computedFrom('_solutionService._activeDiagram')
