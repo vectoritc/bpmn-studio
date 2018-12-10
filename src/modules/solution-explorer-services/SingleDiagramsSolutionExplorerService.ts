@@ -72,7 +72,6 @@ export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerS
 
   public async openSingleDiagram(uri: string, identity: IIdentity): Promise<IDiagram> {
     const uriAlreadyOpened: boolean = this._findOfDiagramWithURI(uri) >= 0;
-    const bpmnFileEndingLength: number = 5;
 
     if (uriAlreadyOpened) {
       throw new Error('This diagram is already opened.');
