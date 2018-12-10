@@ -85,10 +85,12 @@ export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerS
 
     const filepath: string = uri.substring(0, indexBeforeFilename);
 
-    const fileName: string = uri.replace(/^.*[\\\/]/, '');
-    const fileNameWithoutEnding: string = fileName.replace('.bpmn', '');
+    await this._solutionExplorerToOpenDiagrams.openSolution(filepath, identity);
 
-    const diagram: IDiagram = await this._solutionExplorerToOpenDiagrams.loadDiagram(fileNameWithoutEnding);
+    const filename: string = uri.replace(/^.*[\\\/]/, '');
+    const filenameWithoutEnding: string = filename.replace('.bpmn', '');
+
+    const diagram: IDiagram = await this._solutionExplorerToOpenDiagrams.loadDiagram(filenameWithoutEnding);
 
     await this._validationService
       .validate(diagram.xml)
