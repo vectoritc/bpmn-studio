@@ -228,6 +228,7 @@ export class DiagramDetail {
         if (filename.endsWith(bpmnFileSuffix)) {
           return filename.slice(0, bpmnFileSuffix.length);
         }
+
         return filename;
       };
 
