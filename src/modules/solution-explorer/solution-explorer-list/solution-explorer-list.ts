@@ -280,7 +280,7 @@ export class SolutionExplorerList {
 
     const entryIsRemoteSolution: boolean = entry.uri.startsWith('http');
     const noActiveSolutionEntrySet: boolean = this._solutionService.getActiveSolutionEntry() === null
-                          || this._solutionService.getActiveSolutionEntry() === undefined;
+                                           || this._solutionService.getActiveSolutionEntry() === undefined;
 
     if (entryIsRemoteSolution && noActiveSolutionEntrySet) {
       this._solutionService.setActiveSolutionEntry(entry);
