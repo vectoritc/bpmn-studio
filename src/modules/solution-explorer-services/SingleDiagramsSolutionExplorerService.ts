@@ -78,7 +78,12 @@ export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerS
       throw new Error('This diagram is already opened.');
     }
 
-    await this._solutionExplorerToOpenDiagrams.openSolution(uri.substring(0, uri.lastIndexOf('/')), identity);
+    const isWindows: boolean = uri.lastIndexOf('/') === -1;
+    const indexBeforeFilename: number = isWindows
+                                      ? uri.lastIndexOf('\\')
+                                      : uri.lastIndexOf('/');
+
+    await this._solutionExplorerToOpenDiagrams.openSolution(uri.substring(0, indexBeforeFilename), identity);
 
     const fileName: string = uri.replace(/^.*[\\\/]/, '');
     const fileNameWithoutEnding: string = fileName.replace('.bpmn', '');
