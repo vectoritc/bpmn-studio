@@ -583,12 +583,16 @@ export class BpmnIo {
     const keyboard: IKeyboard = this.modeler.get('keyboard');
     const editorActions: IEditorActions = this.modeler.get('editorActions');
     const backSpaceKeyCode: number = 8;
-    const removeSelectedElements: ((key: number, modifiers: KeyboardEvent) => boolean) = (key: number, modifiers: KeyboardEvent): boolean => {
-      if (key === backSpaceKeyCode) {
-        editorActions.trigger('removeSelection');
-        return true;
-      }
-    };
+    const removeSelectedElements: ((key: IInternalEvent, modifiers: KeyboardEvent) => boolean) =
+      (key: IInternalEvent, modifiers: KeyboardEvent): boolean => {
+        const backspaceWasPressed: boolean = key.keyEvent.keyCode === backSpaceKeyCode;
+
+        if (backspaceWasPressed) {
+          editorActions.trigger('removeSelection');
+
+          return true;
+        }
+      };
 
     keyboard.addListener(removeSelectedElements);
   }
