@@ -1,4 +1,5 @@
 import {IShape} from './IShape';
+import {IViewbox} from './IViewbox';
 
 export interface ICanvas {
   _container: HTMLElement;
@@ -10,5 +11,7 @@ export interface ICanvas {
   * @param viewbox The new viewbox for the canvas.
   * @returns The current viewbox.
   */
-  viewbox(viewbox?: string): string;
+  viewbox(viewbox?: IViewbox): IViewbox;
+
+  zoom(zoomLevel: number | string, element?: IShape): void;
 }

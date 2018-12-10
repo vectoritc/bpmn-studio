@@ -421,122 +421,155 @@ Main._createMainWindow = function () {
 
   function setElectronMenubar() {
 
-    let template = [{
-      label: "BPMN-Studio",
-      submenu: [{
-          label: "About BPMN-Studio",
-          click: () =>
-          openAboutWindow({
-            icon_path: isDev ? path.join(__dirname, '..', 'build/icon.png') : path.join(__dirname, '../../../build/icon.png'),
-            product_name: 'BPMN-Studio',
-            bug_report_url: 'https://github.com/process-engine/bpmn-studio/issues/new',
-            homepage: 'www.process-engine.io',
-            copyright: 'Copyright © 2018 process-engine',
-            win_options: {
-              minimizable: false,
-              maximizable: false,
-              resizable: false,
+    const getApplicationMenu = () => {
+      return {
+        label: "BPMN-Studio",
+        submenu: [{
+            label: "About BPMN-Studio",
+            click: () =>
+            openAboutWindow({
+              icon_path: isDev ? path.join(__dirname, '..', 'build/icon.png') : path.join(__dirname, '../../../build/icon.png'),
+              product_name: 'BPMN-Studio',
+              bug_report_url: 'https://github.com/process-engine/bpmn-studio/issues/new',
+              homepage: 'www.process-engine.io',
+              copyright: 'Copyright © 2018 process-engine',
+              win_options: {
+                minimizable: false,
+                maximizable: false,
+                resizable: false,
+              },
+              package_json_dir: __dirname,
+            }),
+          },
+          {
+            type: "separator",
+          },
+          {
+            label: "Quit",
+            role: "quit",
+          },
+        ],
+      };
+    };
+
+    const getFileMenu = () => {
+      return {
+        label: "File",
+        submenu: [
+          {
+            label: "Open Diagram",
+            accelerator: "CmdOrCtrl+O",
+            click: () => {
+              Main._window.webContents.send('menubar__start_opening_diagram');
             },
-            package_json_dir: __dirname,
-          }),
-        },
-        {
-          type: "separator"
-        },
-        {
-          label: "Quit",
-          role: "quit"
-        }
-      ]
-    }, {
-      label: "File",
-      submenu: [
-        {
-          label: "Open Diagram",
-          accelerator: "CmdOrCtrl+O",
-          click: () => {
-            Main._window.webContents.send('menubar__start_opening_diagram');
           },
-        },
-        {
-          label: "Open Solution",
-          accelerator: "CmdOrCtrl+Shift+O",
-          click: () => {
-            Main._window.webContents.send('menubar__start_opening_solution');
+          {
+            label: "Open Solution",
+            accelerator: "CmdOrCtrl+Shift+O",
+            click: () => {
+              Main._window.webContents.send('menubar__start_opening_solution');
+            },
           },
-        },
-      ]
-    }, {
-      label: "Edit",
-      submenu: [{
-          label: "Undo",
-          accelerator: "CmdOrCtrl+Z",
-          selector: "undo:"
-        },
-        {
-          label: "Redo",
-          accelerator: "CmdOrCtrl+Shift+Z",
-          selector: "redo:"
-        },
-        {
-          type: "separator"
-        },
-        {
-          label: "Cut",
-          accelerator: "CmdOrCtrl+X",
-          selector: "cut:"
-        },
-        {
-          label: "Copy",
-          accelerator: "CmdOrCtrl+C",
-          selector: "copy:"
-        },
-        {
-          label: "Paste",
-          accelerator: "CmdOrCtrl+V",
-          selector: "paste:"
-        },
-        {
-          label: "Select All",
-          accelerator: "CmdOrCtrl+A",
-          selector: "selectAll:"
-        }
-      ]
-    }, {
-      label: "Window",
-      submenu: [{
-          role: "minimize"
-        },
-        {
-          role: "close"
-        },
-        {
-          type: "separator"
-        },
-        {
-          role: "reload"
-        },
-        {
-          role: "toggledevtools"
-        }
-      ]
-    }, {
-      label: "Help",
-      submenu: [{
-        label: "Documentation",
-        click: () => {
-          const documentation_url = 'https://www.process-engine.io/documentation/';
-          electron.shell.openExternal(documentation_url);
-        }
-      }, {
-        label: "Release Notes for Current Version",
+        ],
+      };
+    };
+
+    const getEditMenu = () => {
+      return {
+        label: "Edit",
+        submenu: [{
+            label: "Undo",
+            accelerator: "CmdOrCtrl+Z",
+            selector: "undo:",
+          },
+          {
+            label: "Redo",
+            accelerator: "CmdOrCtrl+Shift+Z",
+            selector: "redo:",
+          },
+          {
+            type: "separator",
+          },
+          {
+            label: "Cut",
+            accelerator: "CmdOrCtrl+X",
+            selector: "cut:",
+          },
+          {
+            label: "Copy",
+            accelerator: "CmdOrCtrl+C",
+            selector: "copy:",
+          },
+          {
+            label: "Paste",
+            accelerator: "CmdOrCtrl+V",
+            selector: "paste:",
+          },
+          {
+            label: "Select All",
+            accelerator: "CmdOrCtrl+A",
+            selector: "selectAll:",
+          },
+        ],
+      };
+    };
+
+    const getWindowMenu = () => {
+      const windowMenu = {
+        label: "Window",
+        submenu: [],
+      };
+
+      windowMenu.submenu.push({
+        role: "minimize",
+      });
+      windowMenu.submenu.push({
+        role: "close",
+      });
+      windowMenu.submenu.push({
+        type: "separator",
+      });
+
+      if (isDev) {
+        windowMenu.submenu.push({
+          role: "reload",
+        });
+      }
+
+      windowMenu.submenu.push({
+        role: "toggledevtools",
+      });
+
+      return windowMenu;
+    };
+
+    const getHelpMenu = () => {
+      return {
+        label: "Help",
+        submenu: [{
+          label: "Documentation",
           click: () => {
-            const currentVersion = electron.app.getVersion();
-            const currentReleaseNotesUrl = `https://github.com/process-engine/bpmn-studio/releases/tag/v${currentVersion}`
-            electron.shell.openExternal(currentReleaseNotesUrl);
+            const documentation_url = 'https://www.process-engine.io/documentation/';
+            electron.shell.openExternal(documentation_url);
           }
-      }]
-    }];
+        }, {
+          label: "Release Notes for Current Version",
+            click: () => {
+              const currentVersion = electron.app.getVersion();
+              const currentReleaseNotesUrl = `https://github.com/process-engine/bpmn-studio/releases/tag/v${currentVersion}`
+              electron.shell.openExternal(currentReleaseNotesUrl);
+            }
+        }]
+      };
+    };
+
+    let template = [
+      getApplicationMenu(),
+      getFileMenu(), 
+      getEditMenu(),
+      getWindowMenu(),
+      getHelpMenu(),
+    ];
 
     electron.Menu.setApplicationMenu(electron.Menu.buildFromTemplate(template));
   }

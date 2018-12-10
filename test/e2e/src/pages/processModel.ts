@@ -18,8 +18,8 @@ export class ProcessModel {
     return '/processdef';
   }
 
-  public static processModelUrl(processModel: string): string {
-    return '/processdef/' + processModel + '/detail';
+  public static getProcessModelUrl(): string {
+    return '/diagram/detail';
   }
 
   public static userTasksUrl(correlationId: string): string {
@@ -27,11 +27,11 @@ export class ProcessModel {
   }
 
   public static userTasksInputUrl(processModel: string): string {
-    return '/processdef/' + processModel + '/task/Task_0k8m2if/dynamic-ui';
+    return '/processmodel/' + processModel + '/task/Task_0k8m2if/dynamic-ui';
   }
 
-  public static waitingroomUrl(processModelId: string, correlationId: string): string {
-    return '/waitingroom/' + correlationId + '/' + processModelId;
+  public static liveExecutionTrackerUrl(processModelId: string, correlationId: string): string {
+    return '/correlation/' + correlationId + '/processmodel/' + processModelId + '/live-execution-tracker';
   }
 
   public getProcessModelId(): string {

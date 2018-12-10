@@ -14,4 +14,5 @@ export interface IShape {
   documentation?: Array<IDocumentation>;
   $type: string;
   target?: IShape;
+  source?: IShape;
 }

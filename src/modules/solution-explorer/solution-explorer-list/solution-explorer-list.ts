@@ -7,35 +7,24 @@ import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service
 import {
   IAuthenticationService,
   IDiagramValidationService,
+  ISolutionEntry,
+  ISolutionService,
 } from '../../../contracts';
 import {SingleDiagramsSolutionExplorerService} from '../../solution-explorer-services/SingleDiagramsSolutionExplorerService';
 import {SolutionExplorerServiceFactory} from '../../solution-explorer-services/SolutionExplorerServiceFactory';
 import {SolutionExplorerSolution} from '../solution-explorer-solution/solution-explorer-solution';
 
-/**
- * This entry keeps information about an opened solution. Its used to support
- * the html view and give an easy access to properties like the uri of the
- * solution.
- */
-interface ISolutionEntry {
-  service: ISolutionExplorerService;
-  uri: string;
-  fontAwesomeIconClass: string;
-  isSingleDiagramService: boolean;
-  canCloseSolution: boolean;
-  canCreateNewDiagramsInSolution: boolean;
-}
-
 interface IUriToViewModelMap {
   [key: string]: SolutionExplorerSolution;
 }
 
-@inject('SolutionExplorerServiceFactory', 'AuthenticationService', 'DiagramValidationService')
+@inject('SolutionExplorerServiceFactory', 'AuthenticationService', 'DiagramValidationService', 'SolutionService')
 export class SolutionExplorerList {
 
   private _solutionExplorerServiceFactory: SolutionExplorerServiceFactory;
   private _authenticationService: IAuthenticationService;
   private _diagramValidationService: IDiagramValidationService;
+  private _solutionService: ISolutionService;
   /*
    * Contains all opened solutions.
    */
@@ -56,10 +45,12 @@ export class SolutionExplorerList {
     solutionExplorerServiceFactory: SolutionExplorerServiceFactory,
     authenticationService: IAuthenticationService,
     diagramValidationService: IDiagramValidationService,
+    solutionService: ISolutionService,
   ) {
     this._solutionExplorerServiceFactory = solutionExplorerServiceFactory;
     this._authenticationService = authenticationService;
     this._diagramValidationService = diagramValidationService;
+    this._solutionService = solutionService;
 
     const canReadFromFileSystem: boolean = (window as any).nodeRequire;
     if (canReadFromFileSystem) {
@@ -104,7 +95,9 @@ export class SolutionExplorerList {
   public async openSingleDiagram(uri: string): Promise<IDiagram> {
     const identity: IIdentity = this._createIdentityForSolutionExplorer();
 
-    return this._singleDiagramService.openSingleDiagram(uri, identity);
+    const diagram: IDiagram = await this._singleDiagramService.openSingleDiagram(uri, identity);
+
+    return diagram;
   }
 
   /**
@@ -113,6 +106,12 @@ export class SolutionExplorerList {
    */
   public getOpenedSingleDiagramByURI(uri: string): IDiagram | null {
     return this._singleDiagramService.getOpenedDiagramByURI(uri);
+  }
+
+  public getSingleDiagramSolutionEntry(): ISolutionEntry {
+    return this._openedSolutions.find((entry: ISolutionEntry) => {
+      return entry.uri === 'Single Diagrams';
+    });
   }
 
   public async openSolution(uri: string, insertAtBeginning: boolean = false): Promise<void> {
@@ -137,7 +136,7 @@ export class SolutionExplorerList {
       throw new Error('Solution is already opened.');
     }
 
-    this._addSolutionEntry(uri, solutionExplorer, insertAtBeginning);
+    this._addSolutionEntry(uri, solutionExplorer, identity, insertAtBeginning);
   }
 
   /**
@@ -197,7 +196,9 @@ export class SolutionExplorerList {
         nameOfSingleDiagramService,
       );
 
-    this._addSolutionEntry(uriOfSingleDiagramService, this._singleDiagramService, true);
+    const identity: IIdentity = this._createIdentityForSolutionExplorer();
+
+    this._addSolutionEntry(uriOfSingleDiagramService, this._singleDiagramService, identity, true);
   }
 
   private _getFontAwesomeIconForSolution(service: ISolutionExplorerService, uri: string): string {
@@ -259,7 +260,7 @@ export class SolutionExplorerList {
     return indexOfSolutionWithURI;
   }
 
-  private _addSolutionEntry(uri: string, service: ISolutionExplorerService, insertAtBeginning: boolean): void {
+  private _addSolutionEntry(uri: string, service: ISolutionExplorerService, identity: IIdentity, insertAtBeginning: boolean): void {
     const isSingleDiagramService: boolean = this._isSingleDiagramService(service);
     const fontAwesomeIconClass: string = this._getFontAwesomeIconForSolution(service, uri);
     const canCloseSolution: boolean = this._canCloseSolution(service, uri);
@@ -272,7 +273,18 @@ export class SolutionExplorerList {
       canCloseSolution,
       canCreateNewDiagramsInSolution,
       isSingleDiagramService,
+      identity,
     };
+
+    this._solutionService.addSolutionEntry(entry);
+
+    const entryIsRemoteSolution: boolean = entry.uri.startsWith('http');
+    const noActiveSolutionEntrySet: boolean = this._solutionService.getActiveSolutionEntry() === null
+                                           || this._solutionService.getActiveSolutionEntry() === undefined;
+
+    if (entryIsRemoteSolution && noActiveSolutionEntrySet) {
+      this._solutionService.setActiveSolutionEntry(entry);
+    }
 
     if (insertAtBeginning) {
       this._openedSolutions.splice(1, 0, entry);

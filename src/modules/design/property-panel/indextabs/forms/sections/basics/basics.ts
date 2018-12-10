@@ -20,6 +20,7 @@ import environment from '../../../../../../../environment';
 enum FormfieldTypes {
   string = 'string',
   long = 'long',
+  number = 'number',
   boolean = 'boolean',
   date = 'date',
   enum = 'enum',
@@ -352,6 +353,7 @@ export class BasicsSection implements ISection {
   private _getTypeAndHandleCustomType(type: string): string {
     const typeIsRegularType: boolean = type === FormfieldTypes.string
                                     || type === FormfieldTypes.long
+                                    || type === FormfieldTypes.number
                                     || type === FormfieldTypes.boolean
                                     || type === FormfieldTypes.date
                                     || type === FormfieldTypes.enum

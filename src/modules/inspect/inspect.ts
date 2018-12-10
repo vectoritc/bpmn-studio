@@ -3,20 +3,21 @@ import {bindable, inject} from 'aurelia-framework';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
+import {ISolutionEntry, ISolutionService} from '../../contracts';
 import environment from '../../environment';
 import {Dashboard} from './dashboard/dashboard';
 
 export interface IInspectRouteParameters {
-  processModelId?: string;
   view?: string;
-  latestSource?: string;
+  diagramName?: string;
 }
 
-@inject(EventAggregator)
+@inject(EventAggregator, 'SolutionService')
 export class Inspect {
 
   @bindable() public processModelId: string;
   @bindable() public showDashboard: boolean = true;
+  @bindable() public activeDiagram: IDiagram;
   public showHeatmap: boolean = false;
   public showInspectCorrelation: boolean = false;
   public dashboard: Dashboard;
@@ -25,32 +26,30 @@ export class Inspect {
 
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
+  private _solutionService: ISolutionService;
+  private _activeSolutionEntry: ISolutionEntry;
 
-  constructor(eventAggregator: EventAggregator) {
+  constructor(eventAggregator: EventAggregator,
+              solutionService: ISolutionService) {
     this._eventAggregator = eventAggregator;
+    this._solutionService = solutionService;
   }
 
-  public activate(routeParameters: IInspectRouteParameters): void {
+  public async activate(routeParameters: IInspectRouteParameters): Promise<void> {
 
-    const noRouteParameters: boolean = routeParameters.processModelId === undefined
-                                    || routeParameters.view === undefined;
+    this._activeSolutionEntry = await this._solutionService.getActiveSolutionEntry();
 
-    if (noRouteParameters) {
-      return;
+    const diagramNameIsSet: boolean = routeParameters.diagramName !== undefined;
+
+    if (diagramNameIsSet) {
+      this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
     }
-
-    this.processModelId = routeParameters.processModelId;
-    const process: IDiagram = {
-      name: this.processModelId,
-      xml: '',
-      uri: '',
-      id: this.processModelId,
-    };
 
     const routeViewIsDashboard: boolean = routeParameters.view === 'dashboard';
     const routeViewIsHeatmap: boolean = routeParameters.view === 'heatmap';
     const routeViewIsInspectCorrelation: boolean = routeParameters.view === 'inspect-correlation';
-    const latestSourceIsPE: boolean = routeParameters.latestSource === 'process-engine';
+
+    const latestSourceIsPE: boolean = this._activeSolutionEntry.uri.startsWith('http');
 
     if (routeViewIsDashboard) {
       this.showHeatmap = false;
@@ -67,13 +66,13 @@ export class Inspect {
 
       if (latestSourceIsPE) {
         this._eventAggregator.publish(environment.events.navBar.showInspectButtons);
-        this._eventAggregator.publish(environment.events.navBar.toggleDashboardView);
-        this._eventAggregator.publish(environment.events.navBar.showProcessName, process);
+      } else {
+        this._eventAggregator.publish(environment.events.navBar.hideInspectButtons);
       }
+      this._eventAggregator.publish(environment.events.navBar.toggleDashboardView);
     } else if (routeViewIsHeatmap) {
       this._eventAggregator.publish(environment.events.navBar.showInspectButtons);
       this._eventAggregator.publish(environment.events.navBar.toggleHeatmapView);
-      this._eventAggregator.publish(environment.events.navBar.showProcessName, process);
 
       this.showDashboard = false;
       this.showHeatmap = true;
@@ -95,8 +94,6 @@ export class Inspect {
       this.dashboard.canActivate();
     }
 
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect);
-
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.inspect.shouldDisableTokenViewerButton, (tokenViewerButtonDisabled: boolean) => {
         this.tokenViewerButtonDisabled = tokenViewerButtonDisabled;
@@ -108,7 +105,6 @@ export class Inspect {
     this._eventAggregator.publish(environment.events.navBar.inspectNavigateToDashboard);
     this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToDesigner);
     this._eventAggregator.publish(environment.events.navBar.hideInspectButtons);
-    this._eventAggregator.publish(environment.events.navBar.hideProcessName);
 
     for (const subscription of this._subscriptions) {
       subscription.dispose();

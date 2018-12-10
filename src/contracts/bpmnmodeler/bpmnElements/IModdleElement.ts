@@ -31,4 +31,7 @@ export interface IModdleElement {
   variableName?: string;
   variableEvent?: string;
   text?: string;
+  incoming?: Array<IModdleElement>;
+  outgoing?: Array<IModdleElement>;
+  sourceRef?: IModdleElement;
 }

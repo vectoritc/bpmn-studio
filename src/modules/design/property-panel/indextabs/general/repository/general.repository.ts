@@ -1,26 +1,23 @@
 import {inject} from 'aurelia-framework';
 
-import {IIdentity} from '@essential-projects/iam_contracts';
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
-import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
-@inject('SolutionExplorerServiceManagementApi')
+import {ISolutionEntry, ISolutionService} from '../../../../../../contracts';
+
+@inject('SolutionService')
 export class GeneralRepository {
-  private _solutionExplorerManagementService: ISolutionExplorerService;
-  private _identity: IIdentity;
+  private _solutionService: ISolutionService;
 
-  constructor(solutionExplorerService: ISolutionExplorerService) {
-    this._solutionExplorerManagementService = solutionExplorerService;
+  constructor(solutionService: ISolutionService) {
+    this._solutionService = solutionService;
   }
 
   public async getAllDiagrams(): Promise<Array<IDiagram>> {
-    const solution: ISolution = await this._solutionExplorerManagementService.loadSolution();
-    const diagrams: Array<IDiagram> = solution.diagrams;
+    const solutionEntry: ISolutionEntry = await this._solutionService.getActiveSolutionEntry();
+    const solution: ISolution = await solutionEntry.service.loadSolution();
 
-    return diagrams;
-  }
+    const allDiagramsInSolution: Array<IDiagram> = solution.diagrams;
 
-  public updateDiagram(diagram: IDiagram): Promise<IDiagram> {
-    return this._solutionExplorerManagementService.saveSingleDiagram(diagram, this._identity);
+    return allDiagramsInSolution;
   }
 }

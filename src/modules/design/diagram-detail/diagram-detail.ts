@@ -3,39 +3,50 @@ import {inject, observable} from 'aurelia-framework';
 import {Redirect, Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
-import {IIdentity} from '@essential-projects/iam_contracts';
-import {IManagementApi} from '@process-engine/management_api_contracts';
+import {Event, EventList, IManagementApi} from '@process-engine/management_api_contracts';
 import {ProcessModelExecution} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
-import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
-import {IAuthenticationService, IModdleElement, NotificationType} from '../../../contracts/index';
+import {IElementRegistry,
+        IExtensionElement,
+        IFormElement,
+        IModdleElement,
+        IShape,
+        ISolutionEntry,
+        ISolutionService,
+        NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
 
 interface RouteParameters {
-  diagramUri: string;
+  diagramName?: string;
 }
 
-@inject('SolutionExplorerServiceFileSystem',
-        'ManagementApiClientService',
-        'AuthenticationService',
+type IEventListener = {
+  name: string,
+  function: Function,
+};
+
+@inject('ManagementApiClientService',
         'NotificationService',
+        'SolutionService',
         EventAggregator,
         Router,
         ValidationController)
 export class DiagramDetail {
 
-  public diagram: IDiagram;
+  public activeDiagram: IDiagram;
   public bpmnio: BpmnIo;
   public showUnsavedChangesModal: boolean = false;
+  public showSaveForStartModal: boolean = false;
   public showSaveBeforeDeployModal: boolean = false;
+  public showStartEventModal: boolean = false;
+  public processesStartEvents: Array<Event> = [];
+  public selectedStartEventId: string;
 
   @observable({ changeHandler: 'diagramHasChangedChanged'}) private _diagramHasChanged: boolean;
-  private _solutionExplorerService: ISolutionExplorerService;
-  private _managementClient: IManagementApi;
-  private _authenticationService: IAuthenticationService;
+  private _activeSolutionEntry: ISolutionEntry;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
@@ -43,24 +54,22 @@ export class DiagramDetail {
   private _validationController: ValidationController;
   private _diagramIsInvalid: boolean = false;
   private _ipcRenderer: any;
+  private _solutionService: ISolutionService;
+  private _managementApiClient: IManagementApi;
+  private _ipcRendererEventListeners: Array<IEventListener> = [];
 
-  // This identity is used for the filesystem actions. Needs to be refactored.
-  private _identity: any;
-
-  constructor(solutionExplorerService: ISolutionExplorerService,
-              managementClient: IManagementApi,
-              authenticationService: IAuthenticationService,
+  constructor(managementApiClient: IManagementApi,
               notificationService: NotificationService,
+              solutionService: ISolutionService,
               eventAggregator: EventAggregator,
               router: Router,
               validationController: ValidationController) {
-    this._solutionExplorerService = solutionExplorerService;
-    this._managementClient = managementClient;
-    this._authenticationService = authenticationService;
     this._notificationService = notificationService;
+    this._solutionService = solutionService;
     this._eventAggregator = eventAggregator;
     this._router = router;
     this._validationController = validationController;
+    this._managementApiClient = managementApiClient;
   }
 
   public determineActivationStrategy(): string {
@@ -68,8 +77,18 @@ export class DiagramDetail {
   }
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
-    this.diagram = await this._solutionExplorerService.openSingleDiagram(routeParameters.diagramUri, this._identity);
 
+    const diagramNameIsNotSet: boolean = routeParameters.diagramName === undefined;
+    if (diagramNameIsNotSet) {
+      this._router.navigateToRoute('start-page');
+
+      return;
+    }
+
+    this._activeSolutionEntry = await this._solutionService.getActiveSolutionEntry();
+    this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
+
+    this._solutionService.setActiveDiagram(this.activeDiagram);
     this._diagramHasChanged = false;
 
     const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
@@ -81,10 +100,6 @@ export class DiagramDetail {
   public attached(): void {
 
     this._eventAggregator.publish(environment.events.navBar.showTools);
-    this._eventAggregator.publish(environment.events.navBar.enableDiagramUploadButton);
-    this._eventAggregator.publish(environment.events.navBar.disableStartButton);
-    this._eventAggregator.publish(environment.events.navBar.showProcessName, this.diagram);
-    this._eventAggregator.publish(environment.events.navBar.updateProcess, this.diagram);
 
     this._eventAggregator.publish(environment.events.statusBar.showDiagramViewButtons);
 
@@ -107,6 +122,9 @@ export class DiagramDetail {
       this._eventAggregator.subscribe(environment.events.navBar.noValidationError, () => {
         this._diagramIsInvalid = false;
       }),
+      this._eventAggregator.subscribe(environment.events.processDefDetail.startProcess, () => {
+        this._showStartDialog();
+      }),
     ];
   }
 
@@ -122,6 +140,7 @@ export class DiagramDetail {
         document.getElementById('dontSaveButtonLeaveView').addEventListener('click', () => {
           this.showUnsavedChangesModal = false;
           this._diagramHasChanged = false;
+          this._eventAggregator.publish(environment.events.navBar.diagramChangesResolved);
           resolve(true);
         });
         document.getElementById('saveButtonLeaveView').addEventListener('click', () => {
@@ -154,11 +173,12 @@ export class DiagramDetail {
 
   public deactivate(): void {
     this._eventAggregator.publish(environment.events.navBar.hideTools);
-    this._eventAggregator.publish(environment.events.navBar.hideProcessName);
-    this._eventAggregator.publish(environment.events.navBar.enableStartButton);
     this._eventAggregator.publish(environment.events.navBar.noValidationError);
-    this._eventAggregator.publish(environment.events.navBar.disableDiagramUploadButton);
     this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
+
+    for (const eventListener of this._ipcRendererEventListeners) {
+      this._ipcRenderer.removeListener(eventListener.name, eventListener.function);
+    }
   }
 
   public detached(): void {
@@ -189,32 +209,57 @@ export class DiagramDetail {
    */
   public async uploadProcess(): Promise<void> {
     const rootElements: Array<IModdleElement> = this.bpmnio.modeler._definitions.rootElements;
-    const payload: ProcessModelExecution.UpdateProcessDefinitionsRequestPayload = {
-      xml: this.diagram.xml,
-    };
 
     const processModel: IModdleElement = rootElements.find((definition: IModdleElement) => {
       return definition.$type === 'bpmn:Process';
     });
     const processModelId: string = processModel.id;
 
-    const identity: IIdentity = this._getIdentity();
-
     try {
-      await this
-        ._managementClient
-        .updateProcessDefinitionsByName(identity, processModelId, payload);
+
+      const processEngineRoute: string = window.localStorage.getItem('processEngineRoute');
+      const internalProcessEngineRoute: string = window.localStorage.getItem('InternalProcessEngineRoute');
+      const processEngineRouteIsSet: boolean = processEngineRoute !== '';
+
+      const connectedProcessEngineRoute: string = processEngineRouteIsSet
+                                                ? processEngineRoute
+                                                : internalProcessEngineRoute;
+
+      const solutionToDeployTo: ISolutionEntry = this._solutionService.getSolutionEntryForUri(connectedProcessEngineRoute);
+      this._activeSolutionEntry = solutionToDeployTo;
+
+      this.activeDiagram.id = processModelId;
+
+      const bpmnFileSuffix: string = '.bpmn';
+      const removeBPMNSuffix: (filename: string) => string = (filename: string): string => {
+        if (filename.endsWith(bpmnFileSuffix)) {
+          return filename.slice(0, bpmnFileSuffix.length);
+        }
+
+        return filename;
+      };
+
+      const copyOfDiagram: IDiagram = {
+        id: this.activeDiagram.id,
+        name: this.activeDiagram.name,
+        uri: removeBPMNSuffix(this.activeDiagram.uri),
+        xml: this.activeDiagram.xml,
+      };
+
+      await this._activeSolutionEntry.service.saveDiagram(copyOfDiagram, connectedProcessEngineRoute);
+
+      this._solutionService.setActiveSolutionEntry(this._activeSolutionEntry);
+      this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(processModelId);
+
+      this._solutionService.setActiveDiagram(this.activeDiagram);
 
       this._notificationService
           .showNotification(NotificationType.SUCCESS, 'Diagram was successfully uploaded to the connected ProcessEngine.');
 
       // Since a new processmodel was uploaded, we need to refresh any processmodel lists.
       this._eventAggregator.publish(environment.events.refreshProcessDefs);
-      this._eventAggregator.publish(environment.events.diagramDetail.onDiagramDeployed);
+      this._eventAggregator.publish(environment.events.diagramDetail.onDiagramDeployed, processModelId);
 
-      this._router.navigateToRoute('processdef-detail', {
-        processModelId: processModelId,
-      });
     } catch (error) {
       this._notificationService
           .showNotification(NotificationType.ERROR, `Unable to update diagram: ${error}.`);
@@ -230,10 +275,49 @@ export class DiagramDetail {
     }
   }
 
+  public async startProcess(): Promise<void> {
+
+    if (this.selectedStartEventId === null) {
+      return;
+    }
+
+    this._dropInvalidFormData();
+
+    const startRequestPayload: ProcessModelExecution.ProcessStartRequestPayload = {
+      inputValues: {},
+    };
+
+    try {
+      const response: ProcessModelExecution.ProcessStartResponsePayload = await this._managementApiClient
+        .startProcessInstance(this._activeSolutionEntry.identity,
+                              this.activeDiagram.id,
+                              this.selectedStartEventId,
+                              startRequestPayload,
+                              undefined,
+                              undefined);
+
+      const correlationId: string = response.correlationId;
+
+      this._router.navigateToRoute('live-execution-tracker', {
+        correlationId: correlationId,
+        processModelId: this.activeDiagram.id,
+      });
+    } catch (error) {
+      this.
+        _notificationService
+        .showNotification(
+          NotificationType.ERROR,
+          error.message,
+        );
+    }
+  }
+
   private _prepareSaveModalForClosing(): void {
     this._ipcRenderer = (window as any).nodeRequire('electron').ipcRenderer;
 
-    this._ipcRenderer.on('show-close-modal', () => {
+    const showCloseModalEventName: string = 'show-close-modal';
+
+    const showCloseModalFunction: Function = (): void => {
       const leaveWithoutSaving: EventListenerOrEventListenerObject =  (): void => {
         this._ipcRenderer.send('can-not-close', false);
         this._ipcRenderer.send('close-bpmn-studio');
@@ -264,33 +348,50 @@ export class DiagramDetail {
       document.getElementById('cancelButtonLeaveView').addEventListener('click', doNotLeave);
 
       this.showUnsavedChangesModal = true;
-    });
+    };
+
+    this._ipcRenderer.on(showCloseModalEventName, showCloseModalFunction);
+    this._ipcRendererEventListeners.push({
+                                            name: showCloseModalEventName,
+                                            function: showCloseModalFunction,
+                                        });
+
+  }
+
+  public async saveChangesBeforeStart(): Promise<void> {
+    this._saveDiagram();
+    await this.showSelectStartEventDialog();
   }
 
   /**
-   * Saves the current diagram to disk.
+   * Opens a modal dialog to ask the user, which StartEvent he want's to
+   * use to start the process.
+   *
+   * If there is only one StartEvent this method will select this StartEvent by
+   * default.
    */
-  private async _saveDiagram(): Promise<void> {
+  public async showSelectStartEventDialog(): Promise<void> {
+    await this._updateProcessStartEvents();
 
-    if (this._diagramIsInvalid) {
-      this._notificationService.showNotification(NotificationType.WARNING, `The diagram could not be saved because it is invalid!`);
+    const onlyOneStarteventAvailable: boolean = this.processesStartEvents.length === 1;
+
+    if (onlyOneStarteventAvailable) {
+      this.selectedStartEventId = this.processesStartEvents[0].id;
+      this.startProcess();
 
       return;
     }
 
-    try {
-      const xml: string = await this.bpmnio.getXML();
-      this.diagram.xml = xml;
+    this.showStartEventModal = true;
+    this.showSaveForStartModal = false;
 
-      this._solutionExplorerService.saveSingleDiagram(this.diagram, this._identity);
-      this._diagramHasChanged = false;
-      this._notificationService
-          .showNotification(NotificationType.SUCCESS, `File saved!`);
-      this._eventAggregator.publish(environment.events.navBar.diagramSuccessfullySaved);
-    } catch (error) {
-      this._notificationService
-          .showNotification(NotificationType.ERROR, `Unable to save the file: ${error}.`);
-    }
+  }
+
+  private async _updateProcessStartEvents(): Promise<void> {
+    const startEventResponse: EventList = await this._managementApiClient
+      .getStartEventsForProcessModel(this._activeSolutionEntry.identity, this.activeDiagram.id);
+
+    this.processesStartEvents = startEventResponse.events;
   }
 
   /**
@@ -306,13 +407,18 @@ export class DiagramDetail {
     }
   }
 
-  private _getIdentity(): IIdentity {
-    const accessToken: string = this._authenticationService.getAccessToken();
-    const identity: IIdentity = {
-      token: accessToken,
-    };
+  /**
+   * Opens a modal, if the diagram has unsaved changes and ask the user,
+   * if he wants to save his changes. This is necessary to
+   * execute the process.
+   *
+   * If there are no unsaved changes, no modal will be displayed.
+   */
+  private async _showStartDialog(): Promise<void> {
 
-    return identity;
+    this._diagramHasChanged
+      ? this.showSaveForStartModal = true
+      : await this.showSelectStartEventDialog();
   }
 
   private _handleFormValidateEvents(event: ValidateEvent): void {
@@ -337,5 +443,76 @@ export class DiagramDetail {
     this._eventAggregator
       .publish(environment.events.navBar.noValidationError);
     this._diagramIsInvalid = false;
+  }
+
+  /**
+   * In the current implementation this method only checks for UserTasks that have
+   * empty or otherwise not allowed FormData in them.
+   *
+   * If that is the case the method will continue by deleting unused/not allowed
+   * FormData to make sure the diagrams XML is further supported by Camunda.
+   *
+   * TODO: Look further into this if this method is not better placed at the FormsSection
+   * in the Property Panel, also split this into two methods and name them right.
+   */
+  private _dropInvalidFormData(): void {
+    const registry: IElementRegistry = this.bpmnio.modeler.get('elementRegistry');
+
+    registry.forEach((element: IShape) => {
+
+      const elementIsUserTask: boolean = element.type === 'bpmn:UserTask';
+
+      if (elementIsUserTask) {
+        const businessObj: IModdleElement = element.businessObject;
+
+        const businessObjHasExtensionElements: boolean = businessObj.extensionElements !== undefined;
+        if (businessObjHasExtensionElements) {
+          const extensions: IExtensionElement = businessObj.extensionElements;
+
+          extensions.values = extensions.values.filter((value: IFormElement) => {
+            const typeIsNotCamundaFormData: boolean = value.$type !== 'camunda:FormData';
+            const elementContainsFields: boolean = (value.fields !== undefined) && (value.fields.length > 0);
+
+            const keepThisValue: boolean = typeIsNotCamundaFormData || elementContainsFields;
+            return keepThisValue;
+          });
+
+          const noExtensionValuesSet: boolean = extensions.values.length === 0;
+
+          if (noExtensionValuesSet) {
+            delete businessObj.extensionElements;
+          }
+        }
+      }
+    });
+  }
+
+  /**
+   * Saves the current diagram.
+   */
+  private async _saveDiagram(): Promise<void> {
+
+    if (this._diagramIsInvalid) {
+      // TODO: Try to get some more information out of this: Why was it invalid? This message is not very helpful to the user.
+      this._notificationService.showNotification(NotificationType.WARNING, `The diagram could not be saved because it is invalid!`);
+
+      return;
+    }
+
+    try {
+      const xml: string = await this.bpmnio.getXML();
+      this.activeDiagram.xml = xml;
+
+      const activeSolution: ISolutionEntry = this._solutionService.getActiveSolutionEntry();
+      await activeSolution.service.saveDiagram(this.activeDiagram);
+
+      this._diagramHasChanged = false;
+      this._notificationService
+          .showNotification(NotificationType.SUCCESS, `File saved!`);
+      this._eventAggregator.publish(environment.events.navBar.diagramChangesResolved);
+    } catch (error) {
+      this._notificationService
+          .showNotification(NotificationType.ERROR, `Unable to save the file: ${error}.`);
+    }
   }
 }

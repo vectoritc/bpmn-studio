@@ -4,7 +4,7 @@
   <require from="spectrum-colorpicker/spectrum.css"></require>
   <div class="diagram-detail">
     <div class="bpmnio-container">
-      <bpmn-io view-model.ref="bpmnio" xml.bind="diagram.xml" name.bind="diagram.name" process-model-id.bind="diagram.name" opened-from-process-engine.bind="false"></bpmn-io>
+      <bpmn-io view-model.ref="bpmnio" xml.bind="activeDiagram.xml" name.bind="activeDiagram.name" process-model-id.bind="activeDiagram.name" opened-from-process-engine.bind="false"></bpmn-io>
     </div>
   </div>
 
@@ -51,4 +51,58 @@
       <div class="modal-backdrop fade in"></div>
     </div>
     <!-- }}} Save On Leave Modal -->
+
+  <!-- #region Save Modal for Process Start -->
+  <div show.bind="showSaveForStartModal">
+    <div class="modal show show-modal" tabindex="-1" role="dialog" id="saveModalProcessStart">
+      <div class="modal-dialog save-modal__dialog" role="document">
+        <div class="modal-content save-diagram-modal-dialog__content">
+          <div class="modal-header">
+            <h4 class="modal-title">Document Contains Changes</h4>
+          </div>
+          <div class="modal-body">
+            Your process has unsaved changes. Save changes to diagram before starting the process?
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelButtonProcessStart" click.delegate="cancelDialog()">Cancel</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal" id="saveButtonProcessStart" click.delegate="saveChangesBeforeStart()" >Save and start process</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-backdrop fade in"></div>
+  </div>
+  <!-- #endregion -->
+
+  <!-- #region Select Start Event Modal for Process Start -->
+  <div show.bind="showStartEventModal">
+    <div class="modal show show-modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog select-start-event-modal__dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header process-start-event-modal-dialog__header">
+            <h3 class="process-start-event-modal-dialog__header-headline">Select initial StartEvent</h3>
+          </div>
+
+          <div class="modal-body process-start-event-modal-dialog__body">
+            This process contains more than one start event.<br>
+            Please select a start event that should be used to start the process.
+            <div>
+              <select value.bind="selectedStartEventId" ref="dropdownMenu" class="process-start-event-modal-dialog__dropdown-menu">
+                <option value="">Select StartEvent</option>
+                <option repeat.for="startEvent of processesStartEvents" value.bind="startEvent.id">${startEvent.id}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="modal-footer process-start-event-modal-dialog__footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelStartEventSelection" click.delegate="cancelDialog()">Cancel</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal" id="startProcessWithSelectedStartEvent" click.delegate="startProcess()" disabled.bind="!selectedStartEventId">Start Process</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="modal-backdrop fade in"></div>
+  </div>
+    <!-- #endregion -->
 </template>

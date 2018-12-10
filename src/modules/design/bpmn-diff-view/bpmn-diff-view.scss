@@ -7,16 +7,16 @@
 
 .left-diff-view {
   position: relative;
-  display: inline-block;
-  width: calc(50% - 6px);
-  height: calc(33% + 2px)
+  float: left;
+  width: 50%;
+  height: 33%;
 }
 
 .right-diff-view {
   position: relative;
-  display: inline-block;
-  width: calc(50% + 2px);
-  height: calc(33% + 2px);
+  width: 50%;
+  height: 33%;
+  overflow: hidden;
 }
 
 .lower-diff-view {

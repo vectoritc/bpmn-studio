@@ -28,22 +28,14 @@ export class DynamicUiService implements IDynamicUiService {
                                             userTaskResult);
   }
 
-  public async getUserTaskByCorrelationId(identity: IIdentity,
-                                          userTaskId: string,
-                                          correlationId: string): Promise<UserTask> {
+  public async getUserTask(identity: IIdentity,
+                           correlationId: string,
+                           processModelId: string,
+                           userTaskId: string): Promise<UserTask> {
 
-    const userTaskList: UserTaskList = await this._managementApiClient.getUserTasksForCorrelation(identity, correlationId);
-
-    return  userTaskList.userTasks.find((userTask: UserTask) => {
-      return userTask.id === userTaskId;
-    });
-  }
-
-  public async getUserTaskByProcessModelId(identity: IIdentity,
-                                           userTaskId: string,
-                                           processModelId: string): Promise<UserTask> {
-
-    const userTaskList: UserTaskList = await this._managementApiClient.getUserTasksForProcessModel(identity, processModelId);
+    const userTaskList: UserTaskList = await this._managementApiClient.getUserTasksForProcessModelInCorrelation(identity,
+                                                                                                                processModelId,
+                                                                                                                correlationId);
 
     return  userTaskList.userTasks.find((userTask: UserTask) => {
       return userTask.id === userTaskId;
@@ -61,25 +53,17 @@ export class DynamicUiService implements IDynamicUiService {
                               manualTaskInstanceId);
   }
 
-  public async getManualTaskByCorrelationId(identity: IIdentity,
-                                            manualTaskId: string,
-                                            correlationId: string): Promise<ManualTask> {
+  public async getManualTask(identity: IIdentity,
+                             correlationId: string,
+                             processModelId: string,
+                             manualTaskId: string): Promise<ManualTask> {
 
-    const manualTaskList: ManualTaskList = await this._managementApiClient.getManualTasksForCorrelation(identity, correlationId);
+    const manualTaskList: ManualTaskList = await this._managementApiClient.getManualTasksForProcessModelInCorrelation(identity,
+                                                                                                                      processModelId,
+                                                                                                                      correlationId);
 
     return  manualTaskList.manualTasks.find((manualTask: ManualTask) => {
       return manualTask.id === manualTaskId;
     });
-  }
-
-  public async getManualTaskByProcessModelId(identity: IIdentity,
-                                             manualTaskId: string,
-                                             processModelId: string): Promise<ManualTask> {
-
-    const manualTaskList: ManualTaskList = await this._managementApiClient.getManualTasksForProcessModel(identity, processModelId);
-
-    return manualTaskList.manualTasks.find((manualTask: ManualTask) => {
-    return manualTask.id === manualTaskId;
-   });
   }
 }

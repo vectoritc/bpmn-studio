@@ -24,6 +24,16 @@ export class CorrelationList {
   public correlationsChanged(correlations: Array<Correlation>): void {
     this._convertCorrelationsIntoTableData(correlations);
 
+    // Select latest process instance
+    const sortedTableData: Array<ICorrelationTableEntry> = this._sortListByStartDate();
+    const tableDataIsExisiting: boolean = sortedTableData.length > 0;
+
+    if (tableDataIsExisiting ) {
+      const latestCorelationTableEntry: ICorrelationTableEntry = sortedTableData[sortedTableData.length - 1];
+
+      this.selectCorrelation(latestCorelationTableEntry);
+    }
+
     const sortSettingsExisitng: boolean = this.sortSettings.sortProperty !== undefined;
     if (sortSettingsExisitng) {
       this.sortSettings.ascending = !this.sortSettings.ascending;

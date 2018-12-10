@@ -1,13 +1,15 @@
 import {bindable, inject} from 'aurelia-framework';
 
 import {Correlation, TokenHistoryEntry} from '@process-engine/management_api_contracts';
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
+
 import {IShape} from '../../../../../contracts';
 import {IInspectCorrelationService, IPayloadEntry, IPayloadEntryValue, IRawTokenEntry, ITokenEntry} from '../../contracts';
 
 @inject('InspectCorrelationService')
 export class TokenViewer {
   @bindable() public correlation: Correlation;
-  @bindable() public processModelId: string;
+  @bindable() public activeDiagram: IDiagram;
   @bindable() public flowNode: IShape;
   @bindable() public token: string;
   @bindable() public showBeautifiedToken: boolean = true;
@@ -71,7 +73,7 @@ export class TokenViewer {
     }
 
     const tokenHistoryEntries: Array<TokenHistoryEntry> = await this._inspectCorrelationService
-      .getTokenForFlowNodeInstance(this.processModelId, this.correlation.id, this.flowNode.id);
+      .getTokenForFlowNodeInstance(this.activeDiagram.id, this.correlation.id, this.flowNode.id);
 
     this.tokenEntries = this._getBeautifiedTokenEntriesForFlowNode(tokenHistoryEntries);
     this.rawTokenEntries = this._getRawTokenEntriesForFlowNode(tokenHistoryEntries);

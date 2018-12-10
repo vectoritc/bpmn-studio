@@ -53,7 +53,8 @@
             <select class="props-input props-select" value.bind="selectedType" change.delegate="updateType()">
               <option model.bind="null">-Choose Type-</option>
               <option model.bind="FormfieldTypes.string">Text</option>
-              <option model.bind="FormfieldTypes.long">Number</option>
+              <option model.bind="FormfieldTypes.long">Integer</option>
+              <option model.bind="FormfieldTypes.number">Decimal</option>
               <option model.bind="FormfieldTypes.boolean">Truth Value</option>
               <option model.bind="FormfieldTypes.date">Date</option>
               <option model.bind="FormfieldTypes.enum">Enumeration</option>

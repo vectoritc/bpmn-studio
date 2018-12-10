@@ -18,7 +18,7 @@ import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/er
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
-import {IDiagramCreationService, IUserInputValidationRule} from '../../../contracts';
+import {IDiagramCreationService, ISolutionEntry, ISolutionService, IUserInputValidationRule} from '../../../contracts';
 import {NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
@@ -41,6 +41,7 @@ interface IDiagramCreationState extends IDiagramNameInputState {
   NewInstance.of(ValidationController),
   'DiagramCreationService',
   'NotificationService',
+  'SolutionService',
 )
 export class SolutionExplorerSolution {
 
@@ -49,8 +50,9 @@ export class SolutionExplorerSolution {
   private _validationController: ValidationController;
   private _diagramCreationService: IDiagramCreationService;
   private _notificationService: NotificationService;
+  private _solutionService: ISolutionService;
 
-  private _diagramRoute: string = 'processdef-detail';
+  private _diagramRoute: string = 'diagram-detail';
   private _inspectView: string;
   private _subscriptions: Array<Subscription>;
   private _openedSolution: ISolution;
@@ -123,10 +125,9 @@ export class SolutionExplorerSolution {
       .withMessage('A diagram with that name already exists.');
 
   // Fields below are bound from the html view.
-  @bindable
-  public solutionService: ISolutionExplorerService;
-  @bindable
-  public solutionIsSingleDiagrams: boolean;
+  @bindable public solutionService: ISolutionExplorerService;
+  @bindable public solutionIsSingleDiagrams: boolean;
+  @bindable public displayedSolutionEntry: ISolutionEntry;
   public createNewDiagramInput: HTMLInputElement;
   public _renameDiagramInput: HTMLInputElement;
 
@@ -136,12 +137,14 @@ export class SolutionExplorerSolution {
     validationController: ValidationController,
     diagramCreationService: IDiagramCreationService,
     notificationService: NotificationService,
+    solutionService: ISolutionService,
   ) {
     this._router = router;
     this._eventAggregator = eventAggregator;
     this._validationController = validationController;
     this._diagramCreationService = diagramCreationService;
     this._notificationService = notificationService;
+    this._solutionService = solutionService;
   }
 
   public attached(): void {
@@ -157,13 +160,15 @@ export class SolutionExplorerSolution {
       }),
 
       this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToDesigner, () => {
-        this._diagramRoute = 'processdef-detail';
+        this._diagramRoute = 'diagram-detail';
+        this._inspectView = undefined;
       }),
     ];
 
     this._refreshIntervalTask = setInterval(async() =>  {
       this.updateSolution();
     }, environment.processengine.solutionExplorerPollingIntervalInMs);
+
   }
 
   public detached(): void {
@@ -359,59 +364,50 @@ export class SolutionExplorerSolution {
 
   // TODO: This method is copied all over the place.
   public async navigateToDetailView(diagram: IDiagram): Promise<void> {
-    // TODO: Remove this if cause if we again have one detail view.
-    const diagramIsOpenedFromRemote: boolean = diagram.uri.startsWith('http');
+    const diagramIsNoRemoteDiagram: boolean = !diagram.uri.startsWith('http');
+    if (diagramIsNoRemoteDiagram) {
+      this._inspectView = 'dashboard';
+      this._eventAggregator.publish(environment.events.navBar.inspectNavigateToDashboard);
 
-    if (diagramIsOpenedFromRemote) {
-      await this._router.navigateToRoute(this._diagramRoute, {
-        processModelId: diagram.id,
-        view: this._inspectView,
-      });
-
-    } else {
-
-      const navigationResult: (false | PipelineResult) | (true | PipelineResult) = await this._router.navigateToRoute('diagram-detail', {
-        diagramUri: diagram.uri,
-      });
-
-      // This is needed, because navigateToRoute returns an object even though a boolean should be returned
-      const navigationSuccessful: boolean = (typeof(navigationResult) === 'boolean')
-        ? navigationResult
-        : (navigationResult as PipelineResult).completed;
-
-      if (navigationSuccessful) {
-        // TODO: This should be moved into the diagram-detail component.
-        this._eventAggregator.publish(environment.events.navBar.updateProcess, diagram);
+      const activeRouteIsInspect: boolean = this._diagramRoute === 'inspect';
+      if (activeRouteIsInspect) {
+        this._notificationService.showNotification(NotificationType.INFO,
+          'There are currently no runtime information about this process available.');
       }
     }
+
+    const navigationResult: boolean | PipelineResult = await this._router.navigateToRoute(this._diagramRoute, {
+      view: this._inspectView,
+      diagramName: diagram.name,
+    });
+
+    const navigationResultIsBoolean: boolean = typeof navigationResult === 'boolean';
+    const navigationCanceled: boolean = navigationResultIsBoolean
+                                      ? !(navigationResult as boolean)
+                                      : !(navigationResult as PipelineResult).completed;
+
+    if (navigationCanceled) {
+      return;
+    }
+
+    this._solutionService.setActiveSolutionEntry(this.displayedSolutionEntry);
+    this._solutionService.setActiveDiagram(diagram);
+
   }
 
-  @computedFrom('_router.currentInstruction.config.name')
+  @computedFrom('_solutionService._activeDiagram')
   public get currentlyOpenedDiagramUri(): string {
-    const moduleName: string = this._router.currentInstruction.config.name;
+    const activeDiagram: IDiagram = this._solutionService.getActiveDiagram();
+    const noDiagramWasOpened: boolean = activeDiagram === undefined || activeDiagram === null;
 
-    const diagramDetailViewIsOpen: boolean = moduleName === 'diagram-detail';
-    if (diagramDetailViewIsOpen) {
-      const queryParams: {diagramUri: string} = this._router.currentInstruction.queryParams;
-
-      return queryParams.diagramUri;
+    if (noDiagramWasOpened) {
+      return undefined;
     }
 
-    // TODO: The code below needs to get updated, once we implement multiple remote solutions.
-    const processDefDetailViewIsOpen: boolean = moduleName === 'processdef-detail';
-    const inspectViewIsOpen: boolean = moduleName === 'inspect';
-
-    if (processDefDetailViewIsOpen || inspectViewIsOpen) {
-      const params: {processModelId: string} = this._router.currentInstruction.params;
-
-      return environment.baseRoute + '/api/management/v1/' + params.processModelId;
-    }
-
-    return undefined;
+    return activeDiagram.uri;
   }
 
   private _isDiagramDetailViewOfDiagramOpen(diagramUriToCheck: string): boolean {
-
     const diagramIsOpened: boolean = diagramUriToCheck === this.currentlyOpenedDiagramUri;
 
     return diagramIsOpened;

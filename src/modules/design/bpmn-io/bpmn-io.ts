@@ -13,7 +13,9 @@ import {
   IElementRegistry,
   IEvent,
   IEventFunction,
+  IInternalEvent,
   IKeyboard,
+  IModdleElement,
   IShape,
   NotificationType,
 } from '../../../contracts/index';
@@ -129,6 +131,13 @@ export class BpmnIo {
       const shapeIsParticipant: boolean = element.element.type === 'bpmn:Participant';
       if (shapeIsParticipant) {
         this._checkForMultipleParticipants();
+      }
+    });
+
+    this.modeler.on('element.paste', (event: IInternalEvent) => {
+      const elementToPasteIsUserTask: boolean = event.descriptor.type === 'bpmn:UserTask';
+      if (elementToPasteIsUserTask) {
+        return this._renameFormFields(event);
       }
     });
 
@@ -405,6 +414,32 @@ export class BpmnIo {
     return returnPromise;
   }
 
+  private _renameFormFields(event: IInternalEvent): IInternalEvent {
+    const allFields: Array<IModdleElement> = event.descriptor.businessObject.extensionElements.values[0].fields;
+
+    const formFields: Array<IModdleElement> = allFields.filter((field: IModdleElement) => {
+      return field.$type === 'camunda:FormField';
+    });
+
+    formFields.forEach((formField: IModdleElement) => {
+      formField.id = `Form_${this._generateRandomId()}`;
+    });
+
+    return event;
+  }
+
+  private _generateRandomId(): string {
+    let randomId: string = '';
+    const possible: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+    const randomIdLength: number = 8;
+    for (let i: number = 0; i < randomIdLength; i++) {
+      randomId += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+
+    return randomId;
+  }
+
   private _checkForMultipleParticipants(): void {
     const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
 
@@ -548,12 +583,16 @@ export class BpmnIo {
     const keyboard: IKeyboard = this.modeler.get('keyboard');
     const editorActions: IEditorActions = this.modeler.get('editorActions');
     const backSpaceKeyCode: number = 8;
-    const removeSelectedElements: ((key: number, modifiers: KeyboardEvent) => boolean) = (key: number, modifiers: KeyboardEvent): boolean => {
-      if (key === backSpaceKeyCode) {
-        editorActions.trigger('removeSelection');
-        return true;
-      }
-    };
+    const removeSelectedElements: ((key: IInternalEvent, modifiers: KeyboardEvent) => boolean) =
+      (key: IInternalEvent, modifiers: KeyboardEvent): boolean => {
+        const backspaceWasPressed: boolean = key.keyEvent.keyCode === backSpaceKeyCode;
+
+        if (backspaceWasPressed) {
+          editorActions.trigger('removeSelection');
+
+          return true;
+        }
+      };
 
     keyboard.addListener(removeSelectedElements);
   }

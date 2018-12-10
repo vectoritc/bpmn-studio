@@ -3,47 +3,27 @@ import {bindable, inject} from 'aurelia-framework';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {FlowNodeRuntimeInformation} from '@process-engine/kpi_api_contracts';
-import {ProcessModelExecution} from '@process-engine/management_api_contracts';
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {IBpmnModeler, IElementRegistry, IOverlay} from '../../../contracts/index';
+import {IBpmnModeler, IElementRegistry, IOverlayManager} from '../../../contracts/index';
 import environment from '../../../environment';
 import {IFlowNodeAssociation, IHeatmapService} from './contracts';
 
-interface RouteParameters {
-  processModelId: string;
-}
-
-@inject('HeatmapService', EventAggregator)
+@inject('HeatmapService')
 export class Heatmap {
   public viewerContainer: HTMLDivElement;
-  @bindable() public processModelId: string;
+  @bindable() public activeDiagram: IDiagram;
   @bindable() public dashboardIsShown: string;
 
-  private _processModel: ProcessModelExecution.ProcessModel;
   private _heatmapService: IHeatmapService;
   private _modeler: IBpmnModeler;
   private _viewer: IBpmnModeler;
-  private _eventAggregator: EventAggregator;
 
-  constructor(heatmapService: IHeatmapService, eventAggregator: EventAggregator) {
+  constructor(heatmapService: IHeatmapService) {
     this._heatmapService = heatmapService;
-    this._eventAggregator = eventAggregator;
   }
 
-  /**
-   * This method gets called if the processModelId was changed.
-   * It removes the bpmn-js container from the DOM and destroys the viewer.
-   *
-   * After that the heatmap will be attached again for the new
-   * processModelId.
-   *
-   * Info: The used processModelId is bound by the inspect view.
-   */
-  public processModelIdChanged(): void {
-    const noProcessModelId: boolean = this.processModelId === undefined || this.processModelId === null;
-    if (noProcessModelId) {
-      return;
-    }
+  public activeDiagramChanged(): void {
 
     const attachedViewer: Element = document.getElementsByClassName('bjs-container')[0];
 
@@ -67,8 +47,14 @@ export class Heatmap {
   }
 
   public async attached(): Promise<void> {
-    const noProcessModelId: boolean = this.processModelId === undefined || this.processModelId === null;
-    if (noProcessModelId) {
+
+    const noActiveDiagram: boolean = this.activeDiagram === undefined;
+    if (noActiveDiagram) {
+      return;
+    }
+
+    const diagramIsNoRemoteDiagram: boolean = !this.activeDiagram.uri.startsWith('http');
+    if (diagramIsNoRemoteDiagram) {
       return;
     }
 
@@ -78,11 +64,7 @@ export class Heatmap {
       },
     });
 
-    this._processModel = await this._heatmapService.getProcess(this.processModelId);
-
-    this._eventAggregator.publish(environment.events.navBar.updateProcess, this._processModel);
-
-    await this._pushXmlToBpmnModeler(this._processModel.xml, this._modeler);
+    await this._pushXmlToBpmnModeler(this.activeDiagram.xml, this._modeler);
 
     const elementRegistry: IElementRegistry  = this._modeler.get('elementRegistry');
 
@@ -98,7 +80,7 @@ export class Heatmap {
 
     const flowNodeRuntimeInformation: Array<FlowNodeRuntimeInformation> = await this
       ._heatmapService
-      .getRuntimeInformationForProcessModel(this.processModelId);
+      .getRuntimeInformationForProcessModel(this.activeDiagram.id);
 
     const xml: string = await this._heatmapService.getColoredXML(associations, flowNodeRuntimeInformation, this._modeler);
 
@@ -112,14 +94,9 @@ export class Heatmap {
 
     await this._pushXmlToBpmnModeler(xml, this._viewer);
 
-    const overlays: IOverlay = this._viewer.get('overlays');
+    const overlays: IOverlayManager = this._viewer.get('overlays');
 
-    this._heatmapService.addOverlays(overlays, elementRegistry, this._processModel.id);
-
-    const dashboardIsNotShown: boolean = !this.dashboardIsShown;
-    if (dashboardIsNotShown) {
-      this._eventAggregator.publish(environment.events.navBar.showProcessName, this._processModel);
-    }
+    this._heatmapService.addOverlays(overlays, elementRegistry, this.activeDiagram.id);
 
     this._viewer.attachTo(this.viewerContainer);
   }
