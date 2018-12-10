@@ -217,13 +217,36 @@ export class DiagramDetail {
 
     try {
 
-      const connectedProcessEngineRoute: string = window.localStorage.getItem('processEngineRoute');
+      const processEngineRoute: string = window.localStorage.getItem('processEngineRoute');
+      const internalProcessEngineRoute: string = window.localStorage.getItem('InternalProcessEngineRoute');
+      const processEngineRouteIsSet: boolean = processEngineRoute !== '';
+
+      const connectedProcessEngineRoute: string = processEngineRouteIsSet
+                                                ? processEngineRoute
+                                                : internalProcessEngineRoute;
+
       const solutionToDeployTo: ISolutionEntry = this._solutionService.getSolutionEntryForUri(connectedProcessEngineRoute);
       this._activeSolutionEntry = solutionToDeployTo;
 
       this.activeDiagram.id = processModelId;
 
-      await this._activeSolutionEntry.service.saveDiagram(this.activeDiagram, connectedProcessEngineRoute);
+      const bpmnFileSuffix: string = '.bpmn';
+      const removeBPMNSuffix: (filename: string) => string = (filename: string): string => {
+        if (filename.endsWith(bpmnFileSuffix)) {
+          return filename.slice(0, bpmnFileSuffix.length);
+        }
+
+        return filename;
+      };
+
+      const copyOfDiagram: IDiagram = {
+        id: this.activeDiagram.id,
+        name: this.activeDiagram.name,
+        uri: removeBPMNSuffix(this.activeDiagram.uri),
+        xml: this.activeDiagram.xml,
+      };
+
+      await this._activeSolutionEntry.service.saveDiagram(copyOfDiagram, connectedProcessEngineRoute);
 
       this._solutionService.setActiveSolutionEntry(this._activeSolutionEntry);
       this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(processModelId);

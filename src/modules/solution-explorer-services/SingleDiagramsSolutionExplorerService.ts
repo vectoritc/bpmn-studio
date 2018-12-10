@@ -72,18 +72,24 @@ export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerS
 
   public async openSingleDiagram(uri: string, identity: IIdentity): Promise<IDiagram> {
     const uriAlreadyOpened: boolean = this._findOfDiagramWithURI(uri) >= 0;
-    const bpmnFileEndingLength: number = 5;
 
     if (uriAlreadyOpened) {
       throw new Error('This diagram is already opened.');
     }
 
-    await this._solutionExplorerToOpenDiagrams.openSolution(uri.substring(0, uri.lastIndexOf('/')), identity);
+    const isWindows: boolean = uri.lastIndexOf('/') === -1;
+    const indexBeforeFilename: number = isWindows
+                                      ? uri.lastIndexOf('\\')
+                                      : uri.lastIndexOf('/');
 
-    const fileName: string = uri.replace(/^.*[\\\/]/, '');
-    const fileNameWithoutEnding: string = fileName.replace('.bpmn', '');
+    const filepath: string = uri.substring(0, indexBeforeFilename);
 
-    const diagram: IDiagram = await this._solutionExplorerToOpenDiagrams.loadDiagram(fileNameWithoutEnding);
+    await this._solutionExplorerToOpenDiagrams.openSolution(filepath, identity);
+
+    const filename: string = uri.replace(/^.*[\\\/]/, '');
+    const filenameWithoutEnding: string = filename.replace('.bpmn', '');
+
+    const diagram: IDiagram = await this._solutionExplorerToOpenDiagrams.loadDiagram(filenameWithoutEnding);
 
     await this._validationService
       .validate(diagram.xml)

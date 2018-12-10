@@ -364,27 +364,34 @@ export class SolutionExplorerSolution {
 
   // TODO: This method is copied all over the place.
   public async navigateToDetailView(diagram: IDiagram): Promise<void> {
-    this._solutionService.setActiveSolutionEntry(this.displayedSolutionEntry);
-    this._solutionService.setActiveDiagram(diagram);
-
     const diagramIsNoRemoteDiagram: boolean = !diagram.uri.startsWith('http');
     if (diagramIsNoRemoteDiagram) {
-
       this._inspectView = 'dashboard';
       this._eventAggregator.publish(environment.events.navBar.inspectNavigateToDashboard);
 
       const activeRouteIsInspect: boolean = this._diagramRoute === 'inspect';
-
       if (activeRouteIsInspect) {
         this._notificationService.showNotification(NotificationType.INFO,
           'There are currently no runtime information about this process available.');
       }
     }
 
-    this._router.navigateToRoute(this._diagramRoute, {
+    const navigationResult: boolean | PipelineResult = await this._router.navigateToRoute(this._diagramRoute, {
       view: this._inspectView,
       diagramName: diagram.name,
     });
+
+    const navigationResultIsBoolean: boolean = typeof navigationResult === 'boolean';
+    const navigationCanceled: boolean = navigationResultIsBoolean
+                                      ? !(navigationResult as boolean)
+                                      : !(navigationResult as PipelineResult).completed;
+
+    if (navigationCanceled) {
+      return;
+    }
+
+    this._solutionService.setActiveSolutionEntry(this.displayedSolutionEntry);
+    this._solutionService.setActiveDiagram(diagram);
 
   }
 
