@@ -83,7 +83,7 @@ export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerS
                                       ? uri.lastIndexOf('\\')
                                       : uri.lastIndexOf('/');
 
-    await this._solutionExplorerToOpenDiagrams.openSolution(uri.substring(0, indexBeforeFilename), identity);
+    const filepath: string = uri.substring(0, indexBeforeFilename);
 
     const fileName: string = uri.replace(/^.*[\\\/]/, '');
     const fileNameWithoutEnding: string = fileName.replace('.bpmn', '');
