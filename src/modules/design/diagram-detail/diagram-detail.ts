@@ -217,7 +217,14 @@ export class DiagramDetail {
 
     try {
 
-      const connectedProcessEngineRoute: string = window.localStorage.getItem('processEngineRoute');
+      const processEngineRoute: string = window.localStorage.getItem('processEngineRoute');
+      const internalProcessEngineRoute: string = window.localStorage.getItem('InternalProcessEngineRoute');
+      const processEngineRouteIsSet: boolean = processEngineRoute !== '';
+
+      const connectedProcessEngineRoute: string = processEngineRouteIsSet
+                                                ? processEngineRoute
+                                                : internalProcessEngineRoute;
+
       const solutionToDeployTo: ISolutionEntry = this._solutionService.getSolutionEntryForUri(connectedProcessEngineRoute);
       this._activeSolutionEntry = solutionToDeployTo;
 
