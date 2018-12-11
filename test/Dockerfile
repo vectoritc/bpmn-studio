@@ -42,7 +42,7 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
 ARG CHROME_DRIVER_VERSION="latest"
 RUN CD_VERSION=$(if [ ${CHROME_DRIVER_VERSION:-latest} = "latest" ]; then echo $(wget -qO- https://chromedriver.storage.googleapis.com/LATEST_RELEASE); else echo $CHROME_DRIVER_VERSION; fi) \
   && echo "Using chromedriver version: "$CD_VERSION \
-  && wget --no-verbose -O /tmp/chromedriver_linux64.zip https://chromedriver.storage.googleapis.com/$CD_VERSION/chromedriver_linux64.zip \
+  && wget --no-verbose -O /tmp/chromedriver_linux64.zip https://chromedriver.storage.googleapis.com/71.0.3578.33/chromedriver_linux64.zip \
   && rm -rf /opt/selenium/chromedriver \
   && unzip /tmp/chromedriver_linux64.zip -d /opt/selenium \
   && rm /tmp/chromedriver_linux64.zip \
@@ -53,8 +53,8 @@ RUN CD_VERSION=$(if [ ${CHROME_DRIVER_VERSION:-latest} = "latest" ]; then echo $
 # Copy files
 FROM chrome as app
 
-COPY test/jenkins_e2e.sh /jenkins_e2e.sh 
-RUN chmod 777 /jenkins_e2e.sh 
+COPY test/jenkins_e2e.sh /jenkins_e2e.sh
+RUN chmod 777 /jenkins_e2e.sh
 
 ENTRYPOINT [ "/bin/bash" ]
 
