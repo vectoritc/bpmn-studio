@@ -87,6 +87,13 @@ export class DiagramDetail {
     }
 
     this._activeSolutionEntry = await this._solutionService.getActiveSolutionEntry();
+
+    if (this._activeSolutionEntry === undefined) {
+      this._router.navigateToRoute('start-page');
+
+      return;
+    }
+
     this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
 
     this.xml = this.activeDiagram.xml;

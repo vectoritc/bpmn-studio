@@ -3,8 +3,10 @@ import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {Router} from 'aurelia-router';
 
+import { IDiagram } from '@process-engine/solutionexplorer.contracts';
+import { runInThisContext } from 'vm';
 import {IAuthenticationService} from '../../contracts/authentication/IAuthenticationService';
-import {AuthenticationStateEvent, ISolutionService, NotificationType} from '../../contracts/index';
+import {AuthenticationStateEvent, ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {oidcConfig} from '../../open-id-connect-configuration';
 import {NotificationService} from '../notification/notification.service';
@@ -96,11 +98,13 @@ export class ConfigPanel {
 
     this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, this.baseRoute);
 
-    /**
-     * The active diagram is set to undefined here, because we don't know whether
-     * the new ProcessEngine where we are connected to has also the diagram.
-     */
-    this._solutionService.setActiveDiagram(undefined);
+    const currentActiveSolution: ISolutionEntry = this._solutionService.getActiveSolutionEntry();
+    const currentActiveSolutionIsRemoteSolution: boolean = currentActiveSolution.uri.startsWith('http');
+
+    if (currentActiveSolutionIsRemoteSolution) {
+      this._solutionService.setActiveDiagram(undefined);
+      this._solutionService.setActiveSolutionEntry(undefined);
+    }
 
     const baseRouteIsInternalProcessEngine: boolean = this.baseRoute === window.localStorage.getItem('InternalProcessEngineRoute');
     if (baseRouteIsInternalProcessEngine) {
