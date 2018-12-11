@@ -376,6 +376,9 @@ export class SolutionExplorerSolution {
       }
     }
 
+    const previousActiveSolution: ISolutionEntry = this._solutionService.getActiveSolutionEntry();
+    this._solutionService.setActiveSolutionEntry(this.displayedSolutionEntry);
+
     const navigationResult: boolean | PipelineResult = await this._router.navigateToRoute(this._diagramRoute, {
       view: this._inspectView,
       diagramName: diagram.name,
@@ -387,10 +390,11 @@ export class SolutionExplorerSolution {
                                       : !(navigationResult as PipelineResult).completed;
 
     if (navigationCanceled) {
+      this._solutionService.setActiveSolutionEntry(previousActiveSolution);
+
       return;
     }
 
-    this._solutionService.setActiveSolutionEntry(this.displayedSolutionEntry);
     this._solutionService.setActiveDiagram(diagram);
 
   }
