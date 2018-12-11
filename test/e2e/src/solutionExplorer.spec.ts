@@ -35,6 +35,11 @@ describe('Solution Explorer', () => {
     processModel.postProcessModel(processModelId);
   });
 
+  afterAll(async() => {
+
+    await processModel.deleteProcessModel();
+  });
+
   beforeEach(async() => {
     const navBarTag: ElementFinder = navBar.navBarTag;
     const visibilityOfNavBarTag: Function = expectedConditions.visibilityOf(navBarTag);

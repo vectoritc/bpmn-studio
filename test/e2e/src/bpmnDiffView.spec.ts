@@ -45,10 +45,9 @@ describe('bpmn-io compare view', () => {
     processModel.postProcessModelWithUserTask(processModelId);
   });
 
-  afterAll(() => {
-    processModelId = processModel.getProcessModelId();
+  afterAll(async() => {
 
-    processModel.deleteProcessModel(processModelId);
+    await processModel.deleteProcessModel();
   });
 
   beforeEach(async() => {

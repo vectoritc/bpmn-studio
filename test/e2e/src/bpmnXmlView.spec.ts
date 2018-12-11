@@ -45,6 +45,11 @@ describe('bpmn-io XML view', () => {
     processModel.postProcessModelWithUserTask(processModelId);
   });
 
+  afterAll(async() => {
+
+    await processModel.deleteProcessModel();
+  });
+
   beforeEach(async() => {
     const getRouterViewContainer: ElementFinder = general.getRouterViewContainer;
     const visibilityOfRouterViewContainer: Function = expectedConditions.visibilityOf(getRouterViewContainer);
