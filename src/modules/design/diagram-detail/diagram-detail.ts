@@ -359,6 +359,8 @@ export class DiagramDetail {
   }
 
   public async saveChangesBeforeStart(): Promise<void> {
+    this.showSaveForStartModal = false;
+
     this._saveDiagram();
     await this.showSelectStartEventDialog();
   }
@@ -385,6 +387,11 @@ export class DiagramDetail {
     this.showStartEventModal = true;
     this.showSaveForStartModal = false;
 
+  }
+
+  public cancelDialog(): void {
+    this.showSaveForStartModal = false;
+    this.showStartEventModal = false;
   }
 
   private async _updateProcessStartEvents(): Promise<void> {
