@@ -46,9 +46,9 @@ RUN CD_VERSION=$(if [ ${CHROME_DRIVER_VERSION:-latest} = "latest" ]; then echo $
   && rm -rf /opt/selenium/chromedriver \
   && unzip /tmp/chromedriver_linux64.zip -d /opt/selenium \
   && rm /tmp/chromedriver_linux64.zip \
-  && mv /opt/selenium/chromedriver /opt/selenium/chromedriver-$CD_VERSION \
-  && chmod 755 /opt/selenium/chromedriver-$CD_VERSION \
-  && ln -fs /opt/selenium/chromedriver-$CD_VERSION /usr/bin/chromedriver
+  && mv /opt/selenium/chromedriver /opt/selenium/chromedriver-71.0.3578.33 \
+  && chmod 755 /opt/selenium/chromedriver-71.0.3578.33 \
+  && ln -fs /opt/selenium/chromedriver-71.0.3578.33 /usr/bin/chromedriver
 
 # Copy files
 FROM chrome as app
