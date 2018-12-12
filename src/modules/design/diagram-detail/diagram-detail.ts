@@ -44,6 +44,7 @@ export class DiagramDetail {
   public showStartEventModal: boolean = false;
   public processesStartEvents: Array<Event> = [];
   public selectedStartEventId: string;
+  public xml: string;
 
   @observable({ changeHandler: 'diagramHasChangedChanged'}) private _diagramHasChanged: boolean;
   private _activeSolutionEntry: ISolutionEntry;
@@ -87,6 +88,8 @@ export class DiagramDetail {
 
     this._activeSolutionEntry = await this._solutionService.getActiveSolutionEntry();
     this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
+
+    this.xml = this.activeDiagram.xml;
 
     this._solutionService.setActiveDiagram(this.activeDiagram);
     this._diagramHasChanged = false;
@@ -359,6 +362,8 @@ export class DiagramDetail {
   }
 
   public async saveChangesBeforeStart(): Promise<void> {
+    this.showSaveForStartModal = false;
+
     this._saveDiagram();
     await this.showSelectStartEventDialog();
   }
@@ -385,6 +390,11 @@ export class DiagramDetail {
     this.showStartEventModal = true;
     this.showSaveForStartModal = false;
 
+  }
+
+  public cancelDialog(): void {
+    this.showSaveForStartModal = false;
+    this.showStartEventModal = false;
   }
 
   private async _updateProcessStartEvents(): Promise<void> {
