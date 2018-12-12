@@ -324,6 +324,10 @@ export class BpmnIo {
     }
   }
 
+  public async saveCurrentXML(): Promise<void> {
+    this.savedXml = await this.getXML();
+  }
+
   public xmlChanged(newValue: string): void {
     if (this.modeler !== undefined && this.modeler !== null) {
       this.modeler.importXML(newValue, (err: Error) => {
