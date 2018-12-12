@@ -28,6 +28,7 @@ import {
   IOverlayManager,
   IShape,
   ISolutionEntry,
+  ISolutionService,
   NotificationType,
 } from '../../contracts/index';
 import environment from '../../environment';
@@ -38,7 +39,7 @@ type RouteParameters = {
   processModelId: string;
 };
 
-@inject(Router, 'NotificationService', 'AuthenticationService', 'ManagementApiClientService')
+@inject(Router, 'NotificationService', 'AuthenticationService', 'ManagementApiClientService', 'SolutionService')
 export class LiveExecutionTracker {
   public canvasModel: HTMLElement;
 
@@ -53,6 +54,7 @@ export class LiveExecutionTracker {
   private _notificationService: NotificationService;
   private _authenticationService: IAuthenticationService;
   private _managementApiClient: IManagementApi;
+  private _solutionService: ISolutionService;
 
   private _correlationId: string;
   private _processModelId: string;
@@ -68,17 +70,33 @@ export class LiveExecutionTracker {
   constructor(router: Router,
               notificationService: NotificationService,
               authenticationService: IAuthenticationService,
-              managementApiClient: IManagementApi) {
+              managementApiClient: IManagementApi,
+              solutionService: ISolutionService) {
 
     this._router = router;
     this._notificationService = notificationService;
     this._authenticationService = authenticationService;
     this._managementApiClient = managementApiClient;
+    this._solutionService = solutionService;
   }
 
-  public activate(routeParameters: RouteParameters): void {
+  public async activate(routeParameters: RouteParameters): Promise<void> {
     this._correlationId = routeParameters.correlationId;
     this._processModelId = routeParameters.processModelId;
+
+    const processEngineRoute: string = window.localStorage.getItem('processEngineRoute');
+    const internalProcessEngineRoute: string = window.localStorage.getItem('InternalProcessEngineRoute');
+    const processEngineRouteIsSet: boolean = processEngineRoute !== '';
+
+    const connectedProcessEngineRoute: string = processEngineRouteIsSet
+                                              ? processEngineRoute
+                                              : internalProcessEngineRoute;
+
+    const processEngineSolution: ISolutionEntry = await this._solutionService.getSolutionEntryForUri(connectedProcessEngineRoute);
+    const activeDiagram: IDiagram = await this._getProcessModelAndConvertToDiagram(this._processModelId, processEngineSolution);
+
+    this._solutionService.setActiveSolutionEntry(processEngineSolution);
+    this._solutionService.setActiveDiagram(activeDiagram);
   }
 
   public async attached(): Promise<void> {
