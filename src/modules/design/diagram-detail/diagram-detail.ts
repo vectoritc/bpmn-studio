@@ -88,7 +88,8 @@ export class DiagramDetail {
 
     this._activeSolutionEntry = await this._solutionService.getActiveSolutionEntry();
 
-    if (this._activeSolutionEntry === undefined) {
+    const activeSolutionEntryDoesNotExist: boolean = this._activeSolutionEntry === undefined;
+    if (activeSolutionEntryDoesNotExist) {
       this._router.navigateToRoute('start-page');
 
       return;
