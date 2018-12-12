@@ -168,14 +168,6 @@ export class LiveExecutionTracker {
     // Import the xml to the modeler to add colors to it
     await this._importXmlIntoDiagramModeler(xml);
 
-    /*
-     * Remove all colors if the diagram has already colored elements.
-     * For example, if the user has some elements colored orange and is running
-     * the diagram, one would think in LiveExecutionTracker that the element is
-     * active although it is not active.
-    */
-    this._clearColors();
-
     // Get all elements that can have a token
     const allElements: Array<IShape> = this._elementRegistry.filter((element: IShape): boolean => {
       const elementCanHaveAToken: boolean = element.type !== 'bpmn:SequenceFlow'
@@ -187,9 +179,31 @@ export class LiveExecutionTracker {
       return elementCanHaveAToken;
     });
 
-    // Get all elements that already have a token and all that have an active token.
+    // Get all elements that already have an active token.
     const elementsWithActiveToken: Array<IShape> = await this._getElementsWithActiveToken(allElements);
+
+    // If the backend returned an error the diagram should not be rendered.
+    const couldNotGetActiveTokens: boolean = elementsWithActiveToken === null;
+    if (couldNotGetActiveTokens) {
+      return;
+    }
+
+    // Get all elements that already have a token.
     const elementsWithTokenHistory: Array<IShape> = await this._getElementsWithTokenHistory(allElements);
+
+    // If the backend returned an error the diagram should not be rendered.
+    const couldNotGetTokenHistory: boolean = elementsWithTokenHistory === null;
+    if (couldNotGetTokenHistory) {
+      return;
+    }
+
+    /*
+     * Remove all colors if the diagram has already colored elements.
+     * For example, if the user has some elements colored orange and is running
+     * the diagram, one would think in LiveExecutionTracker that the element is
+     * active although it is not active.
+    */
+    this._clearColors();
 
     // Colorize the found elements and add overlay to those that can be started.
     this._colorizeElements(elementsWithTokenHistory, defaultBpmnColors.green);
@@ -279,13 +293,30 @@ export class LiveExecutionTracker {
     });
   }
 
-  private async _getElementsWithActiveToken(elements: Array<IShape>): Promise<Array<IShape>> {
+  private async _getElementsWithActiveToken(elements: Array<IShape>): Promise<Array<IShape> | null> {
     const identity: IIdentity = this._getIdentity();
 
-    this._activeTokens = await this._managementApiClient.getActiveTokensForCorrelationAndProcessModel(identity,
-                                                                                                      this._correlationId,
-                                                                                                      this._processModelId);
+    const getActiveTokens: Function = async(): Promise<Array<ActiveToken> | null> => {
+      try {
+        return await this._managementApiClient.getActiveTokensForCorrelationAndProcessModel(identity,
+                                                                                            this._correlationId,
+                                                                                            this._processModelId);
+      } catch (error) {
+        console.log('Error while getting Active Token:');
+        console.log(error);
 
+        return null;
+      }
+    };
+
+    const activeTokens: Array<ActiveToken> | null = await getActiveTokens();
+
+    const couldNotGetActiveTokens: boolean = activeTokens === null;
+    if (couldNotGetActiveTokens) {
+      return null;
+    }
+
+    this._activeTokens = activeTokens;
     const elementsWithActiveToken: Array<IShape> = this._activeTokens.map((activeToken: ActiveToken): IShape => {
       const elementWithActiveToken: IShape = elements.find((element: IShape) => {
         return element.id === activeToken.flowNodeId;
@@ -297,13 +328,28 @@ export class LiveExecutionTracker {
     return elementsWithActiveToken;
   }
 
-  private async _getElementsWithTokenHistory(elements: Array<IShape>): Promise<Array<IShape>> {
+  private async _getElementsWithTokenHistory(elements: Array<IShape>): Promise<Array<IShape> | null> {
     const identity: IIdentity = this._getIdentity();
 
-    const tokenHistoryGroups: TokenHistoryGroup = await this._managementApiClient.getTokensForCorrelationAndProcessModel(
-      identity,
-      this._correlationId,
-      this._processModelId);
+    const getTokenHistoryGroup: Function = async(): Promise<TokenHistoryGroup | null> => {
+      try {
+        return await this._managementApiClient.getTokensForCorrelationAndProcessModel(identity,
+                                                                                      this._correlationId,
+                                                                                      this._processModelId);
+      } catch (error) {
+        console.log('Error while getting TokenHistory:');
+        console.log(error);
+
+        return null;
+      }
+    };
+
+    const tokenHistoryGroups: TokenHistoryGroup =  await getTokenHistoryGroup();
+
+    const couldNotGetTokenHistory: boolean = tokenHistoryGroups === null;
+    if (couldNotGetTokenHistory) {
+      return null;
+    }
 
     const elementsWithTokenHistory: Array<IShape> = [];
 
@@ -581,7 +627,23 @@ export class LiveExecutionTracker {
   private async _isCorrelationStillActive(): Promise<boolean> {
     const identity: IIdentity = this._getIdentity();
 
-    const allActiveCorrelations: Array<Correlation> = await this._managementApiClient.getActiveCorrelations(identity);
+    const getActiveCorrelations: Function = async(): Promise<Array<Correlation> | null> => {
+      try {
+        return await this._managementApiClient.getActiveCorrelations(identity);
+      } catch (error) {
+        console.log('Error while getting Active Correlation:');
+        console.log(error);
+
+        return null;
+      }
+    };
+
+    const allActiveCorrelations: Array<Correlation> = await getActiveCorrelations();
+
+    const couldNotGetActiveCorrelations: boolean = allActiveCorrelations === null;
+    if (couldNotGetActiveCorrelations) {
+      return true;
+    }
 
     const correlationIsNotActive: boolean = !allActiveCorrelations.some((activeCorrelation: Correlation) => {
       return activeCorrelation.id === this._correlationId;
