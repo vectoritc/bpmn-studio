@@ -117,18 +117,18 @@ export function configure(aurelia: Aurelia): void {
 
       ipcRenderer.send('app_ready');
 
-      ipcRenderer.on('update_error', (event: any) => {
-        notificationService.showNotification(NotificationType.INFO, 'Update Error');
+      ipcRenderer.on('update_error', () => {
+        notificationService.showNotification(NotificationType.INFO, 'Update Error!');
       });
 
-      ipcRenderer.on('update_available', (event: any) => {
+      ipcRenderer.on('update_available', () => {
         const messageTitle: string = '<h4>Update available.</h4>';
         const messageBody: string = `Download started.`;
 
         notificationService.showNonDisappearingNotification(NotificationType.INFO, `${messageTitle}\n${messageBody}`);
       });
 
-      ipcRenderer.on('update_downloaded', (event: any) => {
+      ipcRenderer.on('update_downloaded', () => {
         const installButton: string = `<a href="javascript:nodeRequire('electron').ipcRenderer.send('quit_and_install')">here</a>`;
 
         const messageTitle: string = '<h4>Update ready!</h4>';
