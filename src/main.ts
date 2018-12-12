@@ -83,8 +83,9 @@ export function configure(aurelia: Aurelia): void {
   aurelia.start().then(() => {
     aurelia.setRoot();
 
+    const applicationRunsInElectron: boolean = (window as any).nodeRequire !== undefined;
     // check if the processengine started successfull
-    if ((window as any).nodeRequire) {
+    if (applicationRunsInElectron) {
 
       const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
       // subscribe to processengine status
@@ -111,14 +112,14 @@ export function configure(aurelia: Aurelia): void {
       });
     }
 
-    if ((window as any).nodeRequire) {
+    if (applicationRunsInElectron) {
       const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
       const notificationService: NotificationService = aurelia.container.get('NotificationService');
 
       ipcRenderer.send('app_ready');
 
       ipcRenderer.on('update_error', (event: any) => {
-        notificationService.showNonDisappearingNotification(NotificationType.INFO, 'Update Error');
+        notificationService.showNotification(NotificationType.INFO, 'Update Error');
       });
 
       ipcRenderer.on('update_available', (event: any) => {
