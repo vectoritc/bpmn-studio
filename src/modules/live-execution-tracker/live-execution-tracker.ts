@@ -406,8 +406,9 @@ export class LiveExecutionTracker {
 
       if (previousElementIsTask) {
         const elementHasActiveToken: boolean = this._hasElementActiveToken(sourceOfIncomingElement.id);
+        const sourceOfIncomingElementHasNoTokenHistory: boolean = !this._hasElementTokenHistory(sourceOfIncomingElement.id, tokenHistoryGroups);
 
-        if (elementHasActiveToken) {
+        if (elementHasActiveToken || sourceOfIncomingElementHasNoTokenHistory) {
           continue;
         }
 
