@@ -82,7 +82,7 @@ pipeline {
           def docker_e2e_container_name = "${docker_e2e_image_name}_container-b${env.BUILD_NUMBER}-${env.GIT_COMMIT}"
 
           try {
-            sh("docker build --file test/Dockerfile --tag ${docker_e2e_image_name} .")
+            sh("docker build --file test/Dockerfile --tag ${docker_e2e_image_name} --no-cache.")
 
             def docker_run_cmd = 'docker run'
             docker_run_cmd += ' --user 112:116' // Use the jenkins system user.
