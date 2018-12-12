@@ -4,7 +4,6 @@ import {bindable, inject, observable} from 'aurelia-framework';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 
-import { TouchSequence } from 'selenium-webdriver';
 import {
   IBpmnModeler,
   IBpmnXmlSaveOptions,
