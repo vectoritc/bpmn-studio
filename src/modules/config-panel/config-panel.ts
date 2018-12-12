@@ -4,7 +4,10 @@ import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {Router} from 'aurelia-router';
 
 import {IAuthenticationService} from '../../contracts/authentication/IAuthenticationService';
-import {AuthenticationStateEvent, ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
+import {AuthenticationStateEvent,
+        ISolutionEntry,
+        ISolutionService,
+        NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {oidcConfig} from '../../open-id-connect-configuration';
 import {NotificationService} from '../notification/notification.service';
