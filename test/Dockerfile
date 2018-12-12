@@ -53,8 +53,8 @@ RUN CD_VERSION=$(if [ ${CHROME_DRIVER_VERSION:-latest} = "latest" ]; then echo $
 # Copy files
 FROM chrome as app
 
-COPY test/jenkins_e2e.sh /jenkins_e2e.sh 
-RUN chmod 777 /jenkins_e2e.sh 
+COPY test/jenkins_e2e.sh /jenkins_e2e.sh
+RUN chmod 777 /jenkins_e2e.sh
 
 ENTRYPOINT [ "/bin/bash" ]
 

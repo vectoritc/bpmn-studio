@@ -12,6 +12,8 @@ import {
 } from '@process-engine/management_api_contracts';
 
 import {ActiveToken} from '@process-engine/kpi_api_contracts';
+import {ProcessModel} from '@process-engine/management_api_contracts/dist/data_models';
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {
   defaultBpmnColors,
   IAuthenticationService,
@@ -25,6 +27,8 @@ import {
   IModeling,
   IOverlayManager,
   IShape,
+  ISolutionEntry,
+  ISolutionService,
   NotificationType,
 } from '../../contracts/index';
 import environment from '../../environment';
@@ -35,7 +39,7 @@ type RouteParameters = {
   processModelId: string;
 };
 
-@inject(Router, 'NotificationService', 'AuthenticationService', 'ManagementApiClientService')
+@inject(Router, 'NotificationService', 'AuthenticationService', 'ManagementApiClientService', 'SolutionService')
 export class LiveExecutionTracker {
   public canvasModel: HTMLElement;
 
@@ -50,6 +54,7 @@ export class LiveExecutionTracker {
   private _notificationService: NotificationService;
   private _authenticationService: IAuthenticationService;
   private _managementApiClient: IManagementApi;
+  private _solutionService: ISolutionService;
 
   private _correlationId: string;
   private _processModelId: string;
@@ -65,17 +70,33 @@ export class LiveExecutionTracker {
   constructor(router: Router,
               notificationService: NotificationService,
               authenticationService: IAuthenticationService,
-              managementApiClient: IManagementApi) {
+              managementApiClient: IManagementApi,
+              solutionService: ISolutionService) {
 
     this._router = router;
     this._notificationService = notificationService;
     this._authenticationService = authenticationService;
     this._managementApiClient = managementApiClient;
+    this._solutionService = solutionService;
   }
 
-  public activate(routeParameters: RouteParameters): void {
+  public async activate(routeParameters: RouteParameters): Promise<void> {
     this._correlationId = routeParameters.correlationId;
     this._processModelId = routeParameters.processModelId;
+
+    const processEngineRoute: string = window.localStorage.getItem('processEngineRoute');
+    const internalProcessEngineRoute: string = window.localStorage.getItem('InternalProcessEngineRoute');
+    const processEngineRouteIsSet: boolean = processEngineRoute !== '';
+
+    const connectedProcessEngineRoute: string = processEngineRouteIsSet
+                                              ? processEngineRoute
+                                              : internalProcessEngineRoute;
+
+    const processEngineSolution: ISolutionEntry = await this._solutionService.getSolutionEntryForUri(connectedProcessEngineRoute);
+    const activeDiagram: IDiagram = await this._getProcessModelAndConvertToDiagram(this._processModelId, processEngineSolution);
+
+    this._solutionService.setActiveSolutionEntry(processEngineSolution);
+    this._solutionService.setActiveDiagram(activeDiagram);
   }
 
   public async attached(): Promise<void> {
@@ -118,6 +139,29 @@ export class LiveExecutionTracker {
   public detached(): void {
     this._attached = false;
     this._stopPolling();
+  }
+
+  /**
+   *
+   * @param processModelId: string | The ID of a ProcessModel.
+   * @param processEngineSolution: ISolutionEntry | The SolutionEntry of the connected ProcessEngine.
+   *
+   * This method fetches the ProcessModel of an ID and returns the matching diagram as IDiagram.
+   * The ProcessEngine Solution is needed to get the correct URI of the diagram.
+   */
+  private async _getProcessModelAndConvertToDiagram(processModelId: string, processEngineSolution: ISolutionEntry): Promise<IDiagram> {
+    const identity: IIdentity = this._getIdentity();
+
+    const processModel: ProcessModel = await this._managementApiClient.getProcessModelById(identity, processModelId);
+
+    const diagram: IDiagram = {
+      id: processModel.id,
+      xml: processModel.xml,
+      uri: `${processEngineSolution.uri}/api/management/v1/${processModel.id}`,
+      name: processModelId,
+    };
+
+    return diagram;
   }
 
   private async _colorizeXml(xml: string): Promise<string> {

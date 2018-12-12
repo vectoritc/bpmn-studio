@@ -36,6 +36,11 @@ describe('Process definition list', () => {
     processModel.postProcessModel(processModelId);
   });
 
+  afterAll(async() => {
+
+    await processModel.deleteProcessModel();
+  });
+
   beforeEach(async() => {
     const processModelLink: string = ProcessModel.getProcessModelLink();
     const destination: string = aureliaUrl + processModelLink;

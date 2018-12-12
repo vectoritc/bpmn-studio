@@ -1,4 +1,4 @@
-import {Aurelia} from 'aurelia-framework';
+import {Aurelia, RelativeViewStrategy} from 'aurelia-framework';
 
 import {NotificationType} from './contracts/index';
 import environment from './environment';
@@ -83,13 +83,12 @@ export function configure(aurelia: Aurelia): void {
   aurelia.start().then(() => {
     aurelia.setRoot();
 
-    // check if the processengine started successfull
-    if ((window as any).nodeRequire) {
+    const applicationRunsInElectron: boolean = (window as any).nodeRequire !== undefined;
+    if (applicationRunsInElectron) {
 
       const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
       // subscribe to processengine status
       ipcRenderer.send('add_internal_processengine_status_listener');
-      ipcRenderer.send('add_autoupdater_listener');
 
       // wait for status to be reported
 
@@ -111,5 +110,35 @@ export function configure(aurelia: Aurelia): void {
         notificationService.showNonDisappearingNotification(NotificationType.ERROR, errorMessage);
       });
     }
+
+    if (applicationRunsInElectron) {
+      const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
+      const notificationService: NotificationService = aurelia.container.get('NotificationService');
+
+      ipcRenderer.send('app_ready');
+
+      ipcRenderer.on('update_error', () => {
+        notificationService.showNotification(NotificationType.INFO, 'Update Error!');
+      });
+
+      ipcRenderer.on('update_available', () => {
+        const messageTitle: string = '<h4>Update available.</h4>';
+        const messageBody: string = `Download started.`;
+
+        notificationService.showNonDisappearingNotification(NotificationType.INFO, `${messageTitle}\n${messageBody}`);
+      });
+
+      ipcRenderer.on('update_downloaded', () => {
+        // tslint:disable-next-line max-line-length
+        const installButton: string = `<a class="btn btn-default" style="color: #000000;" href="javascript:nodeRequire('electron').ipcRenderer.send('quit_and_install')">Install</a>`;
+        const cancelButton: string = `<a class="btn btn-default" style="color: #000000;">Cancel</a>`;
+
+        const messageTitle: string = '<h4>Update ready!</h4>';
+        const messageBody: string = `${cancelButton} ${installButton}`;
+
+        notificationService.showNonDisappearingNotification(NotificationType.INFO, `${messageTitle}\n${messageBody}`);
+      });
+    }
   });
+
 }

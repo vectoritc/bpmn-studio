@@ -81,7 +81,7 @@ export class TaskList {
       this._getTasks = this._getAllTasks;
     }
 
-    this._updateTasks();
+    this.updateTasks();
   }
 
   public attached(): void {
@@ -89,19 +89,19 @@ export class TaskList {
 
     if (getTasksIsUndefined) {
       this._getTasks = this._getAllTasks;
-      this._updateTasks();
+      this.updateTasks();
     }
 
     this._getTasksIntervalId = window.setInterval(() => {
-      this._updateTasks();
+      this.updateTasks();
     }, environment.processengine.dashboardPollingIntervalInMs);
 
     this._subscriptions = [
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
-        this._updateTasks();
+        this.updateTasks();
       }),
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
-        this._updateTasks();
+        this.updateTasks();
       }),
     ];
   }
@@ -305,7 +305,7 @@ export class TaskList {
     return identity;
   }
 
-  private async _updateTasks(): Promise<void> {
+  public async updateTasks(): Promise<void> {
     try {
 
       this._userTasks = await this._getTasks();

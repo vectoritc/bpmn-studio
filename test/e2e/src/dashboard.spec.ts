@@ -35,6 +35,11 @@ describe('Dashboard view', () => {
     processModel.postProcessModelWithUserTask(processModelId);
   });
 
+  afterAll(async() => {
+
+    await processModel.deleteProcessModel();
+  });
+
   beforeEach(async() => {
     const dashboardLink: string = dashboard.dashboardLink;
     const routerViewContainer: ElementFinder = general.getRouterViewContainer;
