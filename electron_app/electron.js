@@ -202,7 +202,7 @@ Main._initializeApplication = function () {
       console.log(`CurrentVersion: ${currentVersion}, CurrentVersionIsPrerelease: ${currentVersionIsPrerelease}`);
 
       autoUpdater.addListener('error', (error) => {
-        event.sender.send('update_error')
+        event.sender.send('update_error');
       });
 
       autoUpdater.addListener('update-available', (info) => {
@@ -549,7 +549,7 @@ Main._createMainWindow = function () {
 
     let template = [
       getApplicationMenu(),
-      getFileMenu(), 
+      getFileMenu(),
       getEditMenu(),
       getWindowMenu(),
       getHelpMenu(),

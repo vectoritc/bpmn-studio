@@ -1,4 +1,4 @@
-import {Aurelia} from 'aurelia-framework';
+import {Aurelia, RelativeViewStrategy} from 'aurelia-framework';
 
 import {NotificationType} from './contracts/index';
 import environment from './environment';
@@ -118,7 +118,7 @@ export function configure(aurelia: Aurelia): void {
       ipcRenderer.send('app_ready');
 
       ipcRenderer.on('update_error', (event: any) => {
-        notificationService.showNotification(NotificationType.INFO, 'Update Error');
+        notificationService.showNonDisappearingNotification(NotificationType.INFO, 'Update Error');
       });
 
       ipcRenderer.on('update_available', (event: any) => {
@@ -126,8 +126,11 @@ export function configure(aurelia: Aurelia): void {
       });
 
       ipcRenderer.on('update_downloaded', (event: any) => {
-        notificationService.showNonDisappearingNotification(NotificationType.INFO, 'Update ready!');
+        const installButton: string = `<a href="javascript:nodeRequire('electron').ipcRenderer.send('quit_and_install')">here</a>`;
+
+        notificationService.showNonDisappearingNotification(NotificationType.INFO, `Update ready! Click ${installButton} to restart and install!`);
       });
     }
   });
+
 }
