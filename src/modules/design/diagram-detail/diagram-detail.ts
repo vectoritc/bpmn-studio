@@ -523,6 +523,7 @@ export class DiagramDetail {
 
       const activeSolution: ISolutionEntry = this._solutionService.getActiveSolutionEntry();
       await activeSolution.service.saveDiagram(this.activeDiagram);
+      this.bpmnio.saveCurrentXML();
 
       this._diagramHasChanged = false;
       this._notificationService

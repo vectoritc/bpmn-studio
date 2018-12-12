@@ -4,6 +4,7 @@ import {bindable, inject, observable} from 'aurelia-framework';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 
+import { TouchSequence } from 'selenium-webdriver';
 import {
   IBpmnModeler,
   IBpmnXmlSaveOptions,
@@ -322,6 +323,10 @@ export class BpmnIo {
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
+  }
+
+  public async saveCurrentXML(): Promise<void> {
+    this.savedXml = await this.getXML();
   }
 
   public xmlChanged(newValue: string): void {
