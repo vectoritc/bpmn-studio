@@ -84,7 +84,6 @@ export function configure(aurelia: Aurelia): void {
     aurelia.setRoot();
 
     const applicationRunsInElectron: boolean = (window as any).nodeRequire !== undefined;
-    // check if the processengine started successfull
     if (applicationRunsInElectron) {
 
       const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
