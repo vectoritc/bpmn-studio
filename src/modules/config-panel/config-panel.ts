@@ -66,7 +66,6 @@ export class ConfigPanel {
     }
 
     this._initialBaseRoute = this.baseRoute;
-    console.log('initialBaseRoute', this._initialBaseRoute);
 
     const customOpenIdRoute: string = window.localStorage.getItem('openIdRoute');
     const customOpenIdRouteIsSet: boolean = customOpenIdRoute !== null
@@ -78,7 +77,6 @@ export class ConfigPanel {
     }
 
     this._initialAuthority = this.authority;
-    console.log('initialAuthority', this._initialAuthority);
 
     this.isLoggedInToProcessEngine = this._authenticationService.isLoggedIn();
 
