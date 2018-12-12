@@ -175,8 +175,8 @@ export class ConfigPanel {
 
   private _updateAuthority(): void {
     const authorityIsSet: boolean = this.authority !== undefined
-    && this.authority !== null
-    && this.authority !== '';
+                                  && this.authority !== null
+                                  && this.authority !== '';
 
     if (authorityIsSet) {
       window.localStorage.setItem('openIdRoute', this.authority);
