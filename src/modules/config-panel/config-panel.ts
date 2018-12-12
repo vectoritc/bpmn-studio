@@ -3,8 +3,6 @@ import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {Router} from 'aurelia-router';
 
-import { IDiagram } from '@process-engine/solutionexplorer.contracts';
-import { runInThisContext } from 'vm';
 import {IAuthenticationService} from '../../contracts/authentication/IAuthenticationService';
 import {AuthenticationStateEvent, ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
