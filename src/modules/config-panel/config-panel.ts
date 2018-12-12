@@ -28,6 +28,8 @@ export class ConfigPanel {
   // We use any here, because we need to call private members (see below)
   private _openIdConnect: OpenIdConnect | any;
   private _solutionService: ISolutionService;
+  private _initialBaseRoute: string;
+  private _initialAuthority: string;
 
   constructor(router: Router,
               notificationService: NotificationService,
@@ -63,6 +65,9 @@ export class ConfigPanel {
       this.baseRoute = baseRouteConfiguredInLocalStorage;
     }
 
+    this._initialBaseRoute = this.baseRoute;
+    console.log('initialBaseRoute', this._initialBaseRoute);
+
     const customOpenIdRoute: string = window.localStorage.getItem('openIdRoute');
     const customOpenIdRouteIsSet: boolean = customOpenIdRoute !== null
                                          && customOpenIdRoute !== undefined
@@ -71,6 +76,9 @@ export class ConfigPanel {
     if (customOpenIdRouteIsSet) {
       this.authority = customOpenIdRoute;
     }
+
+    this._initialAuthority = this.authority;
+    console.log('initialAuthority', this._initialAuthority);
 
     this.isLoggedInToProcessEngine = this._authenticationService.isLoggedIn();
 
@@ -97,36 +105,15 @@ export class ConfigPanel {
       await this._authenticationService.logout();
     }
 
-    this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, this.baseRoute);
-
-    const currentActiveSolution: ISolutionEntry = this._solutionService.getActiveSolutionEntry();
-    const currentActiveSolutionIsRemoteSolution: boolean = currentActiveSolution.uri.startsWith('http');
-
-    if (currentActiveSolutionIsRemoteSolution) {
-      this._solutionService.setActiveDiagram(undefined);
-      this._solutionService.setActiveSolutionEntry(undefined);
+    const baseRouteChanged: boolean = this.baseRoute !== this._initialBaseRoute;
+    if (baseRouteChanged) {
+      this._updateBaseRoute();
     }
 
-    const baseRouteIsInternalProcessEngine: boolean = this.baseRoute === window.localStorage.getItem('InternalProcessEngineRoute');
-    if (baseRouteIsInternalProcessEngine) {
-      window.localStorage.setItem('processEngineRoute', '');
-    } else {
-      window.localStorage.setItem('processEngineRoute', this.baseRoute);
+    const authorityChanged: boolean = this.authority !== this._initialAuthority;
+    if (authorityChanged) {
+      this._updateAuthority();
     }
-
-    const authorityIsSet: boolean = this.authority !== undefined
-                                 && this.authority !== null
-                                 && this.authority !== '';
-
-    if (authorityIsSet) {
-      window.localStorage.setItem('openIdRoute', this.authority);
-    }
-
-    oidcConfig.userManagerSettings.authority = this.authority;
-
-    // This dirty way to update the settings is the only way during runtime
-    this._openIdConnect.configuration.userManagerSettings.authority = this.authority;
-    this._openIdConnect.userManager._settings._authority = this.authority;
 
     this._notificationService.showNotification(NotificationType.SUCCESS, 'Successfully saved settings!');
 
@@ -161,6 +148,45 @@ export class ConfigPanel {
 
   public setBaseRouteToInternalProcessEngine(): void {
     this.baseRoute = this.internalProcessEngineBaseRoute;
+  }
+
+  private _updateBaseRoute(): void {
+    this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, this.baseRoute);
+
+    const currentActiveSolution: ISolutionEntry = this._solutionService.getActiveSolutionEntry();
+    const thereIsAnActiveSolution: boolean = currentActiveSolution !== undefined;
+
+    if (thereIsAnActiveSolution) {
+      const currentActiveSolutionIsRemoteSolution: boolean = currentActiveSolution.uri.startsWith('http');
+
+      if (currentActiveSolutionIsRemoteSolution) {
+        this._solutionService.setActiveDiagram(undefined);
+        this._solutionService.setActiveSolutionEntry(undefined);
+      }
+    }
+
+    const baseRouteIsInternalProcessEngine: boolean = this.baseRoute === window.localStorage.getItem('InternalProcessEngineRoute');
+    if (baseRouteIsInternalProcessEngine) {
+      window.localStorage.setItem('processEngineRoute', '');
+    } else {
+      window.localStorage.setItem('processEngineRoute', this.baseRoute);
+    }
+  }
+
+  private _updateAuthority(): void {
+    const authorityIsSet: boolean = this.authority !== undefined
+    && this.authority !== null
+    && this.authority !== '';
+
+    if (authorityIsSet) {
+      window.localStorage.setItem('openIdRoute', this.authority);
+    }
+
+    oidcConfig.userManagerSettings.authority = this.authority;
+
+    // This dirty way to update the settings is the only way during runtime
+    this._openIdConnect.configuration.userManagerSettings.authority = this.authority;
+    this._openIdConnect.userManager._settings._authority = this.authority;
   }
 
 }
