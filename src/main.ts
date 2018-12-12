@@ -122,13 +122,19 @@ export function configure(aurelia: Aurelia): void {
       });
 
       ipcRenderer.on('update_available', (event: any) => {
-        notificationService.showNotification(NotificationType.INFO, 'Update available, started downloading.');
+        const messageTitle: string = '<h4>Update available.</h4>';
+        const messageBody: string = `Download started.`;
+
+        notificationService.showNonDisappearingNotification(NotificationType.INFO, `${messageTitle}\n${messageBody}`);
       });
 
       ipcRenderer.on('update_downloaded', (event: any) => {
         const installButton: string = `<a href="javascript:nodeRequire('electron').ipcRenderer.send('quit_and_install')">here</a>`;
 
-        notificationService.showNonDisappearingNotification(NotificationType.INFO, `Update ready! Click ${installButton} to restart and install!`);
+        const messageTitle: string = '<h4>Update ready!</h4>';
+        const messageBody: string = `Click ${installButton} to restart and install!`;
+
+        notificationService.showNonDisappearingNotification(NotificationType.INFO, `${messageTitle}\n${messageBody}`);
       });
     }
   });
