@@ -1,6 +1,6 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
-import {Router} from 'aurelia-router';
+import {PipelineResult, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
@@ -285,12 +285,24 @@ export class SolutionExplorerPanel {
 
   // TODO: This method is copied all over the place.
   private async _navigateToDetailView(diagram: IDiagram, solution: ISolutionEntry): Promise<void> {
+    const previousActiveSolution: ISolutionEntry = this._solutionService.getActiveSolutionEntry();
+    const previousActiveDiagram: IDiagram = this._solutionService.getActiveDiagram();
+
     this._solutionService.setActiveSolutionEntry(solution);
     this._solutionService.setActiveDiagram(diagram);
 
-    await this._router.navigateToRoute('diagram-detail', {
+    const result: boolean | PipelineResult = await this._router.navigateToRoute('diagram-detail', {
       diagramName: diagram.name,
     });
 
+    const navigationResultIsBoolean: boolean = typeof result === 'boolean';
+    const navigationCanceled: boolean = navigationResultIsBoolean
+                                      ? !(result as boolean)
+                                      : !(result as PipelineResult).completed;
+
+    if (navigationCanceled) {
+      this._solutionService.setActiveSolutionEntry(previousActiveSolution);
+      this._solutionService.setActiveDiagram(previousActiveDiagram);
+    }
   }
 }
