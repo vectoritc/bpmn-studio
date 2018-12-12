@@ -12,6 +12,8 @@ import {
 } from '@process-engine/management_api_contracts';
 
 import {ActiveToken} from '@process-engine/kpi_api_contracts';
+import {ProcessModel} from '@process-engine/management_api_contracts/dist/data_models';
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {
   defaultBpmnColors,
   IAuthenticationService,
@@ -25,6 +27,7 @@ import {
   IModeling,
   IOverlayManager,
   IShape,
+  ISolutionEntry,
   NotificationType,
 } from '../../contracts/index';
 import environment from '../../environment';
@@ -118,6 +121,29 @@ export class LiveExecutionTracker {
   public detached(): void {
     this._attached = false;
     this._stopPolling();
+  }
+
+  /**
+   *
+   * @param processModelId: string | The ID of a ProcessModel.
+   * @param processEngineSolution: ISolutionEntry | The SolutionEntry of the connected ProcessEngine.
+   *
+   * This method fetches the ProcessModel of an ID and returns the matching diagram as IDiagram.
+   * The ProcessEngine Solution is needed to get the correct URI of the diagram.
+   */
+  private async _getProcessModelAndConvertToDiagram(processModelId: string, processEngineSolution: ISolutionEntry): Promise<IDiagram> {
+    const identity: IIdentity = this._getIdentity();
+
+    const processModel: ProcessModel = await this._managementApiClient.getProcessModelById(identity, processModelId);
+
+    const diagram: IDiagram = {
+      id: processModel.id,
+      xml: processModel.xml,
+      uri: `${processEngineSolution.uri}/api/management/v1/${processModel.id}`,
+      name: processModelId,
+    };
+
+    return diagram;
   }
 
   private async _colorizeXml(xml: string): Promise<string> {
