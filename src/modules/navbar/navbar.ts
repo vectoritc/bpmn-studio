@@ -209,6 +209,11 @@ export class NavBar {
       ? undefined
       : this.activeDiagram.name;
 
+    const solutionIsNotSelected: boolean = this.activeSolutionEntry === undefined;
+    const solutionUri: string = solutionIsNotSelected
+      ? undefined
+      : this.activeSolutionEntry.uri;
+
     this._router.navigateToRoute('inspect', {
       diagramName: diagramName,
       solutionUri: solutionUri,
