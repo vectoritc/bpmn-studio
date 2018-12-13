@@ -339,4 +339,18 @@ export class NavBar {
     this.disableDiagramUploadButton = activeSolutionIsRemoteSolution;
   }
 
+  private _queryStringToObject(queryString: string): IQueryObject {
+    const queryStringPairs: Array<string> = queryString.split('&');
+
+    const result: any = {};
+    queryStringPairs.forEach((pair: string) => {
+      const splittedPair: Array<string> = pair.split('=');
+      result[splittedPair[0]] = decodeURIComponent(splittedPair[1] || '');
+    });
+
+    const queryObject: IQueryObject = JSON.parse(JSON.stringify(result));
+
+    return queryObject;
+  }
+
 }
