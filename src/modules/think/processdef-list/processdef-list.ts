@@ -9,14 +9,15 @@ import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/er
 import {IManagementApi, ProcessModelExecution} from '@process-engine/management_api_contracts';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
-import {AuthenticationStateEvent, IAuthenticationService, NotificationType} from '../../../contracts/index';
+import {AuthenticationStateEvent, IAuthenticationService, ISolutionEntry, ISolutionService, NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 
-@inject(EventAggregator, Router,  'AuthenticationService', 'ManagementApiClientService', 'NotificationService')
+@inject(EventAggregator, Router, 'AuthenticationService', 'ManagementApiClientService', 'NotificationService', 'SolutionService')
 export class ProcessDefList {
 
   public allProcessModels: Array<ProcessModelExecution.ProcessModel>;
+  public activeSolution: ISolutionEntry;
 
   private _authenticationService: IAuthenticationService;
   private _managementApiClient: IManagementApi;
@@ -25,18 +26,21 @@ export class ProcessDefList {
   private _router: Router;
   private _subscriptions: Array<Subscription>;
   private _getProcessesIntervalId: number;
+  private _solutionService: ISolutionService;
 
   constructor(eventAggregator: EventAggregator,
               router: Router,
               authenticationService: IAuthenticationService,
               managementApiClient: IManagementApi,
-              notificationService: NotificationService) {
+              notificationService: NotificationService,
+              solutionService: ISolutionService) {
 
     this._eventAggregator = eventAggregator;
     this._router = router;
     this._authenticationService = authenticationService;
     this._managementApiClient = managementApiClient;
     this._notificationService = notificationService;
+    this._solutionService = solutionService;
 
     this._eventAggregator.publish(environment.events.refreshProcessDefs);
   }
