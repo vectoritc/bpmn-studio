@@ -10,6 +10,7 @@ import {Dashboard} from './dashboard/dashboard';
 export interface IInspectRouteParameters {
   view?: string;
   diagramName?: string;
+  solutionUri?: string;
 }
 
 @inject(EventAggregator, 'SolutionService')
