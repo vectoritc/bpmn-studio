@@ -165,12 +165,8 @@ export class ConfigPanel {
       }
     }
 
-    const baseRouteIsInternalProcessEngine: boolean = this.baseRoute === window.localStorage.getItem('InternalProcessEngineRoute');
-    if (baseRouteIsInternalProcessEngine) {
-      window.localStorage.setItem('processEngineRoute', '');
-    } else {
-      window.localStorage.setItem('processEngineRoute', this.baseRoute);
-    }
+    window.localStorage.setItem('processEngineRoute', this.baseRoute);
+
   }
 
   private _updateAuthority(): void {
