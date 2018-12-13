@@ -376,8 +376,10 @@ export class SolutionExplorerSolution {
       }
     }
 
+    await this._router.navigateToRoute(this._diagramRoute, {
       view: this._inspectView,
       diagramName: diagram.name,
+      solutionUri: this.displayedSolutionEntry.uri,
     });
 
   }
