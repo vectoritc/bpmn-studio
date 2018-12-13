@@ -12,12 +12,15 @@ fi
 
 printf " ️  Generating Changelog File...\n"
 bash generate_release_markdown_file.sh $1 $2
+
 printf " ️  Getting Merge Commits..\n"
 bash get_merge_commits.sh $1 $2
 bash format_messages.bash merge_commits_of_release.txt formatted_messages.txt
+
 printf "🛀 Please clean up the Merge Commits!\n"
 code formatted_messages.txt -w
 bash sort_and_format_merge_commits.sh
+
 printf "📋 Merge Commits have been copied to clipboard.\n"
 printf "✏️  Please paste the Merge Commits into the 'Full Changelog' section!\n"
 code releasenotes_$2.md -w
