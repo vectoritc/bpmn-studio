@@ -5,7 +5,7 @@
 #####
 
 if [ $# -ne 2 ]; then
-  echo "Usage: changelogCreate <Previous_Version> <Current_Version>"
+  echo "Usage: $0 <Previous_Version> <Current_Version>"
 
   exit 1
 fi
