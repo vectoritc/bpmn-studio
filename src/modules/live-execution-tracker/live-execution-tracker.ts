@@ -35,6 +35,8 @@ import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
 type RouteParameters = {
+  diagramName: string,
+  solutionUri: string,
   correlationId: string;
   processModelId: string;
 };
