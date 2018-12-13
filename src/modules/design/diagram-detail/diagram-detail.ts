@@ -94,6 +94,7 @@ export class DiagramDetail {
 
     const diagramNameIsNotSet: boolean = routeParameters.diagramName === undefined;
     const solutionUriIsNotSet: boolean = routeParameters.solutionUri === undefined;
+
     if (diagramNameIsNotSet && solutionUriIsNotSet) {
       this._router.navigateToRoute('start-page');
 
