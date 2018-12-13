@@ -193,6 +193,7 @@ Main._initializeApplication = function () {
     electron.ipcMain.on('app_ready', (event) => {
 
       autoUpdater.checkForUpdates();
+      autoUpdater.autoDownload = false;
 
       const currentVersion = electron.app.getVersion();
       const currentVersionIsPrerelease = prereleaseRegex.test(currentVersion);
