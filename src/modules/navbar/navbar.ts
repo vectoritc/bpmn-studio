@@ -158,6 +158,13 @@ export class NavBar {
     this._router.navigateBack();
   }
 
+  public navigateToThink(): void {
+    this._router.navigateToRoute('processdef-list', {
+      diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
+      solutionUri: this.activeSolutionEntry ? this.activeSolutionEntry.uri : undefined,
+    });
+  }
+
   public showDashboard(): void {
     this.disableDashboardButton = true;
     this.disableHeatmapButton = false;
