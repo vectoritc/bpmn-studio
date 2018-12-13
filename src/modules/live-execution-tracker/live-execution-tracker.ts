@@ -308,7 +308,7 @@ export class LiveExecutionTracker {
                                                                                               this._correlationId,
                                                                                               this._processModelId);
         } catch {
-          // Do nothing
+          continue;
         }
       }
 
@@ -344,7 +344,7 @@ export class LiveExecutionTracker {
                                                                                         this._correlationId,
                                                                                         this._processModelId);
         } catch {
-          // Do nothing
+          continue;
         }
       }
 
