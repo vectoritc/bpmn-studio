@@ -286,7 +286,9 @@ export class SolutionExplorerPanel {
   // TODO: This method is copied all over the place.
   private async _navigateToDetailView(diagram: IDiagram, solution: ISolutionEntry): Promise<void> {
 
+    await this._router.navigateToRoute('diagram-detail', {
       diagramName: diagram.name,
+      solutionUri: solution.uri,
     });
 
   }
