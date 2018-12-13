@@ -100,6 +100,9 @@ export class ProcessList {
   }
 
   public async attached(): Promise<void> {
+    const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
+    this.activeSolution = this._solutionService.getSolutionEntryForUri(remoteSolutionUri);
+
     this._initializeGetProcesses();
 
     await this.updateProcesses();
