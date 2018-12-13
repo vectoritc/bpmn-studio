@@ -146,7 +146,7 @@ export class App {
         moduleId: 'modules/start-page/start-page',
       },
       {
-        route: ['processdef', 'processdef/:page?'],
+        route: ['processdef'],
         title: 'Process Definition List',
         name: 'processdef-list',
         moduleId: 'modules/think/processdef-list/processdef-list',
@@ -174,7 +174,7 @@ export class App {
         nav: false,
       },
       {
-        route: ['process', 'processdef/:processModelId/process'],
+        route: ['process'],
         title: 'Process Instance List',
         name: 'process-list',
         moduleId: 'modules/inspect/process-list/process-list',
