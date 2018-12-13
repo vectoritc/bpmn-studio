@@ -56,8 +56,8 @@ export class NavBar {
     this.solutionExplorerIsActive = window.localStorage.getItem('SolutionExplorerVisibility') === 'true';
 
     this._subscriptions = [
-      this._eventAggregator.subscribe('router:navigation:complete', () => {
-        this._dertermineActiveRoute();
+      this._eventAggregator.subscribe('router:navigation:success', (response: IAureliaRouterResponse) => {
+        this.activeRouteName = response.instruction.config.name;
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.showTools, () => {
