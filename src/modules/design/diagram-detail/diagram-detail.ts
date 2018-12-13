@@ -93,16 +93,8 @@ export class DiagramDetail {
   public async activate(routeParameters: RouteParameters): Promise<void> {
 
     const diagramNameIsNotSet: boolean = routeParameters.diagramName === undefined;
-    if (diagramNameIsNotSet) {
-      this._router.navigateToRoute('start-page');
-
-      return;
-    }
-
-    this._activeSolutionEntry = await this._solutionService.getActiveSolutionEntry();
-
-    const activeSolutionEntryDoesNotExist: boolean = this._activeSolutionEntry === undefined;
-    if (activeSolutionEntryDoesNotExist) {
+    const solutionUriIsNotSet: boolean = routeParameters.solutionUri === undefined;
+    if (diagramNameIsNotSet && solutionUriIsNotSet) {
       this._router.navigateToRoute('start-page');
 
       return;
