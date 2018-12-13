@@ -63,7 +63,7 @@ export class LiveExecutionTracker {
   private _attached: boolean;
   private _previousElementIdsWithActiveToken: Array<string> = [];
   private _activeTokens: Array<ActiveToken>;
-  private _retryCount: number = 5;
+  private _maxRetries: number = 5;
 
   private _elementsWithEventListeners: Array<string> = [];
 
@@ -297,7 +297,7 @@ export class LiveExecutionTracker {
     const identity: IIdentity = this._getIdentity();
 
     const getActiveTokens: Function = async(): Promise<Array<ActiveToken> | null> => {
-      for (let retries: number = 0; retries < this._retryCount; retries++) {
+      for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
           return await this._managementApiClient.getActiveTokensForCorrelationAndProcessModel(identity,
                                                                                               this._correlationId,
@@ -333,7 +333,7 @@ export class LiveExecutionTracker {
     const identity: IIdentity = this._getIdentity();
 
     const getTokenHistoryGroup: Function = async(): Promise<TokenHistoryGroup | null> => {
-      for (let retries: number = 0; retries < this._retryCount; retries++) {
+      for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
           return await this._managementApiClient.getTokensForCorrelationAndProcessModel(identity,
                                                                                         this._correlationId,
@@ -457,7 +457,7 @@ export class LiveExecutionTracker {
 
     // This is necessary because the managementApi sometimes throws an error when the correlation is not yet existing.
     const getCorrelation: () => Promise<Correlation> = async(): Promise<Correlation> => {
-      for (let retries: number = 0; retries < this._retryCount; retries++) {
+      for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
           return await this._managementApiClient.getCorrelationById(identity, this._correlationId);
         } catch {
@@ -638,7 +638,7 @@ export class LiveExecutionTracker {
     const identity: IIdentity = this._getIdentity();
 
     const getActiveCorrelations: Function = async(): Promise<Array<Correlation> | null> => {
-      for (let retries: number = 0; retries < this._retryCount; retries++) {
+      for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
           return await this._managementApiClient.getActiveCorrelations(identity);
         } catch {
