@@ -23,16 +23,17 @@ bash sort_and_format_merge_commits.sh
 
 printf "📋 Merge Commits have been copied to clipboard.\n"
 printf "✏️  Please paste the Merge Commits into the 'Full Changelog' section!\n"
-code releasenotes_$2.md -w
+code releasenotes_$2.md --wait
+
 printf " ️ Getting Closed Issues..\n"
 GITHUB_AUTH="" bash get_fixed_issues.sh
 printf "🛀 Please clean up the Closed Issues!\n"
-code closed_issues -w
+code closed_issues --wait
 bash format_messages.bash closed_issues formatted_closed_issues.txt
 printf "📋 Closed Issues have been copied to Clipboard.\n"
 cat formatted_closed_issues.txt | pbcopy
 printf "✏️  Please paste the Closed Issues in the 'Fixed Issues' section!\n"
-code releasenotes_$2.md -w
+code releasenotes_$2.md --wait
 printf "  Release Notes have been created!!!\n"
-code releasenotes_$2.md -w
+code releasenotes_$2.md --wait
 printf "👋 Bye Bye!\n"
