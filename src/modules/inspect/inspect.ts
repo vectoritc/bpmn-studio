@@ -55,7 +55,7 @@ export class Inspect {
     const routeViewIsHeatmap: boolean = routeParameters.view === 'heatmap';
     const routeViewIsInspectCorrelation: boolean = routeParameters.view === 'inspect-correlation';
 
-    const latestSourceIsPE: boolean = this._activeSolutionEntry.uri.startsWith('http');
+    const latestSourceIsPE: boolean = this._activeSolutionEntry !== undefined && this._activeSolutionEntry.uri.startsWith('http');
 
     if (routeViewIsDashboard) {
       this.showHeatmap = false;
