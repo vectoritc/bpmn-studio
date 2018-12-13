@@ -100,6 +100,7 @@ export class DiagramDetail {
       return;
     }
 
+    this._activeSolutionEntry = this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
     this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
 
     this.xml = this.activeDiagram.xml;
