@@ -18,7 +18,7 @@ bash get_merge_commits.sh $2 $3
 bash format_messages.bash merge_commits_of_release.txt formatted_messages.txt
 
 echo "🛀 Please clean up the Merge Commits!"
-code formatted_messages.txt -w
+code formatted_messages.txt --wait
 bash sort_and_format_merge_commits.sh
 
 echo "📋 Merge Commits have been copied to clipboard."
