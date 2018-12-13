@@ -1,6 +1,5 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
-import {RouteConfig, Router} from 'aurelia-router';
 import {NavigationInstruction, PipelineResult, RouteConfig, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
@@ -53,7 +52,6 @@ export class NavBar {
   }
 
   public attached(): void {
-    this._dertermineActiveRoute();
 
     this.solutionExplorerIsActive = window.localStorage.getItem('SolutionExplorerVisibility') === 'true';
 
@@ -200,8 +198,6 @@ export class NavBar {
   }
 
   public navigateToInspect(): void {
-    this._dertermineActiveRoute();
-
     const activeRouteIsInspect: boolean = this.activeRouteName === 'inspect';
 
     if (activeRouteIsInspect) {
@@ -295,20 +291,6 @@ export class NavBar {
     }
 
     this._eventAggregator.publish(environment.events.diagramDetail.uploadProcess);
-  }
-
-  private _isRouteActive(routeName: string): boolean {
-    if (this._router.currentInstruction.config.name === routeName) {
-      return true;
-    }
-    return false;
-  }
-
-  private _dertermineActiveRoute(): void {
-    const activeRoute: RouteConfig = this._router.routes.find((route: RouteConfig) => {
-      return this._isRouteActive(route.name);
-    });
-    this.activeRouteName = activeRoute.name;
   }
 
   /**
