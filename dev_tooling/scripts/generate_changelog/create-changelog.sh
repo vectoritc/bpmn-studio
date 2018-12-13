@@ -25,6 +25,7 @@ if [ -z $GHAUTH ]; then
 fi
 
 echo " ️  Generating Changelog File..."
+
 bash generate_release_markdown_file.sh $1 $2
 
 echo " ️  Getting Merge Commits.."
@@ -34,20 +35,27 @@ bash format_messages.bash merge_commits_of_release.txt formatted_messages.txt
 echo "🛀 Please clean up the Merge Commits!"
 code formatted_messages.txt --wait
 bash sort_and_format_merge_commits.sh
-
 echo "📋 Merge Commits have been copied to clipboard."
+
 echo "✏️  Please paste the Merge Commits into the 'Full Changelog' section!"
 code releasenotes_$2.md --wait
 
 echo " ️ Getting Closed Issues.."
 GITHUB_AUTH="$GHNAME:$GHAUTH" bash get_fixed_issues.sh
+
 echo "🛀 Please clean up the Closed Issues!"
 code closed_issues --wait
 bash format_messages.bash closed_issues formatted_closed_issues.txt
-echo "📋 Closed Issues have been copied to Clipboard."
 cat formatted_closed_issues.txt | pbcopy
+echo "📋 Closed Issues have been copied to clipboard."
+
 echo "✏️  Please paste the Closed Issues in the 'Fixed Issues' section!"
 code releasenotes_$2.md --wait
-echo "  Release Notes have been created!!!"
+
+echo "✏️  Please fill out the 'Feature' sections!"
 code releasenotes_$2.md --wait
-echo "👋 Bye Bye!"
+
+cat releasenotes_$2.md | pbcopy
+echo "📋 Releasenotes have been copied to clipboard."
+
+echo "  Release Notes have been created successfully!"
