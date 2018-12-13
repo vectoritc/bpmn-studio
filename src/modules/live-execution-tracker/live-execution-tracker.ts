@@ -39,6 +39,11 @@ type RouteParameters = {
   processModelId: string;
 };
 
+enum RequestError {
+  ConnectionLost = 'connectionLost',
+  OtherError = 'otherError',
+}
+
 @inject(Router, 'NotificationService', 'AuthenticationService', 'ManagementApiClientService', 'SolutionService')
 export class LiveExecutionTracker {
   public canvasModel: HTMLElement;
@@ -302,7 +307,7 @@ export class LiveExecutionTracker {
           return await this._managementApiClient.getActiveTokensForCorrelationAndProcessModel(identity,
                                                                                               this._correlationId,
                                                                                               this._processModelId);
-        } catch (error) {
+        } catch {
           // Do nothing
         }
       }
@@ -598,14 +603,16 @@ export class LiveExecutionTracker {
   }
 
   private async _startPolling(): Promise<void> {
-    this._pollingTimer = setTimeout(async() => {
-      const correlationIsStillActive: boolean = await this._isCorrelationStillActive();
-
+    const handleElementColorization: Function = async(): Promise<void> => {
       const previousXml: string = await this._exportXmlFromDiagramViewer();
       const xml: string = await this._getXml();
 
       const couldNotGetXml: boolean = xml === undefined;
       if (couldNotGetXml) {
+        const notificationMessage: string = 'XML could not be found. If the error persists, '
+                                          + 'try reopening the Live Execution Tracker or restarting the process.';
+        this._notificationService.showNotification(NotificationType.ERROR, notificationMessage);
+
         return;
       }
 
@@ -613,7 +620,8 @@ export class LiveExecutionTracker {
 
       const colorizingFailed: boolean = colorizedXml === null;
       if (colorizingFailed) {
-        const notificationMessage: string = 'Could not get tokens. Please try to reopen the Live Execution Tracker or start the process again.';
+        const notificationMessage: string = 'Could not get tokens. If the error persists, '
+                                          + 'try reopening the Live Execution Tracker or restarting the process.';
         this._notificationService.showNotification(NotificationType.ERROR, notificationMessage);
 
         return;
@@ -623,6 +631,36 @@ export class LiveExecutionTracker {
       if (xmlChanged) {
         await this._importXmlIntoDiagramViewer(colorizedXml);
       }
+    };
+
+    this._pollingTimer = setTimeout(async() => {
+      // Stop polling if not attached
+      const notAttached: boolean = !this._attached;
+      if (notAttached) {
+        return;
+      }
+
+      const correlationIsStillActive: boolean | RequestError = await this._isCorrelationStillActive();
+
+      const connectionLost: boolean = correlationIsStillActive === RequestError.ConnectionLost;
+      const errorCheckingCorrelationState: boolean = correlationIsStillActive === RequestError.OtherError;
+
+      // Keep polling if connectionLost
+      if (connectionLost) {
+        this._startPolling();
+
+        return;
+      }
+
+      // Stop polling if checking the correlation state was not successfull
+      if (errorCheckingCorrelationState) {
+        const notificationMessage: string = 'Could not get active correlations. Please try to start the process again.';
+        this._notificationService.showNotification(NotificationType.ERROR, notificationMessage);
+
+        return;
+      }
+
+      await handleElementColorization();
 
       if (correlationIsStillActive && this._attached) {
         this._startPolling();
@@ -634,28 +672,36 @@ export class LiveExecutionTracker {
     clearTimeout(this._pollingTimer);
   }
 
-  private async _isCorrelationStillActive(): Promise<boolean> {
+  private async _isCorrelationStillActive(): Promise<boolean | RequestError> {
     const identity: IIdentity = this._getIdentity();
 
-    const getActiveCorrelations: Function = async(): Promise<Array<Correlation> | null> => {
+    const getActiveCorrelations: Function = async(): Promise<Array<Correlation> | RequestError> => {
       for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
           return await this._managementApiClient.getActiveCorrelations(identity);
-        } catch {
-          // Do nothing
+        } catch (error) {
+          const errorIsConnectionLost: boolean = error.message === 'Failed to fetch';
+
+          if (errorIsConnectionLost) {
+            return RequestError.ConnectionLost;
+          }
         }
       }
 
-      const notificationMessage: string = 'Could not get active correlations. Please try to start the process again.';
-      this._notificationService.showNotification(NotificationType.ERROR, notificationMessage);
+      return RequestError.OtherError;
     };
 
-    const allActiveCorrelations: Array<Correlation> = await getActiveCorrelations();
+    const allActiveCorrelationsOrRequestError: Array<Correlation> | RequestError = await getActiveCorrelations();
 
-    const couldNotGetActiveCorrelations: boolean = allActiveCorrelations === null;
-    if (couldNotGetActiveCorrelations) {
-      return false;
+    const couldNotGetCorrelation: boolean = allActiveCorrelationsOrRequestError === RequestError.ConnectionLost
+                                         || allActiveCorrelationsOrRequestError === RequestError.OtherError;
+    if (couldNotGetCorrelation) {
+      const requestError: RequestError = (allActiveCorrelationsOrRequestError as RequestError);
+
+      return requestError;
     }
+
+    const allActiveCorrelations: Array<Correlation> = (allActiveCorrelationsOrRequestError as Array<Correlation>);
 
     const correlationIsNotActive: boolean = !allActiveCorrelations.some((activeCorrelation: Correlation) => {
       return activeCorrelation.id === this._correlationId;
