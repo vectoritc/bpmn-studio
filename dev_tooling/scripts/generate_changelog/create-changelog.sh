@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #####
-# This Script creates the changelog almost automatically.
+# This script creates the changelog almost automatically.
 #####
 
 if [ $# -ne 2 ]; then
