@@ -1,11 +1,17 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {RouteConfig, Router} from 'aurelia-router';
+import {NavigationInstruction, PipelineResult, RouteConfig, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
+
+interface IAureliaRouterResponse {
+  instruction: NavigationInstruction;
+  result: PipelineResult;
+}
 
 @inject(Router, EventAggregator, 'NotificationService', 'SolutionService')
 export class NavBar {
