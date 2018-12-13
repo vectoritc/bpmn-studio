@@ -60,8 +60,20 @@ export class NavBar {
     this.solutionExplorerIsActive = window.localStorage.getItem('SolutionExplorerVisibility') === 'true';
 
     this._subscriptions = [
-      this._eventAggregator.subscribe('router:navigation:success', (response: IAureliaRouterResponse) => {
+      this._eventAggregator.subscribe('router:navigation:success', async(response: IAureliaRouterResponse) => {
         this.activeRouteName = response.instruction.config.name;
+
+        const queryObject: IQueryObject = this._queryStringToObject(response.instruction.queryString);
+
+        this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(queryObject.solutionUri);
+
+        const solutionIsSet: boolean = this.activeSolutionEntry !== undefined;
+        if (solutionIsSet) {
+          this.activeDiagram = await this.activeSolutionEntry.service.loadDiagram(response.instruction.params.diagramName);
+
+          this._updateNavbarTitle();
+          this._updateNavbarTools();
+        }
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.showTools, () => {
