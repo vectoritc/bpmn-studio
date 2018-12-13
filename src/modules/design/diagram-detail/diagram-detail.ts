@@ -24,6 +24,7 @@ import {BpmnIo} from '../bpmn-io/bpmn-io';
 
 interface RouteParameters {
   diagramName?: string;
+  solutionUri?: string;
 }
 
 type IEventListener = {
