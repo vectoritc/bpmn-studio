@@ -157,6 +157,7 @@ export class NavBar {
 
     this._router.navigateToRoute('inspect', {
       diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
+      solutionUri: this.activeSolutionEntry.uri,
       view: this.inspectView,
     });
   }
@@ -171,6 +172,7 @@ export class NavBar {
 
     this._router.navigateToRoute('inspect', {
       diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
+      solutionUri: this.activeSolutionEntry.uri,
       view: this.inspectView,
     });
   }
@@ -185,6 +187,7 @@ export class NavBar {
 
     this._router.navigateToRoute('inspect', {
       diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
+      solutionUri: this.activeSolutionEntry.uri,
       view: this.inspectView,
     });
 
@@ -202,13 +205,13 @@ export class NavBar {
     this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, this.inspectView);
 
     const diagramIsNotSelect: boolean = this.activeDiagram === undefined;
-
     const diagramName: string = diagramIsNotSelect
       ? undefined
       : this.activeDiagram.name;
 
     this._router.navigateToRoute('inspect', {
       diagramName: diagramName,
+      solutionUri: solutionUri,
       view: this.inspectView,
     });
   }
@@ -225,6 +228,7 @@ export class NavBar {
 
     this._router.navigateToRoute('diagram-detail', {
       diagramName: this.activeDiagram.name,
+      solutionUri: this.activeSolutionEntry.uri,
     });
 
   }
