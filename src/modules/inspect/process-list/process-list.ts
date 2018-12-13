@@ -8,6 +8,8 @@ import {Correlation, CorrelationProcessModel, IManagementApi} from '@process-eng
 import {
   AuthenticationStateEvent,
   IAuthenticationService,
+  ISolutionEntry,
+  ISolutionService,
   NotificationType,
 } from '../../../contracts/index';
 import environment from '../../../environment';
@@ -18,7 +20,7 @@ interface IProcessListRouteParameters {
   solutionUri?: string;
 }
 
-@inject('ManagementApiClientService', EventAggregator, Router, 'NotificationService', 'AuthenticationService')
+@inject('ManagementApiClientService', EventAggregator, Router, 'NotificationService', 'AuthenticationService', 'SolutionService')
 export class ProcessList {
 
   @observable public currentPage: number = 0;
@@ -27,12 +29,14 @@ export class ProcessList {
   public status: Array<string> = [];
   public succesfullRequested: boolean = false;
   public selectedState: HTMLSelectElement;
+  public activeSolution: ISolutionEntry;
 
   private _managementApiService: IManagementApi;
   private _eventAggregator: EventAggregator;
   private _router: Router;
   private _notificationService: NotificationService;
   private _authenticationService: IAuthenticationService;
+  private _solutionService: ISolutionService;
 
   private _getCorrelationsIntervalId: number;
   private _getCorrelations: () => Promise<Array<Correlation>>;
@@ -44,12 +48,14 @@ export class ProcessList {
               router: Router,
               notificationService: NotificationService,
               authenticationService: IAuthenticationService,
+              solutionService: ISolutionService,
   ) {
     this._managementApiService = managementApiService;
     this._eventAggregator = eventAggregator;
     this._router = router;
     this._notificationService = notificationService;
     this._authenticationService = authenticationService;
+    this._solutionService = solutionService;
   }
 
   public async currentPageChanged(newValue: number, oldValue: number): Promise<void> {
@@ -62,11 +68,12 @@ export class ProcessList {
   }
 
   public activate(routeParameters: IProcessListRouteParameters): void {
-    if (!routeParameters.processModelId) {
+
+    if (!routeParameters.diagramName) {
       this._getCorrelations = this.getAllActiveCorrelations;
     } else {
       this._getCorrelations = (): Promise<Array<Correlation>> => {
-        return this.getCorrelationsForProcessModel(routeParameters.processModelId);
+        return this.getCorrelationsForProcessModel(routeParameters.diagramName);
       };
     }
   }
