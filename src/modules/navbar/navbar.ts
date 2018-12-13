@@ -12,6 +12,10 @@ interface IAureliaRouterResponse {
   result: PipelineResult;
 }
 
+interface IQueryObject {
+  solutionUri: string;
+}
+
 @inject(Router, EventAggregator, 'NotificationService', 'SolutionService')
 export class NavBar {
 
