@@ -164,7 +164,7 @@ export class LiveExecutionTracker {
     return diagram;
   }
 
-  private async _colorizeXml(xml: string): Promise<string> {
+  private async _colorizeXml(xml: string): Promise<string | null> {
     // Import the xml to the modeler to add colors to it
     await this._importXmlIntoDiagramModeler(xml);
 
@@ -185,7 +185,7 @@ export class LiveExecutionTracker {
     // If the backend returned an error the diagram should not be rendered.
     const couldNotGetActiveTokens: boolean = elementsWithActiveToken === null;
     if (couldNotGetActiveTokens) {
-      return;
+      return null;
     }
 
     // Get all elements that already have a token.
@@ -194,7 +194,7 @@ export class LiveExecutionTracker {
     // If the backend returned an error the diagram should not be rendered.
     const couldNotGetTokenHistory: boolean = elementsWithTokenHistory === null;
     if (couldNotGetTokenHistory) {
-      return;
+      return null;
     }
 
     /*
@@ -297,16 +297,17 @@ export class LiveExecutionTracker {
     const identity: IIdentity = this._getIdentity();
 
     const getActiveTokens: Function = async(): Promise<Array<ActiveToken> | null> => {
-      try {
-        return await this._managementApiClient.getActiveTokensForCorrelationAndProcessModel(identity,
-                                                                                            this._correlationId,
-                                                                                            this._processModelId);
-      } catch (error) {
-        console.log('Error while getting Active Token:');
-        console.log(error);
-
-        return null;
+      for (let retries: number = 0; retries < this._retryCount; retries++) {
+        try {
+          return await this._managementApiClient.getActiveTokensForCorrelationAndProcessModel(identity,
+                                                                                              this._correlationId,
+                                                                                              this._processModelId);
+        } catch (error) {
+          // Do nothing
+        }
       }
+
+      return null;
     };
 
     const activeTokens: Array<ActiveToken> | null = await getActiveTokens();
@@ -332,16 +333,17 @@ export class LiveExecutionTracker {
     const identity: IIdentity = this._getIdentity();
 
     const getTokenHistoryGroup: Function = async(): Promise<TokenHistoryGroup | null> => {
-      try {
-        return await this._managementApiClient.getTokensForCorrelationAndProcessModel(identity,
-                                                                                      this._correlationId,
-                                                                                      this._processModelId);
-      } catch (error) {
-        console.log('Error while getting TokenHistory:');
-        console.log(error);
-
-        return null;
+      for (let retries: number = 0; retries < this._retryCount; retries++) {
+        try {
+          return await this._managementApiClient.getTokensForCorrelationAndProcessModel(identity,
+                                                                                        this._correlationId,
+                                                                                        this._processModelId);
+        } catch {
+          // Do nothing
+        }
       }
+
+      return null;
     };
 
     const tokenHistoryGroups: TokenHistoryGroup =  await getTokenHistoryGroup();
@@ -602,12 +604,21 @@ export class LiveExecutionTracker {
 
       const previousXml: string = await this._exportXmlFromDiagramViewer();
       const xml: string = await this._getXml();
+
       const couldNotGetXml: boolean = xml === undefined;
       if (couldNotGetXml) {
         return;
       }
 
-      const colorizedXml: string = await this._colorizeXml(xml);
+      const colorizedXml: string | null = await this._colorizeXml(xml);
+
+      const colorizingFailed: boolean = colorizedXml === null;
+      if (colorizingFailed) {
+        const notificationMessage: string = 'Could not get tokens. Please try to reopen the Live Execution Tracker or start the process again.';
+        this._notificationService.showNotification(NotificationType.ERROR, notificationMessage);
+
+        return;
+      }
 
       const xmlChanged: boolean = previousXml !== colorizedXml;
       if (xmlChanged) {
@@ -628,21 +639,23 @@ export class LiveExecutionTracker {
     const identity: IIdentity = this._getIdentity();
 
     const getActiveCorrelations: Function = async(): Promise<Array<Correlation> | null> => {
-      try {
-        return await this._managementApiClient.getActiveCorrelations(identity);
-      } catch (error) {
-        console.log('Error while getting Active Correlation:');
-        console.log(error);
-
-        return null;
+      for (let retries: number = 0; retries < this._retryCount; retries++) {
+        try {
+          return await this._managementApiClient.getActiveCorrelations(identity);
+        } catch {
+          // Do nothing
+        }
       }
+
+      const notificationMessage: string = 'Could not get active correlations. Please try to start the process again.';
+      this._notificationService.showNotification(NotificationType.ERROR, notificationMessage);
     };
 
     const allActiveCorrelations: Array<Correlation> = await getActiveCorrelations();
 
     const couldNotGetActiveCorrelations: boolean = allActiveCorrelations === null;
     if (couldNotGetActiveCorrelations) {
-      return true;
+      return false;
     }
 
     const correlationIsNotActive: boolean = !allActiveCorrelations.some((activeCorrelation: Correlation) => {
