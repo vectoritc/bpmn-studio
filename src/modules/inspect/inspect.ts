@@ -38,13 +38,18 @@ export class Inspect {
 
   public async activate(routeParameters: IInspectRouteParameters): Promise<void> {
 
-    this._activeSolutionEntry = await this._solutionService.getActiveSolutionEntry();
+    this._activeSolutionEntry = await this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
 
     const diagramNameIsSet: boolean = routeParameters.diagramName !== undefined;
 
     if (diagramNameIsSet) {
       this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
     }
+
+    this._solutionService.setActiveDiagram(this.activeDiagram);
+    this._solutionService.setActiveSolutionEntry(this._activeSolutionEntry);
+
+    this._eventAggregator.publish(environment.events.navBar.updateActiveSolutionAndDiagram);
 
     const routeViewIsDashboard: boolean = routeParameters.view === 'dashboard';
     const routeViewIsHeatmap: boolean = routeParameters.view === 'heatmap';
