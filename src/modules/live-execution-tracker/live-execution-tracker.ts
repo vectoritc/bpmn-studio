@@ -68,6 +68,9 @@ export class LiveExecutionTracker {
   private _managementApiClient: IManagementApi;
   private _solutionService: ISolutionService;
 
+  private _activeDiagramName: string;
+  private _activeSolutionUri: string;
+
   private _pollingTimer: NodeJS.Timer;
   private _attached: boolean;
   private _previousElementIdsWithActiveToken: Array<string> = [];
@@ -94,6 +97,9 @@ export class LiveExecutionTracker {
   public async activate(routeParameters: RouteParameters): Promise<void> {
     this.correlationId = routeParameters.correlationId;
     this.processModelId = routeParameters.processModelId;
+
+    this._activeDiagramName = routeParameters.diagramName;
+    this._activeSolutionUri = routeParameters.solutionUri;
 
     this._parentProcessModelId = await this._getParentProcessModelId();
 
@@ -399,6 +405,8 @@ export class LiveExecutionTracker {
       }
 
       this._router.navigateToRoute('live-execution-tracker', {
+        diagramName: this._activeDiagramName,
+        solutionUri: this._activeSolutionUri,
         correlationId: this.correlationId,
         processModelId: callActivityTargetProcess,
       });
