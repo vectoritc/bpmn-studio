@@ -91,6 +91,9 @@ export class TaskList {
   }
 
   public attached(): void {
+    const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
+    this.activeSolution = this._solutionService.getSolutionEntryForUri(remoteSolutionUri);
+
     const getTasksIsUndefined: boolean = this._getTasks === undefined;
 
     if (getTasksIsUndefined) {
