@@ -129,15 +129,6 @@ export class NavBar {
         this.disableDashboardButton = false;
         this.disableInspectCorrelationButton = true;
       }),
-
-      this._eventAggregator.subscribe(environment.events.navBar.updateActiveSolutionAndDiagram, () => {
-
-        this.activeDiagram = this._solutionService.getActiveDiagram();
-        this.activeSolutionEntry = this._solutionService.getActiveSolutionEntry();
-
-        this._updateNavbarTitle();
-        this._updateNavbarTools();
-      }),
     ];
   }
 
