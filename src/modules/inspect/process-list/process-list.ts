@@ -14,7 +14,8 @@ import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 
 interface IProcessListRouteParameters {
-  processModelId?: string;
+  diagramName?: string;
+  solutionUri?: string;
 }
 
 @inject('ManagementApiClientService', EventAggregator, Router, 'NotificationService', 'AuthenticationService')
