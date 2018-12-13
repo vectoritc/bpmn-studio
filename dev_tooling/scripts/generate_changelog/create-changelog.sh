@@ -10,30 +10,30 @@ if [ $# -ne 2 ]; then
   exit 1
 fi
 
-printf " ️  Generating Changelog File...\n"
+echo " ️  Generating Changelog File..."
 bash generate_release_markdown_file.sh $1 $2
 
-printf " ️  Getting Merge Commits..\n"
+echo " ️  Getting Merge Commits.."
 bash get_merge_commits.sh $1 $2
 bash format_messages.bash merge_commits_of_release.txt formatted_messages.txt
 
-printf "🛀 Please clean up the Merge Commits!\n"
+echo "🛀 Please clean up the Merge Commits!"
 code formatted_messages.txt -w
 bash sort_and_format_merge_commits.sh
 
-printf "📋 Merge Commits have been copied to clipboard.\n"
-printf "✏️  Please paste the Merge Commits into the 'Full Changelog' section!\n"
+echo "📋 Merge Commits have been copied to clipboard."
+echo "✏️  Please paste the Merge Commits into the 'Full Changelog' section!"
 code releasenotes_$2.md --wait
 
-printf " ️ Getting Closed Issues..\n"
+echo " ️ Getting Closed Issues.."
 GITHUB_AUTH="" bash get_fixed_issues.sh
-printf "🛀 Please clean up the Closed Issues!\n"
+echo "🛀 Please clean up the Closed Issues!"
 code closed_issues --wait
 bash format_messages.bash closed_issues formatted_closed_issues.txt
-printf "📋 Closed Issues have been copied to Clipboard.\n"
+echo "📋 Closed Issues have been copied to Clipboard."
 cat formatted_closed_issues.txt | pbcopy
-printf "✏️  Please paste the Closed Issues in the 'Fixed Issues' section!\n"
+echo "✏️  Please paste the Closed Issues in the 'Fixed Issues' section!"
 code releasenotes_$2.md --wait
-printf "  Release Notes have been created!!!\n"
+echo "  Release Notes have been created!!!"
 code releasenotes_$2.md --wait
-printf "👋 Bye Bye!\n"
+echo "👋 Bye Bye!"
