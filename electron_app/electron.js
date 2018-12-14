@@ -209,7 +209,7 @@ Main._initializeApplication = function () {
       autoUpdater.addListener('update-available', (info) => {
         event.sender.send('update_available');
 
-        electron.ipcMain.on('downloadUpdate', (event) => {
+        electron.ipcMain.on('download_update', (event) => {
           autoUpdater.doDownloadUpdate();
         });
       });
