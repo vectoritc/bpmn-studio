@@ -319,7 +319,16 @@ export class DiagramDetail {
       this.inputValues = this.initialToken;
     }
 
-    await this._showStartDialog();
+    await this._updateProcessStartEvents();
+
+    const onlyOneStartEventAvailable: boolean = this.processesStartEvents.length === 1;
+
+    if (onlyOneStartEventAvailable) {
+      this.selectedStartEventId = this.processesStartEvents[0].id;
+    } else {
+      this.showStartEventModal = true;
+    }
+
     await this.startProcess();
   }
 
