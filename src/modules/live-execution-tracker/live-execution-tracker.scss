@@ -26,3 +26,17 @@
 .play-task-button-container:hover .play-task-button {
   opacity: 1;
 }
+
+.let__back-button {
+  position: absolute;
+  bottom: 100px;
+  left: 100px;
+  width: 200px;
+}
+
+.let__diagram-detail-button {
+  position: absolute;
+  bottom: 100px;
+  right: 100px;
+  width: 200px;
+}

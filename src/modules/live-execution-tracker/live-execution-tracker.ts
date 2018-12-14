@@ -1,4 +1,4 @@
-import {inject} from 'aurelia-framework';
+import {computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
@@ -37,6 +37,7 @@ import {NotificationService} from '../notification/notification.service';
 type RouteParameters = {
   correlationId: string;
   processModelId: string;
+  previousProcessInstances?: Array<string>;
 };
 
 enum RequestError {
@@ -47,6 +48,7 @@ enum RequestError {
 @inject(Router, 'NotificationService', 'AuthenticationService', 'ManagementApiClientService', 'SolutionService')
 export class LiveExecutionTracker {
   public canvasModel: HTMLElement;
+  public processStopped: boolean = false;
   public showDynamicUiModal: boolean = false;
 
   public correlationId: string;
@@ -70,6 +72,7 @@ export class LiveExecutionTracker {
   private _attached: boolean;
   private _previousElementIdsWithActiveToken: Array<string> = [];
   private _activeTokens: Array<ActiveToken>;
+  private _previousProcessModels: Array<string> = [];
   private _maxRetries: number = 5;
 
   private _elementsWithEventListeners: Array<string> = [];
@@ -90,6 +93,13 @@ export class LiveExecutionTracker {
   public async activate(routeParameters: RouteParameters): Promise<void> {
     this.correlationId = routeParameters.correlationId;
     this.processModelId = routeParameters.processModelId;
+
+    const previousProcessModelExists: boolean = routeParameters.previousProcessInstances !== undefined;
+    if (previousProcessModelExists) {
+      this._previousProcessModels = routeParameters.previousProcessInstances;
+    }
+
+    this.processStopped = false;
 
     const processEngineRoute: string = window.localStorage.getItem('processEngineRoute');
     const internalProcessEngineRoute: string = window.localStorage.getItem('InternalProcessEngineRoute');
@@ -153,8 +163,28 @@ export class LiveExecutionTracker {
     return 'replace';
   }
 
+  @computedFrom('_previousProcessModels.length')
+  public get hasPreviousProcess(): boolean {
+    return this._previousProcessModels.length > 0;
+  }
+
   public closeDynamicUiModal(): void {
     this.showDynamicUiModal = false;
+  }
+
+  public navigateBackToPreviousProcess(): void {
+    const previousProcessInstanceIndex: number = this._previousProcessModels.length - 1;
+    const previousProcess: string = this._previousProcessModels.splice(previousProcessInstanceIndex, 1)[0];
+
+    this._router.navigateToRoute('live-execution-tracker', {
+      correlationId: this.correlationId,
+      processModelId: previousProcess,
+      previousProcessInstances: this._previousProcessModels,
+    });
+  }
+
+  public navigateToDiagramDetail(): void {
+    this._router.navigateBack();
   }
 
   /**
@@ -335,7 +365,7 @@ export class LiveExecutionTracker {
       const element: IShape = this._elementRegistry.get(elementId);
       const callActivityTargetProcess: string = element.businessObject.calledElement;
 
-      this.previousProcessInstances.push(this._processModelId);
+      this._previousProcessModels.push(this.processModelId);
 
       this._router.navigateToRoute('live-execution-tracker', {
         correlationId: this.correlationId,
@@ -786,6 +816,8 @@ export class LiveExecutionTracker {
 
   private _correlationEnded(): void {
     this._notificationService.showNotification(NotificationType.INFO, 'Process stopped.');
+
+    this.processStopped = true;
   }
 
   private _getIdentity(): IIdentity {
