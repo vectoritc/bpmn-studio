@@ -214,6 +214,7 @@ export class LiveExecutionTracker {
     this._colorizeElements(elementsWithTokenHistory, defaultBpmnColors.green);
     this._colorizeElements(elementsWithActiveToken, defaultBpmnColors.orange);
     this._addOverlaysToUserAndManualTasks(elementsWithActiveToken);
+    this._addOverlaysToCallActivities(elementsWithActiveToken);
 
     // Get the elementIds of the elements with an active token and sort them alphabetically
     this._previousElementIdsWithActiveToken = elementsWithActiveToken.map((element: IShape) => element.id).sort();
@@ -267,6 +268,42 @@ export class LiveExecutionTracker {
     }
   }
 
+  private _addOverlaysToCallActivities(elements: Array<IShape>): void {
+    const liveExecutionTrackerIsNotAttached: boolean = !this._attached;
+    if (liveExecutionTrackerIsNotAttached) {
+      return;
+    }
+
+    const activeCallActivities: Array<IShape> = elements.filter((element: IShape) => {
+      const elementIsAUserOrManualTask: boolean = element.type === 'bpmn:CallActivity';
+
+      return elementIsAUserOrManualTask;
+    });
+
+    const activeCallActivityIds: Array<string> =  activeCallActivities.map((element: IShape) => element.id).sort();
+
+    const elementsWithActiveTokenDidNotChange: boolean = activeCallActivityIds.toString() === this._previousElementIdsWithActiveToken.toString();
+    const allActiveElementsHaveAnOverlay: boolean = activeCallActivityIds.length === Object.keys(this._overlays._overlays).length;
+
+    if (elementsWithActiveTokenDidNotChange && allActiveElementsHaveAnOverlay) {
+      return;
+    }
+
+    for (const element of activeCallActivities) {
+      this._overlays.add(element, {
+        position: {
+          left: -1,
+          top: -1,
+        },
+        html: `<div class="play-task-button-container" id="${element.id}"><i class="fas fa-external-link-square-alt play-task-button"></i></div>`,
+      });
+
+      document.getElementById(element.id).addEventListener('click', this._handleCallActivityClick);
+
+      this._elementsWithEventListeners.push(element.id);
+    }
+  }
+
   private _handleTaskClick: (event: MouseEvent) => void =
     (event: MouseEvent): void => {
       const elementId: string = (event.target as HTMLDivElement).id;
@@ -275,6 +312,20 @@ export class LiveExecutionTracker {
         correlationId: this._correlationId,
         processModelId: this._processModelId,
         taskId: elementId,
+      });
+    }
+
+  private _handleCallActivityClick: (event: MouseEvent) => void =
+    (event: MouseEvent): void => {
+      const elementId: string = (event.target as HTMLDivElement).id;
+      const element: IShape = this._elementRegistry.get(elementId);
+
+      this.previousProcessInstances.push(this._processModelId);
+
+      this._router.navigateToRoute('live-execution-tracker', {
+        correlationId: this._correlationId,
+        processModelId: element.businessObject.calledElement,
+        previousProcessInstances: this.previousProcessInstances,
       });
     }
 
