@@ -31,35 +31,37 @@
         <button class="button menu-bar__menu-center--action-button menu-bar__menu-center--back-button back-button" click.delegate="navigateBack()" title="Navigate back">
           <i class="fas fa-arrow-circle-left"></i>
         </button>
-      </template>
-      <template if.bind="showTools">
         <button class="button menu-bar__menu-center--action-button" class.bind="validationError ? 'button--disabled' : ''" click.delegate="saveDiagram()" disabled.bind="validationError" title="Save Diagram">
           <i class="fas fa-save"></i>
         </button>
-      </template>
-      <div class="dropdown" if.bind="showTools">
-        <button class="button menu-bar__menu-center--action-button dropdown-toggle" class.bind="validationError ? 'button--disabled' : ''" disabled.bind="validationError" title="Export Diagram" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i class="fas fa-upload"></i>
-        </button>
-        <ul class="dropdown-menu">
-          <li class="dropdown-item" click.delegate="exportDiagram('BPMN')"><a href="#">as BPMN</a></li>
-          <li class="dropdown-item" click.delegate="exportDiagram('SVG')"><a href="#">as SVG</a></li>
-          <li class="dropdown-item" click.delegate="exportDiagram('PNG')"><a href="#">as PNG</a></li>
-          <li class="dropdown-item" click.delegate="exportDiagram('JPEG')"><a href="#">as JPEG</a></li>
-        </ul>
-      </div>
-      <template if.bind="showTools">
+        <div class="dropdown">
+          <button class="button menu-bar__menu-center--action-button dropdown-toggle" class.bind="validationError ? 'button--disabled' : ''" disabled.bind="validationError" title="Export Diagram" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-upload"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li class="dropdown-item" click.delegate="exportDiagram('BPMN')">as BPMN</li>
+            <li class="dropdown-item" click.delegate="exportDiagram('SVG')">as SVG</li>
+            <li class="dropdown-item" click.delegate="exportDiagram('PNG')">as PNG</li>
+            <li class="dropdown-item" click.delegate="exportDiagram('JPEG')">as JPEG</li>
+          </ul>
+        </div>
         <button class="button menu-bar__menu-center--action-button" class.bind="validationError ? 'button--disabled' : ''" disabled.bind="validationError" click.delegate="printDiagram()" title="Print Diagram">
           <i class="fas fa-print"></i>
         </button>
         <button class="button menu-bar__menu-center--action-button" class.bind="validationError || disableDiagramUploadButton ? 'button--disabled' : ''" click.delegate="uploadProcess()" title.bind="disableDiagramUploadButton ? 'This process is already deployed to the remote ProcessEngine' : 'Deploy to ProcessEngine'">
           <i class="fas fa-dolly-flatbed"></i>
         </button>
-      </template>
-      <template if.bind="showTools">
-        <button class="button menu-bar__menu-center--action-button" class.bind="validationError || disableStartButton ? 'button--disabled' : ''" click.delegate="startProcess()" disabled.bind="validationError || disableStartButton" title.bind="disableStartButton ? 'Before starting the process please deploy it to the ProcessEngine' : 'Start Process'">
-          <i class="fas fa-play"></i>
-        </button>
+        <div class="btn-group">
+          <button class="button menu-bar__menu-center--action-button" class.bind="validationError || disableStartButton ? 'button--disabled' : ''" click.delegate="startProcess()" disabled.bind="validationError || disableStartButton" title.bind="disableStartButton ? 'Before starting the process please deploy it to the ProcessEngine' : 'Start Process'">
+            <i class="fas fa-play"></i>
+          </button>
+          <button type="button" class="button menu-bar__menu-center--action-button dropdown-toggle dropdown-toggle-split" class.bind="validationError || disableStartButton ? 'button--disabled' : ''" disabled.bind="validationError || disableStartButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-left: -10px;">
+            <i class="fas fa-angle-down"></i>
+          </button>
+          <div class="dropdown-menu">
+            <li class="dropdown-item" click.delegate="startProcessWithOptions()">Custom Start</li>
+          </div>
+        </div>
       </template>
       <template if.bind="showInspectTools">
         <button class="button menu-bar__menu-center--action-button" class.bind="disableInspectCorrelationButton ? 'button--active' : ''" click.delegate="showInspectCorrelation()" disabled.bind="disableInspectCorrelationButton" title.bind="disableInspectCorrelationButton ? 'You are on the inspect correlation view' : 'Show Inspect Correlation'">
