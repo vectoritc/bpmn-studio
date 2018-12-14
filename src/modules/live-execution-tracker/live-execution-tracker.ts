@@ -246,7 +246,7 @@ export class LiveExecutionTracker {
     }
 
     for (const elementId of this._elementsWithEventListeners) {
-      document.getElementById(elementId).removeEventListener('click', this._handleElementClick);
+      document.getElementById(elementId).removeEventListener('click', this._handleTaskClick);
     }
 
     this._elementsWithEventListeners = [];
@@ -261,13 +261,13 @@ export class LiveExecutionTracker {
         html: `<div class="play-task-button-container" id="${element.id}"><i class="fas fa-play play-task-button"></i></div>`,
       });
 
-      document.getElementById(element.id).addEventListener('click', this._handleElementClick);
+      document.getElementById(element.id).addEventListener('click', this._handleTaskClick);
 
       this._elementsWithEventListeners.push(element.id);
     }
   }
 
-  private _handleElementClick: (event: MouseEvent) => void =
+  private _handleTaskClick: (event: MouseEvent) => void =
     (event: MouseEvent): void => {
       const elementId: string = (event.target as HTMLDivElement).id;
 
