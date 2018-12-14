@@ -3,7 +3,7 @@
   <require from="../task-dynamic-ui/task-dynamic-ui"></require>
   <div class="let">
     <div ref="canvasModel" class="let__body"></div>
-    <button class="btn btn-default let__diagram-detail-button" click.delegate="navigateToDiagramDetail()">Back</button>
+    <button class="btn btn-default let__diagram-detail-button" click.delegate="navigateBack()">Back</button>
     <button if.bind="processStopped && hasPreviousProcess" class="btn btn-default let__back-button" click.delegate="navigateBackToPreviousProcess()">Back to previous process</button>
   </div>
 

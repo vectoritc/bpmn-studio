@@ -183,7 +183,7 @@ export class LiveExecutionTracker {
     });
   }
 
-  public navigateToDiagramDetail(): void {
+  public navigateBack(): void {
     this._router.navigateBack();
   }
 
