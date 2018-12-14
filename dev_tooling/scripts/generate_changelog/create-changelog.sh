@@ -1,23 +1,33 @@
 #!/bin/bash
 
-#####
+#
 # This script creates the changelog almost automatically.
-#####
+#
+# Usage: create-changelog.sh <Previous_Version> <Current_Version>"
+#
 
-if [ $# -ne 2 ]; then
+set -e
+
+PLATFORM=$(uname -s)
+
+if [[ $PLATFORM != "Darwin" ]]; then
+  exit 1
+fi
+
+if [[ $# -ne 2 ]]; then
   echo "Usage: $0 <Previous_Version> <Current_Version>"
 
   exit 1
 fi
 
-if [ -z $GHNAME ]; then
+if [[ -z $GHNAME ]]; then
   echo "Set Github username via export GHNAME=<Github Username>"
   echo "To set it permanently use: 'echo \"export GHNAME=<Github Username>\" >> .bash_profile'"
 
   exit 1
 fi
 
-if [ -z $GHAUTH ]; then
+if [[ -z $GHAUTH ]]; then
   echo "Set Github Authtoken via export GHAUTH=<Github Authtoken>"
   echo "To set it permanently use: 'echo \"export GHAUTH=<Github Authtoken>\" >> .bash_profile'"
 
