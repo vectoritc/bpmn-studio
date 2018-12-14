@@ -124,7 +124,7 @@ export function configure(aurelia: Aurelia): void {
       ipcRenderer.on('update_available', () => {
         // tslint:disable-next-line max-line-length
         const installButton: string = `<a class="btn btn-default" style="color: #000000;" href="javascript:nodeRequire('electron').ipcRenderer.send('download_update')">Download</a>`;
-        const cancelButton: string = `<a class="btn btn-default" style="color: #000000;">Cancel</a>`;
+        const cancelButton: string = `<a class="btn btn-default" style="color: #000000;" href="#">Cancel</a>`;
 
         const messageTitle: string = '<h4>Update available.</h4>';
         const messageBody: string = `${cancelButton} ${installButton}`;
@@ -135,7 +135,7 @@ export function configure(aurelia: Aurelia): void {
       ipcRenderer.on('update_downloaded', () => {
         // tslint:disable-next-line max-line-length
         const installButton: string = `<a class="btn btn-default" style="color: #000000;" href="javascript:nodeRequire('electron').ipcRenderer.send('quit_and_install')">Install</a>`;
-        const cancelButton: string = `<a class="btn btn-default" style="color: #000000;">Cancel</a>`;
+        const cancelButton: string = `<a class="btn btn-default" style="color: #000000;" href="#">Cancel</a>`;
 
         const messageTitle: string = '<h4>Update ready!</h4>';
         const messageBody: string = `${cancelButton} ${installButton}`;
