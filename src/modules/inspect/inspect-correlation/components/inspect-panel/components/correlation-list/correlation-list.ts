@@ -40,6 +40,9 @@ export class CorrelationList {
 
       this.sortList(this.sortSettings.sortProperty);
     } else {
+      this.sortSettings.sortProperty = CorrelationListSortProperty.Number;
+      this.sortSettings.ascending = true;
+
       this.sortList(CorrelationListSortProperty.Number);
     }
   }
