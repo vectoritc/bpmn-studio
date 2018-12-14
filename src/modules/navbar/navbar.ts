@@ -239,7 +239,7 @@ export class NavBar {
       return;
     }
 
-    this._eventAggregator.publish(environment.events.processDefDetail.saveDiagram);
+    this._eventAggregator.publish(environment.events.diagramDetail.saveDiagram);
   }
 
   public printDiagram(): void {
@@ -247,7 +247,7 @@ export class NavBar {
       return;
     }
 
-    this._eventAggregator.publish(environment.events.processDefDetail.printDiagram);
+    this._eventAggregator.publish(environment.events.diagramDetail.printDiagram);
   }
 
   public exportDiagram(exportAs: string): void {
@@ -255,7 +255,7 @@ export class NavBar {
       return;
     }
 
-    this._eventAggregator.publish(`${environment.events.processDefDetail.exportDiagramAs}:${exportAs}`);
+    this._eventAggregator.publish(`${environment.events.diagramDetail.exportDiagramAs}:${exportAs}`);
   }
 
   public startProcess(): void {
@@ -263,7 +263,7 @@ export class NavBar {
       return;
     }
 
-    this._eventAggregator.publish(environment.events.processDefDetail.startProcess);
+    this._eventAggregator.publish(environment.events.diagramDetail.startProcess);
   }
 
   public uploadProcess(): void {
@@ -271,7 +271,7 @@ export class NavBar {
       return;
     }
 
-    this._eventAggregator.publish(environment.events.processDefDetail.uploadProcess);
+    this._eventAggregator.publish(environment.events.diagramDetail.uploadProcess);
   }
 
   private _isRouteActive(routeName: string): boolean {

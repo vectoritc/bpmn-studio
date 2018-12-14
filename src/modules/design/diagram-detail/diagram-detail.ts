@@ -118,10 +118,10 @@ export class DiagramDetail {
       this._validationController.subscribe((event: ValidateEvent) => {
         this._handleFormValidateEvents(event);
       }),
-      this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
         this._saveDiagram();
+      this._eventAggregator.subscribe(environment.events.diagramDetail.saveDiagram, () => {
       }),
-      this._eventAggregator.subscribe(environment.events.processDefDetail.uploadProcess, () => {
+      this._eventAggregator.subscribe(environment.events.diagramDetail.uploadProcess, () => {
         this._checkIfDiagramIsSavedBeforeDeploy();
       }),
       this._eventAggregator.subscribe(environment.events.differsFromOriginal, (savingNeeded: boolean) => {
@@ -133,7 +133,7 @@ export class DiagramDetail {
       this._eventAggregator.subscribe(environment.events.navBar.noValidationError, () => {
         this._diagramIsInvalid = false;
       }),
-      this._eventAggregator.subscribe(environment.events.processDefDetail.startProcess, () => {
+      this._eventAggregator.subscribe(environment.events.diagramDetail.startProcess, () => {
         this._showStartDialog();
       }),
     ];

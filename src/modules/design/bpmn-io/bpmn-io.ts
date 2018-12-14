@@ -209,7 +209,7 @@ export class BpmnIo {
         }, 0);
       }),
 
-      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:BPMN`, async() => {
+      this._eventAggregator.subscribe(`${environment.events.diagramDetail.exportDiagramAs}:BPMN`, async() => {
         try {
           const exportName: string = `${this.name}.bpmn`;
           const xmlToExport: string = await this.getXML();
@@ -222,7 +222,7 @@ export class BpmnIo {
         }
       }),
 
-      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:SVG`, async() => {
+      this._eventAggregator.subscribe(`${environment.events.diagramDetail.exportDiagramAs}:SVG`, async() => {
         try {
           const exportName: string = `${this.name}.svg`;
           await this._diagramExportService
@@ -234,7 +234,7 @@ export class BpmnIo {
         }
       }),
 
-      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:PNG`, async() => {
+      this._eventAggregator.subscribe(`${environment.events.diagramDetail.exportDiagramAs}:PNG`, async() => {
         try {
           const exportName: string = `${this.name}.png`;
           await this._diagramExportService
@@ -246,7 +246,7 @@ export class BpmnIo {
         }
       }),
 
-      this._eventAggregator.subscribe(`${environment.events.processDefDetail.exportDiagramAs}:JPEG`, async() => {
+      this._eventAggregator.subscribe(`${environment.events.diagramDetail.exportDiagramAs}:JPEG`, async() => {
         try {
           const exportName: string = `${this.name}.jpeg`;
           await this._diagramExportService
@@ -259,11 +259,11 @@ export class BpmnIo {
 
       }),
 
-      this._eventAggregator.subscribe(`${environment.events.processDefDetail.printDiagram}`, async() => {
+      this._eventAggregator.subscribe(`${environment.events.diagramDetail.printDiagram}`, async() => {
         await this._printHandler();
       }),
 
-      this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, async() => {
+      this._eventAggregator.subscribe(environment.events.diagramDetail.saveDiagram, async() => {
         this.savedXml = await this.getXML();
       }),
 
@@ -542,7 +542,7 @@ export class BpmnIo {
    *
    * If using macOS, this combination will be CMD + s.
    *
-   * Saving is triggered by emitting @see environment.events.processDefDetail.saveDiagram
+   * Saving is triggered by emitting @see environment.events.diagramDetail.saveDiagram
    *
    * @param event Passed key event.
    * @return void
@@ -557,7 +557,7 @@ export class BpmnIo {
     * If both keys (meta and s) are pressed, save the diagram.
     * A diagram is saved, by throwing a saveDiagram event.
     *
-    * @see environment.events.processDefDetail.saveDiagram
+    * @see environment.events.diagramDetail.saveDiagram
     */
     const sKeyIsPressed: boolean = event.key === 's';
     const userDoesNotWantToSave: boolean = !(metaKeyIsPressed && sKeyIsPressed);
@@ -569,7 +569,7 @@ export class BpmnIo {
     // Prevent the browser from handling the default action for CTRL + s.
     event.preventDefault();
 
-    this._eventAggregator.publish(environment.events.processDefDetail.saveDiagram);
+    this._eventAggregator.publish(environment.events.diagramDetail.saveDiagram);
   }
 
   /**
@@ -606,7 +606,7 @@ export class BpmnIo {
    *
    * If using macOS, this combination will be CMD + p.
    *
-   * Printing is triggered by emitting @see environment.events.processDefDetail.printDiagram
+   * Printing is triggered by emitting @see environment.events.diagramDetail.printDiagram
    *
    * @param event Passed key event.
    * @return void
@@ -621,7 +621,7 @@ export class BpmnIo {
      * If both keys (meta and p) are pressed, print the diagram.
      * A diagram is printed, by throwing a printDiagram event.
      *
-     * @see environment.events.processDefDetail.printDiagram
+     * @see environment.events.diagramDetail.printDiagram
      */
     const pKeyIsPressed: boolean = event.key === 'p';
     const userWantsToPrint: boolean = metaKeyIsPressed && pKeyIsPressed;
