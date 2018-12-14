@@ -117,15 +117,15 @@
           <div class="modal-body">
             <form>
               <div class="form-group">
-                <label for="correlationId">Custom Correlation ID:</label>
+                <label for="correlationId"><b>Custom Correlation ID</b></label>
                 <input class="form-control input-field" id="correlationId" aria-describedby="correlationIdHelp" placeholder="Correlation ID" value.bind="customCorrelationId">
                 <small id="correlationIdHelp" class="form-text text-muted">
-                    Setting a Correlation ID is optional
+                    Setting a correlation ID is optional
                 </small>
               </div>
               <div class="form-group">
-                <label for="initialToken">Initial StartEvent Token:</label>
-                <textarea class="form-control input-field" id="initialToken" rows="4" placeholder="Input a JSON string here" value.bind="initialToken"></textarea>
+                <label for="initialToken"><b>Initial StartEvent Token</b></label>
+                <textarea class="form-control input-field" id="initialToken" rows="4" placeholder="Input a JSON payload here" value.bind="initialToken"></textarea>
                 <small class="form-text text-muted">
                     Setting an initial token is optional
                 </small>
