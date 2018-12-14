@@ -111,6 +111,12 @@ export class TaskDynamicUi {
   public get taskName(): string {
     const nonWhiteSpaceRegex: RegExp = /\S/;
     const task: UserTask | ManualTask = this._userTask === undefined ? this._manualTask : this._userTask;
+
+    const noTaskIsSet: boolean = task === undefined;
+    if (noTaskIsSet) {
+      return;
+    }
+
     const taskNameIsSet: boolean = nonWhiteSpaceRegex.test(task.name);
     const taskDisplayName: string = taskNameIsSet
       ? task.name
@@ -121,6 +127,9 @@ export class TaskDynamicUi {
 
   private _finishTask(action: string): void {
     if (this.isModal) {
+      this._userTask = undefined;
+      this._manualTask = undefined;
+
       this.closeEvent();
 
       return;
