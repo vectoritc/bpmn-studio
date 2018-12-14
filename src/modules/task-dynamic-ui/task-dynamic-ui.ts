@@ -54,13 +54,11 @@ export class TaskDynamicUi {
     this.correlationId = routeParameters.correlationId;
     this.processModelId = routeParameters.processModelId;
     this.taskId = routeParameters.taskId;
-    console.log(this.taskId);
 
     this.isModal = false;
   }
 
   public attached(): void {
-    console.log(this.taskId);
     this.getTask();
 
     this._subscriptions = [
