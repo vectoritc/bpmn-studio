@@ -1,4 +1,4 @@
-.live-execution-tracker {
+.let {
   position: relative;
   height: calc(50% - 14px);
   margin-bottom: 21px;
@@ -7,7 +7,7 @@
   border: 1px solid #ccc;
 }
 
-.live-execution-tracker__body {
+.let__body {
   position: relative;
   height: calc(100% - 20px);
 }
