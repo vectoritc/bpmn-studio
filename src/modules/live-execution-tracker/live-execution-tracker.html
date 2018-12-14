@@ -1,6 +1,24 @@
 <template>
   <require from="./live-execution-tracker.css"></require>
+  <require from="../task-dynamic-ui/task-dynamic-ui"></require>
   <div class="let">
     <div ref="canvasModel" class="let__body"></div>
+  </div>
+
+  <!-- Task-Dynamic-UI Modal -->
+  <div if.bind="showDynamicUiModal">
+    <div class="modal show-modal" tabindex="-1" role="dialog" id="dynamicUiModal">
+      <div class="modal-dialog save-modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            <task-dynamic-ui correlation-id.bind="correlationId" process-model-id.bind="processModelId" task-id.bind="taskId" is-modal="true"></task-dynamic-ui>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal" click.delegate="closeDynamicUiModal()">Done</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-backdrop fade in"></div>
   </div>
 </template>

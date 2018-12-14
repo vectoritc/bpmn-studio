@@ -47,6 +47,11 @@ enum RequestError {
 @inject(Router, 'NotificationService', 'AuthenticationService', 'ManagementApiClientService', 'SolutionService')
 export class LiveExecutionTracker {
   public canvasModel: HTMLElement;
+  public showDynamicUiModal: boolean = false;
+
+  public correlationId: string;
+  public processModelId: string;
+  public taskId: string;
 
   private _diagramModeler: IBpmnModeler;
   private _diagramViewer: IBpmnModeler;
@@ -60,9 +65,6 @@ export class LiveExecutionTracker {
   private _authenticationService: IAuthenticationService;
   private _managementApiClient: IManagementApi;
   private _solutionService: ISolutionService;
-
-  private _correlationId: string;
-  private _processModelId: string;
 
   private _pollingTimer: NodeJS.Timer;
   private _attached: boolean;
@@ -86,8 +88,8 @@ export class LiveExecutionTracker {
   }
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
-    this._correlationId = routeParameters.correlationId;
-    this._processModelId = routeParameters.processModelId;
+    this.correlationId = routeParameters.correlationId;
+    this.processModelId = routeParameters.processModelId;
 
     const processEngineRoute: string = window.localStorage.getItem('processEngineRoute');
     const internalProcessEngineRoute: string = window.localStorage.getItem('InternalProcessEngineRoute');
@@ -98,7 +100,7 @@ export class LiveExecutionTracker {
                                               : internalProcessEngineRoute;
 
     const processEngineSolution: ISolutionEntry = await this._solutionService.getSolutionEntryForUri(connectedProcessEngineRoute);
-    const activeDiagram: IDiagram = await this._getProcessModelAndConvertToDiagram(this._processModelId, processEngineSolution);
+    const activeDiagram: IDiagram = await this._getProcessModelAndConvertToDiagram(this.processModelId, processEngineSolution);
 
     this._solutionService.setActiveSolutionEntry(processEngineSolution);
     this._solutionService.setActiveDiagram(activeDiagram);
@@ -143,7 +145,16 @@ export class LiveExecutionTracker {
 
   public detached(): void {
     this._attached = false;
+
     this._stopPolling();
+  }
+
+  public determineActivationStrategy(): string {
+    return 'replace';
+  }
+
+  public closeDynamicUiModal(): void {
+    this.showDynamicUiModal = false;
   }
 
   /**
@@ -308,24 +319,28 @@ export class LiveExecutionTracker {
     (event: MouseEvent): void => {
       const elementId: string = (event.target as HTMLDivElement).id;
 
-      this._router.navigateToRoute('task-dynamic-ui', {
-        correlationId: this._correlationId,
-        processModelId: this._processModelId,
-        taskId: elementId,
-      });
+      // this._router.navigateToRoute('task-dynamic-ui', {
+      //   correlationId: this.correlationId,
+      //   processModelId: this.processModelId,
+      //   taskId: elementId,
+      // });
+
+      this.showDynamicUiModal = true;
+      this.taskId = elementId;
     }
 
   private _handleCallActivityClick: (event: MouseEvent) => void =
     (event: MouseEvent): void => {
       const elementId: string = (event.target as HTMLDivElement).id;
       const element: IShape = this._elementRegistry.get(elementId);
+      const callActivityTargetProcess: string = element.businessObject.calledElement;
 
       this.previousProcessInstances.push(this._processModelId);
 
       this._router.navigateToRoute('live-execution-tracker', {
-        correlationId: this._correlationId,
-        processModelId: element.businessObject.calledElement,
-        previousProcessInstances: this.previousProcessInstances,
+        correlationId: this.correlationId,
+        processModelId: callActivityTargetProcess,
+        previousProcessInstances: this._previousProcessModels,
       });
     }
 
@@ -342,11 +357,14 @@ export class LiveExecutionTracker {
       return;
     }
 
-    this._router.navigateToRoute('task-dynamic-ui', {
-      correlationId: this._correlationId,
-      processModelId: this._processModelId,
-      taskId: clickedElement.id,
-    });
+    // this._router.navigateToRoute('task-dynamic-ui', {
+    //   correlationId: this.correlationId,
+    //   processModelId: this.processModelId,
+    //   taskId: clickedElement.id,
+    // });
+
+    this.showDynamicUiModal = true;
+    this.taskId = clickedElement.id;
   }
 
   private async _getElementsWithActiveToken(elements: Array<IShape>): Promise<Array<IShape> | null> {
@@ -356,8 +374,8 @@ export class LiveExecutionTracker {
       for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
           return await this._managementApiClient.getActiveTokensForCorrelationAndProcessModel(identity,
-                                                                                              this._correlationId,
-                                                                                              this._processModelId);
+                                                                                              this.correlationId,
+                                                                                              this.processModelId);
         } catch {
           continue;
         }
@@ -392,8 +410,8 @@ export class LiveExecutionTracker {
       for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
           return await this._managementApiClient.getTokensForCorrelationAndProcessModel(identity,
-                                                                                        this._correlationId,
-                                                                                        this._processModelId);
+                                                                                        this.correlationId,
+                                                                                        this.processModelId);
         } catch {
           continue;
         }
@@ -516,7 +534,7 @@ export class LiveExecutionTracker {
     const getCorrelation: () => Promise<Correlation> = async(): Promise<Correlation> => {
       for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
-          return await this._managementApiClient.getCorrelationById(identity, this._correlationId);
+          return await this._managementApiClient.getCorrelationById(identity, this.correlationId);
         } catch {
           // Do nothing;
         }
@@ -535,7 +553,7 @@ export class LiveExecutionTracker {
     }
 
     const processModelFromCorrelation: CorrelationProcessModel = correlation.processModels.find((processModel: CorrelationProcessModel) => {
-      const processModelIsSearchedProcessModel: boolean = processModel.processModelId === this._processModelId;
+      const processModelIsSearchedProcessModel: boolean = processModel.processModelId === this.processModelId;
 
       return processModelIsSearchedProcessModel;
     });
@@ -756,7 +774,7 @@ export class LiveExecutionTracker {
     const allActiveCorrelations: Array<Correlation> = (allActiveCorrelationsOrRequestError as Array<Correlation>);
 
     const correlationIsNotActive: boolean = !allActiveCorrelations.some((activeCorrelation: Correlation) => {
-      return activeCorrelation.id === this._correlationId;
+      return activeCorrelation.id === this.correlationId;
     });
 
     if (correlationIsNotActive) {
