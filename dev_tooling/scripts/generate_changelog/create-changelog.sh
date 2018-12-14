@@ -22,14 +22,14 @@ fi
 
 if [[ -z $GHNAME ]]; then
   echo "Set Github username via export GHNAME=<Github Username>"
-  echo "To set it permanently use: 'echo \"export GHNAME=<Github Username>\" >> .bash_profile'"
+  echo "To set it permanently use: 'echo \"export GHNAME=<Github Username>\" >> ~/.bash_profile'"
 
   exit 1
 fi
 
 if [[ -z $GHAUTH ]]; then
   echo "Set Github Authtoken via export GHAUTH=<Github Authtoken>"
-  echo "To set it permanently use: 'echo \"export GHAUTH=<Github Authtoken>\" >> .bash_profile'"
+  echo "To set it permanently use: 'echo \"export GHAUTH=<Github Authtoken>\" >> ~/.bash_profile'"
 
   exit 1
 fi
