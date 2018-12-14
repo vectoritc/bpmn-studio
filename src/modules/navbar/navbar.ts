@@ -266,6 +266,14 @@ export class NavBar {
     this._eventAggregator.publish(environment.events.diagramDetail.startProcess);
   }
 
+  public startProcessWithOptions(): void {
+    if (this.validationError || this.disableStartButton) {
+      return;
+    }
+
+    this._eventAggregator.publish(environment.events.diagramDetail.startProcessWithOptions);
+  }
+
   public uploadProcess(): void {
     if (this.validationError || this.disableDiagramUploadButton) {
       return;
