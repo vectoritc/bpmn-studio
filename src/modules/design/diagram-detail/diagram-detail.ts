@@ -42,9 +42,13 @@ export class DiagramDetail {
   public showSaveForStartModal: boolean = false;
   public showSaveBeforeDeployModal: boolean = false;
   public showStartEventModal: boolean = false;
+  public showStartWithOptionsModal: boolean = false;
   public processesStartEvents: Array<Event> = [];
   public selectedStartEventId: string;
   public xml: string;
+  public initialToken: string;
+  public inputValues: object | string;
+  public customCorrelationId: string;
 
   @observable({ changeHandler: 'diagramHasChangedChanged'}) private _diagramHasChanged: boolean;
   private _activeSolutionEntry: ISolutionEntry;
@@ -118,8 +122,8 @@ export class DiagramDetail {
       this._validationController.subscribe((event: ValidateEvent) => {
         this._handleFormValidateEvents(event);
       }),
-        this._saveDiagram();
       this._eventAggregator.subscribe(environment.events.diagramDetail.saveDiagram, () => {
+        this._saveDiagram();
       }),
       this._eventAggregator.subscribe(environment.events.diagramDetail.uploadProcess, () => {
         this._checkIfDiagramIsSavedBeforeDeploy();
@@ -135,6 +139,9 @@ export class DiagramDetail {
       }),
       this._eventAggregator.subscribe(environment.events.diagramDetail.startProcess, () => {
         this._showStartDialog();
+      }),
+      this._eventAggregator.subscribe(environment.events.diagramDetail.startProcessWithOptions, () => {
+        this.showStartWithOptionsModal = true;
       }),
     ];
   }
@@ -286,6 +293,36 @@ export class DiagramDetail {
     }
   }
 
+  public async setOptionsAndStart(): Promise<void> {
+
+    if (this._diagramHasChanged) {
+      this._saveDiagram();
+    }
+
+    const customCorrelationIdIsUndefined: boolean = this.customCorrelationId === undefined;
+    const noInitialToken: boolean = this.initialToken === undefined;
+
+    if (customCorrelationIdIsUndefined && noInitialToken) {
+      return this._notificationService.showNotification(NotificationType.INFO, 'Please fill in at least one field.');
+    }
+
+    const initialTokenIsObject: boolean = this.initialToken !== undefined
+                                       && this.initialToken.startsWith('{');
+
+    if (initialTokenIsObject) {
+      try {
+        this.inputValues = JSON.parse(this.initialToken);
+      } catch (error) {
+        return this._notificationService.showNotification(NotificationType.ERROR, error.message);
+      }
+    } else {
+      this.inputValues = this.initialToken;
+    }
+
+    await this._showStartDialog();
+    await this.startProcess();
+  }
+
   public async startProcess(): Promise<void> {
 
     if (this.selectedStartEventId === null) {
@@ -295,7 +332,8 @@ export class DiagramDetail {
     this._dropInvalidFormData();
 
     const startRequestPayload: ProcessModelExecution.ProcessStartRequestPayload = {
-      inputValues: {},
+      inputValues: this.inputValues,
+      correlationId: this.customCorrelationId,
     };
 
     try {
@@ -397,12 +435,12 @@ export class DiagramDetail {
 
     this.showStartEventModal = true;
     this.showSaveForStartModal = false;
-
   }
 
   public cancelDialog(): void {
     this.showSaveForStartModal = false;
     this.showStartEventModal = false;
+    this.showStartWithOptionsModal = false;
   }
 
   private async _updateProcessStartEvents(): Promise<void> {
