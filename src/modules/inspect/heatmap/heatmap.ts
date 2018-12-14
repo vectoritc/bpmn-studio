@@ -89,6 +89,7 @@ export class Heatmap {
       [
         bundle.ZoomScrollModule,
         bundle.MoveCanvasModule,
+        bundle.MiniMap,
       ],
     });
 
