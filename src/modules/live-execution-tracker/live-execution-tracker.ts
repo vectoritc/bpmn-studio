@@ -1,4 +1,4 @@
-import {computedFrom, inject} from 'aurelia-framework';
+import {computedFrom, inject, observable} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
@@ -168,7 +168,7 @@ export class LiveExecutionTracker {
     return this._previousProcessModels.length > 0;
   }
 
-  public closeDynamicUiModal(): void {
+  public closeDynamicUiModal: Function = (): void => {
     this.showDynamicUiModal = false;
   }
 

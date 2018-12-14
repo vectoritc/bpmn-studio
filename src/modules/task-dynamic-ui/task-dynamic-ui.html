@@ -6,7 +6,7 @@
       <template if.bind="userTask || manualTask">
         <h3>${taskName}</h3>
       </template>
-      <dynamic-ui-wrapper view-model.ref="dynamicUiWrapper" is-modal.bind="isModal"></dynamic-ui-wrapper>
+      <dynamic-ui-wrapper view-model.ref="dynamicUiWrapper" is-modal.bind="isModal" close-event="closeEvent"></dynamic-ui-wrapper>
       <template if.bind="!userTask && !manualTask">
         <h3>Task not found</h3>
       </template>

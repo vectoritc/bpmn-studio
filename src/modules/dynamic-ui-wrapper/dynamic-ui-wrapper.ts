@@ -31,6 +31,7 @@ export class DynamicUiWrapper {
   @bindable() public isConfirmUserTask: boolean = false;
   @bindable() public isFormUserTask: boolean = false;
   @bindable() public isModal: boolean;
+  @bindable() public closeEvent: Function;
 
   private _router: Router;
 
@@ -131,6 +132,8 @@ export class DynamicUiWrapper {
 
   private _cancelTask(): void {
     if (this.isModal) {
+      this.closeEvent();
+
       return;
     }
 
