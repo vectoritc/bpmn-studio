@@ -65,6 +65,7 @@ export default {
       saveDiagram: 'processdefdetail:diagram:save',
       exportDiagramAs: 'processdefdetail:diagram:exportas',
       startProcess: 'processdefdetail:process:start',
+      startProcessWithOptions: 'processdefdetail:process:startWithOptions',
       toggleXMLView: 'processdefdetail:xmlview:toggle',
       uploadProcess: 'processdefdetail:process:upload',
     },
