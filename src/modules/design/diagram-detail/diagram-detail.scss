@@ -60,3 +60,8 @@
   border-color: #e6e6e6 !important;
   box-shadow: none;
 }
+
+.wrong-input:focus {
+  border-color: red !important;
+  box-shadow: none;
+}

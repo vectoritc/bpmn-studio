@@ -118,7 +118,12 @@
             <form>
               <div class="form-group">
                 <label for="correlationId"><b>Custom Correlation ID</b></label>
-                <input class="form-control input-field" id="correlationId" aria-describedby="correlationIdHelp" placeholder="Correlation ID" value.bind="customCorrelationId">
+                <input class="form-control input-field" class.bind="hasValidationError ? 'wrong-input' : ''" id="correlationId" aria-describedby="correlationIdHelp" placeholder="Correlation ID" type="text" value.bind="customCorrelationId">
+                <ul if.bind="hasValidationError" class="rename-errors-container__error">
+                  <li class="rename-errors-container__error__error">Your diagram contains at least one invalid-character
+                    Allowed characters: [a-z, 0-9, -, _, ä, ü, ö, ß, .]
+                  </li>
+                </ul>
                 <small id="correlationIdHelp" class="form-text text-muted">
                     Setting a correlation ID is optional; a correlation ID is useful to identify a process instance; this does not need to be unique.
                 </small>
@@ -138,7 +143,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelButtonProcessStart" click.delegate="cancelDialog()">Cancel</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal" id="startButton" click.delegate="setOptionsAndStart()">${ _diagramHasChanged ? 'Save and start process' : 'Start process'}</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal" id="startButton" click.delegate="setOptionsAndStart()" disabled.bind="hasValidationError">${ _diagramHasChanged ? 'Save and start process' : 'Start process'}</button>
           </div>
         </div>
       </div>

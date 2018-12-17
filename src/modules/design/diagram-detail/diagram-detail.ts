@@ -7,14 +7,17 @@ import {Event, EventList, IManagementApi} from '@process-engine/management_api_c
 import {ProcessModelExecution} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {IElementRegistry,
-        IExtensionElement,
-        IFormElement,
-        IModdleElement,
-        IShape,
-        ISolutionEntry,
-        ISolutionService,
-        NotificationType} from '../../../contracts/index';
+import {
+  IElementRegistry,
+  IExtensionElement,
+  IFormElement,
+  IModdleElement,
+  IShape,
+  ISolutionEntry,
+  ISolutionService,
+  IUserInputValidationRule,
+  NotificationType,
+} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
@@ -48,7 +51,8 @@ export class DiagramDetail {
   public xml: string;
   public initialToken: string;
   public inputValues: object | string | any;
-  public customCorrelationId: string;
+  @observable({ changeHandler: 'correlationChanged'}) public customCorrelationId: string;
+  public hasValidationError: boolean = false;
 
   @observable({ changeHandler: 'diagramHasChangedChanged'}) private _diagramHasChanged: boolean;
   private _activeSolutionEntry: ISolutionEntry;
@@ -62,6 +66,11 @@ export class DiagramDetail {
   private _solutionService: ISolutionService;
   private _managementApiClient: IManagementApi;
   private _ipcRendererEventListeners: Array<IEventListener> = [];
+  private _correlationIdValidationRegExpList: IUserInputValidationRule = {
+    alphanumeric: /^[a-z0-9]/i,
+    specialCharacters: /^[._ -]/i,
+    german: /^[äöüß]/i,
+  };
 
   constructor(managementApiClient: IManagementApi,
               notificationService: NotificationService,
@@ -144,6 +153,31 @@ export class DiagramDetail {
         this.showStartWithOptionsModal = true;
       }),
     ];
+  }
+
+  public correlationChanged(newValue: string): void {
+    const inputAsCharArray: Array<string> = newValue.split('');
+
+    const correlationIdPassesIdCheck: boolean = !inputAsCharArray.some((letter: string) => {
+      for (const regExIndex in this._correlationIdValidationRegExpList) {
+        const letterIsInvalid: boolean = letter.match(this._correlationIdValidationRegExpList[regExIndex]) !== null;
+
+        if (letterIsInvalid) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+
+    const correlationIdDoesNotStartWithWhitespace: boolean = !newValue.match(/^\s/);
+    const correlationIdDoesNotEndWithWhitespace: boolean = !newValue.match(/\s+$/);
+
+    if (correlationIdDoesNotStartWithWhitespace && correlationIdPassesIdCheck && correlationIdDoesNotEndWithWhitespace) {
+      this.hasValidationError = false;
+    } else {
+      this.hasValidationError = true;
+    }
   }
 
   public async canDeactivate(): Promise<Redirect> {
@@ -295,6 +329,10 @@ export class DiagramDetail {
 
   public async setOptionsAndStart(): Promise<void> {
 
+    if (this.hasValidationError) {
+      return;
+    }
+
     if (this._diagramHasChanged) {
       this._saveDiagram();
     }
@@ -312,16 +350,6 @@ export class DiagramDetail {
     }
 
     await this.startProcess();
-  }
-
-  private _getInitialTokenValues(token: object & string | any): object | string | any {
-    try {
-      // If successful, the token is an object
-      return JSON.parse(token);
-    } catch (error) {
-      // If an error occurs, the token is something else.
-      return token;
-    }
   }
 
   public async startProcess(): Promise<void> {
@@ -442,6 +470,16 @@ export class DiagramDetail {
     this.showSaveForStartModal = false;
     this.showStartEventModal = false;
     this.showStartWithOptionsModal = false;
+  }
+
+  private _getInitialTokenValues(token: object & string | any): object | string | any {
+    try {
+      // If successful, the token is an object
+      return JSON.parse(token);
+    } catch (error) {
+      // If an error occurs, the token is something else.
+      return token;
+    }
   }
 
   private async _updateProcessStartEvents(): Promise<void> {
