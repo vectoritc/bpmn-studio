@@ -484,7 +484,7 @@ export class LiveExecutionTracker {
     }
 
     const processModelFromCorrelation: CorrelationProcessModel = correlation.processModels.find((processModel: CorrelationProcessModel) => {
-      const processModelIsSearchedProcessModel: boolean = processModel.name === this._processModelId;
+      const processModelIsSearchedProcessModel: boolean = processModel.processModelId === this._processModelId;
 
       return processModelIsSearchedProcessModel;
     });

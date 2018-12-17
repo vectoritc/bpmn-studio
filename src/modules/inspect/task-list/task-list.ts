@@ -258,7 +258,7 @@ export class TaskList {
     const processModelOfCorrelation: ProcessModelExecution.ProcessModel = await
       this
       ._managementApiService
-      .getProcessModelById(identity, correlation.processModels[0].name);
+      .getProcessModelById(identity, correlation.processModels[0].processModelId);
 
     const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = this._addProcessModelToUserTasks(userTaskList, processModelOfCorrelation);
     const manualTasksAndProcessModels: Array<IManualTaskWithProcessModel> = this._addProcessModelToManualTasks(
