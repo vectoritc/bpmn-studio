@@ -55,8 +55,8 @@
           <button class="button menu-bar__menu-center--action-button" class.bind="validationError || disableStartButton ? 'button--disabled' : ''" click.delegate="startProcess()" disabled.bind="validationError || disableStartButton" title.bind="disableStartButton ? 'Before starting the process please deploy it to the ProcessEngine' : 'Start Process'">
             <i class="fas fa-play"></i>
           </button>
-          <button type="button" class="button menu-bar__menu-center--action-button dropdown-toggle dropdown-toggle-split" class.bind="validationError || disableStartButton ? 'button--disabled' : ''" disabled.bind="validationError || disableStartButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="margin-left: -10px;">
-            <i class="fas fa-angle-down" style="font-size: 12px;"></i>
+          <button type="button" class="button menu-bar__menu-center--action-button dropdown-toggle dropdown-toggle-split dropdown__start-button" class.bind="validationError || disableStartButton ? 'button--disabled' : ''" disabled.bind="validationError || disableStartButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-angle-down start-options__icon"></i>
           </button>
           <div class="dropdown-menu">
             <li class="dropdown-item" click.delegate="startProcessWithOptions()">Custom Start</li>

@@ -50,7 +50,6 @@ export class DiagramDetail {
   public selectedStartEventId: string;
   public xml: string;
   public initialToken: string;
-  public inputValues: object | string | any;
   @observable({ changeHandler: 'correlationChanged'}) public customCorrelationId: string;
   public hasValidationError: boolean = false;
 
@@ -337,7 +336,7 @@ export class DiagramDetail {
       this._saveDiagram();
     }
 
-    this.inputValues = this._getInitialTokenValues(this.initialToken);
+    const parsedInitialToken: any = this._getInitialTokenValues(this.initialToken);
 
     await this._updateProcessStartEvents();
 
@@ -349,10 +348,10 @@ export class DiagramDetail {
       this.showStartEventModal = true;
     }
 
-    await this.startProcess();
+    await this.startProcess(parsedInitialToken);
   }
 
-  public async startProcess(): Promise<void> {
+  public async startProcess(parsedInitialToken?: any): Promise<void> {
 
     if (this.selectedStartEventId === null) {
       return;
@@ -361,7 +360,7 @@ export class DiagramDetail {
     this._dropInvalidFormData();
 
     const startRequestPayload: ProcessModelExecution.ProcessStartRequestPayload = {
-      inputValues: this.inputValues,
+      inputValues: parsedInitialToken,
       correlationId: this.customCorrelationId,
     };
 
@@ -472,7 +471,7 @@ export class DiagramDetail {
     this.showStartWithOptionsModal = false;
   }
 
-  private _getInitialTokenValues(token: object & string | any): object | string | any {
+  private _getInitialTokenValues(token: any): any {
     try {
       // If successful, the token is an object
       return JSON.parse(token);
