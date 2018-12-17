@@ -137,7 +137,10 @@ export class StatusBar {
   }
 
   public navigateToSettings(): void {
-    this._router.navigateToRoute('configuration');
+    this._router.navigateToRoute('configuration', {
+      diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
+      solutionUri: this.activeSolutionEntry ? this.activeSolutionEntry.uri : undefined,
+    });
   }
 
   private _setProcessEngineRoute(processEngineRoute: string): void {
