@@ -1,5 +1,6 @@
 const electron = require('electron');
 const autoUpdater = require('electron-updater').autoUpdater;
+const CancellationToken = require('electron-updater').CancellationToken;
 const path = require('path');
 const app = electron.app;
 const notifier = require('electron-notifications');
