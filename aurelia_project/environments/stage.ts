@@ -55,12 +55,11 @@ export default {
     },
     diagramDetail: {
       onDiagramDeployed: 'diagramdetail:diagram:ondeployed',
-    },
-    processDefDetail: {
       printDiagram: 'processdefdetail:diagram:print',
       saveDiagram: 'processdefdetail:diagram:save',
       exportDiagramAs: 'processdefdetail:diagram:exportas',
       startProcess: 'processdefdetail:process:start',
+      startProcessWithOptions: 'processdefdetail:process:startWithOptions',
       toggleXMLView: 'processdefdetail:xmlview:toggle',
       uploadProcess: 'processdefdetail:process:upload',
     },
