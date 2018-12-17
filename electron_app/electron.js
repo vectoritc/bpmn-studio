@@ -193,11 +193,11 @@ Main._initializeApplication = function () {
     electron.ipcMain.on('app_ready', async(event) => {
       autoUpdater.autoDownload = false;
 
-      autoUpdater.checkForUpdates();
-
       const currentVersion = electron.app.getVersion();
       const currentVersionIsPrerelease = prereleaseRegex.test(currentVersion);
       autoUpdater.allowPrerelease = currentVersionIsPrerelease;
+
+      autoUpdater.checkForUpdates();
 
       const cancellationToken = new CancellationToken();
 
