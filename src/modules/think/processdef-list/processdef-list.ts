@@ -30,9 +30,7 @@ export class ProcessDefList {
               router: Router,
               authenticationService: IAuthenticationService,
               managementApiClient: IManagementApi,
-              notificationService: NotificationService,
-              solutionService: ISolutionService) {
-
+              notificationService: NotificationService) {
     this._eventAggregator = eventAggregator;
     this._router = router;
     this._authenticationService = authenticationService;
