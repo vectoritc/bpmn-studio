@@ -1,11 +1,17 @@
-import {EventAggregator} from 'aurelia-event-aggregator';
+import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
-import {DiffMode} from '../../contracts/index';
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
+
+import {DiffMode, IAureliaRouterResponse, ISolutionEntry, ISolutionService} from '../../contracts/index';
 import environment from '../../environment';
 
-@inject(EventAggregator, Router)
+interface IQueryObject {
+  solutionUri: string;
+}
+
+@inject(EventAggregator, Router, 'SolutionService')
 export class StatusBar {
 
   public processEngineRoute: string = '';
@@ -19,16 +25,20 @@ export class StatusBar {
   public currentXmlIdentifier: string;
   public previousXmlIdentifier: string;
   public showInspectPanel: boolean = true;
+  public activeSolutionEntry: ISolutionEntry;
+  public activeDiagram: IDiagram;
 
   public DiffMode: typeof DiffMode = DiffMode;
 
   private _eventAggregator: EventAggregator;
   private _router: Router;
+  private _solutionService: ISolutionService;
   private _subscriptions: Array<Subscription>;
 
-  constructor(eventAggregator: EventAggregator, router: Router) {
+  constructor(eventAggregator: EventAggregator, router: Router, solutionService: ISolutionService) {
     this._eventAggregator = eventAggregator;
     this._router = router;
+    this._solutionService = solutionService;
 
     const customProcessEngineRoute: string = window.localStorage.getItem('processEngineRoute');
     const isCustomProcessEngineRouteSet: boolean = customProcessEngineRoute !== ''
@@ -136,6 +146,21 @@ export class StatusBar {
     this.isEncryptedCommunication = protocol === 'https://';
     this.processEngineRoute = route;
   }
+
+  private _queryStringToObject(queryString: string): IQueryObject {
+    const queryStringPairs: Array<string> = queryString.split('&');
+
+    const result: any = {};
+    queryStringPairs.forEach((pair: string) => {
+      const splittedPair: Array<string> = pair.split('=');
+      result[splittedPair[0]] = decodeURIComponent(splittedPair[1] || '');
+    });
+
+    const queryObject: IQueryObject = JSON.parse(JSON.stringify(result));
+
+    return queryObject;
+  }
+
   private _disposeAllSubscriptions(): void {
     this._subscriptions.forEach((subscription: Subscription) => {
       subscription.dispose();
