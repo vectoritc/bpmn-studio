@@ -100,8 +100,6 @@ export class ProcessList {
   }
 
   public async attached(): Promise<void> {
-    const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
-    this.activeSolution = this._solutionService.getSolutionEntryForUri(remoteSolutionUri);
 
     this._initializeGetProcesses();
 
@@ -126,6 +124,12 @@ export class ProcessList {
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
+  }
+
+  public get remoteSolutionUri(): string {
+    const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
+
+    return remoteSolutionUri;
   }
 
   public get correlations(): Array<Correlation> {
