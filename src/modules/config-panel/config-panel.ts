@@ -14,6 +14,11 @@ import environment from '../../environment';
 import {oidcConfig} from '../../open-id-connect-configuration';
 import {NotificationService} from '../notification/notification.service';
 
+interface RouteParameters {
+  diagramName?: string;
+  solutionUri?: string;
+}
+
 @inject(Router, 'NotificationService', EventAggregator, 'AuthenticationService', OpenIdConnect, 'InternalProcessEngineBaseRoute', 'SolutionService')
 export class ConfigPanel {
   @bindable public baseRoute: string;
@@ -32,6 +37,7 @@ export class ConfigPanel {
   private _solutionService: ISolutionService;
   private _initialBaseRoute: string;
   private _initialAuthority: string;
+  private _activeSolutionUri: string;
 
   constructor(router: Router,
               notificationService: NotificationService,
@@ -49,6 +55,11 @@ export class ConfigPanel {
     this._openIdConnect = openIdConnect;
     this.internalProcessEngineBaseRoute = internalProcessEngineBaseRoute;
     this._solutionService = solutionService;
+  }
+
+  public activate(routeParameters: RouteParameters): void {
+
+    this._activeSolutionUri = routeParameters.solutionUri;
   }
 
   public attached(): void {
@@ -116,6 +127,17 @@ export class ConfigPanel {
     }
 
     this._notificationService.showNotification(NotificationType.SUCCESS, 'Successfully saved settings!');
+
+    const solutionUriIsSet: boolean = this._activeSolutionUri !== undefined;
+    if (solutionUriIsSet) {
+      const solutionUriIsRemote: boolean = this._activeSolutionUri.startsWith('http');
+
+      if (solutionUriIsRemote) {
+        this._router.navigateToRoute('start-page');
+
+        return;
+      }
+    }
 
     this._router.navigateBack();
   }
