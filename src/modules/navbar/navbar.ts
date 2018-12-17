@@ -64,8 +64,14 @@ export class NavBar {
         this.activeRouteName = response.instruction.config.name;
 
         const queryObject: IQueryObject = this._queryStringToObject(response.instruction.queryString);
+        const noSultionUriSpecified: boolean = queryObject.solutionUri === undefined;
 
-        this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(queryObject.solutionUri);
+        if (noSultionUriSpecified) {
+          const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
+          this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(remoteSolutionUri);
+        } else {
+          this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(queryObject.solutionUri);
+        }
 
         const solutionIsSet: boolean = this.activeSolutionEntry !== undefined;
         if (solutionIsSet) {
@@ -251,7 +257,6 @@ export class NavBar {
       diagramName: this.activeDiagram.name,
       solutionUri: this.activeSolutionEntry.uri,
     });
-
   }
 
   public toggleSolutionExplorer(): void {
