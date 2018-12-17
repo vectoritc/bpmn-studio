@@ -3,11 +3,9 @@ const autoUpdater = require('electron-updater').autoUpdater;
 const CancellationToken = require('electron-updater').CancellationToken;
 const path = require('path');
 const app = electron.app;
-const notifier = require('electron-notifications');
 const isDev = require('electron-is-dev');
 const getPort = require('get-port');
 const fs = require('fs');
-const exec = require('child_process');
 
 const {dialog} = require('electron');
 
