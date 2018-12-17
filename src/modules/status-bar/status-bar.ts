@@ -24,6 +24,7 @@ export class StatusBar {
 
   private _eventAggregator: EventAggregator;
   private _router: Router;
+  private _subscriptions: Array<Subscription>;
 
   constructor(eventAggregator: EventAggregator, router: Router) {
     this._eventAggregator = eventAggregator;
@@ -41,31 +42,54 @@ export class StatusBar {
   }
 
   public attached(): void {
-    this._eventAggregator.subscribe(environment.events.statusBar.showDiagramViewButtons, () => {
-      this.showDiagramViewButtons = true;
-    });
+    this._subscriptions = [
+      this._eventAggregator.subscribe(environment.events.statusBar.showDiagramViewButtons, () => {
+        this.showDiagramViewButtons = true;
+      }),
 
-    this._eventAggregator.subscribe(environment.events.statusBar.hideDiagramViewButtons, () => {
-      this.showDiagramViewButtons = false;
-      this.xmlIsShown = false;
-      this.diffIsShown = false;
-      this.showChangeList = false;
-      this.currentDiffMode = DiffMode.NewVsOld;
-    });
+      this._eventAggregator.subscribe(environment.events.statusBar.hideDiagramViewButtons, () => {
+        this.showDiagramViewButtons = false;
+        this.xmlIsShown = false;
+        this.diffIsShown = false;
+        this.showChangeList = false;
+        this.currentDiffMode = DiffMode.NewVsOld;
+      }),
 
-    this._eventAggregator.subscribe(environment.events.configPanel.processEngineRouteChanged, (newProcessEngineRoute: string) => {
-      this._setProcessEngineRoute(newProcessEngineRoute);
-    });
+      this._eventAggregator.subscribe(environment.events.configPanel.processEngineRouteChanged, (newProcessEngineRoute: string) => {
+        this._setProcessEngineRoute(newProcessEngineRoute);
+      }),
 
-    this._eventAggregator.subscribe(environment.events.statusBar.setXmlIdentifier, (xmlIdentifier: Array<string>) => {
-      [this.previousXmlIdentifier, this.currentXmlIdentifier] = xmlIdentifier;
-    });
+      this._eventAggregator.subscribe(environment.events.statusBar.setXmlIdentifier, (xmlIdentifier: Array<string>) => {
+        [this.previousXmlIdentifier, this.currentXmlIdentifier] = xmlIdentifier;
+      }),
 
-    this._eventAggregator.subscribe(environment.events.statusBar.showInspectCorrelationButtons, (showInspectCorrelation: boolean) => {
-      this.showInspectCorrelationButtons = showInspectCorrelation;
-    });
+      this._eventAggregator.subscribe(environment.events.statusBar.showInspectCorrelationButtons, (showInspectCorrelation: boolean) => {
+        this.showInspectCorrelationButtons = showInspectCorrelation;
+      }),
+
+      this._eventAggregator.subscribe('router:navigation:success', async(response: IAureliaRouterResponse) => {
+        const queryObject: IQueryObject = this._queryStringToObject(response.instruction.queryString);
+        const noSultionUriSpecified: boolean = queryObject.solutionUri === undefined;
+
+        if (noSultionUriSpecified) {
+          const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
+          this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(remoteSolutionUri);
+        } else {
+          this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(queryObject.solutionUri);
+        }
+
+        const solutionIsSet: boolean = this.activeSolutionEntry !== undefined;
+        if (solutionIsSet) {
+          this.activeDiagram = await this.activeSolutionEntry.service.loadDiagram(response.instruction.params.diagramName);
+        }
+      }),
+    ];
 
     this.currentDiffMode = DiffMode.NewVsOld;
+  }
+
+  public detached(): void {
+    this._disposeAllSubscriptions();
   }
 
   public toggleXMLView(): void {
@@ -111,5 +135,10 @@ export class StatusBar {
     const [, protocol, route]: RegExpExecArray = /^([^\:]+:\/\/)?(.*)$/i.exec(processEngineRoute);
     this.isEncryptedCommunication = protocol === 'https://';
     this.processEngineRoute = route;
+  }
+  private _disposeAllSubscriptions(): void {
+    this._subscriptions.forEach((subscription: Subscription) => {
+      subscription.dispose();
+    });
   }
 }
