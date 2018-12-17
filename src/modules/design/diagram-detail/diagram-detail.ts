@@ -106,9 +106,6 @@ export class DiagramDetail {
 
     this.xml = this.activeDiagram.xml;
 
-    this._solutionService.setActiveDiagram(this.activeDiagram);
-    this._solutionService.setActiveSolutionEntry(this._activeSolutionEntry);
-
     this._eventAggregator.publish(environment.events.navBar.updateActiveSolutionAndDiagram);
     this._diagramHasChanged = false;
 
@@ -297,10 +294,12 @@ export class DiagramDetail {
 
       await this._activeSolutionEntry.service.saveDiagram(copyOfDiagram, connectedProcessEngineRoute);
 
-      this._solutionService.setActiveSolutionEntry(this._activeSolutionEntry);
       this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(processModelId);
 
-      this._solutionService.setActiveDiagram(this.activeDiagram);
+      this._router.navigateToRoute('diagram-detail', {
+        diagramName: this.activeDiagram.name,
+        solutionUri: this._activeSolutionEntry.uri,
+      });
 
       this._notificationService
           .showNotification(NotificationType.SUCCESS, 'Diagram was successfully uploaded to the connected ProcessEngine.');
@@ -597,8 +596,7 @@ export class DiagramDetail {
       const xml: string = await this.bpmnio.getXML();
       this.activeDiagram.xml = xml;
 
-      const activeSolution: ISolutionEntry = this._solutionService.getActiveSolutionEntry();
-      await activeSolution.service.saveDiagram(this.activeDiagram);
+      await this._activeSolutionEntry.service.saveDiagram(this.activeDiagram);
       this.bpmnio.saveCurrentXML();
 
       this._diagramHasChanged = false;
