@@ -321,9 +321,9 @@ export class DiagramDetail {
 
     await this._updateProcessStartEvents();
 
-    const onlyOneStartEventAvailable: boolean = this.processesStartEvents.length === 1;
+    const onlyOneStartEventIsAvailable: boolean = this.processesStartEvents.length === 1;
 
-    if (onlyOneStartEventAvailable) {
+    if (onlyOneStartEventIsAvailable) {
       this.selectedStartEventId = this.processesStartEvents[0].id;
     } else {
       this.showStartEventModal = true;
