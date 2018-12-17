@@ -58,19 +58,24 @@ export class NavBar {
       this._eventAggregator.subscribe('router:navigation:success', async(response: IAureliaRouterResponse) => {
         this.activeRouteName = response.instruction.config.name;
 
-        const queryObject: IQueryObject = this._queryStringToObject(response.instruction.queryString);
-        const noSultionUriSpecified: boolean = queryObject.solutionUri === undefined;
+        const solutionUri: string = response.instruction.queryParams.solutionUri;
+        const noSultionUriSpecified: boolean = solutionUri === undefined;
 
         if (noSultionUriSpecified) {
           const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
           this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(remoteSolutionUri);
         } else {
-          this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(queryObject.solutionUri);
+          this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
         }
 
         const solutionIsSet: boolean = this.activeSolutionEntry !== undefined;
         if (solutionIsSet) {
-          this.activeDiagram = await this.activeSolutionEntry.service.loadDiagram(response.instruction.params.diagramName);
+
+          const diagramIsSet: boolean = response.instruction.params.diagramName !== undefined;
+          if (diagramIsSet) {
+
+            this.activeDiagram = await this.activeSolutionEntry.service.loadDiagram(response.instruction.params.diagramName);
+          }
 
           this._updateNavbarTitle();
           this._updateNavbarTools();
@@ -335,20 +340,6 @@ export class NavBar {
 
     this.disableStartButton = !activeSolutionIsRemoteSolution;
     this.disableDiagramUploadButton = activeSolutionIsRemoteSolution;
-  }
-
-  private _queryStringToObject(queryString: string): IQueryObject {
-    const queryStringPairs: Array<string> = queryString.split('&');
-
-    const result: any = {};
-    queryStringPairs.forEach((pair: string) => {
-      const splittedPair: Array<string> = pair.split('=');
-      result[splittedPair[0]] = decodeURIComponent(splittedPair[1] || '');
-    });
-
-    const queryObject: IQueryObject = JSON.parse(JSON.stringify(result));
-
-    return queryObject;
   }
 
 }
