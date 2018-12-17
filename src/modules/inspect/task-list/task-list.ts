@@ -37,13 +37,12 @@ interface IManualTaskWithProcessModel {
   processModel: ProcessModelExecution.ProcessModel;
 }
 
-@inject(EventAggregator, 'ManagementApiClientService', Router, 'NotificationService', 'AuthenticationService', 'SolutionService')
+@inject(EventAggregator, 'ManagementApiClientService', Router, 'NotificationService', 'AuthenticationService')
 export class TaskList {
 
   public currentPage: number = 0;
   public pageSize: number = 10;
   public totalItems: number;
-  public activeSolution: ISolutionEntry;
 
   public successfullyRequested: boolean = false;
 
@@ -52,7 +51,6 @@ export class TaskList {
   private _router: Router;
   private _notificationService: NotificationService;
   private _authenticationService: IAuthenticationService;
-  private _solutionService: ISolutionService;
 
   private _subscriptions: Array<Subscription>;
   private _userTasks: Array<IUserTaskWithProcessModel>;
@@ -64,17 +62,16 @@ export class TaskList {
               router: Router,
               notificationService: NotificationService,
               authenticationService: IAuthenticationService,
-              solutionService: ISolutionService,
   ) {
     this._eventAggregator = eventAggregator;
     this._managementApiService = managementApiService;
     this._router = router;
     this._notificationService = notificationService;
     this._authenticationService = authenticationService;
-    this._solutionService = solutionService;
   }
 
   public initializeTaskList(routeParameters: ITaskListRouteParameters): void {
+
     if (routeParameters.processModelId) {
       this._getTasks = (): Promise<Array<IUserTaskWithProcessModel>> => {
         return this._getTasksForProcessModel(routeParameters.processModelId);
@@ -91,9 +88,6 @@ export class TaskList {
   }
 
   public attached(): void {
-    const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
-    this.activeSolution = this._solutionService.getSolutionEntryForUri(remoteSolutionUri);
-
     const getTasksIsUndefined: boolean = this._getTasks === undefined;
 
     if (getTasksIsUndefined) {
@@ -316,7 +310,6 @@ export class TaskList {
 
   public async updateTasks(): Promise<void> {
     try {
-
       this._userTasks = await this._getTasks();
       this.successfullyRequested = true;
 
