@@ -6,18 +6,17 @@ import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
 import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/errors_ts';
+import {IIdentity} from '@essential-projects/iam_contracts';
 import {IManagementApi, ProcessModelExecution} from '@process-engine/management_api_contracts';
 
-import {IIdentity} from '@essential-projects/iam_contracts';
-import {AuthenticationStateEvent, IAuthenticationService, ISolutionEntry, ISolutionService, NotificationType} from '../../../contracts/index';
+import {AuthenticationStateEvent, IAuthenticationService, ISolutionService, NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 
-@inject(EventAggregator, Router, 'AuthenticationService', 'ManagementApiClientService', 'NotificationService', 'SolutionService')
+@inject(EventAggregator, Router, 'AuthenticationService', 'ManagementApiClientService', 'NotificationService')
 export class ProcessDefList {
 
   public allProcessModels: Array<ProcessModelExecution.ProcessModel>;
-  public activeSolution: ISolutionEntry;
 
   private _authenticationService: IAuthenticationService;
   private _managementApiClient: IManagementApi;
@@ -26,7 +25,6 @@ export class ProcessDefList {
   private _router: Router;
   private _subscriptions: Array<Subscription>;
   private _getProcessesIntervalId: number;
-  private _solutionService: ISolutionService;
 
   constructor(eventAggregator: EventAggregator,
               router: Router,
@@ -40,7 +38,6 @@ export class ProcessDefList {
     this._authenticationService = authenticationService;
     this._managementApiClient = managementApiClient;
     this._notificationService = notificationService;
-    this._solutionService = solutionService;
 
     this._eventAggregator.publish(environment.events.refreshProcessDefs);
   }
