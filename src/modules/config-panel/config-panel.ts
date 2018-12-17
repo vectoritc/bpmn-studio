@@ -175,18 +175,6 @@ export class ConfigPanel {
   private _updateBaseRoute(): void {
     this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, this.baseRoute);
 
-    const currentActiveSolution: ISolutionEntry = this._solutionService.getActiveSolutionEntry();
-    const thereIsAnActiveSolution: boolean = currentActiveSolution !== undefined;
-
-    if (thereIsAnActiveSolution) {
-      const currentActiveSolutionIsRemoteSolution: boolean = currentActiveSolution.uri.startsWith('http');
-
-      if (currentActiveSolutionIsRemoteSolution) {
-        this._solutionService.setActiveDiagram(undefined);
-        this._solutionService.setActiveSolutionEntry(undefined);
-      }
-    }
-
     window.localStorage.setItem('processEngineRoute', this.baseRoute);
 
   }
