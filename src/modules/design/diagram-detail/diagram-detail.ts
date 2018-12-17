@@ -47,7 +47,7 @@ export class DiagramDetail {
   public selectedStartEventId: string;
   public xml: string;
   public initialToken: string;
-  public inputValues: object | string;
+  public inputValues: object | string | any;
   public customCorrelationId: string;
 
   @observable({ changeHandler: 'diagramHasChangedChanged'}) private _diagramHasChanged: boolean;
@@ -299,25 +299,7 @@ export class DiagramDetail {
       this._saveDiagram();
     }
 
-    const customCorrelationIdIsUndefined: boolean = this.customCorrelationId === undefined;
-    const noInitialToken: boolean = this.initialToken === undefined;
-
-    if (customCorrelationIdIsUndefined && noInitialToken) {
-      return this._notificationService.showNotification(NotificationType.INFO, 'Please fill in at least one field.');
-    }
-
-    const initialTokenIsObject: boolean = this.initialToken !== undefined
-                                       && this.initialToken.startsWith('{');
-
-    if (initialTokenIsObject) {
-      try {
-        this.inputValues = JSON.parse(this.initialToken);
-      } catch (error) {
-        return this._notificationService.showNotification(NotificationType.ERROR, error.message);
-      }
-    } else {
-      this.inputValues = this.initialToken;
-    }
+    this.inputValues = this._getInitialTokenValues(this.initialToken);
 
     await this._updateProcessStartEvents();
 
@@ -330,6 +312,16 @@ export class DiagramDetail {
     }
 
     await this.startProcess();
+  }
+
+  private _getInitialTokenValues(token: object & string | any): object | string | any {
+    try {
+      // If successful, the token is an object
+      return JSON.parse(token);
+    } catch (error) {
+      // If an error occurs, the token is something else.
+      return token;
+    }
   }
 
   public async startProcess(): Promise<void> {
