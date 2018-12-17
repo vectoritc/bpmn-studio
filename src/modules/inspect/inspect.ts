@@ -46,9 +46,6 @@ export class Inspect {
       this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
     }
 
-    this._solutionService.setActiveDiagram(this.activeDiagram);
-    this._solutionService.setActiveSolutionEntry(this._activeSolutionEntry);
-
     this._eventAggregator.publish(environment.events.navBar.updateActiveSolutionAndDiagram);
 
     const routeViewIsDashboard: boolean = routeParameters.view === 'dashboard';
