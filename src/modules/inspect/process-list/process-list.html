@@ -13,7 +13,7 @@
           <tr repeat.for="correlation of correlations" id="processList-${correlation.id}" class="process-list-item">
             <td>${correlation.id}</td>
             <td>
-              <a route-href="route: diagram-detail; params.bind: { diagramName: correlation.processModels[0].name, solutionUri: activeSolution.uri }" class="process-list-item-modelname">${correlation.processModels[0].name}</a>
+              <a route-href="route: diagram-detail; params.bind: { diagramName: correlation.processModels[0].name, solutionUri: remoteSolutionUri }" class="process-list-item-modelname">${correlation.processModels[0].name}</a>
             </td>
             <td class="process-list__last-table-cell">
               <a route-href="route: task-list-correlation; params.bind: { correlationId: correlation.id }" class="process-list-item-user-tasks btn btn-default">Tasks</a>
