@@ -60,8 +60,6 @@ export class ProcessDefList {
   }
 
   public attached(): void {
-    const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
-    this.activeSolution = this._solutionService.getSolutionEntryForUri(remoteSolutionUri);
 
     this._getAllProcessModels();
 
@@ -89,9 +87,11 @@ export class ProcessDefList {
   }
 
   public showDetails(processModelId: string): void {
+    const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
+
     this._router.navigateToRoute('diagram-detail', {
       diagramName: processModelId,
-      solutionUri: this.activeSolution.uri,
+      solutionUri: remoteSolutionUri,
     });
   }
 
