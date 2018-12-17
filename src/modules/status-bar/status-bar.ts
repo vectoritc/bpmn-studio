@@ -90,7 +90,12 @@ export class StatusBar {
 
         const solutionIsSet: boolean = this.activeSolutionEntry !== undefined;
         if (solutionIsSet) {
-          this.activeDiagram = await this.activeSolutionEntry.service.loadDiagram(response.instruction.params.diagramName);
+
+          const diagramIsSet: boolean = response.instruction.params.diagramName !== undefined;
+          if (diagramIsSet) {
+
+            this.activeDiagram = await this.activeSolutionEntry.service.loadDiagram(response.instruction.params.diagramName);
+          }
         }
       }),
     ];
