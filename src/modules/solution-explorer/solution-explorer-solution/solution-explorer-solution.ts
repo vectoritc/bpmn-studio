@@ -18,7 +18,7 @@ import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/er
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
-import {IDiagramCreationService, ISolutionEntry, ISolutionService, IUserInputValidationRule} from '../../../contracts';
+import {IAureliaRouterResponse, IDiagramCreationService, ISolutionEntry, ISolutionService, IUserInputValidationRule} from '../../../contracts';
 import {NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
@@ -44,6 +44,8 @@ interface IDiagramCreationState extends IDiagramNameInputState {
   'SolutionService',
 )
 export class SolutionExplorerSolution {
+
+  public activeDiagram: IDiagram;
 
   private _router: Router;
   private _eventAggregator: EventAggregator;
@@ -162,6 +164,25 @@ export class SolutionExplorerSolution {
       this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToDesigner, () => {
         this._diagramRoute = 'diagram-detail';
         this._inspectView = undefined;
+      }),
+
+      this._eventAggregator.subscribe('router:navigation:success', async(response: IAureliaRouterResponse) => {
+
+        const solutionUriSpecified: boolean = response.instruction.queryParams.solutionUri !== undefined;
+        if (solutionUriSpecified) {
+          const solutionUri: string = response.instruction.queryParams.solutionUri;
+          const solutionEntry: ISolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
+
+          const diagramNameIsSpecified: boolean = response.instruction.params.diagramName !== undefined;
+          if (diagramNameIsSpecified) {
+            const diagramName: string = response.instruction.params.diagramName;
+            this.activeDiagram = await solutionEntry.service.loadDiagram(diagramName);
+
+            return;
+          }
+        }
+
+        this.activeDiagram = undefined;
       }),
     ];
 
@@ -384,20 +405,19 @@ export class SolutionExplorerSolution {
 
   }
 
-  @computedFrom('_solutionService._activeDiagram')
-  public get currentlyOpenedDiagramUri(): string {
-    const activeDiagram: IDiagram = this._solutionService.getActiveDiagram();
-    const noDiagramWasOpened: boolean = activeDiagram === undefined || activeDiagram === null;
-
-    if (noDiagramWasOpened) {
+  @computedFrom('activeDiagram.uri')
+  public get activeDiagramUri(): string {
+    const activeDiagramIsNotSet: boolean = this.activeDiagram === undefined;
+    if (activeDiagramIsNotSet) {
       return undefined;
     }
 
-    return activeDiagram.uri;
+    return this.activeDiagram.uri;
   }
 
-  private _isDiagramDetailViewOfDiagramOpen(diagramUriToCheck: string): boolean {
-    const diagramIsOpened: boolean = diagramUriToCheck === this.currentlyOpenedDiagramUri;
+  private async _isDiagramDetailViewOfDiagramOpen(diagramUriToCheck: string): Promise<boolean> {
+    const openedDiagramUri: string = this.activeDiagram.uri;
+    const diagramIsOpened: boolean = diagramUriToCheck === openedDiagramUri;
 
     return diagramIsOpened;
   }
