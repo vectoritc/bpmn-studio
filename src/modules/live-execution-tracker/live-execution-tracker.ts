@@ -114,8 +114,6 @@ export class LiveExecutionTracker {
     const processEngineSolution: ISolutionEntry = await this._solutionService.getSolutionEntryForUri(connectedProcessEngineRoute);
     const activeDiagram: IDiagram = await this._getProcessModelAndConvertToDiagram(this.processModelId, processEngineSolution);
 
-    this._solutionService.setActiveSolutionEntry(processEngineSolution);
-    this._solutionService.setActiveDiagram(activeDiagram);
   }
 
   private async _getParentProcessModelId(): Promise<string> {
