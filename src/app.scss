@@ -85,10 +85,10 @@ a:hover {
 }
 
 .dropdown-item {
+   cursor: pointer !important;
    background-color: transparent !important;
    color: black !important;
    user-select: none;
-   cursor: pointer !important;
 }
 
 .dropdown-item:hover {
