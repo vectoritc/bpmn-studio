@@ -199,7 +199,7 @@ Main._initializeApplication = function () {
 
       autoUpdater.checkForUpdates();
 
-      const cancellationToken = new CancellationToken();
+      const downloadCancellationToken = new CancellationToken();
 
       console.log(`CurrentVersion: ${currentVersion}, CurrentVersionIsPrerelease: ${currentVersionIsPrerelease}`);
 
@@ -211,7 +211,7 @@ Main._initializeApplication = function () {
         event.sender.send('update_available');
 
         electron.ipcMain.on('download_update', (event) => {
-          autoUpdater.downloadUpdate(cancellationToken);
+          autoUpdater.downloadUpdate(downloadCancellationToken);
         });
       });
 
