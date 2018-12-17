@@ -190,15 +190,16 @@ Main._initializeApplication = function () {
 
     const prereleaseRegex = /\d+\.\d+\.\d+-pre-b\d+/;
 
-    electron.ipcMain.on('app_ready', (event) => {
+    electron.ipcMain.on('app_ready', async(event) => {
+      autoUpdater.autoDownload = false;
+      autoUpdater.allowPrerelease = currentVersionIsPrerelease;
 
       autoUpdater.checkForUpdates();
-      autoUpdater.autoDownload = false;
 
       const currentVersion = electron.app.getVersion();
       const currentVersionIsPrerelease = prereleaseRegex.test(currentVersion);
 
-      autoUpdater.allowPrerelease = currentVersionIsPrerelease;
+      const cancellationToken = new CancellationToken();
 
       console.log(`CurrentVersion: ${currentVersion}, CurrentVersionIsPrerelease: ${currentVersionIsPrerelease}`);
 
@@ -210,7 +211,7 @@ Main._initializeApplication = function () {
         event.sender.send('update_available');
 
         electron.ipcMain.on('download_update', (event) => {
-          autoUpdater.doDownloadUpdate();
+          autoUpdater.downloadUpdate(cancellationToken);
         });
       });
 
