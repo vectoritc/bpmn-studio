@@ -119,8 +119,8 @@
               <div class="form-group">
                 <label for="correlationId"><b>Custom Correlation ID</b></label>
                 <input class="form-control input-field" class.bind="hasValidationError ? 'wrong-input' : ''" id="correlationId" aria-describedby="correlationIdHelp" placeholder="Correlation ID" type="text" value.bind="customCorrelationId">
-                <ul if.bind="hasValidationError" class="rename-errors-container__error">
-                  <li class="rename-errors-container__error__error">Your diagram contains at least one invalid-character
+                <ul if.bind="hasValidationError" class="correlation-id-error__container">
+                  <li class="error-list__container">Your diagram contains at least one invalid-character
                     Allowed characters: [a-z, 0-9, -, _, ä, ü, ö, ß, .]
                   </li>
                 </ul>

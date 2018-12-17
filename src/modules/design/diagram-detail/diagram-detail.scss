@@ -61,7 +61,25 @@
   box-shadow: none;
 }
 
+.wrong-input {
+  border-color: red !important;
+}
+
 .wrong-input:focus {
   border-color: red !important;
   box-shadow: none;
+}
+
+.correlation-id-error__container {
+  padding: 2px;
+  padding-left: 25px;
+  margin-top: -3px;
+  margin-right: 0px;
+  border: 1px solid red;
+  border-top: none;
+  color: red;
+}
+
+.error-list__container {
+  list-style-type: disc;
 }
