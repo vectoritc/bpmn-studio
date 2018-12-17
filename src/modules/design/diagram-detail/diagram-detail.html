@@ -121,7 +121,7 @@
                 <input class="form-control input-field" class.bind="hasValidationError ? 'wrong-input' : ''" id="correlationId" aria-describedby="correlationIdHelp" placeholder="Correlation ID" type="text" value.bind="customCorrelationId">
                 <ul if.bind="hasValidationError" class="correlation-id-error__container">
                   <li class="error-list__container">Your diagram contains at least one invalid-character
-                    Allowed characters: [a-z, 0-9, -, _, ä, ü, ö, ß, .]
+                    Supported characters: [a-z, 0-9, -, _, ä, ü, ö, ß, .]
                   </li>
                 </ul>
                 <small id="correlationIdHelp" class="form-text text-muted">
