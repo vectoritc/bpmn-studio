@@ -102,6 +102,11 @@ export class DiagramDetail {
     }
 
     this._activeSolutionEntry = this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
+    /**
+     * We have to open the Solution here again since if we come here after a
+     * reload the solution might not be opened yet.
+     */
+    await this._activeSolutionEntry.service.openSolution(this._activeSolutionEntry.uri, this._activeSolutionEntry.identity);
     this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
 
     this.xml = this.activeDiagram.xml;
