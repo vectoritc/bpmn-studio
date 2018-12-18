@@ -137,7 +137,7 @@ export class DiagramViewer {
 
   private async _getXmlByCorrelation(correlation: Correlation): Promise<string> {
     const processModelForCorrelation: CorrelationProcessModel = correlation.processModels.find((processModel: CorrelationProcessModel) => {
-      return processModel.name === this.activeDiagram.id;
+      return processModel.processModelId === this.activeDiagram.id;
     });
 
     const xmlForCorrelation: string = processModelForCorrelation.xml;

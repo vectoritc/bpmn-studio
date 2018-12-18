@@ -25,7 +25,7 @@ export class InspectCorrelationRepository implements IInspectCorrelationReposito
 
     const correlationsForProcessModelId: Array<Correlation> = allCorrelations.filter((correlation: Correlation) => {
       const processModelWithSameId: CorrelationProcessModel = correlation.processModels.find((processModel: CorrelationProcessModel) => {
-        const isSearchedProcessModel: boolean = processModel.name === processModelId;
+        const isSearchedProcessModel: boolean = processModel.processModelId === processModelId;
 
         return isSearchedProcessModel;
       });
@@ -35,7 +35,7 @@ export class InspectCorrelationRepository implements IInspectCorrelationReposito
       return processModelFound;
     });
 
-    return correlationsForProcessModelId;
+    return correlationsForProcessModelId;processModelId
   }
 
   public async getLogsForCorrelation(correlation: Correlation): Promise<Array<LogEntry>> {
@@ -44,7 +44,11 @@ export class InspectCorrelationRepository implements IInspectCorrelationReposito
     const logsForAllProcessModelsOfCorrelation: Array<Array<LogEntry>> = [];
 
     for (const processModel of correlation.processModels) {
-      const logsForProcessModel: Array<LogEntry> = await this._managementApiService.getProcessModelLog(identity, processModel.name, correlation.id);
+      const logsForProcessModel: Array<LogEntry> = await this._managementApiService
+        .getProcessModelLog(
+          identity,
+          processModel.processModelId,
+          correlation.id);
 
       logsForAllProcessModelsOfCorrelation.push(logsForProcessModel);
     }
@@ -54,7 +58,7 @@ export class InspectCorrelationRepository implements IInspectCorrelationReposito
     return logsForCorrelation;
   }
 
-  public async getTokenForFlowNodeInstance(processModelId: string, correlationId: string, flowNodeId: string): Promise<Array<TokenHistoryEntry>> {
+  public async getTokenForFlowNodeInstance(: string, correlationId: string, flowNodeId: string): Promise<Array<TokenHistoryEntry>> {
     const identity: IIdentity = this._createIdentity();
 
     return this._managementApiService.getTokensForFlowNodeInstance(identity, correlationId, processModelId, flowNodeId);

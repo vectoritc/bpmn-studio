@@ -142,7 +142,7 @@ export class ProcessList {
 
     const correlationsWithId: Array<Correlation> = runningCorrelations.filter((correlation: Correlation) => {
       const processModelWithSearchedId: CorrelationProcessModel =  correlation.processModels.find((processModel: CorrelationProcessModel) => {
-        const isSearchedProcessModel: boolean = processModel.name === processModelId;
+        const isSearchedProcessModel: boolean = processModel.processModelId === processModelId;
 
         return isSearchedProcessModel;
       });
