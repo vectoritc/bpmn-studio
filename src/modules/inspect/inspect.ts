@@ -37,13 +37,20 @@ export class Inspect {
   }
 
   public async activate(routeParameters: IInspectRouteParameters): Promise<void> {
-
-    this._activeSolutionEntry = await this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
-
+    const solutionIsSet: boolean = routeParameters.solutionUri !== undefined;
     const diagramNameIsSet: boolean = routeParameters.diagramName !== undefined;
 
-    if (diagramNameIsSet) {
-      this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
+    if (solutionIsSet) {
+      this._activeSolutionEntry = this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
+      /**
+       * We have to open the Solution here again since if we come here after a
+       * reload the solution might not be opened yet.
+       */
+      await this._activeSolutionEntry.service.openSolution(this._activeSolutionEntry.uri, this._activeSolutionEntry.identity);
+
+      if (diagramNameIsSet) {
+        this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
+      }
     }
 
     this._eventAggregator.publish(environment.events.navBar.updateActiveSolutionAndDiagram);
@@ -52,7 +59,7 @@ export class Inspect {
     const routeViewIsHeatmap: boolean = routeParameters.view === 'heatmap';
     const routeViewIsInspectCorrelation: boolean = routeParameters.view === 'inspect-correlation';
 
-    const latestSourceIsPE: boolean = this._activeSolutionEntry !== undefined && this._activeSolutionEntry.uri.startsWith('http');
+    const latestSourceIsPE: boolean = this._activeSolutionEntry !== undefined && this._activeSolutionEntry.uri.startsWith('http') && diagramNameIsSet;
 
     if (routeViewIsDashboard) {
       this.showHeatmap = false;
