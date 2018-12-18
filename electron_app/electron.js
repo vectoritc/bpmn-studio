@@ -1,12 +1,11 @@
 const electron = require('electron');
 const autoUpdater = require('electron-updater').autoUpdater;
+const CancellationToken = require('electron-updater').CancellationToken;
 const path = require('path');
 const app = electron.app;
-const notifier = require('electron-notifications');
 const isDev = require('electron-is-dev');
 const getPort = require('get-port');
 const fs = require('fs');
-const exec = require('child_process');
 
 const {dialog} = require('electron');
 
@@ -190,14 +189,16 @@ Main._initializeApplication = function () {
 
     const prereleaseRegex = /\d+\.\d+\.\d+-pre-b\d+/;
 
-    electron.ipcMain.on('app_ready', (event) => {
+    electron.ipcMain.on('app_ready', async(event) => {
+      autoUpdater.autoDownload = false;
 
       autoUpdater.checkForUpdates();
 
       const currentVersion = electron.app.getVersion();
       const currentVersionIsPrerelease = prereleaseRegex.test(currentVersion);
-
       autoUpdater.allowPrerelease = currentVersionIsPrerelease;
+
+      const downloadCancellationToken = new CancellationToken();
 
       console.log(`CurrentVersion: ${currentVersion}, CurrentVersionIsPrerelease: ${currentVersionIsPrerelease}`);
 
@@ -206,7 +207,11 @@ Main._initializeApplication = function () {
       });
 
       autoUpdater.addListener('update-available', (info) => {
-        event.sender.send('update_available')
+        event.sender.send('update_available');
+
+        electron.ipcMain.on('download_update', (event) => {
+          autoUpdater.downloadUpdate(downloadCancellationToken);
+        });
       });
 
       autoUpdater.addListener('update-downloaded', (info) => {
