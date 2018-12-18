@@ -179,25 +179,6 @@ export class SolutionExplorerSolution {
 
   }
 
-  private async _updateSolutionExplorer(): Promise<void> {
-    const solutionUri: string = this._router.currentInstruction.queryParams.solutionUri;
-    const solutionUriSpecified: boolean = solutionUri !== undefined;
-
-    if (solutionUriSpecified) {
-      const solutionEntry: ISolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
-      const diagramName: string = this._router.currentInstruction.params.diagramName;
-      const diagramNameIsSpecified: boolean = diagramName !== undefined;
-
-      if (diagramNameIsSpecified) {
-        this.activeDiagram = await solutionEntry.service.loadDiagram(diagramName);
-
-        return;
-      }
-    }
-
-    this.activeDiagram = undefined;
-  }
-
   public detached(): void {
     clearInterval(this._refreshIntervalTask);
     this._disposeSubscriptions();
@@ -748,5 +729,21 @@ export class SolutionExplorerSolution {
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
+  }
+
+  private async _updateSolutionExplorer(): Promise<void> {
+    const solutionUri: string = this._router.currentInstruction.queryParams.solutionUri;
+    const solutionUriSpecified: boolean = solutionUri !== undefined;
+    const diagramName: string = this._router.currentInstruction.params.diagramName;
+    const diagramNameIsSpecified: boolean = diagramName !== undefined;
+
+    if (solutionUriSpecified && diagramNameIsSpecified) {
+      const solutionEntry: ISolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
+      this.activeDiagram = await solutionEntry.service.loadDiagram(diagramName);
+
+      return;
+    }
+
+    this.activeDiagram = undefined;
   }
 }
