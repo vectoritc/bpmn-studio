@@ -21,4 +21,8 @@ export interface ISolutionService {
    */
   getSolutionEntryForUri(uri: string): ISolutionEntry;
 
+  /**
+   * Gets a list of all persisted solutions from the last session.
+   */
+  getPersistedEntries(): Array<ISolutionEntry>;
 }
