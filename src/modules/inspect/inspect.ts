@@ -59,8 +59,6 @@ export class Inspect {
     const routeViewIsHeatmap: boolean = routeParameters.view === 'heatmap';
     const routeViewIsInspectCorrelation: boolean = routeParameters.view === 'inspect-correlation';
 
-    const latestSourceIsPE: boolean = this._activeSolutionEntry !== undefined && this._activeSolutionEntry.uri.startsWith('http') && diagramNameIsSet;
-
     if (routeViewIsDashboard) {
       this.showHeatmap = false;
       this.showDashboard = true;
@@ -74,11 +72,6 @@ export class Inspect {
         }
       }, 0);
 
-      if (latestSourceIsPE) {
-        this._eventAggregator.publish(environment.events.navBar.showInspectButtons);
-      } else {
-        this._eventAggregator.publish(environment.events.navBar.hideInspectButtons);
-      }
       this._eventAggregator.publish(environment.events.navBar.toggleDashboardView);
     } else if (routeViewIsHeatmap) {
       this._eventAggregator.publish(environment.events.navBar.showInspectButtons);

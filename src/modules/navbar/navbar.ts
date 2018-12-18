@@ -85,14 +85,6 @@ export class NavBar {
         this.inspectView = 'dashboard';
       }),
 
-      this._eventAggregator.subscribe(environment.events.navBar.showInspectButtons, () => {
-        this.showInspectTools = true;
-      }),
-
-      this._eventAggregator.subscribe(environment.events.navBar.hideInspectButtons, () => {
-        this.showInspectTools = false;
-      }),
-
       this._eventAggregator.subscribe(environment.events.navBar.toggleHeatmapView, () => {
         this.disableHeatmapButton = true;
         this.disableDashboardButton = false;
@@ -311,10 +303,36 @@ export class NavBar {
   }
 
   private _updateNavbarTools(): void {
-    const activeSolutionIsRemoteSolution: boolean = this.activeSolutionEntry.uri.startsWith('http');
+    const activeRoute: string = this._router.currentInstruction.config.name;
+
+    const activeSolutionIsRemoteSolution: boolean = this.activeSolutionEntry.uri.startsWith('http') && this.activeDiagram !== undefined;
+    const activeRouteIsDiagramDetail: boolean = activeRoute === 'diagram-detail';
+    const activeRouteIsInspect: boolean = activeRoute === 'inspect';
 
     this.disableStartButton = !activeSolutionIsRemoteSolution;
     this.disableDiagramUploadButton = activeSolutionIsRemoteSolution;
+
+    if (activeRouteIsDiagramDetail) {
+      this.showTools = true;
+      this.showInspectTools = false;
+
+    } else if (activeRouteIsInspect) {
+      const inspectView: string = this._router.currentInstruction.params.view;
+      const inspectViewIsDashboard: boolean = inspectView === 'dashboard';
+      const inspectViewIsHeatmap: boolean = inspectView === 'heatmap';
+      const inspectViewIsInspectCorrelation: boolean = inspectView === 'inspect-correlation';
+
+      if (activeSolutionIsRemoteSolution) {
+        this.showInspectTools = true;
+
+        this.disableDashboardButton = inspectViewIsDashboard;
+        this.disableHeatmapButton = inspectViewIsHeatmap;
+        this.disableInspectCorrelationButton = inspectViewIsInspectCorrelation;
+      } else {
+        this.showInspectTools = false;
+      }
+      this.showTools = false;
+    }
   }
 
   private async _updateNavbar(): Promise<void> {
