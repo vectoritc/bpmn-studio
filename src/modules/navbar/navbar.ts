@@ -338,25 +338,23 @@ export class NavBar {
   private async _updateNavbar(): Promise<void> {
     this.activeRouteName = this._router.currentInstruction.config.name;
 
-    const solutionUri: string = this._router.currentInstruction.queryParams.solutionUri;
-    const noSolutionUriSpecified: boolean = solutionUri === undefined;
+    const solutionUriFromNavigation: string = this._router.currentInstruction.queryParams.solutionUri;
+    const noSolutionUriSpecified: boolean = solutionUriFromNavigation === undefined;
 
-    if (noSolutionUriSpecified) {
-      const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
-      this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(remoteSolutionUri);
-    } else {
-      this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
-    }
+    const solutionUri: string = (noSolutionUriSpecified)
+      ? window.localStorage.getItem('processEngineRoute')
+      : solutionUriFromNavigation;
+
+    this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
 
     const solutionIsSet: boolean = this.activeSolutionEntry !== undefined;
-    if (solutionIsSet) {
+    const diagramName: string = this._router.currentInstruction.params.diagramName;
+    const diagramIsSet: boolean = diagramName !== undefined;
 
-      const diagramName: string = this._router.currentInstruction.params.diagramName;
-      const diagramIsSet: boolean = diagramName !== undefined;
-      if (diagramIsSet) {
-
-        this.activeDiagram = await this.activeSolutionEntry.service.loadDiagram(this._router.currentInstruction.params.diagramName);
-      }
+    if (solutionIsSet && diagramIsSet) {
+      this.activeDiagram = await this.activeSolutionEntry
+        .service
+        .loadDiagram(this._router.currentInstruction.params.diagramName);
 
       this._updateNavbarTitle();
       this._updateNavbarTools();
