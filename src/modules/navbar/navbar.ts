@@ -7,10 +7,6 @@ import {IAureliaRouterResponse, ISolutionEntry, ISolutionService, NotificationTy
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
-interface IQueryObject {
-  solutionUri: string;
-}
-
 @inject(Router, EventAggregator, 'NotificationService', 'SolutionService')
 export class NavBar {
 

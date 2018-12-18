@@ -7,10 +7,6 @@ import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {DiffMode, IAureliaRouterResponse, ISolutionEntry, ISolutionService} from '../../contracts/index';
 import environment from '../../environment';
 
-interface IQueryObject {
-  solutionUri: string;
-}
-
 @inject(EventAggregator, Router, 'SolutionService')
 export class StatusBar {
 
