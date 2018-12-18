@@ -77,26 +77,8 @@ export class StatusBar {
         this.showInspectCorrelationButtons = showInspectCorrelation;
       }),
 
-      this._eventAggregator.subscribe('router:navigation:success', async(response: IAureliaRouterResponse) => {
-        const queryObject: IQueryObject = this._queryStringToObject(response.instruction.queryString);
-        const noSultionUriSpecified: boolean = queryObject.solutionUri === undefined;
-
-        if (noSultionUriSpecified) {
-          const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
-          this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(remoteSolutionUri);
-        } else {
-          this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(queryObject.solutionUri);
-        }
-
-        const solutionIsSet: boolean = this.activeSolutionEntry !== undefined;
-        if (solutionIsSet) {
-
-          const diagramIsSet: boolean = response.instruction.params.diagramName !== undefined;
-          if (diagramIsSet) {
-
-            this.activeDiagram = await this.activeSolutionEntry.service.loadDiagram(response.instruction.params.diagramName);
-          }
-        }
+      this._eventAggregator.subscribe('router:navigation:success', () => {
+        this._updateStatusBar();
       }),
     ];
 
@@ -173,5 +155,28 @@ export class StatusBar {
     this._subscriptions.forEach((subscription: Subscription) => {
       subscription.dispose();
     });
+  }
+
+  private async _updateStatusBar(): Promise<void> {
+    const solutionUri: string = this._router.currentInstruction.queryParams.solutionUri;
+    const noSolutionUriSpecified: boolean = solutionUri === undefined;
+
+    if (noSolutionUriSpecified) {
+      const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
+      this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(remoteSolutionUri);
+    } else {
+      this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
+    }
+
+    const solutionIsSet: boolean = this.activeSolutionEntry !== undefined;
+    if (solutionIsSet) {
+
+      const diagramName: string = this._router.currentInstruction.params.diagramName;
+      const diagramIsSet: boolean = diagramName !== undefined;
+      if (diagramIsSet) {
+
+        this.activeDiagram = await this.activeSolutionEntry.service.loadDiagram(diagramName);
+      }
+    }
   }
 }
