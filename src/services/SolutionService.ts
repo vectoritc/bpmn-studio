@@ -9,6 +9,9 @@ export class SolutionService implements ISolutionService {
 
   public removeSolutionEntry(solutionEntry: ISolutionEntry): void {
     this._allSolutionEntries.splice(this._allSolutionEntries.indexOf(solutionEntry));
+    this._allSolutionEntries.splice(this._allSolutionEntries.indexOf(solutionEntry), 1);
+    this._persistSolutionsInLocalStorage();
+  }
   }
 
   public getSolutionEntryForUri(uri: string): ISolutionEntry {
