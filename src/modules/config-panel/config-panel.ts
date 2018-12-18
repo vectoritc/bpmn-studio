@@ -175,6 +175,14 @@ export class ConfigPanel {
   private _updateBaseRoute(): void {
     this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, this.baseRoute);
 
+    const newBaseRouteIsNotInternalProcessEngineRoute: boolean = this.baseRoute !== this.internalProcessEngineBaseRoute;
+
+    if (newBaseRouteIsNotInternalProcessEngineRoute) {
+      window.localStorage.setItem('useCustomProcessEngine', 'true');
+    } else {
+      window.localStorage.removeItem('useCustomProcessEngine');
+    }
+
     window.localStorage.setItem('processEngineRoute', this.baseRoute);
 
   }
