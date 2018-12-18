@@ -218,6 +218,7 @@ export class SolutionExplorerSolution {
   public async updateSolution(): Promise<void> {
     try {
       this._openedSolution = await this.solutionService.loadSolution();
+
     } catch (error) {
       // In the future we can maybe display a small icon indicating the error.
       if (isError(error, UnauthorizedError)) {
