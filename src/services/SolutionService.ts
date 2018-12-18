@@ -27,6 +27,8 @@ export class SolutionService implements ISolutionService {
       } else {
         solution.service = await this._serviceFactory.newFileSystemSolutionExplorer();
       }
+
+      await solution.service.openSolution(solution.uri, solution.identity);
     });
 
     this._persistedEntries = openedSolutions;
