@@ -154,6 +154,9 @@ export class SolutionExplorerList {
     }
 
     this._openedSolutions.splice(indexOfSolutionToBeRemoved, 1);
+
+    const entryToRemove: ISolutionEntry = this._solutionService.getSolutionEntryForUri(uri);
+    this._solutionService.removeSolutionEntry(entryToRemove);
   }
 
   /**
@@ -184,6 +187,7 @@ export class SolutionExplorerList {
    * Add entry for single file service.
    */
   private async _createSingleDiagramServiceEntry(): Promise<void> {
+
     const fileSystemSolutionExplorer: ISolutionExplorerService = await this._solutionExplorerServiceFactory.newFileSystemSolutionExplorer();
 
     const uriOfSingleDiagramService: string = 'Single Diagrams';
