@@ -56,6 +56,16 @@ export class SolutionExplorerPanel {
 
     // Open the solution of the currently configured processengine instance on startup.
     await this.solutionExplorerList.openSolution(uriOfProcessEngine);
+
+    // Open the previously opened solutions.
+    const previouslyOpenedSolutions: Array<ISolutionEntry> = this._solutionService.getPersistedEntries();
+    previouslyOpenedSolutions.forEach(async(entry: ISolutionEntry) => {
+      if (entry.uri !== uriOfProcessEngine) {
+        await this.solutionExplorerList.openSolution(entry.uri);
+      }
+
+    });
+
   }
 
   public async attached(): Promise<void> {
