@@ -4,7 +4,7 @@ import {Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {DiffMode, IAureliaRouterResponse, ISolutionEntry, ISolutionService} from '../../contracts/index';
+import {DiffMode, ISolutionEntry, ISolutionService} from '../../contracts/index';
 import environment from '../../environment';
 
 @inject(EventAggregator, Router, 'SolutionService')
