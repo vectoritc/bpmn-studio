@@ -54,32 +54,11 @@ export class NavBar {
 
     this.solutionExplorerIsActive = window.localStorage.getItem('SolutionExplorerVisibility') === 'true';
 
+    this._updateNavbar();
+
     this._subscriptions = [
-      this._eventAggregator.subscribe('router:navigation:success', async(response: IAureliaRouterResponse) => {
-        this.activeRouteName = response.instruction.config.name;
-
-        const solutionUri: string = response.instruction.queryParams.solutionUri;
-        const noSultionUriSpecified: boolean = solutionUri === undefined;
-
-        if (noSultionUriSpecified) {
-          const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
-          this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(remoteSolutionUri);
-        } else {
-          this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
-        }
-
-        const solutionIsSet: boolean = this.activeSolutionEntry !== undefined;
-        if (solutionIsSet) {
-
-          const diagramIsSet: boolean = response.instruction.params.diagramName !== undefined;
-          if (diagramIsSet) {
-
-            this.activeDiagram = await this.activeSolutionEntry.service.loadDiagram(response.instruction.params.diagramName);
-          }
-
-          this._updateNavbarTitle();
-          this._updateNavbarTools();
-        }
+      this._eventAggregator.subscribe('router:navigation:success', () => {
+        this._updateNavbar();
       }),
 
       this._eventAggregator.subscribe(environment.events.navBar.showTools, () => {
@@ -340,6 +319,35 @@ export class NavBar {
 
     this.disableStartButton = !activeSolutionIsRemoteSolution;
     this.disableDiagramUploadButton = activeSolutionIsRemoteSolution;
+  }
+
+  private async _updateNavbar(): Promise<void> {
+    this.activeRouteName = this._router.currentInstruction.config.name;
+
+    const solutionUri: string = this._router.currentInstruction.queryParams.solutionUri;
+    const noSolutionUriSpecified: boolean = solutionUri === undefined;
+
+    if (noSolutionUriSpecified) {
+      const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
+      this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(remoteSolutionUri);
+    } else {
+      this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
+    }
+
+    const solutionIsSet: boolean = this.activeSolutionEntry !== undefined;
+    if (solutionIsSet) {
+
+      const diagramName: string = this._router.currentInstruction.params.diagramName;
+      const diagramIsSet: boolean = diagramName !== undefined;
+      if (diagramIsSet) {
+
+        this.activeDiagram = await this.activeSolutionEntry.service.loadDiagram(this._router.currentInstruction.params.diagramName);
+      }
+
+      this._updateNavbarTitle();
+      this._updateNavbarTools();
+    }
+
   }
 
 }
