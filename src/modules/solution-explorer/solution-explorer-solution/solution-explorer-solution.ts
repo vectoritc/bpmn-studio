@@ -150,6 +150,8 @@ export class SolutionExplorerSolution {
   }
 
   public attached(): void {
+    this._updateSolutionExplorer();
+
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToInspect, (inspectView?: string) => {
         this._diagramRoute = 'inspect';
@@ -166,23 +168,8 @@ export class SolutionExplorerSolution {
         this._inspectView = undefined;
       }),
 
-      this._eventAggregator.subscribe('router:navigation:success', async(response: IAureliaRouterResponse) => {
-
-        const solutionUriSpecified: boolean = response.instruction.queryParams.solutionUri !== undefined;
-        if (solutionUriSpecified) {
-          const solutionUri: string = response.instruction.queryParams.solutionUri;
-          const solutionEntry: ISolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
-
-          const diagramNameIsSpecified: boolean = response.instruction.params.diagramName !== undefined;
-          if (diagramNameIsSpecified) {
-            const diagramName: string = response.instruction.params.diagramName;
-            this.activeDiagram = await solutionEntry.service.loadDiagram(diagramName);
-
-            return;
-          }
-        }
-
-        this.activeDiagram = undefined;
+      this._eventAggregator.subscribe('router:navigation:success', () => {
+        this._updateSolutionExplorer();
       }),
     ];
 
@@ -190,6 +177,25 @@ export class SolutionExplorerSolution {
       this.updateSolution();
     }, environment.processengine.solutionExplorerPollingIntervalInMs);
 
+  }
+
+  private async _updateSolutionExplorer(): Promise<void> {
+    const solutionUri: string = this._router.currentInstruction.queryParams.solutionUri;
+    const solutionUriSpecified: boolean = solutionUri !== undefined;
+
+    if (solutionUriSpecified) {
+      const solutionEntry: ISolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
+      const diagramName: string = this._router.currentInstruction.params.diagramName;
+      const diagramNameIsSpecified: boolean = diagramName !== undefined;
+
+      if (diagramNameIsSpecified) {
+        this.activeDiagram = await solutionEntry.service.loadDiagram(diagramName);
+
+        return;
+      }
+    }
+
+    this.activeDiagram = undefined;
   }
 
   public detached(): void {
