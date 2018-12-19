@@ -101,17 +101,24 @@ export class DiagramDetail {
       return;
     }
 
-    this._activeSolutionEntry = this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
-    /**
-     * We have to open the solution here again since if we come here after a
-     * reload the solution might not be opened yet.
-     */
-    await this._activeSolutionEntry.service.openSolution(this._activeSolutionEntry.uri, this._activeSolutionEntry.identity);
-    this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
+    try {
+      this._activeSolutionEntry = this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
+      /**
+       * We have to open the solution here again since if we come here after a
+       * reload the solution might not be opened yet.
+       */
+      await this._activeSolutionEntry.service.openSolution(this._activeSolutionEntry.uri, this._activeSolutionEntry.identity);
+      this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
 
-    this.xml = this.activeDiagram.xml;
+      this.xml = this.activeDiagram.xml;
 
-    this._diagramHasChanged = false;
+      this._diagramHasChanged = false;
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.INFO, 'Diagram could not be opened.');
+      this._router.navigateToRoute('start-page');
+
+      return;
+    }
 
     const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
     if (isRunningInElectron) {
