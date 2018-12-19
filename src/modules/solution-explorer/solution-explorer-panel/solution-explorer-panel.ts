@@ -56,6 +56,18 @@ export class SolutionExplorerPanel {
 
     // Open the solution of the currently configured processengine instance on startup.
     await this.solutionExplorerList.openSolution(uriOfProcessEngine);
+
+    // Open the previously opened solutions.
+    const previouslyOpenedSolutions: Array<ISolutionEntry> = this._solutionService.getPersistedEntries();
+    previouslyOpenedSolutions.forEach(async(entry: ISolutionEntry) => {
+      // We are not adding the solution of the connect PE here again since that happened above.
+      const entryIsNotConnectedProcessEngine: boolean = entry.uri !== uriOfProcessEngine;
+      if (entryIsNotConnectedProcessEngine) {
+        await this.solutionExplorerList.openSolution(entry.uri);
+      }
+
+    });
+
   }
 
   public async attached(): Promise<void> {
@@ -285,24 +297,11 @@ export class SolutionExplorerPanel {
 
   // TODO: This method is copied all over the place.
   private async _navigateToDetailView(diagram: IDiagram, solution: ISolutionEntry): Promise<void> {
-    const previousActiveSolution: ISolutionEntry = this._solutionService.getActiveSolutionEntry();
-    const previousActiveDiagram: IDiagram = this._solutionService.getActiveDiagram();
 
-    this._solutionService.setActiveSolutionEntry(solution);
-    this._solutionService.setActiveDiagram(diagram);
-
-    const result: boolean | PipelineResult = await this._router.navigateToRoute('diagram-detail', {
+    await this._router.navigateToRoute('diagram-detail', {
       diagramName: diagram.name,
+      solutionUri: solution.uri,
     });
 
-    const navigationResultIsBoolean: boolean = typeof result === 'boolean';
-    const navigationCanceled: boolean = navigationResultIsBoolean
-                                      ? !(result as boolean)
-                                      : !(result as PipelineResult).completed;
-
-    if (navigationCanceled) {
-      this._solutionService.setActiveSolutionEntry(previousActiveSolution);
-      this._solutionService.setActiveDiagram(previousActiveDiagram);
-    }
   }
 }

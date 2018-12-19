@@ -10,6 +10,7 @@ import {Dashboard} from './dashboard/dashboard';
 export interface IInspectRouteParameters {
   view?: string;
   diagramName?: string;
+  solutionUri?: string;
 }
 
 @inject(EventAggregator, 'SolutionService')
@@ -36,20 +37,25 @@ export class Inspect {
   }
 
   public async activate(routeParameters: IInspectRouteParameters): Promise<void> {
-
-    this._activeSolutionEntry = await this._solutionService.getActiveSolutionEntry();
-
+    const solutionIsSet: boolean = routeParameters.solutionUri !== undefined;
     const diagramNameIsSet: boolean = routeParameters.diagramName !== undefined;
 
-    if (diagramNameIsSet) {
-      this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
+    if (solutionIsSet) {
+      this._activeSolutionEntry = this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
+      /**
+       * We have to open the solution here again since if we come here after a
+       * reload the solution might not be opened yet.
+       */
+      await this._activeSolutionEntry.service.openSolution(this._activeSolutionEntry.uri, this._activeSolutionEntry.identity);
+
+      if (diagramNameIsSet) {
+        this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
+      }
     }
 
     const routeViewIsDashboard: boolean = routeParameters.view === 'dashboard';
     const routeViewIsHeatmap: boolean = routeParameters.view === 'heatmap';
     const routeViewIsInspectCorrelation: boolean = routeParameters.view === 'inspect-correlation';
-
-    const latestSourceIsPE: boolean = this._activeSolutionEntry.uri.startsWith('http');
 
     if (routeViewIsDashboard) {
       this.showHeatmap = false;
@@ -64,11 +70,6 @@ export class Inspect {
         }
       }, 0);
 
-      if (latestSourceIsPE) {
-        this._eventAggregator.publish(environment.events.navBar.showInspectButtons);
-      } else {
-        this._eventAggregator.publish(environment.events.navBar.hideInspectButtons);
-      }
       this._eventAggregator.publish(environment.events.navBar.toggleDashboardView);
     } else if (routeViewIsHeatmap) {
       this._eventAggregator.publish(environment.events.navBar.showInspectButtons);

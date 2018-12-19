@@ -13,7 +13,9 @@ export class GeneralRepository {
   }
 
   public async getAllDiagrams(): Promise<Array<IDiagram>> {
-    const solutionEntry: ISolutionEntry = await this._solutionService.getActiveSolutionEntry();
+    const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
+
+    const solutionEntry: ISolutionEntry = await this._solutionService.getSolutionEntryForUri(remoteSolutionUri);
     const solution: ISolution = await solutionEntry.service.loadSolution();
 
     const allDiagramsInSolution: Array<IDiagram> = solution.diagrams;

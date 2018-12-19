@@ -6,14 +6,14 @@ import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
 import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/errors_ts';
+import {IIdentity} from '@essential-projects/iam_contracts';
 import {IManagementApi, ProcessModelExecution} from '@process-engine/management_api_contracts';
 
-import {IIdentity} from '@essential-projects/iam_contracts';
-import {AuthenticationStateEvent, IAuthenticationService, NotificationType} from '../../../contracts/index';
+import {AuthenticationStateEvent, IAuthenticationService, ISolutionService, NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 
-@inject(EventAggregator, Router,  'AuthenticationService', 'ManagementApiClientService', 'NotificationService')
+@inject(EventAggregator, Router, 'AuthenticationService', 'ManagementApiClientService', 'NotificationService')
 export class ProcessDefList {
 
   public allProcessModels: Array<ProcessModelExecution.ProcessModel>;
@@ -31,7 +31,6 @@ export class ProcessDefList {
               authenticationService: IAuthenticationService,
               managementApiClient: IManagementApi,
               notificationService: NotificationService) {
-
     this._eventAggregator = eventAggregator;
     this._router = router;
     this._authenticationService = authenticationService;
@@ -83,8 +82,11 @@ export class ProcessDefList {
   }
 
   public showDetails(processModelId: string): void {
+    const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
+
     this._router.navigateToRoute('diagram-detail', {
       diagramName: processModelId,
+      solutionUri: remoteSolutionUri,
     });
   }
 

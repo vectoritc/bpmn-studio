@@ -6,15 +6,18 @@ import {Router} from 'aurelia-router';
 import {IAuthenticationService} from '../../contracts/authentication/IAuthenticationService';
 import {
   AuthenticationStateEvent,
-  ISolutionEntry,
-  ISolutionService,
   NotificationType,
 } from '../../contracts/index';
 import environment from '../../environment';
 import {oidcConfig} from '../../open-id-connect-configuration';
 import {NotificationService} from '../notification/notification.service';
 
-@inject(Router, 'NotificationService', EventAggregator, 'AuthenticationService', OpenIdConnect, 'InternalProcessEngineBaseRoute', 'SolutionService')
+interface RouteParameters {
+  diagramName?: string;
+  solutionUri?: string;
+}
+
+@inject(Router, 'NotificationService', EventAggregator, 'AuthenticationService', OpenIdConnect, 'InternalProcessEngineBaseRoute')
 export class ConfigPanel {
   @bindable public baseRoute: string;
   @bindable public authority: string;
@@ -29,9 +32,9 @@ export class ConfigPanel {
   private _subscriptions: Array<Subscription>;
   // We use any here, because we need to call private members (see below)
   private _openIdConnect: OpenIdConnect | any;
-  private _solutionService: ISolutionService;
   private _initialBaseRoute: string;
   private _initialAuthority: string;
+  private _activeSolutionUri: string;
 
   constructor(router: Router,
               notificationService: NotificationService,
@@ -39,7 +42,6 @@ export class ConfigPanel {
               authenticationService: IAuthenticationService,
               openIdConnect: OpenIdConnect,
               internalProcessEngineBaseRoute: string | null,
-              solutionService: ISolutionService,
             ) {
 
     this._router = router;
@@ -48,7 +50,11 @@ export class ConfigPanel {
     this._authenticationService = authenticationService;
     this._openIdConnect = openIdConnect;
     this.internalProcessEngineBaseRoute = internalProcessEngineBaseRoute;
-    this._solutionService = solutionService;
+  }
+
+  public activate(routeParameters: RouteParameters): void {
+
+    this._activeSolutionUri = routeParameters.solutionUri;
   }
 
   public attached(): void {
@@ -117,7 +123,23 @@ export class ConfigPanel {
 
     this._notificationService.showNotification(NotificationType.SUCCESS, 'Successfully saved settings!');
 
-    this._router.navigateBack();
+    const solutionUriIsSet: boolean = this._activeSolutionUri !== undefined;
+    if (solutionUriIsSet) {
+      const solutionUriIsRemote: boolean = this._activeSolutionUri.startsWith('http');
+
+      if (solutionUriIsRemote) {
+        this._router.navigateToRoute('start-page');
+
+        return;
+      }
+    }
+
+    if (baseRouteChanged || authorityChanged) {
+      this._router.navigateToRoute('start-page');
+    } else {
+      this._router.navigateBack();
+    }
+
   }
 
   public authorityChanged(): void {
@@ -153,24 +175,16 @@ export class ConfigPanel {
   private _updateBaseRoute(): void {
     this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, this.baseRoute);
 
-    const currentActiveSolution: ISolutionEntry = this._solutionService.getActiveSolutionEntry();
-    const thereIsAnActiveSolution: boolean = currentActiveSolution !== undefined;
+    const newBaseRouteIsNotInternalProcessEngineRoute: boolean = this.baseRoute !== this.internalProcessEngineBaseRoute;
 
-    if (thereIsAnActiveSolution) {
-      const currentActiveSolutionIsRemoteSolution: boolean = currentActiveSolution.uri.startsWith('http');
-
-      if (currentActiveSolutionIsRemoteSolution) {
-        this._solutionService.setActiveDiagram(undefined);
-        this._solutionService.setActiveSolutionEntry(undefined);
-      }
-    }
-
-    const baseRouteIsInternalProcessEngine: boolean = this.baseRoute === window.localStorage.getItem('InternalProcessEngineRoute');
-    if (baseRouteIsInternalProcessEngine) {
-      window.localStorage.setItem('processEngineRoute', '');
+    if (newBaseRouteIsNotInternalProcessEngineRoute) {
+      window.localStorage.setItem('useCustomProcessEngine', 'true');
     } else {
-      window.localStorage.setItem('processEngineRoute', this.baseRoute);
+      window.localStorage.removeItem('useCustomProcessEngine');
     }
+
+    window.localStorage.setItem('processEngineRoute', this.baseRoute);
+
   }
 
   private _updateAuthority(): void {

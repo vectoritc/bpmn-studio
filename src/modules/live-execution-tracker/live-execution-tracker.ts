@@ -1,4 +1,4 @@
-import {computedFrom, inject, observable} from 'aurelia-framework';
+import {computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
@@ -35,8 +35,9 @@ import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
 type RouteParameters = {
-  correlationId: string;
-  processModelId: string;
+  diagramName: string,
+  solutionUri: string,
+  correlationId: string,
 };
 
 enum RequestError {
@@ -66,6 +67,8 @@ export class LiveExecutionTracker {
   private _managementApiClient: IManagementApi;
   private _solutionService: ISolutionService;
 
+  private _activeSolutionUri: string;
+
   private _pollingTimer: NodeJS.Timer;
   private _attached: boolean;
   private _previousElementIdsWithActiveToken: Array<string> = [];
@@ -91,7 +94,8 @@ export class LiveExecutionTracker {
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
     this.correlationId = routeParameters.correlationId;
-    this.processModelId = routeParameters.processModelId;
+    this.processModelId = routeParameters.diagramName;
+    this._activeSolutionUri = routeParameters.solutionUri;
 
     this._parentProcessModelId = await this._getParentProcessModelId();
 
@@ -106,8 +110,6 @@ export class LiveExecutionTracker {
     const processEngineSolution: ISolutionEntry = await this._solutionService.getSolutionEntryForUri(connectedProcessEngineRoute);
     const activeDiagram: IDiagram = await this._getProcessModelAndConvertToDiagram(this.processModelId, processEngineSolution);
 
-    this._solutionService.setActiveSolutionEntry(processEngineSolution);
-    this._solutionService.setActiveDiagram(activeDiagram);
   }
 
   private async _getParentProcessModelId(): Promise<string> {
@@ -203,7 +205,8 @@ export class LiveExecutionTracker {
   public navigateBackToPreviousProcess(): void {
     this._router.navigateToRoute('live-execution-tracker', {
       correlationId: this.correlationId,
-      processModelId: this._parentProcessModelId,
+      diagramName: this._parentProcessModelId,
+      solutionUri: this._activeSolutionUri,
     });
   }
 
@@ -397,8 +400,9 @@ export class LiveExecutionTracker {
       }
 
       this._router.navigateToRoute('live-execution-tracker', {
+        diagramName: callActivityTargetProcess,
+        solutionUri: this._activeSolutionUri,
         correlationId: this.correlationId,
-        processModelId: callActivityTargetProcess,
       });
     }
 

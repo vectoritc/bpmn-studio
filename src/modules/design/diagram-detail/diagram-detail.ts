@@ -24,6 +24,7 @@ import {BpmnIo} from '../bpmn-io/bpmn-io';
 
 interface RouteParameters {
   diagramName?: string;
+  solutionUri?: string;
 }
 
 type IEventListener = {
@@ -92,27 +93,32 @@ export class DiagramDetail {
   public async activate(routeParameters: RouteParameters): Promise<void> {
 
     const diagramNameIsNotSet: boolean = routeParameters.diagramName === undefined;
-    if (diagramNameIsNotSet) {
+    const solutionUriIsNotSet: boolean = routeParameters.solutionUri === undefined;
+
+    if (diagramNameIsNotSet || solutionUriIsNotSet) {
       this._router.navigateToRoute('start-page');
 
       return;
     }
 
-    this._activeSolutionEntry = await this._solutionService.getActiveSolutionEntry();
+    try {
+      this._activeSolutionEntry = this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
+      /**
+       * We have to open the solution here again since if we come here after a
+       * reload the solution might not be opened yet.
+       */
+      await this._activeSolutionEntry.service.openSolution(this._activeSolutionEntry.uri, this._activeSolutionEntry.identity);
+      this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
 
-    const activeSolutionEntryDoesNotExist: boolean = this._activeSolutionEntry === undefined;
-    if (activeSolutionEntryDoesNotExist) {
+      this.xml = this.activeDiagram.xml;
+
+      this._diagramHasChanged = false;
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.INFO, 'Diagram could not be opened.');
       this._router.navigateToRoute('start-page');
 
       return;
     }
-
-    this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
-
-    this.xml = this.activeDiagram.xml;
-
-    this._solutionService.setActiveDiagram(this.activeDiagram);
-    this._diagramHasChanged = false;
 
     const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
     if (isRunningInElectron) {
@@ -299,10 +305,12 @@ export class DiagramDetail {
 
       await this._activeSolutionEntry.service.saveDiagram(copyOfDiagram, connectedProcessEngineRoute);
 
-      this._solutionService.setActiveSolutionEntry(this._activeSolutionEntry);
       this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(processModelId);
 
-      this._solutionService.setActiveDiagram(this.activeDiagram);
+      this._router.navigateToRoute('diagram-detail', {
+        diagramName: this.activeDiagram.name,
+        solutionUri: this._activeSolutionEntry.uri,
+      });
 
       this._notificationService
           .showNotification(NotificationType.SUCCESS, 'Diagram was successfully uploaded to the connected ProcessEngine.');
@@ -376,8 +384,9 @@ export class DiagramDetail {
       const correlationId: string = response.correlationId;
 
       this._router.navigateToRoute('live-execution-tracker', {
+        diagramName: this.activeDiagram.id,
+        solutionUri: this._activeSolutionEntry.uri,
         correlationId: correlationId,
-        processModelId: this.activeDiagram.id,
       });
     } catch (error) {
       this.
@@ -597,8 +606,7 @@ export class DiagramDetail {
       const xml: string = await this.bpmnio.getXML();
       this.activeDiagram.xml = xml;
 
-      const activeSolution: ISolutionEntry = this._solutionService.getActiveSolutionEntry();
-      await activeSolution.service.saveDiagram(this.activeDiagram);
+      await this._activeSolutionEntry.service.saveDiagram(this.activeDiagram);
       this.bpmnio.saveCurrentXML();
 
       this._diagramHasChanged = false;

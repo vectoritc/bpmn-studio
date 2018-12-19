@@ -11,8 +11,9 @@ import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
 import {NotificationService} from '../notification/notification.service';
 
 interface RouteParameters {
+  diagramName: string;
+  solutionUri: string;
   correlationId: string;
-  processModelId: string;
   taskId: string;
 }
 
@@ -27,6 +28,8 @@ export class TaskDynamicUi {
   @bindable() public isModal: boolean;
   @bindable() public modalCloseEvent: Function;
 
+  private _activeDiagramName: string;
+  private _activeSolutionUri: string;
   private _eventAggregator: EventAggregator;
   private _router: Router;
   private _notificationService: NotificationService;
@@ -51,10 +54,11 @@ export class TaskDynamicUi {
 
   public activate(routeParameters: RouteParameters): void {
     // This is called when starting tasks
-
     this.correlationId = routeParameters.correlationId;
-    this.processModelId = routeParameters.processModelId;
+    this.processModelId = routeParameters.diagramName;
     this.taskId = routeParameters.taskId;
+    this._activeDiagramName = routeParameters.diagramName;
+    this._activeSolutionUri = routeParameters.solutionUri;
 
     this.isModal = false;
   }
@@ -138,8 +142,9 @@ export class TaskDynamicUi {
     const task: UserTask | ManualTask = this._userTask === undefined ? this._manualTask : this._userTask;
 
     this._router.navigateToRoute('live-execution-tracker', {
+      diagramName: this._activeDiagramName,
+      solutionUri: this._activeSolutionUri,
       correlationId: task.correlationId,
-      processModelId: task.processModelId,
     });
   }
 

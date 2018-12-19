@@ -45,6 +45,8 @@ interface IDiagramCreationState extends IDiagramNameInputState {
 )
 export class SolutionExplorerSolution {
 
+  public activeDiagram: IDiagram;
+
   private _router: Router;
   private _eventAggregator: EventAggregator;
   private _validationController: ValidationController;
@@ -148,6 +150,8 @@ export class SolutionExplorerSolution {
   }
 
   public attached(): void {
+    this._updateSolutionExplorer();
+
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToInspect, (inspectView?: string) => {
         this._diagramRoute = 'inspect';
@@ -162,6 +166,10 @@ export class SolutionExplorerSolution {
       this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToDesigner, () => {
         this._diagramRoute = 'diagram-detail';
         this._inspectView = undefined;
+      }),
+
+      this._eventAggregator.subscribe('router:navigation:success', () => {
+        this._updateSolutionExplorer();
       }),
     ];
 
@@ -197,6 +205,7 @@ export class SolutionExplorerSolution {
   public async updateSolution(): Promise<void> {
     try {
       this._openedSolution = await this.solutionService.loadSolution();
+
     } catch (error) {
       // In the future we can maybe display a small icon indicating the error.
       if (isError(error, UnauthorizedError)) {
@@ -220,7 +229,7 @@ export class SolutionExplorerSolution {
   public async deleteDiagram(diagram: IDiagram, event: Event): Promise<void> {
     event.stopPropagation();
 
-    if (this._isDiagramDetailViewOfDiagramOpen(diagram.uri)) {
+    if (await this._isDiagramDetailViewOfDiagramOpen(diagram.uri)) {
       const messageTitle: string = '<h4 class="toast-message__headline">Not supported while opened.</h4>';
       const messageBody: string = 'Deleting of opened diagrams is currently not supported. Please switch to another diagram and try again.';
       const message: string = `${messageTitle}\n${messageBody}`;
@@ -244,7 +253,7 @@ export class SolutionExplorerSolution {
   public async startRenamingOfDiagram(diagram: IDiagram, event: Event): Promise<void> {
     event.stopPropagation();
 
-    if (this._isDiagramDetailViewOfDiagramOpen(diagram.uri)) {
+    if (await this._isDiagramDetailViewOfDiagramOpen(diagram.uri)) {
       const messageTitle: string = '<h4 class="toast-message__headline">Not supported while opened.</h4>';
       const messageBody: string = 'Renaming of opened diagrams is currently not supported. Please switch to another diagram and try again.';
       const message: string = `${messageTitle}\n${messageBody}`;
@@ -376,44 +385,32 @@ export class SolutionExplorerSolution {
       }
     }
 
-    const previousActiveSolution: ISolutionEntry = this._solutionService.getActiveSolutionEntry();
-    this._solutionService.setActiveSolutionEntry(this.displayedSolutionEntry);
-
-    const navigationResult: boolean | PipelineResult = await this._router.navigateToRoute(this._diagramRoute, {
+    await this._router.navigateToRoute(this._diagramRoute, {
       view: this._inspectView,
       diagramName: diagram.name,
+      solutionUri: this.displayedSolutionEntry.uri,
     });
-
-    const navigationResultIsBoolean: boolean = typeof navigationResult === 'boolean';
-    const navigationCanceled: boolean = navigationResultIsBoolean
-                                      ? !(navigationResult as boolean)
-                                      : !(navigationResult as PipelineResult).completed;
-
-    if (navigationCanceled) {
-      this._solutionService.setActiveSolutionEntry(previousActiveSolution);
-
-      return;
-    }
-
-    this._solutionService.setActiveDiagram(diagram);
 
   }
 
-  @computedFrom('_solutionService._activeDiagram')
-  public get currentlyOpenedDiagramUri(): string {
-    const activeDiagram: IDiagram = this._solutionService.getActiveDiagram();
-    const noDiagramWasOpened: boolean = activeDiagram === undefined || activeDiagram === null;
-
-    if (noDiagramWasOpened) {
+  @computedFrom('activeDiagram.uri')
+  public get activeDiagramUri(): string {
+    const activeDiagramIsNotSet: boolean = this.activeDiagram === undefined;
+    if (activeDiagramIsNotSet) {
       return undefined;
     }
 
-    return activeDiagram.uri;
+    return this.activeDiagram.uri;
   }
 
-  private _isDiagramDetailViewOfDiagramOpen(diagramUriToCheck: string): boolean {
-    const diagramIsOpened: boolean = diagramUriToCheck === this.currentlyOpenedDiagramUri;
+  private async _isDiagramDetailViewOfDiagramOpen(diagramUriToCheck: string): Promise<boolean> {
+    const activeDiagramIsUndefined: boolean = this.activeDiagram === undefined;
+    if (activeDiagramIsUndefined) {
+      return false;
+    }
 
+    const openedDiagramUri: string = this.activeDiagram.uri;
+    const diagramIsOpened: boolean = diagramUriToCheck === openedDiagramUri;
     return diagramIsOpened;
   }
 
@@ -736,5 +733,32 @@ export class SolutionExplorerSolution {
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
+  }
+
+  private async _updateSolutionExplorer(): Promise<void> {
+    const solutionUri: string = this._router.currentInstruction.queryParams.solutionUri;
+    const solutionUriSpecified: boolean = solutionUri !== undefined;
+    const diagramName: string = this._router.currentInstruction.params.diagramName;
+    const diagramNameIsSpecified: boolean = diagramName !== undefined;
+
+    const routeName: string = this._router.currentInstruction.config.name;
+    const routeNameIsDiagramDetailOrInspect: boolean = routeName === 'diagram-detail'
+                                                    || routeName === 'inspect';
+    if (routeNameIsDiagramDetailOrInspect) {
+      this._diagramRoute = routeName;
+      this._inspectView = this._router.currentInstruction.params.view;
+    }
+
+    if (solutionUriSpecified && diagramNameIsSpecified) {
+      try {
+        this.activeDiagram = await this.solutionService.loadDiagram(diagramName);
+      } catch (error) {
+        this.activeDiagram = undefined;
+      }
+
+      return;
+    }
+
+    this.activeDiagram = undefined;
   }
 }

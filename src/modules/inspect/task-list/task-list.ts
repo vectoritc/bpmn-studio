@@ -21,7 +21,7 @@ import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 
 interface ITaskListRouteParameters {
-  processModelId?: string;
+  diagramName?: string;
   correlationId?: string;
 }
 
@@ -69,9 +69,10 @@ export class TaskList {
   }
 
   public initializeTaskList(routeParameters: ITaskListRouteParameters): void {
-    if (routeParameters.processModelId) {
+
+    if (routeParameters.diagramName) {
       this._getTasks = (): Promise<Array<IUserTaskWithProcessModel>> => {
-        return this._getTasksForProcessModel(routeParameters.processModelId);
+        return this._getTasksForProcessModel(routeParameters.diagramName);
       };
     } else if (routeParameters.correlationId) {
       this._getTasks = (): Promise<Array<IUserTaskWithProcessModel>> => {
@@ -129,9 +130,12 @@ export class TaskList {
       ? taskWithProcessModel.userTask.id
       : taskWithProcessModel.manualTask.id;
 
+    const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
+
     this._router.navigateToRoute('task-dynamic-ui', {
+      diagramName: processModelId,
+      solutionUri: remoteSolutionUri,
       correlationId: correlationId,
-      processModelId: processModelId,
       taskId: taskId,
     });
   }
@@ -147,6 +151,12 @@ export class TaskList {
     }
 
     return this._userTasks;
+  }
+
+  public get remoteSolutionUri(): string {
+    const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
+
+    return remoteSolutionUri;
   }
 
   private async _getAllTasks(): Promise<Array<IUserTaskWithProcessModel & IManualTaskWithProcessModel>> {
@@ -307,7 +317,6 @@ export class TaskList {
 
   public async updateTasks(): Promise<void> {
     try {
-
       this._userTasks = await this._getTasks();
       this.successfullyRequested = true;
 
