@@ -53,8 +53,6 @@ export class Inspect {
       }
     }
 
-    this._eventAggregator.publish(environment.events.navBar.updateActiveSolutionAndDiagram);
-
     const routeViewIsDashboard: boolean = routeParameters.view === 'dashboard';
     const routeViewIsHeatmap: boolean = routeParameters.view === 'heatmap';
     const routeViewIsInspectCorrelation: boolean = routeParameters.view === 'inspect-correlation';

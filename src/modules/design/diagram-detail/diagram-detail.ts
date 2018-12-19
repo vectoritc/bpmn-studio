@@ -111,7 +111,6 @@ export class DiagramDetail {
 
     this.xml = this.activeDiagram.xml;
 
-    this._eventAggregator.publish(environment.events.navBar.updateActiveSolutionAndDiagram);
     this._diagramHasChanged = false;
 
     const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
