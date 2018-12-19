@@ -25,6 +25,7 @@ export class CallActivitySection implements ISection {
   private _generalService: GeneralService;
   private _router: Router;
   private _eventAggregator: EventAggregator;
+  private _activeSolutionUri: string;
 
   constructor(generalService?: GeneralService, router?: Router, eventAggregator?: EventAggregator) {
     this._generalService = generalService;
@@ -33,6 +34,7 @@ export class CallActivitySection implements ISection {
   }
 
   public async activate(model: IPageModel): Promise<void> {
+    this._activeSolutionUri = this._router.currentInstruction.queryParams.solutionUri;
     this._businessObjInPanel = model.elementInPanel.businessObject;
 
     await this._getAllDiagrams();
@@ -51,6 +53,7 @@ export class CallActivitySection implements ISection {
   public navigateToCalledDiagram(): void {
     this._router.navigateToRoute('diagram-detail', {
       diagramName: this.selectedDiagramId,
+      solutionUri: this._activeSolutionUri,
     });
   }
 
