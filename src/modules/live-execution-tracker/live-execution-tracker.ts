@@ -124,7 +124,7 @@ export class LiveExecutionTracker {
         return processModelFound;
       });
 
-    const parentProcessInstanceId: string = processModelFromCorrelation.parentProcessInstanceId;
+    const {parentProcessInstanceId} = processModelFromCorrelation;
 
     return parentProcessInstanceId;
   }
