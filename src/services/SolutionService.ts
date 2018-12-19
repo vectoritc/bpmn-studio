@@ -36,7 +36,9 @@ export class SolutionService implements ISolutionService {
 
   public addSolutionEntry(solutionEntry: ISolutionEntry): void {
     const solutionWithSameUri: ISolutionEntry = this._allSolutionEntries.find((entry: ISolutionEntry) => {
-      return entry.uri === solutionEntry.uri;
+      const entryHasSameUri: boolean = entry.uri === solutionEntry.uri;
+
+      return entryHasSameUri;
     });
     const solutionIsAlreadOpenend: boolean = solutionWithSameUri !== undefined;
 
@@ -64,7 +66,9 @@ export class SolutionService implements ISolutionService {
 
   public getSolutionEntryForUri(uri: string): ISolutionEntry {
     const solutionEntry: ISolutionEntry = this._allSolutionEntries.find((entry: ISolutionEntry) => {
-      return entry.uri === uri;
+      const entryUriIsSearchedUri: boolean = entry.uri === uri;
+
+      return entryUriIsSearchedUri;
     });
 
     return solutionEntry;
@@ -75,7 +79,9 @@ export class SolutionService implements ISolutionService {
      * Right now the single diagrams solution don't get persisted.
      */
     const entriesToPersist: Array<ISolutionEntry> = this._allSolutionEntries.filter((entry: ISolutionEntry) => {
-      return entry.uri !== 'Single Diagrams';
+      const entryIsNotSingleDiagramSolution: boolean = entry.uri !== 'Single Diagrams';
+
+      return entryIsNotSingleDiagramSolution;
     });
 
     window.localStorage.setItem('openedSolutions', JSON.stringify(entriesToPersist));
@@ -89,7 +95,9 @@ export class SolutionService implements ISolutionService {
 
   private _removeCurrentRemoteSolution(): void {
     const remoteSolution: ISolutionEntry = this._allSolutionEntries.find((entry: ISolutionEntry) => {
-      return entry.uri.startsWith('http');
+      const entryIsRemoteSolution: boolean = entry.uri.startsWith('http');
+
+      return entryIsRemoteSolution;
     });
 
     this.removeSolutionEntry(remoteSolution);
