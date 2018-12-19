@@ -37,7 +37,7 @@ import {NotificationService} from '../notification/notification.service';
 type RouteParameters = {
   diagramName: string,
   solutionUri: string,
-  correlationId: string;
+  correlationId: string,
 };
 
 enum RequestError {
@@ -208,7 +208,8 @@ export class LiveExecutionTracker {
   public navigateBackToPreviousProcess(): void {
     this._router.navigateToRoute('live-execution-tracker', {
       correlationId: this.correlationId,
-      processModelId: this._parentProcessModelId,
+      diagramName: this._parentProcessModelId,
+      solutionUri: this._activeSolutionUri,
     });
   }
 
@@ -402,10 +403,9 @@ export class LiveExecutionTracker {
       }
 
       this._router.navigateToRoute('live-execution-tracker', {
-        diagramName: this._activeDiagramName,
+        diagramName: callActivityTargetProcess,
         solutionUri: this._activeSolutionUri,
         correlationId: this.correlationId,
-        processModelId: callActivityTargetProcess,
       });
     }
 
