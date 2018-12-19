@@ -345,9 +345,9 @@ export class LiveExecutionTracker {
     }
 
     const activeCallActivities: Array<IShape> = elements.filter((element: IShape) => {
-      const elementIsAUserOrManualTask: boolean = element.type === 'bpmn:CallActivity';
+      const elementIsCallActivity: boolean = element.type === 'bpmn:CallActivity';
 
-      return elementIsAUserOrManualTask;
+      return elementIsCallActivity;
     });
 
     const activeCallActivityIds: Array<string> =  activeCallActivities.map((element: IShape) => element.id).sort();
