@@ -1,4 +1,4 @@
-import {computedFrom, inject, observable} from 'aurelia-framework';
+import {computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
@@ -67,7 +67,6 @@ export class LiveExecutionTracker {
   private _managementApiClient: IManagementApi;
   private _solutionService: ISolutionService;
 
-  private _activeDiagramName: string;
   private _activeSolutionUri: string;
 
   private _pollingTimer: NodeJS.Timer;
@@ -96,8 +95,6 @@ export class LiveExecutionTracker {
   public async activate(routeParameters: RouteParameters): Promise<void> {
     this.correlationId = routeParameters.correlationId;
     this.processModelId = routeParameters.diagramName;
-
-    this._activeDiagramName = routeParameters.diagramName;
     this._activeSolutionUri = routeParameters.solutionUri;
 
     this._parentProcessModelId = await this._getParentProcessModelId();
