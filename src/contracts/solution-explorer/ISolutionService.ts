@@ -16,30 +16,13 @@ export interface ISolutionService {
   removeSolutionEntry(solutionEntry: ISolutionEntry): void;
 
   /**
-   * Gets the currently active SolutionEntry.
-   */
-  getActiveSolutionEntry(): ISolutionEntry;
-
-  /**
    * Gets a specific SolutionEntry identified by its URI.
    * @param uri The uri of the searched SolutionEntry.
    */
   getSolutionEntryForUri(uri: string): ISolutionEntry;
 
   /**
-   * Sets the active Solution
-   * @param solution The new active SolutionEntry.
+   * Gets a list of all persisted solutions from the last session.
    */
-  setActiveSolutionEntry(solution: ISolutionEntry): void;
-
-  /**
-   * Gets the currently active Diagram.
-   */
-  getActiveDiagram(): IDiagram;
-
-  /**
-   * Sets the active Diagram
-   * @param solution The new active Diagram.
-   */
-  setActiveDiagram(diagram: IDiagram): void;
+  getPersistedEntries(): Array<ISolutionEntry>;
 }

@@ -1,5 +1,5 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {computedFrom, inject} from 'aurelia-framework';
+import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
@@ -11,8 +11,9 @@ import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
 import {NotificationService} from '../notification/notification.service';
 
 interface RouteParameters {
+  diagramName: string;
+  solutionUri: string;
   correlationId: string;
-  processModelId: string;
   taskId: string;
 }
 
@@ -21,10 +22,14 @@ export class TaskDynamicUi {
 
   public dynamicUiWrapper: DynamicUiWrapper;
 
-  private _correlationId: string;
-  private _processModelId: string;
-  private _taskId: string;
+  @bindable() public correlationId: string;
+  @bindable() public processModelId: string;
+  @bindable() public taskId: string;
+  @bindable() public isModal: boolean;
+  @bindable() public modalCloseEvent: Function;
 
+  private _activeDiagramName: string;
+  private _activeSolutionUri: string;
   private _eventAggregator: EventAggregator;
   private _router: Router;
   private _notificationService: NotificationService;
@@ -49,15 +54,18 @@ export class TaskDynamicUi {
 
   public activate(routeParameters: RouteParameters): void {
     // This is called when starting tasks
+    this.correlationId = routeParameters.correlationId;
+    this.processModelId = routeParameters.diagramName;
+    this.taskId = routeParameters.taskId;
+    this._activeDiagramName = routeParameters.diagramName;
+    this._activeSolutionUri = routeParameters.solutionUri;
 
-    this._correlationId = routeParameters.correlationId;
-    this._processModelId = routeParameters.processModelId;
-    this._taskId = routeParameters.taskId;
-
-    this.getTask();
+    this.isModal = false;
   }
 
   public attached(): void {
+    this.getTask();
+
     this._subscriptions = [
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
         this.getTask();
@@ -107,6 +115,12 @@ export class TaskDynamicUi {
   public get taskName(): string {
     const nonWhiteSpaceRegex: RegExp = /\S/;
     const task: UserTask | ManualTask = this._userTask === undefined ? this._manualTask : this._userTask;
+
+    const noTaskIsSet: boolean = task === undefined;
+    if (noTaskIsSet) {
+      return;
+    }
+
     const taskNameIsSet: boolean = nonWhiteSpaceRegex.test(task.name);
     const taskDisplayName: string = taskNameIsSet
       ? task.name
@@ -116,11 +130,21 @@ export class TaskDynamicUi {
   }
 
   private _finishTask(action: string): void {
+    if (this.isModal) {
+      this._userTask = undefined;
+      this._manualTask = undefined;
+
+      this.modalCloseEvent();
+
+      return;
+    }
+
     const task: UserTask | ManualTask = this._userTask === undefined ? this._manualTask : this._userTask;
 
     this._router.navigateToRoute('live-execution-tracker', {
+      diagramName: this._activeDiagramName,
+      solutionUri: this._activeSolutionUri,
       correlationId: task.correlationId,
-      processModelId: task.processModelId,
     });
   }
 
@@ -128,18 +152,18 @@ export class TaskDynamicUi {
     const identity: IIdentity = this._getIdentity();
 
     try {
-      const correlationNotGiven: boolean = this._correlationId === undefined;
-      const processModelIdNotGiven: boolean = this._processModelId === undefined;
+      const correlationNotGiven: boolean = this.correlationId === undefined;
+      const processModelIdNotGiven: boolean = this.processModelId === undefined;
 
       if (correlationNotGiven) {
-        throw Error(`Invalid Correlation ID: ${this._correlationId}`);
+        throw Error(`Invalid Correlation ID: ${this.correlationId}`);
       }
       if (processModelIdNotGiven) {
-        throw Error(`Invalid ProcessModel ID: ${this._processModelId}`);
+        throw Error(`Invalid ProcessModel ID: ${this.processModelId}`);
       }
 
       this._userTask = await this._dynamicUiService
-                                  .getUserTask(identity, this._correlationId, this._processModelId, this._taskId);
+                                  .getUserTask(identity, this.correlationId, this.processModelId, this.taskId);
 
       const userTaskFound: boolean = this._userTask !== undefined;
       if (userTaskFound) {
@@ -149,7 +173,7 @@ export class TaskDynamicUi {
       }
 
       this._manualTask = await this._dynamicUiService
-                                    .getManualTask(identity, this._correlationId, this._processModelId, this._taskId);
+                                    .getManualTask(identity, this.correlationId, this.processModelId, this.taskId);
 
       const manualTaskFound: boolean = this._manualTask !== undefined;
       if (manualTaskFound) {
@@ -158,7 +182,7 @@ export class TaskDynamicUi {
         return;
       }
 
-      throw new Error(`No UserTask or ManualTask with ID ${this._taskId} found!`);
+      throw new Error(`No UserTask or ManualTask with ID ${this.taskId} found!`);
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, `Failed to refresh task: ${error.message}`);
       throw error;

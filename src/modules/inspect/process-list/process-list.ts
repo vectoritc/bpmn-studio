@@ -1,6 +1,5 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject, observable} from 'aurelia-framework';
-import {Router} from 'aurelia-router';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
 import {Correlation, CorrelationProcessModel, IManagementApi} from '@process-engine/management_api_contracts';
@@ -14,10 +13,11 @@ import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 
 interface IProcessListRouteParameters {
-  processModelId?: string;
+  diagramName?: string;
+  solutionUri?: string;
 }
 
-@inject('ManagementApiClientService', EventAggregator, Router, 'NotificationService', 'AuthenticationService')
+@inject('ManagementApiClientService', EventAggregator, 'NotificationService', 'AuthenticationService')
 export class ProcessList {
 
   @observable public currentPage: number = 0;
@@ -29,7 +29,6 @@ export class ProcessList {
 
   private _managementApiService: IManagementApi;
   private _eventAggregator: EventAggregator;
-  private _router: Router;
   private _notificationService: NotificationService;
   private _authenticationService: IAuthenticationService;
 
@@ -40,13 +39,11 @@ export class ProcessList {
 
   constructor(managementApiService: IManagementApi,
               eventAggregator: EventAggregator,
-              router: Router,
               notificationService: NotificationService,
               authenticationService: IAuthenticationService,
   ) {
     this._managementApiService = managementApiService;
     this._eventAggregator = eventAggregator;
-    this._router = router;
     this._notificationService = notificationService;
     this._authenticationService = authenticationService;
   }
@@ -61,11 +58,12 @@ export class ProcessList {
   }
 
   public activate(routeParameters: IProcessListRouteParameters): void {
-    if (!routeParameters.processModelId) {
+
+    if (!routeParameters.diagramName) {
       this._getCorrelations = this.getAllActiveCorrelations;
     } else {
       this._getCorrelations = (): Promise<Array<Correlation>> => {
-        return this.getCorrelationsForProcessModel(routeParameters.processModelId);
+        return this.getCorrelationsForProcessModel(routeParameters.diagramName);
       };
     }
   }
@@ -92,6 +90,7 @@ export class ProcessList {
   }
 
   public async attached(): Promise<void> {
+
     this._initializeGetProcesses();
 
     await this.updateProcesses();
@@ -115,6 +114,12 @@ export class ProcessList {
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
+  }
+
+  public get remoteSolutionUri(): string {
+    const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
+
+    return remoteSolutionUri;
   }
 
   public get correlations(): Array<Correlation> {
@@ -142,7 +147,7 @@ export class ProcessList {
 
     const correlationsWithId: Array<Correlation> = runningCorrelations.filter((correlation: Correlation) => {
       const processModelWithSearchedId: CorrelationProcessModel =  correlation.processModels.find((processModel: CorrelationProcessModel) => {
-        const isSearchedProcessModel: boolean = processModel.name === processModelId;
+        const isSearchedProcessModel: boolean = processModel.processModelId === processModelId;
 
         return isSearchedProcessModel;
       });

@@ -1,30 +1,10 @@
 <template>
   <require from="./user-login.css"></require>
   <div class="user-login" ref="userLogin">
-    <button id="userLoginButton" show.bind="!isLoggedIn" click.delegate="displayLoginModal()">login</button>
+    <button id="userLoginButton" show.bind="!isLoggedIn" click.delegate="login()">login</button>
     <div show.bind="isLoggedIn">
       <span>${username}</span>
       <button id="userLogoutButton" click.delegate="logout()">logout</button>
     </div>
-  </div>
-  <div if.bind="showLoginModal">
-    <div class="modal show-modal login-modal__show-modal" tabindex="-1" role="dialog">
-      <div class="modal-dialog login-modal__dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title">Notification</h4>
-          </div>
-          <div class="modal-body">
-            Due to technical reasons, the opened solutions will be closed when logged in.
-            <br>For more informations <a href="javascript:nodeRequire('open')('https://github.com/process-engine/bpmn-studio/issues/1006')">click here</a>.
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default" data-dismiss="modal" click.delegate="cancelLogin()">Cancel</button>
-            <button class="btn btn-default" data-dismiss="modal" click.delegate="login()">Continue</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal-backdrop fade in"></div>
   </div>
 </template>

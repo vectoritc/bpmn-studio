@@ -25,7 +25,7 @@ export class InspectCorrelationRepository implements IInspectCorrelationReposito
 
     const correlationsForProcessModelId: Array<Correlation> = allCorrelations.filter((correlation: Correlation) => {
       const processModelWithSameId: CorrelationProcessModel = correlation.processModels.find((processModel: CorrelationProcessModel) => {
-        const isSearchedProcessModel: boolean = processModel.name === processModelId;
+        const isSearchedProcessModel: boolean = processModel.processModelId === processModelId;
 
         return isSearchedProcessModel;
       });
@@ -44,7 +44,11 @@ export class InspectCorrelationRepository implements IInspectCorrelationReposito
     const logsForAllProcessModelsOfCorrelation: Array<Array<LogEntry>> = [];
 
     for (const processModel of correlation.processModels) {
-      const logsForProcessModel: Array<LogEntry> = await this._managementApiService.getProcessModelLog(identity, processModel.name, correlation.id);
+      const logsForProcessModel: Array<LogEntry> = await this._managementApiService
+        .getProcessModelLog(
+          identity,
+          processModel.processModelId,
+          correlation.id);
 
       logsForAllProcessModelsOfCorrelation.push(logsForProcessModel);
     }

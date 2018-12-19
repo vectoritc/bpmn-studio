@@ -1,11 +1,13 @@
-import {EventAggregator} from 'aurelia-event-aggregator';
+import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
-import {DiffMode} from '../../contracts/index';
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
+
+import {DiffMode, ISolutionEntry, ISolutionService} from '../../contracts/index';
 import environment from '../../environment';
 
-@inject(EventAggregator, Router)
+@inject(EventAggregator, Router, 'SolutionService')
 export class StatusBar {
 
   public processEngineRoute: string = '';
@@ -19,15 +21,20 @@ export class StatusBar {
   public currentXmlIdentifier: string;
   public previousXmlIdentifier: string;
   public showInspectPanel: boolean = true;
+  public activeSolutionEntry: ISolutionEntry;
+  public activeDiagram: IDiagram;
 
   public DiffMode: typeof DiffMode = DiffMode;
 
   private _eventAggregator: EventAggregator;
   private _router: Router;
+  private _solutionService: ISolutionService;
+  private _subscriptions: Array<Subscription>;
 
-  constructor(eventAggregator: EventAggregator, router: Router) {
+  constructor(eventAggregator: EventAggregator, router: Router, solutionService: ISolutionService) {
     this._eventAggregator = eventAggregator;
     this._router = router;
+    this._solutionService = solutionService;
 
     const customProcessEngineRoute: string = window.localStorage.getItem('processEngineRoute');
     const isCustomProcessEngineRouteSet: boolean = customProcessEngineRoute !== ''
@@ -41,31 +48,42 @@ export class StatusBar {
   }
 
   public attached(): void {
-    this._eventAggregator.subscribe(environment.events.statusBar.showDiagramViewButtons, () => {
-      this.showDiagramViewButtons = true;
-    });
+    this._subscriptions = [
+      this._eventAggregator.subscribe(environment.events.statusBar.showDiagramViewButtons, () => {
+        this.showDiagramViewButtons = true;
+      }),
 
-    this._eventAggregator.subscribe(environment.events.statusBar.hideDiagramViewButtons, () => {
-      this.showDiagramViewButtons = false;
-      this.xmlIsShown = false;
-      this.diffIsShown = false;
-      this.showChangeList = false;
-      this.currentDiffMode = DiffMode.NewVsOld;
-    });
+      this._eventAggregator.subscribe(environment.events.statusBar.hideDiagramViewButtons, () => {
+        this.showDiagramViewButtons = false;
+        this.xmlIsShown = false;
+        this.diffIsShown = false;
+        this.showChangeList = false;
+        this.currentDiffMode = DiffMode.NewVsOld;
+      }),
 
-    this._eventAggregator.subscribe(environment.events.configPanel.processEngineRouteChanged, (newProcessEngineRoute: string) => {
-      this._setProcessEngineRoute(newProcessEngineRoute);
-    });
+      this._eventAggregator.subscribe(environment.events.configPanel.processEngineRouteChanged, (newProcessEngineRoute: string) => {
+        this._setProcessEngineRoute(newProcessEngineRoute);
+      }),
 
-    this._eventAggregator.subscribe(environment.events.statusBar.setXmlIdentifier, (xmlIdentifier: Array<string>) => {
-      [this.previousXmlIdentifier, this.currentXmlIdentifier] = xmlIdentifier;
-    });
+      this._eventAggregator.subscribe(environment.events.statusBar.setXmlIdentifier, (xmlIdentifier: Array<string>) => {
+        [this.previousXmlIdentifier, this.currentXmlIdentifier] = xmlIdentifier;
+      }),
 
-    this._eventAggregator.subscribe(environment.events.statusBar.showInspectCorrelationButtons, (showInspectCorrelation: boolean) => {
-      this.showInspectCorrelationButtons = showInspectCorrelation;
-    });
+      this._eventAggregator.subscribe(environment.events.statusBar.showInspectCorrelationButtons, (showInspectCorrelation: boolean) => {
+        this.showInspectCorrelationButtons = showInspectCorrelation;
+      }),
+
+      this._eventAggregator.subscribe('router:navigation:success', () => {
+
+        this._updateStatusBar();
+      }),
+    ];
 
     this.currentDiffMode = DiffMode.NewVsOld;
+  }
+
+  public detached(): void {
+    this._disposeAllSubscriptions();
   }
 
   public toggleXMLView(): void {
@@ -103,7 +121,10 @@ export class StatusBar {
   }
 
   public navigateToSettings(): void {
-    this._router.navigateToRoute('configuration');
+    this._router.navigateToRoute('configuration', {
+      diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
+      solutionUri: this.activeSolutionEntry ? this.activeSolutionEntry.uri : undefined,
+    });
   }
 
   private _setProcessEngineRoute(processEngineRoute: string): void {
@@ -111,5 +132,32 @@ export class StatusBar {
     const [, protocol, route]: RegExpExecArray = /^([^\:]+:\/\/)?(.*)$/i.exec(processEngineRoute);
     this.isEncryptedCommunication = protocol === 'https://';
     this.processEngineRoute = route;
+  }
+
+  private _disposeAllSubscriptions(): void {
+    this._subscriptions.forEach((subscription: Subscription) => {
+      subscription.dispose();
+    });
+  }
+
+  private async _updateStatusBar(): Promise<void> {
+    const solutionUriFromNavigation: string = this._router.currentInstruction.queryParams.solutionUri;
+    const noSolutionUriSpecified: boolean = solutionUriFromNavigation === undefined;
+
+    const solutionUri: string = noSolutionUriSpecified
+      ? window.localStorage.getItem('processEngineRoute')
+      : solutionUriFromNavigation;
+
+    this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
+
+    const solutionIsSet: boolean = this.activeSolutionEntry !== undefined;
+    const diagramName: string = this._router.currentInstruction.params.diagramName;
+    const diagramIsSet: boolean = diagramName !== undefined;
+
+    if (solutionIsSet && diagramIsSet) {
+      this.activeDiagram = await this.activeSolutionEntry
+        .service
+        .loadDiagram(diagramName);
+    }
   }
 }

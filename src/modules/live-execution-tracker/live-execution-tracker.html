@@ -1,4 +1,24 @@
 <template>
   <require from="./live-execution-tracker.css"></require>
-  <div ref="canvasModel" class="live-execution-tracker__body"></div>
+  <require from="../task-dynamic-ui/task-dynamic-ui"></require>
+  <div class="live-execution-tracker">
+    <div ref="canvasModel" class="let__body"></div>
+    <button if.bind="hasPreviousProcess" class="btn btn-default let__parent-process-button" click.delegate="navigateBackToPreviousProcess()">Back to previous process</button>
+    <button class="btn btn-default let__back-button" click.delegate="navigateBack()">Back</button>
+  </div>
+
+  <!-- Task-Dynamic-UI Modal -->
+  <div if.bind="showDynamicUiModal">
+    <div class="modal show-modal" tabindex="-1" role="dialog" id="dynamicUiModal">
+      <div class="modal-dialog dynamic-ui-modal-dialog" role="document">
+        <div class="modal-content dynamic-ui-modal-content">
+          <div class="modal-body dynamic-ui-modal-body">
+            <btn class="button close-dynamic-ui-button"><i class="fas fa-times" click.delegate="closeDynamicUiModal()"></i></btn>
+            <task-dynamic-ui correlation-id.bind="correlationId" process-model-id.bind="processModelId" task-id.bind="taskId" is-modal="true" modal-close-event.bind="closeDynamicUiModal"></task-dynamic-ui>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-backdrop fade in"></div>
+  </div>
 </template>

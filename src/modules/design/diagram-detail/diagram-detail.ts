@@ -7,20 +7,24 @@ import {Event, EventList, IManagementApi} from '@process-engine/management_api_c
 import {ProcessModelExecution} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {IElementRegistry,
-        IExtensionElement,
-        IFormElement,
-        IModdleElement,
-        IShape,
-        ISolutionEntry,
-        ISolutionService,
-        NotificationType} from '../../../contracts/index';
+import {
+  IElementRegistry,
+  IExtensionElement,
+  IFormElement,
+  IModdleElement,
+  IShape,
+  ISolutionEntry,
+  ISolutionService,
+  IUserInputValidationRule,
+  NotificationType,
+} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
 
 interface RouteParameters {
   diagramName?: string;
+  solutionUri?: string;
 }
 
 type IEventListener = {
@@ -42,9 +46,13 @@ export class DiagramDetail {
   public showSaveForStartModal: boolean = false;
   public showSaveBeforeDeployModal: boolean = false;
   public showStartEventModal: boolean = false;
+  public showStartWithOptionsModal: boolean = false;
   public processesStartEvents: Array<Event> = [];
   public selectedStartEventId: string;
   public xml: string;
+  public initialToken: string;
+  @observable({ changeHandler: 'correlationChanged'}) public customCorrelationId: string;
+  public hasValidationError: boolean = false;
 
   @observable({ changeHandler: 'diagramHasChangedChanged'}) private _diagramHasChanged: boolean;
   private _activeSolutionEntry: ISolutionEntry;
@@ -58,6 +66,11 @@ export class DiagramDetail {
   private _solutionService: ISolutionService;
   private _managementApiClient: IManagementApi;
   private _ipcRendererEventListeners: Array<IEventListener> = [];
+  private _correlationIdValidationRegExpList: IUserInputValidationRule = {
+    alphanumeric: /^[a-z0-9]/i,
+    specialCharacters: /^[._ -]/i,
+    german: /^[äöüß]/i,
+  };
 
   constructor(managementApiClient: IManagementApi,
               notificationService: NotificationService,
@@ -80,27 +93,32 @@ export class DiagramDetail {
   public async activate(routeParameters: RouteParameters): Promise<void> {
 
     const diagramNameIsNotSet: boolean = routeParameters.diagramName === undefined;
-    if (diagramNameIsNotSet) {
+    const solutionUriIsNotSet: boolean = routeParameters.solutionUri === undefined;
+
+    if (diagramNameIsNotSet || solutionUriIsNotSet) {
       this._router.navigateToRoute('start-page');
 
       return;
     }
 
-    this._activeSolutionEntry = await this._solutionService.getActiveSolutionEntry();
+    try {
+      this._activeSolutionEntry = this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
+      /**
+       * We have to open the solution here again since if we come here after a
+       * reload the solution might not be opened yet.
+       */
+      await this._activeSolutionEntry.service.openSolution(this._activeSolutionEntry.uri, this._activeSolutionEntry.identity);
+      this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
 
-    const activeSolutionEntryDoesNotExist: boolean = this._activeSolutionEntry === undefined;
-    if (activeSolutionEntryDoesNotExist) {
+      this.xml = this.activeDiagram.xml;
+
+      this._diagramHasChanged = false;
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.INFO, 'Diagram could not be opened.');
       this._router.navigateToRoute('start-page');
 
       return;
     }
-
-    this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
-
-    this.xml = this.activeDiagram.xml;
-
-    this._solutionService.setActiveDiagram(this.activeDiagram);
-    this._diagramHasChanged = false;
 
     const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
     if (isRunningInElectron) {
@@ -118,10 +136,10 @@ export class DiagramDetail {
       this._validationController.subscribe((event: ValidateEvent) => {
         this._handleFormValidateEvents(event);
       }),
-      this._eventAggregator.subscribe(environment.events.processDefDetail.saveDiagram, () => {
+      this._eventAggregator.subscribe(environment.events.diagramDetail.saveDiagram, () => {
         this._saveDiagram();
       }),
-      this._eventAggregator.subscribe(environment.events.processDefDetail.uploadProcess, () => {
+      this._eventAggregator.subscribe(environment.events.diagramDetail.uploadProcess, () => {
         this._checkIfDiagramIsSavedBeforeDeploy();
       }),
       this._eventAggregator.subscribe(environment.events.differsFromOriginal, (savingNeeded: boolean) => {
@@ -133,10 +151,38 @@ export class DiagramDetail {
       this._eventAggregator.subscribe(environment.events.navBar.noValidationError, () => {
         this._diagramIsInvalid = false;
       }),
-      this._eventAggregator.subscribe(environment.events.processDefDetail.startProcess, () => {
+      this._eventAggregator.subscribe(environment.events.diagramDetail.startProcess, () => {
         this._showStartDialog();
       }),
+      this._eventAggregator.subscribe(environment.events.diagramDetail.startProcessWithOptions, () => {
+        this.showStartWithOptionsModal = true;
+      }),
     ];
+  }
+
+  public correlationChanged(newValue: string): void {
+    const inputAsCharArray: Array<string> = newValue.split('');
+
+    const correlationIdPassesIdCheck: boolean = !inputAsCharArray.some((letter: string) => {
+      for (const regExIndex in this._correlationIdValidationRegExpList) {
+        const letterIsInvalid: boolean = letter.match(this._correlationIdValidationRegExpList[regExIndex]) !== null;
+
+        if (letterIsInvalid) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+
+    const correlationIdDoesNotStartWithWhitespace: boolean = !newValue.match(/^\s/);
+    const correlationIdDoesNotEndWithWhitespace: boolean = !newValue.match(/\s+$/);
+
+    if (correlationIdDoesNotStartWithWhitespace && correlationIdPassesIdCheck && correlationIdDoesNotEndWithWhitespace) {
+      this.hasValidationError = false;
+    } else {
+      this.hasValidationError = true;
+    }
   }
 
   public async canDeactivate(): Promise<Redirect> {
@@ -259,10 +305,12 @@ export class DiagramDetail {
 
       await this._activeSolutionEntry.service.saveDiagram(copyOfDiagram, connectedProcessEngineRoute);
 
-      this._solutionService.setActiveSolutionEntry(this._activeSolutionEntry);
       this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(processModelId);
 
-      this._solutionService.setActiveDiagram(this.activeDiagram);
+      this._router.navigateToRoute('diagram-detail', {
+        diagramName: this.activeDiagram.name,
+        solutionUri: this._activeSolutionEntry.uri,
+      });
 
       this._notificationService
           .showNotification(NotificationType.SUCCESS, 'Diagram was successfully uploaded to the connected ProcessEngine.');
@@ -286,7 +334,32 @@ export class DiagramDetail {
     }
   }
 
-  public async startProcess(): Promise<void> {
+  public async setOptionsAndStart(): Promise<void> {
+
+    if (this.hasValidationError) {
+      return;
+    }
+
+    if (this._diagramHasChanged) {
+      this._saveDiagram();
+    }
+
+    const parsedInitialToken: any = this._getInitialTokenValues(this.initialToken);
+
+    await this._updateProcessStartEvents();
+
+    const onlyOneStartEventIsAvailable: boolean = this.processesStartEvents.length === 1;
+
+    if (onlyOneStartEventIsAvailable) {
+      this.selectedStartEventId = this.processesStartEvents[0].id;
+    } else {
+      this.showStartEventModal = true;
+    }
+
+    await this.startProcess(parsedInitialToken);
+  }
+
+  public async startProcess(parsedInitialToken?: any): Promise<void> {
 
     if (this.selectedStartEventId === null) {
       return;
@@ -295,7 +368,8 @@ export class DiagramDetail {
     this._dropInvalidFormData();
 
     const startRequestPayload: ProcessModelExecution.ProcessStartRequestPayload = {
-      inputValues: {},
+      inputValues: parsedInitialToken,
+      correlationId: this.customCorrelationId,
     };
 
     try {
@@ -310,8 +384,9 @@ export class DiagramDetail {
       const correlationId: string = response.correlationId;
 
       this._router.navigateToRoute('live-execution-tracker', {
+        diagramName: this.activeDiagram.id,
+        solutionUri: this._activeSolutionEntry.uri,
         correlationId: correlationId,
-        processModelId: this.activeDiagram.id,
       });
     } catch (error) {
       this.
@@ -397,12 +472,22 @@ export class DiagramDetail {
 
     this.showStartEventModal = true;
     this.showSaveForStartModal = false;
-
   }
 
   public cancelDialog(): void {
     this.showSaveForStartModal = false;
     this.showStartEventModal = false;
+    this.showStartWithOptionsModal = false;
+  }
+
+  private _getInitialTokenValues(token: any): any {
+    try {
+      // If successful, the token is an object
+      return JSON.parse(token);
+    } catch (error) {
+      // If an error occurs, the token is something else.
+      return token;
+    }
   }
 
   private async _updateProcessStartEvents(): Promise<void> {
@@ -521,8 +606,7 @@ export class DiagramDetail {
       const xml: string = await this.bpmnio.getXML();
       this.activeDiagram.xml = xml;
 
-      const activeSolution: ISolutionEntry = this._solutionService.getActiveSolutionEntry();
-      await activeSolution.service.saveDiagram(this.activeDiagram);
+      await this._activeSolutionEntry.service.saveDiagram(this.activeDiagram);
       this.bpmnio.saveCurrentXML();
 
       this._diagramHasChanged = false;

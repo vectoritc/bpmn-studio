@@ -26,12 +26,12 @@ export class ProcessModel {
     return '/correlation/' + correlationId + '/task';
   }
 
-  public static userTasksInputUrl(processModel: string): string {
-    return '/processmodel/' + processModel + '/task/Task_0k8m2if/dynamic-ui';
+  public static userTasksInputUrl(correlationId: string, processModel: string): string {
+    return '/correlation/' + correlationId + '/diagram/' + processModel + '/task/Task_0k8m2if/dynamic-ui';
   }
 
   public static liveExecutionTrackerUrl(processModelId: string, correlationId: string): string {
-    return '/correlation/' + correlationId + '/processmodel/' + processModelId + '/live-execution-tracker';
+    return '/correlation/' + correlationId + '/diagram/' + processModelId + '/live-execution-tracker';
   }
 
   public getProcessModelId(): string {
