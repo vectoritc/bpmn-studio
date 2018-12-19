@@ -30,6 +30,8 @@ export class DynamicUiWrapper {
   @bindable({changeHandler: 'manualTaskChanged'}) public currentManualTask: ManualTask;
   @bindable() public isConfirmUserTask: boolean = false;
   @bindable() public isFormUserTask: boolean = false;
+  @bindable() public isModal: boolean;
+  @bindable() public modalCloseEvent: Function;
 
   private _router: Router;
 
@@ -43,6 +45,8 @@ export class DynamicUiWrapper {
     this._dynamicUiService = dynamicUiService;
     this._authenticationService = authenticationService;
     this._router = router;
+
+    this.isModal = false;
   }
 
   public async handleUserTaskButtonClick(action: 'cancel' | 'proceed' | 'decline'): Promise<void> {
@@ -127,6 +131,12 @@ export class DynamicUiWrapper {
   }
 
   private _cancelTask(): void {
+    if (this.isModal) {
+      this.modalCloseEvent();
+
+      return;
+    }
+
     const correlationId: string = this.currentUserTask ? this.currentUserTask.correlationId : this.currentManualTask.correlationId;
 
     this._router.navigateToRoute('task-list-correlation', {
