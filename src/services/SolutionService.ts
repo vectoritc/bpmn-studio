@@ -31,18 +31,17 @@ export class SolutionService implements ISolutionService {
 
     this._persistedEntries = openedSolutions;
     this._allSolutionEntries = this._allSolutionEntries.concat(openedSolutions);
-
   }
 
   public addSolutionEntry(solutionEntry: ISolutionEntry): void {
+
     const solutionWithSameUri: ISolutionEntry = this._allSolutionEntries.find((entry: ISolutionEntry) => {
       const entryHasSameUri: boolean = entry.uri === solutionEntry.uri;
 
       return entryHasSameUri;
     });
-    const solutionIsAlreadOpenend: boolean = solutionWithSameUri !== undefined;
-
-    if (solutionIsAlreadOpenend) {
+    const solutionIsAlreadyOpenend: boolean = solutionWithSameUri !== undefined;
+    if (solutionIsAlreadyOpenend) {
       this.removeSolutionEntry(solutionWithSameUri);
     }
 
@@ -99,6 +98,11 @@ export class SolutionService implements ISolutionService {
 
       return entryIsRemoteSolution;
     });
+
+    const noRemoteSolutionContained: boolean = remoteSolution === undefined;
+    if (noRemoteSolutionContained) {
+      return;
+    }
 
     this.removeSolutionEntry(remoteSolution);
   }
