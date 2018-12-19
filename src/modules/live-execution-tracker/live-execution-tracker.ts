@@ -578,7 +578,7 @@ export class LiveExecutionTracker {
         try {
           return await this._managementApiClient.getCorrelationById(identity, this.correlationId);
         } catch {
-          // Do nothing;
+          continue;
         }
       }
 
