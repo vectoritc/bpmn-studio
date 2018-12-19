@@ -138,7 +138,6 @@ export class TaskList {
       diagramName: processModelId,
       solutionUri: remoteSolutionUri,
       correlationId: correlationId,
-      processModelId: processModelId,
       taskId: taskId,
     });
   }

@@ -145,7 +145,6 @@ export class TaskDynamicUi {
       diagramName: this._activeDiagramName,
       solutionUri: this._activeSolutionUri,
       correlationId: task.correlationId,
-      processModelId: task.processModelId,
     });
   }
 
