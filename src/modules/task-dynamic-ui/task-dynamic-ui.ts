@@ -25,7 +25,7 @@ export class TaskDynamicUi {
   @bindable() public processModelId: string;
   @bindable() public taskId: string;
   @bindable() public isModal: boolean;
-  @bindable() public closeEvent: Function;
+  @bindable() public modalCloseEvent: Function;
 
   private _eventAggregator: EventAggregator;
   private _router: Router;
@@ -130,7 +130,7 @@ export class TaskDynamicUi {
       this._userTask = undefined;
       this._manualTask = undefined;
 
-      this.closeEvent();
+      this.modalCloseEvent();
 
       return;
     }
