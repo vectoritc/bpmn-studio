@@ -229,7 +229,7 @@ export class SolutionExplorerSolution {
   public async deleteDiagram(diagram: IDiagram, event: Event): Promise<void> {
     event.stopPropagation();
 
-    if (this._isDiagramDetailViewOfDiagramOpen(diagram.uri)) {
+    if (await this._isDiagramDetailViewOfDiagramOpen(diagram.uri)) {
       const messageTitle: string = '<h4 class="toast-message__headline">Not supported while opened.</h4>';
       const messageBody: string = 'Deleting of opened diagrams is currently not supported. Please switch to another diagram and try again.';
       const message: string = `${messageTitle}\n${messageBody}`;
@@ -253,7 +253,7 @@ export class SolutionExplorerSolution {
   public async startRenamingOfDiagram(diagram: IDiagram, event: Event): Promise<void> {
     event.stopPropagation();
 
-    if (this._isDiagramDetailViewOfDiagramOpen(diagram.uri)) {
+    if (await this._isDiagramDetailViewOfDiagramOpen(diagram.uri)) {
       const messageTitle: string = '<h4 class="toast-message__headline">Not supported while opened.</h4>';
       const messageBody: string = 'Renaming of opened diagrams is currently not supported. Please switch to another diagram and try again.';
       const message: string = `${messageTitle}\n${messageBody}`;
@@ -404,9 +404,13 @@ export class SolutionExplorerSolution {
   }
 
   private async _isDiagramDetailViewOfDiagramOpen(diagramUriToCheck: string): Promise<boolean> {
+    const activeDiagramIsUndefined: boolean = this.activeDiagram === undefined;
+    if (activeDiagramIsUndefined) {
+      return false;
+    }
+
     const openedDiagramUri: string = this.activeDiagram.uri;
     const diagramIsOpened: boolean = diagramUriToCheck === openedDiagramUri;
-
     return diagramIsOpened;
   }
 
@@ -746,8 +750,11 @@ export class SolutionExplorerSolution {
     }
 
     if (solutionUriSpecified && diagramNameIsSpecified) {
-      const solutionEntry: ISolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
-      this.activeDiagram = await solutionEntry.service.loadDiagram(diagramName);
+      try {
+        this.activeDiagram = await this.solutionService.loadDiagram(diagramName);
+      } catch (error) {
+        this.activeDiagram = undefined;
+      }
 
       return;
     }
