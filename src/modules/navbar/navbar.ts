@@ -331,6 +331,7 @@ export class NavBar {
       } else {
         this.showInspectTools = false;
       }
+
       this.showTools = false;
     }
   }
