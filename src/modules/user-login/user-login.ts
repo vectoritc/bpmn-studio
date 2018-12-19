@@ -6,8 +6,6 @@ import {NotificationService} from './../notification/notification.service';
 
 @inject('AuthenticationService', EventAggregator, 'NotificationService')
 export class UserLogin {
-  public showLoginModal: boolean = false;
-
   private _authenticationService: IAuthenticationService;
   private _eventAggregator: EventAggregator;
   private _notificationService: NotificationService;
@@ -64,21 +62,11 @@ export class UserLogin {
   }
 
   public async login(): Promise<void> {
-    this.showLoginModal = false;
-
     try {
       await this._authenticationService.login();
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, error.message);
     }
-  }
-
-  public displayLoginModal(): void {
-    this.showLoginModal = true;
-  }
-
-  public cancelLogin(): void {
-    this.showLoginModal = false;
   }
 
   public logout(): Promise<void> {

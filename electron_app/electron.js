@@ -519,11 +519,9 @@ Main._createMainWindow = function () {
         type: "separator",
       });
 
-      if (isDev) {
-        windowMenu.submenu.push({
-          role: "reload",
-        });
-      }
+      windowMenu.submenu.push({
+        role: "reload",
+      });
 
       windowMenu.submenu.push({
         role: "toggledevtools",

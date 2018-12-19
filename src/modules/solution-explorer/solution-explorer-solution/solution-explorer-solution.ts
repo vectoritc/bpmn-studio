@@ -751,7 +751,10 @@ export class SolutionExplorerSolution {
 
     if (solutionUriSpecified && diagramNameIsSpecified) {
       try {
-        this.activeDiagram = await this.solutionService.loadDiagram(diagramName);
+        const activeSolution: ISolution = await this.solutionService.loadSolution();
+        this.activeDiagram = activeSolution.diagrams.find((diagram: IDiagram) => {
+          return diagram.name === diagramName;
+        });
       } catch (error) {
         this.activeDiagram = undefined;
       }
