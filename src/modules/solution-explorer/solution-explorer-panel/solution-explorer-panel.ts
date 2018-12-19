@@ -60,7 +60,9 @@ export class SolutionExplorerPanel {
     // Open the previously opened solutions.
     const previouslyOpenedSolutions: Array<ISolutionEntry> = this._solutionService.getPersistedEntries();
     previouslyOpenedSolutions.forEach(async(entry: ISolutionEntry) => {
-      if (entry.uri !== uriOfProcessEngine) {
+      // We are not adding the solution of the connect PE here again since that happened above.
+      const entryIsNotConnectedProcessEngine: boolean = entry.uri !== uriOfProcessEngine;
+      if (entryIsNotConnectedProcessEngine) {
         await this.solutionExplorerList.openSolution(entry.uri);
       }
 
