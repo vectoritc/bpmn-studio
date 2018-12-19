@@ -129,6 +129,7 @@ export class DiagramViewer {
 
     this._diagramViewer.clear();
     this.xmlIsNotSelected = true;
+    this.xml = undefined;
   }
 
   public xmlChanged(): void {
