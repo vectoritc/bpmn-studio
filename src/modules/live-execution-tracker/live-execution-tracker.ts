@@ -376,12 +376,6 @@ export class LiveExecutionTracker {
     (event: MouseEvent): void => {
       const elementId: string = (event.target as HTMLDivElement).id;
 
-      // this._router.navigateToRoute('task-dynamic-ui', {
-      //   correlationId: this.correlationId,
-      //   processModelId: this.processModelId,
-      //   taskId: elementId,
-      // });
-
       this.showDynamicUiModal = true;
       this.taskId = elementId;
     }
@@ -410,12 +404,6 @@ export class LiveExecutionTracker {
     if (elementHasNoActiveToken) {
       return;
     }
-
-    // this._router.navigateToRoute('task-dynamic-ui', {
-    //   correlationId: this.correlationId,
-    //   processModelId: this.processModelId,
-    //   taskId: clickedElement.id,
-    // });
 
     this.showDynamicUiModal = true;
     this.taskId = clickedElement.id;
