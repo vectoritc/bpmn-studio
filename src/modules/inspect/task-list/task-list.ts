@@ -15,8 +15,6 @@ import {Router} from 'aurelia-router';
 import {
   AuthenticationStateEvent,
   IAuthenticationService,
-  ISolutionEntry,
-  ISolutionService,
   NotificationType,
 } from '../../../contracts/index';
 import environment from '../../../environment';

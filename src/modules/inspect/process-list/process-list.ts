@@ -1,6 +1,5 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject, observable} from 'aurelia-framework';
-import {Router} from 'aurelia-router';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
 import {Correlation, CorrelationProcessModel, IManagementApi} from '@process-engine/management_api_contracts';
