@@ -22,11 +22,9 @@ export class SolutionService implements ISolutionService {
     openedSolutions.forEach(async(solution: ISolutionEntry) => {
       const solutionIsRemote: boolean = solution.uri.startsWith('http');
 
-      if (solutionIsRemote) {
-        solution.service = await this._serviceFactory.newManagementApiSolutionExplorer();
-      } else {
-        solution.service = await this._serviceFactory.newFileSystemSolutionExplorer();
-      }
+      solution.service = solutionIsRemote
+        ? await this._serviceFactory.newManagementApiSolutionExplorer()
+        : await this._serviceFactory.newFileSystemSolutionExplorer();
 
       await solution.service.openSolution(solution.uri, solution.identity);
     });
