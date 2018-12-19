@@ -737,8 +737,13 @@ export class SolutionExplorerSolution {
     const diagramName: string = this._router.currentInstruction.params.diagramName;
     const diagramNameIsSpecified: boolean = diagramName !== undefined;
 
-    this._diagramRoute = this._router.currentInstruction.config.name;
-    this._inspectView = this._router.currentInstruction.params.view;
+    const routeName: string = this._router.currentInstruction.config.name;
+    const routeNameIsDiagramDetailOrInspect: boolean = routeName === 'diagram-detail'
+                                                    || routeName === 'inspect';
+    if (routeNameIsDiagramDetailOrInspect) {
+      this._diagramRoute = routeName;
+      this._inspectView = this._router.currentInstruction.params.view;
+    }
 
     if (solutionUriSpecified && diagramNameIsSpecified) {
       const solutionEntry: ISolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);

@@ -6,8 +6,6 @@ import {Router} from 'aurelia-router';
 import {IAuthenticationService} from '../../contracts/authentication/IAuthenticationService';
 import {
   AuthenticationStateEvent,
-  ISolutionEntry,
-  ISolutionService,
   NotificationType,
 } from '../../contracts/index';
 import environment from '../../environment';
@@ -19,7 +17,7 @@ interface RouteParameters {
   solutionUri?: string;
 }
 
-@inject(Router, 'NotificationService', EventAggregator, 'AuthenticationService', OpenIdConnect, 'InternalProcessEngineBaseRoute', 'SolutionService')
+@inject(Router, 'NotificationService', EventAggregator, 'AuthenticationService', OpenIdConnect, 'InternalProcessEngineBaseRoute')
 export class ConfigPanel {
   @bindable public baseRoute: string;
   @bindable public authority: string;
@@ -34,7 +32,6 @@ export class ConfigPanel {
   private _subscriptions: Array<Subscription>;
   // We use any here, because we need to call private members (see below)
   private _openIdConnect: OpenIdConnect | any;
-  private _solutionService: ISolutionService;
   private _initialBaseRoute: string;
   private _initialAuthority: string;
   private _activeSolutionUri: string;
@@ -45,7 +42,6 @@ export class ConfigPanel {
               authenticationService: IAuthenticationService,
               openIdConnect: OpenIdConnect,
               internalProcessEngineBaseRoute: string | null,
-              solutionService: ISolutionService,
             ) {
 
     this._router = router;
@@ -54,7 +50,6 @@ export class ConfigPanel {
     this._authenticationService = authenticationService;
     this._openIdConnect = openIdConnect;
     this.internalProcessEngineBaseRoute = internalProcessEngineBaseRoute;
-    this._solutionService = solutionService;
   }
 
   public activate(routeParameters: RouteParameters): void {
@@ -139,7 +134,12 @@ export class ConfigPanel {
       }
     }
 
-    this._router.navigateBack();
+    if (baseRouteChanged || authorityChanged) {
+      this._router.navigateToRoute('start-page');
+    } else {
+      this._router.navigateBack();
+    }
+
   }
 
   public authorityChanged(): void {

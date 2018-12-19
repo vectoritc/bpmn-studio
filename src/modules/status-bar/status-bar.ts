@@ -74,6 +74,7 @@ export class StatusBar {
       }),
 
       this._eventAggregator.subscribe('router:navigation:success', () => {
+
         this._updateStatusBar();
       }),
     ];
@@ -143,7 +144,7 @@ export class StatusBar {
     const solutionUriFromNavigation: string = this._router.currentInstruction.queryParams.solutionUri;
     const noSolutionUriSpecified: boolean = solutionUriFromNavigation === undefined;
 
-    const solutionUri: string = (noSolutionUriSpecified)
+    const solutionUri: string = noSolutionUriSpecified
       ? window.localStorage.getItem('processEngineRoute')
       : solutionUriFromNavigation;
 

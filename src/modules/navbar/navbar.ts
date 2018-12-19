@@ -285,7 +285,7 @@ export class NavBar {
    * or a remote ProcessEngine
    */
   private _updateNavbarTitle(): void {
-    const noActiveDiagram: boolean = this.activeDiagram === undefined;
+    const noActiveDiagram: boolean = this._router.currentInstruction.params.diagramName === undefined;
 
     if (noActiveDiagram) {
       this.showProcessName = false;
@@ -361,6 +361,18 @@ export class NavBar {
       this._updateNavbarTools();
     }
 
+    const routeNameIsStartPage: boolean = this.activeRouteName === 'start-page';
+    if (routeNameIsStartPage) {
+      this._resetNavbar();
+    }
+
+  }
+
+  private _resetNavbar(): void {
+    this.activeDiagram = undefined;
+    this.activeSolutionEntry = undefined;
+    this.navbarTitle = '';
+    this.showProcessName = false;
   }
 
 }
