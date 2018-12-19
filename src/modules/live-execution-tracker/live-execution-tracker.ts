@@ -72,6 +72,7 @@ export class LiveExecutionTracker {
   private _activeTokens: Array<ActiveToken>;
   private _parentProcessModelId: string;
   private _maxRetries: number = 5;
+  private _activeCallActivities: Array<IShape> = [];
 
   private _elementsWithEventListeners: Array<string> = [];
 
@@ -327,6 +328,12 @@ export class LiveExecutionTracker {
       document.getElementById(elementId).removeEventListener('click', this._handleTaskClick);
     }
 
+    for (const callActivity of this._activeCallActivities) {
+      const callActivityId: string = callActivity.id;
+
+      document.getElementById(callActivityId).removeEventListener('click', this._handleCallActivityClick);
+    }
+
     this._elementsWithEventListeners = [];
     this._overlays.clear();
 
@@ -365,6 +372,8 @@ export class LiveExecutionTracker {
     if (elementsWithActiveTokenDidNotChange && allActiveElementsHaveAnOverlay) {
       return;
     }
+
+    this._activeCallActivities = activeCallActivities;
 
     for (const element of activeCallActivities) {
       this._overlays.add(element, {
