@@ -37,7 +37,6 @@ import {NotificationService} from '../notification/notification.service';
 type RouteParameters = {
   correlationId: string;
   processModelId: string;
-  previousProcessInstances?: Array<string>;
 };
 
 enum RequestError {
@@ -72,7 +71,7 @@ export class LiveExecutionTracker {
   private _attached: boolean;
   private _previousElementIdsWithActiveToken: Array<string> = [];
   private _activeTokens: Array<ActiveToken>;
-  private _previousProcessModels: Array<string> = [];
+  private _parentProcessModelId: string;
   private _maxRetries: number = 5;
 
   private _elementsWithEventListeners: Array<string> = [];
@@ -94,10 +93,13 @@ export class LiveExecutionTracker {
     this.correlationId = routeParameters.correlationId;
     this.processModelId = routeParameters.processModelId;
 
-    const previousProcessModelExists: boolean = routeParameters.previousProcessInstances !== undefined;
-    if (previousProcessModelExists) {
-      this._previousProcessModels = routeParameters.previousProcessInstances;
-    }
+    const parentProcessInstanceId: string = await this.getParentProcessInstanceId();
+    const parentProcessModel: CorrelationProcessModel = await this.getProcessModelByProcessInstanceId(parentProcessInstanceId);
+    const hasParentProcessModel: boolean = parentProcessModel !== undefined;
+
+    this._parentProcessModelId = hasParentProcessModel
+                               ? parentProcessModel.processModelId
+                               : undefined;
 
     this.processStopped = false;
 
@@ -114,6 +116,27 @@ export class LiveExecutionTracker {
 
     this._solutionService.setActiveSolutionEntry(processEngineSolution);
     this._solutionService.setActiveDiagram(activeDiagram);
+  }
+
+  public async getParentProcessInstanceId(): Promise<string> {
+    const correlation: Correlation = await this._managementApiClient.getCorrelationById(this._getIdentity(), this.correlationId);
+    const processModelFromCorrelation: CorrelationProcessModel = correlation.processModels
+      .find((correlationProcessModel: CorrelationProcessModel): boolean => {
+        return correlationProcessModel.processModelId === this.processModelId;
+      });
+
+    const parentProcessInstanceId: string = processModelFromCorrelation.parentProcessInstanceId;
+
+    return parentProcessInstanceId;
+  }
+
+  public async getProcessModelByProcessInstanceId(processInstanceId: string): Promise<CorrelationProcessModel> {
+    const correlation: Correlation = await this._managementApiClient.getCorrelationById(this._getIdentity(), this.correlationId);
+    const processModel: CorrelationProcessModel = correlation.processModels.find((correlationProcessModel: CorrelationProcessModel): boolean => {
+      return correlationProcessModel.processInstanceId === processInstanceId;
+    });
+
+    return processModel;
   }
 
   public async attached(): Promise<void> {
@@ -173,7 +196,7 @@ export class LiveExecutionTracker {
 
   @computedFrom('_previousProcessModels.length')
   public get hasPreviousProcess(): boolean {
-    return this._previousProcessModels.length > 0;
+    return this._parentProcessModelId !== undefined;
   }
 
   public closeDynamicUiModal: Function = (): void => {
@@ -181,13 +204,9 @@ export class LiveExecutionTracker {
   }
 
   public navigateBackToPreviousProcess(): void {
-    const previousProcessInstanceIndex: number = this._previousProcessModels.length - 1;
-    const previousProcess: string = this._previousProcessModels.splice(previousProcessInstanceIndex, 1)[0];
-
     this._router.navigateToRoute('live-execution-tracker', {
       correlationId: this.correlationId,
-      processModelId: previousProcess,
-      previousProcessInstances: this._previousProcessModels,
+      processModelId: this._parentProcessModelId,
     });
   }
 
@@ -373,12 +392,9 @@ export class LiveExecutionTracker {
       const element: IShape = this._elementRegistry.get(elementId);
       const callActivityTargetProcess: string = element.businessObject.calledElement;
 
-      this._previousProcessModels.push(this.processModelId);
-
       this._router.navigateToRoute('live-execution-tracker', {
         correlationId: this.correlationId,
         processModelId: callActivityTargetProcess,
-        previousProcessInstances: this._previousProcessModels,
       });
     }
 
