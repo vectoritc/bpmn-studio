@@ -239,7 +239,7 @@ export class LiveExecutionTracker {
     return diagram;
   }
 
-  private async _colorizeXml(xml: string): Promise<string | null> {
+  private async _colorizeXml(xml: string): Promise<string> {
     // Import the xml to the modeler to add colors to it
     await this._importXmlIntoDiagramModeler(xml);
 
@@ -260,7 +260,7 @@ export class LiveExecutionTracker {
     // If the backend returned an error the diagram should not be rendered.
     const couldNotGetActiveTokens: boolean = elementsWithActiveToken === null;
     if (couldNotGetActiveTokens) {
-      return null;
+      throw new Error('Could not get ActiveTokens.');
     }
 
     // Get all elements that already have a token.
@@ -269,7 +269,7 @@ export class LiveExecutionTracker {
     // If the backend returned an error the diagram should not be rendered.
     const couldNotGetTokenHistory: boolean = elementsWithTokenHistory === null;
     if (couldNotGetTokenHistory) {
-      return null;
+      throw new Error('Could not get TokenHistories.');
     }
 
     /*
@@ -733,9 +733,15 @@ export class LiveExecutionTracker {
         return;
       }
 
-      const colorizedXml: string | null = await this._colorizeXml(xml);
+      const colorizedXml: string = await (async(): Promise<string> => {
+        try {
+          return await this._colorizeXml(xml);
+        } catch {
+          return undefined;
+        }
+      })();
 
-      const colorizingFailed: boolean = colorizedXml === null;
+      const colorizingFailed: boolean = colorizedXml === undefined;
       if (colorizingFailed) {
         const notificationMessage: string = 'Could not get tokens. If the error persists, '
                                           + 'try reopening the Live Execution Tracker or restarting the process.';
