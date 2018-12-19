@@ -93,13 +93,7 @@ export class LiveExecutionTracker {
     this.correlationId = routeParameters.correlationId;
     this.processModelId = routeParameters.processModelId;
 
-    const parentProcessInstanceId: string = await this.getParentProcessInstanceId();
-    const parentProcessModel: CorrelationProcessModel = await this.getProcessModelByProcessInstanceId(parentProcessInstanceId);
-    const hasParentProcessModel: boolean = parentProcessModel !== undefined;
-
-    this._parentProcessModelId = hasParentProcessModel
-                               ? parentProcessModel.processModelId
-                               : undefined;
+    this._parentProcessModelId = await this._getParentProcessModelId();
 
     const processEngineRoute: string = window.localStorage.getItem('processEngineRoute');
     const internalProcessEngineRoute: string = window.localStorage.getItem('InternalProcessEngineRoute');
@@ -116,29 +110,22 @@ export class LiveExecutionTracker {
     this._solutionService.setActiveDiagram(activeDiagram);
   }
 
-  public async getParentProcessInstanceId(): Promise<string> {
-    const correlation: Correlation = await this._managementApiClient.getCorrelationById(this._getIdentity(), this.correlationId);
-    const processModelFromCorrelation: CorrelationProcessModel = correlation.processModels
-      .find((correlationProcessModel: CorrelationProcessModel): boolean => {
-        const processModelFound: boolean = correlationProcessModel.processModelId === this.processModelId;
+  private async _getParentProcessModelId(): Promise<string> {
+    const parentProcessInstanceId: string = await this._getParentProcessInstanceId();
 
-        return processModelFound;
-      });
+    const parentProcessInstanceIdNotFound: boolean = parentProcessInstanceId === undefined;
+    if (parentProcessInstanceIdNotFound) {
+      return undefined;
+    }
 
-    const {parentProcessInstanceId} = processModelFromCorrelation;
+    const parentProcessModel: CorrelationProcessModel = await this._getProcessModelByProcessInstanceId(parentProcessInstanceId);
 
-    return parentProcessInstanceId;
-  }
+    const parentProcessModelNotFound: boolean = parentProcessModel === undefined;
+    if (parentProcessModelNotFound) {
+      return undefined;
+    }
 
-  public async getProcessModelByProcessInstanceId(processInstanceId: string): Promise<CorrelationProcessModel> {
-    const correlation: Correlation = await this._managementApiClient.getCorrelationById(this._getIdentity(), this.correlationId);
-    const processModel: CorrelationProcessModel = correlation.processModels.find((correlationProcessModel: CorrelationProcessModel): boolean => {
-      const processModelFound: boolean = correlationProcessModel.processInstanceId === processInstanceId;
-
-      return processModelFound;
-    });
-
-    return processModel;
+    return parentProcessModel.processModelId;
   }
 
   public async attached(): Promise<void> {
@@ -393,9 +380,9 @@ export class LiveExecutionTracker {
   private _handleTaskClick: (event: MouseEvent) => void =
     (event: MouseEvent): void => {
       const elementId: string = (event.target as HTMLDivElement).id;
+      this.taskId = elementId;
 
       this.showDynamicUiModal = true;
-      this.taskId = elementId;
     }
 
   private _handleCallActivityClick: (event: MouseEvent) => void =
@@ -873,5 +860,77 @@ export class LiveExecutionTracker {
     };
 
     return identity;
+  }
+
+  private async _getParentProcessInstanceId(): Promise<string> {
+    // This is necessary because the managementApi sometimes throws an error when the correlation is not yet existing.
+    const getCorrelation: () => Promise<Correlation> = async(): Promise<Correlation> => {
+      const identity: IIdentity = this._getIdentity();
+
+      for (let retries: number = 0; retries < this._maxRetries; retries++) {
+        try {
+          return await this._managementApiClient.getCorrelationById(identity, this.correlationId);
+        } catch {
+          continue;
+        }
+      }
+
+      this._notificationService.showNotification(NotificationType.ERROR, 'Could not get correlation. Please try to start the process again.');
+
+      return undefined;
+    };
+
+    const correlation: Correlation = await getCorrelation();
+
+    const errorGettingCorrelation: boolean = correlation === undefined;
+    if (errorGettingCorrelation) {
+      return undefined;
+    }
+
+    const processModelFromCorrelation: CorrelationProcessModel = correlation.processModels
+      .find((correlationProcessModel: CorrelationProcessModel): boolean => {
+        const processModelFound: boolean = correlationProcessModel.processModelId === this.processModelId;
+
+        return processModelFound;
+      });
+
+    const {parentProcessInstanceId} = processModelFromCorrelation;
+
+    return parentProcessInstanceId;
+  }
+
+  private async _getProcessModelByProcessInstanceId(processInstanceId: string): Promise<CorrelationProcessModel> {
+    const identity: IIdentity = this._getIdentity();
+
+    // This is necessary because the managementApi sometimes throws an error when the correlation is not yet existing.
+    const getCorrelation: () => Promise<Correlation> = async(): Promise<Correlation> => {
+
+      for (let retries: number = 0; retries < this._maxRetries; retries++) {
+        try {
+          return await this._managementApiClient.getCorrelationById(identity, this.correlationId);
+        } catch {
+          continue;
+        }
+      }
+
+      this._notificationService.showNotification(NotificationType.ERROR, 'Could not get correlation. Please try to start the process again.');
+
+      return undefined;
+    };
+
+    const correlation: Correlation = await getCorrelation();
+
+    const errorGettingCorrelation: boolean = correlation === undefined;
+    if (errorGettingCorrelation) {
+      return undefined;
+    }
+
+    const processModel: CorrelationProcessModel = correlation.processModels.find((correlationProcessModel: CorrelationProcessModel): boolean => {
+      const processModelFound: boolean = correlationProcessModel.processInstanceId === processInstanceId;
+
+      return processModelFound;
+    });
+
+    return processModel;
   }
 }
