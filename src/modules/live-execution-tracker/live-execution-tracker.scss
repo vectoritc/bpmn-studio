@@ -27,6 +27,22 @@
   opacity: 1;
 }
 
+.dynamic-ui-modal-dialog {
+  position: relative;
+  top: 20%;
+  width: 400px;
+  bottom: 20%;
+  height: 60%;
+}
+
+.dynamic-ui-modal-content {
+  height: 100%;
+}
+
+.dynamic-ui-modal-body {
+  height: 100%;
+}
+
 .let__parent-process-button {
   position: absolute;
   bottom: 100px;
