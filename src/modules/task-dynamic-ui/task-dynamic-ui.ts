@@ -14,7 +14,6 @@ interface RouteParameters {
   diagramName: string;
   solutionUri: string;
   correlationId: string;
-  processModelId: string;
   taskId: string;
 }
 
@@ -56,7 +55,7 @@ export class TaskDynamicUi {
   public activate(routeParameters: RouteParameters): void {
     // This is called when starting tasks
     this.correlationId = routeParameters.correlationId;
-    this.processModelId = routeParameters.processModelId;
+    this.processModelId = routeParameters.diagramName;
     this.taskId = routeParameters.taskId;
     this._activeDiagramName = routeParameters.diagramName;
     this._activeSolutionUri = routeParameters.solutionUri;

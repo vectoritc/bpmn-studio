@@ -38,7 +38,6 @@ type RouteParameters = {
   diagramName: string,
   solutionUri: string,
   correlationId: string;
-  processModelId: string;
 };
 
 enum RequestError {
@@ -96,7 +95,7 @@ export class LiveExecutionTracker {
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
     this.correlationId = routeParameters.correlationId;
-    this.processModelId = routeParameters.processModelId;
+    this.processModelId = routeParameters.diagramName;
 
     this._activeDiagramName = routeParameters.diagramName;
     this._activeSolutionUri = routeParameters.solutionUri;

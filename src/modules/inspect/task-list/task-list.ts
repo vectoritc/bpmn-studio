@@ -23,7 +23,7 @@ import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 
 interface ITaskListRouteParameters {
-  processModelId?: string;
+  diagramName?: string;
   correlationId?: string;
 }
 
@@ -72,9 +72,9 @@ export class TaskList {
 
   public initializeTaskList(routeParameters: ITaskListRouteParameters): void {
 
-    if (routeParameters.processModelId) {
+    if (routeParameters.diagramName) {
       this._getTasks = (): Promise<Array<IUserTaskWithProcessModel>> => {
-        return this._getTasksForProcessModel(routeParameters.processModelId);
+        return this._getTasksForProcessModel(routeParameters.diagramName);
       };
     } else if (routeParameters.correlationId) {
       this._getTasks = (): Promise<Array<IUserTaskWithProcessModel>> => {
