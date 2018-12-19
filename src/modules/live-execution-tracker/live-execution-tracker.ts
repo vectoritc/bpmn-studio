@@ -47,7 +47,6 @@ enum RequestError {
 @inject(Router, 'NotificationService', 'AuthenticationService', 'ManagementApiClientService', 'SolutionService')
 export class LiveExecutionTracker {
   public canvasModel: HTMLElement;
-  public processStopped: boolean = false;
   public showDynamicUiModal: boolean = false;
 
   public correlationId: string;
@@ -100,8 +99,6 @@ export class LiveExecutionTracker {
     this._parentProcessModelId = hasParentProcessModel
                                ? parentProcessModel.processModelId
                                : undefined;
-
-    this.processStopped = false;
 
     const processEngineRoute: string = window.localStorage.getItem('processEngineRoute');
     const internalProcessEngineRoute: string = window.localStorage.getItem('InternalProcessEngineRoute');
@@ -828,8 +825,6 @@ export class LiveExecutionTracker {
 
   private _correlationEnded(): void {
     this._notificationService.showNotification(NotificationType.INFO, 'Process stopped.');
-
-    this.processStopped = true;
   }
 
   private _getIdentity(): IIdentity {
