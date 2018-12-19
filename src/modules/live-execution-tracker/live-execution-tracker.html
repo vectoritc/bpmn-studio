@@ -3,8 +3,8 @@
   <require from="../task-dynamic-ui/task-dynamic-ui"></require>
   <div class="let">
     <div ref="canvasModel" class="let__body"></div>
-    <button class="btn btn-default let__diagram-detail-button" click.delegate="navigateBack()">Back</button>
-    <button if.bind="processStopped && hasPreviousProcess" class="btn btn-default let__back-button" click.delegate="navigateBackToPreviousProcess()">Back to previous process</button>
+    <button if.bind="hasPreviousProcess" class="btn btn-default let__parent-process-button" click.delegate="navigateBackToPreviousProcess()">Back to previous process</button>
+    <button class="btn btn-default let__back-button" click.delegate="navigateBack()">Back</button>
   </div>
 
   <!-- Task-Dynamic-UI Modal -->
