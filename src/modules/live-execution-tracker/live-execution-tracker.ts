@@ -404,6 +404,13 @@ export class LiveExecutionTracker {
       const element: IShape = this._elementRegistry.get(elementId);
       const callActivityTargetProcess: string = element.businessObject.calledElement;
 
+      const callAcitivityHasNoTargetProcess: boolean = callActivityTargetProcess === undefined;
+      if (callAcitivityHasNoTargetProcess) {
+        const notificationMessage: string = 'The CallActivity has no target configured. Please configure a target in the designer.';
+
+        this._notificationService.showNotification(NotificationType.INFO, notificationMessage);
+      }
+
       this._router.navigateToRoute('live-execution-tracker', {
         correlationId: this.correlationId,
         processModelId: callActivityTargetProcess,
