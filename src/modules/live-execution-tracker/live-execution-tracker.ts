@@ -171,6 +171,7 @@ export class LiveExecutionTracker {
     if (colorizingFailed) {
       const notificationMessage: string = 'Could not get tokens. '
                                         + 'Please try reopening the Live Execution Tracker or restarting the process.';
+
       this._notificationService.showNotification(NotificationType.ERROR, notificationMessage);
 
       return;
@@ -632,6 +633,7 @@ export class LiveExecutionTracker {
 
     if (xmlIsNotLoaded) {
       const notificationMessage: string = 'The xml could not be loaded. Please try to start the process again.';
+
       this._notificationService.showNotification(NotificationType.ERROR, notificationMessage);
 
       return;
@@ -656,6 +658,7 @@ export class LiveExecutionTracker {
 
     if (xmlIsNotLoaded) {
       const notificationMessage: string = 'The xml could not be loaded. Please try to start the process again.';
+
       this._notificationService.showNotification(NotificationType.ERROR, notificationMessage);
 
       return;
@@ -724,6 +727,7 @@ export class LiveExecutionTracker {
       if (couldNotGetXml) {
         const notificationMessage: string = 'XML could not be found. If the error persists, '
                                           + 'try reopening the Live Execution Tracker or restarting the process.';
+
         this._notificationService.showNotification(NotificationType.ERROR, notificationMessage);
 
         return;
@@ -735,6 +739,7 @@ export class LiveExecutionTracker {
       if (colorizingFailed) {
         const notificationMessage: string = 'Could not get tokens. If the error persists, '
                                           + 'try reopening the Live Execution Tracker or restarting the process.';
+
         this._notificationService.showNotification(NotificationType.ERROR, notificationMessage);
 
         return;
@@ -768,6 +773,7 @@ export class LiveExecutionTracker {
       // Stop polling if checking the correlation state was not successfull
       if (errorCheckingCorrelationState) {
         const notificationMessage: string = 'Could not get active correlations. Please try to start the process again.';
+
         this._notificationService.showNotification(NotificationType.ERROR, notificationMessage);
 
         return;
