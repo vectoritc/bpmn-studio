@@ -119,7 +119,9 @@ export class LiveExecutionTracker {
     const correlation: Correlation = await this._managementApiClient.getCorrelationById(this._getIdentity(), this.correlationId);
     const processModelFromCorrelation: CorrelationProcessModel = correlation.processModels
       .find((correlationProcessModel: CorrelationProcessModel): boolean => {
-        return correlationProcessModel.processModelId === this.processModelId;
+        const processModelFound: boolean = correlationProcessModel.processModelId === this.processModelId;
+
+        return processModelFound;
       });
 
     const parentProcessInstanceId: string = processModelFromCorrelation.parentProcessInstanceId;
@@ -130,7 +132,9 @@ export class LiveExecutionTracker {
   public async getProcessModelByProcessInstanceId(processInstanceId: string): Promise<CorrelationProcessModel> {
     const correlation: Correlation = await this._managementApiClient.getCorrelationById(this._getIdentity(), this.correlationId);
     const processModel: CorrelationProcessModel = correlation.processModels.find((correlationProcessModel: CorrelationProcessModel): boolean => {
-      return correlationProcessModel.processInstanceId === processInstanceId;
+      const processModelFound: boolean = correlationProcessModel.processInstanceId === processInstanceId;
+
+      return processModelFound;
     });
 
     return processModel;
