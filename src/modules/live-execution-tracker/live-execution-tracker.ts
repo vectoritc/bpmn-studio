@@ -166,8 +166,15 @@ export class LiveExecutionTracker {
       return;
     }
 
-    const colorizedXml: string = await this._colorizeXml(xml);
-    const colorizingFailed: boolean = colorizedXml === null;
+    const colorizedXml: string = await (async(): Promise<string> => {
+      try {
+        return await this._colorizeXml(xml);
+      } catch {
+        return undefined;
+      }
+    })();
+
+    const colorizingFailed: boolean = colorizedXml === undefined;
     if (colorizingFailed) {
       const notificationMessage: string = 'Could not get tokens. '
                                         + 'Please try reopening the Live Execution Tracker or restarting the process.';
