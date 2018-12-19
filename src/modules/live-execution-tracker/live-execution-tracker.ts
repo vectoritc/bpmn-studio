@@ -316,9 +316,7 @@ export class LiveExecutionTracker {
     }
 
     for (const callActivity of this._activeCallActivities) {
-      const callActivityId: string = callActivity.id;
-
-      document.getElementById(callActivityId).removeEventListener('click', this._handleCallActivityClick);
+      document.getElementById(callActivity.id).removeEventListener('click', this._handleCallActivityClick);
     }
 
     this._elementsWithEventListeners = [];
