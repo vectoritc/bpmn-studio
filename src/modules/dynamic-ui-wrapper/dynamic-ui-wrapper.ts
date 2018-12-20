@@ -144,16 +144,11 @@ export class DynamicUiWrapper {
     });
   }
 
-  private _finishUserTask(action: 'cancel' | 'proceed' | 'decline'): void {
+  private async _finishUserTask(action: 'cancel' | 'proceed' | 'decline'): Promise<void> {
     const noUserTaskKnown: boolean = !this.isHandlingUserTask;
 
     if (noUserTaskKnown) {
       return;
-    }
-
-    const hasOnButtonClickFunction: boolean = this.onButtonClick !== undefined;
-    if (hasOnButtonClickFunction) {
-      this.onButtonClick(action);
     }
 
     const identity: IIdentity = this._getIdentity();
@@ -163,25 +158,25 @@ export class DynamicUiWrapper {
     const userTaskInstanceId: string = this.currentUserTask.flowNodeInstanceId;
     const userTaskResult: UserTaskResult = this._getUserTaskResults();
 
-    this._dynamicUiService.finishUserTask(identity,
-                                          processInstanceId,
-                                          correlationId,
-                                          userTaskInstanceId,
-                                          userTaskResult);
+    await this._dynamicUiService.finishUserTask(identity,
+                                                processInstanceId,
+                                                correlationId,
+                                                userTaskInstanceId,
+                                                userTaskResult);
 
     this.currentUserTask = undefined;
+
+    const hasOnButtonClickFunction: boolean = this.onButtonClick !== undefined;
+    if (hasOnButtonClickFunction) {
+      this.onButtonClick(action);
+    }
   }
 
-  private _finishManualTask(): void {
+  private async _finishManualTask(): Promise<void> {
     const noManualTaskKnown: boolean = !this.isHandlingManualTask;
 
     if (noManualTaskKnown) {
       return;
-    }
-
-    const noClickHandlerRegistered: boolean = this.onButtonClick !== undefined;
-    if (noClickHandlerRegistered) {
-      this.onButtonClick('proceed');
     }
 
     const identity: IIdentity = this._getIdentity();
@@ -190,12 +185,17 @@ export class DynamicUiWrapper {
     const processInstanceId: string = this.currentManualTask.processInstanceId;
     const manualTaskInstanceId: string = this.currentManualTask.flowNodeInstanceId;
 
-    this._dynamicUiService.finishManualTask(identity,
-                                            processInstanceId,
-                                            correlationId,
-                                            manualTaskInstanceId);
+    await this._dynamicUiService.finishManualTask(identity,
+                                                  processInstanceId,
+                                                  correlationId,
+                                                  manualTaskInstanceId);
 
     this.currentManualTask = undefined;
+
+    const noClickHandlerRegistered: boolean = this.onButtonClick !== undefined;
+    if (noClickHandlerRegistered) {
+      this.onButtonClick('proceed');
+    }
   }
 
   private _getUserTaskResults(): UserTaskResult {

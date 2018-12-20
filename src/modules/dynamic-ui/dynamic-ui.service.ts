@@ -19,13 +19,13 @@ export class DynamicUiService implements IDynamicUiService {
                         processInstanceId: string,
                         correlationId: string,
                         userTaskInstanceId: string,
-                        userTaskResult: UserTaskResult): void {
+                        userTaskResult: UserTaskResult): Promise<void> {
 
-    this._managementApiClient.finishUserTask(identity,
-                                            processInstanceId,
-                                            correlationId,
-                                            userTaskInstanceId,
-                                            userTaskResult);
+    return this._managementApiClient.finishUserTask(identity,
+                                                    processInstanceId,
+                                                    correlationId,
+                                                    userTaskInstanceId,
+                                                    userTaskResult);
   }
 
   public async getUserTask(identity: IIdentity,
@@ -45,12 +45,12 @@ export class DynamicUiService implements IDynamicUiService {
   public finishManualTask(identity: IIdentity,
                           processInstanceId: string,
                           correlationId: string,
-                          manualTaskInstanceId: string): void {
+                          manualTaskInstanceId: string): Promise<void> {
 
-    this._managementApiClient.finishManualTask(identity,
-                              processInstanceId,
-                              correlationId,
-                              manualTaskInstanceId);
+    return this._managementApiClient.finishManualTask(identity,
+                                                      processInstanceId,
+                                                      correlationId,
+                                                      manualTaskInstanceId);
   }
 
   public async getManualTask(identity: IIdentity,
