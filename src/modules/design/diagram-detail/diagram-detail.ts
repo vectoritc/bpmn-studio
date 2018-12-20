@@ -41,6 +41,7 @@ type IEventListener = {
 export class DiagramDetail {
 
   @bindable() public activeDiagram: IDiagram;
+  @bindable() public activeSolutionEntry: ISolutionEntry;
   public bpmnio: BpmnIo;
   public showUnsavedChangesModal: boolean = false;
   public showSaveForStartModal: boolean = false;
@@ -49,13 +50,11 @@ export class DiagramDetail {
   public showStartWithOptionsModal: boolean = false;
   public processesStartEvents: Array<Event> = [];
   public selectedStartEventId: string;
-  public xml: string;
   public initialToken: string;
   @observable({ changeHandler: 'correlationChanged'}) public customCorrelationId: string;
   public hasValidationError: boolean = false;
 
   @observable({ changeHandler: 'diagramHasChangedChanged'}) private _diagramHasChanged: boolean;
-  private _activeSolutionEntry: ISolutionEntry;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
@@ -256,7 +255,7 @@ export class DiagramDetail {
                                                 : internalProcessEngineRoute;
 
       const solutionToDeployTo: ISolutionEntry = this._solutionService.getSolutionEntryForUri(connectedProcessEngineRoute);
-      this._activeSolutionEntry = solutionToDeployTo;
+      this.activeSolutionEntry = solutionToDeployTo;
 
       this.activeDiagram.id = processModelId;
 
@@ -276,9 +275,9 @@ export class DiagramDetail {
         xml: this.activeDiagram.xml,
       };
 
-      await this._activeSolutionEntry.service.saveDiagram(copyOfDiagram, connectedProcessEngineRoute);
+      await this.activeSolutionEntry.service.saveDiagram(copyOfDiagram, connectedProcessEngineRoute);
 
-      this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(processModelId);
+      this.activeDiagram = await this.activeSolutionEntry.service.loadDiagram(processModelId);
 
       this._router.navigateToRoute('design', {
         diagramName: this.activeDiagram.name,
@@ -347,7 +346,7 @@ export class DiagramDetail {
 
     try {
       const response: ProcessModelExecution.ProcessStartResponsePayload = await this._managementApiClient
-        .startProcessInstance(this._activeSolutionEntry.identity,
+        .startProcessInstance(this.activeSolutionEntry.identity,
                               this.activeDiagram.id,
                               this.selectedStartEventId,
                               startRequestPayload,
@@ -358,7 +357,7 @@ export class DiagramDetail {
 
       this._router.navigateToRoute('live-execution-tracker', {
         diagramName: this.activeDiagram.id,
-        solutionUri: this._activeSolutionEntry.uri,
+        solutionUri: this.activeSolutionEntry.uri,
         correlationId: correlationId,
       });
     } catch (error) {
@@ -465,7 +464,7 @@ export class DiagramDetail {
 
   private async _updateProcessStartEvents(): Promise<void> {
     const startEventResponse: EventList = await this._managementApiClient
-      .getStartEventsForProcessModel(this._activeSolutionEntry.identity, this.activeDiagram.id);
+      .getStartEventsForProcessModel(this.activeSolutionEntry.identity, this.activeDiagram.id);
 
     this.processesStartEvents = startEventResponse.events;
   }
@@ -579,7 +578,7 @@ export class DiagramDetail {
       const xml: string = await this.bpmnio.getXML();
       this.activeDiagram.xml = xml;
 
-      await this._activeSolutionEntry.service.saveDiagram(this.activeDiagram);
+      await this.activeSolutionEntry.service.saveDiagram(this.activeDiagram);
       this.bpmnio.saveCurrentXML();
 
       this._diagramHasChanged = false;
