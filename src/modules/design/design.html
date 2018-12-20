@@ -1,11 +1,15 @@
 <template>
   <require from="./design.css"></require>
   <require from="./diagram-detail/diagram-detail"></require>
+  <require from="./bpmn-xml-view/bpmn-xml-view"></require>
 
   <div class="design">
 
     <div show.bind="showDetail" class="design__detail-container">
       <diagram-detail view-model.ref="diagramDetail" active-diagram.bind="activeDiagram" active-solution-entry.bind="activeSolutionEntry"></diagram-detail>
+    </div>
+    <div show.bind="showXML" class="design__xml-view-container">
+      <bpmn-xml-view xml.bind="activeDiagram.xml"></bpmn-xml-view>
     </div>
 
   </div>

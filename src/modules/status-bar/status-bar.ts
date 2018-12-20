@@ -30,6 +30,7 @@ export class StatusBar {
   private _router: Router;
   private _solutionService: ISolutionService;
   private _subscriptions: Array<Subscription>;
+  private _designView: string;
 
   constructor(eventAggregator: EventAggregator, router: Router, solutionService: ISolutionService) {
     this._eventAggregator = eventAggregator;
@@ -91,7 +92,15 @@ export class StatusBar {
       this.toggleDiffView();
     }
 
-    this._eventAggregator.publish(environment.events.bpmnio.toggleXMLView);
+    this._designView = this.xmlIsShown ? 'detail' : 'xml';
+
+    this._router.navigateToRoute('design', {
+      diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
+      solutionUri: this.activeSolutionEntry.uri,
+      view: this._designView,
+    });
+
+    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToDesigner, this._designView);
     this.xmlIsShown = !this.xmlIsShown;
   }
 
