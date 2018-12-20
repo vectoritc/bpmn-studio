@@ -27,6 +27,7 @@ export class TaskDynamicUi {
   @bindable() public taskId: string;
   @bindable() public isModal: boolean;
   @bindable() public modalCloseEvent: Function;
+  public cancelModalEvent: Function;
 
   private _activeDiagramName: string;
   private _activeSolutionUri: string;
@@ -129,6 +130,15 @@ export class TaskDynamicUi {
     return taskDisplayName;
   }
 
+  public modalCloseEventChanged(): void {
+    this.cancelModalEvent = (): void => {
+      this.userTask = undefined;
+      this.manualTask = undefined;
+
+      this.modalCloseEvent();
+    };
+  }
+
   private _finishTask(action: string): void {
     if (this.isModal) {
       this._userTask = undefined;
@@ -191,9 +201,8 @@ export class TaskDynamicUi {
 
   private async setDynamicUIWrapperUserTask(): Promise<void> {
     const dynamicUiWrapperNotExisting: boolean = this.dynamicUiWrapper === undefined;
-    const userTaskNotExisting: boolean = this._userTask === undefined;
 
-    if (dynamicUiWrapperNotExisting || userTaskNotExisting) {
+    if (dynamicUiWrapperNotExisting) {
       return;
     }
 
@@ -202,9 +211,8 @@ export class TaskDynamicUi {
 
   private async setDynamicUIWrapperManualTask(): Promise<void> {
     const dynamicUiWrapperNotExisting: boolean = this.dynamicUiWrapper === undefined;
-    const manualTaskNotExisting: boolean = this._manualTask === undefined;
 
-    if (dynamicUiWrapperNotExisting || manualTaskNotExisting) {
+    if (dynamicUiWrapperNotExisting) {
       return;
     }
 
