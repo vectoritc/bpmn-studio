@@ -54,8 +54,9 @@ export class SolutionExplorerSolution {
   private _notificationService: NotificationService;
   private _solutionService: ISolutionService;
 
-  private _diagramRoute: string = 'diagram-detail';
+  private _diagramRoute: string = 'design';
   private _inspectView: string;
+  private _designView: string = 'detail';
   private _subscriptions: Array<Subscription>;
   private _openedSolution: ISolution;
   private _diagramCreationState: IDiagramCreationState = {
@@ -161,10 +162,16 @@ export class SolutionExplorerSolution {
         this._inspectView = inspectViewIsNotSet
                               ? 'heatmap'
                               : inspectView;
+        this._designView = undefined;
       }),
 
-      this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToDesigner, () => {
-        this._diagramRoute = 'diagram-detail';
+      this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToDesigner, (designView?: string) => {
+        this._diagramRoute = 'design';
+        const designViewIsNotSet: boolean = designView === undefined;
+
+        this._designView = designViewIsNotSet
+                              ? 'detail'
+                              : designView;
         this._inspectView = undefined;
       }),
 
@@ -386,7 +393,7 @@ export class SolutionExplorerSolution {
     }
 
     await this._router.navigateToRoute(this._diagramRoute, {
-      view: this._inspectView,
+      view: this._inspectView ? this._inspectView : this._designView,
       diagramName: diagram.name,
       solutionUri: this.displayedSolutionEntry.uri,
     });
@@ -770,7 +777,7 @@ export class SolutionExplorerSolution {
     const diagramNameIsSpecified: boolean = diagramName !== undefined;
 
     const routeName: string = this._router.currentInstruction.config.name;
-    const routeNameIsDiagramDetailOrInspect: boolean = routeName === 'diagram-detail'
+    const routeNameIsDiagramDetailOrInspect: boolean = routeName === 'design'
                                                     || routeName === 'inspect';
     if (routeNameIsDiagramDetailOrInspect) {
       this._diagramRoute = routeName;

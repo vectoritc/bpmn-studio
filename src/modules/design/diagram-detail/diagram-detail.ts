@@ -307,9 +307,9 @@ export class DiagramDetail {
 
       this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(processModelId);
 
-      this._router.navigateToRoute('diagram-detail', {
+      this._router.navigateToRoute('design', {
         diagramName: this.activeDiagram.name,
-        solutionUri: this._activeSolutionEntry.uri,
+        solutionUri: this.activeSolutionEntry.uri,
       });
 
       this._notificationService
