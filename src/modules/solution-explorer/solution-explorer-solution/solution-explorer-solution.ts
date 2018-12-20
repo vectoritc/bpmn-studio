@@ -406,6 +406,11 @@ export class SolutionExplorerSolution {
       return;
     }
 
+    /**
+     * Because the activeDiagram variable will be gathered with solutionService.load(),
+     * its not sufficient to just ask the activeDiagram for the uri.
+     * We have to make sure, that the current Solution is actually active.
+     */
     const solutionIsNotActive: boolean = !this.activeDiagram.uri.includes(solutionUri);
     if (solutionIsNotActive) {
       return;
