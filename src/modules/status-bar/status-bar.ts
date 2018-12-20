@@ -119,7 +119,15 @@ export class StatusBar {
       this.toggleXMLView();
     }
 
-    this._eventAggregator.publish(environment.events.bpmnio.toggleDiffView);
+    this._designView = this.diffIsShown ? 'detail' : 'diff';
+
+    this._router.navigateToRoute('design', {
+      diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
+      solutionUri: this.activeSolutionEntry.uri,
+      view: this._designView,
+    });
+
+    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToDesigner, this._designView);
     this.diffIsShown = !this.diffIsShown;
   }
 

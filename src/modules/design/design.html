@@ -2,6 +2,7 @@
   <require from="./design.css"></require>
   <require from="./diagram-detail/diagram-detail"></require>
   <require from="./bpmn-xml-view/bpmn-xml-view"></require>
+  <require from="./bpmn-diff-view/bpmn-diff-view"></require>
 
   <div class="design">
 
@@ -10,6 +11,9 @@
     </div>
     <div show.bind="showXML" class="design__xml-view-container">
       <bpmn-xml-view xml.bind="activeDiagram.xml"></bpmn-xml-view>
+    </div>
+    <div if.bind="showDiff" class="design__diff-view-container">
+      <bpmn-diff-view saved-xml.bind="activeDiagram.xml" current-xml.bind="xmlForDiff" process-model-id.bind="activeDiagram.name"></bpmn-diff-view>
     </div>
 
   </div>

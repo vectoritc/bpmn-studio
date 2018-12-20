@@ -89,6 +89,8 @@ export class DiagramDetail {
     return 'replace';
   }
 
+  public async getXML(): Promise<string> {
+    return this.bpmnio.getXML();
   }
 
   public attached(): void {
