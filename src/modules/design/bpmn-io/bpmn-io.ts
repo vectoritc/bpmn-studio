@@ -44,8 +44,6 @@ export class BpmnIo {
 
   public savedXml: string;
   public showPropertyPanel: boolean = false;
-  public initialLoadingFinished: boolean = false;
-  public showXMLView: boolean = false;
   public showDiffView: boolean = false;
   public colorPickerLoaded: boolean = false;
   public minCanvasWidth: number = 100;
@@ -160,8 +158,6 @@ export class BpmnIo {
 
     window.addEventListener('resize', this._resizeEventHandler);
 
-    this.initialLoadingFinished = true;
-
     this.resizeButton.addEventListener('mousedown', (e: Event) => {
       const windowEvent: Event = e || window.event;
       windowEvent.cancelBubble = true;
@@ -192,13 +188,6 @@ export class BpmnIo {
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.processSolutionPanel.toggleProcessSolutionExplorer, () => {
         this._hideOrShowPpForSpaceReasons();
-      }),
-
-      this._eventAggregator.subscribe(environment.events.bpmnio.toggleXMLView, () => {
-        this.toggleXMLView();
-        setTimeout(() => { // This makes the function gets called after the XMLView is toggled
-          this._hideOrShowPpForSpaceReasons();
-        }, 0);
       }),
 
       this._eventAggregator.subscribe(environment.events.bpmnio.toggleDiffView, async() => {
@@ -382,23 +371,6 @@ export class BpmnIo {
     const mousePosition: number = event.clientX;
 
     this._setNewPropertyPanelWidthFromMousePosition(mousePosition);
-  }
-
-  public async toggleXMLView(): Promise<void> {
-    const shouldShowXmlView: boolean = !this.showXMLView;
-    if (shouldShowXmlView) {
-      this.xmlForXmlView = await this.getXML();
-
-      /**
-       * We need to detach the modeler here because otherwise, he would
-       * consume all shortcuts such as cmd/ctrl + c.
-       */
-      this.modeler.detach();
-    } else {
-      this.modeler.attachTo(this.canvasModel);
-    }
-
-    this.showXMLView = !this.showXMLView;
   }
 
   public async getXML(): Promise<string> {
