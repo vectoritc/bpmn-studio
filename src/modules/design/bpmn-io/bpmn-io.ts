@@ -37,7 +37,6 @@ export class BpmnIo {
 
   @bindable() public xml: string;
   @bindable({changeHandler: 'nameChanged'}) public name: string;
-  @bindable() public processModelId: string;
   @bindable() public openedFromProcessEngine: boolean = true;
 
   @observable public propertyPanelWidth: number;
@@ -301,7 +300,6 @@ export class BpmnIo {
         return 0;
       });
 
-      this.xml = newValue;
     }
   }
 
