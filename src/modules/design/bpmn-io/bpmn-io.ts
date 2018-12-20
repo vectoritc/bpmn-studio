@@ -44,22 +44,11 @@ export class BpmnIo {
 
   public savedXml: string;
   public showPropertyPanel: boolean = false;
-  public showDiffView: boolean = false;
   public colorPickerLoaded: boolean = false;
   public minCanvasWidth: number = 100;
   public minPropertyPanelWidth: number = 200;
   public showDiffDestinationButton: boolean = false;
   public diffDestinationIsLocal: boolean = true;
-
-  /**
-   * The following to variables are needed to fix a bug, where the command
-   * stack was reset when opening the bpmn-diff-view or the
-   * bpmn-xml-view component.
-   *
-   * todo: see https://github.com/process-engine/bpmn-studio/issues/912
-   */
-  public xmlForXmlView: string;
-  public xmlForDiffView: string;
 
   private _propertyPanelShouldOpen: boolean = false;
   private _propertyPanelHiddenForSpaceReasons: boolean = false;
@@ -151,9 +140,6 @@ export class BpmnIo {
       });
     }
 
-    this.xmlForXmlView = this.xml;
-    this.xmlForDiffView = this.xml;
-
     this.modeler.attachTo(this.canvasModel);
 
     window.addEventListener('resize', this._resizeEventHandler);
@@ -188,14 +174,6 @@ export class BpmnIo {
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.processSolutionPanel.toggleProcessSolutionExplorer, () => {
         this._hideOrShowPpForSpaceReasons();
-      }),
-
-      this._eventAggregator.subscribe(environment.events.bpmnio.toggleDiffView, async() => {
-        this._toggleDiffView();
-        this.xmlForDiffView = await this.getXML();
-        setTimeout(() => { // This makes the function gets called after the XMLView is toggled
-          this._hideOrShowPpForSpaceReasons();
-        }, 0);
       }),
 
       this._eventAggregator.subscribe(`${environment.events.diagramDetail.exportDiagramAs}:BPMN`, async() => {
@@ -433,10 +411,6 @@ export class BpmnIo {
       this._eventAggregator.publish(eventToPublish);
 
     }, elementRegistryTimeoutMilliseconds);
-  }
-
-  private _toggleDiffView(): void {
-    this.showDiffView = !this.showDiffView;
   }
 
   private _setNewPropertyPanelWidthFromMousePosition(mousePosition: number): void {
