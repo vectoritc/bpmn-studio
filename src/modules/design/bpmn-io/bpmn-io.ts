@@ -35,7 +35,7 @@ export class BpmnIo {
   public canvasModel: HTMLDivElement;
   public propertyPanel: HTMLElement;
 
-  @bindable() public xml: string;
+  @bindable({changeHandler: 'xmlChanged'}) public xml: string;
   @bindable({changeHandler: 'nameChanged'}) public name: string;
   @bindable() public openedFromProcessEngine: boolean = true;
 
