@@ -1,5 +1,5 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {inject, observable} from 'aurelia-framework';
+import {bindable, inject, observable} from 'aurelia-framework';
 import {Redirect, Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
@@ -40,7 +40,7 @@ type IEventListener = {
         ValidationController)
 export class DiagramDetail {
 
-  public activeDiagram: IDiagram;
+  @bindable() public activeDiagram: IDiagram;
   public bpmnio: BpmnIo;
   public showUnsavedChangesModal: boolean = false;
   public showSaveForStartModal: boolean = false;
@@ -90,43 +90,16 @@ export class DiagramDetail {
     return 'replace';
   }
 
-  public async activate(routeParameters: RouteParameters): Promise<void> {
-
-    const diagramNameIsNotSet: boolean = routeParameters.diagramName === undefined;
-    const solutionUriIsNotSet: boolean = routeParameters.solutionUri === undefined;
-
-    if (diagramNameIsNotSet || solutionUriIsNotSet) {
-      this._router.navigateToRoute('start-page');
-
-      return;
-    }
-
-    try {
-      this._activeSolutionEntry = this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
-      /**
-       * We have to open the solution here again since if we come here after a
-       * reload the solution might not be opened yet.
-       */
-      await this._activeSolutionEntry.service.openSolution(this._activeSolutionEntry.uri, this._activeSolutionEntry.identity);
-      this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
-
-      this.xml = this.activeDiagram.xml;
-
-      this._diagramHasChanged = false;
-    } catch (error) {
-      this._notificationService.showNotification(NotificationType.INFO, 'Diagram could not be opened.');
-      this._router.navigateToRoute('start-page');
-
-      return;
-    }
-
-    const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
-    if (isRunningInElectron) {
-      this._prepareSaveModalForClosing();
-    }
   }
 
   public attached(): void {
+    // this.xml = this.activeDiagram.xml;
+    this._diagramHasChanged = false;
+
+    // const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
+    // if (isRunningInElectron) {
+    //   this._prepareSaveModalForClosing();
+    // }
 
     this._eventAggregator.publish(environment.events.navBar.showTools);
 
