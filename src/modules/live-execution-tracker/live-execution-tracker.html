@@ -14,7 +14,7 @@
         <div class="modal-content dynamic-ui-modal-content">
           <div class="modal-body dynamic-ui-modal-body">
             <btn class="button close-dynamic-ui-button"><i class="fas fa-times" click.delegate="closeDynamicUiModal()"></i></btn>
-            <task-dynamic-ui correlation-id.bind="correlationId" process-model-id.bind="processModelId" task-id.bind="taskId" is-modal="true" modal-close-event.bind="closeDynamicUiModal"></task-dynamic-ui>
+            <task-dynamic-ui correlation-id.bind="correlationId" view-model.ref="dynamicUi" process-model-id.bind="processModelId" task-id.bind="taskId" is-modal="true" modal-close-event.bind="closeDynamicUiModal"></task-dynamic-ui>
           </div>
         </div>
       </div>

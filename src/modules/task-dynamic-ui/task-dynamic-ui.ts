@@ -132,11 +132,15 @@ export class TaskDynamicUi {
 
   public modalCloseEventChanged(): void {
     this.cancelModalEvent = (): void => {
-      this.userTask = undefined;
-      this.manualTask = undefined;
+      this.clearTasks();
 
       this.modalCloseEvent();
     };
+  }
+
+  public clearTasks(): void {
+    this.userTask = undefined;
+    this.manualTask = undefined;
   }
 
   private _finishTask(action: string): void {
