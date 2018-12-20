@@ -399,6 +399,17 @@ export class SolutionExplorerSolution {
     if (activeDiagramIsNotSet) {
       return undefined;
     }
+    const solutionUri: string = this._router.currentInstruction.queryParams.solutionUri;
+
+    const solutionUriUnspecified: boolean = solutionUri === undefined;
+    if (solutionUriUnspecified) {
+      return;
+    }
+
+    const solutionIsNotActive: boolean = !this.activeDiagram.uri.includes(solutionUri);
+    if (solutionIsNotActive) {
+      return;
+    }
 
     return this.activeDiagram.uri;
   }
