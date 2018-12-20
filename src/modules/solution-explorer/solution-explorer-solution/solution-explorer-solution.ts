@@ -52,7 +52,6 @@ export class SolutionExplorerSolution {
   private _validationController: ValidationController;
   private _diagramCreationService: IDiagramCreationService;
   private _notificationService: NotificationService;
-  private _solutionService: ISolutionService;
 
   private _diagramRoute: string = 'design';
   private _inspectView: string;
@@ -147,7 +146,6 @@ export class SolutionExplorerSolution {
     this._validationController = validationController;
     this._diagramCreationService = diagramCreationService;
     this._notificationService = notificationService;
-    this._solutionService = solutionService;
   }
 
   public attached(): void {
