@@ -176,23 +176,19 @@ export class TaskDynamicUi {
         throw Error(`Invalid ProcessModel ID: ${this.processModelId}`);
       }
 
-      this._userTask = await this._dynamicUiService
+      this.userTask = await this._dynamicUiService
                                   .getUserTask(identity, this.correlationId, this.processModelId, this.taskId);
 
       const userTaskFound: boolean = this._userTask !== undefined;
       if (userTaskFound) {
-        this.setDynamicUIWrapperUserTask();
-
         return;
       }
 
-      this._manualTask = await this._dynamicUiService
+      this.manualTask = await this._dynamicUiService
                                     .getManualTask(identity, this.correlationId, this.processModelId, this.taskId);
 
       const manualTaskFound: boolean = this._manualTask !== undefined;
       if (manualTaskFound) {
-        this.setDynamicUIWrapperManualTask();
-
         return;
       }
 
