@@ -1,8 +1,12 @@
 <template>
   <require from="./design.css"></require>
+  <require from="./diagram-detail/diagram-detail"></require>
 
   <div class="design">
 
+    <div show.bind="showDetail" class="design__detail-container">
+      <diagram-detail view-model.ref="diagramDetail" active-diagram.bind="activeDiagram" active-solution-entry.bind="activeSolutionEntry"></diagram-detail>
+    </div>
 
   </div>
 </template>
