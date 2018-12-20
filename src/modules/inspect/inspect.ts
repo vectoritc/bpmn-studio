@@ -72,14 +72,12 @@ export class Inspect {
 
       this._eventAggregator.publish(environment.events.navBar.toggleDashboardView);
     } else if (routeViewIsHeatmap) {
-      this._eventAggregator.publish(environment.events.navBar.showInspectButtons);
       this._eventAggregator.publish(environment.events.navBar.toggleHeatmapView);
 
       this.showDashboard = false;
       this.showHeatmap = true;
       this.showInspectCorrelation = false;
     } else if (routeViewIsInspectCorrelation) {
-      this._eventAggregator.publish(environment.events.navBar.showInspectButtons);
       this._eventAggregator.publish(environment.events.navBar.toggleInspectCorrelationView);
 
       this.showDashboard = false;

@@ -1,4 +1,3 @@
-import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
@@ -6,14 +5,13 @@ import {FlowNodeRuntimeInformation} from '@process-engine/kpi_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
 import {IBpmnModeler, IElementRegistry, IOverlayManager} from '../../../contracts/index';
-import environment from '../../../environment';
+
 import {IFlowNodeAssociation, IHeatmapService} from './contracts';
 
 @inject('HeatmapService')
 export class Heatmap {
   public viewerContainer: HTMLDivElement;
   @bindable() public activeDiagram: IDiagram;
-  @bindable() public dashboardIsShown: string;
 
   private _heatmapService: IHeatmapService;
   private _modeler: IBpmnModeler;
