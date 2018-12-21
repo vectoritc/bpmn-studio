@@ -94,13 +94,12 @@ export class DiagramDetail {
   }
 
   public attached(): void {
-    // this.xml = this.activeDiagram.xml;
     this._diagramHasChanged = false;
 
-    // const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
-    // if (isRunningInElectron) {
-    //   this._prepareSaveModalForClosing();
-    // }
+    const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
+    if (isRunningInElectron) {
+      this._prepareSaveModalForClosing();
+    }
 
     this._eventAggregator.publish(environment.events.navBar.showTools);
 
@@ -159,7 +158,7 @@ export class DiagramDetail {
     }
   }
 
-  public async canDeactivate(): Promise<Redirect> {
+  public async canDeactivate(): Promise<boolean> {
 
     const _modal: Promise<boolean> = new Promise((resolve: Function, reject: Function): boolean | void => {
       if (!this._diagramHasChanged) {
@@ -191,15 +190,7 @@ export class DiagramDetail {
       }
     });
 
-    const result: boolean = await _modal;
-    if (result === false) {
-      /*
-       * As suggested in https://github.com/aurelia/router/issues/302, we use
-       * the router directly to navigate back, which results in staying on this
-       * component-- and this is the desired behaviour.
-       */
-      return new Redirect(this._router.currentInstruction.fragment, {trigger: false, replace: false});
-    }
+    return _modal;
   }
 
   public deactivate(): void {

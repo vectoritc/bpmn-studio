@@ -3,6 +3,7 @@ import {bindable, inject} from 'aurelia-framework';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
+import {Redirect, Router} from 'aurelia-router';
 import {ISolutionEntry, ISolutionService} from '../../contracts';
 import environment from '../../environment';
 import {DiagramDetail} from './diagram-detail/diagram-detail';
@@ -13,7 +14,7 @@ export interface IDesignRouteParameters {
   solutionUri?: string;
 }
 
-@inject(EventAggregator, 'SolutionService')
+@inject(EventAggregator, 'SolutionService', Router)
 export class Design {
 
   @bindable() public activeDiagram: IDiagram;
@@ -31,10 +32,13 @@ export class Design {
 
   private _eventAggregator: EventAggregator;
   private _solutionService: ISolutionService;
+  private _subscriptions: Array<Subscription>;
+  private _router: Router;
 
-  constructor(eventAggregator: EventAggregator, solutionService: ISolutionService) {
+  constructor(eventAggregator: EventAggregator, solutionService: ISolutionService, router: Router) {
     this._eventAggregator = eventAggregator;
     this._solutionService = solutionService;
+    this._router = router;
   }
 
   public async activate(routeParameters: IDesignRouteParameters): Promise<void> {
@@ -97,6 +101,22 @@ export class Design {
 
   public togglePanel(): void {
     this._eventAggregator.publish(environment.events.bpmnio.togglePropertyPanel);
+  }
+
+  public async canDeactivate(): Promise<Redirect> {
+    const modalResult: boolean = await this.diagramDetail.canDeactivate();
+    if (!modalResult) {
+      /*
+      * As suggested in https://github.com/aurelia/router/issues/302, we use
+      * the router directly to navigate back, which results in staying on this
+      * component-- and this is the desired behaviour.
+      */
+      return new Redirect(this._router.currentInstruction.fragment, {trigger: false, replace: false});
+    }
+  }
+
+  public deactivate(): void {
+    this.diagramDetail.deactivate();
   }
 
   private _showDiff(): void {
