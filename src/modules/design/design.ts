@@ -23,17 +23,19 @@ export class Design {
   public showDetail: boolean = true;
   public showXML: boolean;
   public showDiff: boolean;
-  public xmlForDiff: string;
   public propertyPanelShown: boolean;
   public showPropertyPanelButton: boolean = true;
   public showDiffDestinationButton: boolean = false;
   public diffDestinationIsLocal: boolean = true;
+
+  @bindable() public xmlForDiff: string;
   public diagramDetail: DiagramDetail;
 
   private _eventAggregator: EventAggregator;
   private _solutionService: ISolutionService;
   private _subscriptions: Array<Subscription>;
   private _router: Router;
+  private _routeView: string;
 
   constructor(eventAggregator: EventAggregator, solutionService: ISolutionService, router: Router) {
     this._eventAggregator = eventAggregator;
@@ -59,6 +61,7 @@ export class Design {
     const routeViewIsDetail: boolean = routeParameters.view === 'detail';
     const routeViewIsXML: boolean = routeParameters.view === 'xml';
     const routeViewIsDiff: boolean = routeParameters.view === 'diff';
+    this._routeView = routeParameters.view;
 
     if (routeViewIsDetail) {
       this.showDetail = true;
@@ -73,12 +76,27 @@ export class Design {
       this.showDiffDestinationButton = false;
       this.showPropertyPanelButton = false;
     } else if (routeViewIsDiff) {
+      /**
+       * We need to check this, because after a reload the diagramdetail component is not attached yet.
+       */
+      const diagramDetailIsNotAttached: boolean = this.diagramDetail === undefined;
+      if (diagramDetailIsNotAttached) {
+        return;
+      }
       this.xmlForDiff = await this.diagramDetail.getXML();
       this._showDiff();
     }
   }
 
   public async attached(): Promise<void> {
+    setTimeout(async() => {
+      this.xmlForDiff = await this.diagramDetail.getXML();
+    }, 0);
+
+    const routeViewIsDiff: boolean = this._routeView === 'diff';
+    if (routeViewIsDiff) {
+      this._showDiff();
+    }
 
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.bpmnio.propertyPanelActive, (showPanel: boolean) => {
