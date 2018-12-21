@@ -80,6 +80,19 @@ export class StatusBar {
     ];
 
     await this._updateStatusBar();
+
+    const currentView: string = this._router.currentInstruction.params.view;
+    switch (currentView) {
+      case 'xml':
+        this.xmlIsShown = true;
+        break;
+      case 'diff':
+        this.diffIsShown = true;
+        break;
+      default:
+        break;
+    }
+
     this.currentDiffMode = DiffMode.NewVsOld;
   }
 
