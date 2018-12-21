@@ -48,7 +48,7 @@ export class StatusBar {
     this._setProcessEngineRoute(processEngineRoute);
   }
 
-  public attached(): void {
+  public async attached(): Promise<void> {
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.statusBar.showDiagramViewButtons, () => {
         this.showDiagramViewButtons = true;
@@ -74,12 +74,12 @@ export class StatusBar {
         this.showInspectCorrelationButtons = showInspectCorrelation;
       }),
 
-      this._eventAggregator.subscribe('router:navigation:success', () => {
-
-        this._updateStatusBar();
+      this._eventAggregator.subscribe('router:navigation:success', async() => {
+        await this._updateStatusBar();
       }),
     ];
 
+    await this._updateStatusBar();
     this.currentDiffMode = DiffMode.NewVsOld;
   }
 
