@@ -14,7 +14,7 @@ export interface IDesignRouteParameters {
 }
 
 @inject(EventAggregator, 'SolutionService')
-export class Deisgn {
+export class Design {
 
   @bindable() public activeDiagram: IDiagram;
   @bindable() public activeSolutionEntry: ISolutionEntry;
