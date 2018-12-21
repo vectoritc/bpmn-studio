@@ -254,8 +254,8 @@ export class BpmnIo {
         this._diagramIsInvalid = false;
       }),
 
-      this._eventAggregator.subscribe(environment.events.bpmnio.showDiffDestinationButton, (showDiffDestinationButton: boolean) => {
-        this.showDiffDestinationButton = showDiffDestinationButton;
+      this._eventAggregator.subscribe(environment.events.bpmnio.togglePropertyPanel, () => {
+        this._togglePanel();
       }),
     ];
 
