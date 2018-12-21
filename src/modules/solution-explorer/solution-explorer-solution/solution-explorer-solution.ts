@@ -380,7 +380,13 @@ export class SolutionExplorerSolution {
   public async navigateToDetailView(diagram: IDiagram): Promise<void> {
     const diagramIsNoRemoteDiagram: boolean = !diagram.uri.startsWith('http');
     if (diagramIsNoRemoteDiagram) {
-      this._inspectView = 'dashboard';
+      const viewIsHeatmapOrInspectCorrelation: boolean = this._inspectView === 'inspect-correlation'
+                                                      || this._inspectView === 'heatmap';
+
+      if (viewIsHeatmapOrInspectCorrelation) {
+        this._inspectView = 'dashboard';
+      }
+
       this._eventAggregator.publish(environment.events.navBar.inspectNavigateToDashboard);
 
       const activeRouteIsInspect: boolean = this._diagramRoute === 'inspect';
