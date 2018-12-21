@@ -30,7 +30,6 @@ const elementRegistryTimeoutMilliseconds: number = 50;
 export class BpmnIo {
   public modeler: IBpmnModeler;
 
-  public toggleButtonPropertyPanel: HTMLButtonElement;
   public resizeButton: HTMLButtonElement;
   public canvasModel: HTMLDivElement;
   public propertyPanel: HTMLElement;
@@ -320,14 +319,16 @@ export class BpmnIo {
         return;
       }
 
-      this.toggleButtonPropertyPanel.classList.add('tool--active');
+      document.getElementById('toggleButtonPropertyPanel').classList.add('design-layout__tool--active');
       this.showPropertyPanel = true;
+      this._eventAggregator.publish(environment.events.bpmnio.propertyPanelActive, true);
       this._propertyPanelShouldOpen = false;
       window.localStorage.setItem('propertyPanelHideState', 'show');
     } else {
 
-      this.toggleButtonPropertyPanel.classList.remove('tool--active');
+      document.getElementById('toggleButtonPropertyPanel').classList.remove('design-layout__tool--active');
       this.showPropertyPanel = false;
+      this._eventAggregator.publish(environment.events.bpmnio.propertyPanelActive, false);
       this._propertyPanelShouldOpen = true;
       window.localStorage.setItem('propertyPanelHideState', 'hide');
     }
