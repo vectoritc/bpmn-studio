@@ -272,7 +272,7 @@ export class BpmnIo {
     const propertyPanelHideState: string = window.localStorage.getItem('propertyPanelHideState');
     const wasPropertyPanelVisible: boolean = propertyPanelHideState === null || propertyPanelHideState === 'show';
     this._propertyPanelShouldOpen = wasPropertyPanelVisible;
-    this.togglePanel();
+    this._togglePanel();
   }
 
   public detached(): void {
@@ -312,7 +312,7 @@ export class BpmnIo {
     }
   }
 
-  public togglePanel(): void {
+  public _togglePanel(): void {
     if (this._propertyPanelShouldOpen) {
       if (this._propertyPanelHasNoSpace) {
         this._notificationService.showNotification(NotificationType.ERROR, 'There is not enough space for the property panel!');
@@ -424,7 +424,7 @@ export class BpmnIo {
 
     if (propertyPanelIsOpen) {
       this._propertyPanelHiddenForSpaceReasons = true;
-      this.togglePanel();
+      this._togglePanel();
     }
   }
 
@@ -433,7 +433,7 @@ export class BpmnIo {
     this._propertyPanelHiddenForSpaceReasons = false;
 
     this._propertyPanelShouldOpen = true;
-    this.togglePanel();
+    this._togglePanel();
   }
 
   private _resizeEventHandler = (event: MouseEvent): void => {
