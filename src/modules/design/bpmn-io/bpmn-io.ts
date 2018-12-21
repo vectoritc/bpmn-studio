@@ -46,8 +46,6 @@ export class BpmnIo {
   public colorPickerLoaded: boolean = false;
   public minCanvasWidth: number = 100;
   public minPropertyPanelWidth: number = 200;
-  public showDiffDestinationButton: boolean = false;
-  public diffDestinationIsLocal: boolean = true;
 
   private _propertyPanelShouldOpen: boolean = false;
   private _propertyPanelHiddenForSpaceReasons: boolean = false;
@@ -333,14 +331,6 @@ export class BpmnIo {
       this._propertyPanelShouldOpen = true;
       window.localStorage.setItem('propertyPanelHideState', 'hide');
     }
-  }
-
-  public toggleDiffDestination(): void {
-    this.diffDestinationIsLocal = !this.diffDestinationIsLocal;
-
-    const diffDestination: string = this.diffDestinationIsLocal ? 'local' : 'deployed';
-
-    this._eventAggregator.publish(environment.events.diffView.setDiffDestination, diffDestination);
   }
 
   public resize(event: MouseEvent): void {
