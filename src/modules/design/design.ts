@@ -1,4 +1,4 @@
-import {EventAggregator} from 'aurelia-event-aggregator';
+import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
@@ -18,10 +18,15 @@ export class Deisgn {
 
   @bindable() public activeDiagram: IDiagram;
   @bindable() public activeSolutionEntry: ISolutionEntry;
+
   public showDetail: boolean = true;
   public showXML: boolean;
   public showDiff: boolean;
   public xmlForDiff: string;
+  public propertyPanelShown: boolean;
+  public showPropertyPanelButton: boolean = true;
+  public showDiffDestinationButton: boolean = false;
+  public diffDestinationIsLocal: boolean = true;
   public diagramDetail: DiagramDetail;
 
   private _eventAggregator: EventAggregator;
@@ -55,22 +60,50 @@ export class Deisgn {
       this.showDetail = true;
       this.showXML = false;
       this.showDiff = false;
-
+      this.showPropertyPanelButton = true;
+      this.showDiffDestinationButton = false;
     } else if (routeViewIsXML) {
-
       this.showDetail = false;
       this.showXML = true;
       this.showDiff = false;
+      this.showDiffDestinationButton = false;
+      this.showPropertyPanelButton = false;
     } else if (routeViewIsDiff) {
       this.xmlForDiff = await this.diagramDetail.getXML();
-      this.showDetail = false;
-      this.showXML = false;
-      this.showDiff = true;
+      this._showDiff();
     }
+  }
+
+  public async attached(): Promise<void> {
+
+    this._subscriptions = [
+      this._eventAggregator.subscribe(environment.events.bpmnio.propertyPanelActive, (showPanel: boolean) => {
+        this.propertyPanelShown = showPanel;
+      }),
+    ];
   }
 
   public detached(): void {
     this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
+    this._subscriptions.forEach((subscription: Subscription) => subscription.dispose());
   }
 
+  public toggleDiffDestination(): void {
+    this.diffDestinationIsLocal = !this.diffDestinationIsLocal;
+    const diffDestination: string = this.diffDestinationIsLocal ? 'local' : 'deployed';
+
+    this._eventAggregator.publish(environment.events.diffView.setDiffDestination, diffDestination);
+  }
+
+  public togglePanel(): void {
+    this._eventAggregator.publish(environment.events.bpmnio.togglePropertyPanel);
+  }
+
+  private _showDiff(): void {
+    this.showDiff = true;
+    this.showDetail = false;
+    this.showXML = false;
+    this.showPropertyPanelButton = false;
+    this.showDiffDestinationButton = true;
+  }
 }
