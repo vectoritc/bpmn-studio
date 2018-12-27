@@ -194,7 +194,6 @@ export class DiagramDetail {
   public deactivate(): void {
     this._eventAggregator.publish(environment.events.navBar.hideTools);
     this._eventAggregator.publish(environment.events.navBar.noValidationError);
-    this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
 
     for (const eventListener of this._ipcRendererEventListeners) {
       this._ipcRenderer.removeListener(eventListener.name, eventListener.function);
