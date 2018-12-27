@@ -228,9 +228,8 @@ export class SolutionExplorerList {
 
   private _canCloseSolution(service: ISolutionExplorerService, uri: string): boolean {
     const solutionIsNotSingleDiagrams: boolean = !this._isSingleDiagramService(service);
-    const solutionIsNotConnectedProcessEngine: boolean = !uri.startsWith('http');
 
-    return solutionIsNotSingleDiagrams && solutionIsNotConnectedProcessEngine;
+    return solutionIsNotSingleDiagrams;
   }
 
   private _isSingleDiagramService(service: ISolutionExplorerService): boolean {
