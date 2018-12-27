@@ -103,6 +103,8 @@ export class Design {
         this.propertyPanelShown = showPanel;
       }),
     ];
+
+    this._eventAggregator.publish(environment.events.statusBar.showDiagramViewButtons);
   }
 
   public detached(): void {

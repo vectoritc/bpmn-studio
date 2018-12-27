@@ -103,8 +103,6 @@ export class DiagramDetail {
 
     this._eventAggregator.publish(environment.events.navBar.showTools);
 
-    this._eventAggregator.publish(environment.events.statusBar.showDiagramViewButtons);
-
     this._subscriptions = [
       this._validationController.subscribe((event: ValidateEvent) => {
         this._handleFormValidateEvents(event);
