@@ -168,7 +168,8 @@ export class DiagramDetail {
   public async saveDiagramAndDeploy(): Promise<void> {
     this.showSaveBeforeDeployModal = false;
     await this.saveDiagram();
-    await this.uploadProcess();
+
+    this._checkForMultipleRemoteSolutions();
   }
 
   /**
@@ -369,6 +370,7 @@ export class DiagramDetail {
     this.showSaveForStartModal = false;
     this.showStartEventModal = false;
     this.showStartWithOptionsModal = false;
+    this.showRemoteSolutionOnDeployModal = false;
   }
 
   private _getInitialTokenValues(token: any): any {
@@ -397,8 +399,20 @@ export class DiagramDetail {
     if (this.diagramHasChanged) {
       this.showSaveBeforeDeployModal = true;
     } else {
-      await this.uploadProcess();
+      await this._checkForMultipleRemoteSolutions();
     }
+  }
+
+  private async _checkForMultipleRemoteSolutions(): Promise<void> {
+    this.remoteSolutions = this._solutionService.getRemoteSolutionEntries();
+
+    const multipleRemoteSolutionsConnected: boolean = this.remoteSolutions.length > 1;
+    if (multipleRemoteSolutionsConnected) {
+      this.showRemoteSolutionOnDeployModal = true;
+    } else {
+      await this.uploadProcess(this.remoteSolutions[0]);
+    }
+
   }
 
   /**
