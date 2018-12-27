@@ -21,11 +21,6 @@ export class DynamicUiNumberElement {
     const validPartsOfValue: Array<string> = /\d+/.exec(`${newValue}`);
 
     const valueHasNoValidPart: boolean = validPartsOfValue === null;
-    if (valueHasNoValidPart) {
-      this.fieldValue = undefined;
-    } else {
-      this.fieldValue = validPartsOfValue[0];
-    }
 
     this.fieldValue = valueHasNoValidPart
                     ? undefined
