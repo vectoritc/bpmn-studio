@@ -777,6 +777,8 @@ export class SolutionExplorerSolution {
       this._inspectView = this._router.currentInstruction.params.view;
     }
 
+    this.activeDiagram = undefined;
+
     if (solutionUriSpecified && diagramNameIsSpecified) {
       try {
         const activeSolution: ISolution = await this.solutionService.loadSolution();
