@@ -3,7 +3,7 @@ import {IEnumFormField} from '../../contracts';
 
 export class DynamicUiNumberElement {
 
-  @bindable()
+  @bindable() public fieldValue: string;
   public field: IEnumFormField;
 
   public activate(field: IEnumFormField): void {
@@ -15,5 +15,17 @@ export class DynamicUiNumberElement {
     if (fieldHasNoValue) {
       this.field.value = this.field.defaultValue;
     }
+  }
+
+  public fieldValueChanged(newValue: number): void {
+    const validPartsOfValue: Array<string> = /\d+/.exec(`${newValue}`);
+
+    const valueHasNoValidPart: boolean = validPartsOfValue === null;
+
+    this.fieldValue = valueHasNoValidPart
+                    ? undefined
+                    : validPartsOfValue[0];
+
+    this.field.value = this.fieldValue;
   }
 }
