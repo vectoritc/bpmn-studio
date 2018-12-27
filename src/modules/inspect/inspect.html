@@ -25,6 +25,17 @@
              click.delegate="toggleShowTokenViewer()">
           <i class="fas fa-book"></i>
         </div>
+        <div if.bind="showInspectCorrelation" class="dropdown">
+          <button class="button inspect-layout__tool dropdown-toggle" title="Export Diagram" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-upload"></i>
+          </button>
+          <ul class="dropdown-menu">
+            <li class="dropdown-item" click.delegate="exportDiagram('BPMN')">as BPMN</li>
+            <li class="dropdown-item" click.delegate="exportDiagram('SVG')">as SVG</li>
+            <li class="dropdown-item" click.delegate="exportDiagram('PNG')">as PNG</li>
+            <li class="dropdown-item" click.delegate="exportDiagram('JPEG')">as JPEG</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>

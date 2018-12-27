@@ -5,20 +5,24 @@ import {Correlation} from '@process-engine/management_api_contracts';
 import {CorrelationProcessModel} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
+import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {
   defaultBpmnColors,
   IBpmnModeler,
   IBpmnXmlSaveOptions,
   IColorPickerColor,
+  IDiagramExportService,
   IElementRegistry,
   IEvent,
   IModeling,
   IShape,
   NotificationType,
 } from '../../../../../contracts/index';
+import environment from '../../../../../environment';
+import {DiagramExportService} from '../../../../design/bpmn-io/services';
 import {NotificationService} from '../../../../notification/notification.service';
 
-@inject('NotificationService', 'ManagementApiClientService', 'AuthenticationService')
+@inject('NotificationService', EventAggregator)
 export class DiagramViewer {
   @bindable() public correlation: Correlation;
   @bindable() public xml: string;
@@ -33,9 +37,14 @@ export class DiagramViewer {
   private _diagramViewer: IBpmnModeler;
   private _modeling: IModeling;
   private _uncoloredXml: string;
+  private _subscriptions: Array<Subscription>;
+  private _diagramExportService: IDiagramExportService;
+  private _eventAggregator: EventAggregator;
 
-  constructor(notificationService: NotificationService) {
+  constructor(notificationService: NotificationService, eventAggregator: EventAggregator) {
     this._notificationService = notificationService;
+    this._diagramExportService = new DiagramExportService();
+    this._eventAggregator = eventAggregator;
   }
 
   public attached(): void {
@@ -59,6 +68,55 @@ export class DiagramViewer {
       this.selectedFlowNode = event.element;
     });
 
+    this._subscriptions = [
+      this._eventAggregator.subscribe(`${environment.events.inspect.exportDiagramAs}:BPMN`, async() => {
+        try {
+          const exportName: string = `${this.activeDiagram.name}.bpmn`;
+          await this._diagramExportService
+            .loadXML(this._uncoloredXml)
+            .asBpmn()
+            .export(exportName);
+        } catch (error) {
+          this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
+        }
+      }),
+
+      this._eventAggregator.subscribe(`${environment.events.inspect.exportDiagramAs}:SVG`, async() => {
+        try {
+          const exportName: string = `${this.activeDiagram.name}.svg`;
+          await this._diagramExportService
+            .loadSVG(await this.getSVG())
+            .asSVG()
+            .export(exportName);
+        } catch (error) {
+          this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
+        }
+      }),
+
+      this._eventAggregator.subscribe(`${environment.events.inspect.exportDiagramAs}:PNG`, async() => {
+        try {
+          const exportName: string = `${this.activeDiagram.name}.png`;
+          await this._diagramExportService
+            .loadSVG(await this.getSVG())
+            .asPNG()
+            .export(exportName);
+        } catch (error) {
+          this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
+        }
+      }),
+
+      this._eventAggregator.subscribe(`${environment.events.inspect.exportDiagramAs}:JPEG`, async() => {
+        try {
+          const exportName: string = `${this.activeDiagram.name}.jpeg`;
+          await this._diagramExportService
+            .loadSVG(await this.getSVG())
+            .asJPEG()
+            .export(exportName);
+        } catch (error) {
+          this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
+        }
+      }),
+    ];
   }
 
   public detached(): void {
@@ -84,6 +142,8 @@ export class DiagramViewer {
       this.xml = undefined;
       this.xmlIsNotSelected = true;
     }
+
+    this._subscriptions.forEach((subscription: Subscription) => subscription.dispose());
   }
 
   public async correlationChanged(newValue: Correlation): Promise<void> {
@@ -231,5 +291,19 @@ export class DiagramViewer {
     });
 
     return saveXmlPromise;
+  }
+
+  private async getSVG(): Promise<string> {
+    const returnPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void => {
+      this._diagramModeler.saveSVG({}, (error: Error, result: string) => {
+        if (error) {
+          reject(error);
+        }
+
+        resolve(result);
+      });
+    });
+
+    return returnPromise;
   }
 }

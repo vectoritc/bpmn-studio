@@ -220,7 +220,6 @@ export class BpmnIo {
         } catch (error) {
           this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
         }
-
       }),
 
       this._eventAggregator.subscribe(`${environment.events.diagramDetail.printDiagram}`, async() => {

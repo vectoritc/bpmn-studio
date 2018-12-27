@@ -142,6 +142,13 @@ export class Inspect {
         this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(diagramName);
       }
     }
+  }
 
+  public exportDiagram(exportAs: string): void {
+    if (this.tokenViewerButtonDisabled) {
+      return;
+    }
+
+    this._eventAggregator.publish(`${environment.events.inspect.exportDiagramAs}:${exportAs}`);
   }
 }
