@@ -125,8 +125,11 @@ export class SolutionExplorerList {
     }
 
     const identity: IIdentity = this._createIdentityForSolutionExplorer();
-    await solutionExplorer.openSolution(uri, identity);
-
+    try {
+      await solutionExplorer.openSolution(uri, identity);
+    } catch (error) {
+      this._solutionService.removeSolutionEntryByUri(uri);
+    }
     const newOpenedSpluton: ISolution = await solutionExplorer.loadSolution();
     const solutionURI: string = newOpenedSpluton.uri;
 
@@ -156,7 +159,7 @@ export class SolutionExplorerList {
     this._openedSolutions.splice(indexOfSolutionToBeRemoved, 1);
 
     const entryToRemove: ISolutionEntry = this._solutionService.getSolutionEntryForUri(uri);
-    this._solutionService.removeSolutionEntry(entryToRemove);
+    this._solutionService.removeSolutionEntryByUri(entryToRemove.uri);
   }
 
   /**
