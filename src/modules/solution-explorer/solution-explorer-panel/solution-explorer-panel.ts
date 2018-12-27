@@ -86,22 +86,6 @@ export class SolutionExplorerPanel {
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
         this.solutionExplorerList.refreshSolutionsOnIdentityChange();
       }),
-      this._eventAggregator.subscribe(environment.events.configPanel.processEngineRouteChanged,
-        async(newRoute: string) => {
-          const oldRoute: string = await this._getCurrentlyConfiguredProcessEngineRoute();
-
-          try {
-            await this.solutionExplorerList.closeSolution(oldRoute);
-          } catch (error) {
-            // ignore
-          }
-          try {
-            await this.solutionExplorerList.openSolution(newRoute, true);
-          } catch (error) {
-            // ignore
-          }
-        },
-      ),
       this._eventAggregator.subscribe(environment.events.diagramDetail.onDiagramDeployed, () => {
         this._refreshSolutions();
       }),
