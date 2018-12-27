@@ -44,4 +44,27 @@
 
     </div>
   </div>
+
+    <!-- #region Save Modal for Process Start -->
+  <div show.bind="showOpenRemoteSolutionModal">
+    <div class="modal show show-modal" tabindex="-1" role="dialog" id="saveModalProcessStart">
+      <div class="modal-dialog save-modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Open Remote Solution</h4>
+          </div>
+          <div class="modal-body">
+            URI:
+            <input type="text" class="form-control" value.bind="uriOfRemoteSolution">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelOpenRemoteSolutionButton" click.delegate="closeRemoteSolutionModal()">Cancel</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal" id="openRemoteSolutionButton" click.delegate="openRemoteSolution()" >Open Solution</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-backdrop fade in"></div>
+  </div>
+  <!-- #endregion -->
 </template>
