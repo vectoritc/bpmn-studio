@@ -42,15 +42,10 @@ export class SolutionService implements ISolutionService {
     });
     const solutionIsAlreadyOpenend: boolean = solutionWithSameUri !== undefined;
     if (solutionIsAlreadyOpenend) {
-      this.removeSolutionEntry(solutionWithSameUri);
+      this.removeSolutionEntryByUri(solutionWithSameUri.uri);
     }
 
     this._allSolutionEntries.push(solutionEntry);
-    this._persistSolutionsInLocalStorage();
-  }
-
-  public removeSolutionEntry(solutionEntry: ISolutionEntry): void {
-    this._allSolutionEntries.splice(this._allSolutionEntries.indexOf(solutionEntry), 1);
     this._persistSolutionsInLocalStorage();
   }
 
@@ -68,6 +63,15 @@ export class SolutionService implements ISolutionService {
     return solutionEntry;
   }
 
+  public removeSolutionEntryByUri(uri: string): void {
+    const solutionToRemove: ISolutionEntry = this._allSolutionEntries.find((entry: ISolutionEntry) => {
+      return entry.uri === uri;
+    });
+
+    this._allSolutionEntries.splice(this._allSolutionEntries.indexOf(solutionToRemove), 1);
+    this._persistSolutionsInLocalStorage();
+  }
+
   private _persistSolutionsInLocalStorage(): void {
     /**
      * Right now the single diagrams solution don't get persisted.
@@ -79,6 +83,7 @@ export class SolutionService implements ISolutionService {
     });
 
     window.localStorage.setItem('openedSolutions', JSON.stringify(entriesToPersist));
+    this._persistedEntries = entriesToPersist;
   }
 
   private _getSolutionFromLocalStorage(): Array<ISolutionEntry> {
