@@ -41,6 +41,8 @@ export class Inspect {
 
     if (solutionIsSet) {
       this._activeSolutionEntry = this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
+      this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, routeParameters.solutionUri);
+
       /**
        * We have to open the solution here again since if we come here after a
        * reload the solution might not be opened yet.
