@@ -45,6 +45,9 @@ export class DiagramDetail {
   public initialToken: string;
   public hasValidationError: boolean = false;
   public diagramIsInvalid: boolean = false;
+  public showRemoteSolutionOnDeployModal: boolean = false;
+  public remoteSolutions: Array<ISolutionEntry> = [];
+  public selectedRemoteSolution: ISolutionEntry;
 
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
@@ -178,7 +181,8 @@ export class DiagramDetail {
   /**
    * Uploads the current diagram to the connected ProcessEngine.
    */
-  public async uploadProcess(): Promise<void> {
+  public async uploadProcess(solutionToDeployTo: ISolutionEntry): Promise<void> {
+
     const rootElements: Array<IModdleElement> = this.bpmnio.modeler._definitions.rootElements;
 
     const processModel: IModdleElement = rootElements.find((definition: IModdleElement) => {
@@ -187,16 +191,6 @@ export class DiagramDetail {
     const processModelId: string = processModel.id;
 
     try {
-
-      const processEngineRoute: string = window.localStorage.getItem('processEngineRoute');
-      const internalProcessEngineRoute: string = window.localStorage.getItem('InternalProcessEngineRoute');
-      const processEngineRouteIsSet: boolean = processEngineRoute !== '';
-
-      const connectedProcessEngineRoute: string = processEngineRouteIsSet
-                                                ? processEngineRoute
-                                                : internalProcessEngineRoute;
-
-      const solutionToDeployTo: ISolutionEntry = this._solutionService.getSolutionEntryForUri(connectedProcessEngineRoute);
       this.activeSolutionEntry = solutionToDeployTo;
 
       this.activeDiagram.id = processModelId;
@@ -217,7 +211,7 @@ export class DiagramDetail {
         xml: this.activeDiagram.xml,
       };
 
-      await this.activeSolutionEntry.service.saveDiagram(copyOfDiagram, connectedProcessEngineRoute);
+      await this.activeSolutionEntry.service.saveDiagram(copyOfDiagram, solutionToDeployTo.uri);
 
       this.activeDiagram = await this.activeSolutionEntry.service.loadDiagram(processModelId);
 
