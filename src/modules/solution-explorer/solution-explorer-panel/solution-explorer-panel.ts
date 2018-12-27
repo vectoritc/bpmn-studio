@@ -34,6 +34,8 @@ export class SolutionExplorerPanel {
   public solutionExplorerList: SolutionExplorerList;
   public solutionInput: HTMLInputElement;
   public singleDiagramInput: HTMLInputElement;
+  public showOpenRemoteSolutionModal: boolean = false;
+  public uriOfRemoteSolution: string;
 
   constructor(
     eventAggregator: EventAggregator,
@@ -116,6 +118,21 @@ export class SolutionExplorerPanel {
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
+  }
+
+  public openRemoteSolutionModal(): void {
+    this.showOpenRemoteSolutionModal = true;
+  }
+
+  public closeRemoteSolutionModal(): void {
+    this.showOpenRemoteSolutionModal = false;
+    this.uriOfRemoteSolution = undefined;
+  }
+
+  public openRemoteSolution(): void {
+    this._openSolutionOrDisplayError(this.uriOfRemoteSolution);
+    this.uriOfRemoteSolution = undefined;
+    this.showOpenRemoteSolutionModal = false;
   }
 
   /**
