@@ -63,6 +63,14 @@ export class SolutionService implements ISolutionService {
     return solutionEntry;
   }
 
+  public getRemoteSolutionEntries(): Array<ISolutionEntry> {
+    const remoteEntries: Array<ISolutionEntry> = this._allSolutionEntries.filter((entry: ISolutionEntry) => {
+      return entry.uri.startsWith('http');
+    });
+
+    return remoteEntries;
+  }
+
   public removeSolutionEntryByUri(uri: string): void {
     const solutionToRemove: ISolutionEntry = this._allSolutionEntries.find((entry: ISolutionEntry) => {
       return entry.uri === uri;
