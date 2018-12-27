@@ -408,13 +408,20 @@ export class SolutionExplorerSolution {
     }
 
     /**
-     * Because the activeDiagram variable will be gathered with solutionService.load(),
-     * its not sufficient to just ask the activeDiagram for the uri.
-     * We have to make sure, that the current Solution is actually active.
+     * We have to check if THIS solution is the "Single Diagrams"-Solution
+     * because it is our special case here and if the ACTIVE solution is the
+     * "Single Diagrams"-Solution we need to return the uri anyway.
+     */
     const singleDiagramSolutionIsActive: boolean = solutionUri === 'Single Diagrams';
     if (this.solutionIsSingleDiagrams && singleDiagramSolutionIsActive) {
       return this.activeDiagram.uri;
     }
+
+    /**
+     * Then we check if the THIS solution is active by extra checking the uri
+     * of the diaragm with the uri of the active solution. That wouldn't work
+     * for the "Single Diagram"-Solution right now, since the uri of that solution
+     * is "Single Diagrams" and therefore would never be active with this check.
      */
     const solutionIsNotActive: boolean = !this.activeDiagram.uri.includes(solutionUri);
     if (solutionIsNotActive) {
