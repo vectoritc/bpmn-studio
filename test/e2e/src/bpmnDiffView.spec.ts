@@ -88,7 +88,7 @@ describe('bpmn-io compare view', () => {
     expect(statusBarDiffViewButtonIsDisplayed).toBeTruthy();
   });
 
-  it('should be possible to open xml view when click on `Show Diff` button.', async() => {
+  it('should be possible to open diff view when click on `Show Diff` button.', async() => {
     const statusBarDiffViewButton: ElementFinder = statusBar.statusBarDiffViewButton;
 
     await BpmnDiffView.openDiffViewByClickOnButton(statusBarDiffViewButton);
@@ -109,7 +109,7 @@ describe('bpmn-io compare view', () => {
     expect(bpmnDiffViewTagIsDisplayed).toBeTruthy();
   });
 
-  it('should be possible to close xml view when click on `Show Diagram` button.', async() => {
+  it('should be possible to close diff view when click on `Show Diagram` button.', async() => {
     const statusBarDiffViewButton: ElementFinder = statusBar.statusBarDiffViewButton;
     const statusBarDisableDiffViewButton: ElementFinder = statusBar.statusBarDisableDiffViewButton;
 
