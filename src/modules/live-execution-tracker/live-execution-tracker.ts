@@ -109,7 +109,7 @@ export class LiveExecutionTracker {
                                               ? processEngineRoute
                                               : internalProcessEngineRoute;
 
-    const processEngineSolution: ISolutionEntry = await this._solutionService.getSolutionEntryForUri(connectedProcessEngineRoute);
+    const processEngineSolution: ISolutionEntry = await this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
     const activeDiagram: IDiagram = await this._getProcessModelAndConvertToDiagram(this.processModelId, processEngineSolution);
 
   }
