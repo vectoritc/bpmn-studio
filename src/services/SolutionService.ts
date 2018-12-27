@@ -45,11 +45,6 @@ export class SolutionService implements ISolutionService {
       this.removeSolutionEntry(solutionWithSameUri);
     }
 
-    const solutionEntryIsRemote: boolean = solutionEntry.uri.startsWith('http');
-    if (solutionEntryIsRemote) {
-      this._removeCurrentRemoteSolution();
-    }
-
     this._allSolutionEntries.push(solutionEntry);
     this._persistSolutionsInLocalStorage();
   }
@@ -90,21 +85,6 @@ export class SolutionService implements ISolutionService {
     const openedSolutions: Array<ISolutionEntry> = JSON.parse(window.localStorage.getItem('openedSolutions'));
 
     return openedSolutions;
-  }
-
-  private _removeCurrentRemoteSolution(): void {
-    const remoteSolution: ISolutionEntry = this._allSolutionEntries.find((entry: ISolutionEntry) => {
-      const entryIsRemoteSolution: boolean = entry.uri.startsWith('http');
-
-      return entryIsRemoteSolution;
-    });
-
-    const noRemoteSolutionContained: boolean = remoteSolution === undefined;
-    if (noRemoteSolutionContained) {
-      return;
-    }
-
-    this.removeSolutionEntry(remoteSolution);
   }
 
 }
