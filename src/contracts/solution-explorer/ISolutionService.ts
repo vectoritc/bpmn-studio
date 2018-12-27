@@ -21,6 +21,11 @@ export interface ISolutionService {
   getPersistedEntries(): Array<ISolutionEntry>;
 
   /**
+   * Gets a list of all currently connected remote solutions.
+   */
+  getRemoteSolutionEntries(): Array<ISolutionEntry>;
+
+  /**
    * Deletes a specific solution indetified by its id.
    * @param uri The uri of the solution entry to delete.
    */
