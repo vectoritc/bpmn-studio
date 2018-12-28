@@ -37,6 +37,7 @@ export class DiagramViewer {
   private _diagramViewer: IBpmnModeler;
   private _modeling: IModeling;
   private _uncoloredXml: string;
+  private _uncoloredSVG: string;
   private _subscriptions: Array<Subscription>;
   private _diagramExportService: IDiagramExportService;
   private _eventAggregator: EventAggregator;
@@ -85,7 +86,7 @@ export class DiagramViewer {
         try {
           const exportName: string = `${this.activeDiagram.name}.svg`;
           await this._diagramExportService
-            .loadSVG(await this.getSVG())
+            .loadSVG(this._uncoloredSVG)
             .asSVG()
             .export(exportName);
         } catch (error) {
@@ -97,7 +98,7 @@ export class DiagramViewer {
         try {
           const exportName: string = `${this.activeDiagram.name}.png`;
           await this._diagramExportService
-            .loadSVG(await this.getSVG())
+            .loadSVG(this._uncoloredSVG)
             .asPNG()
             .export(exportName);
         } catch (error) {
@@ -109,7 +110,7 @@ export class DiagramViewer {
         try {
           const exportName: string = `${this.activeDiagram.name}.jpeg`;
           await this._diagramExportService
-            .loadSVG(await this.getSVG())
+            .loadSVG(this._uncoloredSVG)
             .asJPEG()
             .export(exportName);
         } catch (error) {
@@ -157,6 +158,7 @@ export class DiagramViewer {
     await this._importXml(this._diagramModeler, this.xml);
     this._clearColors();
     this._uncoloredXml = await this._getXmlFromModeler();
+    this._uncoloredSVG = await this._getSVG();
 
     const elementSelected: boolean = this.selectedFlowNode !== undefined;
     if (elementSelected) {
@@ -293,7 +295,7 @@ export class DiagramViewer {
     return saveXmlPromise;
   }
 
-  private async getSVG(): Promise<string> {
+  private async _getSVG(): Promise<string> {
     const returnPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void => {
       this._diagramModeler.saveSVG({}, (error: Error, result: string) => {
         if (error) {
