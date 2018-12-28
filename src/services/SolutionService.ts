@@ -26,7 +26,6 @@ export class SolutionService implements ISolutionService {
       solution.service = solutionIsRemote
         ? await this._serviceFactory.newManagementApiSolutionExplorer()
         : await this._serviceFactory.newFileSystemSolutionExplorer();
-
     });
 
     this._persistedEntries = openedSolutions;
@@ -84,13 +83,12 @@ export class SolutionService implements ISolutionService {
 
   private _persistSolutionsInLocalStorage(): void {
     /**
-     * Right now the single diagrams and internal process engine solution don't get persisted.
+     * Right now the single diagrams don't get persisted.
      */
     const entriesToPersist: Array<ISolutionEntry> = this._allSolutionEntries.filter((entry: ISolutionEntry) => {
       const entryIsNotSingleDiagramSolution: boolean = entry.uri !== 'Single Diagrams';
-      const entryIsNotInternalProcessEngine: boolean = entry.uri !== this._internalProcessEngineRoute;
 
-      return entryIsNotSingleDiagramSolution && entryIsNotInternalProcessEngine;
+      return entryIsNotSingleDiagramSolution;
     });
 
     window.localStorage.setItem('openedSolutions', JSON.stringify(entriesToPersist));
