@@ -7,7 +7,7 @@ import {AureliaNavigationObject, ISolutionEntry, ISolutionService} from '../../c
 import environment from '../../environment';
 import {Dashboard} from './dashboard/dashboard';
 
-export interface IInspectRouteParameters {
+interface IInspectRouteParameters {
   view?: string;
   diagramName?: string;
   solutionUri?: string;
