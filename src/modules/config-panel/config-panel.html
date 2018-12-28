@@ -6,24 +6,6 @@
     </div>
     <div class="config-panel__card card">
       <div class="card-header">
-          ProcessEngine
-      </div>
-      <div class="card-body">
-        <label for="processEngineRoute">Base Route</label>
-        <input value.bind="baseRoute" type="text" class="form-control" id="processEngineRoute">
-        <p class="help-block" if.bind="isLoggedInToProcessEngine">The login session is bound to the current ProcessEngine. Changing the backend route will log you out.</p>
-        <div class="config-panel__card__alert alert alert-info" if.bind="hasInternalProcessEngineBaseRouteSet() && isBaseRouteNotSetToInternalProcessEngine" role="alert">
-          <span>
-            <i class="fa fa-info-circle" aria-hidden="true"></i>
-            An internal ProcessEngine is currently running. Click
-            <a class="config-panel__card__alert__link alert-link" click.delegate="setBaseRouteToInternalProcessEngine()">here</a>
-            to use the internal ProcessEngine, this will change the Base Route to <code>${internalProcessEngineBaseRoute}</code>.
-          </span>
-        </div>
-      </div>
-    </div>
-    <div class="config-panel__card card">
-      <div class="card-header">
           OpenID Connect
       </div>
       <div class="card-body">
