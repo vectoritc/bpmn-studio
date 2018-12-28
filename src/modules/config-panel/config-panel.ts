@@ -155,7 +155,6 @@ export class ConfigPanel {
   }
 
   public cancelUpdate(): void {
-    this._notificationService.showNotification(NotificationType.WARNING, 'Settings dismissed!');
     this._router.navigateBack();
   }
 
