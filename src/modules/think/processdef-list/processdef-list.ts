@@ -14,6 +14,11 @@ import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 
 @inject(EventAggregator, Router, 'AuthenticationService', 'ManagementApiClientService', 'NotificationService')
+interface RouteParameters {
+  diagramName?: string;
+  solutionUri?: string;
+}
+
 export class ProcessDefList {
 
   public allProcessModels: Array<ProcessModelExecution.ProcessModel>;
