@@ -77,6 +77,11 @@ export class SolutionService implements ISolutionService {
       return entry.uri === uri;
     });
 
+    const solutionNotFound: boolean = solutionToRemove === undefined;
+    if (solutionNotFound) {
+      return;
+    }
+
     this._allSolutionEntries.splice(this._allSolutionEntries.indexOf(solutionToRemove), 1);
     this._persistSolutionsInLocalStorage();
   }
