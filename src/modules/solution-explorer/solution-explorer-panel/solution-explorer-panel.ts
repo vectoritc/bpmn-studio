@@ -54,7 +54,7 @@ export class SolutionExplorerPanel {
   }
 
   public async bind(): Promise<void> {
-    const uriOfProcessEngine: string = await this._getCurrentlyConfiguredProcessEngineRoute();
+    const uriOfProcessEngine: string = window.localStorage.getItem('InternalProcessEngineRoute');
 
     // Open the solution of the currently configured processengine instance on startup.
     await this.solutionExplorerList.openSolution(uriOfProcessEngine);
