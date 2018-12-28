@@ -282,20 +282,6 @@ export class SolutionExplorerPanel {
     await Promise.all(openingPromises);
   }
 
-  // TODO: Migrate this method once we have a proper config service.
-  private async _getCurrentlyConfiguredProcessEngineRoute(): Promise<string> {
-    const customProcessEngineRoute: string = window.localStorage.getItem('processEngineRoute');
-    const customProcessEngineRouteSet: boolean = customProcessEngineRoute !== ''
-                                                 && customProcessEngineRoute !== null
-                                                 && customProcessEngineRoute !== undefined;
-    if (customProcessEngineRouteSet) {
-      return customProcessEngineRoute;
-    }
-
-    const internalProcessEngineRoute: string = window.localStorage.getItem('InternalProcessEngineRoute');
-    return internalProcessEngineRoute;
-  }
-
   // TODO: This method is copied all over the place.
   private async _navigateToDetailView(diagram: IDiagram, solution: ISolutionEntry): Promise<void> {
 
