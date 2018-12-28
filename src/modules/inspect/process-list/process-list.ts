@@ -111,8 +111,6 @@ export class ProcessList {
     }
   }
 
-  public get remoteSolutionUri(): string {
-    const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
   public async updateProcesses(): Promise<void> {
     try {
       const correlations: Array<Correlation> = await this._getCorrelations();
@@ -131,7 +129,6 @@ export class ProcessList {
       this._correlations = [];
     }
 
-    return remoteSolutionUri;
     this.totalItems = this._correlations.length;
   }
 
@@ -173,13 +170,4 @@ export class ProcessList {
     return correlationsWithId;
   }
 
-  // TODO: Move this method into a service.
-  private _getIdentity(): IIdentity {
-    const accessToken: string = this._authenticationService.getAccessToken();
-    const identity: IIdentity = {
-      token: accessToken,
-    };
-
-    return identity;
-  }
 }
