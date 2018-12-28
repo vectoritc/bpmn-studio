@@ -101,17 +101,8 @@ export class LiveExecutionTracker {
 
     this._parentProcessModelId = await this._getParentProcessModelId();
 
-    const processEngineRoute: string = window.localStorage.getItem('processEngineRoute');
-    const internalProcessEngineRoute: string = window.localStorage.getItem('InternalProcessEngineRoute');
-    const processEngineRouteIsSet: boolean = processEngineRoute !== '';
-
-    const connectedProcessEngineRoute: string = processEngineRouteIsSet
-                                              ? processEngineRoute
-                                              : internalProcessEngineRoute;
-
-    const processEngineSolution: ISolutionEntry = await this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
+    const processEngineSolution: ISolutionEntry = await this._solutionService.getSolutionEntryForUri(this._activeSolutionUri);
     const activeDiagram: IDiagram = await this._getProcessModelAndConvertToDiagram(this.processModelId, processEngineSolution);
-
   }
 
   private async _getParentProcessModelId(): Promise<string> {
