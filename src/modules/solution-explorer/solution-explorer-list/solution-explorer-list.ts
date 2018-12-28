@@ -130,8 +130,8 @@ export class SolutionExplorerList {
     } catch (error) {
       this._solutionService.removeSolutionEntryByUri(uri);
     }
-    const newOpenedSpluton: ISolution = await solutionExplorer.loadSolution();
-    const solutionURI: string = newOpenedSpluton.uri;
+    const newOpenedSolution: ISolution = await solutionExplorer.loadSolution();
+    const solutionURI: string = newOpenedSolution.uri;
 
     const arrayAlreadyContainedURI: boolean = this._getIndexOfSolution(solutionURI) >= 0;
 
