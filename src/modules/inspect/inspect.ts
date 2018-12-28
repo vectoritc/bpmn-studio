@@ -3,7 +3,7 @@ import {bindable, inject} from 'aurelia-framework';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {ISolutionEntry, ISolutionService} from '../../contracts';
+import {AureliaNavigationObject, ISolutionEntry, ISolutionService} from '../../contracts';
 import environment from '../../environment';
 import {Dashboard} from './dashboard/dashboard';
 
@@ -36,31 +36,10 @@ export class Inspect {
   }
 
   public async activate(routeParameters: IInspectRouteParameters): Promise<void> {
-    const solutionIsSet: boolean = routeParameters.solutionUri !== undefined;
-    const diagramNameIsSet: boolean = routeParameters.diagramName !== undefined;
+    const solutionUri: string = routeParameters.solutionUri;
+    const diagramName: string = routeParameters.diagramName;
 
-    if (solutionIsSet) {
-      this._activeSolutionEntry = this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
-
-      /**
-       * If we would update the PE route when a local soluton is selected it would
-       * crash the ManagementApiClient so we are checking this here.
-       */
-      const solutionIsRemote: boolean = routeParameters.solutionUri.startsWith('http');
-      if (solutionIsRemote) {
-        this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, routeParameters.solutionUri);
-      }
-
-      /**
-       * We have to open the solution here again since if we come here after a
-       * reload the solution might not be opened yet.
-       */
-      await this._activeSolutionEntry.service.openSolution(this._activeSolutionEntry.uri, this._activeSolutionEntry.identity);
-
-      if (diagramNameIsSet) {
-        this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
-      }
-    }
+    await this._updateInspect(diagramName, solutionUri);
 
     const routeViewIsDashboard: boolean = routeParameters.view === 'dashboard';
     const routeViewIsHeatmap: boolean = routeParameters.view === 'heatmap';
@@ -126,5 +105,24 @@ export class Inspect {
     this.showTokenViewer = !this.showTokenViewer;
 
     this._eventAggregator.publish(environment.events.inspectCorrelation.showTokenViewer, this.showTokenViewer);
+  }
+
+  private async _updateInspect(diagramName: string, solutionUri: string): Promise<void> {
+    const solutionUriIsNotSet: boolean = solutionUri === undefined;
+    if (solutionUriIsNotSet) {
+      solutionUri = window.localStorage.getItem('InternalProcessEngineRoute');
+    }
+
+    this._activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
+
+    const solutionIsRemote: boolean = solutionUri.startsWith('http');
+    if (solutionIsRemote) {
+      this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, solutionUri);
+    }
+
+    const diagramIsSet: boolean = diagramName !== undefined;
+    if (diagramIsSet) {
+      this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(diagramName);
+    }
   }
 }
