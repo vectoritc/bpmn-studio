@@ -52,12 +52,11 @@ export class ProcessDefList {
   }
 
   public async activate(routeParameters: RouteParameters): Promise<void> {
-    let solutionUri: string = routeParameters.solutionUri;
-    const solutionUriIsNotSet: boolean = solutionUri === undefined;
+    const solutionUriIsSet: boolean = routeParameters.solutionUri !== undefined;
 
-    if (solutionUriIsNotSet) {
-      solutionUri = window.localStorage.getItem('InternalProcessEngineRoute');
-    }
+    const solutionUri: string = solutionUriIsSet
+                              ? routeParameters.solutionUri
+                              : window.localStorage.getItem('InternalProcessEngineRoute');
 
     this._activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
     await this._activeSolutionEntry.service.openSolution(this._activeSolutionEntry.uri, this._activeSolutionEntry.identity);
