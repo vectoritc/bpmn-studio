@@ -12,7 +12,7 @@
     "start": "./bin/bpmn-studio.js",
     "postinstall": "npm rebuild node-sass && electron-builder install-app-deps",
     "start_dev": "au run --watch",
-    "build": "au build --prod",
+    "build": "au build",
     "reset": "bash dev_tooling/scripts/reset_setup.bash",
     "reinstall": "OLD_PATH=$PATH bash dev_tooling/scripts/reinstall_setup.bash && unset OLD_PATH",
     "deploy": "npm run build && npm publish",
