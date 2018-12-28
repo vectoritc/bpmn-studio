@@ -78,26 +78,8 @@ export class ProcessList {
     }
   }
 
-  public async updateProcesses(): Promise<void> {
-    try {
-      const correlations: Array<Correlation> = await this._getCorrelations();
-      const correlationListWasUpdated: boolean = JSON.stringify(correlations) !== JSON.stringify(this._correlations);
-
-      if (correlationListWasUpdated) {
-        this._correlations = correlations;
-      }
-
-      this.succesfullRequested = true;
-    } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, `Error receiving process list: ${error.message}`);
     }
 
-    if (!this._correlations) {
-      this._correlations = [];
-    }
-
-    this.totalItems = this._correlations.length;
-  }
 
   public async attached(): Promise<void> {
 
@@ -128,8 +110,26 @@ export class ProcessList {
 
   public get remoteSolutionUri(): string {
     const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
+  public async updateProcesses(): Promise<void> {
+    try {
+      const correlations: Array<Correlation> = await this._getCorrelations();
+      const correlationListWasUpdated: boolean = JSON.stringify(correlations) !== JSON.stringify(this._correlations);
+
+      if (correlationListWasUpdated) {
+        this._correlations = correlations;
+      }
+
+      this.succesfullRequested = true;
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR, `Error receiving process list: ${error.message}`);
+    }
+
+    if (!this._correlations) {
+      this._correlations = [];
+    }
 
     return remoteSolutionUri;
+    this.totalItems = this._correlations.length;
   }
 
   public get correlations(): Array<Correlation> {
