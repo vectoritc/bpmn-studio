@@ -347,7 +347,7 @@ export class NavBar {
     const noSolutionUriSpecified: boolean = solutionUriFromNavigation === undefined;
 
     const solutionUri: string = (noSolutionUriSpecified)
-      ? window.localStorage.getItem('processEngineRoute')
+      ? window.localStorage.getItem('InternalProcessEngineRoute')
       : solutionUriFromNavigation;
 
     this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
