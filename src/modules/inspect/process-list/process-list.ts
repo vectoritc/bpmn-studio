@@ -65,12 +65,15 @@ export class ProcessList {
    * If we bind it somewhere via show.bind this method will not be called.
    */
   public activate(routeParameters: IProcessListRouteParameters): void {
+    this._activeSolutionUri = routeParameters.solutionUri;
+    this._activeDiagramName = routeParameters.diagramName;
 
-    if (!routeParameters.diagramName) {
+    const diagramNameIsNotSet: boolean = this._activeDiagramName === undefined;
+    if (diagramNameIsNotSet) {
       this._getCorrelations = this.getAllActiveCorrelations;
     } else {
       this._getCorrelations = (): Promise<Array<Correlation>> => {
-        return this.getCorrelationsForProcessModel(routeParameters.diagramName);
+        return this.getCorrelationsForProcessModel(this._activeDiagramName);
       };
     }
   }
