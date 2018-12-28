@@ -78,10 +78,13 @@ export class ProcessList {
     }
   }
 
+  public async attached(): Promise<void> {
+    const activeSolutionUriIsNotSet: boolean = this._activeSolutionUri === undefined;
+    if (activeSolutionUriIsNotSet) {
+      this._activeSolutionUri = window.localStorage.getItem('InternalProcessEngineRoute');
     }
 
-
-  public async attached(): Promise<void> {
+    this._activeSolutionEntry = this._solutionService.getSolutionEntryForUri(this._activeSolutionUri);
 
     this._initializeGetProcesses();
 
