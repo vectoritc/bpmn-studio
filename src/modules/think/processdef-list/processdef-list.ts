@@ -100,42 +100,5 @@ export class ProcessDefList {
     });
   }
 
-  private async _hasClaimsForProcessDefList(identity: IIdentity): Promise<boolean> {
-    try {
-      await this._managementApiClient.getProcessModels(identity);
-    } catch (error) {
-      const errorIsForbiddenError: boolean = isError(error, ForbiddenError);
-      const errorIsUnauthorizedError: boolean = isError(error, UnauthorizedError);
-
-      if (errorIsForbiddenError || errorIsUnauthorizedError) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
-  private async _getAllProcessModels(): Promise<void> {
-    const processModelExecution: ProcessModelExecution.ProcessModelList = await this._managementApiClient.getProcessModels(this._identity);
-
-    const listWasUpdated: boolean = JSON.stringify(processModelExecution.processModels) !== JSON.stringify(this.allProcessModels);
-
-    if (listWasUpdated) {
-      this.allProcessModels = processModelExecution.processModels;
-    }
-
-  }
-
-  private get _identity(): IIdentity {
-    return this._getIdentity();
-  }
-
-  private _getIdentity(): IIdentity {
-    const accessToken: string = this._authenticationService.getAccessToken();
-    const identity: IIdentity = {
-      token: accessToken,
-    };
-
-    return identity;
   }
 }
