@@ -232,7 +232,10 @@ export class SolutionExplorerList {
   private _canCloseSolution(service: ISolutionExplorerService, uri: string): boolean {
     const solutionIsNotSingleDiagrams: boolean = !this._isSingleDiagramService(service);
 
-    return solutionIsNotSingleDiagrams;
+    const internalProcessEngineRoute: string = window.localStorage.getItem('InternalProcessEngineRoute');
+    const solutionIsNotInternalSolution: boolean = uri !== internalProcessEngineRoute;
+
+    return solutionIsNotSingleDiagrams && solutionIsNotInternalSolution;
   }
 
   private _isSingleDiagramService(service: ISolutionExplorerService): boolean {
