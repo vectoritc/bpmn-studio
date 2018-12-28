@@ -6,7 +6,8 @@ import {Correlation, CorrelationProcessModel, IManagementApi} from '@process-eng
 
 import {
   AuthenticationStateEvent,
-  IAuthenticationService,
+  ISolutionEntry,
+  ISolutionService,
   NotificationType,
 } from '../../../contracts/index';
 import environment from '../../../environment';
@@ -17,7 +18,7 @@ interface IProcessListRouteParameters {
   solutionUri?: string;
 }
 
-@inject('ManagementApiClientService', EventAggregator, 'NotificationService', 'AuthenticationService')
+@inject('ManagementApiClientService', EventAggregator, 'NotificationService', 'SolutionService')
 export class ProcessList {
 
   @observable public currentPage: number = 0;
@@ -30,7 +31,10 @@ export class ProcessList {
   private _managementApiService: IManagementApi;
   private _eventAggregator: EventAggregator;
   private _notificationService: NotificationService;
-  private _authenticationService: IAuthenticationService;
+  private _solutionService: ISolutionService;
+  private _activeDiagramName: string;
+  private _activeSolutionUri: string;
+  private _activeSolutionEntry: ISolutionEntry;
 
   private _getCorrelationsIntervalId: number;
   private _getCorrelations: () => Promise<Array<Correlation>>;
@@ -40,12 +44,11 @@ export class ProcessList {
   constructor(managementApiService: IManagementApi,
               eventAggregator: EventAggregator,
               notificationService: NotificationService,
-              authenticationService: IAuthenticationService,
-  ) {
+              solutionService: ISolutionService) {
     this._managementApiService = managementApiService;
     this._eventAggregator = eventAggregator;
     this._notificationService = notificationService;
-    this._authenticationService = authenticationService;
+    this._solutionService = solutionService;
   }
 
   public async currentPageChanged(newValue: number, oldValue: number): Promise<void> {
