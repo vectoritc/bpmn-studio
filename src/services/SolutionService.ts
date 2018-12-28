@@ -9,6 +9,7 @@ export class SolutionService implements ISolutionService {
   private _allSolutionEntries: Array<ISolutionEntry> = [];
   private _serviceFactory: SolutionExplorerServiceFactory;
   private _persistedEntries: Array<ISolutionEntry> = [];
+  private _internalProcessEngineRoute: string;
 
   constructor(serviceFactory: SolutionExplorerServiceFactory) {
     this._serviceFactory = serviceFactory;
@@ -26,11 +27,12 @@ export class SolutionService implements ISolutionService {
         ? await this._serviceFactory.newManagementApiSolutionExplorer()
         : await this._serviceFactory.newFileSystemSolutionExplorer();
 
-      await solution.service.openSolution(solution.uri, solution.identity);
     });
 
     this._persistedEntries = openedSolutions;
     this._allSolutionEntries = this._allSolutionEntries.concat(openedSolutions);
+
+    this._internalProcessEngineRoute = window.localStorage.getItem('InternalProcessEngineRoute');
   }
 
   public addSolutionEntry(solutionEntry: ISolutionEntry): void {
@@ -82,12 +84,13 @@ export class SolutionService implements ISolutionService {
 
   private _persistSolutionsInLocalStorage(): void {
     /**
-     * Right now the single diagrams solution don't get persisted.
+     * Right now the single diagrams and internal process engine solution don't get persisted.
      */
     const entriesToPersist: Array<ISolutionEntry> = this._allSolutionEntries.filter((entry: ISolutionEntry) => {
       const entryIsNotSingleDiagramSolution: boolean = entry.uri !== 'Single Diagrams';
+      const entryIsNotInternalProcessEngine: boolean = entry.uri !== this._internalProcessEngineRoute;
 
-      return entryIsNotSingleDiagramSolution;
+      return entryIsNotSingleDiagramSolution && entryIsNotInternalProcessEngine;
     });
 
     window.localStorage.setItem('openedSolutions', JSON.stringify(entriesToPersist));
