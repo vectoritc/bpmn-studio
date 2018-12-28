@@ -1,33 +1,34 @@
+import {build, CLIOptions} from 'aurelia-cli';
+import * as eventStream from 'event-stream';
 import * as gulp from 'gulp';
 import * as changedInPlace from 'gulp-changed-in-place';
-import * as plumber from 'gulp-plumber';
-import * as sourcemaps from 'gulp-sourcemaps';
 import * as notify from 'gulp-notify';
+import * as plumber from 'gulp-plumber';
 import * as rename from 'gulp-rename';
+import * as sourcemaps from 'gulp-sourcemaps';
 import * as ts from 'gulp-typescript';
 import * as project from '../aurelia.json';
-import {CLIOptions, build} from 'aurelia-cli';
-import * as eventStream from 'event-stream';
 
-function configureEnvironment() {
-  let env = CLIOptions.getEnvironment();
+function configureEnvironment(): void {
+  const env: string = CLIOptions.getEnvironment();
 
   return gulp.src(`aurelia_project/environments/${env}.ts`)
-    .pipe(changedInPlace({firstPass:true}))
+    .pipe(changedInPlace({firstPass: true}))
     .pipe(rename('environment.ts'))
     .pipe(gulp.dest(project.paths.root));
 }
 
-var typescriptCompiler = typescriptCompiler || null;
+let typescriptCompiler: any = typescriptCompiler || null;
 
-function buildTypeScript() {
+function buildTypeScript(): void {
   typescriptCompiler = ts.createProject('tsconfig.json', {
-    typescript: require('typescript')
+    // tslint:disable-next-line:no-require-imports
+    typescript: require('typescript'),
   });
 
-  let dts = gulp.src(project.transpiler.dtsSource);
+  const dts: any = gulp.src(project.transpiler.dtsSource);
 
-  let src = gulp.src(project.transpiler.source)
+  const src: any = gulp.src(project.transpiler.source)
     .pipe(changedInPlace({firstPass: true}));
 
   return eventStream.merge(dts, src)
@@ -38,7 +39,8 @@ function buildTypeScript() {
     .pipe(build.bundle());
 }
 
+// tslint:disable-next-line:no-default-export
 export default gulp.series(
   configureEnvironment,
-  buildTypeScript
+  buildTypeScript,
 );

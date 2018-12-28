@@ -1,14 +1,14 @@
-import * as gulp from 'gulp';
+import {CLIOptions} from 'aurelia-cli';
 import * as browserSync from 'browser-sync';
 import * as historyApiFallback from 'connect-history-api-fallback/lib';
-import {CLIOptions} from 'aurelia-cli';
+import * as gulp from 'gulp';
 import * as project from '../aurelia.json';
 import build from './build';
 import watch from './watch';
 
-let serve = gulp.series(
+const serve: any = gulp.series(
   build,
-  done => {
+  (done: any) => {
     browserSync({
       online: false,
       open: false,
@@ -26,39 +26,41 @@ let serve = gulp.series(
       },
       server: {
         baseDir: [project.platform.baseDir],
-        middleware: [historyApiFallback(), function(req, res, next) {
+        middleware: [historyApiFallback(), (req: any, res: any, next: any): void => {
           res.setHeader('Access-Control-Allow-Origin', '*');
           next();
-        }]
-      }
-    }, function (err, bs) {
-      if (err) return done(err);
-      let urls = bs.options.get('urls').toJS();
+        }],
+      },
+    }, (err: any, bs: any): void => {
+      if (err) { return done(err); }
+      const urls: any = bs.options.get('urls').toJS();
       log(`Application Available At: ${urls.local}`);
       log(`BrowserSync Available At: ${urls.ui}`);
       done();
     });
-  }
+  },
 );
 
-function log(message) {
+function log(message: any): void {
+  // tslint:disable-next-line:no-console
   console.log(message);
 }
 
-function reload() {
+function reload(): void {
   log('Refreshing the browser');
   browserSync.reload();
 }
 
-let run;
+let run: any;
 
 if (CLIOptions.hasFlag('watch')) {
   run = gulp.series(
     serve,
-    done => { watch(reload); done(); }
+    (done: any) => { watch(reload); done(); },
   );
 } else {
   run = serve;
 }
 
+// tslint:disable-next-line:no-default-export
 export default run;

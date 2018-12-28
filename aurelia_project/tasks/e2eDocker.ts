@@ -42,6 +42,7 @@ function e2eDocker(): NodeJS.ReadWriteStream {
     });
 }
 
+// tslint:disable-next-line:no-default-export
 export default gulp.series(
   clean,
   build_tests,

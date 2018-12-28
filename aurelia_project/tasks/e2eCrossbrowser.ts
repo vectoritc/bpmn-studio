@@ -41,6 +41,7 @@ function e2e(): NodeJS.ReadWriteStream {
     .on('error', () => { });
 }
 
+// tslint:disable-next-line:no-default-export
 export default gulp.series(
   clean,
   build,

@@ -1,42 +1,43 @@
 import * as gulp from 'gulp';
-import * as path from 'path';
-import * as minimatch from 'minimatch';
 import * as changedInPlace from 'gulp-changed-in-place';
+import * as minimatch from 'minimatch';
+import * as path from 'path';
 import * as project from '../aurelia.json';
 
-export default function copyFiles(done) {
+// tslint:disable-next-line:no-default-export
+export default function copyFiles(done: Function): void {
   if (typeof project.build.copyFiles !== 'object') {
     done();
     return;
   }
 
-  const instruction = getNormalizedInstruction();
-  const files = Object.keys(instruction);
+  const instruction: object = getNormalizedInstruction();
+  const files: Array<string> = Object.keys(instruction);
 
   return gulp.src(files)
     .pipe(changedInPlace({ firstPass: true }))
-    .pipe(gulp.dest(x => {
-      const filePath = prepareFilePath(x.path);
-      const key = files.find(f => minimatch(filePath, f));
+    .pipe(gulp.dest((x: any) => {
+      const filePath: string = prepareFilePath(x.path);
+      const key: any = files.find((f: any) => minimatch(filePath, f));
       return instruction[key];
     }));
 }
 
-function getNormalizedInstruction() {
-  const files = project.build.copyFiles;
-  let normalizedInstruction = {};
+function getNormalizedInstruction(): object {
+  const files: Array<string> = project.build.copyFiles;
+  const normalizedInstruction: object = {};
 
-  for (let key in files) {
+  for (const key in files) {
     normalizedInstruction[path.posix.normalize(key)] = files[key];
   }
 
   return normalizedInstruction;
 }
 
-function prepareFilePath(filePath) {
-  let preparedPath = filePath.replace(process.cwd(), '').substring(1);
+function prepareFilePath(filePath: string): string {
+  let preparedPath: string = filePath.replace(process.cwd(), '').substring(1);
 
-  //if we are running on windows we have to fix the path
+  // if we are running on windows we have to fix the path
   if (/^win/.test(process.platform)) {
     preparedPath = preparedPath.replace(/\\/g, '/');
   }
