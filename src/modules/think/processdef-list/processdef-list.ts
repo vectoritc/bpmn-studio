@@ -50,18 +50,18 @@ export class ProcessDefList {
     this._eventAggregator.publish(environment.events.refreshProcessDefs);
   }
 
-  public async canActivate(): Promise<boolean> {
+  public async activate(routeParameters: RouteParameters): Promise<void> {
+    const solutionUri: string = routeParameters.solutionUri;
+    const solutionUriIsNotSet: boolean = solutionUri === undefined;
 
-    const hasClaimsForProcessDefList: boolean = await this._hasClaimsForProcessDefList(this._identity);
-
-    if (!hasClaimsForProcessDefList) {
-      this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have the permission to use the planning feature.');
-      this._router.navigateToRoute('start-page');
-
-      return false;
+    if (solutionUriIsNotSet) {
+      this.allDiagrams = [];
+      return;
     }
 
-    return true;
+    this._activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
+
+    await this._updateDiagramList();
   }
 
   public attached(): void {
