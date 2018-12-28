@@ -43,6 +43,7 @@ export class TaskList {
   public totalItems: number;
 
   public successfullyRequested: boolean = false;
+  public activeSolutionUri: string;
 
   private _eventAggregator: EventAggregator;
   private _managementApiService: IManagementApi;
@@ -88,6 +89,8 @@ export class TaskList {
   public attached(): void {
     const getTasksIsUndefined: boolean = this._getTasks === undefined;
 
+    this.activeSolutionUri = this._router.currentInstruction.queryParams.solutionUri;
+
     if (getTasksIsUndefined) {
       this._getTasks = this._getAllTasks;
       this.updateTasks();
@@ -130,11 +133,9 @@ export class TaskList {
       ? taskWithProcessModel.userTask.id
       : taskWithProcessModel.manualTask.id;
 
-    const curentSolutionUri: string = this._router.currentInstruction.queryParams.solutionUri;
-
     this._router.navigateToRoute('task-dynamic-ui', {
       diagramName: processModelId,
-      solutionUri: curentSolutionUri,
+      solutionUri: this.activeSolutionUri,
       correlationId: correlationId,
       taskId: taskId,
     });
