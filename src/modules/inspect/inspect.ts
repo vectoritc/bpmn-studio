@@ -16,7 +16,6 @@ export interface IInspectRouteParameters {
 @inject(EventAggregator, 'SolutionService')
 export class Inspect {
 
-  @bindable() public processModelId: string;
   @bindable() public showDashboard: boolean = true;
   @bindable() public activeDiagram: IDiagram;
   public showHeatmap: boolean = false;
@@ -72,14 +71,12 @@ export class Inspect {
 
       this._eventAggregator.publish(environment.events.navBar.toggleDashboardView);
     } else if (routeViewIsHeatmap) {
-      this._eventAggregator.publish(environment.events.navBar.showInspectButtons);
       this._eventAggregator.publish(environment.events.navBar.toggleHeatmapView);
 
       this.showDashboard = false;
       this.showHeatmap = true;
       this.showInspectCorrelation = false;
     } else if (routeViewIsInspectCorrelation) {
-      this._eventAggregator.publish(environment.events.navBar.showInspectButtons);
       this._eventAggregator.publish(environment.events.navBar.toggleInspectCorrelationView);
 
       this.showDashboard = false;
@@ -105,7 +102,6 @@ export class Inspect {
   public detached(): void {
     this._eventAggregator.publish(environment.events.navBar.inspectNavigateToDashboard);
     this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToDesigner);
-    this._eventAggregator.publish(environment.events.navBar.hideInspectButtons);
 
     for (const subscription of this._subscriptions) {
       subscription.dispose();

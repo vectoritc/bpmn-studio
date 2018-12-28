@@ -1,7 +1,7 @@
 <template>
   <require from="./bpmn-xml-view.css"></require>
   <require from="highlight.js/styles/github-gist.css"></require>
-  <div class="xml-view">
+  <div show.bind="highlighted" class="xml-view">
     <pre class="xml-view__xml"><code ref="codeElement" textcontent.bind="newXML">
     </code></pre>
   </div>

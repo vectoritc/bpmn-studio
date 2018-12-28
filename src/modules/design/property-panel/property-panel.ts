@@ -129,4 +129,11 @@ export class PropertyPanel {
     }
   }
 
+  public xmlChanged(newValue: string, oldValue: string): void {
+    if (oldValue === undefined) {
+      return;
+    }
+    this.setFirstElement();
+  }
+
 }

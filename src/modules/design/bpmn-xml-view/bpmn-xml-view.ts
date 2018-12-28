@@ -10,27 +10,35 @@ export class BpmnXmlView {
   public codeElement: HTMLElement;
   @bindable() public xml: string;
   @bindable({ defaultBindingMode: bindingMode.oneWay }) public newXML: string;
+  public highlighted: boolean = false;
 
-  public attached(): void {
+  public async attached(): Promise<void> {
     highlightEngine.configure({
       languages: ['xml'],
     });
 
+    setTimeout(async() => {
+      if (this.codeElement) {
+        await this.highlight();
+      }
+    }, 0);
+  }
+
+  public async xmlChanged(): Promise<void> {
+    this.highlighted = false;
     if (this.codeElement) {
-      this.highlight();
+      await this.highlight();
     }
   }
 
-  public xmlChanged(): void {
-    if (this.codeElement) {
-      this.highlight();
-    }
-  }
-
-  public highlight(): void {
+  public async highlight(): Promise<void> {
     this.newXML = this.xml;
-    highlightEngine.lineNumbersBlock(this.codeElement);
-    highlightEngine.highlightBlock(this.codeElement);
+    await highlightEngine.lineNumbersBlock(this.codeElement);
+    await highlightEngine.highlightBlock(this.codeElement);
+
+    setTimeout(() => {
+      this.highlighted = true;
+    }, 0);
   }
 
 }

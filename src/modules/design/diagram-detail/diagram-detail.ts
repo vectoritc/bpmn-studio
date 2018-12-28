@@ -1,5 +1,5 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {inject, observable} from 'aurelia-framework';
+import {bindable, inject, observable} from 'aurelia-framework';
 import {Redirect, Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
@@ -40,7 +40,8 @@ type IEventListener = {
         ValidationController)
 export class DiagramDetail {
 
-  public activeDiagram: IDiagram;
+  @bindable() public activeDiagram: IDiagram;
+  @bindable() public activeSolutionEntry: ISolutionEntry;
   public bpmnio: BpmnIo;
   public showUnsavedChangesModal: boolean = false;
   public showSaveForStartModal: boolean = false;
@@ -49,13 +50,11 @@ export class DiagramDetail {
   public showStartWithOptionsModal: boolean = false;
   public processesStartEvents: Array<Event> = [];
   public selectedStartEventId: string;
-  public xml: string;
   public initialToken: string;
   @observable({ changeHandler: 'correlationChanged'}) public customCorrelationId: string;
   public hasValidationError: boolean = false;
 
   @observable({ changeHandler: 'diagramHasChangedChanged'}) private _diagramHasChanged: boolean;
-  private _activeSolutionEntry: ISolutionEntry;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
@@ -90,47 +89,19 @@ export class DiagramDetail {
     return 'replace';
   }
 
-  public async activate(routeParameters: RouteParameters): Promise<void> {
+  public async getXML(): Promise<string> {
+    return this.bpmnio.getXML();
+  }
 
-    const diagramNameIsNotSet: boolean = routeParameters.diagramName === undefined;
-    const solutionUriIsNotSet: boolean = routeParameters.solutionUri === undefined;
-
-    if (diagramNameIsNotSet || solutionUriIsNotSet) {
-      this._router.navigateToRoute('start-page');
-
-      return;
-    }
-
-    try {
-      this._activeSolutionEntry = this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
-      /**
-       * We have to open the solution here again since if we come here after a
-       * reload the solution might not be opened yet.
-       */
-      await this._activeSolutionEntry.service.openSolution(this._activeSolutionEntry.uri, this._activeSolutionEntry.identity);
-      this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
-
-      this.xml = this.activeDiagram.xml;
-
-      this._diagramHasChanged = false;
-    } catch (error) {
-      this._notificationService.showNotification(NotificationType.INFO, 'Diagram could not be opened.');
-      this._router.navigateToRoute('start-page');
-
-      return;
-    }
+  public attached(): void {
+    this._diagramHasChanged = false;
 
     const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
     if (isRunningInElectron) {
       this._prepareSaveModalForClosing();
     }
-  }
-
-  public attached(): void {
 
     this._eventAggregator.publish(environment.events.navBar.showTools);
-
-    this._eventAggregator.publish(environment.events.statusBar.showDiagramViewButtons);
 
     this._subscriptions = [
       this._validationController.subscribe((event: ValidateEvent) => {
@@ -185,7 +156,7 @@ export class DiagramDetail {
     }
   }
 
-  public async canDeactivate(): Promise<Redirect> {
+  public async canDeactivate(): Promise<boolean> {
 
     const _modal: Promise<boolean> = new Promise((resolve: Function, reject: Function): boolean | void => {
       if (!this._diagramHasChanged) {
@@ -217,21 +188,12 @@ export class DiagramDetail {
       }
     });
 
-    const result: boolean = await _modal;
-    if (result === false) {
-      /*
-       * As suggested in https://github.com/aurelia/router/issues/302, we use
-       * the router directly to navigate back, which results in staying on this
-       * component-- and this is the desired behaviour.
-       */
-      return new Redirect(this._router.currentInstruction.fragment, {trigger: false, replace: false});
-    }
+    return _modal;
   }
 
   public deactivate(): void {
     this._eventAggregator.publish(environment.events.navBar.hideTools);
     this._eventAggregator.publish(environment.events.navBar.noValidationError);
-    this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
 
     for (const eventListener of this._ipcRendererEventListeners) {
       this._ipcRenderer.removeListener(eventListener.name, eventListener.function);
@@ -283,7 +245,7 @@ export class DiagramDetail {
                                                 : internalProcessEngineRoute;
 
       const solutionToDeployTo: ISolutionEntry = this._solutionService.getSolutionEntryForUri(connectedProcessEngineRoute);
-      this._activeSolutionEntry = solutionToDeployTo;
+      this.activeSolutionEntry = solutionToDeployTo;
 
       this.activeDiagram.id = processModelId;
 
@@ -303,13 +265,13 @@ export class DiagramDetail {
         xml: this.activeDiagram.xml,
       };
 
-      await this._activeSolutionEntry.service.saveDiagram(copyOfDiagram, connectedProcessEngineRoute);
+      await this.activeSolutionEntry.service.saveDiagram(copyOfDiagram, connectedProcessEngineRoute);
 
-      this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(processModelId);
+      this.activeDiagram = await this.activeSolutionEntry.service.loadDiagram(processModelId);
 
-      this._router.navigateToRoute('diagram-detail', {
+      this._router.navigateToRoute('design', {
         diagramName: this.activeDiagram.name,
-        solutionUri: this._activeSolutionEntry.uri,
+        solutionUri: this.activeSolutionEntry.uri,
       });
 
       this._notificationService
@@ -374,7 +336,7 @@ export class DiagramDetail {
 
     try {
       const response: ProcessModelExecution.ProcessStartResponsePayload = await this._managementApiClient
-        .startProcessInstance(this._activeSolutionEntry.identity,
+        .startProcessInstance(this.activeSolutionEntry.identity,
                               this.activeDiagram.id,
                               this.selectedStartEventId,
                               startRequestPayload,
@@ -385,7 +347,7 @@ export class DiagramDetail {
 
       this._router.navigateToRoute('live-execution-tracker', {
         diagramName: this.activeDiagram.id,
-        solutionUri: this._activeSolutionEntry.uri,
+        solutionUri: this.activeSolutionEntry.uri,
         correlationId: correlationId,
       });
     } catch (error) {
@@ -492,7 +454,7 @@ export class DiagramDetail {
 
   private async _updateProcessStartEvents(): Promise<void> {
     const startEventResponse: EventList = await this._managementApiClient
-      .getStartEventsForProcessModel(this._activeSolutionEntry.identity, this.activeDiagram.id);
+      .getStartEventsForProcessModel(this.activeSolutionEntry.identity, this.activeDiagram.id);
 
     this.processesStartEvents = startEventResponse.events;
   }
@@ -606,7 +568,7 @@ export class DiagramDetail {
       const xml: string = await this.bpmnio.getXML();
       this.activeDiagram.xml = xml;
 
-      await this._activeSolutionEntry.service.saveDiagram(this.activeDiagram);
+      await this.activeSolutionEntry.service.saveDiagram(this.activeDiagram);
       this.bpmnio.saveCurrentXML();
 
       this._diagramHasChanged = false;

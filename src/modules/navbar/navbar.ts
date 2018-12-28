@@ -29,6 +29,7 @@ export class NavBar {
   public disableInspectCorrelationButton: boolean = false;
   public diagramContainsUnsavedChanges: boolean = false;
   public inspectView: string = 'dashboard';
+  public designView: string = 'detail';
   public disableDesignLink: boolean = false;
   public navbarTitle: string = '';
   @bindable() public processOpenedFromProcessEngine: boolean = false;
@@ -220,9 +221,12 @@ export class NavBar {
       return;
     }
 
-    this._router.navigateToRoute('diagram-detail', {
+    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToDesigner, this.designView);
+
+    this._router.navigateToRoute('design', {
       diagramName: this.activeDiagram.name,
       solutionUri: this.activeSolutionEntry.uri,
+      view: this.designView,
     });
   }
 
@@ -306,7 +310,7 @@ export class NavBar {
     const activeRoute: string = this._router.currentInstruction.config.name;
 
     const activeSolutionIsRemoteSolution: boolean = this.activeSolutionEntry.uri.startsWith('http') && this.activeDiagram !== undefined;
-    const activeRouteIsDiagramDetail: boolean = activeRoute === 'diagram-detail';
+    const activeRouteIsDiagramDetail: boolean = activeRoute === 'design';
     const activeRouteIsInspect: boolean = activeRoute === 'inspect';
 
     this.disableStartButton = !activeSolutionIsRemoteSolution;

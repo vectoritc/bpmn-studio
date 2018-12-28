@@ -210,6 +210,12 @@ export class App {
         name: 'inspect',
         moduleId: 'modules/inspect/inspect',
       },
+      {
+        route: ['design', 'design/:view?/:diagramName?'],
+        title: 'Design',
+        name: 'design',
+        moduleId: 'modules/design/design',
+      },
     ]);
 
     this._openIdConnect.configure(config);

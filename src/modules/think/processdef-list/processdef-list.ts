@@ -84,7 +84,7 @@ export class ProcessDefList {
   public showDetails(processModelId: string): void {
     const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
 
-    this._router.navigateToRoute('diagram-detail', {
+    this._router.navigateToRoute('design', {
       diagramName: processModelId,
       solutionUri: remoteSolutionUri,
     });
