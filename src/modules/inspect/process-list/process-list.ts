@@ -27,6 +27,7 @@ export class ProcessList {
   public status: Array<string> = [];
   public succesfullRequested: boolean = false;
   public selectedState: HTMLSelectElement;
+  public activeSolutionEntry: ISolutionEntry;
 
   private _managementApiService: IManagementApi;
   private _eventAggregator: EventAggregator;
@@ -34,7 +35,6 @@ export class ProcessList {
   private _solutionService: ISolutionService;
   private _activeDiagramName: string;
   private _activeSolutionUri: string;
-  private _activeSolutionEntry: ISolutionEntry;
 
   private _getCorrelationsIntervalId: number;
   private _getCorrelations: () => Promise<Array<Correlation>>;
@@ -84,7 +84,7 @@ export class ProcessList {
       this._activeSolutionUri = window.localStorage.getItem('InternalProcessEngineRoute');
     }
 
-    this._activeSolutionEntry = this._solutionService.getSolutionEntryForUri(this._activeSolutionUri);
+    this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(this._activeSolutionUri);
 
     this._initializeGetProcesses();
 
@@ -145,13 +145,13 @@ export class ProcessList {
   }
 
   private async getAllActiveCorrelations(): Promise<Array<Correlation>> {
-    const identity: IIdentity = this._activeSolutionEntry.identity;
+    const identity: IIdentity = this.activeSolutionEntry.identity;
 
     return this._managementApiService.getActiveCorrelations(identity);
   }
 
   private async getCorrelationsForProcessModel(processModelId: string): Promise<Array<Correlation>> {
-    const identity: IIdentity = this._activeSolutionEntry.identity;
+    const identity: IIdentity = this.activeSolutionEntry.identity;
 
     const runningCorrelations: Array<Correlation> = await this._managementApiService.getActiveCorrelations(identity);
 
