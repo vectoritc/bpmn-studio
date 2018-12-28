@@ -85,6 +85,12 @@ export class Inspect {
       this._eventAggregator.subscribe(environment.events.inspect.shouldDisableTokenViewerButton, (tokenViewerButtonDisabled: boolean) => {
         this.tokenViewerButtonDisabled = tokenViewerButtonDisabled;
       }),
+      this._eventAggregator.subscribe('router:navigation:success', async(navigationResult: AureliaNavigationObject) => {
+        const solutionUri: string = navigationResult.instruction.queryParams.solutionUri;
+        const diagramName: string =  navigationResult.instruction.params.diagramName;
+
+        await this._updateInspect(diagramName, solutionUri);
+      }),
     ];
   }
 
