@@ -130,11 +130,11 @@ export class TaskList {
       ? taskWithProcessModel.userTask.id
       : taskWithProcessModel.manualTask.id;
 
-    const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
+    const curentSolutionUri: string = this._router.currentInstruction.queryParams.solutionUri;
 
     this._router.navigateToRoute('task-dynamic-ui', {
       diagramName: processModelId,
-      solutionUri: remoteSolutionUri,
+      solutionUri: curentSolutionUri,
       correlationId: correlationId,
       taskId: taskId,
     });
@@ -151,12 +151,6 @@ export class TaskList {
     }
 
     return this._userTasks;
-  }
-
-  public get remoteSolutionUri(): string {
-    const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
-
-    return remoteSolutionUri;
   }
 
   private async _getAllTasks(): Promise<Array<IUserTaskWithProcessModel & IManualTaskWithProcessModel>> {
