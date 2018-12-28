@@ -88,6 +88,11 @@ export class DiagramDetail {
   public attached(): void {
     this.diagramHasChanged = false;
 
+    const solutionIsRemote: boolean = this._activeSolutionEntry.uri.startsWith('http');
+    if (solutionIsRemote) {
+      this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, this._activeSolutionEntry.uri);
+    }
+
     const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
     if (isRunningInElectron) {
       this._ipcRenderer = (window as any).nodeRequire('electron').ipcRenderer;
