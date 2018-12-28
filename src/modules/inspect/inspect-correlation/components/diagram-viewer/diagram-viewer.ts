@@ -19,7 +19,7 @@ import {
   NotificationType,
 } from '../../../../../contracts/index';
 import environment from '../../../../../environment';
-import {DiagramExportService} from '../../../../design/bpmn-io/services';
+import {DiagramExportService} from '../../../../design/bpmn-io/services/index';
 import {NotificationService} from '../../../../notification/notification.service';
 
 @inject('NotificationService', EventAggregator)
