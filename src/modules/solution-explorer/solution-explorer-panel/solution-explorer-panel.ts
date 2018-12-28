@@ -165,6 +165,17 @@ export class SolutionExplorerPanel {
     });
   }
 
+  public get uriIsValid(): boolean {
+    const uriIsEmtpy: boolean = this.uriOfRemoteSolution === undefined || this.uriOfRemoteSolution.length === 0;
+    if (uriIsEmtpy) {
+      return true;
+    }
+
+    const uriStartsWithHttp: boolean = this.uriOfRemoteSolution.startsWith('http');
+
+    return uriStartsWithHttp;
+  }
+
   public async openSolution(): Promise<void> {
     const canNotReadFromFileSystem: boolean = !this.canReadFromFileSystem();
     if (canNotReadFromFileSystem) {
