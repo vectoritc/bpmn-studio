@@ -23,6 +23,7 @@ interface RouteParameters {
 export class ProcessDefList {
 
   public allProcessModels: Array<ProcessModelExecution.ProcessModel>;
+  public allDiagrams: Array<IDiagram>;
 
   private _authenticationService: IAuthenticationService;
   private _managementApiClient: IManagementApi;
@@ -66,20 +67,20 @@ export class ProcessDefList {
 
   public attached(): void {
 
-    this._getAllProcessModels();
+    this._updateDiagramList();
 
     this._getProcessesIntervalId = window.setInterval(() => {
-      this._getAllProcessModels();
+      this._updateDiagramList();
       this._eventAggregator.publish(environment.events.refreshProcessDefs);
       // tslint:disable-next-line
     }, environment.processengine.processDefListPollingIntervalInMs);
 
     this._subscriptions = [
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
-        this._getAllProcessModels();
+        this._updateDiagramList();
       }),
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
-        this._getAllProcessModels();
+        this._updateDiagramList();
       }),
     ];
   }
