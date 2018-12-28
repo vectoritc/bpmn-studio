@@ -120,6 +120,7 @@ export class Inspect {
     }
 
     this._activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
+    await this._activeSolutionEntry.service.openSolution(this._activeSolutionEntry.uri, this._activeSolutionEntry.identity);
 
     const solutionIsRemote: boolean = solutionUri.startsWith('http');
     if (solutionIsRemote) {
