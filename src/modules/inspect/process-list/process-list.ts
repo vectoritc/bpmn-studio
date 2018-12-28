@@ -60,6 +60,10 @@ export class ProcessList {
     }
   }
 
+  /**
+   * This method only gets called if this component is navigated to directly.
+   * If we bind it somewhere via show.bind this method will not be called.
+   */
   public activate(routeParameters: IProcessListRouteParameters): void {
 
     if (!routeParameters.diagramName) {
