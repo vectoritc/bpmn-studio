@@ -41,7 +41,15 @@ export class Inspect {
 
     if (solutionIsSet) {
       this._activeSolutionEntry = this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
-      this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, routeParameters.solutionUri);
+
+      /**
+       * If we would update the PE route when a local soluton is selected it would
+       * crash the ManagementApiClient so we are checking this here.
+       */
+      const solutionIsRemote: boolean = routeParameters.solutionUri.startsWith('http');
+      if (solutionIsRemote) {
+        this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, routeParameters.solutionUri);
+      }
 
       /**
        * We have to open the solution here again since if we come here after a
