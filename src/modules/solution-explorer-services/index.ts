@@ -6,7 +6,6 @@ import {SolutionExplorerManagementApiRepository} from '@process-engine/solutione
 import {SolutionExplorerService} from '@process-engine/solutionexplorer.service';
 
 import {DiagramTrashFolderService} from './DiagramTrashFolderService';
-import {RefreshingSolutionExplorerService} from './RefreshingSolutionExplorerService';
 import {SolutionExplorerServiceFactory} from './SolutionExplorerServiceFactory';
 
 export async function configure(config: FrameworkConfiguration): Promise<void> {
@@ -37,6 +36,4 @@ function registerManagementApi(container: Container): void {
   const solutionexplorerService: SolutionExplorerService = new SolutionExplorerService(managementApiRepository);
 
   container.registerInstance('SolutionExplorerServiceManagementApi_NotRefreshing', solutionexplorerService);
-
-  container.registerSingleton('SolutionExplorerServiceManagementApi', RefreshingSolutionExplorerService);
 }
