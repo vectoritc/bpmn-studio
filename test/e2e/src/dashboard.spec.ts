@@ -41,9 +41,19 @@ describe('Dashboard view', () => {
   });
 
   beforeEach(async() => {
-    const dashboardLink: string = dashboard.dashboardLink;
     const routerViewContainer: ElementFinder = general.getRouterViewContainer;
     const visibilityOfRouterViewContainer: Function = expectedConditions.visibilityOf(routerViewContainer);
+
+    await browser.get(aureliaUrl);
+    await browser.driver
+    .wait(() => {
+      browser
+        .wait(visibilityOfRouterViewContainer, defaultTimeoutMS);
+
+      return routerViewContainer;
+    });
+
+    const dashboardLink: string = dashboard.dashboardLink;
 
     await browser.get(aureliaUrl + dashboardLink);
     await browser.driver
