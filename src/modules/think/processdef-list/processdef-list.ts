@@ -100,5 +100,8 @@ export class ProcessDefList {
     });
   }
 
+  private async _updateDiagramList(): Promise<void> {
+    const solution: ISolution = await this._activeSolutionEntry.service.loadSolution();
+    this.allDiagrams = solution.diagrams;
   }
 }
