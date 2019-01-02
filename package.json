@@ -122,9 +122,9 @@
     "print-js": "1.0.47",
     "proxy-polyfill": "0.3.0",
     "pushserve": "^1.0.2",
+    "socket.io-client": "2.1.1",
     "spectrum-colorpicker": "1.8.0",
-    "sqlite3": "4.0.4",
-    "socket.io-client": "2.1.1"
+    "sqlite3": "4.0.4"
   },
   "peerDependencies": {},
   "devDependencies": {
