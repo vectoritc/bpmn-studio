@@ -82,6 +82,12 @@ export class TaskDynamicUi {
 
     this.setDynamicUIWrapperUserTask();
     this.setDynamicUIWrapperManualTask();
+
+    this.cancelModalEvent = (): void => {
+      this.clearTasks();
+
+      this.modalCloseEvent();
+    };
   }
 
   public detached(): void {
@@ -128,14 +134,6 @@ export class TaskDynamicUi {
       : task.id;
 
     return taskDisplayName;
-  }
-
-  public modalCloseEventChanged(): void {
-    this.cancelModalEvent = (): void => {
-      this.clearTasks();
-
-      this.modalCloseEvent();
-    };
   }
 
   public clearTasks(): void {
