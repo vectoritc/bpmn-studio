@@ -15,6 +15,7 @@ import {defaultBpmnColors,
         IModdleElement,
         IModeling,
         IShape,
+        IViewbox,
         NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
@@ -145,6 +146,16 @@ export class DiagramToolsRight {
     const canvas: ICanvas = this.modeler.get('canvas');
 
     canvas.zoom('fit-viewport');
+  }
+
+  public moveViewportToZeroPoint(): void {
+    const canvas: ICanvas = this.modeler.get('canvas');
+
+    const previousViewbox: IViewbox = canvas.viewbox();
+    previousViewbox.x = 0;
+    previousViewbox.y = 0;
+
+    canvas.viewbox(previousViewbox);
   }
 
   private _setColor(color: IColorPickerColor): void {
