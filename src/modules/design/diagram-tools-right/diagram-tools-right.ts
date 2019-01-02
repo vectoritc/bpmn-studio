@@ -12,7 +12,9 @@ import {defaultBpmnColors,
         IEvent,
         IEventFunction,
         IModdleElement,
-        IModeling, IShape, NotificationType} from '../../../contracts/index';
+        IModeling,
+        IShape,
+        NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 
