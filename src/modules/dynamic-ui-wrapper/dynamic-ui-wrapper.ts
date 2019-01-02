@@ -1,6 +1,7 @@
 
 import {bindable, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
+import {domEventDispatch} from 'dom-event-dispatch';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
 import {
@@ -134,7 +135,7 @@ export class DynamicUiWrapper {
 
   private _cancelTask(): void {
     if (this.isModal) {
-      this._emitDomEvent('close-modal');
+      domEventDispatch.dispatchEvent(this._element, 'close-modal', {bubbles: true});
 
       return;
     }
@@ -226,23 +227,5 @@ export class DynamicUiWrapper {
     };
 
     return identity;
-  }
-
-  private _emitDomEvent(eventName: string): void {
-    const windowHasCustomElement: boolean = (window as any).CustomEvent;
-
-    if (windowHasCustomElement) {
-      const changeEvent: CustomEvent = new CustomEvent(eventName, {
-        bubbles: true,
-      });
-
-      this._element.dispatchEvent(changeEvent);
-    } else {
-      const changeEvent: CustomEvent = document.createEvent('CustomEvent');
-
-      changeEvent.initCustomEvent(eventName, true, true, {});
-
-      this._element.dispatchEvent(changeEvent);
-    }
   }
 }

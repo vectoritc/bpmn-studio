@@ -1,6 +1,7 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
+import {domEventDispatch} from 'dom-event-dispatch';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
 import {ManualTask, UserTask} from '@process-engine/management_api_contracts';
@@ -138,7 +139,7 @@ export class TaskDynamicUi {
 
   private _finishTask(action: string): void {
     if (this.isModal) {
-      this._emitDomEvent('close-modal');
+      domEventDispatch.dispatchEvent(this._element, 'close-modal', {bubbles: true});
       this.clearTasks();
 
       return;
@@ -217,23 +218,5 @@ export class TaskDynamicUi {
     };
 
     return identity;
-  }
-
-  private _emitDomEvent(eventName: string): void {
-    const windowHasCustomElement: boolean = (window as any).CustomEvent;
-
-    if (windowHasCustomElement) {
-      const changeEvent: CustomEvent = new CustomEvent(eventName, {
-        bubbles: true,
-      });
-
-      this._element.dispatchEvent(changeEvent);
-    } else {
-      const changeEvent: CustomEvent = document.createEvent('CustomEvent');
-
-      changeEvent.initCustomEvent(eventName, true, true, {});
-
-      this._element.dispatchEvent(changeEvent);
-    }
   }
 }
