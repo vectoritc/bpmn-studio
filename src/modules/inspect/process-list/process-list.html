@@ -10,16 +10,18 @@
             <th>Process Model ID</th>
             <th></th>
           </tr>
-          <tr repeat.for="correlation of correlations" id="processList-${correlation.id}" class="process-list-item">
-            <td>${correlation.id}</td>
-            <td>
-              <a route-href="route: design; params.bind: { view: 'detail', diagramName: correlation.processModels[0].processModelId, solutionUri: activeSolutionEntry.uri }" class="process-list-item-modelname">${correlation.processModels[0].processModelId}</a>
-            </td>
-            <td class="process-list__last-table-cell">
-              <a route-href="route: task-list-correlation; params.bind: { correlationId: correlation.id, solutionUri: activeSolutionEntry.uri }" class="process-list-item-user-tasks btn btn-default">Tasks</a>
-              <a route-href="route: live-execution-tracker; params.bind: { diagramName: correlation.processModels[0].processModelId, solutionUri: activeSolutionEntry.uri, correlationId: correlation.id}" class="btn btn-default">Live Execution Tracking</a>
-            </td>
-          </tr>
+          <template repeat.for="correlation of correlations">
+            <tr repeat.for="processModel of correlation.processModels" id="processList-${correlation.id}" class="process-list-item">
+              <td>${correlation.id}</td>
+              <td>
+                <a route-href="route: design; params.bind: { view: 'detail', diagramName: processModel.processModelId, solutionUri: activeSolutionEntry.uri }" class="process-list-item-modelname">${processModel.processModelId}</a>
+              </td>
+              <td class="process-list__last-table-cell">
+                <a route-href="route: task-list-correlation; params.bind: { correlationId: correlation.id, solutionUri: activeSolutionEntry.uri }" class="process-list-item-user-tasks btn btn-default">Tasks</a>
+                <a route-href="route: live-execution-tracker; params.bind: { diagramName: processModel.processModelId, solutionUri: activeSolutionEntry.uri, correlationId: correlation.id }" class="btn btn-default">Live Execution Tracking</a>
+              </td>
+            </tr>
+          </template>
         </table>
       </template>
       <div class="col-md-12 col-xs-12 pagination" show.bind="correlations && correlations.length > 0">
