@@ -30,6 +30,9 @@
     <a class="button tool" class.bind="distributeElementsEnabled ? '' : 'button--disabled tool--disabled'" title.bind="distributeElementsEnabled ? 'Distribute Elements Horizontally' : 'Select at least three elements to distribute them horizontally'" click.delegate="distributeElementsHorizontally()" disabled.bind="!distributeElementsEnabled">
       <i class="fas fa-arrows-alt-h"></i>
     </a>
+    <a class="button tool" title="Fit diagram to viewport" click.delegate="fitDiagramToViewport()">
+      <i class="fas fa-expand"></i>
+    </a>
     <!-- Why are these here?-->
     <div class="tool">
 

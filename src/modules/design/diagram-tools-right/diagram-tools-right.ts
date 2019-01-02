@@ -7,6 +7,7 @@ import {defaultBpmnColors,
         ElementDistributeOptions,
         IBpmnFunction,
         IBpmnModeler,
+        ICanvas,
         IColorPickerColor,
         IColorPickerSettings,
         IEvent,
@@ -138,6 +139,12 @@ export class DiagramToolsRight {
 
   public distributeElementsHorizontally(): void {
     this._distributeElementsHorizontally();
+  }
+
+  public fitDiagramToViewport(): void {
+    const canvas: ICanvas = this.modeler.get('canvas');
+
+    canvas.zoom('fit-viewport');
   }
 
   private _setColor(color: IColorPickerColor): void {
