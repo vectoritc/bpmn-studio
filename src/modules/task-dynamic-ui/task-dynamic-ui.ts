@@ -17,7 +17,7 @@ interface RouteParameters {
   taskId: string;
 }
 
-@inject(EventAggregator, 'DynamicUiService', Router, 'NotificationService', 'AuthenticationService')
+@inject(EventAggregator, 'DynamicUiService', Router, 'NotificationService', 'AuthenticationService', Element)
 export class TaskDynamicUi {
 
   public dynamicUiWrapper: DynamicUiWrapper;
@@ -26,8 +26,6 @@ export class TaskDynamicUi {
   @bindable() public processModelId: string;
   @bindable() public taskId: string;
   @bindable() public isModal: boolean;
-  @bindable() public modalCloseEvent: Function;
-  public cancelModalEvent: Function;
 
   private _activeDiagramName: string;
   private _activeSolutionUri: string;
@@ -39,18 +37,21 @@ export class TaskDynamicUi {
   private _subscriptions: Array<Subscription>;
   private _userTask: UserTask;
   private _manualTask: ManualTask;
+  private _element: Element;
 
   constructor(eventAggregator: EventAggregator,
               dynamicUiService: IDynamicUiService,
               router: Router,
               notificationService: NotificationService,
-              authenticationService: AuthenticationService) {
+              authenticationService: AuthenticationService,
+              element: Element) {
 
     this._eventAggregator = eventAggregator;
     this._dynamicUiService = dynamicUiService;
     this._router = router;
     this._notificationService = notificationService;
     this._authenticationService = authenticationService;
+    this._element = element;
   }
 
   public activate(routeParameters: RouteParameters): void {
@@ -82,12 +83,6 @@ export class TaskDynamicUi {
 
     this.setDynamicUIWrapperUserTask();
     this.setDynamicUIWrapperManualTask();
-
-    this.cancelModalEvent = (): void => {
-      this.clearTasks();
-
-      this.modalCloseEvent();
-    };
   }
 
   public detached(): void {
@@ -143,10 +138,8 @@ export class TaskDynamicUi {
 
   private _finishTask(action: string): void {
     if (this.isModal) {
-      this._userTask = undefined;
-      this._manualTask = undefined;
-
-      this.modalCloseEvent();
+      this._emitDomEvent('close-modal');
+      this.clearTasks();
 
       return;
     }
@@ -224,5 +217,23 @@ export class TaskDynamicUi {
     };
 
     return identity;
+  }
+
+  private _emitDomEvent(eventName: string): void {
+    const windowHasCustomElement: boolean = (window as any).CustomEvent;
+
+    if (windowHasCustomElement) {
+      const changeEvent: CustomEvent = new CustomEvent(eventName, {
+        bubbles: true,
+      });
+
+      this._element.dispatchEvent(changeEvent);
+    } else {
+      const changeEvent: CustomEvent = document.createEvent('CustomEvent');
+
+      changeEvent.initCustomEvent(eventName, true, true, {});
+
+      this._element.dispatchEvent(changeEvent);
+    }
   }
 }

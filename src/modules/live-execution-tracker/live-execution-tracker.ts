@@ -200,12 +200,6 @@ export class LiveExecutionTracker {
     return this._parentProcessModelId !== undefined;
   }
 
-  public closeDynamicUiModal: Function = (): void => {
-    this.showDynamicUiModal = false;
-
-    this.dynamicUi.clearTasks();
-  }
-
   public navigateBackToPreviousProcess(): void {
     this._router.navigateToRoute('live-execution-tracker', {
       correlationId: this.correlationId,
@@ -216,6 +210,12 @@ export class LiveExecutionTracker {
 
   public navigateBack(): void {
     this._router.navigateBack();
+  }
+
+  public closeDynamicUiModal(): void {
+    this.showDynamicUiModal = false;
+
+    this.dynamicUi.clearTasks();
   }
 
   /**

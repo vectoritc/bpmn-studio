@@ -19,7 +19,7 @@ import {
 } from '../../contracts';
 import {AuthenticationService} from '../authentication/authentication.service';
 
-@inject('DynamicUiService', 'AuthenticationService', Router)
+@inject('DynamicUiService', 'AuthenticationService', Router, Element)
 export class DynamicUiWrapper {
 
   public cancelButtonText: string = 'Cancel';
@@ -31,7 +31,7 @@ export class DynamicUiWrapper {
   @bindable() public isConfirmUserTask: boolean = false;
   @bindable() public isFormUserTask: boolean = false;
   @bindable() public isModal: boolean;
-  @bindable() public modalCloseEvent: Function;
+  private _element: Element;
 
   private _router: Router;
 
@@ -40,11 +40,13 @@ export class DynamicUiWrapper {
 
   constructor(dynamicUiService: IDynamicUiService,
               authenticationService: AuthenticationService,
-              router: Router) {
+              router: Router,
+              element: Element) {
 
     this._dynamicUiService = dynamicUiService;
     this._authenticationService = authenticationService;
     this._router = router;
+    this._element = element;
 
     this.isModal = false;
   }
@@ -132,7 +134,7 @@ export class DynamicUiWrapper {
 
   private _cancelTask(): void {
     if (this.isModal) {
-      this.modalCloseEvent();
+      this._emitDomEvent('close-modal');
 
       return;
     }
@@ -224,5 +226,23 @@ export class DynamicUiWrapper {
     };
 
     return identity;
+  }
+
+  private _emitDomEvent(eventName: string): void {
+    const windowHasCustomElement: boolean = (window as any).CustomEvent;
+
+    if (windowHasCustomElement) {
+      const changeEvent: CustomEvent = new CustomEvent(eventName, {
+        bubbles: true,
+      });
+
+      this._element.dispatchEvent(changeEvent);
+    } else {
+      const changeEvent: CustomEvent = document.createEvent('CustomEvent');
+
+      changeEvent.initCustomEvent(eventName, true, true, {});
+
+      this._element.dispatchEvent(changeEvent);
+    }
   }
 }
