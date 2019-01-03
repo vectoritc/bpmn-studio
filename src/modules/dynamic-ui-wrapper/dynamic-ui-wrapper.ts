@@ -169,8 +169,8 @@ export class DynamicUiWrapper {
 
     this.currentUserTask = undefined;
 
-    const hasOnButtonClickFunction: boolean = this.onButtonClick !== undefined;
-    if (hasOnButtonClickFunction) {
+    const buttonClickHandlerExists: boolean = this.onButtonClick !== undefined;
+    if (buttonClickHandlerExists) {
       this.onButtonClick(action);
     }
   }
@@ -195,8 +195,8 @@ export class DynamicUiWrapper {
 
     this.currentManualTask = undefined;
 
-    const noClickHandlerRegistered: boolean = this.onButtonClick !== undefined;
-    if (noClickHandlerRegistered) {
+    const buttonClickHandlerExists: boolean = this.onButtonClick !== undefined;
+    if (buttonClickHandlerExists) {
       this.onButtonClick('proceed');
     }
   }
