@@ -211,7 +211,7 @@ export class App {
         moduleId: 'modules/inspect/inspect',
       },
       {
-        route: ['design', 'design/:view?/diagram/:diagramName?/'],
+        route: ['design', 'design/:view?/diagram/:diagramName?'],
         title: 'Design',
         name: 'design',
         moduleId: 'modules/design/design',
