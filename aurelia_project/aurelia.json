@@ -349,6 +349,11 @@
             "name": "socket.io-client",
             "path": "../node_modules/socket.io-client/dist",
             "main": "socket.io"
+          },
+          {
+            "name": "dom-event-dispatch",
+            "path": "../node_modules/dom-event-dispatch/dist",
+            "main": "dom-event-dispatch"
           }
         ]
       }

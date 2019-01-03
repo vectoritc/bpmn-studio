@@ -1,6 +1,7 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
+import {domEventDispatch} from 'dom-event-dispatch';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
 import {ManualTask, UserTask} from '@process-engine/management_api_contracts';
@@ -17,7 +18,7 @@ interface RouteParameters {
   taskId: string;
 }
 
-@inject(EventAggregator, 'DynamicUiService', Router, 'NotificationService', 'AuthenticationService')
+@inject(EventAggregator, 'DynamicUiService', Router, 'NotificationService', 'AuthenticationService', Element)
 export class TaskDynamicUi {
 
   public dynamicUiWrapper: DynamicUiWrapper;
@@ -26,7 +27,6 @@ export class TaskDynamicUi {
   @bindable() public processModelId: string;
   @bindable() public taskId: string;
   @bindable() public isModal: boolean;
-  @bindable() public modalCloseEvent: Function;
 
   private _activeDiagramName: string;
   private _activeSolutionUri: string;
@@ -38,18 +38,21 @@ export class TaskDynamicUi {
   private _subscriptions: Array<Subscription>;
   private _userTask: UserTask;
   private _manualTask: ManualTask;
+  private _element: Element;
 
   constructor(eventAggregator: EventAggregator,
               dynamicUiService: IDynamicUiService,
               router: Router,
               notificationService: NotificationService,
-              authenticationService: AuthenticationService) {
+              authenticationService: AuthenticationService,
+              element: Element) {
 
     this._eventAggregator = eventAggregator;
     this._dynamicUiService = dynamicUiService;
     this._router = router;
     this._notificationService = notificationService;
     this._authenticationService = authenticationService;
+    this._element = element;
   }
 
   public activate(routeParameters: RouteParameters): void {
@@ -129,12 +132,15 @@ export class TaskDynamicUi {
     return taskDisplayName;
   }
 
+  public clearTasks(): void {
+    this.userTask = undefined;
+    this.manualTask = undefined;
+  }
+
   private _finishTask(action: string): void {
     if (this.isModal) {
-      this._userTask = undefined;
-      this._manualTask = undefined;
-
-      this.modalCloseEvent();
+      domEventDispatch.dispatchEvent(this._element, 'close-modal', {bubbles: true});
+      this.clearTasks();
 
       return;
     }
@@ -162,23 +168,19 @@ export class TaskDynamicUi {
         throw Error(`Invalid ProcessModel ID: ${this.processModelId}`);
       }
 
-      this._userTask = await this._dynamicUiService
+      this.userTask = await this._dynamicUiService
                                   .getUserTask(identity, this.correlationId, this.processModelId, this.taskId);
 
       const userTaskFound: boolean = this._userTask !== undefined;
       if (userTaskFound) {
-        this.setDynamicUIWrapperUserTask();
-
         return;
       }
 
-      this._manualTask = await this._dynamicUiService
+      this.manualTask = await this._dynamicUiService
                                     .getManualTask(identity, this.correlationId, this.processModelId, this.taskId);
 
       const manualTaskFound: boolean = this._manualTask !== undefined;
       if (manualTaskFound) {
-        this.setDynamicUIWrapperManualTask();
-
         return;
       }
 
@@ -191,9 +193,8 @@ export class TaskDynamicUi {
 
   private async setDynamicUIWrapperUserTask(): Promise<void> {
     const dynamicUiWrapperNotExisting: boolean = this.dynamicUiWrapper === undefined;
-    const userTaskNotExisting: boolean = this._userTask === undefined;
 
-    if (dynamicUiWrapperNotExisting || userTaskNotExisting) {
+    if (dynamicUiWrapperNotExisting) {
       return;
     }
 
@@ -202,9 +203,8 @@ export class TaskDynamicUi {
 
   private async setDynamicUIWrapperManualTask(): Promise<void> {
     const dynamicUiWrapperNotExisting: boolean = this.dynamicUiWrapper === undefined;
-    const manualTaskNotExisting: boolean = this._manualTask === undefined;
 
-    if (dynamicUiWrapperNotExisting || manualTaskNotExisting) {
+    if (dynamicUiWrapperNotExisting) {
       return;
     }
 

@@ -33,6 +33,7 @@ import {
 } from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
+import {TaskDynamicUi} from '../task-dynamic-ui/task-dynamic-ui';
 
 type RouteParameters = {
   diagramName: string,
@@ -49,6 +50,7 @@ enum RequestError {
 export class LiveExecutionTracker {
   public canvasModel: HTMLElement;
   public showDynamicUiModal: boolean = false;
+  public dynamicUi: TaskDynamicUi;
 
   public correlationId: string;
   public processModelId: string;
@@ -198,10 +200,6 @@ export class LiveExecutionTracker {
     return this._parentProcessModelId !== undefined;
   }
 
-  public closeDynamicUiModal: Function = (): void => {
-    this.showDynamicUiModal = false;
-  }
-
   public navigateBackToPreviousProcess(): void {
     this._router.navigateToRoute('live-execution-tracker', {
       correlationId: this.correlationId,
@@ -212,6 +210,12 @@ export class LiveExecutionTracker {
 
   public navigateBack(): void {
     this._router.navigateBack();
+  }
+
+  public closeDynamicUiModal(): void {
+    this.showDynamicUiModal = false;
+
+    this.dynamicUi.clearTasks();
   }
 
   /**
