@@ -182,12 +182,12 @@ export class Design {
 
   }
 
-  public leaveWithoutSaving(): void {
+  public quitWithoutSaving(): void {
     this._ipcRenderer.send('can-not-close', false);
     this._ipcRenderer.send('close-bpmn-studio');
   }
 
-  public async leaveWithSaving(): Promise<void> {
+  public async quitWithSaving(): Promise<void> {
     if (this.diagramDetail.diagramIsInvalid) {
       return;
     }
@@ -199,7 +199,7 @@ export class Design {
     this._ipcRenderer.send('close-bpmn-studio');
   }
 
-  public doNotLeave(): void {
+  public cancelQuitting(): void {
     this.showUnsavedChangesModal = false;
   }
 }
