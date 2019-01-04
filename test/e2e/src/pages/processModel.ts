@@ -19,7 +19,7 @@ export class ProcessModel {
   }
 
   public static getProcessModelUrl(): string {
-    return '/diagram/detail';
+    return '/design';
   }
 
   public static userTasksUrl(correlationId: string): string {

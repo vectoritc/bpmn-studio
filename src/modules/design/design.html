@@ -1,0 +1,77 @@
+<template>
+  <require from="./design.css"></require>
+  <require from="./diagram-detail/diagram-detail"></require>
+  <require from="./bpmn-xml-view/bpmn-xml-view"></require>
+  <require from="./bpmn-diff-view/bpmn-diff-view"></require>
+
+  <div class="design">
+
+    <div show.bind="showDetail" class="design__detail-container">
+      <diagram-detail view-model.ref="diagramDetail" active-diagram.bind="activeDiagram" active-solution-entry.bind="activeSolutionEntry"></diagram-detail>
+    </div>
+    <div show.bind="showXML" class="design__xml-view-container">
+      <bpmn-xml-view xml.bind="activeDiagram.xml"></bpmn-xml-view>
+    </div>
+    <div if.bind="showDiff" class="design__diff-view-container">
+      <bpmn-diff-view saved-xml.bind="xmlForDiffNew ? xmlForDiffNew : activeDiagram.xml" current-xml.bind="xmlForDiffOld" process-model-id.bind="activeDiagram.name"></bpmn-diff-view>
+    </div>
+
+    <div class="design-layout__tools-right">
+      <div class="tool-list tool-list--vertical">
+        <div show.bind="showPropertyPanelButton" id="toggleButtonPropertyPanel" class="design-layout__tool">
+          <button class="button menu-bar__menu-left--tool" class.bind="propertyPanelShown ? 'design-layout__tool--active' : ''" click.delegate="togglePanel()" title="Toggle visibility of the Property Panel">
+            <i class="fas fa-sliders-h"></i>
+          </button>
+        </div>
+        <div if.bind="showDiffDestinationButton" class="design-layout__tool" click.delegate="toggleDiffDestination()">
+          <i class="button fas fa-database" class.bind="diffDestinationIsLocal ? '' :  'design-layout__tool--active'"
+            title.bind="diffDestinationIsLocal ? 'Show difference to the deployed diagram' : 'Show difference to the last saved diagram'"></i>
+        </div>
+      </div>
+    </div>
+  <!-- Save On Quit Modal {{{ -->
+    <div show.bind="showQuitModal">
+      <div class="modal show-modal" tabindex="-1" role="dialog" id="saveModalLeaveView">
+        <div class="modal-dialog save-modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Document Contains Changes</h4>
+            </div>
+            <div class="modal-body">
+              Your process has unsaved changes. Save changes to diagram before quitting the BPMN-Studio?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal" click.delegate="cancelQuitting()">Cancel</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal" click.delegate="quitWithoutSaving()">Quit and don't save</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal" click.delegate="quitWithSaving()">Save and quit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-backdrop fade in"></div>
+    </div>
+  </div>
+  <!-- }}} Save On Quit Modal -->
+  <!-- Save On Leave Modal {{{ -->
+    <div show.bind="showLeaveModal">
+      <div class="modal show-modal" tabindex="-1" role="dialog" id="saveModalLeaveView">
+        <div class="modal-dialog save-modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Document Contains Changes</h4>
+            </div>
+            <div class="modal-body">
+              Your process has unsaved changes. Save changes to diagram before leaving?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelButtonLeaveView">Cancel</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal" id="dontSaveButtonLeaveView">Leave and don't save</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal" id="saveButtonLeaveView">Save and leave</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-backdrop fade in"></div>
+    </div>
+    <!-- }}} Save On Leave Modal -->
+</template>

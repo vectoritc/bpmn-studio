@@ -7,6 +7,7 @@ import {
 
 import {BpmnIo} from './pages/bpmn-io';
 import {BpmnDiffView} from './pages/bpmnDiffView';
+import {Design} from './pages/design';
 import {General} from './pages/general';
 import {NavBar} from './pages/navBar';
 import {ProcessModel} from './pages/processModel';
@@ -22,6 +23,7 @@ describe('bpmn-io compare view', () => {
   let processModel: ProcessModel;
   let solutionExplorer: SolutionExplorer;
   let statusBar: StatusBar;
+  let design: Design;
 
   let processModelId: string;
 
@@ -38,6 +40,7 @@ describe('bpmn-io compare view', () => {
     processModel = new ProcessModel();
     solutionExplorer = new SolutionExplorer();
     statusBar = new StatusBar();
+    design = new Design();
 
     processModelId = processModel.getProcessModelId();
 
@@ -85,10 +88,20 @@ describe('bpmn-io compare view', () => {
     expect(statusBarDiffViewButtonIsDisplayed).toBeTruthy();
   });
 
-  it('should be possible to open xml view when click on `Show Diff` button.', async() => {
+  it('should be possible to open diff view when click on `Show Diff` button.', async() => {
     const statusBarDiffViewButton: ElementFinder = statusBar.statusBarDiffViewButton;
 
     await BpmnDiffView.openDiffViewByClickOnButton(statusBarDiffViewButton);
+
+    const designTag: ElementFinder = design.designTag;
+    const visibilityOfDesignTag: Function = expectedConditions.visibilityOf(designTag);
+
+    await browser.driver
+      .wait(() => {
+        browser.wait(visibilityOfDesignTag, defaultTimeoutMS);
+
+        return design.designTag;
+      });
 
     const bpmnDiffViewTag: ElementFinder = bpmnDiffView.bpmnDiffViewTag;
     const bpmnDiffViewTagIsDisplayed: boolean = await bpmnDiffViewTag.isDisplayed();
@@ -96,7 +109,7 @@ describe('bpmn-io compare view', () => {
     expect(bpmnDiffViewTagIsDisplayed).toBeTruthy();
   });
 
-  it('should be possible to close xml view when click on `Show Diagram` button.', async() => {
+  it('should be possible to close diff view when click on `Show Diagram` button.', async() => {
     const statusBarDiffViewButton: ElementFinder = statusBar.statusBarDiffViewButton;
     const statusBarDisableDiffViewButton: ElementFinder = statusBar.statusBarDisableDiffViewButton;
 
@@ -105,6 +118,16 @@ describe('bpmn-io compare view', () => {
 
     // And then close the diff view
     await BpmnDiffView.closeDiffViewByClickOnButton(statusBarDisableDiffViewButton);
+
+    const designTag: ElementFinder = design.designTag;
+    const visibilityOfDesignTag: Function = expectedConditions.visibilityOf(designTag);
+
+    await browser.driver
+      .wait(() => {
+        browser.wait(visibilityOfDesignTag, defaultTimeoutMS);
+
+        return design.designTag;
+      });
 
     const bpmnDiffViewTag: ElementFinder = bpmnDiffView.bpmnDiffViewTag;
 

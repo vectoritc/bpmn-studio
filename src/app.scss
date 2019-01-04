@@ -12,6 +12,11 @@ input:focus {
   outline: none !important;
 }
 
+.form-control:focus {
+  border-color: #ced4da;
+  box-shadow: none;
+}
+
 // We don't want our bootstrap 4 dropdowns to display the caret at the end of the button
 .dropdown-toggle::after {
   display: none;

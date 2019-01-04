@@ -30,6 +30,7 @@ export class StatusBar {
   private _router: Router;
   private _solutionService: ISolutionService;
   private _subscriptions: Array<Subscription>;
+  private _designView: string;
 
   constructor(eventAggregator: EventAggregator, router: Router, solutionService: ISolutionService) {
     this._eventAggregator = eventAggregator;
@@ -47,7 +48,7 @@ export class StatusBar {
     this._setProcessEngineRoute(processEngineRoute);
   }
 
-  public attached(): void {
+  public async attached(): Promise<void> {
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.statusBar.showDiagramViewButtons, () => {
         this.showDiagramViewButtons = true;
@@ -73,11 +74,15 @@ export class StatusBar {
         this.showInspectCorrelationButtons = showInspectCorrelation;
       }),
 
-      this._eventAggregator.subscribe('router:navigation:success', () => {
-
-        this._updateStatusBar();
+      this._eventAggregator.subscribe('router:navigation:success', async() => {
+        await this._updateStatusBar();
+        this._refreshRightButtons();
       }),
     ];
+
+    await this._updateStatusBar();
+
+    this._refreshRightButtons();
 
     this.currentDiffMode = DiffMode.NewVsOld;
   }
@@ -91,7 +96,17 @@ export class StatusBar {
       this.toggleDiffView();
     }
 
-    this._eventAggregator.publish(environment.events.bpmnio.toggleXMLView);
+    this._designView = this.xmlIsShown ? 'detail' : 'xml';
+
+    this._eventAggregator.publish(environment.events.diagramDetail.suppressUnsavedChangesModal);
+
+    this._router.navigateToRoute('design', {
+      diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
+      solutionUri: this.activeSolutionEntry.uri,
+      view: this._designView,
+    });
+
+    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToDesigner, this._designView);
     this.xmlIsShown = !this.xmlIsShown;
   }
 
@@ -110,7 +125,17 @@ export class StatusBar {
       this.toggleXMLView();
     }
 
-    this._eventAggregator.publish(environment.events.bpmnio.toggleDiffView);
+    this._designView = this.diffIsShown ? 'detail' : 'diff';
+
+    this._eventAggregator.publish(environment.events.diagramDetail.suppressUnsavedChangesModal);
+
+    this._router.navigateToRoute('design', {
+      diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
+      solutionUri: this.activeSolutionEntry.uri,
+      view: this._designView,
+    });
+
+    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToDesigner, this._designView);
     this.diffIsShown = !this.diffIsShown;
   }
 
@@ -125,6 +150,22 @@ export class StatusBar {
       diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
       solutionUri: this.activeSolutionEntry ? this.activeSolutionEntry.uri : undefined,
     });
+  }
+
+  private _refreshRightButtons(): void {
+    const currentView: string = this._router.currentInstruction.params.view;
+    switch (currentView) {
+      case 'xml':
+        this.xmlIsShown = true;
+        break;
+      case 'diff':
+        this.diffIsShown = true;
+        break;
+      default:
+        this.xmlIsShown = false;
+        this.diffIsShown = false;
+        break;
+    }
   }
 
   private _setProcessEngineRoute(processEngineRoute: string): void {

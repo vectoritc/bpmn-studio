@@ -1,6 +1,7 @@
 
 import {bindable, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
+import {domEventDispatch} from 'dom-event-dispatch';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
 import {
@@ -19,7 +20,7 @@ import {
 } from '../../contracts';
 import {AuthenticationService} from '../authentication/authentication.service';
 
-@inject('DynamicUiService', 'AuthenticationService', Router)
+@inject('DynamicUiService', 'AuthenticationService', Router, Element)
 export class DynamicUiWrapper {
 
   public cancelButtonText: string = 'Cancel';
@@ -31,7 +32,7 @@ export class DynamicUiWrapper {
   @bindable() public isConfirmUserTask: boolean = false;
   @bindable() public isFormUserTask: boolean = false;
   @bindable() public isModal: boolean;
-  @bindable() public modalCloseEvent: Function;
+  private _element: Element;
 
   private _router: Router;
 
@@ -40,11 +41,13 @@ export class DynamicUiWrapper {
 
   constructor(dynamicUiService: IDynamicUiService,
               authenticationService: AuthenticationService,
-              router: Router) {
+              router: Router,
+              element: Element) {
 
     this._dynamicUiService = dynamicUiService;
     this._authenticationService = authenticationService;
     this._router = router;
+    this._element = element;
 
     this.isModal = false;
   }
@@ -132,7 +135,7 @@ export class DynamicUiWrapper {
 
   private _cancelTask(): void {
     if (this.isModal) {
-      this.modalCloseEvent();
+      domEventDispatch.dispatchEvent(this._element, 'close-modal', {bubbles: true});
 
       return;
     }
@@ -144,16 +147,11 @@ export class DynamicUiWrapper {
     });
   }
 
-  private _finishUserTask(action: 'cancel' | 'proceed' | 'decline'): void {
+  private _finishUserTask(action: 'cancel' | 'proceed' | 'decline'): Promise<void> {
     const noUserTaskKnown: boolean = !this.isHandlingUserTask;
 
     if (noUserTaskKnown) {
       return;
-    }
-
-    const hasOnButtonClickFunction: boolean = this.onButtonClick !== undefined;
-    if (hasOnButtonClickFunction) {
-      this.onButtonClick(action);
     }
 
     const identity: IIdentity = this._getIdentity();
@@ -170,18 +168,18 @@ export class DynamicUiWrapper {
                                           userTaskResult);
 
     this.currentUserTask = undefined;
+
+    const buttonClickHandlerExists: boolean = this.onButtonClick !== undefined;
+    if (buttonClickHandlerExists) {
+      this.onButtonClick(action);
+    }
   }
 
-  private _finishManualTask(): void {
+  private _finishManualTask(): Promise<void> {
     const noManualTaskKnown: boolean = !this.isHandlingManualTask;
 
     if (noManualTaskKnown) {
       return;
-    }
-
-    const noClickHandlerRegistered: boolean = this.onButtonClick !== undefined;
-    if (noClickHandlerRegistered) {
-      this.onButtonClick('proceed');
     }
 
     const identity: IIdentity = this._getIdentity();
@@ -196,6 +194,11 @@ export class DynamicUiWrapper {
                                             manualTaskInstanceId);
 
     this.currentManualTask = undefined;
+
+    const buttonClickHandlerExists: boolean = this.onButtonClick !== undefined;
+    if (buttonClickHandlerExists) {
+      this.onButtonClick('proceed');
+    }
   }
 
   private _getUserTaskResults(): UserTaskResult {

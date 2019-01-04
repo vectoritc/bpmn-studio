@@ -30,38 +30,21 @@ const elementRegistryTimeoutMilliseconds: number = 50;
 export class BpmnIo {
   public modeler: IBpmnModeler;
 
-  public toggleButtonPropertyPanel: HTMLButtonElement;
   public resizeButton: HTMLButtonElement;
   public canvasModel: HTMLDivElement;
   public propertyPanel: HTMLElement;
 
-  @bindable() public xml: string;
+  @bindable({changeHandler: 'xmlChanged'}) public xml: string;
   @bindable({changeHandler: 'nameChanged'}) public name: string;
-  @bindable() public processModelId: string;
   @bindable() public openedFromProcessEngine: boolean = true;
 
   @observable public propertyPanelWidth: number;
 
   public savedXml: string;
   public showPropertyPanel: boolean = false;
-  public initialLoadingFinished: boolean = false;
-  public showXMLView: boolean = false;
-  public showDiffView: boolean = false;
   public colorPickerLoaded: boolean = false;
   public minCanvasWidth: number = 100;
   public minPropertyPanelWidth: number = 200;
-  public showDiffDestinationButton: boolean = false;
-  public diffDestinationIsLocal: boolean = true;
-
-  /**
-   * The following to variables are needed to fix a bug, where the command
-   * stack was reset when opening the bpmn-diff-view or the
-   * bpmn-xml-view component.
-   *
-   * todo: see https://github.com/process-engine/bpmn-studio/issues/912
-   */
-  public xmlForXmlView: string;
-  public xmlForDiffView: string;
 
   private _propertyPanelShouldOpen: boolean = false;
   private _propertyPanelHiddenForSpaceReasons: boolean = false;
@@ -153,14 +136,9 @@ export class BpmnIo {
       });
     }
 
-    this.xmlForXmlView = this.xml;
-    this.xmlForDiffView = this.xml;
-
     this.modeler.attachTo(this.canvasModel);
 
     window.addEventListener('resize', this._resizeEventHandler);
-
-    this.initialLoadingFinished = true;
 
     this.resizeButton.addEventListener('mousedown', (e: Event) => {
       const windowEvent: Event = e || window.event;
@@ -192,21 +170,6 @@ export class BpmnIo {
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.processSolutionPanel.toggleProcessSolutionExplorer, () => {
         this._hideOrShowPpForSpaceReasons();
-      }),
-
-      this._eventAggregator.subscribe(environment.events.bpmnio.toggleXMLView, () => {
-        this.toggleXMLView();
-        setTimeout(() => { // This makes the function gets called after the XMLView is toggled
-          this._hideOrShowPpForSpaceReasons();
-        }, 0);
-      }),
-
-      this._eventAggregator.subscribe(environment.events.bpmnio.toggleDiffView, async() => {
-        this._toggleDiffView();
-        this.xmlForDiffView = await this.getXML();
-        setTimeout(() => { // This makes the function gets called after the XMLView is toggled
-          this._hideOrShowPpForSpaceReasons();
-        }, 0);
       }),
 
       this._eventAggregator.subscribe(`${environment.events.diagramDetail.exportDiagramAs}:BPMN`, async() => {
@@ -291,8 +254,8 @@ export class BpmnIo {
         this._diagramIsInvalid = false;
       }),
 
-      this._eventAggregator.subscribe(environment.events.bpmnio.showDiffDestinationButton, (showDiffDestinationButton: boolean) => {
-        this.showDiffDestinationButton = showDiffDestinationButton;
+      this._eventAggregator.subscribe(environment.events.bpmnio.togglePropertyPanel, () => {
+        this._togglePanel();
       }),
     ];
 
@@ -309,7 +272,7 @@ export class BpmnIo {
     const propertyPanelHideState: string = window.localStorage.getItem('propertyPanelHideState');
     const wasPropertyPanelVisible: boolean = propertyPanelHideState === null || propertyPanelHideState === 'show';
     this._propertyPanelShouldOpen = wasPropertyPanelVisible;
-    this.togglePanel();
+    this._togglePanel();
   }
 
   public detached(): void {
@@ -334,7 +297,6 @@ export class BpmnIo {
         return 0;
       });
 
-      this.xml = newValue;
     }
   }
 
@@ -350,55 +312,32 @@ export class BpmnIo {
     }
   }
 
-  public togglePanel(): void {
+  public _togglePanel(): void {
     if (this._propertyPanelShouldOpen) {
       if (this._propertyPanelHasNoSpace) {
         this._notificationService.showNotification(NotificationType.ERROR, 'There is not enough space for the property panel!');
         return;
       }
 
-      this.toggleButtonPropertyPanel.classList.add('tool--active');
+      document.getElementById('toggleButtonPropertyPanel').classList.add('design-layout__tool--active');
       this.showPropertyPanel = true;
+      this._eventAggregator.publish(environment.events.bpmnio.propertyPanelActive, true);
       this._propertyPanelShouldOpen = false;
       window.localStorage.setItem('propertyPanelHideState', 'show');
     } else {
 
-      this.toggleButtonPropertyPanel.classList.remove('tool--active');
+      document.getElementById('toggleButtonPropertyPanel').classList.remove('design-layout__tool--active');
       this.showPropertyPanel = false;
+      this._eventAggregator.publish(environment.events.bpmnio.propertyPanelActive, false);
       this._propertyPanelShouldOpen = true;
       window.localStorage.setItem('propertyPanelHideState', 'hide');
     }
-  }
-
-  public toggleDiffDestination(): void {
-    this.diffDestinationIsLocal = !this.diffDestinationIsLocal;
-
-    const diffDestination: string = this.diffDestinationIsLocal ? 'local' : 'deployed';
-
-    this._eventAggregator.publish(environment.events.diffView.setDiffDestination, diffDestination);
   }
 
   public resize(event: MouseEvent): void {
     const mousePosition: number = event.clientX;
 
     this._setNewPropertyPanelWidthFromMousePosition(mousePosition);
-  }
-
-  public async toggleXMLView(): Promise<void> {
-    const shouldShowXmlView: boolean = !this.showXMLView;
-    if (shouldShowXmlView) {
-      this.xmlForXmlView = await this.getXML();
-
-      /**
-       * We need to detach the modeler here because otherwise, he would
-       * consume all shortcuts such as cmd/ctrl + c.
-       */
-      this.modeler.detach();
-    } else {
-      this.modeler.attachTo(this.canvasModel);
-    }
-
-    this.showXMLView = !this.showXMLView;
   }
 
   public async getXML(): Promise<string> {
@@ -463,10 +402,6 @@ export class BpmnIo {
     }, elementRegistryTimeoutMilliseconds);
   }
 
-  private _toggleDiffView(): void {
-    this.showDiffView = !this.showDiffView;
-  }
-
   private _setNewPropertyPanelWidthFromMousePosition(mousePosition: number): void {
     const propertyPanelMaxWidth: number = this.propertyPanel.parentElement.offsetWidth - this.minCanvasWidth;
     const mousePositionFromRight: number = document.body.clientWidth - mousePosition;
@@ -489,7 +424,7 @@ export class BpmnIo {
 
     if (propertyPanelIsOpen) {
       this._propertyPanelHiddenForSpaceReasons = true;
-      this.togglePanel();
+      this._togglePanel();
     }
   }
 
@@ -498,7 +433,7 @@ export class BpmnIo {
     this._propertyPanelHiddenForSpaceReasons = false;
 
     this._propertyPanelShouldOpen = true;
-    this.togglePanel();
+    this._togglePanel();
   }
 
   private _resizeEventHandler = (event: MouseEvent): void => {

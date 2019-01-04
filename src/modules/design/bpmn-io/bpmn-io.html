@@ -1,8 +1,6 @@
 <template>
   <require from="../property-panel/property-panel"></require>
   <require from="@process-engine/bpmn-js-custom-bundle/bpmn-modeler-custom.css"></require>
-  <require from="../bpmn-diff-view/bpmn-diff-view"></require>
-  <require from="../bpmn-xml-view/bpmn-xml-view"></require>
   <require from="../diagram-tools-right/diagram-tools-right"></require>
   <require from="./bpmn-io.css"></require>
   <div class="bpmn-io-layout">
@@ -10,7 +8,7 @@
       DIAGRAM TOOLS
     -->
     <div class="bpmn-io-layout__tools-left">
-      <div show.bind="!showXMLView && !showDiffView" class="tool-list tool-list--vertical">
+      <div class="tool-list tool-list--vertical">
         <div class="button tool">
           <i class="fas fa-mouse-pointer"></i>
         </div>
@@ -27,7 +25,7 @@
       MAIN CANVAS
     -->
     <div class="bpmn-io-layout__main js-main">
-      <div class="modeler" show.bind="!showXMLView && !showDiffView">
+      <div class="modeler">
         <div class="diagram" id="bpmnIoDiagram">
           <div ref="canvasModel" class="canvasModel"></div>
         </div>
@@ -37,29 +35,6 @@
           <property-panel id="js-properties-panel" modeler.bind="modeler" xml.bind="xml"></property-panel>
         </div>
       </div>
-      <bpmn-xml-view if.bind="initialLoadingFinished" show.bind="showXMLView" xml.bind="xmlForXmlView"></bpmn-xml-view>
-      <bpmn-diff-view if.bind="showDiffView" saved-xml.bind="savedXml" current-xml.bind="xmlForDiffView" process-model-id.bind="processModelId"></bpmn-diff-view>
-    </div>
-
-    <div class="bpmn-io-layout__tools-right">
-      <div show.bind="!showXMLView && !showDiffView" class="tool-list tool-list--vertical">
-        <div ref="toggleButtonPropertyPanel" class="tool__right">
-          <button class="button menu-bar__menu-left--tool" class.bind="showPropertyPanel ? 'button--active' : ''" click.delegate="togglePanel()" title="Toggle visibility of the Property Panel">
-            <i class="fas fa-sliders-h"></i>
-          </button>
-        </div>
-      </div>
-      <div show.bind="showDiffView" class="tool-list tool-list--vertical">
-        <div if.bind="showDiffDestinationButton" class="tool__right" click.delegate="toggleDiffDestination()">
-          <i class="button fas fa-database" class.bind="diffDestinationIsLocal ? '' :  'button--active'"
-            title.bind="diffDestinationIsLocal ? 'Show difference to the deployed diagram' : 'Show difference to the last saved diagram'"></i>
-        </div>
-        <div if.bind="!showDiffDestinationButton" class="tool--deactivated">
-          <i class="fas fa-database"
-            title.bind="openedFromProcessEngine ? 'This diagram was opened from a ProcessEngine' : 'This diagram has not been deployed yet'"></i>
-        </div>
-      </div>
-
     </div>
   </div>
 </template>

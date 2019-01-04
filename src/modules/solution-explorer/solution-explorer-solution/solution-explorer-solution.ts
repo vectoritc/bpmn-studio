@@ -52,10 +52,10 @@ export class SolutionExplorerSolution {
   private _validationController: ValidationController;
   private _diagramCreationService: IDiagramCreationService;
   private _notificationService: NotificationService;
-  private _solutionService: ISolutionService;
 
-  private _diagramRoute: string = 'diagram-detail';
+  private _diagramRoute: string = 'design';
   private _inspectView: string;
+  private _designView: string = 'detail';
   private _subscriptions: Array<Subscription>;
   private _openedSolution: ISolution;
   private _diagramCreationState: IDiagramCreationState = {
@@ -146,7 +146,6 @@ export class SolutionExplorerSolution {
     this._validationController = validationController;
     this._diagramCreationService = diagramCreationService;
     this._notificationService = notificationService;
-    this._solutionService = solutionService;
   }
 
   public attached(): void {
@@ -161,10 +160,16 @@ export class SolutionExplorerSolution {
         this._inspectView = inspectViewIsNotSet
                               ? 'heatmap'
                               : inspectView;
+        this._designView = undefined;
       }),
 
-      this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToDesigner, () => {
-        this._diagramRoute = 'diagram-detail';
+      this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToDesigner, (designView?: string) => {
+        this._diagramRoute = 'design';
+        const designViewIsNotSet: boolean = designView === undefined;
+
+        this._designView = designViewIsNotSet
+                              ? 'detail'
+                              : designView;
         this._inspectView = undefined;
       }),
 
@@ -375,7 +380,13 @@ export class SolutionExplorerSolution {
   public async navigateToDetailView(diagram: IDiagram): Promise<void> {
     const diagramIsNoRemoteDiagram: boolean = !diagram.uri.startsWith('http');
     if (diagramIsNoRemoteDiagram) {
-      this._inspectView = 'dashboard';
+      const viewIsHeatmapOrInspectCorrelation: boolean = this._inspectView === 'inspect-correlation'
+                                                      || this._inspectView === 'heatmap';
+
+      if (viewIsHeatmapOrInspectCorrelation) {
+        this._inspectView = 'dashboard';
+      }
+
       this._eventAggregator.publish(environment.events.navBar.inspectNavigateToDashboard);
 
       const activeRouteIsInspect: boolean = this._diagramRoute === 'inspect';
@@ -386,7 +397,7 @@ export class SolutionExplorerSolution {
     }
 
     await this._router.navigateToRoute(this._diagramRoute, {
-      view: this._inspectView,
+      view: this._inspectView ? this._inspectView : this._designView,
       diagramName: diagram.name,
       solutionUri: this.displayedSolutionEntry.uri,
     });
@@ -398,6 +409,34 @@ export class SolutionExplorerSolution {
     const activeDiagramIsNotSet: boolean = this.activeDiagram === undefined;
     if (activeDiagramIsNotSet) {
       return undefined;
+    }
+
+    const solutionUri: string = this._router.currentInstruction.queryParams.solutionUri;
+
+    const solutionUriUnspecified: boolean = solutionUri === undefined;
+    if (solutionUriUnspecified) {
+      return;
+    }
+
+    /**
+     * We have to check if THIS solution is the "Single Diagrams"-Solution
+     * because it is our special case here and if the ACTIVE solution is the
+     * "Single Diagrams"-Solution we need to return the uri anyway.
+     */
+    const singleDiagramSolutionIsActive: boolean = solutionUri === 'Single Diagrams';
+    if (this.solutionIsSingleDiagrams && singleDiagramSolutionIsActive) {
+      return this.activeDiagram.uri;
+    }
+
+    /**
+     * Then we check if the THIS solution is active by extra checking the uri
+     * of the diaragm with the uri of the active solution. That wouldn't work
+     * for the "Single Diagram"-Solution right now, since the uri of that solution
+     * is "Single Diagrams" and therefore would never be active with this check.
+     */
+    const solutionIsNotActive: boolean = !this.activeDiagram.uri.includes(solutionUri);
+    if (solutionIsNotActive) {
+      return;
     }
 
     return this.activeDiagram.uri;
@@ -742,12 +781,14 @@ export class SolutionExplorerSolution {
     const diagramNameIsSpecified: boolean = diagramName !== undefined;
 
     const routeName: string = this._router.currentInstruction.config.name;
-    const routeNameIsDiagramDetailOrInspect: boolean = routeName === 'diagram-detail'
+    const routeNameIsDiagramDetailOrInspect: boolean = routeName === 'design'
                                                     || routeName === 'inspect';
     if (routeNameIsDiagramDetailOrInspect) {
       this._diagramRoute = routeName;
       this._inspectView = this._router.currentInstruction.params.view;
     }
+
+    this.activeDiagram = undefined;
 
     if (solutionUriSpecified && diagramNameIsSpecified) {
       try {
@@ -755,6 +796,7 @@ export class SolutionExplorerSolution {
         this.activeDiagram = activeSolution.diagrams.find((diagram: IDiagram) => {
           return diagram.name === diagramName;
         });
+
       } catch (error) {
         this.activeDiagram = undefined;
       }

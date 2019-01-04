@@ -205,10 +205,16 @@ export class App {
         moduleId: 'modules/live-execution-tracker/live-execution-tracker',
       },
       {
-        route: ['inspect', 'inspect/:view?/:diagramName?'],
+        route: ['inspect', 'inspect/:view?/diagram/:diagramName?'],
         title: 'Inspect',
         name: 'inspect',
         moduleId: 'modules/inspect/inspect',
+      },
+      {
+        route: ['design', 'design/:view?/diagram/:diagramName?'],
+        title: 'Design',
+        name: 'design',
+        moduleId: 'modules/design/design',
       },
     ]);
 

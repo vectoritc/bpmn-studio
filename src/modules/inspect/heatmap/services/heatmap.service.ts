@@ -285,7 +285,7 @@ export class HeatmapService implements IHeatmapService {
 
   private async _getXmlFromModeler(modeler: IBpmnModeler): Promise<string> {
     const saveXmlPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void =>  {
-      modeler.saveXML({}, async(saveXmlError: Error, xml: string) => {
+      modeler.saveXML({format: true}, async(saveXmlError: Error, xml: string) => {
         if (saveXmlError) {
           reject(saveXmlError);
 

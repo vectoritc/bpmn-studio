@@ -51,9 +51,10 @@ export class CallActivitySection implements ISection {
   }
 
   public navigateToCalledDiagram(): void {
-    this._router.navigateToRoute('diagram-detail', {
+    this._router.navigateToRoute('design', {
       diagramName: this.selectedDiagramId,
       solutionUri: this._activeSolutionUri,
+      view: 'detail',
     });
   }
 
