@@ -165,6 +165,7 @@ export class DiagramDetail {
 
     if (this._suppressSaveChangesModal) {
       this._suppressSaveChangesModal = false;
+
       return true;
     }
 
