@@ -107,6 +107,8 @@ export class StatusBar {
 
     this._designView = this.xmlIsShown ? 'detail' : 'xml';
 
+    this._eventAggregator.publish(environment.events.diagramDetail.suppressUnsavedChangesModal);
+
     this._router.navigateToRoute('design', {
       diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
       solutionUri: this.activeSolutionEntry.uri,
@@ -133,6 +135,8 @@ export class StatusBar {
     }
 
     this._designView = this.diffIsShown ? 'detail' : 'diff';
+
+    this._eventAggregator.publish(environment.events.diagramDetail.suppressUnsavedChangesModal);
 
     this._router.navigateToRoute('design', {
       diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
