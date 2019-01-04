@@ -4,7 +4,8 @@ import {Redirect, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
+import {activationStrategy, NavigationInstruction, Redirect, RouteConfig, Router} from 'aurelia-router';
+import {ISolutionEntry, ISolutionService, NotificationType} from '../../contracts';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 import {DiagramDetail} from './diagram-detail/diagram-detail';
@@ -163,6 +164,26 @@ export class Design {
   public detached(): void {
     this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
     this._subscriptions.forEach((subscription: Subscription) => subscription.dispose());
+  }
+
+  /**
+   * We abuse this method to obtain the router target, since asking
+   * the router in the canDeactivate method is kinda broken.
+   *
+   * We also use invoke-lifecycle to cache the current instance of
+   * the design view.
+   *
+   * @param routeParams Current router parameters for the destination route
+   * @param routeConfig Current configuration for the destination route
+   * @param navigationInstruction Current navigation instruction.
+   */
+  public determineActivationStrategy(
+    routeParams: IDesignRouteParameters,
+    routeConfig: RouteConfig,
+    navigationInstruction: NavigationInstruction): string {
+
+    console.log(routeParams);
+    return activationStrategy.invokeLifecycle;
   }
 
   public toggleDiffDestination(): void {
