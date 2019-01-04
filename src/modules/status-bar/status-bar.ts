@@ -82,17 +82,7 @@ export class StatusBar {
 
     await this._updateStatusBar();
 
-    const currentView: string = this._router.currentInstruction.params.view;
-    switch (currentView) {
-      case 'xml':
-        this.xmlIsShown = true;
-        break;
-      case 'diff':
-        this.diffIsShown = true;
-        break;
-      default:
-        break;
-    }
+    this._refreshRightButtons();
 
     this.currentDiffMode = DiffMode.NewVsOld;
   }
@@ -163,14 +153,19 @@ export class StatusBar {
   }
 
   private _refreshRightButtons(): void {
-    const target: string = this._router.currentInstruction.params.view;
-    const targetIsNotDiffOrXml: boolean = target !== 'diff' && target !== 'xml';
-
-    if (targetIsNotDiffOrXml) {
-      this.diffIsShown = false;
-      this.xmlIsShown = false;
+    const currentView: string = this._router.currentInstruction.params.view;
+    switch (currentView) {
+      case 'xml':
+        this.xmlIsShown = true;
+        break;
+      case 'diff':
+        this.diffIsShown = true;
+        break;
+      default:
+        this.xmlIsShown = false;
+        this.diffIsShown = false;
+        break;
     }
-
   }
 
   private _setProcessEngineRoute(processEngineRoute: string): void {
