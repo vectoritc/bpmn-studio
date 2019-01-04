@@ -22,11 +22,6 @@ import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
 
-interface RouteParameters {
-  diagramName?: string;
-  solutionUri?: string;
-}
-
 @inject('ManagementApiClientService',
         'NotificationService',
         'SolutionService',
