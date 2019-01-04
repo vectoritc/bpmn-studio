@@ -52,6 +52,7 @@ export default {
       toggleInspectCorrelationView: 'navbar:tools:inspectButtons:toggleInspectCorrelationView',
       diagramChangesResolved: 'navbar:diagram:changesResolved',
       updateActiveSolutionAndDiagram: 'navbar:activeSolution:diagram:update',
+      navigateBack: 'navbar:navigation:back',
     },
     diagramDetail: {
       onDiagramDeployed: 'diagramdetail:diagram:ondeployed',
