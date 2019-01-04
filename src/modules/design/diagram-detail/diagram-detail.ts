@@ -55,6 +55,8 @@ export class DiagramDetail {
   public hasValidationError: boolean = false;
 
   @observable({ changeHandler: 'diagramHasChangedChanged'}) private _diagramHasChanged: boolean;
+
+  private _suppressSaveChangesModal: boolean = false;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
@@ -128,6 +130,9 @@ export class DiagramDetail {
       this._eventAggregator.subscribe(environment.events.diagramDetail.startProcessWithOptions, () => {
         this.showStartWithOptionsModal = true;
       }),
+      this._eventAggregator.subscribe(environment.events.diagramDetail.suppressUnsavedChangesModal, () => {
+        this._suppressSaveChangesModal = true;
+      }),
     ];
   }
 
@@ -157,6 +162,12 @@ export class DiagramDetail {
   }
 
   public async canDeactivate(): Promise<boolean> {
+
+    if (this._suppressSaveChangesModal) {
+      this._suppressSaveChangesModal = false;
+
+      return true;
+    }
 
     const _modal: Promise<boolean> = new Promise((resolve: Function, reject: Function): boolean | void => {
       if (!this._diagramHasChanged) {
