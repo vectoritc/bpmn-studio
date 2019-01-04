@@ -51,6 +51,7 @@ export class Design {
   private _ipcRenderer: any;
   private _ipcRendererEventListeners: Array<IEventListener> = [];
   private _suppressSaveChangesModal: boolean;
+  private _destinationView: string = '';
 
   constructor(eventAggregator: EventAggregator, solutionService: ISolutionService, router: Router, notificationService: NotificationService) {
     this._eventAggregator = eventAggregator;
@@ -177,6 +178,7 @@ export class Design {
    */
   public determineActivationStrategy(routeParams: IDesignRouteParameters): string {
     console.log(routeParams);
+    this._destinationView = routeParams.view;
     return activationStrategy.invokeLifecycle;
   }
 
@@ -192,8 +194,15 @@ export class Design {
   }
 
   public async canDeactivate(): Promise<Redirect> {
-    const modalResult: boolean = await this.canDeactivateModal();
+    const oldView: string = this._router.currentInstruction.params.view;
 
+    const modalShouldBeSuppressed: boolean = this._destinationView === 'detail' && (oldView === 'diff' || oldView === 'xml');
+
+    if (modalShouldBeSuppressed) {
+      return;
+    }
+
+    const modalResult: boolean = await this.canDeactivateModal();
     if (!modalResult) {
       /*
       * As suggested in https://github.com/aurelia/router/issues/302, we use
