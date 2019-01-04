@@ -131,7 +131,6 @@ export class DiagramDetail {
         this.showStartWithOptionsModal = true;
       }),
       this._eventAggregator.subscribe(environment.events.diagramDetail.suppressUnsavedChangesModal, () => {
-        console.log('suppress');
         this._suppressSaveChangesModal = true;
       }),
     ];
