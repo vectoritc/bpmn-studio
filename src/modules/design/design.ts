@@ -101,7 +101,7 @@ export class Design {
         return;
       }
 
-      const previousRouteIsDiff: any = this._router.currentInstruction.params.view === 'diff';
+      const previousRouteIsDiff: boolean = this._router.currentInstruction.params.view === 'diff';
 
       if (previousRouteIsDiff) {
         this.xmlForDiffOld = this.activeDiagram.xml;
