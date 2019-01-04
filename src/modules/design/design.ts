@@ -180,13 +180,13 @@ export class Design {
         resolve(true);
       });
 
-      document.getElementById('saveButtonLeaveView').addEventListener('click', () => {
+      document.getElementById('saveButtonLeaveView').addEventListener('click', async() => {
         if (this.diagramDetail.diagramIsInvalid) {
           resolve(false);
         }
 
         this.showLeaveModal = false;
-        this.diagramDetail.saveDiagram();
+        await this.diagramDetail.saveDiagram();
         this.diagramDetail.diagramHasChanged = false;
 
         resolve(true);
