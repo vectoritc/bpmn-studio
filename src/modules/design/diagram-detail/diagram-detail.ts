@@ -22,16 +22,6 @@ import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
 
-interface RouteParameters {
-  diagramName?: string;
-  solutionUri?: string;
-}
-
-type IEventListener = {
-  name: string,
-  function: Function,
-};
-
 @inject('ManagementApiClientService',
         'NotificationService',
         'SolutionService',
@@ -42,6 +32,8 @@ export class DiagramDetail {
 
   @bindable() public activeDiagram: IDiagram;
   @bindable() public activeSolutionEntry: ISolutionEntry;
+  @observable({ changeHandler: 'correlationChanged'}) public customCorrelationId: string;
+  @observable({ changeHandler: 'diagramHasChangedChanged'}) public diagramHasChanged: boolean;
   public bpmnio: BpmnIo;
   public showUnsavedChangesModal: boolean = false;
   public showSaveForStartModal: boolean = false;
@@ -51,22 +43,17 @@ export class DiagramDetail {
   public processesStartEvents: Array<Event> = [];
   public selectedStartEventId: string;
   public initialToken: string;
-  @observable({ changeHandler: 'correlationChanged'}) public customCorrelationId: string;
   public hasValidationError: boolean = false;
+  public diagramIsInvalid: boolean = false;
 
-  @observable({ changeHandler: 'diagramHasChangedChanged'}) private _diagramHasChanged: boolean;
-
-  private _suppressSaveChangesModal: boolean = false;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
   private _router: Router;
   private _validationController: ValidationController;
-  private _diagramIsInvalid: boolean = false;
   private _ipcRenderer: any;
   private _solutionService: ISolutionService;
   private _managementApiClient: IManagementApi;
-  private _ipcRendererEventListeners: Array<IEventListener> = [];
   private _correlationIdValidationRegExpList: IUserInputValidationRule = {
     alphanumeric: /^[a-z0-9]/i,
     specialCharacters: /^[._ -]/i,
@@ -96,11 +83,11 @@ export class DiagramDetail {
   }
 
   public attached(): void {
-    this._diagramHasChanged = false;
+    this.diagramHasChanged = false;
 
     const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
     if (isRunningInElectron) {
-      this._prepareSaveModalForClosing();
+      this._ipcRenderer = (window as any).nodeRequire('electron').ipcRenderer;
     }
 
     this._eventAggregator.publish(environment.events.navBar.showTools);
@@ -110,28 +97,25 @@ export class DiagramDetail {
         this._handleFormValidateEvents(event);
       }),
       this._eventAggregator.subscribe(environment.events.diagramDetail.saveDiagram, () => {
-        this._saveDiagram();
+        this.saveDiagram();
       }),
       this._eventAggregator.subscribe(environment.events.diagramDetail.uploadProcess, () => {
         this._checkIfDiagramIsSavedBeforeDeploy();
       }),
       this._eventAggregator.subscribe(environment.events.differsFromOriginal, (savingNeeded: boolean) => {
-        this._diagramHasChanged = savingNeeded;
+        this.diagramHasChanged = savingNeeded;
       }),
       this._eventAggregator.subscribe(environment.events.navBar.validationError, () => {
-        this._diagramIsInvalid = true;
+        this.diagramIsInvalid = true;
       }),
       this._eventAggregator.subscribe(environment.events.navBar.noValidationError, () => {
-        this._diagramIsInvalid = false;
+        this.diagramIsInvalid = false;
       }),
       this._eventAggregator.subscribe(environment.events.diagramDetail.startProcess, () => {
         this._showStartDialog();
       }),
       this._eventAggregator.subscribe(environment.events.diagramDetail.startProcessWithOptions, () => {
         this.showStartWithOptionsModal = true;
-      }),
-      this._eventAggregator.subscribe(environment.events.diagramDetail.suppressUnsavedChangesModal, () => {
-        this._suppressSaveChangesModal = true;
       }),
     ];
   }
@@ -161,54 +145,9 @@ export class DiagramDetail {
     }
   }
 
-  public async canDeactivate(): Promise<boolean> {
-
-    if (this._suppressSaveChangesModal) {
-      this._suppressSaveChangesModal = false;
-
-      return true;
-    }
-
-    const _modal: Promise<boolean> = new Promise((resolve: Function, reject: Function): boolean | void => {
-      if (!this._diagramHasChanged) {
-        resolve(true);
-      } else {
-        this.showUnsavedChangesModal = true;
-
-        // register onClick handler
-        document.getElementById('dontSaveButtonLeaveView').addEventListener('click', () => {
-          this.showUnsavedChangesModal = false;
-          this._diagramHasChanged = false;
-          this._eventAggregator.publish(environment.events.navBar.diagramChangesResolved);
-          resolve(true);
-        });
-        document.getElementById('saveButtonLeaveView').addEventListener('click', () => {
-          if (this._diagramIsInvalid) {
-            resolve(false);
-          }
-
-          this.showUnsavedChangesModal = false;
-          this._saveDiagram();
-          this._diagramHasChanged = false;
-          resolve(true);
-        });
-        document.getElementById('cancelButtonLeaveView').addEventListener('click', () => {
-          this.showUnsavedChangesModal = false;
-          resolve(false);
-        });
-      }
-    });
-
-    return _modal;
-  }
-
   public deactivate(): void {
     this._eventAggregator.publish(environment.events.navBar.hideTools);
     this._eventAggregator.publish(environment.events.navBar.noValidationError);
-
-    for (const eventListener of this._ipcRendererEventListeners) {
-      this._ipcRenderer.removeListener(eventListener.name, eventListener.function);
-    }
   }
 
   public detached(): void {
@@ -223,7 +162,7 @@ export class DiagramDetail {
    */
   public async saveDiagramAndDeploy(): Promise<void> {
     this.showSaveBeforeDeployModal = false;
-    await this._saveDiagram();
+    await this.saveDiagram();
     await this.uploadProcess();
   }
 
@@ -301,7 +240,7 @@ export class DiagramDetail {
   public diagramHasChangedChanged(): void {
     const isRunningInElectron: boolean = this._ipcRenderer !== undefined;
     if (isRunningInElectron) {
-      const canNotClose: boolean = this._diagramHasChanged;
+      const canNotClose: boolean = this.diagramHasChanged;
 
       this._ipcRenderer.send('can-not-close', canNotClose);
     }
@@ -313,8 +252,8 @@ export class DiagramDetail {
       return;
     }
 
-    if (this._diagramHasChanged) {
-      this._saveDiagram();
+    if (this.diagramHasChanged) {
+      this.saveDiagram();
     }
 
     const parsedInitialToken: any = this._getInitialTokenValues(this.initialToken);
@@ -371,57 +310,40 @@ export class DiagramDetail {
     }
   }
 
-  private _prepareSaveModalForClosing(): void {
-    this._ipcRenderer = (window as any).nodeRequire('electron').ipcRenderer;
-
-    const showCloseModalEventName: string = 'show-close-modal';
-
-    const showCloseModalFunction: Function = (): void => {
-      const leaveWithoutSaving: EventListenerOrEventListenerObject =  (): void => {
-        this._ipcRenderer.send('can-not-close', false);
-        this._ipcRenderer.send('close-bpmn-studio');
-      };
-
-      const leaveWithSaving: EventListenerOrEventListenerObject = async(): Promise<void> => {
-        if (this._diagramIsInvalid) {
-          return;
-        }
-
-        this.showUnsavedChangesModal = false;
-        await this._saveDiagram();
-        this._diagramHasChanged = false;
-
-        this._ipcRenderer.send('close-bpmn-studio');
-      };
-
-      const doNotLeave: EventListenerOrEventListenerObject = (): void => {
-        this.showUnsavedChangesModal = false;
-
-        document.getElementById('dontSaveButtonLeaveView').removeEventListener('click', leaveWithoutSaving);
-        document.getElementById('saveButtonLeaveView').removeEventListener('click', leaveWithSaving);
-        document.getElementById('cancelButtonLeaveView').removeEventListener('click', doNotLeave);
-      };
-
-      document.getElementById('dontSaveButtonLeaveView').addEventListener('click', leaveWithoutSaving);
-      document.getElementById('saveButtonLeaveView').addEventListener('click', leaveWithSaving );
-      document.getElementById('cancelButtonLeaveView').addEventListener('click', doNotLeave);
-
-      this.showUnsavedChangesModal = true;
-    };
-
-    this._ipcRenderer.on(showCloseModalEventName, showCloseModalFunction);
-    this._ipcRendererEventListeners.push({
-                                            name: showCloseModalEventName,
-                                            function: showCloseModalFunction,
-                                        });
-
-  }
-
   public async saveChangesBeforeStart(): Promise<void> {
     this.showSaveForStartModal = false;
 
-    this._saveDiagram();
+    this.saveDiagram();
     await this.showSelectStartEventDialog();
+  }
+
+  /**
+   * Saves the current diagram.
+   */
+  public async saveDiagram(): Promise<void> {
+
+    if (this.diagramIsInvalid) {
+      // TODO: Try to get some more information out of this: Why was it invalid? This message is not very helpful to the user.
+      this._notificationService.showNotification(NotificationType.WARNING, `The diagram could not be saved because it is invalid!`);
+
+      return;
+    }
+
+    try {
+      const xml: string = await this.bpmnio.getXML();
+      this.activeDiagram.xml = xml;
+
+      await this.activeSolutionEntry.service.saveDiagram(this.activeDiagram);
+      this.bpmnio.saveCurrentXML();
+
+      this.diagramHasChanged = false;
+      this._notificationService
+          .showNotification(NotificationType.SUCCESS, `File saved!`);
+      this._eventAggregator.publish(environment.events.navBar.diagramChangesResolved);
+    } catch (error) {
+      this._notificationService
+          .showNotification(NotificationType.ERROR, `Unable to save the file: ${error}.`);
+    }
   }
 
   /**
@@ -476,7 +398,7 @@ export class DiagramDetail {
    * If not, the user will be ask to save the diagram.
    */
   private async _checkIfDiagramIsSavedBeforeDeploy(): Promise<void> {
-    if (this._diagramHasChanged) {
+    if (this.diagramHasChanged) {
       this.showSaveBeforeDeployModal = true;
     } else {
       await this.uploadProcess();
@@ -492,7 +414,7 @@ export class DiagramDetail {
    */
   private async _showStartDialog(): Promise<void> {
 
-    this._diagramHasChanged
+    this.diagramHasChanged
       ? this.showSaveForStartModal = true
       : await this.showSelectStartEventDialog();
   }
@@ -510,7 +432,7 @@ export class DiagramDetail {
       if (resultIsNotValid) {
         this._eventAggregator
           .publish(environment.events.navBar.validationError);
-        this._diagramIsInvalid = true;
+        this.diagramIsInvalid = true;
 
         return;
       }
@@ -518,7 +440,7 @@ export class DiagramDetail {
 
     this._eventAggregator
       .publish(environment.events.navBar.noValidationError);
-    this._diagramIsInvalid = false;
+    this.diagramIsInvalid = false;
   }
 
   /**
@@ -561,34 +483,5 @@ export class DiagramDetail {
         }
       }
     });
-  }
-
-  /**
-   * Saves the current diagram.
-   */
-  private async _saveDiagram(): Promise<void> {
-
-    if (this._diagramIsInvalid) {
-      // TODO: Try to get some more information out of this: Why was it invalid? This message is not very helpful to the user.
-      this._notificationService.showNotification(NotificationType.WARNING, `The diagram could not be saved because it is invalid!`);
-
-      return;
-    }
-
-    try {
-      const xml: string = await this.bpmnio.getXML();
-      this.activeDiagram.xml = xml;
-
-      await this.activeSolutionEntry.service.saveDiagram(this.activeDiagram);
-      this.bpmnio.saveCurrentXML();
-
-      this._diagramHasChanged = false;
-      this._notificationService
-          .showNotification(NotificationType.SUCCESS, `File saved!`);
-      this._eventAggregator.publish(environment.events.navBar.diagramChangesResolved);
-    } catch (error) {
-      this._notificationService
-          .showNotification(NotificationType.ERROR, `Unable to save the file: ${error}.`);
-    }
   }
 }

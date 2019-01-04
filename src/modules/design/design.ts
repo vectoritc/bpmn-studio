@@ -14,11 +14,19 @@ export interface IDesignRouteParameters {
   solutionUri?: string;
 }
 
+type IEventListener = {
+  name: string,
+  function: Function,
+};
+
 @inject(EventAggregator, 'SolutionService', Router)
 export class Design {
 
   @bindable() public activeDiagram: IDiagram;
   @bindable() public activeSolutionEntry: ISolutionEntry;
+
+  public showQuitModal: boolean;
+  public showLeaveModal: boolean;
 
   public showDetail: boolean = true;
   public showXML: boolean;
@@ -36,6 +44,9 @@ export class Design {
   private _subscriptions: Array<Subscription>;
   private _router: Router;
   private _routeView: string;
+  private _ipcRenderer: any;
+  private _ipcRendererEventListeners: Array<IEventListener> = [];
+  private _suppressSaveChangesModal: boolean;
 
   constructor(eventAggregator: EventAggregator, solutionService: ISolutionService, router: Router) {
     this._eventAggregator = eventAggregator;
@@ -44,6 +55,11 @@ export class Design {
   }
 
   public async activate(routeParameters: IDesignRouteParameters): Promise<void> {
+    const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
+    if (isRunningInElectron) {
+      this._prepareSaveModalForClosing();
+    }
+
     const solutionIsSet: boolean = routeParameters.solutionUri !== undefined;
     const diagramNameIsSet: boolean = routeParameters.diagramName !== undefined;
 
@@ -102,6 +118,9 @@ export class Design {
       this._eventAggregator.subscribe(environment.events.bpmnio.propertyPanelActive, (showPanel: boolean) => {
         this.propertyPanelShown = showPanel;
       }),
+      this._eventAggregator.subscribe(environment.events.diagramDetail.suppressUnsavedChangesModal, () => {
+        this._suppressSaveChangesModal = true;
+      }),
     ];
 
     this._eventAggregator.publish(environment.events.statusBar.showDiagramViewButtons);
@@ -124,7 +143,8 @@ export class Design {
   }
 
   public async canDeactivate(): Promise<Redirect> {
-    const modalResult: boolean = await this.diagramDetail.canDeactivate();
+    const modalResult: boolean = await this.canDeactivateModal();
+
     if (!modalResult) {
       /*
       * As suggested in https://github.com/aurelia/router/issues/302, we use
@@ -135,8 +155,59 @@ export class Design {
     }
   }
 
+  public async canDeactivateModal(): Promise<boolean> {
+    if (this._suppressSaveChangesModal) {
+      this._suppressSaveChangesModal = false;
+
+      return true;
+    }
+
+    const modalResult: Promise<boolean> = new Promise((resolve: Function, reject: Function): boolean | void => {
+      if (!this.diagramDetail.diagramHasChanged) {
+        resolve(true);
+
+        return;
+      }
+
+      this.showLeaveModal = true;
+
+      // register onClick handler
+      document.getElementById('dontSaveButtonLeaveView').addEventListener('click', () => {
+        this.showLeaveModal = false;
+        this.diagramDetail.diagramHasChanged = false;
+        this._eventAggregator.publish(environment.events.navBar.diagramChangesResolved);
+
+        resolve(true);
+      });
+
+      document.getElementById('saveButtonLeaveView').addEventListener('click', async() => {
+        if (this.diagramDetail.diagramIsInvalid) {
+          resolve(false);
+        }
+
+        this.showLeaveModal = false;
+        await this.diagramDetail.saveDiagram();
+        this.diagramDetail.diagramHasChanged = false;
+
+        resolve(true);
+      });
+
+      document.getElementById('cancelButtonLeaveView').addEventListener('click', () => {
+        this.showLeaveModal = false;
+
+        resolve(false);
+      });
+    });
+
+    return modalResult;
+  }
+
   public deactivate(): void {
     this.diagramDetail.deactivate();
+
+    for (const eventListener of this._ipcRendererEventListeners) {
+      this._ipcRenderer.removeListener(eventListener.name, eventListener.function);
+    }
   }
 
   private _showDiff(): void {
@@ -145,5 +216,42 @@ export class Design {
     this.showXML = false;
     this.showPropertyPanelButton = false;
     this.showDiffDestinationButton = true;
+  }
+
+  private _prepareSaveModalForClosing(): void {
+    this._ipcRenderer = (window as any).nodeRequire('electron').ipcRenderer;
+
+    const showCloseModalEventName: string = 'show-close-modal';
+
+    const showCloseModalFunction: Function = (): void => {
+      this.showQuitModal = true;
+    };
+
+    this._ipcRenderer.on(showCloseModalEventName, showCloseModalFunction);
+    this._ipcRendererEventListeners.push({
+                                            name: showCloseModalEventName,
+                                            function: showCloseModalFunction,
+                                        });
+
+  }
+
+  public quitWithoutSaving(): void {
+    this._ipcRenderer.send('can-not-close', false);
+    this._ipcRenderer.send('close-bpmn-studio');
+  }
+
+  public async quitWithSaving(): Promise<void> {
+    if (this.diagramDetail.diagramIsInvalid) {
+      return;
+    }
+
+    await this.diagramDetail.saveDiagram();
+    this.diagramDetail.diagramHasChanged = false;
+
+    this._ipcRenderer.send('close-bpmn-studio');
+  }
+
+  public cancelQuitting(): void {
+    this.showQuitModal = false;
   }
 }
