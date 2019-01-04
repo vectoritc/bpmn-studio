@@ -25,7 +25,7 @@ export class Design {
   @bindable() public activeDiagram: IDiagram;
   @bindable() public activeSolutionEntry: ISolutionEntry;
 
-  public showUnsavedChangesModal: boolean;
+  public showQuitModal: boolean;
 
   public showDetail: boolean = true;
   public showXML: boolean;
