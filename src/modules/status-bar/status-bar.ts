@@ -76,6 +76,7 @@ export class StatusBar {
 
       this._eventAggregator.subscribe('router:navigation:success', async() => {
         await this._updateStatusBar();
+        this._refreshRightButtons();
       }),
     ];
 
@@ -159,6 +160,17 @@ export class StatusBar {
       diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
       solutionUri: this.activeSolutionEntry ? this.activeSolutionEntry.uri : undefined,
     });
+  }
+
+  private _refreshRightButtons(): void {
+    const target: string = this._router.currentInstruction.params.view;
+    const targetIsNotDiffOrXml: boolean = target !== 'diff' && target !== 'xml';
+
+    if (targetIsNotDiffOrXml) {
+      this.diffIsShown = false;
+      this.xmlIsShown = false;
+    }
+
   }
 
   private _setProcessEngineRoute(processEngineRoute: string): void {
