@@ -174,14 +174,8 @@ export class Design {
    * the design view.
    *
    * @param routeParams Current router parameters for the destination route
-   * @param routeConfig Current configuration for the destination route
-   * @param navigationInstruction Current navigation instruction.
    */
-  public determineActivationStrategy(
-    routeParams: IDesignRouteParameters,
-    routeConfig: RouteConfig,
-    navigationInstruction: NavigationInstruction): string {
-
+  public determineActivationStrategy(routeParams: IDesignRouteParameters): string {
     console.log(routeParams);
     return activationStrategy.invokeLifecycle;
   }
