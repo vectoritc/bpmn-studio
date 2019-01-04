@@ -45,5 +45,4 @@ function e2e(): NodeJS.ReadWriteStream {
 export default gulp.series(
   clean,
   build,
-  e2e,
-);
+  e2e);

@@ -8,7 +8,7 @@ import watch from './watch';
 
 const serve: any = gulp.series(
   build,
-  (done: any) => {
+  (done: Function) => {
     browserSync({
       online: false,
       open: false,

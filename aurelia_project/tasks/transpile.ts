@@ -42,5 +42,4 @@ function buildTypeScript(): void {
 // tslint:disable-next-line:no-default-export
 export default gulp.series(
   configureEnvironment,
-  buildTypeScript,
-);
+  buildTypeScript);

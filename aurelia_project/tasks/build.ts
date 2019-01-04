@@ -13,10 +13,8 @@ const build: any = gulp.series(
     transpile,
     processMarkup,
     processCSS,
-    copyFiles,
-  ),
-  writeBundles,
-);
+    copyFiles),
+  writeBundles);
 
 let main: any;
 

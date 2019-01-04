@@ -46,5 +46,4 @@ function e2eDocker(): NodeJS.ReadWriteStream {
 export default gulp.series(
   clean,
   build_tests,
-  e2eDocker,
-);
+  e2eDocker);

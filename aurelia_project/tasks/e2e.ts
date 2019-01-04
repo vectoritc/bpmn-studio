@@ -49,5 +49,4 @@ export default gulp.series(
   build_tests,
   build,
   run,
-  e2e,
-);
+  e2e);
