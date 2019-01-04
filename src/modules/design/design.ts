@@ -14,11 +14,18 @@ export interface IDesignRouteParameters {
   solutionUri?: string;
 }
 
+type IEventListener = {
+  name: string,
+  function: Function,
+};
+
 @inject(EventAggregator, 'SolutionService', Router)
 export class Design {
 
   @bindable() public activeDiagram: IDiagram;
   @bindable() public activeSolutionEntry: ISolutionEntry;
+
+  public showUnsavedChangesModal: boolean;
 
   public showDetail: boolean = true;
   public showXML: boolean;
@@ -36,6 +43,8 @@ export class Design {
   private _subscriptions: Array<Subscription>;
   private _router: Router;
   private _routeView: string;
+  public _ipcRenderer: any;
+  public _ipcRendererEventListeners: Array<IEventListener> = [];
 
   constructor(eventAggregator: EventAggregator, solutionService: ISolutionService, router: Router) {
     this._eventAggregator = eventAggregator;
@@ -44,6 +53,11 @@ export class Design {
   }
 
   public async activate(routeParameters: IDesignRouteParameters): Promise<void> {
+    const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
+    if (isRunningInElectron) {
+      this._prepareSaveModalForClosing();
+    }
+
     const solutionIsSet: boolean = routeParameters.solutionUri !== undefined;
     const diagramNameIsSet: boolean = routeParameters.diagramName !== undefined;
 
@@ -137,6 +151,10 @@ export class Design {
 
   public deactivate(): void {
     this.diagramDetail.deactivate();
+
+    for (const eventListener of this._ipcRendererEventListeners) {
+      this._ipcRenderer.removeListener(eventListener.name, eventListener.function);
+    }
   }
 
   private _showDiff(): void {
@@ -145,5 +163,43 @@ export class Design {
     this.showXML = false;
     this.showPropertyPanelButton = false;
     this.showDiffDestinationButton = true;
+  }
+
+  private _prepareSaveModalForClosing(): void {
+    this._ipcRenderer = (window as any).nodeRequire('electron').ipcRenderer;
+
+    const showCloseModalEventName: string = 'show-close-modal';
+
+    const showCloseModalFunction: Function = (): void => {
+      this.showUnsavedChangesModal = true;
+    };
+
+    this._ipcRenderer.on(showCloseModalEventName, showCloseModalFunction);
+    this._ipcRendererEventListeners.push({
+                                            name: showCloseModalEventName,
+                                            function: showCloseModalFunction,
+                                        });
+
+  }
+
+  public leaveWithoutSaving(): void {
+    this._ipcRenderer.send('can-not-close', false);
+    this._ipcRenderer.send('close-bpmn-studio');
+  }
+
+  public async leaveWithSaving(): Promise<void> {
+    if (this.diagramDetail.diagramIsInvalid) {
+      return;
+    }
+
+    this.diagramDetail.showUnsavedChangesModal = false;
+    await this.diagramDetail.saveDiagram();
+    this.diagramDetail.diagramHasChanged = false;
+
+    this._ipcRenderer.send('close-bpmn-studio');
+  }
+
+  public doNotLeave(): void {
+    this.showUnsavedChangesModal = false;
   }
 }
