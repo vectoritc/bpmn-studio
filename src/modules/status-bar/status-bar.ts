@@ -76,9 +76,6 @@ export class StatusBar {
 
       this._eventAggregator.subscribe('router:navigation:success', async() => {
         await this._updateStatusBar();
-      }),
-
-      this._eventAggregator.subscribe(environment.events.navBar.navigateBack, () => {
         this._refreshRightButtons();
       }),
     ];
@@ -166,14 +163,16 @@ export class StatusBar {
   }
 
   private _refreshRightButtons(): void {
-    if (this.xmlIsShown) {
+    const target: string = this._router.currentInstruction.params.view;
+    const targetIsNotDiffOrXml: boolean = target !== 'diff' && target !== 'xml';
+
+    if (targetIsNotDiffOrXml) {
+      this.diffIsShown = false;
       this.xmlIsShown = false;
     }
 
-    if (this.diffIsShown) {
-      this.diffIsShown = false;
-    }
   }
+
   private _setProcessEngineRoute(processEngineRoute: string): void {
     // This Regex returns the protocol and the route from the processEngineRoute string
     const [, protocol, route]: RegExpExecArray = /^([^\:]+:\/\/)?(.*)$/i.exec(processEngineRoute);

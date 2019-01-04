@@ -129,7 +129,6 @@ export class NavBar {
   }
 
   public navigateBack(): void {
-    this._eventAggregator.publish(environment.events.navBar.navigateBack);
     this._router.navigateBack();
   }
 
