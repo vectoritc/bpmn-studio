@@ -158,6 +158,8 @@ export class DiagramViewer {
     await this._importXml(this._diagramModeler, this.xml);
     this._clearColors();
     this._uncoloredXml = await this._getXmlFromModeler();
+
+    await this._importXml(this._diagramViewer, this._uncoloredXml);
     this._uncoloredSVG = await this._getSVG();
 
     const elementSelected: boolean = this.selectedFlowNode !== undefined;
@@ -178,8 +180,6 @@ export class DiagramViewer {
         return;
       }
     }
-
-    await this._importXml(this._diagramViewer, this._uncoloredXml);
   }
 
   public activeDiagramChanged(): void {
@@ -297,7 +297,7 @@ export class DiagramViewer {
 
   private async _getSVG(): Promise<string> {
     const returnPromise: Promise<string> = new Promise((resolve: Function, reject: Function): void => {
-      this._diagramModeler.saveSVG({}, (error: Error, result: string) => {
+      this._diagramViewer.saveSVG({ format: true }, (error: Error, result: string) => {
         if (error) {
           reject(error);
         }
