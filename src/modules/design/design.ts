@@ -108,6 +108,7 @@ export class Design {
         this.xmlForDiffNew = await this.diagramDetail.getXML();
       } else {
         this.xmlForDiffOld = await this.diagramDetail.getXML();
+        this.xmlForDiffNew = undefined;
       }
 
       this._showDiff();
