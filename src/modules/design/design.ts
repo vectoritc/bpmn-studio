@@ -43,8 +43,8 @@ export class Design {
   private _subscriptions: Array<Subscription>;
   private _router: Router;
   private _routeView: string;
-  public _ipcRenderer: any;
-  public _ipcRendererEventListeners: Array<IEventListener> = [];
+  private _ipcRenderer: any;
+  private _ipcRendererEventListeners: Array<IEventListener> = [];
 
   constructor(eventAggregator: EventAggregator, solutionService: ISolutionService, router: Router) {
     this._eventAggregator = eventAggregator;
