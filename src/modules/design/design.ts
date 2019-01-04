@@ -36,7 +36,8 @@ export class Design {
   public showDiffDestinationButton: boolean = false;
   public diffDestinationIsLocal: boolean = true;
 
-  @bindable() public xmlForDiff: string;
+  @bindable() public xmlForDiffOld: string;
+  @bindable() public xmlForDiffNew: string;
   public diagramDetail: DiagramDetail;
 
   private _eventAggregator: EventAggregator;
@@ -99,14 +100,23 @@ export class Design {
       if (diagramDetailIsNotAttached) {
         return;
       }
-      this.xmlForDiff = await this.diagramDetail.getXML();
+
+      const previousRouteIsDiff: any = this._router.currentInstruction.params.view === 'diff';
+
+      if (previousRouteIsDiff) {
+        this.xmlForDiffOld = this.activeDiagram.xml;
+        this.xmlForDiffNew = await this.diagramDetail.getXML();
+      } else {
+        this.xmlForDiffOld = await this.diagramDetail.getXML();
+      }
+
       this._showDiff();
     }
   }
 
   public async attached(): Promise<void> {
     setTimeout(async() => {
-      this.xmlForDiff = await this.diagramDetail.getXML();
+      this.xmlForDiffOld = await this.diagramDetail.getXML();
     }, 0);
 
     const routeViewIsDiff: boolean = this._routeView === 'diff';
