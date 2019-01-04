@@ -6,10 +6,9 @@ import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
 import {IEventFunction, IShape} from '../../../contracts/index';
 import environment from '../../../environment';
-import {NotificationService} from '../../notification/notification.service';
 import {IInspectCorrelationService} from './contracts';
 
-@inject('InspectCorrelationService', EventAggregator, 'NotificationService')
+@inject('InspectCorrelationService', EventAggregator)
 export class InspectCorrelation {
   @bindable() public activeDiagram: IDiagram;
   @bindable() public selectedCorrelation: Correlation;
