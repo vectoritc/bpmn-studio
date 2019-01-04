@@ -46,7 +46,6 @@ export class DiagramDetail {
   public hasValidationError: boolean = false;
   public diagramIsInvalid: boolean = false;
 
-  private _suppressSaveChangesModal: boolean = false;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
@@ -118,9 +117,6 @@ export class DiagramDetail {
       this._eventAggregator.subscribe(environment.events.diagramDetail.startProcessWithOptions, () => {
         this.showStartWithOptionsModal = true;
       }),
-      this._eventAggregator.subscribe(environment.events.diagramDetail.suppressUnsavedChangesModal, () => {
-        this._suppressSaveChangesModal = true;
-      }),
     ];
   }
 
@@ -147,47 +143,6 @@ export class DiagramDetail {
     } else {
       this.hasValidationError = true;
     }
-  }
-
-  public async canDeactivate(): Promise<boolean> {
-
-    if (this._suppressSaveChangesModal) {
-      this._suppressSaveChangesModal = false;
-
-      return true;
-    }
-
-    const _modal: Promise<boolean> = new Promise((resolve: Function, reject: Function): boolean | void => {
-      if (!this.diagramHasChanged) {
-        resolve(true);
-      } else {
-        this.showUnsavedChangesModal = true;
-
-        // register onClick handler
-        document.getElementById('dontSaveButtonLeaveView').addEventListener('click', () => {
-          this.showUnsavedChangesModal = false;
-          this.diagramHasChanged = false;
-          this._eventAggregator.publish(environment.events.navBar.diagramChangesResolved);
-          resolve(true);
-        });
-        document.getElementById('saveButtonLeaveView').addEventListener('click', () => {
-          if (this.diagramIsInvalid) {
-            resolve(false);
-          }
-
-          this.showUnsavedChangesModal = false;
-          this.saveDiagram();
-          this.diagramHasChanged = false;
-          resolve(true);
-        });
-        document.getElementById('cancelButtonLeaveView').addEventListener('click', () => {
-          this.showUnsavedChangesModal = false;
-          resolve(false);
-        });
-      }
-    });
-
-    return _modal;
   }
 
   public deactivate(): void {

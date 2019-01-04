@@ -7,50 +7,27 @@
       <bpmn-io view-model.ref="bpmnio" xml.bind="activeDiagram.xml" name.bind="activeDiagram.name" opened-from-process-engine.bind="false"></bpmn-io>
     </div>
   </div>
-
-  <!-- Save On Leave Modal {{{ -->
-    <div show.bind="showUnsavedChangesModal">
-      <div class="modal show-modal" tabindex="-1" role="dialog" id="saveModalLeaveView">
-        <div class="modal-dialog save-modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h4 class="modal-title">Document Contains Changes</h4>
-            </div>
-            <div class="modal-body">
-              Your process has unsaved changes. Save changes to diagram before leaving?
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelButtonLeaveView">Cancel</button>
-              <button type="button" class="btn btn-default" data-dismiss="modal" id="dontSaveButtonLeaveView">Leave and don't save</button>
-              <button type="button" class="btn btn-default" data-dismiss="modal" id="saveButtonLeaveView">Save and leave</button>
-            </div>
+  <!-- Save Before Deploy Modal {{{ -->
+  <div show.bind="showSaveBeforeDeployModal">
+    <div class="modal show-modal">
+      <div class="modal-dialog save-before-deploy-modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Save Diagram Before Deploying</h4>
+          </div>
+          <div class="modal-body">
+            In order to deploy your diagram, you have to save your recent changes to disk.
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelDeploy" click.delegate="cancelSaveBeforeDeployModal()"> Cancel</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal" id="saveButtonDeploy" click.delegate="saveDiagramAndDeploy()"> Save and deploy</button>
           </div>
         </div>
       </div>
-      <div class="modal-backdrop fade in"></div>
     </div>
-    <!-- }}} Save On Leave Modal -->
-    <!-- Save Before Deploy Modal {{{ -->
-    <div show.bind="showSaveBeforeDeployModal">
-      <div class="modal show-modal">
-        <div class="modal-dialog save-before-deploy-modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h4 class="modal-title">Save Diagram Before Deploying</h4>
-            </div>
-            <div class="modal-body">
-              In order to deploy your diagram, you have to save your recent changes to disk.
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelDeploy" click.delegate="cancelSaveBeforeDeployModal()"> Cancel</button>
-              <button type="button" class="btn btn-default" data-dismiss="modal" id="saveButtonDeploy" click.delegate="saveDiagramAndDeploy()"> Save and deploy</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="modal-backdrop fade in"></div>
-    </div>
-    <!-- }}} Save On Leave Modal -->
+    <div class="modal-backdrop fade in"></div>
+  </div>
+  <!-- }}} Save On Leave Modal -->
 
   <!-- #region Save Modal for Process Start -->
   <div show.bind="showSaveForStartModal">
