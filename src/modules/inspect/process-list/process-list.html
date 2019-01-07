@@ -18,7 +18,7 @@
               </td>
               <td class="process-list__last-table-cell">
                 <a route-href="route: task-list-correlation; params.bind: { correlationId: correlation.id, solutionUri: activeSolutionEntry.uri }" class="process-list-item-user-tasks btn btn-default">Tasks</a>
-                <a route-href="route: live-execution-tracker; params.bind: { diagramName: processModel.processModelId, solutionUri: activeSolutionEntry.uri, correlationId: correlation.id }" class="btn btn-default">Live Execution Tracking</a>
+                <a route-href="route: live-execution-tracker; params.bind: { diagramName: processModel.processModelId, solutionUri: activeSolutionEntry.uri, correlationId: correlation.id, processInstanceId: processModel.processInstanceId }" class="btn btn-default">Live Execution Tracking</a>
               </td>
             </tr>
           </template>

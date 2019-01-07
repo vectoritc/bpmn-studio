@@ -285,11 +285,13 @@ export class DiagramDetail {
                               undefined);
 
       const correlationId: string = response.correlationId;
+      const processInstanceId: string = response.processInstanceId;
 
       this._router.navigateToRoute('live-execution-tracker', {
         diagramName: this.activeDiagram.id,
         solutionUri: this.activeSolutionEntry.uri,
         correlationId: correlationId,
+        processInstanceId: processInstanceId,
       });
     } catch (error) {
       this.
