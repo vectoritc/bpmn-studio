@@ -130,8 +130,11 @@ export class SolutionExplorerSolution {
   @bindable public solutionService: ISolutionExplorerService;
   @bindable public solutionIsSingleDiagrams: boolean;
   @bindable public displayedSolutionEntry: ISolutionEntry;
+  @bindable public fontAwesomeIconClass: string;
   public createNewDiagramInput: HTMLInputElement;
-  public _renameDiagramInput: HTMLInputElement;
+
+  private _renameDiagramInput: HTMLInputElement;
+  private _originalIconClass: string;
 
   constructor(
     router: Router,
@@ -149,6 +152,7 @@ export class SolutionExplorerSolution {
   }
 
   public attached(): void {
+    this._originalIconClass = this.fontAwesomeIconClass;
     this._updateSolutionExplorer();
 
     this._subscriptions = [
@@ -210,7 +214,7 @@ export class SolutionExplorerSolution {
   public async updateSolution(): Promise<void> {
     try {
       this._openedSolution = await this.solutionService.loadSolution();
-
+      this.fontAwesomeIconClass = this._originalIconClass;
     } catch (error) {
       // In the future we can maybe display a small icon indicating the error.
       if (isError(error, UnauthorizedError)) {
@@ -219,6 +223,7 @@ export class SolutionExplorerSolution {
         this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have the required permissions to list process models.');
       } else {
         this._openedSolution.diagrams = undefined;
+        this.fontAwesomeIconClass = 'fa-bolt';
       }
     }
   }
