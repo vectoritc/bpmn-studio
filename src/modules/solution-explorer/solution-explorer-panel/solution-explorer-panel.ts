@@ -181,6 +181,12 @@ export class SolutionExplorerPanel {
     return uriStartsWithHttp;
   }
 
+  public get uriIsEmpty(): boolean {
+    const uriIsEmtpy: boolean = this.uriOfRemoteSolution === undefined || this.uriOfRemoteSolution.length === 0;
+
+    return uriIsEmtpy;
+  }
+
   public async openSolution(): Promise<void> {
     const canNotReadFromFileSystem: boolean = !this.canReadFromFileSystem();
     if (canNotReadFromFileSystem) {
