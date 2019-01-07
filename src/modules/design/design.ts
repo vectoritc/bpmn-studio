@@ -177,7 +177,6 @@ export class Design {
    * @param routeParams Current router parameters for the destination route
    */
   public determineActivationStrategy(routeParams: IDesignRouteParameters): string {
-    console.log(routeParams);
     this._destinationView = routeParams.view;
     return activationStrategy.invokeLifecycle;
   }
