@@ -130,6 +130,7 @@ export class SolutionExplorerList {
     } catch (error) {
       this._solutionService.removeSolutionEntryByUri(uri);
     }
+
     const newOpenedSolution: ISolution = await solutionExplorer.loadSolution();
     const solutionURI: string = newOpenedSolution.uri;
 
