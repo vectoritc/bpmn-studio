@@ -9,7 +9,7 @@
 
         <div class="solution-entry__header" title="${solutionEntry.uri}">
 
-          <i class="fa ${solutionEntry.fontAwesomeIconClass} solution-entry__header__icon"></i>
+          <i class="fa ${solutionEntry.fontAwesomeIconClass} solution-entry__header__icon" title.bind="solutionEntry.fontAwesomeIconClass === 'fa-bolt' ? 'ProcessEngine Disconnected!' : ''"></i>
 
           <span class="solution-entry__header__name">${solutionEntry.uri}</span>
 
