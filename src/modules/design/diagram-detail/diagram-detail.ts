@@ -186,7 +186,7 @@ export class DiagramDetail {
    * Uploads the current diagram to the connected ProcessEngine.
    */
   public async uploadProcess(solutionToDeployTo: ISolutionEntry): Promise<void> {
-
+    this.cancelDialog();
     const rootElements: Array<IModdleElement> = this.bpmnio.modeler._definitions.rootElements;
 
     const processModel: IModdleElement = rootElements.find((definition: IModdleElement) => {
