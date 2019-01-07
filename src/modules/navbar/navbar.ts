@@ -361,6 +361,11 @@ export class NavBar {
         .service
         .loadDiagram(this._router.currentInstruction.params.diagramName);
 
+      const diagramNotFound: boolean = this.activeDiagram === undefined;
+      if (diagramNotFound) {
+        return;
+      }
+
       this._updateNavbarTitle();
       this._updateNavbarTools();
     }
