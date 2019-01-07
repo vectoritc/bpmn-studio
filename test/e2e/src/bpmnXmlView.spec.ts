@@ -7,6 +7,7 @@ import {
 
 import {BpmnIo} from './pages/bpmn-io';
 import {BpmnXmlView} from './pages/bpmnXmlView';
+import {Design} from './pages/design';
 import {General} from './pages/general';
 import {NavBar} from './pages/navBar';
 import {ProcessModel} from './pages/processModel';
@@ -22,6 +23,7 @@ describe('bpmn-io XML view', () => {
   let processModel: ProcessModel;
   let solutionExplorer: SolutionExplorer;
   let statusBar: StatusBar;
+  let design: Design;
 
   let processModelId: string;
 
@@ -38,6 +40,7 @@ describe('bpmn-io XML view', () => {
     processModel = new ProcessModel();
     solutionExplorer = new SolutionExplorer();
     statusBar = new StatusBar();
+    design = new Design();
 
     processModelId = processModel.getProcessModelId();
 
@@ -90,6 +93,16 @@ describe('bpmn-io XML view', () => {
     const bpmnXmlViewTag: ElementFinder = bpmnXmlView.bpmnXmlViewTag;
 
     await BpmnXmlView.openXMLViewByClickOnButton(statusBarXMLViewButton);
+
+    const designTag: ElementFinder = design.designTag;
+    const visibilityOfDesignTag: Function = expectedConditions.visibilityOf(designTag);
+
+    await browser.driver
+      .wait(() => {
+        browser.wait(visibilityOfDesignTag, defaultTimeoutMS);
+
+        return design.designTag;
+      });
 
     const xmlViewIsDisplayed: boolean = await bpmnXmlViewTag.isDisplayed();
 
