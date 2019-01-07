@@ -43,10 +43,10 @@ function e2e(): NodeJS.ReadWriteStream {
     });
 }
 
+// tslint:disable-next-line:no-default-export
 export default gulp.series(
   clean,
   build_tests,
   build,
   run,
-  e2e,
-);
+  e2e);
