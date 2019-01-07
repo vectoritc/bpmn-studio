@@ -55,6 +55,7 @@ export class Design {
     this._eventAggregator = eventAggregator;
     this._solutionService = solutionService;
     this._router = router;
+    this._notificationService = notificationService;
   }
 
   public async activate(routeParameters: IDesignRouteParameters): Promise<void> {
@@ -75,6 +76,12 @@ export class Design {
       await this.activeSolutionEntry.service.openSolution(this.activeSolutionEntry.uri, this.activeSolutionEntry.identity);
 
       this.activeDiagram = diagramNameIsSet ? await this.activeSolutionEntry.service.loadDiagram(routeParameters.diagramName) : undefined;
+
+      const diagramNotFound: boolean = this.activeDiagram === undefined;
+      if (diagramNotFound) {
+        this._router.navigateToRoute('start-page');
+        this._notificationService.showNotification(NotificationType.INFO, 'Diagram could not be opened!');
+      }
     }
 
     const routeViewIsDetail: boolean = routeParameters.view === 'detail';
