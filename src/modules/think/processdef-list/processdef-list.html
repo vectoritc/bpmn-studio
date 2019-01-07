@@ -11,7 +11,7 @@
             <th>Process Name</th>
           </tr>
           <tr repeat.for="diagram of allDiagrams" class="process-definition-list-item">
-            <td class="process-name-table-entry" id="processDef-${diagram.id}" title="${diagram.id}" click.delegate="showDetails(diagram.id)">${diagram.name}</td>
+            <td class="process-name-table-entry" id="processDef-${diagram.id}" title="${diagram.id}" click.delegate="showDetails(diagram.name)">${diagram.name}</td>
           </tr>
         </table>
       </div>

@@ -93,9 +93,10 @@ export class ProcessDefList {
 
   public showDetails(diagramName: string): void {
 
-    this._router.navigateToRoute('diagram-detail', {
+    this._router.navigateToRoute('design', {
       diagramName: diagramName,
       solutionUri: this._activeSolutionEntry.uri,
+      view: 'detail',
     });
   }
 
