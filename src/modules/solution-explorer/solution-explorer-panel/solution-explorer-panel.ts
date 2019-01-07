@@ -113,8 +113,13 @@ export class SolutionExplorerPanel {
     this.uriOfRemoteSolution = undefined;
   }
 
-  public openRemoteSolution(): void {
-    this._openSolutionOrDisplayError(this.uriOfRemoteSolution);
+  public async openRemoteSolution(): Promise<void> {
+    try {
+      await this.solutionExplorerList.openSolution(this.uriOfRemoteSolution);
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR, `Unable to connect to ProcessEngine on: ${this.uriOfRemoteSolution}`);
+    }
+
     this.uriOfRemoteSolution = undefined;
     this.showOpenRemoteSolutionModal = false;
   }
