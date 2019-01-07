@@ -178,6 +178,7 @@ export class Design {
    */
   public determineActivationStrategy(routeParams: IDesignRouteParameters): string {
     this._destinationView = routeParams.view;
+
     return activationStrategy.invokeLifecycle;
   }
 
