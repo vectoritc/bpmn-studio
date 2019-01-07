@@ -1,11 +1,12 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
+import {Redirect, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {Redirect, Router} from 'aurelia-router';
-import {ISolutionEntry, ISolutionService} from '../../contracts';
+import {ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
+import {NotificationService} from '../notification/notification.service';
 import {DiagramDetail} from './diagram-detail/diagram-detail';
 
 export interface IDesignRouteParameters {
@@ -19,7 +20,7 @@ type IEventListener = {
   function: Function,
 };
 
-@inject(EventAggregator, 'SolutionService', Router)
+@inject(EventAggregator, 'SolutionService', Router, 'NotificationService')
 export class Design {
 
   @bindable() public activeDiagram: IDiagram;
@@ -41,6 +42,7 @@ export class Design {
   public diagramDetail: DiagramDetail;
 
   private _eventAggregator: EventAggregator;
+  private _notificationService: NotificationService;
   private _solutionService: ISolutionService;
   private _subscriptions: Array<Subscription>;
   private _router: Router;
@@ -49,7 +51,7 @@ export class Design {
   private _ipcRendererEventListeners: Array<IEventListener> = [];
   private _suppressSaveChangesModal: boolean;
 
-  constructor(eventAggregator: EventAggregator, solutionService: ISolutionService, router: Router) {
+  constructor(eventAggregator: EventAggregator, solutionService: ISolutionService, router: Router, notificationService: NotificationService) {
     this._eventAggregator = eventAggregator;
     this._solutionService = solutionService;
     this._router = router;
@@ -265,4 +267,5 @@ export class Design {
   public cancelQuitting(): void {
     this.showQuitModal = false;
   }
+
 }
