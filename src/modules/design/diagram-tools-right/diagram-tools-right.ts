@@ -82,7 +82,6 @@ export class DiagramToolsRight {
     this.modeler.on('commandStack.elements.move.postExecute', (event: IEvent) => {
       this.colorPickerEnabled = true;
     });
-
   }
 
   public detached(): void {
