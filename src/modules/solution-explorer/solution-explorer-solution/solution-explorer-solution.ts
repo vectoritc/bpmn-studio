@@ -217,6 +217,8 @@ export class SolutionExplorerSolution {
         this._notificationService.showNotification(NotificationType.ERROR, 'You need to login to list process models.');
       } else if (isError(error, ForbiddenError)) {
         this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have the required permissions to list process models.');
+      } else {
+        this._openedSolution.diagrams = undefined;
       }
     }
   }
