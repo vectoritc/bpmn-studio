@@ -125,7 +125,8 @@ export class ProcessList {
       this._notificationService.showNotification(NotificationType.ERROR, `Error receiving process list: ${error.message}`);
     }
 
-    if (!this._correlations) {
+    const correlationsAreNotSet: boolean = this._correlations === undefined || this._correlations === null;
+    if (correlationsAreNotSet) {
       this._correlations = [];
     }
 
