@@ -294,7 +294,8 @@ describe('Dashboard view', () => {
     await dashboard.continueUserTaskByClickOnDynamicUiWrapperContinueButton();
 
     const correlationId: string = processModel.getCorrelationId();
-    const liveExecutionTrackerUrl: string = ProcessModel.liveExecutionTrackerUrl(processModelId, correlationId);
+    const processInstanceId: string = processModel.getProcessInstanceId();
+    const liveExecutionTrackerUrl: string = ProcessModel.liveExecutionTrackerUrl(processModelId, correlationId, processInstanceId);
     const currentBrowserUrl: string = await browser.getCurrentUrl();
 
     // Should be in live execution tracker
