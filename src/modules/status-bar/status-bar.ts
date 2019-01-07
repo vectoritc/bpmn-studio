@@ -152,13 +152,6 @@ export class StatusBar {
     }
   }
 
-  // private _setProcessEngineRoute(processEngineRoute: string): void {
-  //   // This Regex returns the protocol and the route from the processEngineRoute string
-  //   const [, protocol, route]: RegExpExecArray = /^([^\:]+:\/\/)?(.*)$/i.exec(processEngineRoute);
-  //   this.isEncryptedCommunication = protocol === 'https://';
-  //   this.processEngineRoute = route;
-  // }
-
   private _disposeAllSubscriptions(): void {
     this._subscriptions.forEach((subscription: Subscription) => {
       subscription.dispose();
