@@ -148,16 +148,6 @@ export class DiagramToolsRight {
     canvas.zoom('fit-viewport');
   }
 
-  public moveViewportToZeroPoint(): void {
-    const canvas: ICanvas = this.modeler.get('canvas');
-
-    const previousViewbox: IViewbox = canvas.viewbox();
-    previousViewbox.x = 0;
-    previousViewbox.y = 0;
-
-    canvas.viewbox(previousViewbox);
-  }
-
   private _setColor(color: IColorPickerColor): void {
     const modeling: IModeling = this.modeler.get('modeling');
 
