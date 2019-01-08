@@ -123,6 +123,7 @@ export class ProcessList {
       this.succesfullRequested = true;
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, `Error receiving process list: ${error.message}`);
+      this.succesfullRequested = false;
     }
 
     const correlationsAreNotSet: boolean = this._correlations === undefined || this._correlations === null;
