@@ -45,6 +45,9 @@ export class DiagramDetail {
   public initialToken: string;
   public hasValidationError: boolean = false;
   public diagramIsInvalid: boolean = false;
+  public showRemoteSolutionOnDeployModal: boolean = false;
+  public remoteSolutions: Array<ISolutionEntry> = [];
+  public selectedRemoteSolution: ISolutionEntry;
 
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
@@ -84,6 +87,11 @@ export class DiagramDetail {
 
   public attached(): void {
     this.diagramHasChanged = false;
+
+    const solutionIsRemote: boolean = this.activeSolutionEntry.uri.startsWith('http');
+    if (solutionIsRemote) {
+      this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, this.activeSolutionEntry.uri);
+    }
 
     const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
     if (isRunningInElectron) {
@@ -163,7 +171,8 @@ export class DiagramDetail {
   public async saveDiagramAndDeploy(): Promise<void> {
     this.showSaveBeforeDeployModal = false;
     await this.saveDiagram();
-    await this.uploadProcess();
+
+    this._checkForMultipleRemoteSolutions();
   }
 
   /**
@@ -176,7 +185,8 @@ export class DiagramDetail {
   /**
    * Uploads the current diagram to the connected ProcessEngine.
    */
-  public async uploadProcess(): Promise<void> {
+  public async uploadProcess(solutionToDeployTo: ISolutionEntry): Promise<void> {
+    this.cancelDialog();
     const rootElements: Array<IModdleElement> = this.bpmnio.modeler._definitions.rootElements;
 
     const processModel: IModdleElement = rootElements.find((definition: IModdleElement) => {
@@ -185,16 +195,6 @@ export class DiagramDetail {
     const processModelId: string = processModel.id;
 
     try {
-
-      const processEngineRoute: string = window.localStorage.getItem('processEngineRoute');
-      const internalProcessEngineRoute: string = window.localStorage.getItem('InternalProcessEngineRoute');
-      const processEngineRouteIsSet: boolean = processEngineRoute !== '';
-
-      const connectedProcessEngineRoute: string = processEngineRouteIsSet
-                                                ? processEngineRoute
-                                                : internalProcessEngineRoute;
-
-      const solutionToDeployTo: ISolutionEntry = this._solutionService.getSolutionEntryForUri(connectedProcessEngineRoute);
       this.activeSolutionEntry = solutionToDeployTo;
 
       this.activeDiagram.id = processModelId;
@@ -215,7 +215,7 @@ export class DiagramDetail {
         xml: this.activeDiagram.xml,
       };
 
-      await this.activeSolutionEntry.service.saveDiagram(copyOfDiagram, connectedProcessEngineRoute);
+      await this.activeSolutionEntry.service.saveDiagram(copyOfDiagram, solutionToDeployTo.uri);
 
       this.activeDiagram = await this.activeSolutionEntry.service.loadDiagram(processModelId);
 
@@ -373,6 +373,7 @@ export class DiagramDetail {
     this.showSaveForStartModal = false;
     this.showStartEventModal = false;
     this.showStartWithOptionsModal = false;
+    this.showRemoteSolutionOnDeployModal = false;
   }
 
   private _getInitialTokenValues(token: any): any {
@@ -401,8 +402,20 @@ export class DiagramDetail {
     if (this.diagramHasChanged) {
       this.showSaveBeforeDeployModal = true;
     } else {
-      await this.uploadProcess();
+      await this._checkForMultipleRemoteSolutions();
     }
+  }
+
+  private async _checkForMultipleRemoteSolutions(): Promise<void> {
+    this.remoteSolutions = this._solutionService.getRemoteSolutionEntries();
+
+    const multipleRemoteSolutionsConnected: boolean = this.remoteSolutions.length > 1;
+    if (multipleRemoteSolutionsConnected) {
+      this.showRemoteSolutionOnDeployModal = true;
+    } else {
+      await this.uploadProcess(this.remoteSolutions[0]);
+    }
+
   }
 
   /**

@@ -6,7 +6,8 @@ import {Correlation, CorrelationProcessModel, IManagementApi} from '@process-eng
 
 import {
   AuthenticationStateEvent,
-  IAuthenticationService,
+  ISolutionEntry,
+  ISolutionService,
   NotificationType,
 } from '../../../contracts/index';
 import environment from '../../../environment';
@@ -17,7 +18,7 @@ interface IProcessListRouteParameters {
   solutionUri?: string;
 }
 
-@inject('ManagementApiClientService', EventAggregator, 'NotificationService', 'AuthenticationService')
+@inject('ManagementApiClientService', EventAggregator, 'NotificationService', 'SolutionService')
 export class ProcessList {
 
   @observable public currentPage: number = 0;
@@ -26,11 +27,14 @@ export class ProcessList {
   public status: Array<string> = [];
   public succesfullRequested: boolean = false;
   public selectedState: HTMLSelectElement;
+  public activeSolutionEntry: ISolutionEntry;
 
   private _managementApiService: IManagementApi;
   private _eventAggregator: EventAggregator;
   private _notificationService: NotificationService;
-  private _authenticationService: IAuthenticationService;
+  private _solutionService: ISolutionService;
+  private _activeDiagramName: string;
+  private _activeSolutionUri: string;
 
   private _getCorrelationsIntervalId: number;
   private _getCorrelations: () => Promise<Array<Correlation>>;
@@ -40,12 +44,11 @@ export class ProcessList {
   constructor(managementApiService: IManagementApi,
               eventAggregator: EventAggregator,
               notificationService: NotificationService,
-              authenticationService: IAuthenticationService,
-  ) {
+              solutionService: ISolutionService) {
     this._managementApiService = managementApiService;
     this._eventAggregator = eventAggregator;
     this._notificationService = notificationService;
-    this._authenticationService = authenticationService;
+    this._solutionService = solutionService;
   }
 
   public async currentPageChanged(newValue: number, oldValue: number): Promise<void> {
@@ -57,39 +60,31 @@ export class ProcessList {
     }
   }
 
+  /**
+   * This method only gets called if this component is navigated to directly.
+   * If we bind it somewhere via show.bind this method will not be called.
+   */
   public activate(routeParameters: IProcessListRouteParameters): void {
+    this._activeSolutionUri = routeParameters.solutionUri;
+    this._activeDiagramName = routeParameters.diagramName;
 
-    if (!routeParameters.diagramName) {
+    const diagramNameIsNotSet: boolean = this._activeDiagramName === undefined;
+    if (diagramNameIsNotSet) {
       this._getCorrelations = this.getAllActiveCorrelations;
     } else {
       this._getCorrelations = (): Promise<Array<Correlation>> => {
-        return this.getCorrelationsForProcessModel(routeParameters.diagramName);
+        return this.getCorrelationsForProcessModel(this._activeDiagramName);
       };
     }
   }
 
-  public async updateProcesses(): Promise<void> {
-    try {
-      const correlations: Array<Correlation> = await this._getCorrelations();
-      const correlationListWasUpdated: boolean = JSON.stringify(correlations) !== JSON.stringify(this._correlations);
-
-      if (correlationListWasUpdated) {
-        this._correlations = correlations;
-      }
-
-      this.succesfullRequested = true;
-    } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, `Error receiving process list: ${error.message}`);
-    }
-
-    if (!this._correlations) {
-      this._correlations = [];
-    }
-
-    this.totalItems = this._correlations.length;
-  }
-
   public async attached(): Promise<void> {
+    const activeSolutionUriIsNotSet: boolean = this._activeSolutionUri === undefined;
+    if (activeSolutionUriIsNotSet) {
+      this._activeSolutionUri = window.localStorage.getItem('InternalProcessEngineRoute');
+    }
+
+    this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(this._activeSolutionUri);
 
     this._initializeGetProcesses();
 
@@ -116,10 +111,27 @@ export class ProcessList {
     }
   }
 
-  public get remoteSolutionUri(): string {
-    const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
+  public async updateProcesses(): Promise<void> {
+    try {
+      const correlations: Array<Correlation> = await this._getCorrelations();
+      const correlationListWasUpdated: boolean = JSON.stringify(correlations) !== JSON.stringify(this._correlations);
 
-    return remoteSolutionUri;
+      if (correlationListWasUpdated) {
+        this._correlations = correlations;
+      }
+
+      this.succesfullRequested = true;
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR, `Error receiving process list: ${error.message}`);
+      this.succesfullRequested = false;
+    }
+
+    const correlationsAreNotSet: boolean = this._correlations === undefined || this._correlations === null;
+    if (correlationsAreNotSet) {
+      this._correlations = [];
+    }
+
+    this.totalItems = this._correlations.length;
   }
 
   public get correlations(): Array<Correlation> {
@@ -135,13 +147,13 @@ export class ProcessList {
   }
 
   private async getAllActiveCorrelations(): Promise<Array<Correlation>> {
-    const identity: IIdentity = this._getIdentity();
+    const identity: IIdentity = this.activeSolutionEntry.identity;
 
     return this._managementApiService.getActiveCorrelations(identity);
   }
 
   private async getCorrelationsForProcessModel(processModelId: string): Promise<Array<Correlation>> {
-    const identity: IIdentity = this._getIdentity();
+    const identity: IIdentity = this.activeSolutionEntry.identity;
 
     const runningCorrelations: Array<Correlation> = await this._managementApiService.getActiveCorrelations(identity);
 
@@ -160,13 +172,4 @@ export class ProcessList {
     return correlationsWithId;
   }
 
-  // TODO: Move this method into a service.
-  private _getIdentity(): IIdentity {
-    const accessToken: string = this._authenticationService.getAccessToken();
-    const identity: IIdentity = {
-      token: accessToken,
-    };
-
-    return identity;
-  }
 }

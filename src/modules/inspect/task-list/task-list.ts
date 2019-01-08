@@ -43,6 +43,7 @@ export class TaskList {
   public totalItems: number;
 
   public successfullyRequested: boolean = false;
+  public activeSolutionUri: string;
 
   private _eventAggregator: EventAggregator;
   private _managementApiService: IManagementApi;
@@ -88,6 +89,8 @@ export class TaskList {
   public attached(): void {
     const getTasksIsUndefined: boolean = this._getTasks === undefined;
 
+    this.activeSolutionUri = this._router.currentInstruction.queryParams.solutionUri;
+
     if (getTasksIsUndefined) {
       this._getTasks = this._getAllTasks;
       this.updateTasks();
@@ -130,11 +133,9 @@ export class TaskList {
       ? taskWithProcessModel.userTask.id
       : taskWithProcessModel.manualTask.id;
 
-    const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
-
     this._router.navigateToRoute('task-dynamic-ui', {
       diagramName: processModelId,
-      solutionUri: remoteSolutionUri,
+      solutionUri: this.activeSolutionUri,
       correlationId: correlationId,
       taskId: taskId,
     });
@@ -151,12 +152,6 @@ export class TaskList {
     }
 
     return this._userTasks;
-  }
-
-  public get remoteSolutionUri(): string {
-    const remoteSolutionUri: string = window.localStorage.getItem('processEngineRoute');
-
-    return remoteSolutionUri;
   }
 
   private async _getAllTasks(): Promise<Array<IUserTaskWithProcessModel & IManualTaskWithProcessModel>> {

@@ -125,10 +125,14 @@ export class SolutionExplorerList {
     }
 
     const identity: IIdentity = this._createIdentityForSolutionExplorer();
-    await solutionExplorer.openSolution(uri, identity);
+    try {
+      await solutionExplorer.openSolution(uri, identity);
+    } catch (error) {
+      this._solutionService.removeSolutionEntryByUri(uri);
+    }
 
-    const newOpenedSpluton: ISolution = await solutionExplorer.loadSolution();
-    const solutionURI: string = newOpenedSpluton.uri;
+    const newOpenedSolution: ISolution = await solutionExplorer.loadSolution();
+    const solutionURI: string = newOpenedSolution.uri;
 
     const arrayAlreadyContainedURI: boolean = this._getIndexOfSolution(solutionURI) >= 0;
 
@@ -156,7 +160,7 @@ export class SolutionExplorerList {
     this._openedSolutions.splice(indexOfSolutionToBeRemoved, 1);
 
     const entryToRemove: ISolutionEntry = this._solutionService.getSolutionEntryForUri(uri);
-    this._solutionService.removeSolutionEntry(entryToRemove);
+    this._solutionService.removeSolutionEntryByUri(entryToRemove.uri);
   }
 
   /**
@@ -228,9 +232,11 @@ export class SolutionExplorerList {
 
   private _canCloseSolution(service: ISolutionExplorerService, uri: string): boolean {
     const solutionIsNotSingleDiagrams: boolean = !this._isSingleDiagramService(service);
-    const solutionIsNotConnectedProcessEngine: boolean = !uri.startsWith('http');
 
-    return solutionIsNotSingleDiagrams && solutionIsNotConnectedProcessEngine;
+    const internalProcessEngineRoute: string = window.localStorage.getItem('InternalProcessEngineRoute');
+    const solutionIsNotInternalSolution: boolean = uri !== internalProcessEngineRoute;
+
+    return solutionIsNotSingleDiagrams && solutionIsNotInternalSolution;
   }
 
   private _isSingleDiagramService(service: ISolutionExplorerService): boolean {

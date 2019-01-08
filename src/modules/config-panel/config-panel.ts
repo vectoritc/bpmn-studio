@@ -19,7 +19,6 @@ interface RouteParameters {
 
 @inject(Router, 'NotificationService', EventAggregator, 'AuthenticationService', OpenIdConnect, 'InternalProcessEngineBaseRoute')
 export class ConfigPanel {
-  @bindable public baseRoute: string;
   @bindable public authority: string;
   public readonly defaultAuthority: string = environment.openIdConnect.defaultAuthority;
   public isLoggedInToProcessEngine: boolean;
@@ -58,23 +57,6 @@ export class ConfigPanel {
   }
 
   public attached(): void {
-    this.baseRoute = environment.baseRoute;
-
-    // If there is a route set in the localstorage, we prefer this setting.
-    const customProcessEngineRoute: string = window.localStorage.getItem('processEngineRoute');
-    const isCustomProcessEngineRouteSet: boolean = customProcessEngineRoute !== ''
-                                                && customProcessEngineRoute !== null;
-
-    const baseRouteConfiguredInLocalStorage: string = isCustomProcessEngineRouteSet
-    ? customProcessEngineRoute
-    : window.localStorage.getItem('InternalProcessEngineRoute') ;
-
-    if (baseRouteConfiguredInLocalStorage) {
-      this.baseRoute = baseRouteConfiguredInLocalStorage;
-    }
-
-    this._initialBaseRoute = this.baseRoute;
-
     const customOpenIdRoute: string = window.localStorage.getItem('openIdRoute');
     const customOpenIdRouteIsSet: boolean = customOpenIdRoute !== null
                                          && customOpenIdRoute !== undefined
@@ -111,11 +93,6 @@ export class ConfigPanel {
       await this._authenticationService.logout();
     }
 
-    const baseRouteChanged: boolean = this.baseRoute !== this._initialBaseRoute;
-    if (baseRouteChanged) {
-      this._updateBaseRoute();
-    }
-
     const authorityChanged: boolean = this.authority !== this._initialAuthority;
     if (authorityChanged) {
       this._updateAuthority();
@@ -134,7 +111,7 @@ export class ConfigPanel {
       }
     }
 
-    if (baseRouteChanged || authorityChanged) {
+    if (authorityChanged) {
       this._router.navigateToRoute('start-page');
     } else {
       this._router.navigateBack();
@@ -155,36 +132,7 @@ export class ConfigPanel {
   }
 
   public cancelUpdate(): void {
-    this._notificationService.showNotification(NotificationType.WARNING, 'Settings dismissed!');
     this._router.navigateBack();
-  }
-
-  @computedFrom('baseRoute')
-  public get isBaseRouteNotSetToInternalProcessEngine(): boolean {
-    return this.internalProcessEngineBaseRoute !== this.baseRoute;
-  }
-
-  public hasInternalProcessEngineBaseRouteSet(): boolean {
-    return this.internalProcessEngineBaseRoute !== null;
-  }
-
-  public setBaseRouteToInternalProcessEngine(): void {
-    this.baseRoute = this.internalProcessEngineBaseRoute;
-  }
-
-  private _updateBaseRoute(): void {
-    this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, this.baseRoute);
-
-    const newBaseRouteIsNotInternalProcessEngineRoute: boolean = this.baseRoute !== this.internalProcessEngineBaseRoute;
-
-    if (newBaseRouteIsNotInternalProcessEngineRoute) {
-      window.localStorage.setItem('useCustomProcessEngine', 'true');
-    } else {
-      window.localStorage.removeItem('useCustomProcessEngine');
-    }
-
-    window.localStorage.setItem('processEngineRoute', this.baseRoute);
-
   }
 
   private _updateAuthority(): void {

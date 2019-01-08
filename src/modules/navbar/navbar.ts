@@ -347,7 +347,7 @@ export class NavBar {
     const noSolutionUriSpecified: boolean = solutionUriFromNavigation === undefined;
 
     const solutionUri: string = (noSolutionUriSpecified)
-      ? window.localStorage.getItem('processEngineRoute')
+      ? window.localStorage.getItem('InternalProcessEngineRoute')
       : solutionUriFromNavigation;
 
     this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
@@ -357,9 +357,26 @@ export class NavBar {
     const diagramIsSet: boolean = diagramName !== undefined;
 
     if (solutionIsSet && diagramIsSet) {
-      this.activeDiagram = await this.activeSolutionEntry
-        .service
-        .loadDiagram(this._router.currentInstruction.params.diagramName);
+
+      const activeSolutionIsSingleDiagramSolution: boolean = solutionUri === 'Single Diagrams';
+      if (activeSolutionIsSingleDiagramSolution) {
+        const persistedDiagrams: Array<IDiagram> = this._solutionService.getSingleDiagrams();
+
+        this.activeDiagram = persistedDiagrams.find((diagram: IDiagram) => {
+          return diagram.name === diagramName;
+        });
+      } else {
+
+        this.activeDiagram = await this.activeSolutionEntry
+          .service
+          .loadDiagram(this._router.currentInstruction.params.diagramName);
+      }
+
+      const diagramNotFound: boolean = this.activeDiagram === undefined;
+
+      if (diagramNotFound) {
+        return;
+      }
 
       this._updateNavbarTitle();
       this._updateNavbarTools();

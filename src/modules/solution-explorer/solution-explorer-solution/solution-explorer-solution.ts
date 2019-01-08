@@ -130,8 +130,12 @@ export class SolutionExplorerSolution {
   @bindable public solutionService: ISolutionExplorerService;
   @bindable public solutionIsSingleDiagrams: boolean;
   @bindable public displayedSolutionEntry: ISolutionEntry;
+  @bindable public fontAwesomeIconClass: string;
   public createNewDiagramInput: HTMLInputElement;
-  public _renameDiagramInput: HTMLInputElement;
+
+  private _renameDiagramInput: HTMLInputElement;
+  private _originalIconClass: string;
+  private _globalSolutionService: ISolutionService;
 
   constructor(
     router: Router,
@@ -146,9 +150,11 @@ export class SolutionExplorerSolution {
     this._validationController = validationController;
     this._diagramCreationService = diagramCreationService;
     this._notificationService = notificationService;
+    this._globalSolutionService = solutionService;
   }
 
   public attached(): void {
+    this._originalIconClass = this.fontAwesomeIconClass;
     this._updateSolutionExplorer();
 
     this._subscriptions = [
@@ -210,13 +216,16 @@ export class SolutionExplorerSolution {
   public async updateSolution(): Promise<void> {
     try {
       this._openedSolution = await this.solutionService.loadSolution();
-
+      this.fontAwesomeIconClass = this._originalIconClass;
     } catch (error) {
       // In the future we can maybe display a small icon indicating the error.
       if (isError(error, UnauthorizedError)) {
         this._notificationService.showNotification(NotificationType.ERROR, 'You need to login to list process models.');
       } else if (isError(error, ForbiddenError)) {
         this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have the required permissions to list process models.');
+      } else {
+        this._openedSolution.diagrams = undefined;
+        this.fontAwesomeIconClass = 'fa-bolt';
       }
     }
   }
@@ -229,6 +238,13 @@ export class SolutionExplorerSolution {
 
     const singleDiagramService: SingleDiagramsSolutionExplorerService = this.solutionService as SingleDiagramsSolutionExplorerService;
     singleDiagramService.closeSingleDiagram(diagram);
+
+    this._globalSolutionService.removeSingleDiagramByUri(diagram.uri);
+
+    const closedDiagramWasActiveDiagram: boolean = this.activeDiagramUri === diagram.uri;
+    if (closedDiagramWasActiveDiagram) {
+      this._router.navigateToRoute('start-page');
+    }
   }
 
   public async deleteDiagram(diagram: IDiagram, event: Event): Promise<void> {

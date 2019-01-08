@@ -1,11 +1,12 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
+import {Redirect, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {Redirect, Router} from 'aurelia-router';
-import {ISolutionEntry, ISolutionService} from '../../contracts';
+import {ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
+import {NotificationService} from '../notification/notification.service';
 import {DiagramDetail} from './diagram-detail/diagram-detail';
 
 export interface IDesignRouteParameters {
@@ -19,7 +20,7 @@ type IEventListener = {
   function: Function,
 };
 
-@inject(EventAggregator, 'SolutionService', Router)
+@inject(EventAggregator, 'SolutionService', Router, 'NotificationService')
 export class Design {
 
   @bindable() public activeDiagram: IDiagram;
@@ -41,6 +42,7 @@ export class Design {
   public diagramDetail: DiagramDetail;
 
   private _eventAggregator: EventAggregator;
+  private _notificationService: NotificationService;
   private _solutionService: ISolutionService;
   private _subscriptions: Array<Subscription>;
   private _router: Router;
@@ -49,10 +51,11 @@ export class Design {
   private _ipcRendererEventListeners: Array<IEventListener> = [];
   private _suppressSaveChangesModal: boolean;
 
-  constructor(eventAggregator: EventAggregator, solutionService: ISolutionService, router: Router) {
+  constructor(eventAggregator: EventAggregator, solutionService: ISolutionService, router: Router, notificationService: NotificationService) {
     this._eventAggregator = eventAggregator;
     this._solutionService = solutionService;
     this._router = router;
+    this._notificationService = notificationService;
   }
 
   public async activate(routeParameters: IDesignRouteParameters): Promise<void> {
@@ -66,13 +69,33 @@ export class Design {
 
     if (solutionIsSet) {
       this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
+
       /**
        * We have to open the solution here again since if we come here after a
        * reload the solution might not be opened yet.
        */
       await this.activeSolutionEntry.service.openSolution(this.activeSolutionEntry.uri, this.activeSolutionEntry.identity);
 
-      this.activeDiagram = diagramNameIsSet ? await this.activeSolutionEntry.service.loadDiagram(routeParameters.diagramName) : undefined;
+      const isSingleDiagram: boolean = this.activeSolutionEntry.uri === 'Single Diagrams';
+
+      if (isSingleDiagram) {
+        const persistedDiagrams: Array<IDiagram> = this._solutionService.getSingleDiagrams();
+
+        this.activeDiagram = persistedDiagrams.find((diagram: IDiagram) => {
+          return diagram.name === routeParameters.diagramName;
+        });
+
+      } else {
+
+        this.activeDiagram = diagramNameIsSet ? await this.activeSolutionEntry.service.loadDiagram(routeParameters.diagramName) : undefined;
+      }
+
+      const diagramNotFound: boolean = this.activeDiagram === undefined;
+
+      if (diagramNotFound) {
+        this._router.navigateToRoute('start-page');
+        this._notificationService.showNotification(NotificationType.INFO, 'Diagram could not be opened!');
+      }
     }
 
     const routeViewIsDetail: boolean = routeParameters.view === 'detail';
@@ -265,4 +288,5 @@ export class Design {
   public cancelQuitting(): void {
     this.showQuitModal = false;
   }
+
 }

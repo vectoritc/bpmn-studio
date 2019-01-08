@@ -34,6 +34,8 @@ export class SolutionExplorerPanel {
   public solutionExplorerList: SolutionExplorerList;
   public solutionInput: HTMLInputElement;
   public singleDiagramInput: HTMLInputElement;
+  public showOpenRemoteSolutionModal: boolean = false;
+  public uriOfRemoteSolution: string;
 
   constructor(
     eventAggregator: EventAggregator,
@@ -52,7 +54,7 @@ export class SolutionExplorerPanel {
   }
 
   public async bind(): Promise<void> {
-    const uriOfProcessEngine: string = await this._getCurrentlyConfiguredProcessEngineRoute();
+    const uriOfProcessEngine: string = window.localStorage.getItem('InternalProcessEngineRoute');
 
     // Open the solution of the currently configured processengine instance on startup.
     await this.solutionExplorerList.openSolution(uriOfProcessEngine);
@@ -65,6 +67,11 @@ export class SolutionExplorerPanel {
       if (entryIsNotConnectedProcessEngine) {
         await this.solutionExplorerList.openSolution(entry.uri);
       }
+
+      const persistedSingleDiagrams: Array<IDiagram> = this._solutionService.getSingleDiagrams();
+      persistedSingleDiagrams.forEach(async(diagram: IDiagram) => {
+        await this.solutionExplorerList.openSingleDiagram(diagram.uri);
+      });
 
     });
 
@@ -84,22 +91,6 @@ export class SolutionExplorerPanel {
       this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
         this.solutionExplorerList.refreshSolutionsOnIdentityChange();
       }),
-      this._eventAggregator.subscribe(environment.events.configPanel.processEngineRouteChanged,
-        async(newRoute: string) => {
-          const oldRoute: string = await this._getCurrentlyConfiguredProcessEngineRoute();
-
-          try {
-            await this.solutionExplorerList.closeSolution(oldRoute);
-          } catch (error) {
-            // ignore
-          }
-          try {
-            await this.solutionExplorerList.openSolution(newRoute, true);
-          } catch (error) {
-            // ignore
-          }
-        },
-      ),
       this._eventAggregator.subscribe(environment.events.diagramDetail.onDiagramDeployed, () => {
         this._refreshSolutions();
       }),
@@ -116,6 +107,26 @@ export class SolutionExplorerPanel {
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
+  }
+
+  public openRemoteSolutionModal(): void {
+    this.showOpenRemoteSolutionModal = true;
+  }
+
+  public closeRemoteSolutionModal(): void {
+    this.showOpenRemoteSolutionModal = false;
+    this.uriOfRemoteSolution = undefined;
+  }
+
+  public async openRemoteSolution(): Promise<void> {
+    try {
+      await this.solutionExplorerList.openSolution(this.uriOfRemoteSolution);
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.ERROR, `Unable to connect to ProcessEngine on: ${this.uriOfRemoteSolution}`);
+    }
+
+    this.uriOfRemoteSolution = undefined;
+    this.showOpenRemoteSolutionModal = false;
   }
 
   /**
@@ -164,6 +175,22 @@ export class SolutionExplorerPanel {
     });
   }
 
+  public get uriIsValid(): boolean {
+    if (this.uriIsEmpty) {
+      return true;
+    }
+
+    const uriStartsWithHttp: boolean = this.uriOfRemoteSolution.toLowerCase().startsWith('http');
+
+    return uriStartsWithHttp;
+  }
+
+  public get uriIsEmpty(): boolean {
+    const uriIsEmtpy: boolean = this.uriOfRemoteSolution === undefined || this.uriOfRemoteSolution.length === 0;
+
+    return uriIsEmtpy;
+  }
+
   public async openSolution(): Promise<void> {
     const canNotReadFromFileSystem: boolean = !this.canReadFromFileSystem();
     if (canNotReadFromFileSystem) {
@@ -203,8 +230,11 @@ export class SolutionExplorerPanel {
 
   private async _openSingleDiagramOrDisplayError(uri: string): Promise<void> {
     try {
+
       const openedDiagram: IDiagram = await this.solutionExplorerList.openSingleDiagram(uri);
       const solution: ISolutionEntry = this.solutionExplorerList.getSingleDiagramSolutionEntry();
+
+      this._solutionService.addSingleDiagram(openedDiagram);
 
       await this._navigateToDetailView(openedDiagram, solution);
 
@@ -279,20 +309,6 @@ export class SolutionExplorerPanel {
       });
 
     await Promise.all(openingPromises);
-  }
-
-  // TODO: Migrate this method once we have a proper config service.
-  private async _getCurrentlyConfiguredProcessEngineRoute(): Promise<string> {
-    const customProcessEngineRoute: string = window.localStorage.getItem('processEngineRoute');
-    const customProcessEngineRouteSet: boolean = customProcessEngineRoute !== ''
-                                                 && customProcessEngineRoute !== null
-                                                 && customProcessEngineRoute !== undefined;
-    if (customProcessEngineRouteSet) {
-      return customProcessEngineRoute;
-    }
-
-    const internalProcessEngineRoute: string = window.localStorage.getItem('InternalProcessEngineRoute');
-    return internalProcessEngineRoute;
   }
 
   // TODO: This method is copied all over the place.
