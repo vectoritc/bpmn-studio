@@ -184,13 +184,18 @@ export class Design {
     const destinationView: string = destinationInstruction.params.view;
     const destinationDiagramName: string = destinationInstruction.params.diagramName;
 
-    const userNavigatesToSameDiagram: boolean =
-      oldView === 'detail' && (destinationView === 'xml' || destinationView === 'diff')
-      && oldDiagramName === destinationDiagramName;
+    const userNavigatesToSameDiagram: boolean = 
+          oldView === 'detail'
+          && (destinationView === 'xml' || destinationView === 'diff')
+          && oldDiagramName === destinationDiagramName;
 
-    const renameThis: boolean = (oldView === 'xml' && destinationView === 'diff') || (oldView === 'diff' && destinationView === 'xml');
+    const renameThis: boolean = 
+          (oldView === 'xml' && destinationView === 'diff') 
+          || (oldView === 'diff' && destinationView === 'xml');
 
-    const modalShouldBeSuppressed: boolean = destinationView === 'detail' && (oldView === 'diff' || oldView === 'xml');
+    const modalShouldBeSuppressed: boolean =
+          destinationView === 'detail' 
+          && (oldView === 'diff' || oldView === 'xml');
 
     if (modalShouldBeSuppressed || userNavigatesToSameDiagram || renameThis) {
       return;
