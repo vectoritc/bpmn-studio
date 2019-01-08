@@ -69,6 +69,7 @@ export class Design {
 
     if (solutionIsSet) {
       this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
+
       /**
        * We have to open the solution here again since if we come here after a
        * reload the solution might not be opened yet.
@@ -77,7 +78,7 @@ export class Design {
 
       this.activeDiagram = diagramNameIsSet ? await this.activeSolutionEntry.service.loadDiagram(routeParameters.diagramName) : undefined;
 
-      const diagramNotFound: boolean = this.activeDiagram === undefined;
+      let diagramNotFound: boolean = this.activeDiagram === undefined;
       const isSingleDiagram: boolean = this.activeSolutionEntry.uri === 'Single Diagrams';
 
       if (diagramNotFound && isSingleDiagram) {
@@ -86,6 +87,8 @@ export class Design {
         this.activeDiagram = persistedDiagrams.find((diagram: IDiagram) => {
           return diagram.name === routeParameters.diagramName;
         });
+
+        diagramNotFound = this.activeDiagram === undefined;
       }
 
       if (diagramNotFound) {
