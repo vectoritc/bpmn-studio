@@ -299,10 +299,7 @@ export class Design {
    */
   private _modalCanBeSuppressed(destinationInstruction: NavigationInstruction): boolean {
     const oldView: string = this._router.currentInstruction.params.view;
-    const oldDiagramName: string = this._router.currentInstruction.params.diagramName;
-
     const destinationView: string = destinationInstruction.params.view;
-    const destinationDiagramName: string = destinationInstruction.params.diagramName;
 
     const navToDiffOrXmlFromDetail: boolean =
       oldView === 'detail'
