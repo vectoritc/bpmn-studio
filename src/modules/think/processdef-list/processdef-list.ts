@@ -5,29 +5,21 @@ import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
-import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/errors_ts';
-import {IIdentity} from '@essential-projects/iam_contracts';
-import {IManagementApi, ProcessModelExecution} from '@process-engine/management_api_contracts';
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 
-import {AuthenticationStateEvent, IAuthenticationService, ISolutionEntry, ISolutionService, NotificationType} from '../../../contracts/index';
+import {AuthenticationStateEvent, ISolutionEntry, ISolutionService} from '../../../contracts/index';
 import environment from '../../../environment';
-import {NotificationService} from '../../notification/notification.service';
 
 interface RouteParameters {
   diagramName?: string;
   solutionUri?: string;
 }
 
-@inject(EventAggregator, Router, 'AuthenticationService', 'ManagementApiClientService', 'NotificationService', 'SolutionService')
+@inject(EventAggregator, Router, 'SolutionService')
 export class ProcessDefList {
 
-  public allProcessModels: Array<ProcessModelExecution.ProcessModel>;
   public allDiagrams: Array<IDiagram>;
 
-  private _authenticationService: IAuthenticationService;
-  private _managementApiClient: IManagementApi;
-  private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _router: Router;
   private _subscriptions: Array<Subscription>;
@@ -37,15 +29,9 @@ export class ProcessDefList {
 
   constructor(eventAggregator: EventAggregator,
               router: Router,
-              authenticationService: IAuthenticationService,
-              managementApiClient: IManagementApi,
-              notificationService: NotificationService,
               solutionService: ISolutionService) {
     this._eventAggregator = eventAggregator;
     this._router = router;
-    this._authenticationService = authenticationService;
-    this._managementApiClient = managementApiClient;
-    this._notificationService = notificationService;
     this._solutionService = solutionService;
 
     this._eventAggregator.publish(environment.events.refreshProcessDefs);
