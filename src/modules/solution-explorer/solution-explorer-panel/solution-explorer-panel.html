@@ -54,8 +54,8 @@
             <h4 class="modal-title">Open Remote Solution</h4>
           </div>
           <div class="modal-body">
-            URI:
-            <input type="text" class="form-control" class.bind="uriIsValid ? '' : 'uri-input--invalid'" value.bind="uriOfRemoteSolution">
+            Location:
+            <input type="text" class="form-control" class.bind="uriIsValid ? '' : 'uri-input--invalid'" value.bind="uriOfRemoteSolution" placeholder="Please provide a URI for the remote ProcessEngine">
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelOpenRemoteSolutionButton" click.delegate="closeRemoteSolutionModal()">Cancel</button>
