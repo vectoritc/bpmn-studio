@@ -135,6 +135,7 @@ export class SolutionExplorerSolution {
 
   private _renameDiagramInput: HTMLInputElement;
   private _originalIconClass: string;
+  private _globalSolutionService: ISolutionService;
 
   constructor(
     router: Router,
@@ -149,6 +150,7 @@ export class SolutionExplorerSolution {
     this._validationController = validationController;
     this._diagramCreationService = diagramCreationService;
     this._notificationService = notificationService;
+    this._globalSolutionService = solutionService;
   }
 
   public attached(): void {
@@ -236,6 +238,8 @@ export class SolutionExplorerSolution {
 
     const singleDiagramService: SingleDiagramsSolutionExplorerService = this.solutionService as SingleDiagramsSolutionExplorerService;
     singleDiagramService.closeSingleDiagram(diagram);
+
+    this._globalSolutionService.removeSingleDiagramByUri(diagram.uri);
   }
 
   public async deleteDiagram(diagram: IDiagram, event: Event): Promise<void> {
