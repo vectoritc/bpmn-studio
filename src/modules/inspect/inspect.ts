@@ -129,18 +129,19 @@ export class Inspect {
 
     const diagramIsSet: boolean = diagramName !== undefined;
     if (diagramIsSet) {
-      this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(diagramName);
+
+      const activeSolutionIsSingleDiagramSolution: boolean = solutionUri === 'Single Diagrams';
+      if (activeSolutionIsSingleDiagramSolution) {
+        const persistedDiagrams: Array<IDiagram> = this._solutionService.getSingleDiagrams();
+
+        this.activeDiagram = persistedDiagrams.find((diagram: IDiagram) => {
+          return diagram.name === diagramName;
+        });
+      } else {
+
+        this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(diagramName);
+      }
     }
 
-    const diagramNotFound: boolean = this.activeDiagram === undefined;
-    const activeSolutionIsSingleDiagramSolution: boolean = solutionUri === 'Single Diagrams';
-
-    if (diagramNotFound && activeSolutionIsSingleDiagramSolution) {
-      const persistedDiagrams: Array<IDiagram> = this._solutionService.getSingleDiagrams();
-
-      this.activeDiagram = persistedDiagrams.find((diagram: IDiagram) => {
-        return diagram.name === diagramName;
-      });
-    }
   }
 }

@@ -76,20 +76,21 @@ export class Design {
        */
       await this.activeSolutionEntry.service.openSolution(this.activeSolutionEntry.uri, this.activeSolutionEntry.identity);
 
-      this.activeDiagram = diagramNameIsSet ? await this.activeSolutionEntry.service.loadDiagram(routeParameters.diagramName) : undefined;
-
-      let diagramNotFound: boolean = this.activeDiagram === undefined;
       const isSingleDiagram: boolean = this.activeSolutionEntry.uri === 'Single Diagrams';
 
-      if (diagramNotFound && isSingleDiagram) {
+      if (isSingleDiagram) {
         const persistedDiagrams: Array<IDiagram> = this._solutionService.getSingleDiagrams();
 
         this.activeDiagram = persistedDiagrams.find((diagram: IDiagram) => {
           return diagram.name === routeParameters.diagramName;
         });
 
-        diagramNotFound = this.activeDiagram === undefined;
+      } else {
+
+        this.activeDiagram = diagramNameIsSet ? await this.activeSolutionEntry.service.loadDiagram(routeParameters.diagramName) : undefined;
       }
+
+      const diagramNotFound: boolean = this.activeDiagram === undefined;
 
       if (diagramNotFound) {
         this._router.navigateToRoute('start-page');

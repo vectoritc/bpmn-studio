@@ -357,22 +357,22 @@ export class NavBar {
     const diagramIsSet: boolean = diagramName !== undefined;
 
     if (solutionIsSet && diagramIsSet) {
-      this.activeDiagram = await this.activeSolutionEntry
-        .service
-        .loadDiagram(this._router.currentInstruction.params.diagramName);
 
-      let diagramNotFound: boolean = this.activeDiagram === undefined;
       const activeSolutionIsSingleDiagramSolution: boolean = solutionUri === 'Single Diagrams';
-
-      if (diagramNotFound && activeSolutionIsSingleDiagramSolution) {
+      if (activeSolutionIsSingleDiagramSolution) {
         const persistedDiagrams: Array<IDiagram> = this._solutionService.getSingleDiagrams();
 
         this.activeDiagram = persistedDiagrams.find((diagram: IDiagram) => {
           return diagram.name === diagramName;
         });
+      } else {
 
-        diagramNotFound = this.activeDiagram === undefined;
+        this.activeDiagram = await this.activeSolutionEntry
+          .service
+          .loadDiagram(this._router.currentInstruction.params.diagramName);
       }
+
+      const diagramNotFound: boolean = this.activeDiagram === undefined;
 
       if (diagramNotFound) {
         return;
