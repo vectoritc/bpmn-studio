@@ -39,7 +39,7 @@ export class Inspect {
     const solutionUri: string = routeParameters.solutionUri;
     const diagramName: string = routeParameters.diagramName;
 
-    await this._updateInspect(diagramName, solutionUri);
+    await this._updateInspectView(diagramName, solutionUri);
 
     const routeViewIsDashboard: boolean = routeParameters.view === 'dashboard';
     const routeViewIsHeatmap: boolean = routeParameters.view === 'heatmap';
@@ -89,7 +89,7 @@ export class Inspect {
         const solutionUri: string = navigationResult.instruction.queryParams.solutionUri;
         const diagramName: string =  navigationResult.instruction.params.diagramName;
 
-        await this._updateInspect(diagramName, solutionUri);
+        await this._updateInspectView(diagramName, solutionUri);
       }),
     ];
   }
@@ -113,7 +113,7 @@ export class Inspect {
     this._eventAggregator.publish(environment.events.inspectCorrelation.showTokenViewer, this.showTokenViewer);
   }
 
-  private async _updateInspect(diagramName: string, solutionUri: string): Promise<void> {
+  private async _updateInspectView(diagramName: string, solutionUri: string): Promise<void> {
     const solutionUriIsNotSet: boolean = solutionUri === undefined;
     if (solutionUriIsNotSet) {
       solutionUri = window.localStorage.getItem('InternalProcessEngineRoute');
