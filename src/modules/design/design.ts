@@ -51,7 +51,6 @@ export class Design {
   private _ipcRenderer: any;
   private _ipcRendererEventListeners: Array<IEventListener> = [];
   private _suppressSaveChangesModal: boolean;
-  private _routerDestinationParams: IDesignRouteParameters;
 
   constructor(eventAggregator: EventAggregator, solutionService: ISolutionService, router: Router, notificationService: NotificationService) {
     this._eventAggregator = eventAggregator;
@@ -167,21 +166,6 @@ export class Design {
     this._subscriptions.forEach((subscription: Subscription) => subscription.dispose());
   }
 
-  /**
-   * We abuse this method to obtain the router target, since asking
-   * the router in the canDeactivate method is kinda broken.
-   *
-   * We also use invoke-lifecycle to cache the current instance of
-   * the design view.
-   *
-   * @param routeParams Current router parameters for the destination route
-   */
-  public determineActivationStrategy(routeParams: IDesignRouteParameters): string {
-    this._routerDestinationParams = routeParams;
-
-    return activationStrategy.invokeLifecycle;
-  }
-
   public toggleDiffDestination(): void {
     this.diffDestinationIsLocal = !this.diffDestinationIsLocal;
     const diffDestination: string = this.diffDestinationIsLocal ? 'local' : 'deployed';
@@ -193,12 +177,12 @@ export class Design {
     this._eventAggregator.publish(environment.events.bpmnio.togglePropertyPanel);
   }
 
-  public async canDeactivate(): Promise<Redirect> {
+  public async canDeactivate(destinationInstruction: NavigationInstruction): Promise<Redirect> {
     const oldView: string = this._router.currentInstruction.params.view;
     const oldDiagramName: string = this._router.currentInstruction.params.diagramName;
 
-    const destinationView: string = this._routerDestinationParams.view;
-    const destinationDiagramName: string = this._routerDestinationParams.diagramName;
+    const destinationView: string = destinationInstruction.params.view;
+    const destinationDiagramName: string = destinationInstruction.params.diagramName;
 
     const userNavigatesToSameDiagram: boolean =
       oldView === 'detail' && (destinationView === 'xml' || destinationView === 'diff')
@@ -206,7 +190,7 @@ export class Design {
 
     const renameThis: boolean = (oldView === 'xml' && destinationView === 'diff') || (oldView === 'diff' && destinationView === 'xml');
 
-    const modalShouldBeSuppressed: boolean = this._routerDestinationParams.view === 'detail' && (oldView === 'diff' || oldView === 'xml');
+    const modalShouldBeSuppressed: boolean = destinationView === 'detail' && (oldView === 'diff' || oldView === 'xml');
 
     if (modalShouldBeSuppressed || userNavigatesToSameDiagram || renameThis) {
       return;
