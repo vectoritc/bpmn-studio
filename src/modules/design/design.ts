@@ -51,7 +51,7 @@ export class Design {
   private _ipcRenderer: any;
   private _ipcRendererEventListeners: Array<IEventListener> = [];
   private _suppressSaveChangesModal: boolean;
-  private _destinationView: string = '';
+  private _routerDestinationParams: IDesignRouteParameters;
 
   constructor(eventAggregator: EventAggregator, solutionService: ISolutionService, router: Router, notificationService: NotificationService) {
     this._eventAggregator = eventAggregator;
@@ -177,7 +177,7 @@ export class Design {
    * @param routeParams Current router parameters for the destination route
    */
   public determineActivationStrategy(routeParams: IDesignRouteParameters): string {
-    this._destinationView = routeParams.view;
+    this._routerDestinationParams = routeParams;
 
     return activationStrategy.invokeLifecycle;
   }
@@ -195,10 +195,20 @@ export class Design {
 
   public async canDeactivate(): Promise<Redirect> {
     const oldView: string = this._router.currentInstruction.params.view;
+    const oldDiagramName: string = this._router.currentInstruction.params.diagramName;
 
-    const modalShouldBeSuppressed: boolean = this._destinationView === 'detail' && (oldView === 'diff' || oldView === 'xml');
+    const destinationView: string = this._routerDestinationParams.view;
+    const destinationDiagramName: string = this._routerDestinationParams.diagramName;
 
-    if (modalShouldBeSuppressed) {
+    const userNavigatesToSameDiagram: boolean =
+      oldView === 'detail' && (destinationView === 'xml' || destinationView === 'diff')
+      && oldDiagramName === destinationDiagramName;
+
+    const renameThis: boolean = (oldView === 'xml' && destinationView === 'diff') || (oldView === 'diff' && destinationView === 'xml');
+
+    const modalShouldBeSuppressed: boolean = this._routerDestinationParams.view === 'detail' && (oldView === 'diff' || oldView === 'xml');
+
+    if (modalShouldBeSuppressed || userNavigatesToSameDiagram || renameThis) {
       return;
     }
 
@@ -214,11 +224,11 @@ export class Design {
   }
 
   public async canDeactivateModal(): Promise<boolean> {
-    if (this._suppressSaveChangesModal) {
+    /*if (this._suppressSaveChangesModal) {
       this._suppressSaveChangesModal = false;
 
       return true;
-    }
+    }*/
 
     const modalResult: Promise<boolean> = new Promise((resolve: Function, reject: Function): boolean | void => {
       if (!this.diagramDetail.diagramHasChanged) {
