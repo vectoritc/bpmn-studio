@@ -1,7 +1,8 @@
 import {inject} from 'aurelia-framework';
 
-import {ISolutionEntry, ISolutionService} from '../contracts';
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
+import {ISolutionEntry, ISolutionService} from '../contracts';
 import {SolutionExplorerServiceFactory} from '../modules/solution-explorer-services/SolutionExplorerServiceFactory';
 
 @inject('SolutionExplorerServiceFactory')
@@ -9,11 +10,14 @@ export class SolutionService implements ISolutionService {
   private _allSolutionEntries: Array<ISolutionEntry> = [];
   private _serviceFactory: SolutionExplorerServiceFactory;
   private _persistedEntries: Array<ISolutionEntry> = [];
+  private _persistedSingleDiagrams: Array<IDiagram> = [];
 
   constructor(serviceFactory: SolutionExplorerServiceFactory) {
     this._serviceFactory = serviceFactory;
 
     const openedSolutions: Array<ISolutionEntry> = this._getSolutionFromLocalStorage();
+    this._persistedSingleDiagrams = this._getSingleDiagramsFromLocalStorage();
+
     const openedSolutionsAreNotSet: boolean = openedSolutions === null;
     if (openedSolutionsAreNotSet) {
       return;
