@@ -241,7 +241,8 @@ export class SolutionExplorerSolution {
 
     this._globalSolutionService.removeSingleDiagramByUri(diagram.uri);
 
-    if (this.activeDiagramUri === diagram.uri) {
+    const closedDiagramWasActiveDiagram: boolean = this.activeDiagramUri === diagram.uri;
+    if (closedDiagramWasActiveDiagram) {
       this._router.navigateToRoute('start-page');
     }
   }
