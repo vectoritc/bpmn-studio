@@ -88,6 +88,36 @@ export class SolutionService implements ISolutionService {
     this._persistSolutionsInLocalStorage();
   }
 
+  /**
+   * SINGLE DIAGRAMS
+   */
+
+  public addSingleDiagram(diagramToAdd: IDiagram): void {
+    const diagramAlreadyPersisted: boolean = this._persistedSingleDiagrams.some((diagram: IDiagram) => {
+      return diagramToAdd.uri === diagram.uri;
+    });
+
+    if (diagramAlreadyPersisted) {
+      return;
+    }
+
+    this._persistedSingleDiagrams.push(diagramToAdd);
+    this._persistSingleDiagramsInLocalStorage();
+  }
+
+  public removeSingleDiagramByUri(diagramUri: string): void {
+    const indexOfDiagramToRemove: number = this._persistedSingleDiagrams.findIndex((diagram: IDiagram) => {
+      return diagram.uri === diagramUri;
+    });
+
+    this._persistedSingleDiagrams.splice(indexOfDiagramToRemove, 1);
+    this._persistSingleDiagramsInLocalStorage();
+  }
+
+  public getSingleDiagrams(): Array<IDiagram> {
+    return this._persistedSingleDiagrams;
+  }
+
   private _persistSolutionsInLocalStorage(): void {
     /**
      * Right now the single diagrams don't get persisted.
