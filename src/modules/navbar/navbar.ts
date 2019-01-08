@@ -361,7 +361,19 @@ export class NavBar {
         .service
         .loadDiagram(this._router.currentInstruction.params.diagramName);
 
-      const diagramNotFound: boolean = this.activeDiagram === undefined;
+      let diagramNotFound: boolean = this.activeDiagram === undefined;
+      const activeSolutionIsSingleDiagramSolution: boolean = solutionUri === 'Single Diagrams';
+
+      if (diagramNotFound && activeSolutionIsSingleDiagramSolution) {
+        const persistedDiagrams: Array<IDiagram> = this._solutionService.getSingleDiagrams();
+
+        this.activeDiagram = persistedDiagrams.find((diagram: IDiagram) => {
+          return diagram.name === diagramName;
+        });
+
+        diagramNotFound = this.activeDiagram === undefined;
+      }
+
       if (diagramNotFound) {
         return;
       }
