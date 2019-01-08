@@ -300,22 +300,16 @@ export class Design {
     const oldView: string = this._router.currentInstruction.params.view;
     const destinationView: string = destinationInstruction.params.view;
 
-    const navToDiffOrXmlFromDetail: boolean =
-      oldView === 'detail'
-      && (destinationView === 'xml' || destinationView === 'diff');
+    const navigatesFromTo: Function = (from: string, to: string): boolean =>
+      (oldView === from && to === destinationView);
 
-    const navFromDiffToXml: boolean = oldView === 'diff' && destinationView === 'xml';
-    const navFromXmlToDiff: boolean = oldView === 'xml' && destinationView === 'diff';
-
-    const navFromDiffXmlToDetail: boolean =
-      (oldView === 'diff' || oldView === 'xml')
-      && destinationView === 'detail';
-
-    const shouldModalBeSuppressed: boolean =
-      navToDiffOrXmlFromDetail
-      || navFromDiffToXml
-      || navFromXmlToDiff
-      || navFromDiffXmlToDetail;
+    const shouldModalBeSuppressed: boolean = navigatesFromTo('diff', 'xml')
+      || navigatesFromTo('diff', 'detail')
+      || navigatesFromTo('xml', 'detail')
+      || navigatesFromTo('xml', 'diff')
+      || navigatesFromTo('diff', 'xml')
+      || navigatesFromTo('detail', 'xml')
+      || navigatesFromTo('detail', 'diff');
 
     return shouldModalBeSuppressed;
   }
