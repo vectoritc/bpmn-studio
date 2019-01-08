@@ -174,8 +174,8 @@ export class Design {
   }
 
   public async canDeactivate(destinationInstruction: NavigationInstruction): Promise<Redirect> {
-    const navigationShouldNotBePossible: boolean = !(await this.canDeactivateModal(destinationInstruction));
-    if (navigationShouldNotBePossible) {
+    const userCanNotDeactivateRoute: boolean = !(await this.canDeactivateModal(destinationInstruction));
+    if (userCanNotDeactivateRoute) {
       /*
       * As suggested in https://github.com/aurelia/router/issues/302, we use
       * the router directly to navigate back, which results in staying on this
