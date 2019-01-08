@@ -174,26 +174,8 @@ export class Design {
   }
 
   public async canDeactivate(destinationInstruction: NavigationInstruction): Promise<Redirect> {
-    const oldView: string = this._router.currentInstruction.params.view;
-    const oldDiagramName: string = this._router.currentInstruction.params.diagramName;
 
-    const destinationView: string = destinationInstruction.params.view;
-    const destinationDiagramName: string = destinationInstruction.params.diagramName;
-
-    const userNavigatesToSameDiagram: boolean = 
-          oldView === 'detail'
-          && (destinationView === 'xml' || destinationView === 'diff')
-          && oldDiagramName === destinationDiagramName;
-
-    const renameThis: boolean = 
-          (oldView === 'xml' && destinationView === 'diff') 
-          || (oldView === 'diff' && destinationView === 'xml');
-
-    const modalShouldBeSuppressed: boolean =
-          destinationView === 'detail' 
-          && (oldView === 'diff' || oldView === 'xml');
-
-    if (modalShouldBeSuppressed || userNavigatesToSameDiagram || renameThis) {
+    if (this._modalCanBeSuppressed(destinationInstruction)) {
       return;
     }
 
@@ -308,4 +290,41 @@ export class Design {
     this.showQuitModal = false;
   }
 
+  /**
+   * This function checks, if the 'Save unsaved changes' Modal can be
+   * suppressed.
+   *
+   * This is the case, if the user basically navigates between the detail,
+   * the xml and the diff view, since the current xml will passed between
+   * these views.
+   *
+   * Therefore, the following routes will suppress the modal:
+   *  * detail  <-->   xml
+   *  * detail  <-->   diff
+   *  * diff    <-->   xml
+   *
+   * @param destinationInstruction The current router instruction which contains
+   * the destination router paremeters.
+   */
+  private _modalCanBeSuppressed(destinationInstruction: NavigationInstruction): boolean {
+    const oldView: string = this._router.currentInstruction.params.view;
+    const oldDiagramName: string = this._router.currentInstruction.params.diagramName;
+
+    const destinationView: string = destinationInstruction.params.view;
+    const destinationDiagramName: string = destinationInstruction.params.diagramName;
+
+    const navToDiffOrXmlFromDetail: boolean =
+      oldView === 'detail'
+      && (destinationView === 'xml' || destinationView === 'diff');
+
+    const navFromToDiffXml: boolean =
+      (oldView === 'xml' && destinationView === 'diff')
+      || (oldView === 'diff' && destinationView === 'xml');
+
+    const navFromDiffXmlToDetail: boolean =
+      destinationView === 'detail'
+      && (oldView === 'diff' || oldView === 'xml');
+
+    return navToDiffOrXmlFromDetail || navFromToDiffXml || navFromDiffXmlToDetail;
+  }
 }
