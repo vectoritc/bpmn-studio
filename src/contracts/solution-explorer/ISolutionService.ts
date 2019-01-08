@@ -26,7 +26,7 @@ export interface ISolutionService {
   getRemoteSolutionEntries(): Array<ISolutionEntry>;
 
   /**
-   * Deletes a specific solution indetified by its id.
+   * Deletes a specific solution indetified by its ID.
    * @param uri The uri of the solution entry to delete.
    */
   removeSolutionEntryByUri(uri: string): void;
@@ -38,7 +38,7 @@ export interface ISolutionService {
   addSingleDiagram(diagram: IDiagram): void;
 
   /**
-   * Removes a single diagram from the service identified by its uri.
+   * Removes a single diagram from the service identified by its URI.
    * @param diagramUri The uri of the diagram to remove.
    */
   removeSingleDiagramByUri(diagramUri: string): void;
