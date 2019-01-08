@@ -17,6 +17,7 @@ import {
   IInternalEvent,
   IKeyboard,
   IModdleElement,
+  IPropertiesElement,
   IShape,
   NotificationType,
 } from '../../../contracts/index';
@@ -374,7 +375,7 @@ export class BpmnIo {
       return field.$type === 'camunda:FormData';
     });
 
-    formFields.forEach((formField: IModdleElement) => {
+    formDataObject.fields.forEach((formField: IModdleElement) => {
       formField.id = `Form_${this._generateRandomId()}`;
     });
 
