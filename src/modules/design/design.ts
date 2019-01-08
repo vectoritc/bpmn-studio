@@ -1,11 +1,10 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
-import {Redirect, Router} from 'aurelia-router';
+import {NavigationInstruction, Redirect, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {activationStrategy, NavigationInstruction, Redirect, RouteConfig, Router} from 'aurelia-router';
-import {ISolutionEntry, ISolutionService, NotificationType} from '../../contracts';
+import {ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 import {DiagramDetail} from './diagram-detail/diagram-detail';
