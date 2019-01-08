@@ -226,8 +226,11 @@ export class SolutionExplorerPanel {
 
   private async _openSingleDiagramOrDisplayError(uri: string): Promise<void> {
     try {
+
       const openedDiagram: IDiagram = await this.solutionExplorerList.openSingleDiagram(uri);
       const solution: ISolutionEntry = this.solutionExplorerList.getSingleDiagramSolutionEntry();
+
+      this._solutionService.addSingleDiagram(openedDiagram);
 
       await this._navigateToDetailView(openedDiagram, solution);
 
