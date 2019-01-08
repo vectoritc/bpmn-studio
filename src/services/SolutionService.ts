@@ -9,7 +9,6 @@ export class SolutionService implements ISolutionService {
   private _allSolutionEntries: Array<ISolutionEntry> = [];
   private _serviceFactory: SolutionExplorerServiceFactory;
   private _persistedEntries: Array<ISolutionEntry> = [];
-  private _internalProcessEngineRoute: string;
 
   constructor(serviceFactory: SolutionExplorerServiceFactory) {
     this._serviceFactory = serviceFactory;
@@ -31,7 +30,6 @@ export class SolutionService implements ISolutionService {
     this._persistedEntries = openedSolutions;
     this._allSolutionEntries = this._allSolutionEntries.concat(openedSolutions);
 
-    this._internalProcessEngineRoute = window.localStorage.getItem('InternalProcessEngineRoute');
   }
 
   public addSolutionEntry(solutionEntry: ISolutionEntry): void {
