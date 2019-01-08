@@ -30,4 +30,21 @@ export interface ISolutionService {
    * @param uri The uri of the solution entry to delete.
    */
   removeSolutionEntryByUri(uri: string): void;
+
+  /**
+   * Adds a single diagram to the service.
+   * @param diagram The diagram to add.
+   */
+  addSingleDiagram(diagram: IDiagram): void;
+
+  /**
+   * Removes a single diagram from the service identified by its uri.
+   * @param diagramUri The uri of the diagram to remove.
+   */
+  removeSingleDiagramByUri(diagramUri: string): void;
+
+  /**
+   * Returns a list of all single diagrams in the service.
+   */
+  getSingleDiagrams(): Array<IDiagram>;
 }
