@@ -7,12 +7,16 @@ import {defaultBpmnColors,
         ElementDistributeOptions,
         IBpmnFunction,
         IBpmnModeler,
+        ICanvas,
         IColorPickerColor,
         IColorPickerSettings,
         IEvent,
         IEventFunction,
         IModdleElement,
-        IModeling, IShape, NotificationType} from '../../../contracts/index';
+        IModeling,
+        IShape,
+        IViewbox,
+        NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 
@@ -78,7 +82,6 @@ export class DiagramToolsRight {
     this.modeler.on('commandStack.elements.move.postExecute', (event: IEvent) => {
       this.colorPickerEnabled = true;
     });
-
   }
 
   public detached(): void {
@@ -136,6 +139,12 @@ export class DiagramToolsRight {
 
   public distributeElementsHorizontally(): void {
     this._distributeElementsHorizontally();
+  }
+
+  public fitDiagramToViewport(): void {
+    const canvas: ICanvas = this.modeler.get('canvas');
+
+    canvas.zoom('fit-viewport');
   }
 
   private _setColor(color: IColorPickerColor): void {

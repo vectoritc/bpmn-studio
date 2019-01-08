@@ -7,6 +7,7 @@ import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {
   IBpmnModeler,
   IBpmnXmlSaveOptions,
+  ICanvas,
   IDiagramExportService,
   IDiagramPrintService,
   IEditorActions,
@@ -292,8 +293,12 @@ export class BpmnIo {
   }
 
   public xmlChanged(newValue: string): void {
-    if (this.modeler !== undefined && this.modeler !== null) {
+    const modelerIsSet: boolean = this.modeler !== undefined && this.modeler !== null;
+
+    if (modelerIsSet) {
       this.modeler.importXML(newValue, (err: Error) => {
+        this._fitDiagramToViewport();
+
         return 0;
       });
 
@@ -355,6 +360,12 @@ export class BpmnIo {
       });
     });
     return returnPromise;
+  }
+
+  private _fitDiagramToViewport(): void {
+    const canvas: ICanvas = this.modeler.get('canvas');
+
+    canvas.zoom('fit-viewport');
   }
 
   private _renameFormFields(event: IInternalEvent): IInternalEvent {
