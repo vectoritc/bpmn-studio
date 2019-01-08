@@ -191,12 +191,6 @@ export class Design {
   }
 
   public async canDeactivateModal(): Promise<boolean> {
-    /*if (this._suppressSaveChangesModal) {
-      this._suppressSaveChangesModal = false;
-
-      return true;
-    }*/
-
     const modalResult: Promise<boolean> = new Promise((resolve: Function, reject: Function): boolean | void => {
       if (!this.diagramDetail.diagramHasChanged) {
         resolve(true);
@@ -298,7 +292,7 @@ export class Design {
    * the xml and the diff view, since the current xml will passed between
    * these views.
    *
-   * Therefore, the following routes will suppress the modal:
+   * Therefore, the following paths will suppress the modal:
    *  * detail  <-->   xml
    *  * detail  <-->   diff
    *  * diff    <-->   xml
