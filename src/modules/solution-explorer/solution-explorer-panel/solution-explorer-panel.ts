@@ -180,7 +180,7 @@ export class SolutionExplorerPanel {
       return true;
     }
 
-    const uriStartsWithHttp: boolean = this.uriOfRemoteSolution.startsWith('http');
+    const uriStartsWithHttp: boolean = this.uriOfRemoteSolution.toLowerCase().startsWith('http');
 
     return uriStartsWithHttp;
   }
