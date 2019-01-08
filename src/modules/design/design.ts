@@ -78,6 +78,16 @@ export class Design {
       this.activeDiagram = diagramNameIsSet ? await this.activeSolutionEntry.service.loadDiagram(routeParameters.diagramName) : undefined;
 
       const diagramNotFound: boolean = this.activeDiagram === undefined;
+      const isSingleDiagram: boolean = this.activeSolutionEntry.uri === 'Single Diagrams';
+
+      if (diagramNotFound && isSingleDiagram) {
+        const persistedDiagrams: Array<IDiagram> = this._solutionService.getSingleDiagrams();
+
+        this.activeDiagram = persistedDiagrams.find((diagram: IDiagram) => {
+          return diagram.name === routeParameters.diagramName;
+        });
+      }
+
       if (diagramNotFound) {
         this._router.navigateToRoute('start-page');
         this._notificationService.showNotification(NotificationType.INFO, 'Diagram could not be opened!');
