@@ -36,6 +36,10 @@ export class SolutionService implements ISolutionService {
 
   }
 
+  /**
+   * SOLUTIONS
+   */
+
   public addSolutionEntry(solutionEntry: ISolutionEntry): void {
 
     const solutionWithSameUri: ISolutionEntry = this._allSolutionEntries.find((entry: ISolutionEntry) => {
@@ -138,4 +142,15 @@ export class SolutionService implements ISolutionService {
     return openedSolutions;
   }
 
+  private _getSingleDiagramsFromLocalStorage(): Array<IDiagram> {
+    const singleDiagrams: Array<IDiagram> = JSON.parse(window.localStorage.getItem('SingleDiagrams'));
+    const singleDigramsPersisted: boolean = singleDiagrams !== null;
+
+    return singleDigramsPersisted ? singleDiagrams : [];
+  }
+
+  private _persistSingleDiagramsInLocalStorage(): void {
+
+    window.localStorage.setItem('SingleDiagrams', JSON.stringify(this._persistedSingleDiagrams));
+  }
 }
