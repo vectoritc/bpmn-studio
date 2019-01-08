@@ -174,8 +174,8 @@ export class Design {
   }
 
   public async canDeactivate(destinationInstruction: NavigationInstruction): Promise<Redirect> {
-    const modalResult: boolean = await this.canDeactivateModal(destinationInstruction);
-    if (!modalResult) {
+    const navigationShouldNotBePossible: boolean = !(await this.canDeactivateModal(destinationInstruction));
+    if (navigationShouldNotBePossible) {
       /*
       * As suggested in https://github.com/aurelia/router/issues/302, we use
       * the router directly to navigate back, which results in staying on this
@@ -295,7 +295,7 @@ export class Design {
    *  * diff    <-->   xml
    *
    * @param destinationInstruction The current router instruction which contains
-   * the destination router paremeters.
+   * the destination router parameters.
    */
   private _modalCanBeSuppressed(destinationInstruction: NavigationInstruction): boolean {
     const oldView: string = this._router.currentInstruction.params.view;
@@ -305,14 +305,19 @@ export class Design {
       oldView === 'detail'
       && (destinationView === 'xml' || destinationView === 'diff');
 
-    const navFromToDiffXml: boolean =
-      (oldView === 'xml' && destinationView === 'diff')
-      || (oldView === 'diff' && destinationView === 'xml');
+    const navFromDiffToXml: boolean = oldView === 'diff' && destinationView === 'xml';
+    const navFromXmlToDiff: boolean = oldView === 'xml' && destinationView === 'diff';
 
     const navFromDiffXmlToDetail: boolean =
-      destinationView === 'detail'
-      && (oldView === 'diff' || oldView === 'xml');
+      (oldView === 'diff' || oldView === 'xml')
+      && destinationView === 'detail';
 
-    return navToDiffOrXmlFromDetail || navFromToDiffXml || navFromDiffXmlToDetail;
+    const shouldModalBeSuppressed: boolean =
+      navToDiffOrXmlFromDetail
+      || navFromDiffToXml
+      || navFromXmlToDiff
+      || navFromDiffXmlToDetail;
+
+    return shouldModalBeSuppressed;
   }
 }
