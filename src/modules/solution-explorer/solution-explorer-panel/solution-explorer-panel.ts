@@ -176,8 +176,7 @@ export class SolutionExplorerPanel {
   }
 
   public get uriIsValid(): boolean {
-    const uriIsEmtpy: boolean = this.uriOfRemoteSolution === undefined || this.uriOfRemoteSolution.length === 0;
-    if (uriIsEmtpy) {
+    if (this.uriIsEmpty) {
       return true;
     }
 
