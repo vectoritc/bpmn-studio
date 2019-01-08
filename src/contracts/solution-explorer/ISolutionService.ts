@@ -11,7 +11,7 @@ export interface ISolutionService {
 
   /**
    * Gets a specific SolutionEntry identified by its URI.
-   * @param uri The uri of the searched SolutionEntry.
+   * @param uri The URI of the searched SolutionEntry.
    */
   getSolutionEntryForUri(uri: string): ISolutionEntry;
 
