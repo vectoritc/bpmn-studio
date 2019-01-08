@@ -240,6 +240,10 @@ export class SolutionExplorerSolution {
     singleDiagramService.closeSingleDiagram(diagram);
 
     this._globalSolutionService.removeSingleDiagramByUri(diagram.uri);
+
+    if (this.activeDiagramUri === diagram.uri) {
+      this._router.navigateToRoute('start-page');
+    }
   }
 
   public async deleteDiagram(diagram: IDiagram, event: Event): Promise<void> {
