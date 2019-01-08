@@ -174,12 +174,7 @@ export class Design {
   }
 
   public async canDeactivate(destinationInstruction: NavigationInstruction): Promise<Redirect> {
-
-    if (this._modalCanBeSuppressed(destinationInstruction)) {
-      return;
-    }
-
-    const modalResult: boolean = await this.canDeactivateModal();
+    const modalResult: boolean = await this.canDeactivateModal(destinationInstruction);
     if (!modalResult) {
       /*
       * As suggested in https://github.com/aurelia/router/issues/302, we use
@@ -190,9 +185,11 @@ export class Design {
     }
   }
 
-  public async canDeactivateModal(): Promise<boolean> {
+  public async canDeactivateModal(currentRouteInstruction: NavigationInstruction): Promise<boolean> {
     const modalResult: Promise<boolean> = new Promise((resolve: Function, reject: Function): boolean | void => {
-      if (!this.diagramDetail.diagramHasChanged) {
+
+      const modalCanBeSuppressed: boolean = !this.diagramDetail.diagramHasChanged || this._modalCanBeSuppressed(currentRouteInstruction);
+      if (modalCanBeSuppressed) {
         resolve(true);
 
         return;
