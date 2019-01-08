@@ -50,7 +50,6 @@ export class Design {
   private _routeView: string;
   private _ipcRenderer: any;
   private _ipcRendererEventListeners: Array<IEventListener> = [];
-  private _suppressSaveChangesModal: boolean;
 
   constructor(eventAggregator: EventAggregator, solutionService: ISolutionService, router: Router, notificationService: NotificationService) {
     this._eventAggregator = eventAggregator;
@@ -152,9 +151,6 @@ export class Design {
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.bpmnio.propertyPanelActive, (showPanel: boolean) => {
         this.propertyPanelShown = showPanel;
-      }),
-      this._eventAggregator.subscribe(environment.events.diagramDetail.suppressUnsavedChangesModal, () => {
-        this._suppressSaveChangesModal = true;
       }),
     ];
 
