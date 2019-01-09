@@ -405,7 +405,13 @@ export class SolutionExplorerSolution {
 
   public getDiagramFolder(diagramUri: string): string {
     const diagramLocation: string = this.getDiagramLocation(diagramUri);
-    const diagramFolder: string = diagramLocation.slice(diagramLocation.lastIndexOf('/'), diagramLocation.length);
+
+    const isWindows: boolean = diagramLocation.lastIndexOf('/') === -1;
+    const indexBeforeFoldername: number = isWindows
+                                      ? diagramLocation.lastIndexOf('\\')
+                                      : diagramLocation.lastIndexOf('/');
+
+    const diagramFolder: string = diagramLocation.slice(indexBeforeFoldername, diagramLocation.length);
 
     return diagramFolder;
   }
