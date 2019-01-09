@@ -397,7 +397,8 @@ export class SolutionExplorerSolution {
     const indexBeforeFilename: number = isWindows
                                       ? diagramUri.lastIndexOf('\\')
                                       : diagramUri.lastIndexOf('/');
-
+const seperator: string = isWindows ? '\\' : '/';
+const indexBeforeFilename: number = diagramUri.lastIndexOf(seperator);
     const diagramLocationWithoutFileName: string = diagramUri.slice(0, indexBeforeFilename);
 
     return diagramLocationWithoutFileName;
