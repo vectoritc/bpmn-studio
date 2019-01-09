@@ -392,6 +392,10 @@ export class SolutionExplorerSolution {
     }
   }
 
+  public getDiagramLocation(diagramUri: string): string {
+    return diagramUri.slice(0, diagramUri.lastIndexOf('/'));
+  }
+
   // TODO: This method is copied all over the place.
   public async navigateToDetailView(diagram: IDiagram): Promise<void> {
     const diagramIsNoRemoteDiagram: boolean = !diagram.uri.startsWith('http');
