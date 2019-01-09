@@ -393,7 +393,12 @@ export class SolutionExplorerSolution {
   }
 
   public getDiagramLocation(diagramUri: string): string {
-    const diagramLocationWithoutFileName: string = diagramUri.slice(0, diagramUri.lastIndexOf('/'));
+    const isWindows: boolean = diagramUri.lastIndexOf('/') === -1;
+    const indexBeforeFilename: number = isWindows
+                                      ? diagramUri.lastIndexOf('\\')
+                                      : diagramUri.lastIndexOf('/');
+
+    const diagramLocationWithoutFileName: string = diagramUri.slice(0, indexBeforeFilename);
 
     return diagramLocationWithoutFileName;
   }
