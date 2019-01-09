@@ -1,6 +1,6 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
-import {Redirect, Router} from 'aurelia-router';
+import {NavigationInstruction, Redirect, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
@@ -49,7 +49,6 @@ export class Design {
   private _routeView: string;
   private _ipcRenderer: any;
   private _ipcRendererEventListeners: Array<IEventListener> = [];
-  private _suppressSaveChangesModal: boolean;
 
   constructor(eventAggregator: EventAggregator, solutionService: ISolutionService, router: Router, notificationService: NotificationService) {
     this._eventAggregator = eventAggregator;
@@ -152,9 +151,6 @@ export class Design {
       this._eventAggregator.subscribe(environment.events.bpmnio.propertyPanelActive, (showPanel: boolean) => {
         this.propertyPanelShown = showPanel;
       }),
-      this._eventAggregator.subscribe(environment.events.diagramDetail.suppressUnsavedChangesModal, () => {
-        this._suppressSaveChangesModal = true;
-      }),
     ];
 
     this._eventAggregator.publish(environment.events.statusBar.showDiagramViewButtons);
@@ -176,10 +172,9 @@ export class Design {
     this._eventAggregator.publish(environment.events.bpmnio.togglePropertyPanel);
   }
 
-  public async canDeactivate(): Promise<Redirect> {
-    const modalResult: boolean = await this.canDeactivateModal();
-
-    if (!modalResult) {
+  public async canDeactivate(destinationInstruction: NavigationInstruction): Promise<Redirect> {
+    const userCanNotDeactivateRoute: boolean = !(await this.canDeactivateModal(destinationInstruction));
+    if (userCanNotDeactivateRoute) {
       /*
       * As suggested in https://github.com/aurelia/router/issues/302, we use
       * the router directly to navigate back, which results in staying on this
@@ -189,15 +184,11 @@ export class Design {
     }
   }
 
-  public async canDeactivateModal(): Promise<boolean> {
-    if (this._suppressSaveChangesModal) {
-      this._suppressSaveChangesModal = false;
-
-      return true;
-    }
-
+  public async canDeactivateModal(currentRouteInstruction: NavigationInstruction): Promise<boolean> {
     const modalResult: Promise<boolean> = new Promise((resolve: Function, reject: Function): boolean | void => {
-      if (!this.diagramDetail.diagramHasChanged) {
+
+      const modalCanBeSuppressed: boolean = !this.diagramDetail.diagramHasChanged || this._modalCanBeSuppressed(currentRouteInstruction);
+      if (modalCanBeSuppressed) {
         resolve(true);
 
         return;
@@ -289,4 +280,33 @@ export class Design {
     this.showQuitModal = false;
   }
 
+  /**
+   * This function checks, if the 'Save unsaved changes' Modal can be
+   * suppressed.
+   *
+   * This is the case, if the user basically navigates between the detail,
+   * the xml and the diff view, since the current xml will passed between
+   * these views.
+   *
+   * Therefore, the following paths will suppress the modal:
+   *  * detail  <-->   xml
+   *  * detail  <-->   diff
+   *  * diff    <-->   xml
+   *
+   * @param destinationInstruction The current router instruction which contains
+   * the destination router parameters.
+   */
+  private _modalCanBeSuppressed(destinationInstruction: NavigationInstruction): boolean {
+    const oldView: string = this._router.currentInstruction.params.view;
+    const destinationView: string = destinationInstruction.params.view;
+
+    const navigatingBetween: Function = (routeA: string, routeB: string): boolean =>
+      (routeA === oldView || routeA === destinationView) && (routeB === oldView || routeB === destinationView);
+
+    const shouldModalBeSuppressed: boolean = navigatingBetween('diff', 'xml')
+      || navigatingBetween('diff', 'detail')
+      || navigatingBetween('xml', 'detail');
+
+    return shouldModalBeSuppressed;
+  }
 }
