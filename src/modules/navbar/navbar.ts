@@ -20,6 +20,7 @@ export class NavBar {
   public solutionExplorerIsActive: boolean = true;
   public showTools: boolean = false;
   public showInspectTools: boolean = false;
+  public showExportOnInspectCorrelation: boolean = false;
   public disableStartButton: boolean = true;
   public validationError: boolean = false;
   public showProcessName: boolean = false;
@@ -256,7 +257,11 @@ export class NavBar {
       return;
     }
 
-    this._eventAggregator.publish(`${environment.events.diagramDetail.exportDiagramAs}:${exportAs}`);
+    const eventToPublish: string = this.showExportOnInspectCorrelation
+                                 ? environment.events.inspect.exportDiagramAs
+                                 : environment.events.diagramDetail.exportDiagramAs;
+
+    this._eventAggregator.publish(`${eventToPublish}:${exportAs}`);
   }
 
   public startProcess(): void {
@@ -319,19 +324,21 @@ export class NavBar {
     if (activeRouteIsDiagramDetail) {
       this.showTools = true;
       this.showInspectTools = false;
+      this.showExportOnInspectCorrelation = false;
 
     } else if (activeRouteIsInspect) {
       const inspectView: string = this._router.currentInstruction.params.view;
       const inspectViewIsDashboard: boolean = inspectView === 'dashboard';
       const inspectViewIsHeatmap: boolean = inspectView === 'heatmap';
       const inspectViewIsInspectCorrelation: boolean = inspectView === 'inspect-correlation';
-
       if (activeSolutionIsRemoteSolution) {
         this.showInspectTools = true;
 
         this.disableDashboardButton = inspectViewIsDashboard;
         this.disableHeatmapButton = inspectViewIsHeatmap;
         this.disableInspectCorrelationButton = inspectViewIsInspectCorrelation;
+
+        this.showExportOnInspectCorrelation = inspectViewIsInspectCorrelation ? inspectViewIsInspectCorrelation : false;
       } else {
         this.showInspectTools = false;
       }

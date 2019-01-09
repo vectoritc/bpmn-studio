@@ -34,8 +34,16 @@
         <button class="button menu-bar__menu-center--action-button" class.bind="validationError ? 'button--disabled' : ''" click.delegate="saveDiagram()" disabled.bind="validationError" title="Save Diagram">
           <i class="fas fa-save"></i>
         </button>
+      </template>
+      <template if.bind="showTools || showExportOnInspectCorrelation">
         <div class="dropdown">
-          <button class="button menu-bar__menu-center--action-button dropdown-toggle" class.bind="validationError ? 'button--disabled' : ''" disabled.bind="validationError" title="Export Diagram" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <button class="button menu-bar__menu-center--action-button dropdown-toggle"
+                  class.bind="showExportOnInspectCorrelation ? 'export_button-inspect_correlation' : ''"
+                  disabled.bind="validationError"
+                  title="Export Diagram"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false">
             <i class="fas fa-upload"></i>
           </button>
           <ul class="dropdown-menu">
@@ -45,6 +53,8 @@
             <li class="dropdown-item" click.delegate="exportDiagram('JPEG')">as JPEG</li>
           </ul>
         </div>
+      </template>
+      <template if.bind="showTools">
         <button class="button menu-bar__menu-center--action-button" class.bind="validationError ? 'button--disabled' : ''" disabled.bind="validationError" click.delegate="printDiagram()" title="Print Diagram">
           <i class="fas fa-print"></i>
         </button>
