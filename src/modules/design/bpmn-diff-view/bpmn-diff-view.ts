@@ -5,7 +5,7 @@ import {bindable} from 'aurelia-framework';
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {diff} from 'bpmn-js-differ';
 
-import { IDiagram } from '@process-engine/solutionexplorer.contracts';
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {
   defaultBpmnColors,
   DiffMode,
@@ -28,7 +28,7 @@ import {
   NotificationType,
 } from '../../../contracts/index';
 import environment from '../../../environment';
-import { SolutionService } from '../../../services/SolutionService';
+import {SolutionService} from '../../../services/SolutionService';
 import {ElementNameService} from '../../elementname/elementname.service';
 import {NotificationService} from '../../notification/notification.service';
 
