@@ -303,9 +303,9 @@ export class Design {
     const navigatingBetween: Function = (routeA: string, routeB: string): boolean =>
       (routeA === oldView || routeA === destinationView) && (routeB === oldView || routeB === destinationView);
 
-    const shouldModalBeSuppressed: boolean = navigatesBetween('diff', 'xml')
-      || navigatesBetween('diff', 'detail')
-      || navigatesBetween('xml', 'detail');
+    const shouldModalBeSuppressed: boolean = navigatingBetween('diff', 'xml')
+      || navigatingBetween('diff', 'detail')
+      || navigatingBetween('xml', 'detail');
 
     return shouldModalBeSuppressed;
   }
