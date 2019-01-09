@@ -164,7 +164,13 @@ export class BpmnDiffView {
       return;
     }
 
-    await this._updateDeployedXml();
+    const updatingDeploydedXmlWasSuccessfull: boolean = await this._updateDeployedXml();
+    if (updatingDeploydedXmlWasSuccessfull) {
+      return;
+    }
+
+    this._diffDestination = 'local';
+    this._setSavedProcessModelAsPreviousXml();
   }
 
   public deployedXmlChanged(): void {
