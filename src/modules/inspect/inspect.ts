@@ -144,11 +144,4 @@ export class Inspect {
     }
   }
 
-  public exportDiagram(exportAs: string): void {
-    if (this.tokenViewerButtonDisabled) {
-      return;
-    }
-
-    this._eventAggregator.publish(`${environment.events.inspect.exportDiagramAs}:${exportAs}`);
-  }
 }
