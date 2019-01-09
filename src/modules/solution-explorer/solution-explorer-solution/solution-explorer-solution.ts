@@ -394,11 +394,9 @@ export class SolutionExplorerSolution {
 
   public getDiagramLocation(diagramUri: string): string {
     const isWindows: boolean = diagramUri.lastIndexOf('/') === -1;
-    const indexBeforeFilename: number = isWindows
-                                      ? diagramUri.lastIndexOf('\\')
-                                      : diagramUri.lastIndexOf('/');
-const seperator: string = isWindows ? '\\' : '/';
-const indexBeforeFilename: number = diagramUri.lastIndexOf(seperator);
+    const seperator: string = isWindows ? '\\' : '/';
+    const indexBeforeFilename: number = diagramUri.lastIndexOf(seperator);
+
     const diagramLocationWithoutFileName: string = diagramUri.slice(0, indexBeforeFilename);
 
     return diagramLocationWithoutFileName;
@@ -407,10 +405,9 @@ const indexBeforeFilename: number = diagramUri.lastIndexOf(seperator);
   public getDiagramFolder(diagramUri: string): string {
     const diagramLocation: string = this.getDiagramLocation(diagramUri);
 
-    const isWindows: boolean = diagramLocation.lastIndexOf('/') === -1;
-    const indexBeforeFoldername: number = isWindows
-                                      ? diagramLocation.lastIndexOf('\\')
-                                      : diagramLocation.lastIndexOf('/');
+    const isWindows: boolean = diagramUri.lastIndexOf('/') === -1;
+    const seperator: string = isWindows ? '\\' : '/';
+    const indexBeforeFoldername: number = diagramUri.lastIndexOf(seperator);
 
     const diagramFolder: string = diagramLocation.slice(indexBeforeFoldername, diagramLocation.length);
 
