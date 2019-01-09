@@ -239,7 +239,11 @@ export class Design {
   public get remoteSolutions(): Array<ISolutionEntry> {
     const remoteSolutions: Array<ISolutionEntry> = this._solutionService.getRemoteSolutionEntries();
 
-    return remoteSolutions;
+    const remoteSolutionsWithoutActive: Array<ISolutionEntry> = remoteSolutions.filter((remoteSolution: ISolutionEntry) => {
+      return remoteSolution.uri !== this.activeSolutionEntry.uri;
+    });
+
+    return remoteSolutionsWithoutActive;
   }
 
   private _showDiff(): void {
