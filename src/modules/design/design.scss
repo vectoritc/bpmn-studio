@@ -21,7 +21,12 @@
   border: none;
 }
 
-.design__diff-destination-button:hover > .button {
+.design__diff-destination-button--disabled {
+  opacity: 0.2 !important;
+}
+
+
+.design__diff-destination-button:hover > .fas {
   opacity: 1;
 }
 
