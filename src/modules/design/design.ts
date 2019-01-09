@@ -1,6 +1,6 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
-import {NavigationInstruction, Redirect, Router} from 'aurelia-router';
+import {NavigationInstruction, Redirect, Router, activationStrategy} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
@@ -159,6 +159,11 @@ export class Design {
   public detached(): void {
     this._eventAggregator.publish(environment.events.statusBar.hideDiagramViewButtons);
     this._subscriptions.forEach((subscription: Subscription) => subscription.dispose());
+  }
+
+  public determineActivationStrategy(): string {
+
+    return activationStrategy.invokeLifecycle;
   }
 
   public toggleDiffDestination(diffDestination: string): void {
