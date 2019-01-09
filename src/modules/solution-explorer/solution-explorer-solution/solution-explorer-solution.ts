@@ -392,6 +392,28 @@ export class SolutionExplorerSolution {
     }
   }
 
+  public getDiagramLocation(diagramUri: string): string {
+    const isWindows: boolean = diagramUri.lastIndexOf('/') === -1;
+    const seperator: string = isWindows ? '\\' : '/';
+    const indexBeforeFilename: number = diagramUri.lastIndexOf(seperator);
+
+    const diagramLocationWithoutFileName: string = diagramUri.slice(0, indexBeforeFilename);
+
+    return diagramLocationWithoutFileName;
+  }
+
+  public getDiagramFolder(diagramUri: string): string {
+    const diagramLocation: string = this.getDiagramLocation(diagramUri);
+
+    const isWindows: boolean = diagramUri.lastIndexOf('/') === -1;
+    const seperator: string = isWindows ? '\\' : '/';
+    const indexBeforeFoldername: number = diagramLocation.lastIndexOf(seperator);
+
+    const diagramFolder: string = diagramLocation.slice(indexBeforeFoldername, diagramLocation.length);
+
+    return diagramFolder;
+  }
+
   // TODO: This method is copied all over the place.
   public async navigateToDetailView(diagram: IDiagram): Promise<void> {
     const diagramIsNoRemoteDiagram: boolean = !diagram.uri.startsWith('http');
