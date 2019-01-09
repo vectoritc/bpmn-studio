@@ -87,6 +87,7 @@ export default {
     },
     inspect: {
       shouldDisableTokenViewerButton: 'inspect:tokenViewerButton:disable',
+      exportDiagramAs: 'inspect:diagram:exportas',
     },
     inspectCorrelation: {
       showInspectPanel: 'inspectCorrelation:inspectPanel:show',

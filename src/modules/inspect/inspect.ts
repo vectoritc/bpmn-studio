@@ -142,6 +142,6 @@ export class Inspect {
         this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(diagramName);
       }
     }
-
   }
+
 }
