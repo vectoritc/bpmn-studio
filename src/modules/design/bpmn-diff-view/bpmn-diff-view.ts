@@ -2,12 +2,10 @@ import {inject} from 'aurelia-dependency-injection';
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable} from 'aurelia-framework';
 
-import {IIdentity} from '@essential-projects/iam_contracts';
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
-import {ManagementApiClientService} from '@process-engine/management_api_client';
-import {ProcessModelExecution} from '@process-engine/management_api_contracts';
 import {diff} from 'bpmn-js-differ';
 
+import { IDiagram } from '@process-engine/solutionexplorer.contracts';
 import {
   defaultBpmnColors,
   DiffMode,
@@ -25,15 +23,18 @@ import {
   IEventFunction,
   IModeling,
   IShape,
+  ISolutionEntry,
   IViewbox,
   NotificationType,
 } from '../../../contracts/index';
 import environment from '../../../environment';
-import {AuthenticationService} from '../../authentication/authentication.service';
+import { SolutionService } from '../../../services/SolutionService';
 import {ElementNameService} from '../../elementname/elementname.service';
 import {NotificationService} from '../../notification/notification.service';
 
-@inject('NotificationService', EventAggregator, 'ManagementApiClientService', AuthenticationService)
+@inject('NotificationService',
+        EventAggregator,
+        'SolutionService')
 export class BpmnDiffView {
 
   @bindable() public currentXml: string;
@@ -71,19 +72,17 @@ export class BpmnDiffView {
   private _elementRegistry: IElementRegistry;
   private _subscriptions: Array<Subscription>;
   private _elementNameService: ElementNameService;
-  private _managementApiService: ManagementApiClientService;
-  private _authenticationService: AuthenticationService;
+  private _diffDestination: string = 'local';
+  private _solutionService: SolutionService;
 
   constructor(notificationService: NotificationService,
               eventAggregator: EventAggregator,
-              managementApiService: ManagementApiClientService,
-              authenticationService: AuthenticationService) {
+              solutionService: SolutionService) {
 
     this._notificationService = notificationService;
     this._eventAggregator = eventAggregator;
     this._elementNameService = new ElementNameService();
-    this._managementApiService = managementApiService;
-    this._authenticationService = authenticationService;
+    this._solutionService = solutionService;
   }
 
   public created(): void {
@@ -110,6 +109,7 @@ export class BpmnDiffView {
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.diffView.changeDiffMode, (diffMode: DiffMode) => {
         this.currentDiffMode = diffMode;
+
         this._updateDiffView();
       }),
 
@@ -117,14 +117,18 @@ export class BpmnDiffView {
         this.showChangeList = !this.showChangeList;
       }),
 
-      this._eventAggregator.subscribe(environment.events.diffView.setDiffDestination, (diffDestination: string) => {
-        const diffLastSavedXml: boolean = diffDestination === 'local';
-        const diffDeployedXml: boolean = diffDestination === 'deployed';
+      this._eventAggregator.subscribe(environment.events.diffView.setDiffDestination, async(diffDestination: string) => {
+        this._diffDestination = diffDestination;
 
+        const diffLastSavedXml: boolean = diffDestination === 'local';
         if (diffLastSavedXml) {
           this._setSavedProcessModelAsPreviousXml();
-        } else if (diffDeployedXml) {
-          this._setDeployedProcessModelAsPreviousXml();
+        } else {
+          const updatingDeployedXmlWasSuccessfull: boolean = await this._updateDeployedXml();
+
+          if (updatingDeployedXmlWasSuccessfull) {
+            this._setDeployedProcessModelAsPreviousXml();
+          }
         }
       }),
     ];
@@ -160,18 +164,7 @@ export class BpmnDiffView {
       return;
     }
 
-    const identity: IIdentity = this._createIdentity();
-    const processModels: ProcessModelExecution.ProcessModelList = await this._managementApiService.getProcessModels(identity);
-
-    const deployedProcessModel: ProcessModelExecution.ProcessModel =
-      processModels.processModels.find((currentProcessModel: ProcessModelExecution.ProcessModel) => {
-        return currentProcessModel.id === this.processModelId;
-    });
-
-    const processModelIsDeployed: boolean = deployedProcessModel !== undefined;
-    this.deployedXml = (processModelIsDeployed)
-                                    ? deployedProcessModel.xml
-                                    : undefined;
+    await this._updateDeployedXml();
   }
 
   public deployedXmlChanged(): void {
@@ -231,6 +224,42 @@ export class BpmnDiffView {
     const changedViewbox: IViewbox = lowerCanvas.viewbox();
     leftCanvas.viewbox(changedViewbox);
     rightCanvas.viewbox(changedViewbox);
+  }
+
+  private async _updateDeployedXml(): Promise<boolean> {
+    const activeSolutionEntry: ISolutionEntry = this._solutionService.getRemoteSolutionEntries().find((remoteSolution: ISolutionEntry): boolean => {
+      return remoteSolution.uri === this._diffDestination;
+    });
+
+    const activeSolutionEntryNotFound: boolean = activeSolutionEntry === undefined;
+    if (activeSolutionEntryNotFound) {
+      return false;
+    }
+
+    const getXmlFromDeployed: () => Promise<IDiagram> = (async(): Promise<IDiagram> => {
+      try {
+        return await activeSolutionEntry.service.loadDiagram(this.processModelId);
+      } catch {
+        return undefined;
+      }
+    });
+
+    const diagram: IDiagram = await getXmlFromDeployed();
+
+    const diagrammIsNotDeployed: boolean = diagram === undefined;
+    this.deployedXml = (diagrammIsNotDeployed)
+                                    ? undefined
+                                    : diagram.xml;
+
+    const diffingAgainstDeployed: boolean =  this._diffDestination !== 'local';
+    if (diagrammIsNotDeployed && diffingAgainstDeployed) {
+      const errorMessage: string = 'Could not diff against the deployed version: This diagram is not deployed to the ProcessEngine.';
+      this._notificationService.showNotification(NotificationType.ERROR, errorMessage);
+
+      return false;
+    }
+
+    return true;
   }
 
   private async _updateXmlChanges(): Promise<void> {
@@ -568,20 +597,5 @@ export class BpmnDiffView {
       stroke: color.border,
       fill: color.fill,
     });
-  }
-
-  /**
-   * Creates an identity using the authentication service.
-   *
-   * TODO: This needs to moved away from here in the future.
-   * @returns IIdentity created Identity
-   */
-  private _createIdentity(): IIdentity {
-    const accessToken: string = this._authenticationService.getAccessToken();
-    const identity: IIdentity = {
-      token: accessToken,
-    };
-
-    return identity;
   }
 }

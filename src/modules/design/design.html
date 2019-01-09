@@ -23,9 +23,15 @@
             <i class="fas fa-sliders-h"></i>
           </button>
         </div>
-        <div if.bind="showDiffDestinationButton" class="design-layout__tool" click.delegate="toggleDiffDestination()">
+        <button type="button" if.bind="showDiffDestinationButton" class="design-layout__tool button dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="button fas fa-database" class.bind="diffDestinationIsLocal ? '' :  'design-layout__tool--active'"
-            title.bind="diffDestinationIsLocal ? 'Show difference to the deployed diagram' : 'Show difference to the last saved diagram'"></i>
+            title.bind="diffDestinationIsLocal ? 'Show difference to the deployed diagram' : 'Show difference to the last saved diagram'">
+          </i>
+          <i class="fas fa-angle-down start-options__icon"></i>
+        </button>
+        <div class="dropdown-menu">
+          <li class="dropdown-item" click.delegate="toggleDiffDestination('local')">Local</li>
+          <li repeat.for="solution of remoteSolutions" class="dropdown-item" click.delegate="toggleDiffDestination(solution.uri)">${solution.uri}</li>
         </div>
       </div>
     </div>

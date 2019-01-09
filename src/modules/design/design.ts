@@ -161,9 +161,8 @@ export class Design {
     this._subscriptions.forEach((subscription: Subscription) => subscription.dispose());
   }
 
-  public toggleDiffDestination(): void {
-    this.diffDestinationIsLocal = !this.diffDestinationIsLocal;
-    const diffDestination: string = this.diffDestinationIsLocal ? 'local' : 'deployed';
+  public toggleDiffDestination(diffDestination: string): void {
+    this.diffDestinationIsLocal = diffDestination === 'local';
 
     this._eventAggregator.publish(environment.events.diffView.setDiffDestination, diffDestination);
   }
@@ -233,6 +232,12 @@ export class Design {
     for (const eventListener of this._ipcRendererEventListeners) {
       this._ipcRenderer.removeListener(eventListener.name, eventListener.function);
     }
+  }
+
+  public get remoteSolutions(): Array<ISolutionEntry> {
+    const remoteSolutions: Array<ISolutionEntry> = this._solutionService.getRemoteSolutionEntries();
+
+    return remoteSolutions;
   }
 
   private _showDiff(): void {
