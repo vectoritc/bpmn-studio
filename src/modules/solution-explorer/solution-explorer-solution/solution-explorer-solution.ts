@@ -393,7 +393,16 @@ export class SolutionExplorerSolution {
   }
 
   public getDiagramLocation(diagramUri: string): string {
-    return diagramUri.slice(0, diagramUri.lastIndexOf('/'));
+    const diagramLocationWithoutFileName: string = diagramUri.slice(0, diagramUri.lastIndexOf('/'));
+
+    return diagramLocationWithoutFileName;
+  }
+
+  public getDiagramFolder(diagramUri: string): string {
+    const diagramLocation: string = this.getDiagramLocation(diagramUri);
+    const diagramFolder: string = diagramLocation.slice(diagramLocation.lastIndexOf('/'), diagramLocation.length);
+
+    return diagramFolder;
   }
 
   // TODO: This method is copied all over the place.
