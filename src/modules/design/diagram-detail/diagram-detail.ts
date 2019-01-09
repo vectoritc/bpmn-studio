@@ -8,6 +8,7 @@ import {ProcessModelExecution} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
 import {
+  IConnection,
   IElementRegistry,
   IExtensionElement,
   IFormElement,
@@ -62,6 +63,7 @@ export class DiagramDetail {
     specialCharacters: /^[._ -]/i,
     german: /^[äöüß]/i,
   };
+  private _clickedOnCustomStart: boolean = false;
 
   constructor(managementApiClient: IManagementApi,
               notificationService: NotificationService,
@@ -122,8 +124,9 @@ export class DiagramDetail {
       this._eventAggregator.subscribe(environment.events.diagramDetail.startProcess, () => {
         this._showStartDialog();
       }),
-      this._eventAggregator.subscribe(environment.events.diagramDetail.startProcessWithOptions, () => {
-        this.showStartWithOptionsModal = true;
+      this._eventAggregator.subscribe(environment.events.diagramDetail.startProcessWithOptions, async() => {
+        this._clickedOnCustomStart = true;
+        await this.showSelectStartEventDialog();
       }),
     ];
   }
@@ -258,16 +261,6 @@ export class DiagramDetail {
 
     const parsedInitialToken: any = this._getInitialTokenValues(this.initialToken);
 
-    await this._updateProcessStartEvents();
-
-    const onlyOneStartEventIsAvailable: boolean = this.processesStartEvents.length === 1;
-
-    if (onlyOneStartEventIsAvailable) {
-      this.selectedStartEventId = this.processesStartEvents[0].id;
-    } else {
-      this.showStartEventModal = true;
-    }
-
     await this.startProcess(parsedInitialToken);
   }
 
@@ -308,6 +301,9 @@ export class DiagramDetail {
           error.message,
         );
     }
+
+    this._clickedOnCustomStart = false;
+
   }
 
   public async saveChangesBeforeStart(): Promise<void> {
@@ -360,7 +356,13 @@ export class DiagramDetail {
 
     if (onlyOneStarteventAvailable) {
       this.selectedStartEventId = this.processesStartEvents[0].id;
-      this.startProcess();
+
+      if (!this._clickedOnCustomStart) {
+        this.startProcess();
+        this._clickedOnCustomStart = false;
+      } else {
+        this.showCustomStartModal();
+      }
 
       return;
     }
@@ -374,6 +376,14 @@ export class DiagramDetail {
     this.showStartEventModal = false;
     this.showStartWithOptionsModal = false;
     this.showRemoteSolutionOnDeployModal = false;
+    this._clickedOnCustomStart = false;
+  }
+
+  public showCustomStartModal(): void {
+    this.showStartEventModal = false;
+    this._getTokenFromStartEventAnnotation();
+
+    this.showStartWithOptionsModal = true;
   }
 
   private _getInitialTokenValues(token: any): any {
@@ -384,6 +394,49 @@ export class DiagramDetail {
       // If an error occurs, the token is something else.
       return token;
     }
+  }
+
+  private _getTokenFromStartEventAnnotation(): void {
+
+    const getTokenFromStartEvent: (startEventId?: string) => string = (startEventId?: string): string => {
+      const elementRegistry: IElementRegistry = this.bpmnio.modeler.get('elementRegistry');
+      const noStartEventId: boolean = startEventId === undefined;
+      let startEvent: IShape;
+
+      if (noStartEventId) {
+        startEvent = elementRegistry.filter((element: IShape) => {
+          return element.type === 'bpmn:StartEvent';
+        })[0];
+      } else {
+        startEvent = elementRegistry.get(startEventId);
+      }
+
+      const startEventAssociations: Array<IConnection> = startEvent.outgoing.filter((connection: IConnection) => {
+        const connectionIsAssociation: boolean = connection.type === 'bpmn:Association';
+
+        return connectionIsAssociation;
+      });
+
+      const associationWithStartToken: IConnection = startEventAssociations.find((connection: IConnection) => {
+        const token: string = connection.target.businessObject.text
+                                                              .trim();
+
+        return token.startsWith('StartToken:');
+      });
+
+      if (associationWithStartToken) {
+        const initialToken: string = associationWithStartToken.target.businessObject.text
+                                                                                    .trim()
+                                                                                    .replace('StartToken:', '')
+                                                                                    .trim();
+
+        return initialToken;
+      }
+
+      return '';
+    };
+
+    this.initialToken = getTokenFromStartEvent(this.selectedStartEventId);
   }
 
   private async _updateProcessStartEvents(): Promise<void> {
@@ -468,7 +521,6 @@ export class DiagramDetail {
    */
   private _dropInvalidFormData(): void {
     const registry: IElementRegistry = this.bpmnio.modeler.get('elementRegistry');
-
     registry.forEach((element: IShape) => {
 
       const elementIsUserTask: boolean = element.type === 'bpmn:UserTask';
