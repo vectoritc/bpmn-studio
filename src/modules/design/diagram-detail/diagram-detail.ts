@@ -398,45 +398,43 @@ export class DiagramDetail {
 
   private _getTokenFromStartEventAnnotation(): void {
 
-    const getTokenFromStartEvent: (startEventId?: string) => string = (startEventId?: string): string => {
-      const elementRegistry: IElementRegistry = this.bpmnio.modeler.get('elementRegistry');
-      const noStartEventId: boolean = startEventId === undefined;
-      let startEvent: IShape;
+    const elementRegistry: IElementRegistry = this.bpmnio.modeler.get('elementRegistry');
+    const noStartEventId: boolean = this.selectedStartEventId === undefined;
+    let startEvent: IShape;
 
-      if (noStartEventId) {
-        startEvent = elementRegistry.filter((element: IShape) => {
-          return element.type === 'bpmn:StartEvent';
-        })[0];
-      } else {
-        startEvent = elementRegistry.get(startEventId);
-      }
+    if (noStartEventId) {
+      startEvent = elementRegistry.filter((element: IShape) => {
+        return element.type === 'bpmn:StartEvent';
+      })[0];
+    } else {
+      startEvent = elementRegistry.get(this.selectedStartEventId);
+    }
 
-      const startEventAssociations: Array<IConnection> = startEvent.outgoing.filter((connection: IConnection) => {
-        const connectionIsAssociation: boolean = connection.type === 'bpmn:Association';
+    const startEventAssociations: Array<IConnection> = startEvent.outgoing.filter((connection: IConnection) => {
+      const connectionIsAssociation: boolean = connection.type === 'bpmn:Association';
 
-        return connectionIsAssociation;
-      });
+      return connectionIsAssociation;
+    });
 
-      const associationWithStartToken: IConnection = startEventAssociations.find((connection: IConnection) => {
-        const token: string = connection.target.businessObject.text
-                                                              .trim();
+    const associationWithStartToken: IConnection = startEventAssociations.find((connection: IConnection) => {
+      const token: string = connection.target.businessObject.text
+                                                            .trim();
 
-        return token.startsWith('StartToken:');
-      });
+      return token.startsWith('StartToken:');
+    });
 
-      if (associationWithStartToken) {
-        const initialToken: string = associationWithStartToken.target.businessObject.text
-                                                                                    .trim()
-                                                                                    .replace('StartToken:', '')
-                                                                                    .trim();
+    if (associationWithStartToken) {
+      const initialToken: string = associationWithStartToken.target.businessObject.text
+                                                                                  .trim()
+                                                                                  .replace('StartToken:', '')
+                                                                                  .trim();
 
-        return initialToken;
-      }
+      this.initialToken = initialToken;
 
-      return '';
-    };
+      return;
+    }
 
-    this.initialToken = getTokenFromStartEvent(this.selectedStartEventId);
+    this.initialToken = '';
   }
 
   private async _updateProcessStartEvents(): Promise<void> {
