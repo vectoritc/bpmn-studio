@@ -72,7 +72,7 @@ export class BpmnDiffView {
   private _elementRegistry: IElementRegistry;
   private _subscriptions: Array<Subscription>;
   private _elementNameService: ElementNameService;
-  private _diffDestination: string = 'local';
+  private _diffDestination: string = 'lastSaved';
   private _solutionService: SolutionService;
 
   constructor(notificationService: NotificationService,
@@ -120,7 +120,7 @@ export class BpmnDiffView {
       this._eventAggregator.subscribe(environment.events.diffView.setDiffDestination, async(diffDestination: string) => {
         this._diffDestination = diffDestination;
 
-        const diffLastSavedXml: boolean = diffDestination === 'local';
+        const diffLastSavedXml: boolean = diffDestination === 'lastSaved';
         if (diffLastSavedXml) {
           this._setSavedProcessModelAsPreviousXml();
         } else {
@@ -169,7 +169,7 @@ export class BpmnDiffView {
       return;
     }
 
-    this._diffDestination = 'local';
+    this._diffDestination = 'lastSaved';
     this._setSavedProcessModelAsPreviousXml();
   }
 
@@ -257,7 +257,7 @@ export class BpmnDiffView {
                                     ? undefined
                                     : diagram.xml;
 
-    const diffingAgainstDeployed: boolean =  this._diffDestination !== 'local';
+    const diffingAgainstDeployed: boolean =  this._diffDestination !== 'lastSaved';
     if (diagrammIsNotDeployed && diffingAgainstDeployed) {
       const errorMessage: string = 'Could not diff against the deployed version: This diagram is not deployed to the ProcessEngine.';
       this._notificationService.showNotification(NotificationType.ERROR, errorMessage);

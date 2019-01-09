@@ -35,7 +35,6 @@ export class Design {
   public propertyPanelShown: boolean;
   public showPropertyPanelButton: boolean = true;
   public showDiffDestinationButton: boolean = false;
-  public diffDestinationIsLocal: boolean = true;
 
   @bindable() public xmlForDiffOld: string;
   @bindable() public xmlForDiffNew: string;
@@ -167,8 +166,6 @@ export class Design {
   }
 
   public toggleDiffDestination(diffDestination: string): void {
-    this.diffDestinationIsLocal = diffDestination === 'local';
-
     this._eventAggregator.publish(environment.events.diffView.setDiffDestination, diffDestination);
   }
 
