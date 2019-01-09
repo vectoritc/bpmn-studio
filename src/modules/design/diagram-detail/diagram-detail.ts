@@ -1,6 +1,6 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
-import {Redirect, Router} from 'aurelia-router';
+import {Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
 import {Event, EventList, IManagementApi} from '@process-engine/management_api_contracts';
