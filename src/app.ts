@@ -216,6 +216,12 @@ export class App {
         name: 'design',
         moduleId: 'modules/design/design',
       },
+      {
+        route: ['think/:view?/diagram/:diagramName?'],
+        title: 'Think',
+        name: 'think',
+        moduleId: 'modules/think/think',
+      },
     ]);
 
     this._openIdConnect.configure(config);
