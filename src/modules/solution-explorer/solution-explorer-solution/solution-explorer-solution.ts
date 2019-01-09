@@ -407,7 +407,7 @@ export class SolutionExplorerSolution {
 
     const isWindows: boolean = diagramUri.lastIndexOf('/') === -1;
     const seperator: string = isWindows ? '\\' : '/';
-    const indexBeforeFoldername: number = diagramUri.lastIndexOf(seperator);
+    const indexBeforeFoldername: number = diagramLocation.lastIndexOf(seperator);
 
     const diagramFolder: string = diagramLocation.slice(indexBeforeFoldername, diagramLocation.length);
 
