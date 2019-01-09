@@ -300,16 +300,12 @@ export class Design {
     const oldView: string = this._router.currentInstruction.params.view;
     const destinationView: string = destinationInstruction.params.view;
 
-    const navigatesFromTo: Function = (from: string, to: string): boolean =>
-      (oldView === from && to === destinationView);
+    const navigatingBetween: Function = (routeA: string, routeB: string): boolean =>
+      (routeA === oldView || routeA === destinationView) && (routeB === oldView || routeB === destinationView);
 
-    const shouldModalBeSuppressed: boolean = navigatesFromTo('diff', 'xml')
-      || navigatesFromTo('diff', 'detail')
-      || navigatesFromTo('xml', 'detail')
-      || navigatesFromTo('xml', 'diff')
-      || navigatesFromTo('diff', 'xml')
-      || navigatesFromTo('detail', 'xml')
-      || navigatesFromTo('detail', 'diff');
+    const shouldModalBeSuppressed: boolean = navigatesBetween('diff', 'xml')
+      || navigatesBetween('diff', 'detail')
+      || navigatesBetween('xml', 'detail');
 
     return shouldModalBeSuppressed;
   }
