@@ -2,7 +2,7 @@
 //       The big issue with this file is: it is the main
 //       anchor for the studio; but it is not apparent why.
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {inject} from 'aurelia-framework';
+import {bindable, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
@@ -19,12 +19,12 @@ interface RouteParameters {
 export class ProcessDefList {
 
   public allDiagrams: Array<IDiagram>;
+  @bindable() public activeSolutionEntry: ISolutionEntry;
 
   private _eventAggregator: EventAggregator;
   private _router: Router;
   private _subscriptions: Array<Subscription>;
   private _getProcessesIntervalId: number;
-  private _activeSolutionEntry: ISolutionEntry;
   private _solutionService: ISolutionService;
 
   constructor(eventAggregator: EventAggregator,
