@@ -427,7 +427,12 @@ export class DiagramDetail {
                                                                                   .replace('StartToken:', '')
                                                                                   .trim();
 
-      this.initialToken = initialToken;
+       /**
+       * This Regex replaces all single quotes with double quotes and adds double
+       * quotes to non quotet keys.
+       * This way we make sure that JSON.parse() can handle the given string.
+       */
+      this.initialToken = initialToken.replace(/(\s*?{\s*?|\s*?,\s*?)(['"])?([a-zA-Z0-9]+)(['"])?:/g, '$1"$3":');
 
       return;
     }
