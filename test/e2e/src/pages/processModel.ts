@@ -15,7 +15,7 @@ export class ProcessModel {
 
   // Define Functions
   public static getProcessModelLink(): string {
-    return '/processdef';
+    return '/think';
   }
 
   public static getProcessModelUrl(): string {
