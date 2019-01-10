@@ -171,7 +171,7 @@ export class SolutionExplorerList {
 
     if (diagramOfClosedSolutionOpen) {
       /**
-       * We only want to close the open Solution, if the User don't have
+       * We only want to close the open Solution, if the user does not have
        * unsaved changes.
        */
       const subscription: Subscription = this._eventAggregator.subscribe('router:navigation:success', () => {
