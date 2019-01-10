@@ -215,6 +215,7 @@ export class SolutionExplorerList {
 
    const uriNotFound: boolean = indexOfSolutionToBeRemoved < 0;
    if (uriNotFound) {
+
       return;
     }
    this._openedSolutions.splice(indexOfSolutionToBeRemoved, 1);
