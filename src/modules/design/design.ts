@@ -69,10 +69,15 @@ export class Design {
     const routerAndInstructionIsNotNull: boolean = this._router !== null
                                                 && this._router.currentInstruction !== null;
 
-    const diagramNamesAreDifferent: boolean = routeParameters.diagramName !== this._router.currentInstruction.params.diagramName;
-    const navigateToAnotherDiagram: boolean = routerAndInstructionIsNotNull
-                                            ? diagramNamesAreDifferent
-                                            : true;
+    const diagramNamesAreDifferent: boolean = routerAndInstructionIsNotNull
+                                              ? routeParameters.diagramName !== this._router.currentInstruction.params.diagramName
+                                              : true;
+
+    const routeFromOtherView: boolean = routerAndInstructionIsNotNull
+                                      ? this._router.currentInstruction.config.name !== 'design'
+                                      : true;
+
+    const navigateToAnotherDiagram: boolean = diagramNamesAreDifferent || routeFromOtherView;
 
     if (solutionIsSet) {
       this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
