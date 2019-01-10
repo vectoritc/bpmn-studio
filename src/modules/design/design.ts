@@ -156,7 +156,7 @@ export class Design {
     return activationStrategy.invokeLifecycle;
   }
 
-  public toggleDiffDestination(diffDestination: string): void {
+  public setDiffDestination(diffDestination: string): void {
     this._eventAggregator.publish(environment.events.diffView.setDiffDestination, diffDestination);
   }
 

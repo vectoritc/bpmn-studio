@@ -28,8 +28,8 @@
           <i class="button fas fa-angle-down start-options__icon" class.bind="remoteSolutions.length < 1 ? 'design__diff-destination-button--disabled' : ''"></i>
         </button>
         <div class="dropdown-menu">
-          <li class="dropdown-item" click.delegate="toggleDiffDestination('lastSaved')">Last saved version</li>
-          <li repeat.for="solution of remoteSolutions" class="dropdown-item" click.delegate="toggleDiffDestination(solution.uri)">${solution.uri}</li>
+          <li class="dropdown-item" click.delegate="setDiffDestination('lastSaved')">Last saved version</li>
+          <li repeat.for="solution of remoteSolutions" class="dropdown-item" click.delegate="setDiffDestination(solution.uri)">${solution.uri}</li>
         </div>
       </div>
     </div>
