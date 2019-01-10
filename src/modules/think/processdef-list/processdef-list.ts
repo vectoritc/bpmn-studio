@@ -10,11 +10,6 @@ import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {AuthenticationStateEvent, ISolutionEntry, ISolutionService} from '../../../contracts/index';
 import environment from '../../../environment';
 
-interface RouteParameters {
-  diagramName?: string;
-  solutionUri?: string;
-}
-
 @inject(EventAggregator, Router, 'SolutionService')
 export class ProcessDefList {
 
@@ -68,13 +63,13 @@ export class ProcessDefList {
 
     this._router.navigateToRoute('design', {
       diagramName: diagramName,
-      solutionUri: this._activeSolutionEntry.uri,
+      solutionUri: this.activeSolutionEntry.uri,
       view: 'detail',
     });
   }
 
   private async _updateDiagramList(): Promise<void> {
-    const solution: ISolution = await this._activeSolutionEntry.service.loadSolution();
+    const solution: ISolution = await this.activeSolutionEntry.service.loadSolution();
     this.allDiagrams = solution.diagrams;
   }
 }
