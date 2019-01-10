@@ -124,5 +124,26 @@
       <div class="modal-backdrop fade in"></div>
     </div>
     <!-- #endregion -->
+    <!-- #region Save Modal for Process Start -->
+    <div show.bind="showSaveForStartModal">
+      <div class="modal show show-modal" tabindex="-1" role="dialog" id="saveModalProcessStart">
+        <div class="modal-dialog save-modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Document Contains Changes</h4>
+            </div>
+            <div class="modal-body">
+              Your process has unsaved changes. Save changes to diagram before starting the process?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelButtonProcessStart" click.delegate="diagramDetail.cancelDialog()">Cancel</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal" id="saveButtonProcessStart" click.delegate="diagramDetail.saveChangesBeforeStart()" >Save and start process</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-backdrop fade in"></div>
+    </div>
+    <!-- #endregion -->
   </div>
 </template>

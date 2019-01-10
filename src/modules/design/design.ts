@@ -288,6 +288,10 @@ export class Design {
     return this.diagramDetail.showRemoteSolutionOnDeployModal;
   }
 
+  public get showSaveForStartModal(): boolean {
+    return this.diagramDetail.showSaveForStartModal;
+  }
+
   private _showDiff(): void {
     this.showDiff = true;
     this.showDetail = false;
