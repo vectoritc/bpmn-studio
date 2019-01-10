@@ -163,7 +163,7 @@ export class SolutionExplorerList {
   public async closeSolution(uri: string): Promise<void> {
 
     /**
-     * If the user closes the Solution which contains the Diagram, which he still
+     * If the user closes the Solution which contains the diagram, which he still
      * has opened, he gets navigated to the start page.
      */
     const currentOpenDiagram: string = this._router.currentInstruction.queryParams.solutionUri;
