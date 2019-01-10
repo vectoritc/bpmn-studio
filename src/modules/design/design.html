@@ -78,5 +78,26 @@
       <div class="modal-backdrop fade in"></div>
     </div>
     <!-- }}} Save On Leave Modal -->
+    <!-- Save Before Deploy Modal {{{ -->
+    <div show.bind="showSaveBeforeDeployModal">
+      <div class="modal show-modal">
+        <div class="modal-dialog save-before-deploy-modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Save Diagram Before Deploying</h4>
+            </div>
+            <div class="modal-body">
+              In order to deploy your diagram, you have to save your recent changes to disk.
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelDeploy" click.delegate="diagramDetail.cancelSaveBeforeDeployModal()"> Cancel</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal" id="saveButtonDeploy" click.delegate="diagramDetail.saveDiagramAndDeploy()"> Save and deploy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-backdrop fade in"></div>
+    </div>
+    <!-- }}} Save Before Deploy Modal -->
   </div>
 </template>

@@ -280,6 +280,10 @@ export class Design {
     return remoteSolutionsWithoutActive;
   }
 
+  public get showSaveBeforeDeployModal(): boolean {
+    return this.diagramDetail.showSaveBeforeDeployModal;
+  }
+
   private _showDiff(): void {
     this.showDiff = true;
     this.showDetail = false;
