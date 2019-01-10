@@ -69,10 +69,15 @@ export class Design {
     const routerAndInstructionIsNotNull: boolean = this._router !== null
                                                 && this._router.currentInstruction !== null;
 
-    const diagramNamesAreDifferent: boolean = routeParameters.diagramName !== this._router.currentInstruction.params.diagramName;
-    const navigateToAnotherDiagram: boolean = routerAndInstructionIsNotNull
-                                            ? diagramNamesAreDifferent
-                                            : true;
+    const diagramNamesAreDifferent: boolean = routerAndInstructionIsNotNull
+                                              ? routeParameters.diagramName !== this._router.currentInstruction.params.diagramName
+                                              : true;
+
+    const routeFromOtherView: boolean = routerAndInstructionIsNotNull
+                                      ? this._router.currentInstruction.config.name !== 'design'
+                                      : true;
+
+    const navigateToAnotherDiagram: boolean = diagramNamesAreDifferent || routeFromOtherView;
 
     if (solutionIsSet) {
       this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
@@ -85,29 +90,28 @@ export class Design {
 
       const isSingleDiagram: boolean = this.activeSolutionEntry.uri === 'Single Diagrams';
 
+      if (isSingleDiagram) {
+        const persistedDiagrams: Array<IDiagram> = this._solutionService.getSingleDiagrams();
+
+        this.activeDiagram = persistedDiagrams.find((diagram: IDiagram) => {
+          return diagram.name === routeParameters.diagramName;
+        });
+
+      } else {
+
+        this.activeDiagram = diagramNameIsSet
+                            ? await this.activeSolutionEntry.service.loadDiagram(routeParameters.diagramName)
+                            : undefined;
+      }
+
+      const diagramNotFound: boolean = this.activeDiagram === undefined;
+
+      if (diagramNotFound) {
+        this._router.navigateToRoute('start-page');
+        this._notificationService.showNotification(NotificationType.INFO, 'Diagram could not be opened!');
+      }
+
       if (navigateToAnotherDiagram) {
-
-        if (isSingleDiagram) {
-          const persistedDiagrams: Array<IDiagram> = this._solutionService.getSingleDiagrams();
-
-          this.activeDiagram = persistedDiagrams.find((diagram: IDiagram) => {
-            return diagram.name === routeParameters.diagramName;
-          });
-
-        } else {
-
-          this.activeDiagram = diagramNameIsSet
-                             ? await this.activeSolutionEntry.service.loadDiagram(routeParameters.diagramName)
-                             : undefined;
-        }
-
-        const diagramNotFound: boolean = this.activeDiagram === undefined;
-
-        if (diagramNotFound) {
-          this._router.navigateToRoute('start-page');
-          this._notificationService.showNotification(NotificationType.INFO, 'Diagram could not be opened!');
-        }
-
         this.xml = this.activeDiagram.xml;
       }
     }

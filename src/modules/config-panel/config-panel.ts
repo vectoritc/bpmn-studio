@@ -31,7 +31,6 @@ export class ConfigPanel {
   private _subscriptions: Array<Subscription>;
   // We use any here, because we need to call private members (see below)
   private _openIdConnect: OpenIdConnect | any;
-  private _initialBaseRoute: string;
   private _initialAuthority: string;
   private _activeSolutionUri: string;
 
