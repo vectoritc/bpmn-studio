@@ -5,7 +5,7 @@ import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {activationStrategy, NavigationInstruction, Redirect, Router} from 'aurelia-router';
+import {Router} from 'aurelia-router';
 
 import {
   IAuthenticationService,
