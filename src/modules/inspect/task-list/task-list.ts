@@ -85,8 +85,6 @@ export class TaskList {
     } else {
       this._getTasks = this._getAllTasks;
     }
-
-    this.updateTasks();
   }
 
   public attached(): void {
@@ -119,6 +117,8 @@ export class TaskList {
         this.updateTasks();
       }),
     ];
+
+    this.updateTasks();
   }
 
   public detached(): void {
