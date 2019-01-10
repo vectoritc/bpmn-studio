@@ -90,29 +90,28 @@ export class Design {
 
       const isSingleDiagram: boolean = this.activeSolutionEntry.uri === 'Single Diagrams';
 
+      if (isSingleDiagram) {
+        const persistedDiagrams: Array<IDiagram> = this._solutionService.getSingleDiagrams();
+
+        this.activeDiagram = persistedDiagrams.find((diagram: IDiagram) => {
+          return diagram.name === routeParameters.diagramName;
+        });
+
+      } else {
+
+        this.activeDiagram = diagramNameIsSet
+                            ? await this.activeSolutionEntry.service.loadDiagram(routeParameters.diagramName)
+                            : undefined;
+      }
+
+      const diagramNotFound: boolean = this.activeDiagram === undefined;
+
+      if (diagramNotFound) {
+        this._router.navigateToRoute('start-page');
+        this._notificationService.showNotification(NotificationType.INFO, 'Diagram could not be opened!');
+      }
+
       if (navigateToAnotherDiagram) {
-
-        if (isSingleDiagram) {
-          const persistedDiagrams: Array<IDiagram> = this._solutionService.getSingleDiagrams();
-
-          this.activeDiagram = persistedDiagrams.find((diagram: IDiagram) => {
-            return diagram.name === routeParameters.diagramName;
-          });
-
-        } else {
-
-          this.activeDiagram = diagramNameIsSet
-                             ? await this.activeSolutionEntry.service.loadDiagram(routeParameters.diagramName)
-                             : undefined;
-        }
-
-        const diagramNotFound: boolean = this.activeDiagram === undefined;
-
-        if (diagramNotFound) {
-          this._router.navigateToRoute('start-page');
-          this._notificationService.showNotification(NotificationType.INFO, 'Diagram could not be opened!');
-        }
-
         this.xml = this.activeDiagram.xml;
       }
     }
