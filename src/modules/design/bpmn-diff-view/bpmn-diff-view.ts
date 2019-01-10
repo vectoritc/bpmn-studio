@@ -257,7 +257,7 @@ export class BpmnDiffView {
                                     ? undefined
                                     : diagram.xml;
 
-    const diffingAgainstDeployed: boolean =  this._diffDestination !== 'lastSaved';
+    const diffingAgainstDeployed: boolean = this._diffDestination !== 'lastSaved';
     if (diagrammIsNotDeployed && diffingAgainstDeployed) {
       const errorMessage: string = 'Could not diff against the deployed version: This diagram is not deployed to the ProcessEngine.';
       this._notificationService.showNotification(NotificationType.ERROR, errorMessage);
