@@ -19,6 +19,7 @@
   margin: auto;
   background: inherit;
   border: none;
+  opacity: 0.5;
 }
 
 .design__diff-destination-button--disabled {
@@ -26,7 +27,7 @@
 }
 
 
-.design__diff-destination-button:hover > .fas {
+.design__diff-destination-button:hover {
   opacity: 1;
 }
 
