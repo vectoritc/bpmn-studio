@@ -14,13 +14,24 @@ export interface IThinkRouteParameters {
 export class Think {
   public showDiagramList: boolean = false;
 
+  public activeSolutionEntry: ISolutionEntry;
+
   private _solutionService: ISolutionService;
 
   constructor(solutionService: ISolutionService) {
     this._solutionService = solutionService;
   }
 
-  public activate(routeParameters: IThinkRouteParameters): void {
+  public async activate(routeParameters: IThinkRouteParameters): Promise<void> {
     this.showDiagramList = true;
+
+    const solutionUriIsSet: boolean = routeParameters.solutionUri !== undefined;
+
+    const solutionUri: string = solutionUriIsSet
+                              ? routeParameters.solutionUri
+                              : window.localStorage.getItem('InternalProcessEngineRoute');
+
+    this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
+    await this.activeSolutionEntry.service.openSolution(this.activeSolutionEntry.uri, this.activeSolutionEntry.identity);
   }
 }
