@@ -26,7 +26,7 @@ export class Design {
   @bindable() public activeDiagram: IDiagram;
   @bindable() public activeSolutionEntry: ISolutionEntry;
 
-  @bindable({ defaultBindingMode: bindingMode.oneWay }) public xml: string;
+  @bindable({defaultBindingMode: bindingMode.oneWay}) public xml: string;
 
   public showQuitModal: boolean;
   public showLeaveModal: boolean;
