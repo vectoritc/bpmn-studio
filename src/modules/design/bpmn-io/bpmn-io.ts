@@ -185,7 +185,7 @@ export class BpmnIo {
             .loadXML(xmlToExport)
             .asBpmn()
             .export(exportName);
-        } catch (error) {
+        } catch {
           this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
         }
       }),
