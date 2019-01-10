@@ -1,5 +1,8 @@
+import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
+import {inject} from 'aurelia-framework';
+import {Router} from 'aurelia-router';
+
 import {isError, NotFoundError, UnauthorizedError} from '@essential-projects/errors_ts';
-import {IIdentity} from '@essential-projects/iam_contracts';
 import {
   Correlation,
   IManagementApi,
@@ -9,12 +12,11 @@ import {
   UserTask,
   UserTaskList,
 } from '@process-engine/management_api_contracts';
-import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {inject} from 'aurelia-framework';
-import {Router} from 'aurelia-router';
+
 import {
   AuthenticationStateEvent,
-  IAuthenticationService,
+  ISolutionEntry,
+  ISolutionService,
   NotificationType,
 } from '../../../contracts/index';
 import environment from '../../../environment';
@@ -35,7 +37,7 @@ interface IManualTaskWithProcessModel {
   processModel: ProcessModelExecution.ProcessModel;
 }
 
-@inject(EventAggregator, 'ManagementApiClientService', Router, 'NotificationService', 'AuthenticationService')
+@inject(EventAggregator, 'ManagementApiClientService', Router, 'NotificationService', 'SolutionService')
 export class TaskList {
 
   public currentPage: number = 0;
@@ -43,13 +45,14 @@ export class TaskList {
   public totalItems: number;
 
   public successfullyRequested: boolean = false;
-  public activeSolutionUri: string;
+  public activeSolutionEntry: ISolutionEntry;
 
+  private _activeSolutionUri: string;
   private _eventAggregator: EventAggregator;
   private _managementApiService: IManagementApi;
   private _router: Router;
   private _notificationService: NotificationService;
-  private _authenticationService: IAuthenticationService;
+  private _solutionService: ISolutionService;
 
   private _subscriptions: Array<Subscription>;
   private _userTasks: Array<IUserTaskWithProcessModel>;
@@ -60,13 +63,13 @@ export class TaskList {
               managementApiService: IManagementApi,
               router: Router,
               notificationService: NotificationService,
-              authenticationService: IAuthenticationService,
+              solutionService: ISolutionService,
   ) {
     this._eventAggregator = eventAggregator;
     this._managementApiService = managementApiService;
     this._router = router;
     this._notificationService = notificationService;
-    this._authenticationService = authenticationService;
+    this._solutionService = solutionService;
   }
 
   public initializeTaskList(routeParameters: ITaskListRouteParameters): void {
@@ -89,7 +92,15 @@ export class TaskList {
   public attached(): void {
     const getTasksIsUndefined: boolean = this._getTasks === undefined;
 
-    this.activeSolutionUri = this._router.currentInstruction.queryParams.solutionUri;
+    this._activeSolutionUri = this._router.currentInstruction.queryParams.solutionUri;
+
+    const activeSolutionUriIsNotSet: boolean = this._activeSolutionUri === undefined;
+
+    if (activeSolutionUriIsNotSet) {
+      this._activeSolutionUri = window.localStorage.getItem('InternalProcessEngineRoute');
+    }
+
+    this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(this._activeSolutionUri);
 
     if (getTasksIsUndefined) {
       this._getTasks = this._getAllTasks;
@@ -135,7 +146,7 @@ export class TaskList {
 
     this._router.navigateToRoute('task-dynamic-ui', {
       diagramName: processModelId,
-      solutionUri: this.activeSolutionUri,
+      solutionUri: this.activeSolutionEntry.uri,
       correlationId: correlationId,
       taskId: taskId,
     });
