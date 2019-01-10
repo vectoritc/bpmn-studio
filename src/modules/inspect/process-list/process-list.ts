@@ -1,5 +1,6 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject, observable} from 'aurelia-framework';
+import {Router} from 'aurelia-router';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
 import {Correlation, CorrelationProcessModel, IManagementApi} from '@process-engine/management_api_contracts';
@@ -13,7 +14,7 @@ import {
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 
-@inject('ManagementApiClientService', EventAggregator, 'NotificationService', 'SolutionService')
+@inject('ManagementApiClientService', EventAggregator, 'NotificationService', 'SolutionService', Router)
 export class ProcessList {
 
   @observable public currentPage: number = 0;
@@ -28,8 +29,8 @@ export class ProcessList {
   private _eventAggregator: EventAggregator;
   private _notificationService: NotificationService;
   private _solutionService: ISolutionService;
-  private _activeDiagramName: string;
   private _activeSolutionUri: string;
+  private _router: Router;
 
   private _getCorrelationsIntervalId: number;
   private _getCorrelations: () => Promise<Array<Correlation>>;
@@ -39,11 +40,13 @@ export class ProcessList {
   constructor(managementApiService: IManagementApi,
               eventAggregator: EventAggregator,
               notificationService: NotificationService,
-              solutionService: ISolutionService) {
+              solutionService: ISolutionService,
+              router: Router) {
     this._managementApiService = managementApiService;
     this._eventAggregator = eventAggregator;
     this._notificationService = notificationService;
     this._solutionService = solutionService;
+    this._router = router;
   }
 
   public async currentPageChanged(newValue: number, oldValue: number): Promise<void> {
@@ -55,26 +58,12 @@ export class ProcessList {
     }
   }
 
-  /**
-   * This method only gets called if this component is navigated to directly.
-   * If we bind it somewhere via show.bind this method will not be called.
-   */
-  public activate(routeParameters: IProcessListRouteParameters): void {
-    this._activeSolutionUri = routeParameters.solutionUri;
-    this._activeDiagramName = routeParameters.diagramName;
-
-    const diagramNameIsNotSet: boolean = this._activeDiagramName === undefined;
-    if (diagramNameIsNotSet) {
-      this._getCorrelations = this.getAllActiveCorrelations;
-    } else {
-      this._getCorrelations = (): Promise<Array<Correlation>> => {
-        return this.getCorrelationsForProcessModel(this._activeDiagramName);
-      };
-    }
-  }
-
   public async attached(): Promise<void> {
+
+    this._activeSolutionUri = this._router.currentInstruction.queryParams.solutionUri;
+
     const activeSolutionUriIsNotSet: boolean = this._activeSolutionUri === undefined;
+
     if (activeSolutionUriIsNotSet) {
       this._activeSolutionUri = window.localStorage.getItem('InternalProcessEngineRoute');
     }
