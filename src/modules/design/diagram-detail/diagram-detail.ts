@@ -424,7 +424,6 @@ export class DiagramDetail {
 
     if (associationWithStartToken) {
       const initialToken: string = associationWithStartToken.target.businessObject.text
-                                                                                  .trim()
                                                                                   .replace('StartToken:', '')
                                                                                   .trim();
 
