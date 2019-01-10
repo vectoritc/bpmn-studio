@@ -68,11 +68,11 @@ export class SolutionExplorerPanel {
         await this.solutionExplorerList.openSolution(entry.uri);
       }
 
-      const persistedSingleDiagrams: Array<IDiagram> = this._solutionService.getSingleDiagrams();
-      persistedSingleDiagrams.forEach(async(diagram: IDiagram) => {
-        await this.solutionExplorerList.openSingleDiagram(diagram.uri);
-      });
+    });
 
+    const persistedSingleDiagrams: Array<IDiagram> = this._solutionService.getSingleDiagrams();
+    persistedSingleDiagrams.forEach(async(diagram: IDiagram) => {
+      await this.solutionExplorerList.openSingleDiagram(diagram.uri);
     });
 
   }
