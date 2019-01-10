@@ -360,6 +360,8 @@ export class BpmnIo {
       this.modeler.saveXML(xmlSaveOptions, (error: Error, result: string) => {
         if (error) {
           reject(error);
+
+          return;
         }
 
         resolve(result);
