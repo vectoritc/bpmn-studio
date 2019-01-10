@@ -99,5 +99,30 @@
       <div class="modal-backdrop fade in"></div>
     </div>
     <!-- }}} Save Before Deploy Modal -->
+    <!-- #region Remote Solution Modal for Process Deploy -->
+    <div show.bind="showRemoteSolutionOnDeployModal">
+      <div class="modal show show-modal" tabindex="-1" role="dialog" id="remoteSolutionOnDeployModal">
+        <div class="modal-dialog remote-solution-deploy-modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Multiple Connected Engines Found</h4>
+            </div>
+            <div class="modal-body">
+              Choose a remote engine; the diagram will be deployed to your selection.
+              <select class="form-control" value.bind="selectedRemoteSolution">
+                <option repeat.for="entry of remoteSolutions" model.bind="entry">${entry.uri}</option>
+              </select>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelButtonRemoteSolutionsOnDeploy" click.delegate="diagramDetail.cancelDialog()">Cancel</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal" id="saveButtonRemoteSolutionsOnDeploy" click.delegate="diagramDetail.uploadProcess(selectedRemoteSolution)" >Deploy Process</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-backdrop fade in"></div>
+    </div>
+    <!-- #endregion -->
   </div>
 </template>

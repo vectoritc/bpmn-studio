@@ -284,6 +284,10 @@ export class Design {
     return this.diagramDetail.showSaveBeforeDeployModal;
   }
 
+  public get showRemoteSolutionOnDeployModal(): boolean {
+    return this.diagramDetail.showRemoteSolutionOnDeployModal;
+  }
+
   private _showDiff(): void {
     this.showDiff = true;
     this.showDetail = false;
