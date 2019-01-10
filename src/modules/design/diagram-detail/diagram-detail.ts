@@ -1,5 +1,5 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {bindable, bindingMode, inject, observable} from 'aurelia-framework';
+import {bindable, bindingMode, computedFrom, inject, observable} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
@@ -167,6 +167,11 @@ export class DiagramDetail {
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
+  }
+
+  @computedFrom('activeDiagram.uri')
+  public get activeDiagramUri(): string {
+    return this.activeDiagram.uri;
   }
 
   /**

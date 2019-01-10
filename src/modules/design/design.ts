@@ -143,10 +143,6 @@ export class Design {
   }
 
   public async attached(): Promise<void> {
-    setTimeout(async() => {
-      this.xmlForDiff = await this.diagramDetail.getXML();
-    }, 0);
-
     const routeViewIsDiff: boolean = this._routeView === 'diff';
     if (routeViewIsDiff) {
       this._showDiff();

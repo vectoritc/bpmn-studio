@@ -36,7 +36,8 @@ export class BpmnIo {
   public resizeButton: HTMLButtonElement;
   public canvasModel: HTMLDivElement;
   public propertyPanel: HTMLElement;
-  @bindable({changeHandler: 'xmlChanged', defaultBindingMode: bindingMode.twoWay}) public xml: string;
+  @bindable({changeHandler: 'diagramChanged'}) public diagramUri: string;
+  @bindable({defaultBindingMode: bindingMode.twoWay}) public xml: string;
   @bindable({changeHandler: 'nameChanged'}) public name: string;
   @bindable() public openedFromProcessEngine: boolean = true;
 
@@ -293,17 +294,20 @@ export class BpmnIo {
     this.savedXml = await this.getXML();
   }
 
-  public xmlChanged(newValue: string): void {
-    const modelerIsSet: boolean = this.modeler !== undefined && this.modeler !== null;
+  public diagramChanged(): void {
+    // This is needed to make sure the xml was already binded
+    setTimeout(() => {
+      const modelerIsSet: boolean = this.modeler !== undefined && this.modeler !== null;
+      if (modelerIsSet) {
+        this.modeler.importXML(this.xml, (err: Error) => {
+          this._fitDiagramToViewport();
 
-    if (modelerIsSet) {
-      this.modeler.importXML(newValue, (err: Error) => {
-        this._fitDiagramToViewport();
+          return 0;
+        });
 
-        return 0;
-      });
+      }
 
-    }
+    }, 0);
   }
 
   public nameChanged(newValue: string): void {
