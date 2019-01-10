@@ -1,5 +1,5 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {bindable, inject, observable} from 'aurelia-framework';
+import {bindable, bindingMode, computedFrom, inject, observable} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
@@ -33,8 +33,9 @@ export class DiagramDetail {
 
   @bindable() public activeDiagram: IDiagram;
   @bindable() public activeSolutionEntry: ISolutionEntry;
-  @observable({ changeHandler: 'correlationChanged'}) public customCorrelationId: string;
-  @observable({ changeHandler: 'diagramHasChangedChanged'}) public diagramHasChanged: boolean;
+  @observable({changeHandler: 'correlationChanged'}) public customCorrelationId: string;
+  @observable({changeHandler: 'diagramHasChangedChanged'}) public diagramHasChanged: boolean;
+  @bindable({defaultBindingMode: bindingMode.oneWay}) public xml: string;
   public bpmnio: BpmnIo;
   public showUnsavedChangesModal: boolean = false;
   public showSaveForStartModal: boolean = false;
@@ -165,6 +166,11 @@ export class DiagramDetail {
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
+  }
+
+  @computedFrom('activeDiagram.uri')
+  public get activeDiagramUri(): string {
+    return this.activeDiagram.uri;
   }
 
   /**

@@ -1,5 +1,5 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {bindable, inject} from 'aurelia-framework';
+import {bindable, bindingMode, inject} from 'aurelia-framework';
 import {activationStrategy, NavigationInstruction, Redirect, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
@@ -25,6 +25,8 @@ export class Design {
 
   @bindable() public activeDiagram: IDiagram;
   @bindable() public activeSolutionEntry: ISolutionEntry;
+
+  @bindable({defaultBindingMode: bindingMode.oneWay}) public xml: string;
 
   public showQuitModal: boolean;
   public showLeaveModal: boolean;
@@ -64,6 +66,14 @@ export class Design {
     const solutionIsSet: boolean = routeParameters.solutionUri !== undefined;
     const diagramNameIsSet: boolean = routeParameters.diagramName !== undefined;
 
+    const routerAndInstructionIsNotNull: boolean = this._router !== null
+                                                && this._router.currentInstruction !== null;
+
+    const diagramNamesAreDifferent: boolean = routeParameters.diagramName !== this._router.currentInstruction.params.diagramName;
+    const navigateToAnotherDiagram: boolean = routerAndInstructionIsNotNull
+                                            ? diagramNamesAreDifferent
+                                            : true;
+
     if (solutionIsSet) {
       this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
 
@@ -75,23 +85,30 @@ export class Design {
 
       const isSingleDiagram: boolean = this.activeSolutionEntry.uri === 'Single Diagrams';
 
-      if (isSingleDiagram) {
-        const persistedDiagrams: Array<IDiagram> = this._solutionService.getSingleDiagrams();
+      if (navigateToAnotherDiagram) {
 
-        this.activeDiagram = persistedDiagrams.find((diagram: IDiagram) => {
-          return diagram.name === routeParameters.diagramName;
-        });
+        if (isSingleDiagram) {
+          const persistedDiagrams: Array<IDiagram> = this._solutionService.getSingleDiagrams();
 
-      } else {
+          this.activeDiagram = persistedDiagrams.find((diagram: IDiagram) => {
+            return diagram.name === routeParameters.diagramName;
+          });
 
-        this.activeDiagram = diagramNameIsSet ? await this.activeSolutionEntry.service.loadDiagram(routeParameters.diagramName) : undefined;
-      }
+        } else {
 
-      const diagramNotFound: boolean = this.activeDiagram === undefined;
+          this.activeDiagram = diagramNameIsSet
+                             ? await this.activeSolutionEntry.service.loadDiagram(routeParameters.diagramName)
+                             : undefined;
+        }
 
-      if (diagramNotFound) {
-        this._router.navigateToRoute('start-page');
-        this._notificationService.showNotification(NotificationType.INFO, 'Diagram could not be opened!');
+        const diagramNotFound: boolean = this.activeDiagram === undefined;
+
+        if (diagramNotFound) {
+          this._router.navigateToRoute('start-page');
+          this._notificationService.showNotification(NotificationType.INFO, 'Diagram could not be opened!');
+        }
+
+        this.xml = this.activeDiagram.xml;
       }
     }
 
@@ -128,10 +145,6 @@ export class Design {
   }
 
   public async attached(): Promise<void> {
-    setTimeout(async() => {
-      this.xmlForDiff = await this.diagramDetail.getXML();
-    }, 0);
-
     const routeViewIsDiff: boolean = this._routeView === 'diff';
     if (routeViewIsDiff) {
       this._showDiff();

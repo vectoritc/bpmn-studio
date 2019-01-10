@@ -1,6 +1,6 @@
 
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {bindable, inject, observable} from 'aurelia-framework';
+import {bindable, bindingMode, inject, observable} from 'aurelia-framework';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 
@@ -36,11 +36,10 @@ export class BpmnIo {
   public resizeButton: HTMLButtonElement;
   public canvasModel: HTMLDivElement;
   public propertyPanel: HTMLElement;
-
-  @bindable({changeHandler: 'xmlChanged'}) public xml: string;
+  @bindable({changeHandler: 'diagramChanged'}) public diagramUri: string;
+  @bindable({defaultBindingMode: bindingMode.twoWay}) public xml: string;
   @bindable({changeHandler: 'nameChanged'}) public name: string;
   @bindable() public openedFromProcessEngine: boolean = true;
-
   @observable public propertyPanelWidth: number;
 
   public savedXml: string;
@@ -109,8 +108,9 @@ export class BpmnIo {
      */
     const handlerPriority: number = 1000;
 
-    this.modeler.on('commandStack.changed', () => {
+    this.modeler.on('commandStack.changed', async() => {
       this._eventAggregator.publish(environment.events.diagramChange);
+      this.xml = await this.getXML();
     }, handlerPriority);
 
     this.modeler.on(['shape.added', 'shape.removed'], (element: IEvent) => {
@@ -179,11 +179,12 @@ export class BpmnIo {
         try {
           const exportName: string = `${this.name}.bpmn`;
           const xmlToExport: string = await this.getXML();
+
           await this._diagramExportService
             .loadXML(xmlToExport)
             .asBpmn()
             .export(exportName);
-        } catch (error) {
+        } catch {
           this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
         }
       }),
@@ -293,17 +294,20 @@ export class BpmnIo {
     this.savedXml = await this.getXML();
   }
 
-  public xmlChanged(newValue: string): void {
-    const modelerIsSet: boolean = this.modeler !== undefined && this.modeler !== null;
+  public diagramChanged(): void {
+    // This is needed to make sure the xml was already binded
+    setTimeout(() => {
+      const modelerIsSet: boolean = this.modeler !== undefined && this.modeler !== null;
+      if (modelerIsSet) {
+        this.modeler.importXML(this.xml, (err: Error) => {
+          this._fitDiagramToViewport();
 
-    if (modelerIsSet) {
-      this.modeler.importXML(newValue, (err: Error) => {
-        this._fitDiagramToViewport();
+          return 0;
+        });
 
-        return 0;
-      });
+      }
 
-    }
+    }, 0);
   }
 
   public nameChanged(newValue: string): void {
@@ -355,6 +359,8 @@ export class BpmnIo {
       this.modeler.saveXML(xmlSaveOptions, (error: Error, result: string) => {
         if (error) {
           reject(error);
+
+          return;
         }
 
         resolve(result);
