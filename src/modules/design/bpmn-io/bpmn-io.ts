@@ -40,7 +40,6 @@ export class BpmnIo {
   @bindable({defaultBindingMode: bindingMode.twoWay}) public xml: string;
   @bindable({changeHandler: 'nameChanged'}) public name: string;
   @bindable() public openedFromProcessEngine: boolean = true;
-
   @observable public propertyPanelWidth: number;
 
   public savedXml: string;

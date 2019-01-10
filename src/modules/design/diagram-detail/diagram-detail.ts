@@ -35,6 +35,7 @@ export class DiagramDetail {
   @bindable() public activeSolutionEntry: ISolutionEntry;
   @observable({ changeHandler: 'correlationChanged'}) public customCorrelationId: string;
   @observable({ changeHandler: 'diagramHasChangedChanged'}) public diagramHasChanged: boolean;
+  @bindable({ defaultBindingMode: bindingMode.oneWay }) public xml: string;
   public bpmnio: BpmnIo;
   public showUnsavedChangesModal: boolean = false;
   public showSaveForStartModal: boolean = false;
@@ -49,8 +50,6 @@ export class DiagramDetail {
   public showRemoteSolutionOnDeployModal: boolean = false;
   public remoteSolutions: Array<ISolutionEntry> = [];
   public selectedRemoteSolution: ISolutionEntry;
-
-  @bindable({ defaultBindingMode: bindingMode.oneWay }) public xml: string;
 
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
