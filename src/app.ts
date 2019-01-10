@@ -146,13 +146,6 @@ export class App {
         moduleId: 'modules/start-page/start-page',
       },
       {
-        route: ['processdef', 'processdef/:diagramName?'],
-        title: 'Process Definition List',
-        name: 'processdef-list',
-        moduleId: 'modules/think/processdef-list/processdef-list',
-        nav: true,
-      },
-      {
         route: ['dashboard'],
         title: 'Dashboard',
         name: 'dashboard',
