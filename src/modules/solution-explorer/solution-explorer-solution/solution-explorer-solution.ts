@@ -495,8 +495,9 @@ export class SolutionExplorerSolution {
       return false;
     }
 
-    const openedDiagramUri: string = this.activeDiagram.uri;
+    const openedDiagramUri: string = this.activeDiagramUri;
     const diagramIsOpened: boolean = diagramUriToCheck === openedDiagramUri;
+
     return diagramIsOpened;
   }
 
