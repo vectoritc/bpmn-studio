@@ -5,7 +5,7 @@ import {
   inject,
   NewInstance,
 } from 'aurelia-framework';
-import {PipelineResult, Router} from 'aurelia-router';
+import {Router} from 'aurelia-router';
 import {
   ControllerValidateResult,
   FluentRuleCustomizer,
@@ -236,14 +236,16 @@ export class SolutionExplorerSolution {
   public async closeDiagram(diagram: IDiagram, event: Event): Promise<void> {
     event.stopPropagation();
 
-    const singleDiagramService: SingleDiagramsSolutionExplorerService = this.solutionService as SingleDiagramsSolutionExplorerService;
-    singleDiagramService.closeSingleDiagram(diagram);
-
-    this._globalSolutionService.removeSingleDiagramByUri(diagram.uri);
-
     const closedDiagramWasActiveDiagram: boolean = this.activeDiagramUri === diagram.uri;
     if (closedDiagramWasActiveDiagram) {
+      const subscription: Subscription = this._eventAggregator.subscribe('router:navigation:success', () => {
+        this._closeSingleDiagram(diagram);
+        subscription.dispose();
+      });
+
       this._router.navigateToRoute('start-page');
+    } else {
+      this._closeSingleDiagram(diagram);
     }
   }
 
@@ -478,6 +480,13 @@ export class SolutionExplorerSolution {
     }
 
     return this.activeDiagram.uri;
+  }
+
+  private _closeSingleDiagram(diagramToClose: IDiagram): void {
+    const singleDiagramService: SingleDiagramsSolutionExplorerService = this.solutionService as SingleDiagramsSolutionExplorerService;
+    singleDiagramService.closeSingleDiagram(diagramToClose);
+
+    this._globalSolutionService.removeSingleDiagramByUri(diagramToClose.uri);
   }
 
   private async _isDiagramDetailViewOfDiagramOpen(diagramUriToCheck: string): Promise<boolean> {
