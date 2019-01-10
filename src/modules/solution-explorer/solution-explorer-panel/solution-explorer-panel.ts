@@ -135,7 +135,7 @@ export class SolutionExplorerPanel {
       await this.solutionExplorerList.openSolution(this.uriOfRemoteSolution);
     } catch (error) {
       const genericMessage: string = `Unable to connect to ProcessEngine on: ${this.uriOfRemoteSolution}`;
-      const cause: string = error.message ? `${error.message}` : '';
+      const cause: string = error.message ? error.message : '';
       this._notificationService.showNotification(NotificationType.ERROR, `${genericMessage} ${cause}`);
     }
 
