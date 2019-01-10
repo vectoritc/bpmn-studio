@@ -19,6 +19,7 @@ import {
   IModdleElement,
   IPropertiesElement,
   IShape,
+  IViewbox,
   NotificationType,
 } from '../../../contracts/index';
 import environment from '../../../environment';
@@ -365,7 +366,13 @@ export class BpmnIo {
   private _fitDiagramToViewport(): void {
     const canvas: ICanvas = this.modeler.get('canvas');
 
-    canvas.zoom('fit-viewport');
+    const viewbox: IViewbox  = canvas.viewbox();
+
+    const diagramIsVisible: boolean = viewbox.height > 0 && viewbox.width > 0;
+
+    if (diagramIsVisible) {
+      canvas.zoom('fit-viewport');
+    }
   }
 
   private _renameFormFields(event: IInternalEvent): IInternalEvent {

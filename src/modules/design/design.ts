@@ -1,6 +1,6 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
-import {NavigationInstruction, Redirect, Router} from 'aurelia-router';
+import {activationStrategy, NavigationInstruction, Redirect, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
@@ -35,10 +35,8 @@ export class Design {
   public propertyPanelShown: boolean;
   public showPropertyPanelButton: boolean = true;
   public showDiffDestinationButton: boolean = false;
-  public diffDestinationIsLocal: boolean = true;
 
-  @bindable() public xmlForDiffOld: string;
-  @bindable() public xmlForDiffNew: string;
+  @bindable() public xmlForDiff: string;
   public diagramDetail: DiagramDetail;
 
   private _eventAggregator: EventAggregator;
@@ -123,15 +121,7 @@ export class Design {
         return;
       }
 
-      const previousRouteIsDiff: boolean = this._router.currentInstruction.params.view === 'diff';
-
-      if (previousRouteIsDiff) {
-        this.xmlForDiffOld = this.activeDiagram.xml;
-        this.xmlForDiffNew = await this.diagramDetail.getXML();
-      } else {
-        this.xmlForDiffOld = await this.diagramDetail.getXML();
-        this.xmlForDiffNew = undefined;
-      }
+      this.xmlForDiff = await this.diagramDetail.getXML();
 
       this._showDiff();
     }
@@ -139,7 +129,7 @@ export class Design {
 
   public async attached(): Promise<void> {
     setTimeout(async() => {
-      this.xmlForDiffOld = await this.diagramDetail.getXML();
+      this.xmlForDiff = await this.diagramDetail.getXML();
     }, 0);
 
     const routeViewIsDiff: boolean = this._routeView === 'diff';
@@ -161,10 +151,12 @@ export class Design {
     this._subscriptions.forEach((subscription: Subscription) => subscription.dispose());
   }
 
-  public toggleDiffDestination(): void {
-    this.diffDestinationIsLocal = !this.diffDestinationIsLocal;
-    const diffDestination: string = this.diffDestinationIsLocal ? 'local' : 'deployed';
+  public determineActivationStrategy(): string {
 
+    return activationStrategy.invokeLifecycle;
+  }
+
+  public setDiffDestination(diffDestination: string): void {
     this._eventAggregator.publish(environment.events.diffView.setDiffDestination, diffDestination);
   }
 
@@ -233,6 +225,26 @@ export class Design {
     for (const eventListener of this._ipcRendererEventListeners) {
       this._ipcRenderer.removeListener(eventListener.name, eventListener.function);
     }
+  }
+
+  public activeDiagramChanged(newValue: IDiagram, oldValue: IDiagram): void {
+    const activeDiagramDidNotChange: boolean = newValue.id === oldValue.id
+                                            && newValue.uri === oldValue.uri;
+    if (activeDiagramDidNotChange) {
+      return;
+    }
+
+    this.xmlForDiff = this.activeDiagram.xml;
+  }
+
+  public get remoteSolutions(): Array<ISolutionEntry> {
+    const remoteSolutions: Array<ISolutionEntry> = this._solutionService.getRemoteSolutionEntries();
+
+    const remoteSolutionsWithoutActive: Array<ISolutionEntry> = remoteSolutions.filter((remoteSolution: ISolutionEntry) => {
+      return remoteSolution.uri !== this.activeSolutionEntry.uri;
+    });
+
+    return remoteSolutionsWithoutActive;
   }
 
   private _showDiff(): void {

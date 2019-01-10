@@ -15,6 +15,22 @@
   margin-right: 36px;
 }
 
+.design__diff-destination-button {
+  margin: auto;
+  background: inherit;
+  border: none;
+  opacity: 0.5;
+}
+
+.design__diff-destination-button--disabled {
+  opacity: 0.2 !important;
+}
+
+
+.design__diff-destination-button:hover {
+  opacity: 1;
+}
+
 .design__diff-view-container {
   height: 100%;
   margin-right: 36px;
