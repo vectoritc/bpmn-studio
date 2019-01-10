@@ -37,19 +37,6 @@ export class ProcessDefList {
     this._eventAggregator.publish(environment.events.refreshProcessDefs);
   }
 
-  public async activate(routeParameters: RouteParameters): Promise<void> {
-    const solutionUriIsSet: boolean = routeParameters.solutionUri !== undefined;
-
-    const solutionUri: string = solutionUriIsSet
-                              ? routeParameters.solutionUri
-                              : window.localStorage.getItem('InternalProcessEngineRoute');
-
-    this._activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
-    await this._activeSolutionEntry.service.openSolution(this._activeSolutionEntry.uri, this._activeSolutionEntry.identity);
-
-    await this._updateDiagramList();
-  }
-
   public attached(): void {
 
     this._updateDiagramList();
