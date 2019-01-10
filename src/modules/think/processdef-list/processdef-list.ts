@@ -7,10 +7,10 @@ import {Router} from 'aurelia-router';
 
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 
-import {AuthenticationStateEvent, ISolutionEntry, ISolutionService} from '../../../contracts/index';
+import {AuthenticationStateEvent, ISolutionEntry} from '../../../contracts/index';
 import environment from '../../../environment';
 
-@inject(EventAggregator, Router, 'SolutionService')
+@inject(EventAggregator, Router)
 export class ProcessDefList {
 
   public allDiagrams: Array<IDiagram>;
@@ -20,14 +20,11 @@ export class ProcessDefList {
   private _router: Router;
   private _subscriptions: Array<Subscription>;
   private _getProcessesIntervalId: number;
-  private _solutionService: ISolutionService;
 
   constructor(eventAggregator: EventAggregator,
-              router: Router,
-              solutionService: ISolutionService) {
+              router: Router) {
     this._eventAggregator = eventAggregator;
     this._router = router;
-    this._solutionService = solutionService;
 
     this._eventAggregator.publish(environment.events.refreshProcessDefs);
   }
