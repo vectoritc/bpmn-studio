@@ -170,8 +170,6 @@ export class SolutionExplorerList {
     const diagramOfClosedSolutionOpen: boolean = uri.includes(currentOpenDiagram);
 
     if (diagramOfClosedSolutionOpen) {
-      this._router.navigateToRoute('start-page');
-
       /**
        * We only want to close the open Solution, if the User don't have
        * unsaved changes.
@@ -180,6 +178,8 @@ export class SolutionExplorerList {
         this._cleanupSolution(uri);
         subscription.dispose();
       });
+
+      this._router.navigateToRoute('start-page');
 
     } else {
       this._cleanupSolution(uri);
