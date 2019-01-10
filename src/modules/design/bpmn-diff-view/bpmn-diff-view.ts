@@ -233,9 +233,7 @@ export class BpmnDiffView {
   }
 
   private async _updateDeployedXml(): Promise<boolean> {
-    const activeSolutionEntry: ISolutionEntry = this._solutionService.getRemoteSolutionEntries().find((remoteSolution: ISolutionEntry): boolean => {
-      return remoteSolution.uri === this._diffDestination;
-    });
+    const activeSolutionEntry: ISolutionEntry = this._solutionService.getSolutionEntryForUri(this._diffDestination);
 
     const activeSolutionEntryNotFound: boolean = activeSolutionEntry === undefined;
     if (activeSolutionEntryNotFound) {
