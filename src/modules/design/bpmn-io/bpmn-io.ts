@@ -180,6 +180,7 @@ export class BpmnIo {
         try {
           const exportName: string = `${this.name}.bpmn`;
           const xmlToExport: string = await this.getXML();
+
           await this._diagramExportService
             .loadXML(xmlToExport)
             .asBpmn()
