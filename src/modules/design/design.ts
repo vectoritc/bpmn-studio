@@ -1,5 +1,5 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {bindable, inject} from 'aurelia-framework';
+import {bindable, bindingMode, inject} from 'aurelia-framework';
 import {activationStrategy, NavigationInstruction, Redirect, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
@@ -25,6 +25,8 @@ export class Design {
 
   @bindable() public activeDiagram: IDiagram;
   @bindable() public activeSolutionEntry: ISolutionEntry;
+
+  @bindable({ defaultBindingMode: bindingMode.oneWay }) public xml: string;
 
   public showQuitModal: boolean;
   public showLeaveModal: boolean;
@@ -92,6 +94,7 @@ export class Design {
       if (diagramNotFound) {
         this._router.navigateToRoute('start-page');
         this._notificationService.showNotification(NotificationType.INFO, 'Diagram could not be opened!');
+        this.xml = this.activeDiagram.xml;
       }
     }
 

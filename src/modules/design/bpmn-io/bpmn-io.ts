@@ -1,6 +1,6 @@
 
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {bindable, inject, observable} from 'aurelia-framework';
+import {bindable, bindingMode, inject, observable} from 'aurelia-framework';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 
@@ -36,8 +36,7 @@ export class BpmnIo {
   public resizeButton: HTMLButtonElement;
   public canvasModel: HTMLDivElement;
   public propertyPanel: HTMLElement;
-
-  @bindable({changeHandler: 'xmlChanged'}) public xml: string;
+  @bindable({changeHandler: 'xmlChanged', defaultBindingMode: bindingMode.twoWay}) public xml: string;
   @bindable({changeHandler: 'nameChanged'}) public name: string;
   @bindable() public openedFromProcessEngine: boolean = true;
 
@@ -109,8 +108,9 @@ export class BpmnIo {
      */
     const handlerPriority: number = 1000;
 
-    this.modeler.on('commandStack.changed', () => {
+    this.modeler.on('commandStack.changed', async() => {
       this._eventAggregator.publish(environment.events.diagramChange);
+      this.xml = await this.getXML();
     }, handlerPriority);
 
     this.modeler.on(['shape.added', 'shape.removed'], (element: IEvent) => {
