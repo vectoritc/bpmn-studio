@@ -13,11 +13,6 @@ import {
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 
-interface IProcessListRouteParameters {
-  diagramName?: string;
-  solutionUri?: string;
-}
-
 @inject('ManagementApiClientService', EventAggregator, 'NotificationService', 'SolutionService')
 export class ProcessList {
 
