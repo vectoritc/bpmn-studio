@@ -292,6 +292,14 @@ export class Design {
     return this.diagramDetail.showSaveForStartModal;
   }
 
+  public get showStartWithOptionsModal(): boolean {
+    return this.diagramDetail.showStartWithOptionsModal;
+  }
+
+  public get diagramHasChanged(): boolean {
+    return this.diagramDetail.diagramHasChanged;
+  }
+
   private _showDiff(): void {
     this.showDiff = true;
     this.showDetail = false;
