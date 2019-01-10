@@ -166,15 +166,16 @@ export class TaskList {
   }
 
   private async _getAllTasks(): Promise<Array<IUserTaskWithProcessModel & IManualTaskWithProcessModel>> {
-    const identity: IIdentity = this._getIdentity();
 
-    const allProcessModels: ProcessModelExecution.ProcessModelList = await this._managementApiService.getProcessModels(identity);
+    const allProcessModels: ProcessModelExecution.ProcessModelList = await this._managementApiService
+                                                                               .getProcessModels(this.activeSolutionEntry.identity);
 
     // TODO (ph): This will create 1 + n http reqeusts, where n is the number of process models in the processengine.
     const promisesForAllUserTasks: Array<Promise<Array<IUserTaskWithProcessModel>>> = allProcessModels.processModels
       .map(async(processModel: ProcessModelExecution.ProcessModel): Promise<Array<IUserTaskWithProcessModel>> => {
         try {
-          const userTaskList: UserTaskList = await this._managementApiService.getUserTasksForProcessModel(identity, processModel.id);
+          const userTaskList: UserTaskList = await this._managementApiService
+                                                       .getUserTasksForProcessModel(this.activeSolutionEntry.identity, processModel.id);
 
           const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = this._addProcessModelToUserTasks(userTaskList, processModel);
 
@@ -193,7 +194,8 @@ export class TaskList {
     const promisesForAllManualTasks: Array<Promise<Array<IManualTaskWithProcessModel>>> = allProcessModels.processModels
       .map(async(processModel: ProcessModelExecution.ProcessModel): Promise<Array<IManualTaskWithProcessModel>> => {
         try {
-          const manualTaskList: ManualTaskList = await this._managementApiService.getManualTasksForProcessModel(identity, processModel.id);
+          const manualTaskList: ManualTaskList = await this._managementApiService
+                                                           .getManualTasksForProcessModel(this.activeSolutionEntry.identity, processModel.id);
 
           const manualTasksAndProcessModels: Array<IManualTaskWithProcessModel> = this._addProcessModelToManualTasks(manualTaskList, processModel);
 
@@ -226,18 +228,17 @@ export class TaskList {
   }
 
   private async _getTasksForProcessModel(processModelId: string): Promise<Array<IUserTaskWithProcessModel & IManualTaskWithProcessModel>> {
-    const identity: IIdentity = this._getIdentity();
 
     const processModel: ProcessModelExecution.ProcessModel = await
       this
       ._managementApiService
-      .getProcessModelById(identity, processModelId);
+      .getProcessModelById(this.activeSolutionEntry.identity, processModelId);
 
     let userTaskList: UserTaskList;
     let manualTaskList: ManualTaskList;
     try {
-      userTaskList = await this._managementApiService.getUserTasksForProcessModel(identity, processModelId);
-      manualTaskList = await this._managementApiService.getManualTasksForProcessModel(identity, processModelId);
+      userTaskList = await this._managementApiService.getUserTasksForProcessModel(this.activeSolutionEntry.identity, processModelId);
+      manualTaskList = await this._managementApiService.getManualTasksForProcessModel(this.activeSolutionEntry.identity, processModelId);
 
     } catch (error) {
       if (isError(error, NotFoundError)) {
@@ -254,12 +255,12 @@ export class TaskList {
   }
 
   private async _getTasksForCorrelation(correlationId: string): Promise<Array<IUserTaskWithProcessModel & IManualTaskWithProcessModel>> {
-    const identity: IIdentity = this._getIdentity();
 
-    const userTaskList: UserTaskList = await this._managementApiService.getUserTasksForCorrelation(identity, correlationId);
-    const manualTaskList: ManualTaskList = await this._managementApiService.getManualTasksForCorrelation(identity, correlationId);
+    const userTaskList: UserTaskList = await this._managementApiService.getUserTasksForCorrelation(this.activeSolutionEntry.identity, correlationId);
+    const manualTaskList: ManualTaskList = await this._managementApiService
+                                                     .getManualTasksForCorrelation(this.activeSolutionEntry.identity, correlationId);
 
-    const runningCorrelations: Array<Correlation> = await this._managementApiService.getActiveCorrelations(identity);
+    const runningCorrelations: Array<Correlation> = await this._managementApiService.getActiveCorrelations(this.activeSolutionEntry.identity);
 
     const correlation: Correlation = runningCorrelations.find((otherCorrelation: Correlation) => {
       return otherCorrelation.id === correlationId;
@@ -274,7 +275,7 @@ export class TaskList {
     const processModelOfCorrelation: ProcessModelExecution.ProcessModel = await
       this
       ._managementApiService
-      .getProcessModelById(identity, correlation.processModels[0].processModelId);
+      .getProcessModelById(this.activeSolutionEntry.identity, correlation.processModels[0].processModelId);
 
     const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = this._addProcessModelToUserTasks(userTaskList, processModelOfCorrelation);
     const manualTasksAndProcessModels: Array<IManualTaskWithProcessModel> = this._addProcessModelToManualTasks(
@@ -309,16 +310,6 @@ export class TaskList {
       }));
 
     return manualTasksAndProcessModels;
-  }
-
-  // TODO: Move this method into a service.
-  private _getIdentity(): IIdentity {
-    const accessToken: string = this._authenticationService.getAccessToken();
-    const identity: IIdentity = {
-      token: accessToken,
-    };
-
-    return identity;
   }
 
   public async updateTasks(): Promise<void> {
