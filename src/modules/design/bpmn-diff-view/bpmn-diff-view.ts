@@ -240,23 +240,24 @@ export class BpmnDiffView {
       return false;
     }
 
-    const getXmlFromDeployed: () => Promise<IDiagram> = (async(): Promise<IDiagram> => {
+    const getXmlFromDeployed: () => Promise<string> = (async(): Promise<string> => {
       try {
-        return await activeSolutionEntry.service.loadDiagram(this.processModelId);
+        const diagram: IDiagram = await activeSolutionEntry.service.loadDiagram(this.processModelId);
+
+        const diagramFound: boolean = diagram !== undefined;
+
+        return diagramFound ? diagram.xml : undefined;
+
       } catch {
         return undefined;
       }
     });
 
-    const diagram: IDiagram = await getXmlFromDeployed();
-
-    const diagrammIsNotDeployed: boolean = diagram === undefined;
-    this.deployedXml = (diagrammIsNotDeployed)
-                                    ? undefined
-                                    : diagram.xml;
+    this.deployedXml = await getXmlFromDeployed();
+    const diagramIsNotDeployed: boolean = this.deployedXml === undefined;
 
     const diffingAgainstDeployed: boolean = this._diffDestination !== 'lastSaved';
-    if (diagrammIsNotDeployed && diffingAgainstDeployed) {
+    if (diagramIsNotDeployed && diffingAgainstDeployed) {
       const errorMessage: string = 'Could not diff against the deployed version: This diagram is not deployed to the ProcessEngine.';
       this._notificationService.showNotification(NotificationType.ERROR, errorMessage);
 
