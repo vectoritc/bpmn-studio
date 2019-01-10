@@ -357,7 +357,8 @@ export class DiagramDetail {
     if (onlyOneStarteventAvailable) {
       this.selectedStartEventId = this.processesStartEvents[0].id;
 
-      if (!this._clickedOnCustomStart) {
+      const doesNotComeFromCustomModal: boolean = this._clickedOnCustomStart === false;
+      if (doesNotComeFromCustomModal) {
         this.startProcess();
         this._clickedOnCustomStart = false;
       } else {
@@ -380,9 +381,7 @@ export class DiagramDetail {
   }
 
   public showCustomStartModal(): void {
-    this.showStartEventModal = false;
     this._getTokenFromStartEventAnnotation();
-
     this.showStartWithOptionsModal = true;
   }
 
