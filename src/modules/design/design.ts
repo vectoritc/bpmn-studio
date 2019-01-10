@@ -96,7 +96,9 @@ export class Design {
 
         } else {
 
-          this.activeDiagram = diagramNameIsSet ? await this.activeSolutionEntry.service.loadDiagram(routeParameters.diagramName) : undefined;
+          this.activeDiagram = diagramNameIsSet
+                             ? await this.activeSolutionEntry.service.loadDiagram(routeParameters.diagramName)
+                             : undefined;
         }
 
         const diagramNotFound: boolean = this.activeDiagram === undefined;
