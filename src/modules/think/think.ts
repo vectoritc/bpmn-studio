@@ -1,7 +1,8 @@
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
-import { ISolutionService } from '../../contracts';
+
+import {ISolutionEntry, ISolutionService} from '../../contracts';
 
 export interface IThinkRouteParameters {
   view?: string;
