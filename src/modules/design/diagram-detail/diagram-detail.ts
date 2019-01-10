@@ -33,8 +33,8 @@ export class DiagramDetail {
 
   @bindable() public activeDiagram: IDiagram;
   @bindable() public activeSolutionEntry: ISolutionEntry;
-   @observable({changeHandler: 'correlationChanged'}) public customCorrelationId: string;
-   @observable({changeHandler: 'diagramHasChangedChanged'}) public diagramHasChanged: boolean;
+  @observable({changeHandler: 'correlationChanged'}) public customCorrelationId: string;
+  @observable({changeHandler: 'diagramHasChangedChanged'}) public diagramHasChanged: boolean;
   @bindable({defaultBindingMode: bindingMode.oneWay}) public xml: string;
   public bpmnio: BpmnIo;
   public showUnsavedChangesModal: boolean = false;
