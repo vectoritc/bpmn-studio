@@ -16,10 +16,8 @@ import {General} from './indextabs/general/general';
 
 export class PropertyPanel {
 
-  @bindable()
-  public modeler: IBpmnModeler;
-  @bindable()
-  public xml: string;
+  @bindable() public modeler: IBpmnModeler;
+  @bindable() public xml: string;
   @bindable() public diagramUri: string;
   public elementInPanel: IShape;
   public generalIndextab: IIndextab = new General();
