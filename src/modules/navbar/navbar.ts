@@ -10,8 +10,6 @@ import {NotificationService} from '../notification/notification.service';
 @inject(Router, EventAggregator, 'NotificationService', 'SolutionService')
 export class NavBar {
 
-  @bindable() public activeRouteName: string;
-
   public activeSolutionEntry: ISolutionEntry;
   public activeDiagram: IDiagram;
 
@@ -349,7 +347,6 @@ export class NavBar {
   }
 
   private async _updateNavbar(): Promise<void> {
-    this.activeRouteName = this._router.currentInstruction.config.name;
 
     const solutionUriFromNavigation: string = this.router.currentInstruction.queryParams.solutionUri;
     const noSolutionUriSpecified: boolean = solutionUriFromNavigation === undefined;
@@ -390,7 +387,7 @@ export class NavBar {
       this._updateNavbarTools();
     }
 
-    const routeNameIsStartPage: boolean = this.activeRouteName === 'start-page';
+    const routeNameIsStartPage: boolean = this.router.currentInstruction.config.name === 'start-page';
     if (routeNameIsStartPage) {
       this._resetNavbar();
     }
