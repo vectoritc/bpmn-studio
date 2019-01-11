@@ -1,6 +1,6 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
-import {Router} from 'aurelia-router';
+import {NavModel, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
@@ -129,6 +129,31 @@ export class NavBar {
 
   public navigateBack(): void {
     this.router.navigateBack();
+  }
+
+  public navigate(navModel: NavModel): void {
+    switch (navModel.config.name) {
+      case 'processdef-list':
+        this.routerNavigate(navModel.config.name);
+        break;
+      case 'design':
+        const noActiveDiagram: boolean = this.activeDiagram === undefined;
+        if (noActiveDiagram) {
+          this._notificationService.showNotification(NotificationType.INFO, 'In order to open the designer, you have to select a diagram first!');
+
+          return;
+        }
+
+        this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToDesigner, this.designView);
+        this.routerNavigate(navModel.config.name, this.designView);
+        break;
+      case 'inspect':
+        this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, this.inspectView);
+        this.routerNavigate(navModel.config.name, this.inspectView);
+        break;
+      default:
+        break;
+    }
   }
 
   public showDashboard(): void {
