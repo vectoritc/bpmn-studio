@@ -227,6 +227,11 @@ export class NavBar {
       diagramName: this.activeDiagram.name,
       solutionUri: this.activeSolutionEntry.uri,
       view: this.designView,
+  public routerNavigate(route: string, view?: string): void {
+    this.router.navigateToRoute(route, {
+      diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
+      solutionUri: this.activeSolutionEntry ? this.activeSolutionEntry.uri : undefined,
+      view: view,
     });
   }
 
@@ -293,7 +298,7 @@ export class NavBar {
    * or a remote ProcessEngine
    */
   private _updateNavbarTitle(): void {
-    const noActiveDiagram: boolean = this._router.currentInstruction.params.diagramName === undefined;
+    const noActiveDiagram: boolean = this.router.currentInstruction.params.diagramName === undefined;
 
     if (noActiveDiagram) {
       this.showProcessName = false;
