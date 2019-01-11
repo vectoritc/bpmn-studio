@@ -164,11 +164,7 @@ export class NavBar {
     this.inspectView = 'dashboard';
     this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, this.inspectView);
 
-    this._router.navigateToRoute('inspect', {
-      diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
-      solutionUri: this.activeSolutionEntry.uri,
-      view: this.inspectView,
-    });
+    this.routerNavigate(this.router.currentInstruction.config.name, this.inspectView);
   }
 
   public showHeatmap(): void {
@@ -179,11 +175,7 @@ export class NavBar {
     this.inspectView = 'heatmap';
     this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, this.inspectView);
 
-    this._router.navigateToRoute('inspect', {
-      diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
-      solutionUri: this.activeSolutionEntry.uri,
-      view: this.inspectView,
-    });
+    this.routerNavigate(this.router.currentInstruction.config.name, this.inspectView);
   }
 
   public showInspectCorrelation(): void {
@@ -194,12 +186,7 @@ export class NavBar {
     this.inspectView = 'inspect-correlation';
     this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, this.inspectView);
 
-    this._router.navigateToRoute('inspect', {
-      diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
-      solutionUri: this.activeSolutionEntry.uri,
-      view: this.inspectView,
-    });
-
+    this.routerNavigate(this.router.currentInstruction.config.name, this.inspectView);
   }
 
   public routerNavigate(route: string, view?: string): void {
