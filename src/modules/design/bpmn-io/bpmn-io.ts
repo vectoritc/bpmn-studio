@@ -110,6 +110,7 @@ export class BpmnIo {
 
     this.modeler.on('commandStack.changed', async() => {
       this._eventAggregator.publish(environment.events.diagramChange);
+
       this.xml = await this.getXML();
     }, handlerPriority);
 

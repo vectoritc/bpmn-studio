@@ -134,6 +134,7 @@ export class PropertyPanel {
     if (oldValue === undefined) {
       return;
     }
+
     this.setFirstElement();
   }
 
