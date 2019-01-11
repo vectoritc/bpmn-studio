@@ -34,14 +34,15 @@ export class NavBar {
   public navbarTitle: string = '';
   @bindable() public processOpenedFromProcessEngine: boolean = false;
 
-  private _router: Router;
+  public router: Router;
+
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
   private _notificationService: NotificationService;
   private _solutionService: ISolutionService;
 
   constructor(router: Router, eventAggregator: EventAggregator, notificationService: NotificationService, solutionService: ISolutionService) {
-    this._router = router;
+    this.router = router;
     this._eventAggregator = eventAggregator;
     this._notificationService = notificationService;
     this._solutionService = solutionService;
@@ -129,7 +130,7 @@ export class NavBar {
   }
 
   public navigateBack(): void {
-    this._router.navigateBack();
+    this.router.navigateBack();
   }
 
   public navigateToThink(): void {
@@ -312,7 +313,7 @@ export class NavBar {
   }
 
   private _updateNavbarTools(): void {
-    const activeRoute: string = this._router.currentInstruction.config.name;
+    const activeRoute: string = this.router.currentInstruction.config.name;
 
     const activeSolutionIsRemoteSolution: boolean = this.activeSolutionEntry.uri.startsWith('http') && this.activeDiagram !== undefined;
     const activeRouteIsDiagramDetail: boolean = activeRoute === 'design';
@@ -327,7 +328,7 @@ export class NavBar {
       this.showExportOnInspectCorrelation = false;
 
     } else if (activeRouteIsInspect) {
-      const inspectView: string = this._router.currentInstruction.params.view;
+      const inspectView: string = this.router.currentInstruction.params.view;
       const inspectViewIsDashboard: boolean = inspectView === 'dashboard';
       const inspectViewIsHeatmap: boolean = inspectView === 'heatmap';
       const inspectViewIsInspectCorrelation: boolean = inspectView === 'inspect-correlation';
@@ -350,7 +351,7 @@ export class NavBar {
   private async _updateNavbar(): Promise<void> {
     this.activeRouteName = this._router.currentInstruction.config.name;
 
-    const solutionUriFromNavigation: string = this._router.currentInstruction.queryParams.solutionUri;
+    const solutionUriFromNavigation: string = this.router.currentInstruction.queryParams.solutionUri;
     const noSolutionUriSpecified: boolean = solutionUriFromNavigation === undefined;
 
     const solutionUri: string = (noSolutionUriSpecified)
@@ -360,7 +361,7 @@ export class NavBar {
     this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
 
     const solutionIsSet: boolean = this.activeSolutionEntry !== undefined;
-    const diagramName: string = this._router.currentInstruction.params.diagramName;
+    const diagramName: string = this.router.currentInstruction.params.diagramName;
     const diagramIsSet: boolean = diagramName !== undefined;
 
     if (solutionIsSet && diagramIsSet) {
@@ -376,7 +377,7 @@ export class NavBar {
 
         this.activeDiagram = await this.activeSolutionEntry
           .service
-          .loadDiagram(this._router.currentInstruction.params.diagramName);
+          .loadDiagram(this.router.currentInstruction.params.diagramName);
       }
 
       const diagramNotFound: boolean = this.activeDiagram === undefined;
