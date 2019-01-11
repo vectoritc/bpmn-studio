@@ -131,14 +131,6 @@ export class NavBar {
     this.router.navigateBack();
   }
 
-  public navigateToThink(): void {
-    this._router.navigateToRoute('think', {
-      view: 'diagram-list',
-      diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
-      solutionUri: this.activeSolutionEntry ? this.activeSolutionEntry.uri : undefined,
-    });
-  }
-
   public showDashboard(): void {
     this.disableDashboardButton = true;
     this.disableHeatmapButton = false;
@@ -185,48 +177,6 @@ export class NavBar {
 
   }
 
-  public navigateToInspect(): void {
-    const activeRouteIsInspect: boolean = this.activeRouteName === 'inspect';
-
-    if (activeRouteIsInspect) {
-      return;
-    }
-
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, this.inspectView);
-
-    const diagramIsNotSelect: boolean = this.activeDiagram === undefined;
-    const diagramName: string = diagramIsNotSelect
-      ? undefined
-      : this.activeDiagram.name;
-
-    const solutionIsNotSelected: boolean = this.activeSolutionEntry === undefined;
-    const solutionUri: string = solutionIsNotSelected
-      ? undefined
-      : this.activeSolutionEntry.uri;
-
-    this._router.navigateToRoute('inspect', {
-      diagramName: diagramName,
-      solutionUri: solutionUri,
-      view: this.inspectView,
-    });
-  }
-
-  public navigateToDesigner(): void {
-
-    const processIsUndefined: boolean = this.activeDiagram === undefined;
-
-    if (processIsUndefined) {
-      this._notificationService.showNotification(NotificationType.INFO, 'In order to open the designer, you have to select a diagram first!');
-
-      return;
-    }
-
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToDesigner, this.designView);
-
-    this._router.navigateToRoute('design', {
-      diagramName: this.activeDiagram.name,
-      solutionUri: this.activeSolutionEntry.uri,
-      view: this.designView,
   public routerNavigate(route: string, view?: string): void {
     this.router.navigateToRoute(route, {
       diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
