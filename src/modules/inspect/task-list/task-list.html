@@ -9,9 +9,9 @@
           <th>Task ID</th>
           <th></th>
         </tr>
-        <tr repeat.for="entry of shownTasks" class="task-list-item" id="taskList-${entry.processModel.id}">
+        <tr repeat.for="entry of shownTasks" class="task-list-item" id="taskList-${entry.userTask ? entry.userTask.processModelId : entry.manualTask.processModelId}">
           <td>
-            <a route-href="route: design; params.bind: { diagramName: entry.processModel.id, solutionUri: remoteSolutionUri, view: 'detail' }" >${entry.processModel.id}</a>
+            <a route-href="route: design; params.bind: { diagramName: entry.userTask ? entry.userTask.processModelId : entry.manualTask.processModelId, solutionUri: activeSolutionEntry.uri, view: 'detail' }">${entry.userTask ? entry.userTask.processModelId : entry.manualTask.processModelId}</a>
           </td>
           <td>${entry.userTask.id ? entry.userTask.id : entry.manualTask.id}</td>
           <td class="task-list__last-table-cell">

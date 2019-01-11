@@ -1,12 +1,13 @@
 
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {bindable, inject, observable} from 'aurelia-framework';
+import {bindable, bindingMode, inject, observable} from 'aurelia-framework';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 
 import {
   IBpmnModeler,
   IBpmnXmlSaveOptions,
+  ICanvas,
   IDiagramExportService,
   IDiagramPrintService,
   IEditorActions,
@@ -16,7 +17,9 @@ import {
   IInternalEvent,
   IKeyboard,
   IModdleElement,
+  IPropertiesElement,
   IShape,
+  IViewbox,
   NotificationType,
 } from '../../../contracts/index';
 import environment from '../../../environment';
@@ -33,11 +36,10 @@ export class BpmnIo {
   public resizeButton: HTMLButtonElement;
   public canvasModel: HTMLDivElement;
   public propertyPanel: HTMLElement;
-
-  @bindable({changeHandler: 'xmlChanged'}) public xml: string;
+  @bindable({changeHandler: 'diagramChanged'}) public diagramUri: string;
+  @bindable({defaultBindingMode: bindingMode.twoWay}) public xml: string;
   @bindable({changeHandler: 'nameChanged'}) public name: string;
   @bindable() public openedFromProcessEngine: boolean = true;
-
   @observable public propertyPanelWidth: number;
 
   public savedXml: string;
@@ -106,8 +108,10 @@ export class BpmnIo {
      */
     const handlerPriority: number = 1000;
 
-    this.modeler.on('commandStack.changed', () => {
+    this.modeler.on('commandStack.changed', async() => {
       this._eventAggregator.publish(environment.events.diagramChange);
+
+      this.xml = await this.getXML();
     }, handlerPriority);
 
     this.modeler.on(['shape.added', 'shape.removed'], (element: IEvent) => {
@@ -176,11 +180,12 @@ export class BpmnIo {
         try {
           const exportName: string = `${this.name}.bpmn`;
           const xmlToExport: string = await this.getXML();
+
           await this._diagramExportService
             .loadXML(xmlToExport)
             .asBpmn()
             .export(exportName);
-        } catch (error) {
+        } catch {
           this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
         }
       }),
@@ -219,7 +224,6 @@ export class BpmnIo {
         } catch (error) {
           this._notificationService.showNotification(NotificationType.ERROR, 'An error occurred while preparing the diagram for exporting');
         }
-
       }),
 
       this._eventAggregator.subscribe(`${environment.events.diagramDetail.printDiagram}`, async() => {
@@ -291,13 +295,20 @@ export class BpmnIo {
     this.savedXml = await this.getXML();
   }
 
-  public xmlChanged(newValue: string): void {
-    if (this.modeler !== undefined && this.modeler !== null) {
-      this.modeler.importXML(newValue, (err: Error) => {
-        return 0;
-      });
+  public diagramChanged(): void {
+    // This is needed to make sure the xml was already binded
+    setTimeout(() => {
+      const modelerIsSet: boolean = this.modeler !== undefined && this.modeler !== null;
+      if (modelerIsSet) {
+        this.modeler.importXML(this.xml, (err: Error) => {
+          this._fitDiagramToViewport();
 
-    }
+          return 0;
+        });
+
+      }
+
+    }, 0);
   }
 
   public nameChanged(newValue: string): void {
@@ -349,6 +360,8 @@ export class BpmnIo {
       this.modeler.saveXML(xmlSaveOptions, (error: Error, result: string) => {
         if (error) {
           reject(error);
+
+          return;
         }
 
         resolve(result);
@@ -357,14 +370,26 @@ export class BpmnIo {
     return returnPromise;
   }
 
-  private _renameFormFields(event: IInternalEvent): IInternalEvent {
-    const allFields: Array<IModdleElement> = event.descriptor.businessObject.extensionElements.values[0].fields;
+  private _fitDiagramToViewport(): void {
+    const canvas: ICanvas = this.modeler.get('canvas');
 
-    const formFields: Array<IModdleElement> = allFields.filter((field: IModdleElement) => {
-      return field.$type === 'camunda:FormField';
+    const viewbox: IViewbox  = canvas.viewbox();
+
+    const diagramIsVisible: boolean = viewbox.height > 0 && viewbox.width > 0;
+
+    if (diagramIsVisible) {
+      canvas.zoom('fit-viewport');
+    }
+  }
+
+  private _renameFormFields(event: IInternalEvent): IInternalEvent {
+    const allFields: Array<IPropertiesElement> = event.descriptor.businessObject.extensionElements.values;
+
+    const formDataObject: IPropertiesElement = allFields.find((field: IModdleElement) => {
+      return field.$type === 'camunda:FormData';
     });
 
-    formFields.forEach((formField: IModdleElement) => {
+    formDataObject.fields.forEach((formField: IModdleElement) => {
       formField.id = `Form_${this._generateRandomId()}`;
     });
 

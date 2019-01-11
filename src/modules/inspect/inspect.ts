@@ -3,11 +3,11 @@ import {bindable, inject} from 'aurelia-framework';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {ISolutionEntry, ISolutionService} from '../../contracts';
+import {AureliaNavigationObject, ISolutionEntry, ISolutionService} from '../../contracts';
 import environment from '../../environment';
 import {Dashboard} from './dashboard/dashboard';
 
-export interface IInspectRouteParameters {
+interface IInspectRouteParameters {
   view?: string;
   diagramName?: string;
   solutionUri?: string;
@@ -36,21 +36,10 @@ export class Inspect {
   }
 
   public async activate(routeParameters: IInspectRouteParameters): Promise<void> {
-    const solutionIsSet: boolean = routeParameters.solutionUri !== undefined;
-    const diagramNameIsSet: boolean = routeParameters.diagramName !== undefined;
+    const solutionUri: string = routeParameters.solutionUri;
+    const diagramName: string = routeParameters.diagramName;
 
-    if (solutionIsSet) {
-      this._activeSolutionEntry = this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
-      /**
-       * We have to open the solution here again since if we come here after a
-       * reload the solution might not be opened yet.
-       */
-      await this._activeSolutionEntry.service.openSolution(this._activeSolutionEntry.uri, this._activeSolutionEntry.identity);
-
-      if (diagramNameIsSet) {
-        this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(routeParameters.diagramName);
-      }
-    }
+    await this._updateInspectView(diagramName, solutionUri);
 
     const routeViewIsDashboard: boolean = routeParameters.view === 'dashboard';
     const routeViewIsHeatmap: boolean = routeParameters.view === 'heatmap';
@@ -96,6 +85,12 @@ export class Inspect {
       this._eventAggregator.subscribe(environment.events.inspect.shouldDisableTokenViewerButton, (tokenViewerButtonDisabled: boolean) => {
         this.tokenViewerButtonDisabled = tokenViewerButtonDisabled;
       }),
+      this._eventAggregator.subscribe('router:navigation:success', async(navigationResult: AureliaNavigationObject) => {
+        const solutionUri: string = navigationResult.instruction.queryParams.solutionUri;
+        const diagramName: string =  navigationResult.instruction.params.diagramName;
+
+        await this._updateInspectView(diagramName, solutionUri);
+      }),
     ];
   }
 
@@ -117,4 +112,36 @@ export class Inspect {
 
     this._eventAggregator.publish(environment.events.inspectCorrelation.showTokenViewer, this.showTokenViewer);
   }
+
+  private async _updateInspectView(diagramName: string, solutionUri: string): Promise<void> {
+    const solutionUriIsNotSet: boolean = solutionUri === undefined;
+    if (solutionUriIsNotSet) {
+      solutionUri = window.localStorage.getItem('InternalProcessEngineRoute');
+    }
+
+    this._activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
+    await this._activeSolutionEntry.service.openSolution(this._activeSolutionEntry.uri, this._activeSolutionEntry.identity);
+
+    const solutionIsRemote: boolean = solutionUri.startsWith('http');
+    if (solutionIsRemote) {
+      this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, solutionUri);
+    }
+
+    const diagramIsSet: boolean = diagramName !== undefined;
+    if (diagramIsSet) {
+
+      const activeSolutionIsSingleDiagramSolution: boolean = solutionUri === 'Single Diagrams';
+      if (activeSolutionIsSingleDiagramSolution) {
+        const persistedDiagrams: Array<IDiagram> = this._solutionService.getSingleDiagrams();
+
+        this.activeDiagram = persistedDiagrams.find((diagram: IDiagram) => {
+          return diagram.name === diagramName;
+        });
+      } else {
+
+        this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(diagramName);
+      }
+    }
+  }
+
 }

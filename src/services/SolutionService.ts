@@ -1,7 +1,8 @@
 import {inject} from 'aurelia-framework';
 
-import {ISolutionEntry, ISolutionService} from '../contracts';
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
+import {ISolutionEntry, ISolutionService} from '../contracts';
 import {SolutionExplorerServiceFactory} from '../modules/solution-explorer-services/SolutionExplorerServiceFactory';
 
 @inject('SolutionExplorerServiceFactory')
@@ -9,11 +10,14 @@ export class SolutionService implements ISolutionService {
   private _allSolutionEntries: Array<ISolutionEntry> = [];
   private _serviceFactory: SolutionExplorerServiceFactory;
   private _persistedEntries: Array<ISolutionEntry> = [];
+  private _persistedSingleDiagrams: Array<IDiagram> = [];
 
   constructor(serviceFactory: SolutionExplorerServiceFactory) {
     this._serviceFactory = serviceFactory;
 
     const openedSolutions: Array<ISolutionEntry> = this._getSolutionFromLocalStorage();
+    this._persistedSingleDiagrams = this._getSingleDiagramsFromLocalStorage();
+
     const openedSolutionsAreNotSet: boolean = openedSolutions === null;
     if (openedSolutionsAreNotSet) {
       return;
@@ -25,13 +29,16 @@ export class SolutionService implements ISolutionService {
       solution.service = solutionIsRemote
         ? await this._serviceFactory.newManagementApiSolutionExplorer()
         : await this._serviceFactory.newFileSystemSolutionExplorer();
-
-      await solution.service.openSolution(solution.uri, solution.identity);
     });
 
     this._persistedEntries = openedSolutions;
     this._allSolutionEntries = this._allSolutionEntries.concat(openedSolutions);
+
   }
+
+  /**
+   * SOLUTIONS
+   */
 
   public addSolutionEntry(solutionEntry: ISolutionEntry): void {
 
@@ -42,20 +49,10 @@ export class SolutionService implements ISolutionService {
     });
     const solutionIsAlreadyOpenend: boolean = solutionWithSameUri !== undefined;
     if (solutionIsAlreadyOpenend) {
-      this.removeSolutionEntry(solutionWithSameUri);
-    }
-
-    const solutionEntryIsRemote: boolean = solutionEntry.uri.startsWith('http');
-    if (solutionEntryIsRemote) {
-      this._removeCurrentRemoteSolution();
+      this.removeSolutionEntryByUri(solutionWithSameUri.uri);
     }
 
     this._allSolutionEntries.push(solutionEntry);
-    this._persistSolutionsInLocalStorage();
-  }
-
-  public removeSolutionEntry(solutionEntry: ISolutionEntry): void {
-    this._allSolutionEntries.splice(this._allSolutionEntries.indexOf(solutionEntry), 1);
     this._persistSolutionsInLocalStorage();
   }
 
@@ -73,9 +70,61 @@ export class SolutionService implements ISolutionService {
     return solutionEntry;
   }
 
+  public getRemoteSolutionEntries(): Array<ISolutionEntry> {
+    const remoteEntries: Array<ISolutionEntry> = this._allSolutionEntries.filter((entry: ISolutionEntry) => {
+      return entry.uri.startsWith('http');
+    });
+
+    return remoteEntries;
+  }
+
+  public removeSolutionEntryByUri(uri: string): void {
+    const solutionToRemove: ISolutionEntry = this._allSolutionEntries.find((entry: ISolutionEntry) => {
+      return entry.uri === uri;
+    });
+
+    const solutionNotFound: boolean = solutionToRemove === undefined;
+    if (solutionNotFound) {
+      return;
+    }
+
+    this._allSolutionEntries.splice(this._allSolutionEntries.indexOf(solutionToRemove), 1);
+    this._persistSolutionsInLocalStorage();
+  }
+
+  /**
+   * SINGLE DIAGRAMS
+   */
+
+  public addSingleDiagram(diagramToAdd: IDiagram): void {
+    const diagramAlreadyPersisted: boolean = this._persistedSingleDiagrams.some((diagram: IDiagram) => {
+      return diagramToAdd.uri === diagram.uri;
+    });
+
+    if (diagramAlreadyPersisted) {
+      return;
+    }
+
+    this._persistedSingleDiagrams.push(diagramToAdd);
+    this._persistSingleDiagramsInLocalStorage();
+  }
+
+  public removeSingleDiagramByUri(diagramUri: string): void {
+    const indexOfDiagramToRemove: number = this._persistedSingleDiagrams.findIndex((diagram: IDiagram) => {
+      return diagram.uri === diagramUri;
+    });
+
+    this._persistedSingleDiagrams.splice(indexOfDiagramToRemove, 1);
+    this._persistSingleDiagramsInLocalStorage();
+  }
+
+  public getSingleDiagrams(): Array<IDiagram> {
+    return this._persistedSingleDiagrams;
+  }
+
   private _persistSolutionsInLocalStorage(): void {
     /**
-     * Right now the single diagrams solution don't get persisted.
+     * Right now the single diagrams don't get persisted.
      */
     const entriesToPersist: Array<ISolutionEntry> = this._allSolutionEntries.filter((entry: ISolutionEntry) => {
       const entryIsNotSingleDiagramSolution: boolean = entry.uri !== 'Single Diagrams';
@@ -84,6 +133,7 @@ export class SolutionService implements ISolutionService {
     });
 
     window.localStorage.setItem('openedSolutions', JSON.stringify(entriesToPersist));
+    this._persistedEntries = entriesToPersist;
   }
 
   private _getSolutionFromLocalStorage(): Array<ISolutionEntry> {
@@ -92,19 +142,15 @@ export class SolutionService implements ISolutionService {
     return openedSolutions;
   }
 
-  private _removeCurrentRemoteSolution(): void {
-    const remoteSolution: ISolutionEntry = this._allSolutionEntries.find((entry: ISolutionEntry) => {
-      const entryIsRemoteSolution: boolean = entry.uri.startsWith('http');
+  private _getSingleDiagramsFromLocalStorage(): Array<IDiagram> {
+    const singleDiagrams: Array<IDiagram> = JSON.parse(window.localStorage.getItem('SingleDiagrams'));
+    const singleDigramsPersisted: boolean = singleDiagrams !== null;
 
-      return entryIsRemoteSolution;
-    });
-
-    const noRemoteSolutionContained: boolean = remoteSolution === undefined;
-    if (noRemoteSolutionContained) {
-      return;
-    }
-
-    this.removeSolutionEntry(remoteSolution);
+    return singleDigramsPersisted ? singleDiagrams : [];
   }
 
+  private _persistSingleDiagramsInLocalStorage(): void {
+
+    window.localStorage.setItem('SingleDiagrams', JSON.stringify(this._persistedSingleDiagrams));
+  }
 }

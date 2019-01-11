@@ -13,11 +13,11 @@
           <tr repeat.for="correlation of correlations" id="processList-${correlation.id}" class="process-list-item">
             <td>${correlation.id}</td>
             <td>
-              <a route-href="route: design; params.bind: { diagramName: correlation.processModels[0].processModelId, solutionUri: remoteSolutionUri, view: 'detail' }" class="process-list-item-modelname">${correlation.processModels[0].processModelId}</a>
+              <a route-href="route: design; params.bind: { view: 'detail', diagramName: correlation.processModels[0].processModelId, solutionUri: activeSolutionEntry.uri }" class="process-list-item-modelname">${correlation.processModels[0].processModelId}</a>
             </td>
             <td class="process-list__last-table-cell">
-              <a route-href="route: task-list-correlation; params.bind: { correlationId: correlation.id }" class="process-list-item-user-tasks btn btn-default">Tasks</a>
-              <a route-href="route: live-execution-tracker; params.bind: { diagramName: correlation.processModels[0].processModelId, correlationId: correlation.id}" class="btn btn-default">Live Execution Tracking</a>
+              <a route-href="route: task-list-correlation; params.bind: { correlationId: correlation.id, solutionUri: activeSolutionEntry.uri }" class="process-list-item-user-tasks btn btn-default">Tasks</a>
+              <a route-href="route: live-execution-tracker; params.bind: { diagramName: correlation.processModels[0].processModelId, solutionUri: activeSolutionEntry.uri, correlationId: correlation.id}" class="btn btn-default">Live Execution Tracking</a>
             </td>
           </tr>
         </table>

@@ -1,3 +1,4 @@
+import {IConnection} from './bpmnElements';
 import {IDocumentation, IModdleElement} from './index';
 
 export interface IShape {
@@ -15,4 +16,5 @@ export interface IShape {
   $type: string;
   target?: IShape;
   source?: IShape;
+  outgoing?: Array<IConnection>;
 }

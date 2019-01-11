@@ -31,14 +31,7 @@ export function configure(aurelia: Aurelia): void {
     aurelia.container.registerInstance('InternalProcessEngineBaseRoute', null);
   }
 
-  const customProcessEngineRoute: string = window.localStorage.getItem('processEngineRoute');
-  const shouldUseCustomProcessEngine: boolean = window.localStorage.getItem('useCustomProcessEngine') !== null;
-
-  const processEngineRoute: string = shouldUseCustomProcessEngine
-  ? customProcessEngineRoute
-  : window.localStorage.getItem('InternalProcessEngineRoute');
-
-  window.localStorage.setItem('processEngineRoute', processEngineRoute);
+  const processEngineRoute: string = window.localStorage.getItem('InternalProcessEngineRoute');
 
   const processEngineRouteExists: boolean = processEngineRoute !== null && processEngineRoute !== '';
   if (processEngineRouteExists) {

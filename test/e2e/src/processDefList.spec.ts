@@ -42,10 +42,20 @@ describe('Process definition list', () => {
   });
 
   beforeEach(async() => {
-    const processModelLink: string = ProcessModel.getProcessModelLink();
-    const destination: string = aureliaUrl + processModelLink;
     const routerViewContainer: ElementFinder = general.getRouterViewContainer;
     const visibilityOfRouterViewContainer: Function = expectedConditions.visibilityOf(routerViewContainer);
+
+    await browser.get(aureliaUrl);
+    await browser.driver
+      .wait(() => {
+        browser
+          .wait(visibilityOfRouterViewContainer, defaultTimeoutMS);
+
+        return routerViewContainer;
+     });
+
+    const processModelLink: string = ProcessModel.getProcessModelLink();
+    const destination: string = aureliaUrl + processModelLink;
 
     await browser.get(destination);
     await browser.driver

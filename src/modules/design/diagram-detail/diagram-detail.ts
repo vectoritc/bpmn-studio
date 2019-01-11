@@ -1,6 +1,6 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {bindable, inject, observable} from 'aurelia-framework';
-import {Redirect, Router} from 'aurelia-router';
+import {bindable, bindingMode, computedFrom, inject, observable} from 'aurelia-framework';
+import {Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
 import {Event, EventList, IManagementApi} from '@process-engine/management_api_contracts';
@@ -8,6 +8,7 @@ import {ProcessModelExecution} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
 import {
+  IConnection,
   IElementRegistry,
   IExtensionElement,
   IFormElement,
@@ -32,8 +33,9 @@ export class DiagramDetail {
 
   @bindable() public activeDiagram: IDiagram;
   @bindable() public activeSolutionEntry: ISolutionEntry;
-  @observable({ changeHandler: 'correlationChanged'}) public customCorrelationId: string;
-  @observable({ changeHandler: 'diagramHasChangedChanged'}) public diagramHasChanged: boolean;
+  @observable({changeHandler: 'correlationChanged'}) public customCorrelationId: string;
+  @observable({changeHandler: 'diagramHasChangedChanged'}) public diagramHasChanged: boolean;
+  @bindable({defaultBindingMode: bindingMode.oneWay}) public xml: string;
   public bpmnio: BpmnIo;
   public showUnsavedChangesModal: boolean = false;
   public showSaveForStartModal: boolean = false;
@@ -45,6 +47,9 @@ export class DiagramDetail {
   public initialToken: string;
   public hasValidationError: boolean = false;
   public diagramIsInvalid: boolean = false;
+  public showRemoteSolutionOnDeployModal: boolean = false;
+  public remoteSolutions: Array<ISolutionEntry> = [];
+  public selectedRemoteSolution: ISolutionEntry;
 
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
@@ -59,6 +64,7 @@ export class DiagramDetail {
     specialCharacters: /^[._ -]/i,
     german: /^[äöüß]/i,
   };
+  private _clickedOnCustomStart: boolean = false;
 
   constructor(managementApiClient: IManagementApi,
               notificationService: NotificationService,
@@ -84,6 +90,11 @@ export class DiagramDetail {
 
   public attached(): void {
     this.diagramHasChanged = false;
+
+    const solutionIsRemote: boolean = this.activeSolutionEntry.uri.startsWith('http');
+    if (solutionIsRemote) {
+      this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, this.activeSolutionEntry.uri);
+    }
 
     const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
     if (isRunningInElectron) {
@@ -114,8 +125,9 @@ export class DiagramDetail {
       this._eventAggregator.subscribe(environment.events.diagramDetail.startProcess, () => {
         this._showStartDialog();
       }),
-      this._eventAggregator.subscribe(environment.events.diagramDetail.startProcessWithOptions, () => {
-        this.showStartWithOptionsModal = true;
+      this._eventAggregator.subscribe(environment.events.diagramDetail.startProcessWithOptions, async() => {
+        this._clickedOnCustomStart = true;
+        await this.showSelectStartEventDialog();
       }),
     ];
   }
@@ -156,6 +168,11 @@ export class DiagramDetail {
     }
   }
 
+  @computedFrom('activeDiagram.uri')
+  public get activeDiagramUri(): string {
+    return this.activeDiagram.uri;
+  }
+
   /**
    * Saves the current diagram to disk and deploys it to the
    * process engine.
@@ -163,7 +180,8 @@ export class DiagramDetail {
   public async saveDiagramAndDeploy(): Promise<void> {
     this.showSaveBeforeDeployModal = false;
     await this.saveDiagram();
-    await this.uploadProcess();
+
+    this._checkForMultipleRemoteSolutions();
   }
 
   /**
@@ -176,7 +194,8 @@ export class DiagramDetail {
   /**
    * Uploads the current diagram to the connected ProcessEngine.
    */
-  public async uploadProcess(): Promise<void> {
+  public async uploadProcess(solutionToDeployTo: ISolutionEntry): Promise<void> {
+    this.cancelDialog();
     const rootElements: Array<IModdleElement> = this.bpmnio.modeler._definitions.rootElements;
 
     const processModel: IModdleElement = rootElements.find((definition: IModdleElement) => {
@@ -185,16 +204,6 @@ export class DiagramDetail {
     const processModelId: string = processModel.id;
 
     try {
-
-      const processEngineRoute: string = window.localStorage.getItem('processEngineRoute');
-      const internalProcessEngineRoute: string = window.localStorage.getItem('InternalProcessEngineRoute');
-      const processEngineRouteIsSet: boolean = processEngineRoute !== '';
-
-      const connectedProcessEngineRoute: string = processEngineRouteIsSet
-                                                ? processEngineRoute
-                                                : internalProcessEngineRoute;
-
-      const solutionToDeployTo: ISolutionEntry = this._solutionService.getSolutionEntryForUri(connectedProcessEngineRoute);
       this.activeSolutionEntry = solutionToDeployTo;
 
       this.activeDiagram.id = processModelId;
@@ -215,7 +224,7 @@ export class DiagramDetail {
         xml: this.activeDiagram.xml,
       };
 
-      await this.activeSolutionEntry.service.saveDiagram(copyOfDiagram, connectedProcessEngineRoute);
+      await this.activeSolutionEntry.service.saveDiagram(copyOfDiagram, solutionToDeployTo.uri);
 
       this.activeDiagram = await this.activeSolutionEntry.service.loadDiagram(processModelId);
 
@@ -258,16 +267,6 @@ export class DiagramDetail {
 
     const parsedInitialToken: any = this._getInitialTokenValues(this.initialToken);
 
-    await this._updateProcessStartEvents();
-
-    const onlyOneStartEventIsAvailable: boolean = this.processesStartEvents.length === 1;
-
-    if (onlyOneStartEventIsAvailable) {
-      this.selectedStartEventId = this.processesStartEvents[0].id;
-    } else {
-      this.showStartEventModal = true;
-    }
-
     await this.startProcess(parsedInitialToken);
   }
 
@@ -308,6 +307,9 @@ export class DiagramDetail {
           error.message,
         );
     }
+
+    this._clickedOnCustomStart = false;
+
   }
 
   public async saveChangesBeforeStart(): Promise<void> {
@@ -360,7 +362,14 @@ export class DiagramDetail {
 
     if (onlyOneStarteventAvailable) {
       this.selectedStartEventId = this.processesStartEvents[0].id;
-      this.startProcess();
+
+      const functionCallDoesNotComeFromCustomModal: boolean = this._clickedOnCustomStart === false;
+      if (functionCallDoesNotComeFromCustomModal) {
+        this.startProcess();
+        this._clickedOnCustomStart = false;
+      } else {
+        this.showCustomStartModal();
+      }
 
       return;
     }
@@ -373,6 +382,13 @@ export class DiagramDetail {
     this.showSaveForStartModal = false;
     this.showStartEventModal = false;
     this.showStartWithOptionsModal = false;
+    this.showRemoteSolutionOnDeployModal = false;
+    this._clickedOnCustomStart = false;
+  }
+
+  public showCustomStartModal(): void {
+    this._getTokenFromStartEventAnnotation();
+    this.showStartWithOptionsModal = true;
   }
 
   private _getInitialTokenValues(token: any): any {
@@ -383,6 +399,51 @@ export class DiagramDetail {
       // If an error occurs, the token is something else.
       return token;
     }
+  }
+
+  private _getTokenFromStartEventAnnotation(): void {
+
+    const elementRegistry: IElementRegistry = this.bpmnio.modeler.get('elementRegistry');
+    const noStartEventId: boolean = this.selectedStartEventId === undefined;
+    let startEvent: IShape;
+
+    if (noStartEventId) {
+      startEvent = elementRegistry.filter((element: IShape) => {
+        return element.type === 'bpmn:StartEvent';
+      })[0];
+    } else {
+      startEvent = elementRegistry.get(this.selectedStartEventId);
+    }
+
+    const startEventAssociations: Array<IConnection> = startEvent.outgoing.filter((connection: IConnection) => {
+      const connectionIsAssociation: boolean = connection.type === 'bpmn:Association';
+
+      return connectionIsAssociation;
+    });
+
+    const associationWithStartToken: IConnection = startEventAssociations.find((connection: IConnection) => {
+      const token: string = connection.target.businessObject.text
+                                                            .trim();
+
+      return token.startsWith('StartToken:');
+    });
+
+    if (associationWithStartToken) {
+      const initialToken: string = associationWithStartToken.target.businessObject.text
+                                                                                  .replace('StartToken:', '')
+                                                                                  .trim();
+
+       /**
+       * This Regex replaces all single quotes with double quotes and adds double
+       * quotes to non quotet keys.
+       * This way we make sure that JSON.parse() can handle the given string.
+       */
+      this.initialToken = initialToken.replace(/(\s*?{\s*?|\s*?,\s*?)(['"])?([a-zA-Z0-9]+)(['"])?:/g, '$1"$3":');
+
+      return;
+    }
+
+    this.initialToken = '';
   }
 
   private async _updateProcessStartEvents(): Promise<void> {
@@ -401,8 +462,20 @@ export class DiagramDetail {
     if (this.diagramHasChanged) {
       this.showSaveBeforeDeployModal = true;
     } else {
-      await this.uploadProcess();
+      await this._checkForMultipleRemoteSolutions();
     }
+  }
+
+  private async _checkForMultipleRemoteSolutions(): Promise<void> {
+    this.remoteSolutions = this._solutionService.getRemoteSolutionEntries();
+
+    const multipleRemoteSolutionsConnected: boolean = this.remoteSolutions.length > 1;
+    if (multipleRemoteSolutionsConnected) {
+      this.showRemoteSolutionOnDeployModal = true;
+    } else {
+      await this.uploadProcess(this.remoteSolutions[0]);
+    }
+
   }
 
   /**
@@ -455,7 +528,6 @@ export class DiagramDetail {
    */
   private _dropInvalidFormData(): void {
     const registry: IElementRegistry = this.bpmnio.modeler.get('elementRegistry');
-
     registry.forEach((element: IShape) => {
 
       const elementIsUserTask: boolean = element.type === 'bpmn:UserTask';

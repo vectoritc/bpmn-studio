@@ -4,6 +4,9 @@ import {IIdentity} from '@essential-projects/iam_contracts';
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
+import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
+import {Router} from 'aurelia-router';
+
 import {
   IAuthenticationService,
   IDiagramValidationService,
@@ -18,9 +21,11 @@ interface IUriToViewModelMap {
   [key: string]: SolutionExplorerSolution;
 }
 
-@inject('SolutionExplorerServiceFactory', 'AuthenticationService', 'DiagramValidationService', 'SolutionService')
+@inject(Router, EventAggregator, 'SolutionExplorerServiceFactory', 'AuthenticationService', 'DiagramValidationService', 'SolutionService')
 export class SolutionExplorerList {
 
+  private _router: Router;
+  private _eventAggregator: EventAggregator;
   private _solutionExplorerServiceFactory: SolutionExplorerServiceFactory;
   private _authenticationService: IAuthenticationService;
   private _diagramValidationService: IDiagramValidationService;
@@ -42,11 +47,15 @@ export class SolutionExplorerList {
   public solutionEntryViewModels: IUriToViewModelMap = {};
 
   constructor(
+    router: Router,
+    eventAggregator: EventAggregator,
     solutionExplorerServiceFactory: SolutionExplorerServiceFactory,
     authenticationService: IAuthenticationService,
     diagramValidationService: IDiagramValidationService,
     solutionService: ISolutionService,
   ) {
+    this._router = router;
+    this._eventAggregator = eventAggregator;
     this._solutionExplorerServiceFactory = solutionExplorerServiceFactory;
     this._authenticationService = authenticationService;
     this._diagramValidationService = diagramValidationService;
@@ -125,10 +134,16 @@ export class SolutionExplorerList {
     }
 
     const identity: IIdentity = this._createIdentityForSolutionExplorer();
-    await solutionExplorer.openSolution(uri, identity);
+    try {
+      await solutionExplorer.openSolution(uri, identity);
+    } catch (error) {
+      this._solutionService.removeSolutionEntryByUri(uri);
 
-    const newOpenedSpluton: ISolution = await solutionExplorer.loadSolution();
-    const solutionURI: string = newOpenedSpluton.uri;
+      return;
+    }
+
+    const newOpenedSolution: ISolution = await solutionExplorer.loadSolution();
+    const solutionURI: string = newOpenedSolution.uri;
 
     const arrayAlreadyContainedURI: boolean = this._getIndexOfSolution(solutionURI) >= 0;
 
@@ -146,17 +161,29 @@ export class SolutionExplorerList {
    * @param uri the uri of the solution to close.
    */
   public async closeSolution(uri: string): Promise<void> {
-    const indexOfSolutionToBeRemoved: number = this._getIndexOfSolution(uri);
 
-    const uriNotFound: boolean = indexOfSolutionToBeRemoved < 0;
-    if (uriNotFound) {
-      return;
+    /**
+     * If the user closes the Solution which contains the diagram, which he still
+     * has opened, he gets navigated to the start page.
+     */
+    const currentOpenDiagram: string = this._router.currentInstruction.queryParams.solutionUri;
+    const diagramOfClosedSolutionOpen: boolean = uri.includes(currentOpenDiagram);
+
+    if (diagramOfClosedSolutionOpen) {
+      /**
+       * We only want to close the open Solution, if the user does not have
+       * unsaved changes.
+       */
+      const subscription: Subscription = this._eventAggregator.subscribe('router:navigation:success', () => {
+        this._cleanupSolution(uri);
+        subscription.dispose();
+      });
+
+      this._router.navigateToRoute('start-page');
+
+    } else {
+      this._cleanupSolution(uri);
     }
-
-    this._openedSolutions.splice(indexOfSolutionToBeRemoved, 1);
-
-    const entryToRemove: ISolutionEntry = this._solutionService.getSolutionEntryForUri(uri);
-    this._solutionService.removeSolutionEntry(entryToRemove);
   }
 
   /**
@@ -183,6 +210,19 @@ export class SolutionExplorerList {
     return filteredEntries;
   }
 
+  private _cleanupSolution(uri: string): void {
+   const indexOfSolutionToBeRemoved: number = this._getIndexOfSolution(uri);
+
+   const uriNotFound: boolean = indexOfSolutionToBeRemoved < 0;
+   if (uriNotFound) {
+
+      return;
+    }
+   this._openedSolutions.splice(indexOfSolutionToBeRemoved, 1);
+
+   const entryToRemove: ISolutionEntry = this._solutionService.getSolutionEntryForUri(uri);
+   this._solutionService.removeSolutionEntryByUri(entryToRemove.uri);
+  }
   /**
    * Add entry for single file service.
    */
@@ -228,9 +268,11 @@ export class SolutionExplorerList {
 
   private _canCloseSolution(service: ISolutionExplorerService, uri: string): boolean {
     const solutionIsNotSingleDiagrams: boolean = !this._isSingleDiagramService(service);
-    const solutionIsNotConnectedProcessEngine: boolean = !uri.startsWith('http');
 
-    return solutionIsNotSingleDiagrams && solutionIsNotConnectedProcessEngine;
+    const internalProcessEngineRoute: string = window.localStorage.getItem('InternalProcessEngineRoute');
+    const solutionIsNotInternalSolution: boolean = uri !== internalProcessEngineRoute;
+
+    return solutionIsNotSingleDiagrams && solutionIsNotInternalSolution;
   }
 
   private _isSingleDiagramService(service: ISolutionExplorerService): boolean {

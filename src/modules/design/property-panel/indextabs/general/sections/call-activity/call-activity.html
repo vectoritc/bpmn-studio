@@ -11,7 +11,7 @@
             <select class="props-input props-select" value.bind="selectedDiagramId" change.delegate="updateCalledDiagram()">
               <option model.bind="null">-Choose called process-</option>
               <option repeat.for="diagram of allDiagrams"
-                      model.bind="diagram.id" value="${diagram.id}">${diagram.name}</option>
+                      model.bind="diagram.name" value="${diagram.name}">${diagram.name}</option>
             </select>
           </td>
         </tr>

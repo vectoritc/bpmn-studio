@@ -80,11 +80,16 @@
   margin-right: 6px;
 }
 
-.diagram-entry__name {
+.diagram-entry__name-container {
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.diagram-entry__location {
+  font-size: 12px;
+  color: darkgray;
 }
 
 .diagram-entry:hover .diagram-entry__name {

@@ -1,7 +1,7 @@
 {
   "name": "bpmn-studio",
   "description": "An Aurelia application for designing BPMN diagrams, which can also be connected to a process engine to execute these diagrams.",
-  "version": "4.15.0",
+  "version": "4.16.0",
   "author": {
     "name": "process-engine",
     "email": "hello@process-engine.io",
@@ -12,7 +12,7 @@
     "start": "./bin/bpmn-studio.js",
     "postinstall": "npm rebuild node-sass && electron-builder install-app-deps",
     "start_dev": "au run --watch",
-    "build": "au build --prod",
+    "build": "au build",
     "reset": "bash dev_tooling/scripts/reset_setup.bash",
     "reinstall": "OLD_PATH=$PATH bash dev_tooling/scripts/reinstall_setup.bash && unset OLD_PATH",
     "deploy": "npm run build && npm publish",
@@ -98,7 +98,7 @@
     "@process-engine/kpi_api_contracts": "1.1.0",
     "@process-engine/management_api_client": "1.6.0",
     "@process-engine/management_api_contracts": "1.6.1",
-    "@process-engine/process_engine_runtime": "5.0.0",
+    "@process-engine/process_engine_runtime": "5.1.0",
     "@process-engine/solutionexplorer.contracts": "1.0.0",
     "@process-engine/solutionexplorer.repository.contracts": "4.0.0",
     "@process-engine/solutionexplorer.repository.filesystem": "4.0.0",

@@ -1,11 +1,12 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {bindable, inject} from 'aurelia-framework';
+import {bindable, bindingMode, inject} from 'aurelia-framework';
+import {activationStrategy, NavigationInstruction, Redirect, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {Redirect, Router} from 'aurelia-router';
-import {ISolutionEntry, ISolutionService} from '../../contracts';
+import {ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
+import {NotificationService} from '../notification/notification.service';
 import {DiagramDetail} from './diagram-detail/diagram-detail';
 
 export interface IDesignRouteParameters {
@@ -19,11 +20,13 @@ type IEventListener = {
   function: Function,
 };
 
-@inject(EventAggregator, 'SolutionService', Router)
+@inject(EventAggregator, 'SolutionService', Router, 'NotificationService')
 export class Design {
 
   @bindable() public activeDiagram: IDiagram;
   @bindable() public activeSolutionEntry: ISolutionEntry;
+
+  @bindable({defaultBindingMode: bindingMode.oneWay}) public xml: string;
 
   public showQuitModal: boolean;
   public showLeaveModal: boolean;
@@ -34,25 +37,24 @@ export class Design {
   public propertyPanelShown: boolean;
   public showPropertyPanelButton: boolean = true;
   public showDiffDestinationButton: boolean = false;
-  public diffDestinationIsLocal: boolean = true;
 
-  @bindable() public xmlForDiffOld: string;
-  @bindable() public xmlForDiffNew: string;
+  @bindable() public xmlForDiff: string;
   public diagramDetail: DiagramDetail;
 
   private _eventAggregator: EventAggregator;
+  private _notificationService: NotificationService;
   private _solutionService: ISolutionService;
   private _subscriptions: Array<Subscription>;
   private _router: Router;
   private _routeView: string;
   private _ipcRenderer: any;
   private _ipcRendererEventListeners: Array<IEventListener> = [];
-  private _suppressSaveChangesModal: boolean;
 
-  constructor(eventAggregator: EventAggregator, solutionService: ISolutionService, router: Router) {
+  constructor(eventAggregator: EventAggregator, solutionService: ISolutionService, router: Router, notificationService: NotificationService) {
     this._eventAggregator = eventAggregator;
     this._solutionService = solutionService;
     this._router = router;
+    this._notificationService = notificationService;
   }
 
   public async activate(routeParameters: IDesignRouteParameters): Promise<void> {
@@ -64,15 +66,58 @@ export class Design {
     const solutionIsSet: boolean = routeParameters.solutionUri !== undefined;
     const diagramNameIsSet: boolean = routeParameters.diagramName !== undefined;
 
+    const routerAndInstructionIsNotNull: boolean = this._router !== null
+                                                && this._router.currentInstruction !== null;
+
+    const diagramNamesAreDifferent: boolean = routerAndInstructionIsNotNull
+                                              ? routeParameters.diagramName !== this._router.currentInstruction.params.diagramName
+                                              : true;
+
+    const solutionIsDifferent: boolean = routerAndInstructionIsNotNull
+                                        ? routeParameters.solutionUri !== this._router.currentInstruction.queryParams.solutionUri
+                                        : true;
+
+    const routeFromOtherView: boolean = routerAndInstructionIsNotNull
+                                      ? this._router.currentInstruction.config.name !== 'design'
+                                      : true;
+
+    const navigateToAnotherDiagram: boolean = diagramNamesAreDifferent || routeFromOtherView || solutionIsDifferent;
+
     if (solutionIsSet) {
       this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
+
       /**
        * We have to open the solution here again since if we come here after a
        * reload the solution might not be opened yet.
        */
       await this.activeSolutionEntry.service.openSolution(this.activeSolutionEntry.uri, this.activeSolutionEntry.identity);
 
-      this.activeDiagram = diagramNameIsSet ? await this.activeSolutionEntry.service.loadDiagram(routeParameters.diagramName) : undefined;
+      const isSingleDiagram: boolean = this.activeSolutionEntry.uri === 'Single Diagrams';
+
+      if (isSingleDiagram) {
+        const persistedDiagrams: Array<IDiagram> = this._solutionService.getSingleDiagrams();
+
+        this.activeDiagram = persistedDiagrams.find((diagram: IDiagram) => {
+          return diagram.name === routeParameters.diagramName;
+        });
+
+      } else {
+
+        this.activeDiagram = diagramNameIsSet
+                            ? await this.activeSolutionEntry.service.loadDiagram(routeParameters.diagramName)
+                            : undefined;
+      }
+
+      const diagramNotFound: boolean = this.activeDiagram === undefined;
+
+      if (diagramNotFound) {
+        this._router.navigateToRoute('start-page');
+        this._notificationService.showNotification(NotificationType.INFO, 'Diagram could not be opened!');
+      }
+
+      if (navigateToAnotherDiagram) {
+        this.xml = this.activeDiagram.xml;
+      }
     }
 
     const routeViewIsDetail: boolean = routeParameters.view === 'detail';
@@ -101,25 +146,13 @@ export class Design {
         return;
       }
 
-      const previousRouteIsDiff: boolean = this._router.currentInstruction.params.view === 'diff';
-
-      if (previousRouteIsDiff) {
-        this.xmlForDiffOld = this.activeDiagram.xml;
-        this.xmlForDiffNew = await this.diagramDetail.getXML();
-      } else {
-        this.xmlForDiffOld = await this.diagramDetail.getXML();
-        this.xmlForDiffNew = undefined;
-      }
+      this.xmlForDiff = await this.diagramDetail.getXML();
 
       this._showDiff();
     }
   }
 
   public async attached(): Promise<void> {
-    setTimeout(async() => {
-      this.xmlForDiffOld = await this.diagramDetail.getXML();
-    }, 0);
-
     const routeViewIsDiff: boolean = this._routeView === 'diff';
     if (routeViewIsDiff) {
       this._showDiff();
@@ -128,9 +161,6 @@ export class Design {
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.bpmnio.propertyPanelActive, (showPanel: boolean) => {
         this.propertyPanelShown = showPanel;
-      }),
-      this._eventAggregator.subscribe(environment.events.diagramDetail.suppressUnsavedChangesModal, () => {
-        this._suppressSaveChangesModal = true;
       }),
     ];
 
@@ -142,10 +172,12 @@ export class Design {
     this._subscriptions.forEach((subscription: Subscription) => subscription.dispose());
   }
 
-  public toggleDiffDestination(): void {
-    this.diffDestinationIsLocal = !this.diffDestinationIsLocal;
-    const diffDestination: string = this.diffDestinationIsLocal ? 'local' : 'deployed';
+  public determineActivationStrategy(): string {
 
+    return activationStrategy.invokeLifecycle;
+  }
+
+  public setDiffDestination(diffDestination: string): void {
     this._eventAggregator.publish(environment.events.diffView.setDiffDestination, diffDestination);
   }
 
@@ -153,10 +185,9 @@ export class Design {
     this._eventAggregator.publish(environment.events.bpmnio.togglePropertyPanel);
   }
 
-  public async canDeactivate(): Promise<Redirect> {
-    const modalResult: boolean = await this.canDeactivateModal();
-
-    if (!modalResult) {
+  public async canDeactivate(destinationInstruction: NavigationInstruction): Promise<Redirect> {
+    const userCanNotDeactivateRoute: boolean = !(await this.canDeactivateModal(destinationInstruction));
+    if (userCanNotDeactivateRoute) {
       /*
       * As suggested in https://github.com/aurelia/router/issues/302, we use
       * the router directly to navigate back, which results in staying on this
@@ -166,15 +197,11 @@ export class Design {
     }
   }
 
-  public async canDeactivateModal(): Promise<boolean> {
-    if (this._suppressSaveChangesModal) {
-      this._suppressSaveChangesModal = false;
-
-      return true;
-    }
-
+  public async canDeactivateModal(currentRouteInstruction: NavigationInstruction): Promise<boolean> {
     const modalResult: Promise<boolean> = new Promise((resolve: Function, reject: Function): boolean | void => {
-      if (!this.diagramDetail.diagramHasChanged) {
+
+      const modalCanBeSuppressed: boolean = !this.diagramDetail.diagramHasChanged || this._modalCanBeSuppressed(currentRouteInstruction);
+      if (modalCanBeSuppressed) {
         resolve(true);
 
         return;
@@ -221,6 +248,26 @@ export class Design {
     }
   }
 
+  public activeDiagramChanged(newValue: IDiagram, oldValue: IDiagram): void {
+    const activeDiagramDidNotChange: boolean = newValue.id === oldValue.id
+                                            && newValue.uri === oldValue.uri;
+    if (activeDiagramDidNotChange) {
+      return;
+    }
+
+    this.xmlForDiff = this.activeDiagram.xml;
+  }
+
+  public get remoteSolutions(): Array<ISolutionEntry> {
+    const remoteSolutions: Array<ISolutionEntry> = this._solutionService.getRemoteSolutionEntries();
+
+    const remoteSolutionsWithoutActive: Array<ISolutionEntry> = remoteSolutions.filter((remoteSolution: ISolutionEntry) => {
+      return remoteSolution.uri !== this.activeSolutionEntry.uri;
+    });
+
+    return remoteSolutionsWithoutActive;
+  }
+
   private _showDiff(): void {
     this.showDiff = true;
     this.showDetail = false;
@@ -264,5 +311,35 @@ export class Design {
 
   public cancelQuitting(): void {
     this.showQuitModal = false;
+  }
+
+  /**
+   * This function checks, if the 'Save unsaved changes' Modal can be
+   * suppressed.
+   *
+   * This is the case, if the user basically navigates between the detail,
+   * the xml and the diff view, since the current xml will passed between
+   * these views.
+   *
+   * Therefore, the following paths will suppress the modal:
+   *  * detail  <-->   xml
+   *  * detail  <-->   diff
+   *  * diff    <-->   xml
+   *
+   * @param destinationInstruction The current router instruction which contains
+   * the destination router parameters.
+   */
+  private _modalCanBeSuppressed(destinationInstruction: NavigationInstruction): boolean {
+    const oldView: string = this._router.currentInstruction.params.view;
+    const destinationView: string = destinationInstruction.params.view;
+
+    const navigatingBetween: Function = (routeA: string, routeB: string): boolean =>
+      (routeA === oldView || routeA === destinationView) && (routeB === oldView || routeB === destinationView);
+
+    const shouldModalBeSuppressed: boolean = navigatingBetween('diff', 'xml')
+      || navigatingBetween('diff', 'detail')
+      || navigatingBetween('xml', 'detail');
+
+    return shouldModalBeSuppressed;
   }
 }

@@ -10,14 +10,12 @@ import environment from '../../environment';
 @inject(EventAggregator, Router, 'SolutionService')
 export class StatusBar {
 
-  public processEngineRoute: string = '';
   public showDiagramViewButtons: boolean = false;
   public diffIsShown: boolean = false;
   public currentDiffMode: DiffMode;
   public xmlIsShown: boolean = false;
   public showInspectCorrelationButtons: boolean = false;
   public showChangeList: boolean = false;
-  public isEncryptedCommunication: boolean = false;
   public currentXmlIdentifier: string;
   public previousXmlIdentifier: string;
   public showInspectPanel: boolean = true;
@@ -36,16 +34,6 @@ export class StatusBar {
     this._eventAggregator = eventAggregator;
     this._router = router;
     this._solutionService = solutionService;
-
-    const customProcessEngineRoute: string = window.localStorage.getItem('processEngineRoute');
-    const isCustomProcessEngineRouteSet: boolean = customProcessEngineRoute !== ''
-                                                && customProcessEngineRoute !== null;
-
-    const processEngineRoute: string = isCustomProcessEngineRouteSet
-    ? customProcessEngineRoute
-    : window.localStorage.getItem('InternalProcessEngineRoute');
-
-    this._setProcessEngineRoute(processEngineRoute);
   }
 
   public async attached(): Promise<void> {
@@ -60,10 +48,6 @@ export class StatusBar {
         this.diffIsShown = false;
         this.showChangeList = false;
         this.currentDiffMode = DiffMode.NewVsOld;
-      }),
-
-      this._eventAggregator.subscribe(environment.events.configPanel.processEngineRouteChanged, (newProcessEngineRoute: string) => {
-        this._setProcessEngineRoute(newProcessEngineRoute);
       }),
 
       this._eventAggregator.subscribe(environment.events.statusBar.setXmlIdentifier, (xmlIdentifier: Array<string>) => {
@@ -98,8 +82,6 @@ export class StatusBar {
 
     this._designView = this.xmlIsShown ? 'detail' : 'xml';
 
-    this._eventAggregator.publish(environment.events.diagramDetail.suppressUnsavedChangesModal);
-
     this._router.navigateToRoute('design', {
       diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
       solutionUri: this.activeSolutionEntry.uri,
@@ -126,8 +108,6 @@ export class StatusBar {
     }
 
     this._designView = this.diffIsShown ? 'detail' : 'diff';
-
-    this._eventAggregator.publish(environment.events.diagramDetail.suppressUnsavedChangesModal);
 
     this._router.navigateToRoute('design', {
       diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
@@ -168,13 +148,6 @@ export class StatusBar {
     }
   }
 
-  private _setProcessEngineRoute(processEngineRoute: string): void {
-    // This Regex returns the protocol and the route from the processEngineRoute string
-    const [, protocol, route]: RegExpExecArray = /^([^\:]+:\/\/)?(.*)$/i.exec(processEngineRoute);
-    this.isEncryptedCommunication = protocol === 'https://';
-    this.processEngineRoute = route;
-  }
-
   private _disposeAllSubscriptions(): void {
     this._subscriptions.forEach((subscription: Subscription) => {
       subscription.dispose();
@@ -183,13 +156,8 @@ export class StatusBar {
 
   private async _updateStatusBar(): Promise<void> {
     const solutionUriFromNavigation: string = this._router.currentInstruction.queryParams.solutionUri;
-    const noSolutionUriSpecified: boolean = solutionUriFromNavigation === undefined;
 
-    const solutionUri: string = noSolutionUriSpecified
-      ? window.localStorage.getItem('processEngineRoute')
-      : solutionUriFromNavigation;
-
-    this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
+    this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUriFromNavigation);
 
     const solutionIsSet: boolean = this.activeSolutionEntry !== undefined;
     const diagramName: string = this._router.currentInstruction.params.diagramName;

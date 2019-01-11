@@ -66,7 +66,6 @@ export default {
       startProcessWithOptions: 'diagramdetail:process:startWithOptions',
       toggleXMLView: 'design:xmlview:toggle',
       uploadProcess: 'diagramdetail:process:upload',
-      suppressUnsavedChangesModal: 'diagramdetail:view:suppressUnsavedChangesModal',
     },
     bpmnio: {
       toggleXMLView: 'design:xmlview:toggle',
@@ -88,6 +87,7 @@ export default {
     },
     inspect: {
       shouldDisableTokenViewerButton: 'inspect:tokenViewerButton:disable',
+      exportDiagramAs: 'inspect:diagram:exportas',
     },
     inspectCorrelation: {
       showInspectPanel: 'inspectCorrelation:inspectPanel:show',

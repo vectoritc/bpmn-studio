@@ -5,7 +5,7 @@ import {
   inject,
   NewInstance,
 } from 'aurelia-framework';
-import {PipelineResult, Router} from 'aurelia-router';
+import {Router} from 'aurelia-router';
 import {
   ControllerValidateResult,
   FluentRuleCustomizer,
@@ -130,8 +130,12 @@ export class SolutionExplorerSolution {
   @bindable public solutionService: ISolutionExplorerService;
   @bindable public solutionIsSingleDiagrams: boolean;
   @bindable public displayedSolutionEntry: ISolutionEntry;
+  @bindable public fontAwesomeIconClass: string;
   public createNewDiagramInput: HTMLInputElement;
-  public _renameDiagramInput: HTMLInputElement;
+
+  private _renameDiagramInput: HTMLInputElement;
+  private _originalIconClass: string;
+  private _globalSolutionService: ISolutionService;
 
   constructor(
     router: Router,
@@ -146,9 +150,11 @@ export class SolutionExplorerSolution {
     this._validationController = validationController;
     this._diagramCreationService = diagramCreationService;
     this._notificationService = notificationService;
+    this._globalSolutionService = solutionService;
   }
 
   public attached(): void {
+    this._originalIconClass = this.fontAwesomeIconClass;
     this._updateSolutionExplorer();
 
     this._subscriptions = [
@@ -210,13 +216,16 @@ export class SolutionExplorerSolution {
   public async updateSolution(): Promise<void> {
     try {
       this._openedSolution = await this.solutionService.loadSolution();
-
+      this.fontAwesomeIconClass = this._originalIconClass;
     } catch (error) {
       // In the future we can maybe display a small icon indicating the error.
       if (isError(error, UnauthorizedError)) {
         this._notificationService.showNotification(NotificationType.ERROR, 'You need to login to list process models.');
       } else if (isError(error, ForbiddenError)) {
         this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have the required permissions to list process models.');
+      } else {
+        this._openedSolution.diagrams = undefined;
+        this.fontAwesomeIconClass = 'fa-bolt';
       }
     }
   }
@@ -227,8 +236,17 @@ export class SolutionExplorerSolution {
   public async closeDiagram(diagram: IDiagram, event: Event): Promise<void> {
     event.stopPropagation();
 
-    const singleDiagramService: SingleDiagramsSolutionExplorerService = this.solutionService as SingleDiagramsSolutionExplorerService;
-    singleDiagramService.closeSingleDiagram(diagram);
+    const closedDiagramWasActiveDiagram: boolean = this.activeDiagramUri === diagram.uri;
+    if (closedDiagramWasActiveDiagram) {
+      const subscription: Subscription = this._eventAggregator.subscribe('router:navigation:success', () => {
+        this._closeSingleDiagram(diagram);
+        subscription.dispose();
+      });
+
+      this._router.navigateToRoute('start-page');
+    } else {
+      this._closeSingleDiagram(diagram);
+    }
   }
 
   public async deleteDiagram(diagram: IDiagram, event: Event): Promise<void> {
@@ -376,6 +394,28 @@ export class SolutionExplorerSolution {
     }
   }
 
+  public getDiagramLocation(diagramUri: string): string {
+    const isWindows: boolean = diagramUri.lastIndexOf('/') === -1;
+    const seperator: string = isWindows ? '\\' : '/';
+    const indexBeforeFilename: number = diagramUri.lastIndexOf(seperator);
+
+    const diagramLocationWithoutFileName: string = diagramUri.slice(0, indexBeforeFilename);
+
+    return diagramLocationWithoutFileName;
+  }
+
+  public getDiagramFolder(diagramUri: string): string {
+    const diagramLocation: string = this.getDiagramLocation(diagramUri);
+
+    const isWindows: boolean = diagramUri.lastIndexOf('/') === -1;
+    const seperator: string = isWindows ? '\\' : '/';
+    const indexBeforeFoldername: number = diagramLocation.lastIndexOf(seperator);
+
+    const diagramFolder: string = diagramLocation.slice(indexBeforeFoldername, diagramLocation.length);
+
+    return diagramFolder;
+  }
+
   // TODO: This method is copied all over the place.
   public async navigateToDetailView(diagram: IDiagram): Promise<void> {
     const diagramIsNoRemoteDiagram: boolean = !diagram.uri.startsWith('http');
@@ -442,14 +482,22 @@ export class SolutionExplorerSolution {
     return this.activeDiagram.uri;
   }
 
+  private _closeSingleDiagram(diagramToClose: IDiagram): void {
+    const singleDiagramService: SingleDiagramsSolutionExplorerService = this.solutionService as SingleDiagramsSolutionExplorerService;
+    singleDiagramService.closeSingleDiagram(diagramToClose);
+
+    this._globalSolutionService.removeSingleDiagramByUri(diagramToClose.uri);
+  }
+
   private async _isDiagramDetailViewOfDiagramOpen(diagramUriToCheck: string): Promise<boolean> {
     const activeDiagramIsUndefined: boolean = this.activeDiagram === undefined;
     if (activeDiagramIsUndefined) {
       return false;
     }
 
-    const openedDiagramUri: string = this.activeDiagram.uri;
+    const openedDiagramUri: string = this.activeDiagramUri;
     const diagramIsOpened: boolean = diagramUriToCheck === openedDiagramUri;
+
     return diagramIsOpened;
   }
 
