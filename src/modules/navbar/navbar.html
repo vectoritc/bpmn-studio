@@ -8,15 +8,8 @@
           <i class="fas fa-project-diagram"></i>
         </button>
       </div>
-      <div class="button menu__menu-tabbed-link"
-      class.bind="activeRouteName === 'think' ? 'button--active menu__menu-tabbed-link--active' : ''">
-        <a id="navbarThinkLink" class="menu-tabbed-link" click.delegate="navigateToThink()">Think</a>
-      </div>
-      <div class="button menu__menu-tabbed-link" class.bind="activeRouteName === 'design' ? 'button--active menu__menu-tabbed-link--active' : ''">
-        <a id="navbarDesignLink" class.bind="disableDesignLink ? 'button--disabled menu-tabbed-link menu-tabbed-link--disabled' : 'menu-tabbed-link'" click.delegate="navigateToDesigner()">Design</a>
-      </div>
-      <div class="button menu__menu-tabbed-link" class.bind="activeRouteName === 'inspect' ? 'button--active menu__menu-tabbed-link--active' : ''">
-        <a id="navbarInspectLink" class="menu-tabbed-link" click.delegate="navigateToInspect()">Inspect</a>
+      <div repeat.for="nav of router.navigation" class="button menu__menu-tabbed-link" class.bind="nav.isActive ? 'button--active menu__menu-tabbed-link--active' : ''">
+        <a id="navbar${nav.title}" class="menu-tabbed-link" click.delegate="navigate(nav)">${nav.title}</a>
       </div>
     </div>
     <div class="menu-bar__menu menu-bar__menu--center" id="navBarCenter">
