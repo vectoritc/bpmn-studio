@@ -31,7 +31,6 @@ export class NavBar {
   public diagramContainsUnsavedChanges: boolean = false;
   public inspectView: string = 'dashboard';
   public designView: string = 'detail';
-  public disableDesignLink: boolean = false;
   public navbarTitle: string = '';
   @bindable() public processOpenedFromProcessEngine: boolean = false;
 
