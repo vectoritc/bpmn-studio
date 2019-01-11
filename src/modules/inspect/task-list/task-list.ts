@@ -138,7 +138,15 @@ export class TaskList {
       ? taskWithProcessModel.userTask.correlationId
       : taskWithProcessModel.manualTask.correlationId;
 
-    const processModelId: string = taskWithProcessModel.processModel.id;
+    const tasksProcessModelId: string = taskWithProcessModel.userTask
+      ? taskWithProcessModel.userTask.processModelId
+      : taskWithProcessModel.manualTask.processModelId;
+
+    const taskIsFromCallActivity: boolean = taskWithProcessModel.processModel.id !== tasksProcessModelId;
+
+    const processModelId: string = taskIsFromCallActivity
+      ? tasksProcessModelId
+      : taskWithProcessModel.processModel.id;
 
     const taskId: string = taskWithProcessModel.userTask
       ? taskWithProcessModel.userTask.id
