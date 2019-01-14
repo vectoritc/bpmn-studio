@@ -94,6 +94,9 @@ export class SolutionExplorerPanel {
       this._eventAggregator.subscribe(environment.events.diagramDetail.onDiagramDeployed, () => {
         this._refreshSolutions();
       }),
+      this._eventAggregator.subscribe(environment.events.startPage.openLocalSolution, () => {
+        this.openSolution();
+      }),
     ];
   }
 
