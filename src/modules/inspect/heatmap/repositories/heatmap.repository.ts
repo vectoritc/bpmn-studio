@@ -4,44 +4,34 @@ import {IIdentity} from '@essential-projects/iam_contracts';
 import {ActiveToken, FlowNodeRuntimeInformation} from '@process-engine/kpi_api_contracts';
 import {IManagementApi, ProcessModelExecution} from '@process-engine/management_api_contracts';
 
-import {IAuthenticationService} from '../../../../contracts';
 import {IHeatmapRepository} from '../contracts/IHeatmap.Repository';
 
-@inject('ManagementApiClientService', 'AuthenticationService')
+@inject('ManagementApiClientService')
 export class HeatmapRepository implements IHeatmapRepository {
 
   private _managementApiClientService: IManagementApi;
-  private _authenticationService: IAuthenticationService;
+  private _identity: IIdentity;
 
-  constructor(managementApiClientService: IManagementApi, authenticationService: IAuthenticationService) {
+  constructor(managementApiClientService: IManagementApi) {
     this._managementApiClientService = managementApiClientService;
-    this._authenticationService = authenticationService;
   }
 
   public getRuntimeInformationForProcessModel(processModelId: string): Promise<Array<FlowNodeRuntimeInformation>> {
-    const identity: IIdentity = this._getIdentity();
 
-    return this._managementApiClientService.getRuntimeInformationForProcessModel(identity, processModelId);
+    return this._managementApiClientService.getRuntimeInformationForProcessModel(this._identity, processModelId);
   }
 
   public getProcess(processModelId: string): Promise<ProcessModelExecution.ProcessModel> {
-    const identity: IIdentity = this._getIdentity();
 
-    return this._managementApiClientService.getProcessModelById(identity, processModelId);
+    return this._managementApiClientService.getProcessModelById(this._identity, processModelId);
   }
 
   public getActiveTokensForFlowNode(flowNodeId: string): Promise<Array<ActiveToken>> {
-    const identity: IIdentity = this._getIdentity();
 
-    return this._managementApiClientService.getActiveTokensForFlowNode(identity, flowNodeId);
+    return this._managementApiClientService.getActiveTokensForFlowNode(this._identity, flowNodeId);
   }
 
-  private _getIdentity(): IIdentity {
-    const accessToken: string = this._authenticationService.getAccessToken();
-    const identity: IIdentity = {
-      token: accessToken,
-    };
-
-    return identity;
+  public setIdentity(identity: IIdentity): void {
+    this._identity = identity;
   }
 }
