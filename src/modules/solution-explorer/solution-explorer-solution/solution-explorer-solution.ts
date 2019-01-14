@@ -805,6 +805,7 @@ export class SolutionExplorerSolution {
   private async _updateSolutionExplorer(): Promise<void> {
     const solutionUri: string = this._router.currentInstruction.queryParams.solutionUri;
     const solutionUriSpecified: boolean = solutionUri !== undefined;
+
     const diagramName: string = this._router.currentInstruction.params.diagramName;
     const diagramNameIsSpecified: boolean = diagramName !== undefined;
 
@@ -825,13 +826,9 @@ export class SolutionExplorerSolution {
           return diagram.name === diagramName;
         });
 
-      } catch (error) {
-        this.activeDiagram = undefined;
+      } catch {
+        // Do nothing
       }
-
-      return;
     }
-
-    this.activeDiagram = undefined;
   }
 }
