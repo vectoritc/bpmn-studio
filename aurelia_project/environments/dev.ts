@@ -33,6 +33,9 @@ export default {
   events: {
     differsFromOriginal: 'differsFromOriginal',
     xmlChanged: 'xmlChanged',
+    startPage: {
+      openLocalSolution: 'startpage:openlocalsolution',
+    },
     statusBar: {
       showDiagramViewButtons: 'statusbar:diagramviewbuttons:show',
       hideDiagramViewButtons: 'statusbar:diagramviewbuttons:hide',
