@@ -300,6 +300,10 @@
             "path": "../aurelia_project/native/util"
           },
           {
+            "name": "os",
+            "path": "../aurelia_project/native/os"
+          },
+          {
             "name": "@process-engine/solutionexplorer.repository.filesystem",
             "main": "index.js",
             "path": "../node_modules/@process-engine/solutionexplorer.repository.filesystem/dist/amd"
