@@ -21,7 +21,6 @@ export class App {
 
   private _openIdConnect: OpenIdConnect | any;
   private _authenticationService: AuthenticationService;
-  private _router: Router;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
@@ -111,8 +110,6 @@ export class App {
   }
 
   public configureRouter(config: RouterConfiguration, router: Router): void {
-    this._router = router;
-
     const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
 
     if (isRunningInElectron) {
