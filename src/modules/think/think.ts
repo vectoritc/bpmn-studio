@@ -1,6 +1,4 @@
-import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
-import {Router} from 'aurelia-router';
 
 import {ISolutionEntry, ISolutionService} from '../../contracts';
 
@@ -10,7 +8,7 @@ export interface IThinkRouteParameters {
   solutionUri?: string;
 }
 
-@inject('SolutionService', Router, EventAggregator)
+@inject('SolutionService')
 export class Think {
   public showDiagramList: boolean = false;
 
