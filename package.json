@@ -98,7 +98,7 @@
     "@process-engine/kpi_api_contracts": "1.2.0",
     "@process-engine/management_api_client": "1.8.0",
     "@process-engine/management_api_contracts": "2.1.0",
-    "@process-engine/process_engine_runtime": "feature~add_get_token_by_process-instance_functionality",
+    "@process-engine/process_engine_runtime": "5.2.0-bd9bb695-b187",
     "@process-engine/solutionexplorer.contracts": "1.0.0",
     "@process-engine/solutionexplorer.repository.contracts": "4.0.0",
     "@process-engine/solutionexplorer.repository.filesystem": "4.0.1",
