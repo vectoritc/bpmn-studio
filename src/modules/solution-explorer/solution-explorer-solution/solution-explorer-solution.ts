@@ -110,7 +110,8 @@ export class SolutionExplorerSolution {
       .withMessage('The diagram name can not end with a whitespace character.')
       .then()
       .satisfies(async(input: string) => {
-        const diagramNameIsUnchanged: boolean = this._currentlyRenamingDiagram && this._currentlyRenamingDiagram.name === input;
+        const diagramNameIsUnchanged: boolean = this._isCurrentlyRenamingDiagram
+                                             && this._currentlyRenamingDiagram.name.toLowerCase() === input.toLowerCase();
         if (diagramNameIsUnchanged) {
           return true;
         }
@@ -198,7 +199,7 @@ export class SolutionExplorerSolution {
       this._resetDiagramCreation();
     }
 
-    if (this._isCurrentlyRenamingDiagram()) {
+    if (this._isCurrentlyRenamingDiagram) {
       this._resetDiagramRenaming();
     }
   }
@@ -286,7 +287,7 @@ export class SolutionExplorerSolution {
       return;
     }
 
-    if (this._isCurrentlyRenamingDiagram()) {
+    if (this._isCurrentlyRenamingDiagram) {
       return;
     }
 
@@ -324,7 +325,7 @@ export class SolutionExplorerSolution {
     }
 
     // Dont allow new diagram creation, if already renaming another diagram.
-    if (this._isCurrentlyRenamingDiagram()) {
+    if (this._isCurrentlyRenamingDiagram) {
       return;
     }
 
@@ -344,7 +345,7 @@ export class SolutionExplorerSolution {
     return this._diagramCreationState.isCreateDiagramInputShown;
   }
 
-  public _isCurrentlyRenamingDiagram(): boolean {
+  public get _isCurrentlyRenamingDiagram(): boolean {
     return this._currentlyRenamingDiagram !== null;
   }
 
