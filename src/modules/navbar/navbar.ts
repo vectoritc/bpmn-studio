@@ -144,11 +144,9 @@ export class NavBar {
           return;
         }
 
-        this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToDesigner, this.designView);
         this.routerNavigate(navModel.config.name, this.designView);
         break;
       case 'inspect':
-        this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, this.inspectView);
         this.routerNavigate(navModel.config.name, this.inspectView);
         break;
       default:
@@ -162,7 +160,6 @@ export class NavBar {
     this.disableInspectCorrelationButton = false;
 
     this.inspectView = 'dashboard';
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, this.inspectView);
 
     this.routerNavigate(this.router.currentInstruction.config.name, this.inspectView);
   }
@@ -173,7 +170,6 @@ export class NavBar {
     this.disableInspectCorrelationButton = false;
 
     this.inspectView = 'heatmap';
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, this.inspectView);
 
     this.routerNavigate(this.router.currentInstruction.config.name, this.inspectView);
   }
@@ -184,7 +180,6 @@ export class NavBar {
     this.disableInspectCorrelationButton = true;
 
     this.inspectView = 'inspect-correlation';
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, this.inspectView);
 
     this.routerNavigate(this.router.currentInstruction.config.name, this.inspectView);
   }
