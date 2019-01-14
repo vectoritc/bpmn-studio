@@ -22,8 +22,6 @@ export class DiagramList {
               router: Router) {
     this._eventAggregator = eventAggregator;
     this._router = router;
-
-    this._eventAggregator.publish(environment.events.refreshProcessDefs);
   }
 
   public attached(): void {
@@ -32,7 +30,6 @@ export class DiagramList {
 
     this._getProcessesIntervalId = window.setInterval(() => {
       this._updateDiagramList();
-      this._eventAggregator.publish(environment.events.refreshProcessDefs);
       // tslint:disable-next-line
     }, environment.processengine.processDefListPollingIntervalInMs);
 
