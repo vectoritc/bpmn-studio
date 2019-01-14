@@ -23,8 +23,6 @@ export class Think {
   }
 
   public async activate(routeParameters: IThinkRouteParameters): Promise<void> {
-    this.showDiagramList = true;
-
     const solutionUriIsSet: boolean = routeParameters.solutionUri !== undefined;
 
     const solutionUri: string = solutionUriIsSet
@@ -33,5 +31,7 @@ export class Think {
 
     this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
     await this.activeSolutionEntry.service.openSolution(this.activeSolutionEntry.uri, this.activeSolutionEntry.identity);
+
+    this.showDiagramList = true;
   }
 }
