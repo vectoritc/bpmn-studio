@@ -35,6 +35,7 @@ export default {
     xmlChanged: 'xmlChanged',
     startPage: {
       openLocalSolution: 'startpage:openlocalsolution',
+      openSingleDiagram: 'startpage:openSingleDiagram',
     },
     statusBar: {
       showDiagramViewButtons: 'statusbar:diagramviewbuttons:show',
