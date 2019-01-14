@@ -18,4 +18,8 @@ export class StartPage {
   public openLocalSolution(): void {
     this._eventAggregator.publish(environment.events.startPage.openLocalSolution);
   }
+
+  public openSingleDiagram(): void {
+    this._eventAggregator.publish(environment.events.startPage.openSingleDiagram);
+  }
 }
