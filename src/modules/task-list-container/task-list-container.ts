@@ -5,16 +5,17 @@ import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/er
 import {IManagementApi} from '@process-engine/management_api_contracts';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
-import {IAuthenticationService, NotificationType} from '../../contracts/index';
+import {ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
 import {TaskList} from '../inspect/task-list/task-list';
 import {NotificationService} from '../notification/notification.service';
 
 interface ITaskListRouteParameters {
   processModelId?: string;
   correlationId?: string;
+  solutionUri?: string;
 }
 
-@inject('NotificationService', Router, 'ManagementApiClientService', 'AuthenticationService')
+@inject('NotificationService', Router, 'ManagementApiClientService', 'SolutionService')
 export class TaskListContainer {
 
   public showTaskList: boolean = false;
@@ -24,24 +25,24 @@ export class TaskListContainer {
   private _notificationService: NotificationService;
   private _router: Router;
   private _managementApiService: IManagementApi;
-  private _authenticationService: IAuthenticationService;
+  private _solutionService: ISolutionService;
 
   constructor(
     notificationService: NotificationService,
     router: Router,
     managementApiService: IManagementApi,
-    authenticationService: IAuthenticationService,
+    solutionService: ISolutionService,
   ) {
     this._notificationService = notificationService;
     this._router = router;
     this._managementApiService = managementApiService;
-    this._authenticationService = authenticationService;
+    this._solutionService = solutionService;
   }
 
-  public async canActivate(): Promise<boolean> {
-    const identity: IIdentity = this._getIdentity();
+  public async canActivate(routeParameters: ITaskListRouteParameters): Promise<boolean> {
+    const activeSolutionEntry: ISolutionEntry = this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
 
-    const hasNoClaimsForTaskList: boolean = !(await this._hasClaimsForTaskList(identity));
+    const hasNoClaimsForTaskList: boolean = !(await this._hasClaimsForTaskList(activeSolutionEntry.identity));
 
     if (hasNoClaimsForTaskList) {
       this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have the permission to use the inspect features.');
@@ -61,15 +62,6 @@ export class TaskListContainer {
 
   public attached(): void {
     this.taskList.initializeTaskList(this._routeParameters);
-  }
-
-  private _getIdentity(): IIdentity {
-    const accessToken: string = this._authenticationService.getAccessToken();
-    const identity: IIdentity = {
-      token: accessToken,
-    };
-
-    return identity;
   }
 
   private async _hasClaimsForTaskList(identity: IIdentity): Promise<boolean> {
