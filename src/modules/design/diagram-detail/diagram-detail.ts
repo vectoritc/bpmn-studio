@@ -378,6 +378,8 @@ export class DiagramDetail {
     } else {
       this.showCustomStartModal();
     }
+
+    this.showStartEventModal = false;
   }
 
   public cancelDialog(): void {

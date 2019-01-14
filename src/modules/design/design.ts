@@ -296,6 +296,10 @@ export class Design {
     return this.diagramDetail.showStartWithOptionsModal;
   }
 
+  public get showStartEventModal(): boolean {
+    return this.diagramDetail.showStartEventModal;
+  }
+
   public get diagramHasChanged(): boolean {
     return this.diagramDetail.diagramHasChanged;
   }
