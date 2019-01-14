@@ -1,6 +1,6 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {inject} from 'aurelia-framework';
-import {Router, RouterConfiguration} from 'aurelia-router';
+import {bindable, inject} from 'aurelia-framework';
+import {NavigationInstruction, RouteConfig, Router, RouterConfiguration} from 'aurelia-router';
 /**
  * This import statement loads bootstrap. Its required because otherwise
  * its not executed.
@@ -9,14 +9,21 @@ import 'bootstrap';
 
 import {OpenIdConnect} from 'aurelia-open-id-connect';
 
-import {NotificationType} from './contracts/index';
+import {ISolutionEntry, ISolutionService, NotificationType} from './contracts/index';
 import environment from './environment';
 import {AuthenticationService} from './modules/authentication/authentication.service';
 import {NotificationService} from './modules/notification/notification.service';
 
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {oidcConfig} from './open-id-connect-configuration';
-@inject(OpenIdConnect, 'AuthenticationService', 'NotificationService', EventAggregator)
+
+@inject(OpenIdConnect, 'AuthenticationService', 'NotificationService', EventAggregator, 'SolutionService')
 export class App {
+  @bindable() public activeSolutionEntry: ISolutionEntry;
+  @bindable() public activeDiagram: Promise<IDiagram> | IDiagram;
+  @bindable() public singleDiagrams: Array<IDiagram> = [];
+  @bindable() public remoteSolutions: Array<ISolutionEntry> = [];
+
   public showSolutionExplorer: boolean = false;
 
   private _openIdConnect: OpenIdConnect | any;
@@ -25,20 +32,23 @@ export class App {
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
+  private _solutionService: ISolutionService;
 
   private _preventDefaultBehaviour: EventListener;
 
   constructor(openIdConnect: OpenIdConnect,
               authenticationService: AuthenticationService,
               notificationService: NotificationService,
-              eventAggregator: EventAggregator) {
+              eventAggregator: EventAggregator,
+              solutionService: ISolutionService) {
     this._openIdConnect = openIdConnect;
     this._authenticationService = authenticationService;
     this._notificationService = notificationService;
     this._eventAggregator = eventAggregator;
+    this._solutionService = solutionService;
   }
 
-  public activate(): void {
+  public async activate(): Promise<void> {
     this._preventDefaultBehaviour = (event: Event): boolean => {
       event.preventDefault();
 
@@ -89,6 +99,58 @@ export class App {
 
       oidcConfig.userManagerSettings.authority = openIdConnectRoute;
     }
+
+    const latestSolutionUri: string = window.sessionStorage.getItem('latestSolutionUri');
+    const latestActiveDiagramName: string = window.sessionStorage.getItem('latestActiveDiagramName');
+
+    if (latestSolutionUri && latestActiveDiagramName) {
+      this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(latestSolutionUri);
+      await this.activeSolutionEntry.service.openSolution(this.activeSolutionEntry.uri, this.activeSolutionEntry.identity);
+      this.activeDiagram = this.activeSolutionEntry.service.loadDiagram(latestActiveDiagramName);
+    }
+  }
+
+  public async attached(): Promise<void> {
+    const subscription: Subscription =
+    this._eventAggregator.subscribe('router:navigation:processing', async(navigationInstruction: {instruction: NavigationInstruction}) => {
+      this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(navigationInstruction.instruction.queryParams.solutionUri);
+      this.singleDiagrams = this._solutionService.getSingleDiagrams();
+      this.remoteSolutions = this._getRemoteSolutions();
+
+      const isSingleDiagram: boolean = this.activeSolutionEntry.uri === 'Single Diagrams';
+
+      if (isSingleDiagram) {
+        this.activeDiagram = this.singleDiagrams.find((diagram: IDiagram) => {
+          return diagram.name === navigationInstruction.instruction.params.diagramName;
+        });
+
+      } else {
+        this.activeDiagram = this.activeSolutionEntry
+                                 .service
+                                 .loadDiagram(navigationInstruction.instruction.params.diagramName);
+
+      }
+
+      window.sessionStorage.setItem('latestSolutionUri', navigationInstruction.instruction.queryParams.solutionUri);
+      window.sessionStorage.setItem('latestActiveDiagramName', navigationInstruction.instruction.params.diagramName);
+
+      return true;
+    });
+
+    this._subscriptions.push(
+      subscription,
+    );
+
+  }
+
+  private _getRemoteSolutions(): Array<ISolutionEntry> {
+    const remoteSolutions: Array<ISolutionEntry> = this._solutionService.getRemoteSolutionEntries();
+
+    const remoteSolutionsWithoutActive: Array<ISolutionEntry> = remoteSolutions.filter((remoteSolution: ISolutionEntry) => {
+      return remoteSolution.uri !== this.activeSolutionEntry.uri;
+    });
+
+    return remoteSolutionsWithoutActive;
   }
 
   public deactivate(): void {
