@@ -22,4 +22,8 @@ export class StartPage {
   public openSingleDiagram(): void {
     this._eventAggregator.publish(environment.events.startPage.openSingleDiagram);
   }
+
+  public createNewSingleDiagram(): void {
+    this._eventAggregator.publish(environment.events.startPage.createSingleDiagram);
+  }
 }
