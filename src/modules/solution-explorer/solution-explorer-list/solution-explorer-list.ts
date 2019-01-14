@@ -190,9 +190,24 @@ export class SolutionExplorerList {
    * entry.
    */
   public async createDiagram(uri: string): Promise<void> {
-    const viewModelOfEntry: SolutionExplorerSolution = this.solutionEntryViewModels[uri];
+    let viewModelOfEntry: SolutionExplorerSolution = this.solutionEntryViewModels[uri];
 
-    return viewModelOfEntry.startCreationOfNewDiagram();
+    const solutionIsNotOpened: boolean = viewModelOfEntry === undefined || viewModelOfEntry === null;
+    if (solutionIsNotOpened) {
+      await this.openSolution(uri);
+    }
+
+    /**
+     * Waiting for next tick of the browser here because the new solution wouldn't
+     * be added if we wouldn't do that.
+     */
+    window.setTimeout(() => {
+      if (solutionIsNotOpened) {
+        viewModelOfEntry = this.solutionEntryViewModels[uri];
+      }
+
+      viewModelOfEntry.startCreationOfNewDiagram();
+    }, 0);
   }
 
   /*
