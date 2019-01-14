@@ -133,7 +133,7 @@ export class NavBar {
 
   public navigate(navModel: NavModel): void {
     switch (navModel.config.name) {
-      case 'processdef-list':
+      case 'think':
         this.routerNavigate(navModel.config.name);
         break;
       case 'design':
