@@ -138,6 +138,7 @@ export class NavBar {
     switch (navModel.config.name) {
       case 'think':
         this.routerNavigate(navModel.config.name, this.thinkView);
+
         break;
       case 'design':
         const noActiveDiagram: boolean = this.activeDiagram === undefined;
@@ -153,6 +154,7 @@ export class NavBar {
         }
 
         this.routerNavigate(navModel.config.name, this.designView);
+
         break;
       case 'inspect':
         const inspectIsActive: boolean = navModel.isActive === true;
@@ -161,6 +163,7 @@ export class NavBar {
         }
 
         this.routerNavigate(navModel.config.name, this.inspectView);
+
         break;
       default:
         break;
