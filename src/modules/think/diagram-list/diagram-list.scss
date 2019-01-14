@@ -1,20 +1,20 @@
 /*
  * Process Definition List Styles
  */
-.process-def-list {
+.diagram-list {
   display: flex;
   height: 100%;
   align-items: stretch;
 }
 
-.process-def-list-table {
+.diagram-list-table {
   table-layout: fixed;
 }
 
-.processdef-list-container {
+.diagram-list-container {
   padding: 20px 60px;
   flex: 1;
-  overflow: scroll;
+  overflow: auto;
 }
 
 /*

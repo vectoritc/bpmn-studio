@@ -134,7 +134,8 @@ export class NavBar {
   }
 
   public navigateToThink(): void {
-    this._router.navigateToRoute('processdef-list', {
+    this._router.navigateToRoute('think', {
+      view: 'diagram-list',
       diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
       solutionUri: this.activeSolutionEntry ? this.activeSolutionEntry.uri : undefined,
     });

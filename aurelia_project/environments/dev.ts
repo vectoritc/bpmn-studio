@@ -33,7 +33,6 @@ export default {
   events: {
     differsFromOriginal: 'differsFromOriginal',
     xmlChanged: 'xmlChanged',
-    refreshProcessDefs: 'processdefs:refresh',
     statusBar: {
       showDiagramViewButtons: 'statusbar:diagramviewbuttons:show',
       hideDiagramViewButtons: 'statusbar:diagramviewbuttons:hide',

@@ -236,8 +236,6 @@ export class DiagramDetail {
       this._notificationService
           .showNotification(NotificationType.SUCCESS, 'Diagram was successfully uploaded to the connected ProcessEngine.');
 
-      // Since a new processmodel was uploaded, we need to refresh any processmodel lists.
-      this._eventAggregator.publish(environment.events.refreshProcessDefs);
       this._eventAggregator.publish(environment.events.diagramDetail.onDiagramDeployed, processModelId);
 
     } catch (error) {
