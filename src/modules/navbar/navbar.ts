@@ -27,8 +27,11 @@ export class NavBar {
   public disableDashboardButton: boolean = false;
   public disableInspectCorrelationButton: boolean = false;
   public diagramContainsUnsavedChanges: boolean = false;
+
   public inspectView: string = 'dashboard';
   public designView: string = 'detail';
+  public thinkView: string = 'diagram-list';
+
   public navbarTitle: string = '';
   @bindable() public processOpenedFromProcessEngine: boolean = false;
 
@@ -134,7 +137,7 @@ export class NavBar {
   public navigate(navModel: NavModel): void {
     switch (navModel.config.name) {
       case 'think':
-        this.routerNavigate(navModel.config.name);
+        this.routerNavigate(navModel.config.name, this.thinkView);
         break;
       case 'design':
         const noActiveDiagram: boolean = this.activeDiagram === undefined;
