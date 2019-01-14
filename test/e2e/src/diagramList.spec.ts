@@ -78,21 +78,21 @@ describe('Diagram list', () => {
       });
   });
 
-  it('should contain at least process definitions.', async() => {
+  it('should contain at least one diagram.', async() => {
     const diagramListItems: ElementArrayFinder = diagramListPage.diagramListItems;
     const numberOfDiagrams: number = await diagramListItems.count();
 
     expect(numberOfDiagrams).toBeGreaterThan(0);
   });
 
-  it('should contain just created process definition.', async() => {
+  it('should contain just created diagram.', async() => {
     const diagramListItemIds: ElementArrayFinder = diagramListPage.diagramListItemIds(diagramId);
     const numberOfDiagramsById: number = await diagramListItemIds.count();
 
     expect(numberOfDiagramsById).toBe(1);
   });
 
-  it('should be possible to open a process diagram.', async() => {
+  it('should be possible to open a diagram.', async() => {
     const diagram: ElementFinder = DiagramListPage.diagram(diagramId);
 
     await diagram.click();
