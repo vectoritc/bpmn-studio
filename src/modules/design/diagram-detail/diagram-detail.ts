@@ -361,19 +361,23 @@ export class DiagramDetail {
     if (onlyOneStarteventAvailable) {
       this.selectedStartEventId = this.processesStartEvents[0].id;
 
-      const functionCallDoesNotComeFromCustomModal: boolean = this._clickedOnCustomStart === false;
-      if (functionCallDoesNotComeFromCustomModal) {
-        this.startProcess();
-        this._clickedOnCustomStart = false;
-      } else {
-        this.showCustomStartModal();
-      }
+      this.continueStarting();
 
       return;
     }
 
     this.showStartEventModal = true;
     this.showSaveForStartModal = false;
+  }
+
+  public continueStarting(): void {
+    const functionCallDoesNotComeFromCustomModal: boolean = this._clickedOnCustomStart === false;
+    if (functionCallDoesNotComeFromCustomModal) {
+      this.startProcess();
+      this._clickedOnCustomStart = false;
+    } else {
+      this.showCustomStartModal();
+    }
   }
 
   public cancelDialog(): void {
