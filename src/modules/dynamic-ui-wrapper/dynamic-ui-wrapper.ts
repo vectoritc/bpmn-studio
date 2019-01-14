@@ -18,9 +18,8 @@ import {
   IEnumFormField,
   IStringFormField,
 } from '../../contracts';
-import {AuthenticationService} from '../authentication/authentication.service';
 
-@inject('DynamicUiService', 'AuthenticationService', Router, Element)
+@inject('DynamicUiService', Router, Element)
 export class DynamicUiWrapper {
 
   public cancelButtonText: string = 'Cancel';
@@ -37,19 +36,21 @@ export class DynamicUiWrapper {
   private _router: Router;
 
   private _dynamicUiService: IDynamicUiService;
-  private _authenticationService: AuthenticationService;
+  private _identity: IIdentity;
 
   constructor(dynamicUiService: IDynamicUiService,
-              authenticationService: AuthenticationService,
               router: Router,
               element: Element) {
 
     this._dynamicUiService = dynamicUiService;
-    this._authenticationService = authenticationService;
     this._router = router;
     this._element = element;
 
     this.isModal = false;
+  }
+
+  public set identity(identity: IIdentity) {
+    this._identity = identity;
   }
 
   public async handleUserTaskButtonClick(action: 'cancel' | 'proceed' | 'decline'): Promise<void> {
@@ -154,14 +155,12 @@ export class DynamicUiWrapper {
       return;
     }
 
-    const identity: IIdentity = this._getIdentity();
-
     const correlationId: string = this.currentUserTask.correlationId;
     const processInstanceId: string = this.currentUserTask.processInstanceId;
     const userTaskInstanceId: string = this.currentUserTask.flowNodeInstanceId;
     const userTaskResult: UserTaskResult = this._getUserTaskResults();
 
-    this._dynamicUiService.finishUserTask(identity,
+    this._dynamicUiService.finishUserTask(this._identity,
                                           processInstanceId,
                                           correlationId,
                                           userTaskInstanceId,
@@ -182,13 +181,11 @@ export class DynamicUiWrapper {
       return;
     }
 
-    const identity: IIdentity = this._getIdentity();
-
     const correlationId: string = this.currentManualTask.correlationId;
     const processInstanceId: string = this.currentManualTask.processInstanceId;
     const manualTaskInstanceId: string = this.currentManualTask.flowNodeInstanceId;
 
-    this._dynamicUiService.finishManualTask(identity,
+    this._dynamicUiService.finishManualTask(this._identity,
                                             processInstanceId,
                                             correlationId,
                                             manualTaskInstanceId);
@@ -220,12 +217,4 @@ export class DynamicUiWrapper {
     return userTaskResult;
   }
 
-  private _getIdentity(): IIdentity {
-    const accessToken: string = this._authenticationService.getAccessToken();
-    const identity: IIdentity = {
-      token: accessToken,
-    };
-
-    return identity;
-  }
 }
