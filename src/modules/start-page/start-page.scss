@@ -6,7 +6,6 @@
   justify-content: center;
 }
 
-
 .start-page__content {
   text-align: center;
   -webkit-user-drag: none;
@@ -22,4 +21,35 @@
 .start-page__icon {
   opacity: 0.1;
   -webkit-user-drag: none;
+}
+
+.start-page__quick-start {
+  display: flex;
+  flex-direction: column;
+}
+
+.quick-start__item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.quick-start__topic {
+  margin: 0 20px;
+  color: #555555;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.quick-start__topic:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.quick-start__shortcut {
+  margin: 0 20px;
+  color: #555555;
+  font-size: 17px;
+  font-weight: bold;
 }
