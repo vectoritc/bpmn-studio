@@ -198,11 +198,11 @@ export class App {
         moduleId: 'modules/live-execution-tracker/live-execution-tracker',
       },
       {
-        route: ['inspect', 'inspect/:view?/diagram/:diagramName?'],
-        title: 'Inspect',
-        name: 'inspect',
-        moduleId: 'modules/inspect/inspect',
-        nav: 2,
+        route: ['think', 'think/:view?/diagram/:diagramName?'],
+        title: 'Think',
+        name: 'think',
+        moduleId: 'modules/think/think',
+        nav: 0,
       },
       {
         route: ['design', 'design/:view?/diagram/:diagramName?'],
@@ -212,10 +212,11 @@ export class App {
         nav: 1,
       },
       {
-        route: ['think', 'think/:view?/diagram/:diagramName?'],
-        title: 'Think',
-        name: 'think',
-        moduleId: 'modules/think/think',
+        route: ['inspect', 'inspect/:view?/diagram/:diagramName?'],
+        title: 'Inspect',
+        name: 'inspect',
+        moduleId: 'modules/inspect/inspect',
+        nav: 2,
       },
     ]);
 
