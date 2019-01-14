@@ -147,9 +147,19 @@ export class NavBar {
           return;
         }
 
+        const designIsActive: boolean = navModel.isActive === true;
+        if (designIsActive) {
+          return;
+        }
+
         this.routerNavigate(navModel.config.name, this.designView);
         break;
       case 'inspect':
+        const inspectIsActive: boolean = navModel.isActive === true;
+        if (inspectIsActive) {
+          return;
+        }
+
         this.routerNavigate(navModel.config.name, this.inspectView);
         break;
       default:
