@@ -37,10 +37,12 @@
 }
 
 .quick-start__topic {
-  margin: 0 20px;
+  margin-right: 20px;
   color: #555555;
   font-size: 17px;
   font-weight: bold;
+  width: 50%;
+  text-align: right;
 }
 
 .quick-start__topic:hover {
@@ -49,8 +51,10 @@
 }
 
 .quick-start__shortcut {
-  margin: 0 20px;
+  margin-left: 20px;
   color: #555555;
   font-size: 17px;
   font-weight: bold;
+  width: 50%;
+  text-align: left;
 }
