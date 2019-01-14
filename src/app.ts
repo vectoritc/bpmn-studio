@@ -210,7 +210,7 @@ export class App {
         moduleId: 'modules/design/design',
       },
       {
-        route: ['think/:view?/diagram/:diagramName?'],
+        route: ['think', 'think/:view?/diagram/:diagramName?'],
         title: 'Think',
         name: 'think',
         moduleId: 'modules/think/think',
