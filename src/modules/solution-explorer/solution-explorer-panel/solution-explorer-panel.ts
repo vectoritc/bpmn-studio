@@ -320,6 +320,8 @@ export class SolutionExplorerPanel {
 
     this._ipcRenderer.removeListener('menubar__start_opening_diagram', this._electronOnMenuOpenDiagramHook);
     this._ipcRenderer.removeListener('menubar__start_opening_solution', this._electronOnMenuOpenSolutionHook);
+
+    this._ipcRenderer.removeListener('menubar__start_create_diagram', this._electronOnCreateDiagram);
   }
 
   private _openDiagramOnDropBehaviour: EventListener = async(event: DragEvent): Promise<void> => {
