@@ -36,6 +36,7 @@ export default {
     startPage: {
       openLocalSolution: 'startpage:openlocalsolution',
       openSingleDiagram: 'startpage:openSingleDiagram',
+      createSingleDiagram: 'startpage:createSingleDiagram',
     },
     statusBar: {
       showDiagramViewButtons: 'statusbar:diagramviewbuttons:show',
