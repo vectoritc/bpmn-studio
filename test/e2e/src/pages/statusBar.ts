@@ -9,7 +9,7 @@ import {By} from 'selenium-webdriver';
 export class StatusBar {
 
   // Define Links, Urls, Classes
-  public statusBarLink: string = '/processdef';
+  public statusBarLink: string = '/think';
   public statusBarActiveClassName: string = 'status-bar__element--active';
 
   // Define Elements
