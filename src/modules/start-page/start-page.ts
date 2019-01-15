@@ -8,12 +8,20 @@ export class StartPage {
   private _eventAggregator: EventAggregator;
 
   public isRunningInElectron: boolean = (window as any).nodeRequire;
-  public isRunningOnWindows: boolean = process.platform === 'win32';
-  public isRunningOnMacOS: boolean = process.platform === 'darwin';
-  public isRunningOnLinux: boolean = process.platform === 'linux';
+  public isRunningOnWindows: boolean;
+  public isRunningOnMacOS: boolean;
+  public isRunningOnLinux: boolean;
 
   constructor(eventAggregator: EventAggregator) {
     this._eventAggregator = eventAggregator;
+  }
+
+  public activate(): void {
+    if (this.isRunningInElectron) {
+      this.isRunningOnWindows = process.platform === 'win32';
+      this.isRunningOnMacOS = process.platform === 'darwin';
+      this.isRunningOnLinux = process.platform === 'linux';
+    }
   }
 
   public openLocalSolution(): void {
