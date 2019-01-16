@@ -75,7 +75,7 @@ Main.execute = function () {
    * process and finally open a file via double-click.
    *
    */
-  const existingInstance = app.makeSingleInstance((argv, workingDirectory) => {
+  const existingInstance = app.hasSingleInstanceLock((argv, workingDirectory) => {
     const noArgumentsSet = argv[1] === undefined;
 
     if (noArgumentsSet) {
