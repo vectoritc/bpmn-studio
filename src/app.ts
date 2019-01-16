@@ -150,7 +150,7 @@ export class App {
         title: 'Dashboard',
         name: 'dashboard',
         moduleId: 'modules/inspect/dashboard/dashboard',
-        nav: true,
+        nav: false,
       },
       {
         route: ['task', 'processdef/:diagramName/task'],
@@ -171,7 +171,7 @@ export class App {
         title: 'Process Instance List',
         name: 'process-list',
         moduleId: 'modules/inspect/process-list/process-list',
-        nav: true,
+        nav: false,
       },
       {
         route: ['correlation/:correlationId/diagram/:diagramName/task/:taskId/dynamic-ui'],
@@ -198,22 +198,25 @@ export class App {
         moduleId: 'modules/live-execution-tracker/live-execution-tracker',
       },
       {
-        route: ['inspect', 'inspect/:view?/diagram/:diagramName?'],
-        title: 'Inspect',
-        name: 'inspect',
-        moduleId: 'modules/inspect/inspect',
+        route: ['think', 'think/:view?/diagram/:diagramName?'],
+        title: 'Think',
+        name: 'think',
+        moduleId: 'modules/think/think',
+        nav: 0,
       },
       {
         route: ['design', 'design/:view?/diagram/:diagramName?'],
         title: 'Design',
         name: 'design',
         moduleId: 'modules/design/design',
+        nav: 1,
       },
       {
-        route: ['think', 'think/:view?/diagram/:diagramName?'],
-        title: 'Think',
-        name: 'think',
-        moduleId: 'modules/think/think',
+        route: ['inspect', 'inspect/:view?/diagram/:diagramName?'],
+        title: 'Inspect',
+        name: 'inspect',
+        moduleId: 'modules/inspect/inspect',
+        nav: 2,
       },
     ]);
 

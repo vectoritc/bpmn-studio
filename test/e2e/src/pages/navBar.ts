@@ -24,9 +24,9 @@ export class NavBar {
   private _byLoginButton: By = by.id('userLoginButton');
   private _bySolutionExplorerButton: By = by.id('navbarSolutionExplorerButton');
   private _byActiveButton: By = by.css('#navbarSolutionExplorerButton.button--active');
-  private _byThinkLink: By = by.id('navbarThinkLink');
-  private _byDesignLink: By = by.id('navbarDesignLink');
-  private _byInspectLink: By = by.id('navbarInspectLink');
+  private _byThinkLink: By = by.id('navbarThink');
+  private _byDesignLink: By = by.id('navbarDesign');
+  private _byInspectLink: By = by.id('navbarInspect');
 
   public navBarTag: ElementFinder = element(this._byTagName);
   public navBarContainer: ElementFinder = this.navBarTag.element(this._byStatusBarContainer);

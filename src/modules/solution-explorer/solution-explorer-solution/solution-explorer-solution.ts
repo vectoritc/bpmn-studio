@@ -159,27 +159,6 @@ export class SolutionExplorerSolution {
     this._updateSolutionExplorer();
 
     this._subscriptions = [
-      this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToInspect, (inspectView?: string) => {
-        this._diagramRoute = 'inspect';
-
-        const inspectViewIsNotSet: boolean = inspectView === undefined;
-
-        this._inspectView = inspectViewIsNotSet
-                              ? 'heatmap'
-                              : inspectView;
-        this._designView = undefined;
-      }),
-
-      this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToDesigner, (designView?: string) => {
-        this._diagramRoute = 'design';
-        const designViewIsNotSet: boolean = designView === undefined;
-
-        this._designView = designViewIsNotSet
-                              ? 'detail'
-                              : designView;
-        this._inspectView = undefined;
-      }),
-
       this._eventAggregator.subscribe('router:navigation:success', () => {
         this._updateSolutionExplorer();
       }),
@@ -826,6 +805,7 @@ export class SolutionExplorerSolution {
   private async _updateSolutionExplorer(): Promise<void> {
     const solutionUri: string = this._router.currentInstruction.queryParams.solutionUri;
     const solutionUriSpecified: boolean = solutionUri !== undefined;
+
     const diagramName: string = this._router.currentInstruction.params.diagramName;
     const diagramNameIsSpecified: boolean = diagramName !== undefined;
 
@@ -846,13 +826,9 @@ export class SolutionExplorerSolution {
           return diagram.name === diagramName;
         });
 
-      } catch (error) {
-        this.activeDiagram = undefined;
+      } catch {
+        // Do nothing
       }
-
-      return;
     }
-
-    this.activeDiagram = undefined;
   }
 }

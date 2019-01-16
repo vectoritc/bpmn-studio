@@ -81,8 +81,6 @@ export default {
     diagramChange: 'diagram:change',
     processSolutionPanel: {
       toggleProcessSolutionExplorer: 'processSolutionPanel:processsolutionexplorer:toggle',
-      navigateToInspect: 'processSolutionPanel:processEngineLinks:navigateToInspect',
-      navigateToDesigner: 'processSolutionPanel:processEngineLinks:navigateToDesigner',
     },
     inspect: {
       shouldDisableTokenViewerButton: 'inspect:tokenViewerButton:disable',

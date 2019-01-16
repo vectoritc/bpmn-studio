@@ -96,7 +96,6 @@ export class Inspect {
 
   public detached(): void {
     this._eventAggregator.publish(environment.events.navBar.inspectNavigateToDashboard);
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToDesigner);
 
     for (const subscription of this._subscriptions) {
       subscription.dispose();
