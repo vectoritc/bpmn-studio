@@ -126,11 +126,13 @@ export class TaskList {
   }
 
   public continueTask(taskWithProcessModel: IUserTaskWithProcessModel & IManualTaskWithProcessModel): void {
-    const correlationId: string = taskWithProcessModel.userTask
+    const taskIsAnUserTask: boolean = taskWithProcessModel.userTask !== undefined;
+
+    const correlationId: string = taskIsAnUserTask
                                 ? taskWithProcessModel.userTask.correlationId
                                 : taskWithProcessModel.manualTask.correlationId;
 
-    const tasksProcessModelId: string = taskWithProcessModel.userTask
+    const tasksProcessModelId: string = taskIsAnUserTask
                                       ? taskWithProcessModel.userTask.processModelId
                                       : taskWithProcessModel.manualTask.processModelId;
 
@@ -140,7 +142,6 @@ export class TaskList {
                                  ? tasksProcessModelId
                                  : taskWithProcessModel.processModel.id;
 
-    const taskIsAnUserTask: boolean = taskWithProcessModel.userTask !== undefined;
     const taskId: string = taskIsAnUserTask
                          ? taskWithProcessModel.userTask.id
                          : taskWithProcessModel.manualTask.id;
