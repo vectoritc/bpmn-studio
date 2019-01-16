@@ -42,5 +42,10 @@ module.exports = function (config, windowParams) {
         reject(new Error('window was closed by user'));
       });
 
+      function onCallback(url) {
+        var url_parts = nodeUrl.parse(url, true);
+        var href = url_parts.href;
+        var error = url_parts.error;
+        }
       }
 };
