@@ -53,6 +53,13 @@ module.exports = function (config, windowParams) {
           setImmediate(function () {
             authWindow.close();
           });
+        } else if (href.includes('/connect/authorize/callback')) {
+
+          authWindow.loadURL(href);
+
+          setImmediate(function () {
+            authWindow.close();
+          });
         }
       }
 };
