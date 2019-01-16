@@ -232,7 +232,8 @@ describe('Dashboard view', () => {
     await dashboard.continueTaskByClickOnButton(processModelId);
 
     const correlationId: string = processModel.getCorrelationId();
-    const userTasksInputUrl: string = ProcessModel.userTasksInputUrl(correlationId, processModelId);
+    const processInstanceId: string = processModel.getProcessInstanceId();
+    const userTasksInputUrl: string = ProcessModel.userTasksInputUrl(correlationId, processModelId, processInstanceId);
     const currentBrowserUrl: string = await browser.getCurrentUrl();
 
     expect(currentBrowserUrl).toContain(userTasksInputUrl);
