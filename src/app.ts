@@ -103,12 +103,6 @@ export class App {
     });
   }
 
-  private _parseDeepLinkingUrl(url: string): string {
-    const customProtocolPrefix: string = 'bpmn-studio://';
-    const urlFragment: string = url.substring(customProtocolPrefix.length);
-    return urlFragment;
-  }
-
   public configureRouter(config: RouterConfiguration, router: Router): void {
     const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
 
