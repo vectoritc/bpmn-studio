@@ -59,6 +59,7 @@ export class BpmnIo {
   private _diagramPrintService: IDiagramPrintService;
   private _diagramIsInvalid: boolean = false;
 
+  private _diagramHasChanges: boolean = false;
   /**
    * We are using the direct reference of a container element to place the tools of bpmn-js
    * in the left sidebar (bpmn-io-layout__tools-left).
@@ -274,6 +275,10 @@ export class BpmnIo {
 
         keyboard.unbind();
       }),
+
+      this._eventAggregator.subscribe(environment.events.differsFromOriginal, (changes: boolean) => {
+       this._diagramHasChanges = changes;
+      }),
     ];
 
     const previousPropertyPanelWidth: string = window.localStorage.getItem('propertyPanelWidth');
@@ -315,7 +320,7 @@ export class BpmnIo {
       if (modelerIsSet) {
         this.modeler.importXML(this.xml, (err: Error) => {
           this._fitDiagramToViewport();
-
+          this._diagramHasChanges = false;
           return 0;
         });
 
