@@ -31,4 +31,7 @@ module.exports = function (config, windowParams) {
     }
 
     var url = config.authorizationUrl + '?' + queryString.stringify(urlParams);
+
+    return new Promise(function (resolve, reject) {
+      }
 };
