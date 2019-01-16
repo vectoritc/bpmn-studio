@@ -57,6 +57,16 @@ module.exports = function (config, windowParams) {
 
           authWindow.loadURL(href);
 
+        } else if (href.includes(config.redirectUri)) {
+          var identityParameter = url_parts.hash;
+          var parameterAsArray = identityParameter.split('&');
+
+          var id_token = parameterAsArray[0].split('=')[1];
+          var access_token = parameterAsArray[1].split('=')[1];
+
+          resolve(access_token);
+          authWindow.removeAllListeners('closed');
+
           setImmediate(function () {
             authWindow.close();
           });
