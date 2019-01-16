@@ -72,4 +72,14 @@ module.exports = function (config, windowParams) {
           });
         }
       }
+
+      authWindow.webContents.on('will-redirect', (event, url) => {
+        if (url.includes(config.redirectUri)) {
+          event.preventDefault();
+        }
+
+        onCallback(url);
+      });
+    });
+  }
 };
