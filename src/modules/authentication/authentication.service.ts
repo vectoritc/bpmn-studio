@@ -62,22 +62,24 @@ export class AuthenticationService implements IAuthenticationService {
       return;
     }
 
-    await this._openIdConnect.login();
-    const identity: IIdentity = await this.getIdentity();
-    this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
-  }
+    const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
 
-  public async loginViaDeepLink(urlFragment: string): Promise<void> {
-    const signinResponse: Oidc.SigninResponse = new SigninResponse(urlFragment) as Oidc.SigninResponse;
-    const user: User = new User(signinResponse);
+    ipcRenderer.on('github-oauth-reply', async(event: any, accessToken: string) => {
 
-    const loginSuccessful: boolean = user.access_token !== undefined;
+      const identity: IIdentity = await this.getIdentity(accessToken);
+      this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
 
-    this._user = loginSuccessful ? user : undefined;
+      const remoteSolutions: Array<ISolutionEntry> = this._solutionService.getRemoteSolutionEntries();
 
-    const identity: IIdentity = await this.getIdentity();
+      remoteSolutions.forEach((solution: ISolutionEntry) => {
+        solution.identity = {
+          token: accessToken,
+        };
+      });
 
-    this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
+    });
+
+    ipcRenderer.send('github-oauth', 'getToken');
   }
 
   public finishLogout(): void {
