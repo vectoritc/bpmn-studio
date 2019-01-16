@@ -120,6 +120,8 @@ export class Design {
       }
     }
 
+    const diagramDetailIsNotAttached: boolean = this.diagramDetail === undefined;
+
     const routeViewIsDetail: boolean = routeParameters.view === 'detail';
     const routeViewIsXML: boolean = routeParameters.view === 'xml';
     const routeViewIsDiff: boolean = routeParameters.view === 'diff';
@@ -131,17 +133,29 @@ export class Design {
       this.showDiff = false;
       this.showPropertyPanelButton = true;
       this.showDiffDestinationButton = false;
+
+      if (diagramDetailIsNotAttached) {
+        return;
+      }
+
+      const element: Document | any = document;
+      this.diagramDetail.bpmnio.keyboard.bind(element);
+
     } else if (routeViewIsXML) {
       this.showDetail = false;
       this.showXML = true;
       this.showDiff = false;
       this.showDiffDestinationButton = false;
       this.showPropertyPanelButton = false;
-    } else if (routeViewIsDiff) {
       /**
        * We need to check this, because after a reload the diagramdetail component is not attached yet.
        */
-      const diagramDetailIsNotAttached: boolean = this.diagramDetail === undefined;
+      if (diagramDetailIsNotAttached) {
+        return;
+      }
+
+      this.diagramDetail.bpmnio.keyboard.unbind();
+    } else if (routeViewIsDiff) {
       if (diagramDetailIsNotAttached) {
         return;
       }
@@ -154,8 +168,14 @@ export class Design {
 
   public async attached(): Promise<void> {
     const routeViewIsDiff: boolean = this._routeView === 'diff';
+    const routeViewIsXML: boolean = this._routeView === 'xml';
+
     if (routeViewIsDiff) {
       this._showDiff();
+    }
+
+    if (routeViewIsDiff || routeViewIsXML) {
+      this.diagramDetail.bpmnio.keyboard.unbind();
     }
 
     this._subscriptions = [
