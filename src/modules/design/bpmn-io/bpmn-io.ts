@@ -265,6 +265,15 @@ export class BpmnIo {
       this._eventAggregator.subscribe(environment.events.bpmnio.togglePropertyPanel, () => {
         this._togglePanel();
       }),
+
+      this._eventAggregator.subscribe(environment.events.bpmnio.bindKeyboard, () => {
+        const element: Document | any = document;
+        this._keyboard.bind(element);
+      }),
+
+      this._eventAggregator.subscribe(environment.events.bpmnio.unbindKeyboard, () => {
+        this._keyboard.unbind();
+      }),
     ];
 
     const previousPropertyPanelWidth: string = window.localStorage.getItem('propertyPanelWidth');
