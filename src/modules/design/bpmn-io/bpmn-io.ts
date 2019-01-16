@@ -17,6 +17,7 @@ import {
   IInternalEvent,
   IKeyboard,
   IModdleElement,
+  IProcessRef,
   IPropertiesElement,
   IShape,
   IViewbox,
@@ -59,6 +60,7 @@ export class BpmnIo {
   private _diagramPrintService: IDiagramPrintService;
   private _diagramIsInvalid: boolean = false;
 
+  private _tempProcess: IProcessRef;
   private _diagramHasChanges: boolean = false;
   /**
    * We are using the direct reference of a container element to place the tools of bpmn-js
@@ -123,6 +125,15 @@ export class BpmnIo {
       }
     });
 
+    this.modeler.on('shape.remove', (event: IInternalEvent) => {
+      const shapeIsParticipant: boolean = event.element.type === 'bpmn:Participant';
+      if (shapeIsParticipant) {
+        const rootElements: Array<IProcessRef> = this.modeler._definitions.rootElements;
+        this._tempProcess = rootElements.find((element: IProcessRef) => {
+          return element.$type === 'bpmn:Process';
+        });
+
+        return event;
       }
     });
 
@@ -315,9 +326,12 @@ export class BpmnIo {
 
   public async saveCurrentXML(): Promise<void> {
     this.savedXml = await this.getXML();
+    this._tempProcess = undefined;
   }
 
   public diagramChanged(): void {
+    this._tempProcess = undefined;
+
     // This is needed to make sure the xml was already binded
     setTimeout(() => {
       const modelerIsSet: boolean = this.modeler !== undefined && this.modeler !== null;
