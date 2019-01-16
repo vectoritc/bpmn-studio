@@ -56,7 +56,6 @@ export class AuthenticationService implements IAuthenticationService {
   public async login(): Promise<void> {
 
     const isIdentityServerReachable: boolean = await this._isIdentityServerReachable();
-
     if (!isIdentityServerReachable) {
       this._notificationService.showNotification(NotificationType.ERROR, 'IdentityServer is offline');
       return;
