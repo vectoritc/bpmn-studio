@@ -1,4 +1,5 @@
 import {IDescriptor} from './IDescriptor';
+import {IShape} from './IShape';
 
 export interface IInternalEvent {
   cancelBubble?: boolean;
@@ -7,4 +8,5 @@ export interface IInternalEvent {
   returnValue?: IInternalEvent;
   keyEvent?: KeyboardEvent;
   type: undefined;
+  element?: IShape;
 }
