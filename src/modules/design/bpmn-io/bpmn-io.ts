@@ -12,7 +12,6 @@ import {
   IDiagramPrintService,
   IEditorActions,
   IElementRegistry,
-  IEvent,
   IEventFunction,
   IInternalEvent,
   IKeyboard,
