@@ -190,10 +190,10 @@ export class LiveExecutionTracker {
       return true;
     }
 
-    const previousRoute: string = destinationInstruction.fragment;
-    const previousSiteIsDynamicUi: boolean = previousRoute.includes('/dynamic-ui');
+    const previousRoute: string = destinationInstruction.config.name;
+    const previousRouteIsDynamicUi: boolean = previousRoute === 'task-dynamic-ui';
 
-    if (previousSiteIsDynamicUi) {
+    if (previousRouteIsDynamicUi) {
       this._router.navigateBack();
 
       return false;
