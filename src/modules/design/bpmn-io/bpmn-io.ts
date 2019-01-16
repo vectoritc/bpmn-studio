@@ -299,10 +299,6 @@ export class BpmnIo {
     this.savedXml = await this.getXML();
   }
 
-  public get keyboard(): IKeyboard {
-    return this._keyboard;
-  }
-
   public diagramChanged(): void {
     // This is needed to make sure the xml was already binded
     setTimeout(() => {
