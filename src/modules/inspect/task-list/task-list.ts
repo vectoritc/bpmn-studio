@@ -127,22 +127,23 @@ export class TaskList {
 
   public continueTask(taskWithProcessModel: IUserTaskWithProcessModel & IManualTaskWithProcessModel): void {
     const correlationId: string = taskWithProcessModel.userTask
-      ? taskWithProcessModel.userTask.correlationId
-      : taskWithProcessModel.manualTask.correlationId;
+                                ? taskWithProcessModel.userTask.correlationId
+                                : taskWithProcessModel.manualTask.correlationId;
 
     const tasksProcessModelId: string = taskWithProcessModel.userTask
-      ? taskWithProcessModel.userTask.processModelId
-      : taskWithProcessModel.manualTask.processModelId;
+                                      ? taskWithProcessModel.userTask.processModelId
+                                      : taskWithProcessModel.manualTask.processModelId;
 
     const taskIsFromCallActivity: boolean = taskWithProcessModel.processModel.id !== tasksProcessModelId;
 
     const processModelId: string = taskIsFromCallActivity
-      ? tasksProcessModelId
-      : taskWithProcessModel.processModel.id;
+                                 ? tasksProcessModelId
+                                 : taskWithProcessModel.processModel.id;
 
-    const taskId: string = taskWithProcessModel.userTask
-      ? taskWithProcessModel.userTask.id
-      : taskWithProcessModel.manualTask.id;
+    const taskIsAnUserTask: boolean = taskWithProcessModel.userTask !== undefined;
+    const taskId: string = taskIsAnUserTask
+                         ? taskWithProcessModel.userTask.id
+                         : taskWithProcessModel.manualTask.id;
 
     this._router.navigateToRoute('task-dynamic-ui', {
       diagramName: processModelId,
