@@ -171,7 +171,7 @@ export class AuthenticationService implements IAuthenticationService {
     return base64EncodedString;
   }
 
-  public async getIdentity(): Promise<IIdentity | null> {
+  public async getIdentity(token: string): Promise<IIdentity | null> {
 
     const accessToken: string = this.getAccessToken();
 
@@ -186,7 +186,7 @@ export class AuthenticationService implements IAuthenticationService {
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
