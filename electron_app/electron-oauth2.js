@@ -10,7 +10,7 @@ const session = electron.session;
 const BrowserWindow = electron.BrowserWindow || electron.remote.BrowserWindow;
 
 module.exports = function (config, windowParams) {
-  function getAuthorizationCode(opts) {
+  function getAccessToken(opts) {
     opts = opts || {};
 
     var urlParams = {
@@ -84,6 +84,6 @@ module.exports = function (config, windowParams) {
   }
 
   return {
-    getAuthorizationCode: getAuthorizationCode,
+    getAccessToken: getAccessToken,
   };
 };
