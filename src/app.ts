@@ -112,22 +112,6 @@ export class App {
   public configureRouter(config: RouterConfiguration, router: Router): void {
     const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
 
-    if (isRunningInElectron) {
-      const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
-      ipcRenderer.on('deep-linking-request', async(event: any, url: string) => {
-
-        const urlFragment: string = this._parseDeepLinkingUrl(url);
-
-        if (urlFragment === 'signout-oidc') {
-          this._authenticationService.finishLogout();
-        } else if (urlFragment.startsWith('signin-oidc')) {
-          this._authenticationService.loginViaDeepLink(urlFragment);
-        }
-      });
-
-      ipcRenderer.send('deep-linking-ready');
-    }
-
     if (!isRunningInElectron) {
       config.options.pushState = true;
       config.options.baseRoute = '/';
