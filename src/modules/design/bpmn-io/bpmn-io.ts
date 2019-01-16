@@ -430,7 +430,7 @@ export class BpmnIo {
     return randomId;
   }
 
-  private _checkForMultipleParticipants(): void {
+  private _checkForMultipleParticipants(event: IInternalEvent): IInternalEvent {
     const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
 
     setTimeout(() => {
@@ -447,6 +447,8 @@ export class BpmnIo {
       this._eventAggregator.publish(eventToPublish);
 
     }, elementRegistryTimeoutMilliseconds);
+
+    return event;
   }
 
   private _setNewPropertyPanelWidthFromMousePosition(mousePosition: number): void {
