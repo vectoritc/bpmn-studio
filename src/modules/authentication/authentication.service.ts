@@ -64,7 +64,7 @@ export class AuthenticationService implements IAuthenticationService {
 
     const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
 
-    ipcRenderer.on('openIDConnect-reply', async(event: any, accessToken: string) => {
+    ipcRenderer.on('openIDConnect-login-reply', async(event: any, accessToken: string) => {
 
       const identity: IIdentity = await this.getIdentity(accessToken);
       this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
@@ -79,7 +79,7 @@ export class AuthenticationService implements IAuthenticationService {
 
     });
 
-    ipcRenderer.send('openIDConnect-start');
+    ipcRenderer.send('openIDConnect-login');
   }
 
   public finishLogout(): void {

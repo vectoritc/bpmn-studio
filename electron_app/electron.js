@@ -165,11 +165,11 @@ Main._initializeApplication = function () {
 
     const githubOAuth = electronOauth2(oauthConfig, windowParams);
 
-    ipcMain.on('openIDConnect-start', (event) => {
+    ipcMain.on('openIDConnect-login', (event) => {
 
       githubOAuth.getAccessToken()
         .then(token => {
-          event.sender.send('openIDConnect-reply', token);
+          event.sender.send('openIDConnect-login-reply', token);
         }, err => {
           console.log('Error while getting token', err);
         });
