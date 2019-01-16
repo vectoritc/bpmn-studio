@@ -1,5 +1,5 @@
 import {computedFrom, inject} from 'aurelia-framework';
-import {Router} from 'aurelia-router';
+import {NavigationInstruction, RouteConfig, Router} from 'aurelia-router';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 
@@ -63,6 +63,7 @@ export class LiveExecutionTracker {
   private _solutionService: ISolutionService;
 
   private activeSolutionEntry: ISolutionEntry;
+  private _isNavigatingBack: boolean = false;
 
   private _pollingTimer: NodeJS.Timer;
   private _attached: boolean;
@@ -174,7 +175,33 @@ export class LiveExecutionTracker {
   }
 
   public navigateBack(): void {
+    this._isNavigatingBack = true;
     this._router.navigateBack();
+  }
+
+  /*
+  * To avoid navigating back to the dynamic UI, we need to navigate further back.
+  *
+  * This is necessary because the dynamic ui would try to display an already completed UserTask/ManualTask.
+  */
+  public canDeactivate(destinationInstruction: NavigationInstruction): boolean {
+    const isNotNavigatingBack: boolean = !this._isNavigatingBack;
+    if (isNotNavigatingBack) {
+      return true;
+    }
+
+    const previousRoute: string = destinationInstruction.fragment;
+    const previousSiteIsDynamicUi: boolean = previousRoute.includes('/dynamic-ui');
+
+    if (previousSiteIsDynamicUi) {
+      this._router.navigateBack();
+
+      return false;
+    }
+
+    this._isNavigatingBack = false;
+
+    return true;
   }
 
   public closeDynamicUiModal(): void {
