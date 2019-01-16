@@ -102,6 +102,8 @@ export class BpmnIo {
         .showNotification(NotificationType.INFO, 'In order to paste an element you have to place your cursor outside of the element.');
     });
 
+    this._keyboard = this.modeler.get('keyboard');
+
     this._addRemoveWithBackspaceKeyboardListener();
 
     /**
@@ -132,8 +134,6 @@ export class BpmnIo {
 
     this._diagramPrintService = new DiagramPrintService();
     this._diagramExportService = new DiagramExportService();
-
-    this._keyboard = this.modeler.get('keyboard');
   }
 
   public async attached(): Promise<void> {
