@@ -5,17 +5,16 @@ import {Router} from 'aurelia-router';
 
 import {User} from 'oidc-client';
 
-import {AuthenticationStateEvent, IAuthenticationService, IIdentity, NotificationType} from '../../contracts/index';
+import {AuthenticationStateEvent, IAuthenticationService, IIdentity, ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {oidcConfig} from '../../open-id-connect-configuration';
 import {NotificationService} from './../notification/notification.service';
-import {SigninResponse} from './open-id/open-id-signin-response';
 
 const UNAUTHORIZED_STATUS_CODE: number = 401;
 const LOGOUT_SUCCESS_STATUS_CODE: number = 200;
 const IDENTITY_SERVER_AVAILABLE_SUCCESS_STATUS_CODE: number = 200;
 
-@inject(EventAggregator, 'NotificationService', OpenIdConnect, Router)
+@inject(EventAggregator, 'NotificationService', OpenIdConnect, Router, 'SolutionService')
 export class AuthenticationService implements IAuthenticationService {
 
   private _eventAggregator: EventAggregator;
@@ -24,15 +23,18 @@ export class AuthenticationService implements IAuthenticationService {
   private _router: Router;
   private _user: User;
   private _logoutWindow: Window = null;
+  private _solutionService: ISolutionService;
 
   constructor(eventAggregator: EventAggregator,
               notificationService: NotificationService,
               openIdConnect: OpenIdConnect,
-              router: Router) {
+              router: Router,
+              solutionService: ISolutionService) {
     this._eventAggregator = eventAggregator;
     this._notificationService = notificationService;
     this._openIdConnect = openIdConnect;
     this._router = router;
+    this._solutionService = solutionService;
 
     this._initialize();
   }
