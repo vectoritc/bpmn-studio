@@ -6,6 +6,10 @@ const app = electron.app;
 const isDev = require('electron-is-dev');
 const getPort = require('get-port');
 const fs = require('fs');
+const electronOauth2 = require('./electron-oauth2');
+const oauthConfig = require('./oauth-config');
+const ipcMain = electron.ipcMain;
+const BrowserWindow = electron.BrowserWindow || electron.remote.BrowserWindow;
 
 const {dialog} = require('electron');
 
