@@ -1,5 +1,5 @@
 import {computedFrom, inject} from 'aurelia-framework';
-import {NavigationInstruction, RouteConfig, Router} from 'aurelia-router';
+import {NavigationInstruction, Router} from 'aurelia-router';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 
