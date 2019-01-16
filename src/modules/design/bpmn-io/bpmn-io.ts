@@ -115,10 +115,14 @@ export class BpmnIo {
       this.xml = await this.getXML();
     }, handlerPriority);
 
-    this.modeler.on(['shape.added', 'shape.removed'], (element: IEvent) => {
-      const shapeIsParticipant: boolean = element.element.type === 'bpmn:Participant';
+    this.modeler.on(['shape.added', 'shape.removed'], (event: IInternalEvent) => {
+      const shapeIsParticipant: boolean = event.element.type === 'bpmn:Participant';
+
       if (shapeIsParticipant) {
-        this._checkForMultipleParticipants();
+        return this._checkForMultipleParticipants(event);
+      }
+    });
+
       }
     });
 
