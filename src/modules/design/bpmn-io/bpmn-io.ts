@@ -59,8 +59,6 @@ export class BpmnIo {
   private _diagramPrintService: IDiagramPrintService;
   private _diagramIsInvalid: boolean = false;
 
-  private _keyboard: IKeyboard;
-
   /**
    * We are using the direct reference of a container element to place the tools of bpmn-js
    * in the left sidebar (bpmn-io-layout__tools-left).
@@ -101,8 +99,6 @@ export class BpmnIo {
       this._notificationService
         .showNotification(NotificationType.INFO, 'In order to paste an element you have to place your cursor outside of the element.');
     });
-
-    this._keyboard = this.modeler.get('keyboard');
 
     this._addRemoveWithBackspaceKeyboardListener();
 
@@ -267,12 +263,16 @@ export class BpmnIo {
       }),
 
       this._eventAggregator.subscribe(environment.events.bpmnio.bindKeyboard, () => {
+        const keyboard: IKeyboard = this.modeler.get('keyboard');
+
         const element: Document | any = document;
-        this._keyboard.bind(element);
+        keyboard.bind(element);
       }),
 
       this._eventAggregator.subscribe(environment.events.bpmnio.unbindKeyboard, () => {
-        this._keyboard.unbind();
+        const keyboard: IKeyboard = this.modeler.get('keyboard');
+
+        keyboard.unbind();
       }),
     ];
 
@@ -557,6 +557,7 @@ export class BpmnIo {
       return;
     }
 
+    const keyboard: IKeyboard = this.modeler.get('keyboard');
     const editorActions: IEditorActions = this.modeler.get('editorActions');
     const backSpaceKeyCode: number = 8;
     const removeSelectedElements: ((key: IInternalEvent, modifiers: KeyboardEvent) => boolean) =
@@ -570,7 +571,7 @@ export class BpmnIo {
         }
       };
 
-    this._keyboard.addListener(removeSelectedElements);
+    keyboard.addListener(removeSelectedElements);
   }
 
   /**
