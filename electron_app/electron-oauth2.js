@@ -46,6 +46,13 @@ module.exports = function (config, windowParams) {
         var url_parts = nodeUrl.parse(url, true);
         var href = url_parts.href;
         var error = url_parts.error;
+
+        if (error !== undefined) {
+          reject(error);
+          authWindow.removeAllListeners('closed');
+          setImmediate(function () {
+            authWindow.close();
+          });
         }
       }
 };
