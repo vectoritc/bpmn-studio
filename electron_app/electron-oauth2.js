@@ -38,5 +38,9 @@ module.exports = function (config, windowParams) {
       authWindow.loadURL(url);
       authWindow.show();
 
+      authWindow.on('closed', () => {
+        reject(new Error('window was closed by user'));
+      });
+
       }
 };
