@@ -35,31 +35,6 @@ Main._window = null;
 
 
 Main.execute = function () {
-
-  const windowParams = {
-    alwaysOnTop: true,
-    autoHideMenuBar: true,
-    webPreferences: {
-      nodeIntegration: true,
-      nodeIntegrationInWorker: true,
-      allowRunningInsecureContent: true,
-      webSecurit: false,
-    }
-  };
-
-  const githubOAuth = electronOauth2(oauthConfig, windowParams);
-
-  ipcMain.on('github-oauth', (event, arg) => {
-
-    githubOAuth.getAuthorizationCode()
-      .then(token => {
-        event.sender.send('github-oauth-reply', token);
-      }, err => {
-        console.log('Error while getting token', err);
-      });
-  });
-
-
   /**
    * This method gets called when BPMN-Studio starts for the first time. When it
    * starts it's the first instance, therefore this functions returns "false"
@@ -252,8 +227,31 @@ Main._initializeApplication = function () {
       });
     })
 
+  }
 
+  function initializeOidc() {
+    const windowParams = {
+      alwaysOnTop: true,
+      autoHideMenuBar: true,
+      webPreferences: {
+        nodeIntegration: true,
+        nodeIntegrationInWorker: true,
+        allowRunningInsecureContent: true,
+        webSecurit: false,
+      }
+    };
 
+    const githubOAuth = electronOauth2(oauthConfig, windowParams);
+
+    ipcMain.on('openIDConnect-start', (event) => {
+
+      githubOAuth.getAccessToken()
+        .then(token => {
+          event.sender.send('openIDConnect-reply', token);
+        }, err => {
+          console.log('Error while getting token', err);
+        });
+    });
   }
 
   function initializeFileOpenFeature() {
