@@ -35,6 +35,18 @@ Main._window = null;
 
 
 Main.execute = function () {
+
+  const windowParams = {
+    alwaysOnTop: true,
+    autoHideMenuBar: true,
+    webPreferences: {
+      nodeIntegration: true,
+      nodeIntegrationInWorker: true,
+      allowRunningInsecureContent: true,
+      webSecurit: false,
+    }
+  };
+
   /**
    * This method gets called when BPMN-Studio starts for the first time. When it
    * starts it's the first instance, therefore this functions returns "false"
