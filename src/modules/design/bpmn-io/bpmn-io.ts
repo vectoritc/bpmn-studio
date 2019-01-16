@@ -59,6 +59,8 @@ export class BpmnIo {
   private _diagramPrintService: IDiagramPrintService;
   private _diagramIsInvalid: boolean = false;
 
+  private _keyboard: IKeyboard;
+
   /**
    * We are using the direct reference of a container element to place the tools of bpmn-js
    * in the left sidebar (bpmn-io-layout__tools-left).
@@ -130,6 +132,8 @@ export class BpmnIo {
 
     this._diagramPrintService = new DiagramPrintService();
     this._diagramExportService = new DiagramExportService();
+
+    this._keyboard = this.modeler.get('keyboard');
   }
 
   public async attached(): Promise<void> {
@@ -293,6 +297,10 @@ export class BpmnIo {
 
   public async saveCurrentXML(): Promise<void> {
     this.savedXml = await this.getXML();
+  }
+
+  public get keyboard(): IKeyboard {
+    return this._keyboard;
   }
 
   public diagramChanged(): void {
@@ -544,7 +552,6 @@ export class BpmnIo {
       return;
     }
 
-    const keyboard: IKeyboard = this.modeler.get('keyboard');
     const editorActions: IEditorActions = this.modeler.get('editorActions');
     const backSpaceKeyCode: number = 8;
     const removeSelectedElements: ((key: IInternalEvent, modifiers: KeyboardEvent) => boolean) =
@@ -558,7 +565,7 @@ export class BpmnIo {
         }
       };
 
-    keyboard.addListener(removeSelectedElements);
+    this._keyboard.addListener(removeSelectedElements);
   }
 
   /**
