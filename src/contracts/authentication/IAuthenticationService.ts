@@ -5,5 +5,5 @@ export interface IAuthenticationService {
   logout(): Promise<void>;
   isLoggedIn(): boolean;
   getAccessToken(): string;
-  getIdentity(token: string): Promise<IIdentity>;
+  getIdentity(): Promise<IIdentity>;
 }

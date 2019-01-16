@@ -24,6 +24,7 @@ export class AuthenticationService implements IAuthenticationService {
   private _user: User;
   private _logoutWindow: Window = null;
   private _solutionService: ISolutionService;
+  private _accessToken: string;
 
   constructor(eventAggregator: EventAggregator,
               notificationService: NotificationService,
@@ -65,7 +66,8 @@ export class AuthenticationService implements IAuthenticationService {
 
     ipcRenderer.on('openIDConnect-login-reply', async(event: any, accessToken: string) => {
 
-      const identity: IIdentity = await this.getIdentity(accessToken);
+      this._accessToken = accessToken;
+      const identity: IIdentity = await this.getIdentity();
       this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
 
       const remoteSolutions: Array<ISolutionEntry> = this._solutionService.getRemoteSolutionEntries();
@@ -151,13 +153,13 @@ export class AuthenticationService implements IAuthenticationService {
   }
 
   public getAccessToken(): string | null {
-    const userIsNotLoggedIn: boolean = this._user === undefined;
+    const userIsNotLoggedIn: boolean = this._accessToken === undefined;
 
     if (userIsNotLoggedIn) {
       return this._getDummyAccessToken();
     }
 
-    return this._user.access_token;
+    return this._accessToken;
   }
 
   // TODO: The dummy token needs to be removed in the future!!
@@ -170,13 +172,9 @@ export class AuthenticationService implements IAuthenticationService {
     return base64EncodedString;
   }
 
-  public async getIdentity(token: string): Promise<IIdentity | null> {
+  public async getIdentity(): Promise<IIdentity | null> {
 
-    const accessToken: string = this.getAccessToken();
-
-    if (!accessToken) {
-      return null;
-    }
+    const token: string = this.getAccessToken();
 
     const request: Request = new Request(`${environment.openIdConnect.authority}/connect/userinfo`, {
       method: 'GET',
