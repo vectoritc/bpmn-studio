@@ -14,6 +14,7 @@ interface RouteParameters {
   diagramName: string;
   solutionUri: string;
   correlationId: string;
+  processInstanceId: string;
   taskId: string;
 }
 
@@ -24,6 +25,7 @@ export class TaskDynamicUi {
 
   @bindable() public correlationId: string;
   @bindable() public processModelId: string;
+  @bindable() public processInstanceId: string;
   @bindable() public taskId: string;
   @bindable() public isModal: boolean;
   @bindable() public activeSolutionEntry: ISolutionEntry;
@@ -60,6 +62,7 @@ export class TaskDynamicUi {
     // This is called when starting tasks
     this.correlationId = routeParameters.correlationId;
     this.processModelId = routeParameters.diagramName;
+    this.processInstanceId = routeParameters.processInstanceId;
     this.taskId = routeParameters.taskId;
     this._activeDiagramName = routeParameters.diagramName;
     this._activeSolutionUri = routeParameters.solutionUri;
@@ -168,6 +171,7 @@ export class TaskDynamicUi {
       diagramName: this._activeDiagramName,
       solutionUri: this._activeSolutionUri,
       correlationId: task.correlationId,
+      processInstanceId: this.processInstanceId,
     });
   }
 

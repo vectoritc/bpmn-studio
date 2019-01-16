@@ -145,10 +145,15 @@ export class TaskList {
                          ? taskWithProcessModel.userTask.id
                          : taskWithProcessModel.manualTask.id;
 
+    const processInstanceId: string = taskIsAnUserTask
+                                    ? taskWithProcessModel.userTask.processInstanceId
+                                    : taskWithProcessModel.manualTask.processInstanceId;
+
     this._router.navigateToRoute('task-dynamic-ui', {
       diagramName: processModelId,
       solutionUri: this.activeSolutionEntry.uri,
       correlationId: correlationId,
+      processInstanceId: processInstanceId,
       taskId: taskId,
     });
   }

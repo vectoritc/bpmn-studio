@@ -149,7 +149,7 @@ export class App {
         nav: false,
       },
       {
-        route: ['correlation/:correlationId/diagram/:diagramName/task/:taskId/dynamic-ui'],
+        route: ['correlation/:correlationId/diagram/:diagramName/instance/:processInstanceId/task/:taskId/dynamic-ui'],
         title: 'Task Dynamic UI',
         name: 'task-dynamic-ui',
         moduleId: 'modules/task-dynamic-ui/task-dynamic-ui',
