@@ -82,4 +82,8 @@ module.exports = function (config, windowParams) {
       });
     });
   }
+
+  return {
+    getAuthorizationCode: getAuthorizationCode,
+  };
 };
