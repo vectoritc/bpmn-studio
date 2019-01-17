@@ -91,10 +91,9 @@ export class LiveExecutionTracker {
   public async activate(routeParameters: RouteParameters): Promise<void> {
     this.correlationId = routeParameters.correlationId;
     this.processModelId = routeParameters.diagramName;
+    this.activeSolutionEntry = await this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
 
     this._parentProcessModelId = await this._getParentProcessModelId();
-
-    this._activeSolutionEntry = await this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
   }
 
   public async attached(): Promise<void> {
