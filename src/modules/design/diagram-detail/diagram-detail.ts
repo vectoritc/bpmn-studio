@@ -3,8 +3,7 @@ import {bindable, bindingMode, computedFrom, inject, observable} from 'aurelia-f
 import {Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
-import {Event, EventList, IManagementApi} from '@process-engine/management_api_contracts';
-import {ProcessModelExecution} from '@process-engine/management_api_contracts';
+import {DataModels, IManagementApi} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
 import {
@@ -42,7 +41,7 @@ export class DiagramDetail {
   public showSaveBeforeDeployModal: boolean = false;
   public showStartEventModal: boolean = false;
   public showStartWithOptionsModal: boolean = false;
-  public processesStartEvents: Array<Event> = [];
+  public processesStartEvents: Array<DataModels.Events.Event> = [];
   public selectedStartEventId: string;
   public initialToken: string;
   public hasValidationError: boolean = false;
@@ -90,11 +89,6 @@ export class DiagramDetail {
 
   public attached(): void {
     this.diagramHasChanged = false;
-
-    const solutionIsRemote: boolean = this.activeSolutionEntry.uri.startsWith('http');
-    if (solutionIsRemote) {
-      this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, this.activeSolutionEntry.uri);
-    }
 
     const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
     if (isRunningInElectron) {
@@ -236,8 +230,6 @@ export class DiagramDetail {
       this._notificationService
           .showNotification(NotificationType.SUCCESS, 'Diagram was successfully uploaded to the connected ProcessEngine.');
 
-      // Since a new processmodel was uploaded, we need to refresh any processmodel lists.
-      this._eventAggregator.publish(environment.events.refreshProcessDefs);
       this._eventAggregator.publish(environment.events.diagramDetail.onDiagramDeployed, processModelId);
 
     } catch (error) {
@@ -262,7 +254,7 @@ export class DiagramDetail {
     }
 
     if (this.diagramHasChanged) {
-      this.saveDiagram();
+      await this.saveDiagram();
     }
 
     const parsedInitialToken: any = this._getInitialTokenValues(this.initialToken);
@@ -278,13 +270,13 @@ export class DiagramDetail {
 
     this._dropInvalidFormData();
 
-    const startRequestPayload: ProcessModelExecution.ProcessStartRequestPayload = {
+    const startRequestPayload: DataModels.ProcessModels.ProcessStartRequestPayload = {
       inputValues: parsedInitialToken,
       correlationId: this.customCorrelationId,
     };
 
     try {
-      const response: ProcessModelExecution.ProcessStartResponsePayload = await this._managementApiClient
+      const response: DataModels.ProcessModels.ProcessStartResponsePayload = await this._managementApiClient
         .startProcessInstance(this.activeSolutionEntry.identity,
                               this.activeDiagram.id,
                               this.selectedStartEventId,
@@ -315,7 +307,7 @@ export class DiagramDetail {
   public async saveChangesBeforeStart(): Promise<void> {
     this.showSaveForStartModal = false;
 
-    this.saveDiagram();
+    await this.saveDiagram();
     await this.showSelectStartEventDialog();
   }
 
@@ -363,19 +355,25 @@ export class DiagramDetail {
     if (onlyOneStarteventAvailable) {
       this.selectedStartEventId = this.processesStartEvents[0].id;
 
-      const functionCallDoesNotComeFromCustomModal: boolean = this._clickedOnCustomStart === false;
-      if (functionCallDoesNotComeFromCustomModal) {
-        this.startProcess();
-        this._clickedOnCustomStart = false;
-      } else {
-        this.showCustomStartModal();
-      }
+      this.continueStarting();
 
       return;
     }
 
     this.showStartEventModal = true;
     this.showSaveForStartModal = false;
+  }
+
+  public continueStarting(): void {
+    const functionCallDoesNotComeFromCustomModal: boolean = this._clickedOnCustomStart === false;
+    if (functionCallDoesNotComeFromCustomModal) {
+      this.startProcess();
+      this._clickedOnCustomStart = false;
+    } else {
+      this.showCustomStartModal();
+    }
+
+    this.showStartEventModal = false;
   }
 
   public cancelDialog(): void {
@@ -422,16 +420,33 @@ export class DiagramDetail {
     });
 
     const associationWithStartToken: IConnection = startEventAssociations.find((connection: IConnection) => {
-      const token: string = connection.target.businessObject.text
-                                                            .trim();
+      const associationText: string = connection.target.businessObject.text;
+
+      const associationTextIsEmpty: boolean = associationText === undefined
+                                           || associationText === null;
+      if (associationTextIsEmpty) {
+        return undefined;
+      }
+
+      const token: string = associationText.trim();
 
       return token.startsWith('StartToken:');
     });
 
-    if (associationWithStartToken) {
-      const initialToken: string = associationWithStartToken.target.businessObject.text
-                                                                                  .replace('StartToken:', '')
-                                                                                  .trim();
+    const associationWithStartTokenIsExisting: boolean = associationWithStartToken !== undefined;
+    if (associationWithStartTokenIsExisting) {
+      const untrimmedInitialToken: string = associationWithStartToken.target.businessObject.text;
+
+      const untrimmedInitialTokenIsUndefined: boolean = untrimmedInitialToken === undefined;
+      if (untrimmedInitialTokenIsUndefined) {
+        this.initialToken = '';
+
+        return;
+      }
+
+      const initialToken: string = untrimmedInitialToken
+                                    .replace('StartToken:', '')
+                                    .trim();
 
        /**
        * This Regex replaces all single quotes with double quotes and adds double
@@ -447,7 +462,7 @@ export class DiagramDetail {
   }
 
   private async _updateProcessStartEvents(): Promise<void> {
-    const startEventResponse: EventList = await this._managementApiClient
+    const startEventResponse: DataModels.Events.EventList = await this._managementApiClient
       .getStartEventsForProcessModel(this.activeSolutionEntry.identity, this.activeDiagram.id);
 
     this.processesStartEvents = startEventResponse.events;

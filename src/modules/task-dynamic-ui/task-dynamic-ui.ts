@@ -4,10 +4,9 @@ import {Router} from 'aurelia-router';
 import {domEventDispatch} from 'dom-event-dispatch';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
-import {ManualTask, UserTask} from '@process-engine/management_api_contracts';
+import {DataModels} from '@process-engine/management_api_contracts';
 
-import {AuthenticationStateEvent, IDynamicUiService, NotificationType} from '../../contracts/index';
-import {AuthenticationService} from '../authentication/authentication.service';
+import {AuthenticationStateEvent, IDynamicUiService, ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
 import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
 import {NotificationService} from '../notification/notification.service';
 
@@ -18,7 +17,7 @@ interface RouteParameters {
   taskId: string;
 }
 
-@inject(EventAggregator, 'DynamicUiService', Router, 'NotificationService', 'AuthenticationService', Element)
+@inject(EventAggregator, 'DynamicUiService', Router, 'NotificationService', 'SolutionService', Element)
 export class TaskDynamicUi {
 
   public dynamicUiWrapper: DynamicUiWrapper;
@@ -27,31 +26,33 @@ export class TaskDynamicUi {
   @bindable() public processModelId: string;
   @bindable() public taskId: string;
   @bindable() public isModal: boolean;
+  @bindable() public activeSolutionEntry: ISolutionEntry;
 
   private _activeDiagramName: string;
   private _activeSolutionUri: string;
   private _eventAggregator: EventAggregator;
   private _router: Router;
   private _notificationService: NotificationService;
-  private _authenticationService: AuthenticationService;
+  private _solutionService: ISolutionService;
   private _dynamicUiService: IDynamicUiService;
   private _subscriptions: Array<Subscription>;
-  private _userTask: UserTask;
-  private _manualTask: ManualTask;
+  private _userTask: DataModels.UserTasks.UserTask;
+  private _manualTask: DataModels.ManualTasks.ManualTask;
   private _element: Element;
+  private _identity: IIdentity;
 
   constructor(eventAggregator: EventAggregator,
               dynamicUiService: IDynamicUiService,
               router: Router,
               notificationService: NotificationService,
-              authenticationService: AuthenticationService,
+              solutionService: ISolutionService,
               element: Element) {
 
     this._eventAggregator = eventAggregator;
     this._dynamicUiService = dynamicUiService;
     this._router = router;
     this._notificationService = notificationService;
-    this._authenticationService = authenticationService;
+    this._solutionService = solutionService;
     this._element = element;
   }
 
@@ -63,10 +64,14 @@ export class TaskDynamicUi {
     this._activeDiagramName = routeParameters.diagramName;
     this._activeSolutionUri = routeParameters.solutionUri;
 
+    this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(this._activeSolutionUri);
+    this._identity = this.activeSolutionEntry.identity;
+
     this.isModal = false;
   }
 
   public attached(): void {
+    this.dynamicUiWrapper.identity = this._identity;
     this.getTask();
 
     this._subscriptions = [
@@ -86,38 +91,42 @@ export class TaskDynamicUi {
     this.setDynamicUIWrapperManualTask();
   }
 
+  public activeSolutionEntryChanged(newValue: ISolutionEntry): void {
+    this._identity = newValue.identity;
+  }
+
   public detached(): void {
     for (const subscription of this._subscriptions) {
       subscription.dispose();
     }
   }
 
-  public set userTask(userTask: UserTask) {
+  public set userTask(userTask: DataModels.UserTasks.UserTask) {
     this._userTask = userTask;
 
     this.setDynamicUIWrapperUserTask();
   }
 
   @computedFrom('_userTask')
-  public get userTask(): UserTask {
+  public get userTask(): DataModels.UserTasks.UserTask {
     return this._userTask;
   }
 
-  public set manualTask(manualTask: ManualTask) {
+  public set manualTask(manualTask: DataModels.ManualTasks.ManualTask) {
     this._manualTask = manualTask;
 
     this.setDynamicUIWrapperManualTask();
   }
 
   @computedFrom('_manualTask')
-  public get manualTask(): ManualTask {
+  public get manualTask(): DataModels.ManualTasks.ManualTask {
     return this._manualTask;
   }
 
   @computedFrom('_userTask', '_manualTask')
   public get taskName(): string {
     const nonWhiteSpaceRegex: RegExp = /\S/;
-    const task: UserTask | ManualTask = this._userTask === undefined ? this._manualTask : this._userTask;
+    const task: DataModels.UserTasks.UserTask | DataModels.ManualTasks.ManualTask = this._userTask === undefined ? this._manualTask : this._userTask;
 
     const noTaskIsSet: boolean = task === undefined;
     if (noTaskIsSet) {
@@ -145,7 +154,7 @@ export class TaskDynamicUi {
       return;
     }
 
-    const task: UserTask | ManualTask = this._userTask === undefined ? this._manualTask : this._userTask;
+    const task: DataModels.UserTasks.UserTask | DataModels.ManualTasks.ManualTask = this._userTask === undefined ? this._manualTask : this._userTask;
 
     this._router.navigateToRoute('live-execution-tracker', {
       diagramName: this._activeDiagramName,
@@ -155,7 +164,6 @@ export class TaskDynamicUi {
   }
 
   private async getTask(): Promise<void> {
-    const identity: IIdentity = this._getIdentity();
 
     try {
       const correlationNotGiven: boolean = this.correlationId === undefined;
@@ -169,7 +177,7 @@ export class TaskDynamicUi {
       }
 
       this.userTask = await this._dynamicUiService
-                                  .getUserTask(identity, this.correlationId, this.processModelId, this.taskId);
+                                  .getUserTask(this._identity, this.correlationId, this.processModelId, this.taskId);
 
       const userTaskFound: boolean = this._userTask !== undefined;
       if (userTaskFound) {
@@ -177,7 +185,7 @@ export class TaskDynamicUi {
       }
 
       this.manualTask = await this._dynamicUiService
-                                    .getManualTask(identity, this.correlationId, this.processModelId, this.taskId);
+                                    .getManualTask(this._identity, this.correlationId, this.processModelId, this.taskId);
 
       const manualTaskFound: boolean = this._manualTask !== undefined;
       if (manualTaskFound) {
@@ -209,14 +217,5 @@ export class TaskDynamicUi {
     }
 
     this.dynamicUiWrapper.currentManualTask = this._manualTask;
-  }
-
-  private _getIdentity(): IIdentity {
-    const accessToken: string = this._authenticationService.getAccessToken();
-    const identity: IIdentity = {
-      token: accessToken,
-    };
-
-    return identity;
   }
 }

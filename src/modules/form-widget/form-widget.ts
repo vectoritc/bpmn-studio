@@ -1,4 +1,4 @@
-import {UserTaskConfig, UserTaskFormField, UserTaskFormFieldType} from '@process-engine/management_api_contracts';
+import {DataModels} from '@process-engine/management_api_contracts';
 import {bindable, inject} from 'aurelia-framework';
 import {NotificationType} from '../../contracts/index';
 import {NotificationService} from '../notification/notification.service';
@@ -7,22 +7,22 @@ import {NotificationService} from '../notification/notification.service';
 export class FormWidget {
 
   @bindable()
-  public userTaskConfig: UserTaskConfig;
+  public userTaskConfig: DataModels.UserTasks.UserTaskConfig;
   private _notificationService: NotificationService;
 
   constructor(notificationService: NotificationService) {
     this._notificationService = notificationService;
   }
 
-  public getFieldControl(field: UserTaskFormField): string {
+  public getFieldControl(field: DataModels.UserTasks.UserTaskFormField): string {
     switch (field.type) {
-      case UserTaskFormFieldType.enum:
+      case DataModels.UserTasks.UserTaskFormFieldType.enum:
         return 'dropdown';
-      case UserTaskFormFieldType.string:
+      case DataModels.UserTasks.UserTaskFormFieldType.string:
         return 'textbox';
-      case UserTaskFormFieldType.boolean:
+      case DataModels.UserTasks.UserTaskFormFieldType.boolean:
         return 'checkbox';
-      case UserTaskFormFieldType.long:
+      case DataModels.UserTasks.UserTaskFormFieldType.long:
         return 'number';
       default:
         const notSupportedType: string = field.type !== undefined ? field.type : 'Custom Type';

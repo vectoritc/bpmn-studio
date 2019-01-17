@@ -1,17 +1,17 @@
 <template>
-  <require from="./processdef-list.css"></require>
+  <require from="./diagram-list.css"></require>
   <require from="../../user-login/user-login"></require>
 
-  <div class="process-def-list">
-    <div class="processdef-list-container">
+  <div class="diagram-list">
+    <div class="diagram-list-container">
       <div show.bind="allDiagrams">
         <input type="file" ref="fileInput" accept=".xml, application/xml, .bpmn, application/bpmn20-xml" files.bind="selectedFiles" class="d-none">
-        <table class="table table-striped table-bordered process-def-list-table">
+        <table class="table table-striped table-bordered diagram-list-table">
           <tr>
             <th>Process Name</th>
           </tr>
-          <tr repeat.for="diagram of allDiagrams" class="process-definition-list-item">
-            <td class="process-name-table-entry" id="processDef-${diagram.id}" title="${diagram.id}" click.delegate="showDetails(diagram.name)">${diagram.name}</td>
+          <tr repeat.for="diagram of allDiagrams" class="diagram-list-item">
+            <td class="process-name-table-entry" id="diagram-${diagram.id}" title="${diagram.id}" click.delegate="showDetails(diagram.name)">${diagram.name}</td>
           </tr>
         </table>
       </div>

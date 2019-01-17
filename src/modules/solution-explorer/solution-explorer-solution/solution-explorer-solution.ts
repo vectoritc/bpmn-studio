@@ -110,7 +110,8 @@ export class SolutionExplorerSolution {
       .withMessage('The diagram name can not end with a whitespace character.')
       .then()
       .satisfies(async(input: string) => {
-        const diagramNameIsUnchanged: boolean = this._currentlyRenamingDiagram && this._currentlyRenamingDiagram.name === input;
+        const diagramNameIsUnchanged: boolean = this._isCurrentlyRenamingDiagram
+                                             && this._currentlyRenamingDiagram.name.toLowerCase() === input.toLowerCase();
         if (diagramNameIsUnchanged) {
           return true;
         }
@@ -158,27 +159,6 @@ export class SolutionExplorerSolution {
     this._updateSolutionExplorer();
 
     this._subscriptions = [
-      this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToInspect, (inspectView?: string) => {
-        this._diagramRoute = 'inspect';
-
-        const inspectViewIsNotSet: boolean = inspectView === undefined;
-
-        this._inspectView = inspectViewIsNotSet
-                              ? 'heatmap'
-                              : inspectView;
-        this._designView = undefined;
-      }),
-
-      this._eventAggregator.subscribe(environment.events.processSolutionPanel.navigateToDesigner, (designView?: string) => {
-        this._diagramRoute = 'design';
-        const designViewIsNotSet: boolean = designView === undefined;
-
-        this._designView = designViewIsNotSet
-                              ? 'detail'
-                              : designView;
-        this._inspectView = undefined;
-      }),
-
       this._eventAggregator.subscribe('router:navigation:success', () => {
         this._updateSolutionExplorer();
       }),
@@ -198,7 +178,7 @@ export class SolutionExplorerSolution {
       this._resetDiagramCreation();
     }
 
-    if (this._isCurrentlyRenamingDiagram()) {
+    if (this._isCurrentlyRenamingDiagram) {
       this._resetDiagramRenaming();
     }
   }
@@ -286,7 +266,7 @@ export class SolutionExplorerSolution {
       return;
     }
 
-    if (this._isCurrentlyRenamingDiagram()) {
+    if (this._isCurrentlyRenamingDiagram) {
       return;
     }
 
@@ -324,7 +304,7 @@ export class SolutionExplorerSolution {
     }
 
     // Dont allow new diagram creation, if already renaming another diagram.
-    if (this._isCurrentlyRenamingDiagram()) {
+    if (this._isCurrentlyRenamingDiagram) {
       return;
     }
 
@@ -344,7 +324,7 @@ export class SolutionExplorerSolution {
     return this._diagramCreationState.isCreateDiagramInputShown;
   }
 
-  public _isCurrentlyRenamingDiagram(): boolean {
+  public get _isCurrentlyRenamingDiagram(): boolean {
     return this._currentlyRenamingDiagram !== null;
   }
 
@@ -825,13 +805,15 @@ export class SolutionExplorerSolution {
   private async _updateSolutionExplorer(): Promise<void> {
     const solutionUri: string = this._router.currentInstruction.queryParams.solutionUri;
     const solutionUriSpecified: boolean = solutionUri !== undefined;
+
     const diagramName: string = this._router.currentInstruction.params.diagramName;
     const diagramNameIsSpecified: boolean = diagramName !== undefined;
 
     const routeName: string = this._router.currentInstruction.config.name;
-    const routeNameIsDiagramDetailOrInspect: boolean = routeName === 'design'
-                                                    || routeName === 'inspect';
-    if (routeNameIsDiagramDetailOrInspect) {
+    const routeNameNeedsUpdate: boolean = routeName === 'design'
+                                        || routeName === 'inspect'
+                                        || routeName === 'think';
+    if (routeNameNeedsUpdate) {
       this._diagramRoute = routeName;
       this._inspectView = this._router.currentInstruction.params.view;
     }
@@ -845,13 +827,9 @@ export class SolutionExplorerSolution {
           return diagram.name === diagramName;
         });
 
-      } catch (error) {
-        this.activeDiagram = undefined;
+      } catch {
+        // Do nothing
       }
-
-      return;
     }
-
-    this.activeDiagram = undefined;
   }
 }

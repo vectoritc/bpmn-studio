@@ -1,11 +1,10 @@
+import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {computedFrom, inject} from 'aurelia-framework';
+import {Router} from 'aurelia-router';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
-
-import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {Router} from 'aurelia-router';
 
 import {
   IAuthenticationService,
@@ -191,9 +190,24 @@ export class SolutionExplorerList {
    * entry.
    */
   public async createDiagram(uri: string): Promise<void> {
-    const viewModelOfEntry: SolutionExplorerSolution = this.solutionEntryViewModels[uri];
+    let viewModelOfEntry: SolutionExplorerSolution = this.solutionEntryViewModels[uri];
 
-    return viewModelOfEntry.startCreationOfNewDiagram();
+    const solutionIsNotOpened: boolean = viewModelOfEntry === undefined || viewModelOfEntry === null;
+    if (solutionIsNotOpened) {
+      await this.openSolution(uri);
+    }
+
+    /**
+     * Waiting for next tick of the browser here because the new solution wouldn't
+     * be added if we wouldn't do that.
+     */
+    window.setTimeout(() => {
+      if (solutionIsNotOpened) {
+        viewModelOfEntry = this.solutionEntryViewModels[uri];
+      }
+
+      viewModelOfEntry.startCreationOfNewDiagram();
+    }, 0);
   }
 
   /*
@@ -333,8 +347,10 @@ export class SolutionExplorerList {
 
   private _createIdentityForSolutionExplorer(): IIdentity {
     const accessToken: string = this._authenticationService.getAccessToken();
+    // TODO: Get the identity from the IdentityService of `@process-engine/iam`
     const identity: IIdentity = {
       token: accessToken,
+      userId: '', // Provided by the IdentityService.
     };
 
     return identity;

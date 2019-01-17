@@ -10,6 +10,9 @@ import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 import {SolutionExplorerList} from '../solution-explorer-list/solution-explorer-list';
 
+import * as os from 'os';
+import * as path from 'path';
+
 /**
  * This component handels:
  *  - Opening files via drag and drop
@@ -80,7 +83,7 @@ export class SolutionExplorerPanel {
   public async attached(): Promise<void> {
     if (this.canReadFromFileSystem()) {
 
-      this._registerElectronFileOpeningHooks();
+      this._registerElectronHooks();
       document.addEventListener('drop', this._openDiagramOnDropBehaviour);
     }
 
@@ -93,6 +96,15 @@ export class SolutionExplorerPanel {
       }),
       this._eventAggregator.subscribe(environment.events.diagramDetail.onDiagramDeployed, () => {
         this._refreshSolutions();
+      }),
+      this._eventAggregator.subscribe(environment.events.startPage.openLocalSolution, () => {
+        this.openSolution();
+      }),
+      this._eventAggregator.subscribe(environment.events.startPage.openSingleDiagram, () => {
+        this.openDiagram();
+      }),
+      this._eventAggregator.subscribe(environment.events.startPage.createSingleDiagram, () => {
+        this._createNewDiagram();
       }),
     ];
   }
@@ -122,7 +134,9 @@ export class SolutionExplorerPanel {
     try {
       await this.solutionExplorerList.openSolution(this.uriOfRemoteSolution);
     } catch (error) {
-      this._notificationService.showNotification(NotificationType.ERROR, `Unable to connect to ProcessEngine on: ${this.uriOfRemoteSolution}`);
+      const genericMessage: string = `Unable to connect to ProcessEngine on: ${this.uriOfRemoteSolution}`;
+      const cause: string = error.message ? error.message : '';
+      this._notificationService.showNotification(NotificationType.ERROR, `${genericMessage}<br />${cause}`);
     }
 
     this.uriOfRemoteSolution = undefined;
@@ -265,12 +279,30 @@ export class SolutionExplorerPanel {
     this.openSolution();
   }
 
-  private _registerElectronFileOpeningHooks(): void {
+  private _electronOnCreateDiagram = async(_: Event): Promise<void> => {
+    this._createNewDiagram();
+  }
+
+  private _createNewDiagram(): void {
+    const activeSolutionUri: string = this._router.currentInstruction.queryParams.solutionUri;
+    const activeSolutionCanCreateDiagrams: boolean = activeSolutionUri !== undefined
+                                                   && !activeSolutionUri.startsWith('http');
+
+    const uri: string = activeSolutionCanCreateDiagrams
+                        ? activeSolutionUri
+                        : path.join(os.homedir(), 'Desktop');
+
+    this.solutionExplorerList.createDiagram(uri);
+  }
+
+  private _registerElectronHooks(): void {
     // Register handler for double-click event fired from "electron.js".
     this._ipcRenderer.on('double-click-on-file', this._electronFileOpeningHook);
 
     this._ipcRenderer.on('menubar__start_opening_diagram', this._electronOnMenuOpenDiagramHook);
     this._ipcRenderer.on('menubar__start_opening_solution', this._electronOnMenuOpenSolutionHook);
+
+    this._ipcRenderer.on('menubar__start_create_diagram', this._electronOnCreateDiagram);
 
     // Send event to signal the component is ready to handle the event.
     this._ipcRenderer.send('waiting-for-double-file-click');
@@ -291,6 +323,8 @@ export class SolutionExplorerPanel {
 
     this._ipcRenderer.removeListener('menubar__start_opening_diagram', this._electronOnMenuOpenDiagramHook);
     this._ipcRenderer.removeListener('menubar__start_opening_solution', this._electronOnMenuOpenSolutionHook);
+
+    this._ipcRenderer.removeListener('menubar__start_create_diagram', this._electronOnCreateDiagram);
   }
 
   private _openDiagramOnDropBehaviour: EventListener = async(event: DragEvent): Promise<void> => {

@@ -78,4 +78,145 @@
       <div class="modal-backdrop fade in"></div>
     </div>
     <!-- }}} Save On Leave Modal -->
+    <!-- Save Before Deploy Modal {{{ -->
+    <div show.bind="showSaveBeforeDeployModal">
+      <div class="modal show-modal">
+        <div class="modal-dialog save-before-deploy-modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Save Diagram Before Deploying</h4>
+            </div>
+            <div class="modal-body">
+              In order to deploy your diagram, you have to save your recent changes to disk.
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelDeploy" click.delegate="diagramDetail.cancelSaveBeforeDeployModal()"> Cancel</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal" id="saveButtonDeploy" click.delegate="diagramDetail.saveDiagramAndDeploy()"> Save and deploy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-backdrop fade in"></div>
+    </div>
+    <!-- }}} Save Before Deploy Modal -->
+    <!-- #region Remote Solution Modal for Process Deploy -->
+    <div show.bind="showRemoteSolutionOnDeployModal">
+      <div class="modal show show-modal" tabindex="-1" role="dialog" id="remoteSolutionOnDeployModal">
+        <div class="modal-dialog remote-solution-deploy-modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Multiple Connected Engines Found</h4>
+            </div>
+            <div class="modal-body">
+              Choose a remote engine; the diagram will be deployed to your selection.
+              <select class="form-control" value.bind="diagramDetail.selectedRemoteSolution">
+                <option repeat.for="entry of remoteSolutions" model.bind="entry">${entry.uri}</option>
+              </select>
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelButtonRemoteSolutionsOnDeploy" click.delegate="diagramDetail.cancelDialog()">Cancel</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal" id="saveButtonRemoteSolutionsOnDeploy" click.delegate="diagramDetail.uploadProcess(selectedRemoteSolution)" >Deploy Process</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-backdrop fade in"></div>
+    </div>
+    <!-- #endregion -->
+    <!-- #region Save Modal for Process Start -->
+    <div show.bind="showSaveForStartModal">
+      <div class="modal show show-modal" tabindex="-1" role="dialog" id="saveModalProcessStart">
+        <div class="modal-dialog save-modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Document Contains Changes</h4>
+            </div>
+            <div class="modal-body">
+              Your process has unsaved changes. Save changes to diagram before starting the process?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelButtonProcessStart" click.delegate="diagramDetail.cancelDialog()">Cancel</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal" id="saveButtonProcessStart" click.delegate="diagramDetail.saveChangesBeforeStart()" >Save and start process</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-backdrop fade in"></div>
+    </div>
+    <!-- #endregion -->
+      <!-- #region Save Modal for Process Start -->
+  <div show.bind="showStartWithOptionsModal">
+    <div class="modal show show-modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog save-modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Start Options</h4>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="correlationId"><b>Custom Correlation ID</b></label>
+                <input class="form-control input-field" class.bind="diagramDetail.hasValidationError ? 'wrong-input' : ''" id="correlationId" aria-describedby="correlationIdHelp" placeholder="Correlation ID" type="text" value.bind="diagramDetail.customCorrelationId">
+                <ul if.bind="diagramDetail.hasValidationError" class="correlation-id-error__container">
+                  <li class="error-list__container">Your diagram contains at least one invalid-character
+                    Supported characters: [a-z, 0-9, -, _, ä, ü, ö, ß, .]
+                  </li>
+                </ul>
+                <small id="correlationIdHelp" class="form-text text-muted">
+                    Setting a correlation ID is optional; a correlation ID is useful to identify a process instance; this does not need to be unique.
+                </small>
+              </div>
+              <div class="form-group">
+                <label for="initialToken"><b>Initial StartEvent Token</b></label>
+                <textarea class="form-control input-field design-modal__textarea" id="initialToken" rows="4" placeholder="Put your JSON payload here." value.bind="diagramDetail.initialToken"></textarea>
+                <small class="form-text text-muted">
+                    Setting an initial token (JSON payload) is optional; use this if you want to start your process with parameter.
+                </small>
+              </div>
+            </form>
+
+            <small if.bind="diagramHasChanged" class="form-text text-muted">
+                Your diagram contains unsaved changes. Please save them before starting.
+            </small>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelButtonProcessStart" click.delegate="diagramDetail.cancelDialog()">Cancel</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal" id="startButton" click.delegate="diagramDetail.setOptionsAndStart()" disabled.bind="diagramDetail.hasValidationError">${ diagramHasChanged ? 'Save and start process' : 'Start process'}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-backdrop fade in"></div>
+  </div>
+  <!-- #endregion -->
+    <!-- #region Select Start Event Modal for Process Start -->
+    <div if.bind="showStartEventModal">
+      <div class="modal show show-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog select-start-event-modal__dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header process-start-event-modal-dialog__header">
+              <h3 class="process-start-event-modal-dialog__header-headline">Select initial StartEvent</h3>
+            </div>
+            <div class="modal-body process-start-event-modal-dialog__body">
+              This process contains more than one start event.<br>
+              Please select a start event that should be used to start the process.
+              <div>
+                <select value.bind="diagramDetail.selectedStartEventId" ref="dropdownMenu" class="process-start-event-modal-dialog__dropdown-menu">
+                  <option>Select StartEvent</option>
+                  <option repeat.for="startEvent of diagramDetail.processesStartEvents" value.bind="diagramDetail.startEvent.id">${diagramDetail.startEvent.id}</option>
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer process-start-event-modal-dialog__footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelStartEventSelection" click.delegate="diagramDetail.cancelDialog()">Cancel</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal" id="startProcessWithSelectedStartEvent" click.delegate="diagramDetail.continueStarting()" disabled.bind="!diagramDetail.selectedStartEventId">Start Process</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-backdrop fade in"></div>
+    </div>
+    <!-- #endregion -->
+  </div>
 </template>

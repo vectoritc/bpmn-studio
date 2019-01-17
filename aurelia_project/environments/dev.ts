@@ -33,7 +33,11 @@ export default {
   events: {
     differsFromOriginal: 'differsFromOriginal',
     xmlChanged: 'xmlChanged',
-    refreshProcessDefs: 'processdefs:refresh',
+    startPage: {
+      openLocalSolution: 'startpage:openlocalsolution',
+      openSingleDiagram: 'startpage:openSingleDiagram',
+      createSingleDiagram: 'startpage:createSingleDiagram',
+    },
     statusBar: {
       showDiagramViewButtons: 'statusbar:diagramviewbuttons:show',
       hideDiagramViewButtons: 'statusbar:diagramviewbuttons:hide',
@@ -73,6 +77,8 @@ export default {
       showDiffDestinationButton: 'design:diffDestinationButton:toggle',
       togglePropertyPanel: 'design:propertypanel:toggle',
       propertyPanelActive: 'design:propertypanel:active',
+      bindKeyboard: 'design:keyboard:bind',
+      unbindKeyboard: 'design:keyboard:unbind',
     },
     diffView: {
       changeDiffMode: 'diffview:diffmode:change',
@@ -82,8 +88,6 @@ export default {
     diagramChange: 'diagram:change',
     processSolutionPanel: {
       toggleProcessSolutionExplorer: 'processSolutionPanel:processsolutionexplorer:toggle',
-      navigateToInspect: 'processSolutionPanel:processEngineLinks:navigateToInspect',
-      navigateToDesigner: 'processSolutionPanel:processEngineLinks:navigateToDesigner',
     },
     inspect: {
       shouldDisableTokenViewerButton: 'inspect:tokenViewerButton:disable',

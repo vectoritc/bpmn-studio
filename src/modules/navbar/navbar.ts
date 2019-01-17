@@ -1,6 +1,6 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, computedFrom, inject} from 'aurelia-framework';
-import {Router} from 'aurelia-router';
+import {NavModel, Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
@@ -9,8 +9,6 @@ import {NotificationService} from '../notification/notification.service';
 
 @inject(Router, EventAggregator, 'NotificationService', 'SolutionService')
 export class NavBar {
-
-  @bindable() public activeRouteName: string;
 
   public activeSolutionEntry: ISolutionEntry;
   public activeDiagram: IDiagram;
@@ -29,20 +27,23 @@ export class NavBar {
   public disableDashboardButton: boolean = false;
   public disableInspectCorrelationButton: boolean = false;
   public diagramContainsUnsavedChanges: boolean = false;
+
   public inspectView: string = 'dashboard';
   public designView: string = 'detail';
-  public disableDesignLink: boolean = false;
+  public thinkView: string = 'diagram-list';
+
   public navbarTitle: string = '';
   @bindable() public processOpenedFromProcessEngine: boolean = false;
 
-  private _router: Router;
+  public router: Router;
+
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
   private _notificationService: NotificationService;
   private _solutionService: ISolutionService;
 
   constructor(router: Router, eventAggregator: EventAggregator, notificationService: NotificationService, solutionService: ISolutionService) {
-    this._router = router;
+    this.router = router;
     this._eventAggregator = eventAggregator;
     this._notificationService = notificationService;
     this._solutionService = solutionService;
@@ -130,14 +131,43 @@ export class NavBar {
   }
 
   public navigateBack(): void {
-    this._router.navigateBack();
+    this.router.navigateBack();
   }
 
-  public navigateToThink(): void {
-    this._router.navigateToRoute('processdef-list', {
-      diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
-      solutionUri: this.activeSolutionEntry ? this.activeSolutionEntry.uri : undefined,
-    });
+  public navigate(navModel: NavModel): void {
+    switch (navModel.config.name) {
+      case 'think':
+        this.routerNavigate(navModel.config.name, this.thinkView);
+
+        break;
+      case 'design':
+        const noActiveDiagram: boolean = this.activeDiagram === undefined;
+        if (noActiveDiagram) {
+          this._notificationService.showNotification(NotificationType.INFO, 'In order to open the designer, you have to select a diagram first!');
+
+          return;
+        }
+
+        const designIsActive: boolean = navModel.isActive === true;
+        if (designIsActive) {
+          return;
+        }
+
+        this.routerNavigate(navModel.config.name, this.designView);
+
+        break;
+      case 'inspect':
+        const inspectIsActive: boolean = navModel.isActive === true;
+        if (inspectIsActive) {
+          return;
+        }
+
+        this.routerNavigate(navModel.config.name, this.inspectView);
+
+        break;
+      default:
+        break;
+    }
   }
 
   public showDashboard(): void {
@@ -146,13 +176,8 @@ export class NavBar {
     this.disableInspectCorrelationButton = false;
 
     this.inspectView = 'dashboard';
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, this.inspectView);
 
-    this._router.navigateToRoute('inspect', {
-      diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
-      solutionUri: this.activeSolutionEntry.uri,
-      view: this.inspectView,
-    });
+    this.routerNavigate(this.router.currentInstruction.config.name, this.inspectView);
   }
 
   public showHeatmap(): void {
@@ -161,13 +186,8 @@ export class NavBar {
     this.disableInspectCorrelationButton = false;
 
     this.inspectView = 'heatmap';
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, this.inspectView);
 
-    this._router.navigateToRoute('inspect', {
-      diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
-      solutionUri: this.activeSolutionEntry.uri,
-      view: this.inspectView,
-    });
+    this.routerNavigate(this.router.currentInstruction.config.name, this.inspectView);
   }
 
   public showInspectCorrelation(): void {
@@ -176,58 +196,15 @@ export class NavBar {
     this.disableInspectCorrelationButton = true;
 
     this.inspectView = 'inspect-correlation';
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, this.inspectView);
 
-    this._router.navigateToRoute('inspect', {
+    this.routerNavigate(this.router.currentInstruction.config.name, this.inspectView);
+  }
+
+  public routerNavigate(route: string, view?: string): void {
+    this.router.navigateToRoute(route, {
       diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
-      solutionUri: this.activeSolutionEntry.uri,
-      view: this.inspectView,
-    });
-
-  }
-
-  public navigateToInspect(): void {
-    const activeRouteIsInspect: boolean = this.activeRouteName === 'inspect';
-
-    if (activeRouteIsInspect) {
-      return;
-    }
-
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToInspect, this.inspectView);
-
-    const diagramIsNotSelect: boolean = this.activeDiagram === undefined;
-    const diagramName: string = diagramIsNotSelect
-      ? undefined
-      : this.activeDiagram.name;
-
-    const solutionIsNotSelected: boolean = this.activeSolutionEntry === undefined;
-    const solutionUri: string = solutionIsNotSelected
-      ? undefined
-      : this.activeSolutionEntry.uri;
-
-    this._router.navigateToRoute('inspect', {
-      diagramName: diagramName,
-      solutionUri: solutionUri,
-      view: this.inspectView,
-    });
-  }
-
-  public navigateToDesigner(): void {
-
-    const processIsUndefined: boolean = this.activeDiagram === undefined;
-
-    if (processIsUndefined) {
-      this._notificationService.showNotification(NotificationType.INFO, 'In order to open the designer, you have to select a diagram first!');
-
-      return;
-    }
-
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToDesigner, this.designView);
-
-    this._router.navigateToRoute('design', {
-      diagramName: this.activeDiagram.name,
-      solutionUri: this.activeSolutionEntry.uri,
-      view: this.designView,
+      solutionUri: this.activeSolutionEntry ? this.activeSolutionEntry.uri : undefined,
+      view: view,
     });
   }
 
@@ -294,7 +271,7 @@ export class NavBar {
    * or a remote ProcessEngine
    */
   private _updateNavbarTitle(): void {
-    const noActiveDiagram: boolean = this._router.currentInstruction.params.diagramName === undefined;
+    const noActiveDiagram: boolean = this.router.currentInstruction.params.diagramName === undefined;
 
     if (noActiveDiagram) {
       this.showProcessName = false;
@@ -312,7 +289,7 @@ export class NavBar {
   }
 
   private _updateNavbarTools(): void {
-    const activeRoute: string = this._router.currentInstruction.config.name;
+    const activeRoute: string = this.router.currentInstruction.config.name;
 
     const activeSolutionIsRemoteSolution: boolean = this.activeSolutionEntry.uri.startsWith('http') && this.activeDiagram !== undefined;
     const activeRouteIsDiagramDetail: boolean = activeRoute === 'design';
@@ -327,7 +304,7 @@ export class NavBar {
       this.showExportOnInspectCorrelation = false;
 
     } else if (activeRouteIsInspect) {
-      const inspectView: string = this._router.currentInstruction.params.view;
+      const inspectView: string = this.router.currentInstruction.params.view;
       const inspectViewIsDashboard: boolean = inspectView === 'dashboard';
       const inspectViewIsHeatmap: boolean = inspectView === 'heatmap';
       const inspectViewIsInspectCorrelation: boolean = inspectView === 'inspect-correlation';
@@ -348,9 +325,8 @@ export class NavBar {
   }
 
   private async _updateNavbar(): Promise<void> {
-    this.activeRouteName = this._router.currentInstruction.config.name;
 
-    const solutionUriFromNavigation: string = this._router.currentInstruction.queryParams.solutionUri;
+    const solutionUriFromNavigation: string = this.router.currentInstruction.queryParams.solutionUri;
     const noSolutionUriSpecified: boolean = solutionUriFromNavigation === undefined;
 
     const solutionUri: string = (noSolutionUriSpecified)
@@ -360,7 +336,7 @@ export class NavBar {
     this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
 
     const solutionIsSet: boolean = this.activeSolutionEntry !== undefined;
-    const diagramName: string = this._router.currentInstruction.params.diagramName;
+    const diagramName: string = this.router.currentInstruction.params.diagramName;
     const diagramIsSet: boolean = diagramName !== undefined;
 
     if (solutionIsSet && diagramIsSet) {
@@ -376,7 +352,7 @@ export class NavBar {
 
         this.activeDiagram = await this.activeSolutionEntry
           .service
-          .loadDiagram(this._router.currentInstruction.params.diagramName);
+          .loadDiagram(this.router.currentInstruction.params.diagramName);
       }
 
       const diagramNotFound: boolean = this.activeDiagram === undefined;
@@ -389,7 +365,7 @@ export class NavBar {
       this._updateNavbarTools();
     }
 
-    const routeNameIsStartPage: boolean = this.activeRouteName === 'start-page';
+    const routeNameIsStartPage: boolean = this.router.currentInstruction.config.name === 'start-page';
     if (routeNameIsStartPage) {
       this._resetNavbar();
     }

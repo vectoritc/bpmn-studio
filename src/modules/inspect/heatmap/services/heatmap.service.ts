@@ -1,8 +1,9 @@
 import {inject} from 'aurelia-framework';
 
 import {ActiveToken, FlowNodeRuntimeInformation} from '@process-engine/kpi_api_contracts';
-import {ProcessModelExecution} from '@process-engine/management_api_contracts';
+import {DataModels} from '@process-engine/management_api_contracts';
 
+import {IIdentity} from '@essential-projects/iam_contracts';
 import {
   defaultBpmnColors,
   IBpmnModeler,
@@ -31,6 +32,10 @@ export class HeatmapService implements IHeatmapService {
 
   constructor(heatmapRepository: IHeatmapRepository) {
     this._heatmapRepository = heatmapRepository;
+  }
+
+  public setIdentity(identity: IIdentity): void {
+    this._heatmapRepository.setIdentity(identity);
   }
 
   public getRuntimeInformationForProcessModel(processModelId: string): Promise<Array<FlowNodeRuntimeInformation>> {
@@ -110,7 +115,7 @@ export class HeatmapService implements IHeatmapService {
     });
   }
 
-  public getProcess(processModelId: string): Promise<ProcessModelExecution.ProcessModel> {
+  public getProcess(processModelId: string): Promise<DataModels.ProcessModels.ProcessModel> {
     return this._heatmapRepository.getProcess(processModelId);
   }
 

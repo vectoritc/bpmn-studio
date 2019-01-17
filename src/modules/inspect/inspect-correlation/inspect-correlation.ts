@@ -1,7 +1,7 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 
-import {Correlation} from '@process-engine/management_api_contracts';
+import {DataModels} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
 import {IEventFunction, IShape} from '../../../contracts/index';
@@ -11,12 +11,12 @@ import {IInspectCorrelationService} from './contracts';
 @inject('InspectCorrelationService', EventAggregator)
 export class InspectCorrelation {
   @bindable() public activeDiagram: IDiagram;
-  @bindable() public selectedCorrelation: Correlation;
+  @bindable() public selectedCorrelation: DataModels.Correlations.Correlation;
   @bindable() public inspectPanelFullscreen: boolean = false;
   @observable public bottomPanelHeight: number = 250;
   @observable public tokenViewerWidth: number = 250;
 
-  public correlations: Array<Correlation>;
+  public correlations: Array<DataModels.Correlations.Correlation>;
   public token: string;
   public showInspectPanel: boolean = true;
   public showTokenViewer: boolean = false;

@@ -92,6 +92,11 @@ export class Design {
        */
       await this.activeSolutionEntry.service.openSolution(this.activeSolutionEntry.uri, this.activeSolutionEntry.identity);
 
+      const solutionIsRemote: boolean = this.activeSolutionEntry.uri.startsWith('http');
+      if (solutionIsRemote) {
+        this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, this.activeSolutionEntry.uri);
+      }
+
       const isSingleDiagram: boolean = this.activeSolutionEntry.uri === 'Single Diagrams';
 
       if (isSingleDiagram) {
@@ -131,13 +136,19 @@ export class Design {
       this.showDiff = false;
       this.showPropertyPanelButton = true;
       this.showDiffDestinationButton = false;
+
+      this._eventAggregator.publish(environment.events.bpmnio.bindKeyboard);
+
     } else if (routeViewIsXML) {
       this.showDetail = false;
       this.showXML = true;
       this.showDiff = false;
       this.showDiffDestinationButton = false;
       this.showPropertyPanelButton = false;
+
+      this._eventAggregator.publish(environment.events.bpmnio.unbindKeyboard);
     } else if (routeViewIsDiff) {
+      this._eventAggregator.publish(environment.events.bpmnio.unbindKeyboard);
       /**
        * We need to check this, because after a reload the diagramdetail component is not attached yet.
        */
@@ -154,8 +165,14 @@ export class Design {
 
   public async attached(): Promise<void> {
     const routeViewIsDiff: boolean = this._routeView === 'diff';
+    const routeViewIsXML: boolean = this._routeView === 'xml';
+
     if (routeViewIsDiff) {
       this._showDiff();
+    }
+
+    if (routeViewIsDiff || routeViewIsXML) {
+      this._eventAggregator.publish(environment.events.bpmnio.unbindKeyboard);
     }
 
     this._subscriptions = [
@@ -188,12 +205,14 @@ export class Design {
   public async canDeactivate(destinationInstruction: NavigationInstruction): Promise<Redirect> {
     const userCanNotDeactivateRoute: boolean = !(await this.canDeactivateModal(destinationInstruction));
     if (userCanNotDeactivateRoute) {
+
+      const redirectUrl: string = `${this._router.currentInstruction.fragment}?${this._router.currentInstruction.queryString}`;
       /*
       * As suggested in https://github.com/aurelia/router/issues/302, we use
       * the router directly to navigate back, which results in staying on this
       * component-- and this is the desired behaviour.
       */
-      return new Redirect(this._router.currentInstruction.fragment, {trigger: false, replace: false});
+      return new Redirect(redirectUrl, {trigger: false, replace: false});
     }
   }
 
@@ -266,6 +285,30 @@ export class Design {
     });
 
     return remoteSolutionsWithoutActive;
+  }
+
+  public get showSaveBeforeDeployModal(): boolean {
+    return this.diagramDetail.showSaveBeforeDeployModal;
+  }
+
+  public get showRemoteSolutionOnDeployModal(): boolean {
+    return this.diagramDetail.showRemoteSolutionOnDeployModal;
+  }
+
+  public get showSaveForStartModal(): boolean {
+    return this.diagramDetail.showSaveForStartModal;
+  }
+
+  public get showStartWithOptionsModal(): boolean {
+    return this.diagramDetail.showStartWithOptionsModal;
+  }
+
+  public get showStartEventModal(): boolean {
+    return this.diagramDetail.showStartEventModal;
+  }
+
+  public get diagramHasChanged(): boolean {
+    return this.diagramDetail.diagramHasChanged;
   }
 
   private _showDiff(): void {

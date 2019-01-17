@@ -21,7 +21,6 @@ export class App {
 
   private _openIdConnect: OpenIdConnect | any;
   private _authenticationService: AuthenticationService;
-  private _router: Router;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
@@ -111,8 +110,6 @@ export class App {
   }
 
   public configureRouter(config: RouterConfiguration, router: Router): void {
-    this._router = router;
-
     const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
 
     if (isRunningInElectron) {
@@ -146,18 +143,11 @@ export class App {
         moduleId: 'modules/start-page/start-page',
       },
       {
-        route: ['processdef', 'processdef/:diagramName?'],
-        title: 'Process Definition List',
-        name: 'processdef-list',
-        moduleId: 'modules/think/processdef-list/processdef-list',
-        nav: true,
-      },
-      {
         route: ['dashboard'],
         title: 'Dashboard',
         name: 'dashboard',
         moduleId: 'modules/inspect/dashboard/dashboard',
-        nav: true,
+        nav: false,
       },
       {
         route: ['task', 'processdef/:diagramName/task'],
@@ -178,7 +168,7 @@ export class App {
         title: 'Process Instance List',
         name: 'process-list',
         moduleId: 'modules/inspect/process-list/process-list',
-        nav: true,
+        nav: false,
       },
       {
         route: ['correlation/:correlationId/diagram/:diagramName/task/:taskId/dynamic-ui'],
@@ -205,16 +195,25 @@ export class App {
         moduleId: 'modules/live-execution-tracker/live-execution-tracker',
       },
       {
-        route: ['inspect', 'inspect/:view?/diagram/:diagramName?'],
-        title: 'Inspect',
-        name: 'inspect',
-        moduleId: 'modules/inspect/inspect',
+        route: ['think', 'think/:view?/diagram/:diagramName?'],
+        title: 'Think',
+        name: 'think',
+        moduleId: 'modules/think/think',
+        nav: 0,
       },
       {
         route: ['design', 'design/:view?/diagram/:diagramName?'],
         title: 'Design',
         name: 'design',
         moduleId: 'modules/design/design',
+        nav: 1,
+      },
+      {
+        route: ['inspect', 'inspect/:view?/diagram/:diagramName?'],
+        title: 'Inspect',
+        name: 'inspect',
+        moduleId: 'modules/inspect/inspect',
+        nav: 2,
       },
     ]);
 

@@ -88,7 +88,6 @@ export class StatusBar {
       view: this._designView,
     });
 
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToDesigner, this._designView);
     this.xmlIsShown = !this.xmlIsShown;
   }
 
@@ -115,7 +114,6 @@ export class StatusBar {
       view: this._designView,
     });
 
-    this._eventAggregator.publish(environment.events.processSolutionPanel.navigateToDesigner, this._designView);
     this.diffIsShown = !this.diffIsShown;
   }
 

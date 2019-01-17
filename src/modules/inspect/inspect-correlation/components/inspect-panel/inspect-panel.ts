@@ -1,7 +1,7 @@
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
 
-import {Correlation} from '@process-engine/management_api_contracts';
+import {DataModels} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
 import {InspectPanelTab} from '../../../../../contracts/index';
@@ -9,8 +9,8 @@ import environment from '../../../../../environment';
 
 @inject(EventAggregator)
 export class InspectPanel {
-  @bindable() public correlations: Array<Correlation>;
-  @bindable() public selectedCorrelation: Correlation;
+  @bindable() public correlations: Array<DataModels.Correlations.Correlation>;
+  @bindable() public selectedCorrelation: DataModels.Correlations.Correlation;
   @bindable() public fullscreen: boolean = false;
   @bindable() public activeDiagram: IDiagram;
   public InspectPanelTab: typeof InspectPanelTab = InspectPanelTab;
@@ -44,7 +44,7 @@ export class InspectPanel {
     this.showLogViewer = shouldShowLogViewer;
   }
 
-  public correlationChanged(newCorrelation: Correlation, oldCorrelation: Correlation): void {
+  public correlationChanged(newCorrelation: DataModels.Correlations.Correlation, oldCorrelation: DataModels.Correlations.Correlation): void {
     const firstCorrelationGotSelected: boolean = oldCorrelation !== undefined;
     const shouldEnableTokenViewerButton: boolean = !(firstCorrelationGotSelected
                                                    || this.fullscreen);

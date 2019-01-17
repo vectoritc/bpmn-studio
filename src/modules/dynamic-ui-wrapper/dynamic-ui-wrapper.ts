@@ -4,13 +4,7 @@ import {Router} from 'aurelia-router';
 import {domEventDispatch} from 'dom-event-dispatch';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
-import {
-  ManualTask,
-  UserTask,
-  UserTaskFormField,
-  UserTaskFormFieldType,
-  UserTaskResult,
-} from '@process-engine/management_api_contracts';
+import {DataModels} from '@process-engine/management_api_contracts';
 
 import {
   IBooleanFormField,
@@ -18,17 +12,16 @@ import {
   IEnumFormField,
   IStringFormField,
 } from '../../contracts';
-import {AuthenticationService} from '../authentication/authentication.service';
 
-@inject('DynamicUiService', 'AuthenticationService', Router, Element)
+@inject('DynamicUiService', Router, Element)
 export class DynamicUiWrapper {
 
   public cancelButtonText: string = 'Cancel';
   public confirmButtonText: string = 'Continue';
   public declineButtonText: string = 'Decline';
   public onButtonClick: (action: 'cancel' | 'proceed' | 'decline') => void;
-  @bindable({changeHandler: 'userTaskChanged'}) public currentUserTask: UserTask;
-  @bindable({changeHandler: 'manualTaskChanged'}) public currentManualTask: ManualTask;
+  @bindable({changeHandler: 'userTaskChanged'}) public currentUserTask: DataModels.UserTasks.UserTask;
+  @bindable({changeHandler: 'manualTaskChanged'}) public currentManualTask: DataModels.ManualTasks.ManualTask;
   @bindable() public isConfirmUserTask: boolean = false;
   @bindable() public isFormUserTask: boolean = false;
   @bindable() public isModal: boolean;
@@ -37,19 +30,21 @@ export class DynamicUiWrapper {
   private _router: Router;
 
   private _dynamicUiService: IDynamicUiService;
-  private _authenticationService: AuthenticationService;
+  private _identity: IIdentity;
 
   constructor(dynamicUiService: IDynamicUiService,
-              authenticationService: AuthenticationService,
               router: Router,
               element: Element) {
 
     this._dynamicUiService = dynamicUiService;
-    this._authenticationService = authenticationService;
     this._router = router;
     this._element = element;
 
     this.isModal = false;
+  }
+
+  public set identity(identity: IIdentity) {
+    this._identity = identity;
   }
 
   public async handleUserTaskButtonClick(action: 'cancel' | 'proceed' | 'decline'): Promise<void> {
@@ -62,10 +57,10 @@ export class DynamicUiWrapper {
     }
 
     if (this.isConfirmUserTask) {
-      const formFields: Array<UserTaskFormField> = this.currentUserTask.data.formFields;
+      const formFields: Array<DataModels.UserTasks.UserTaskFormField> = this.currentUserTask.data.formFields;
 
-      const booleanFormFieldIndex: number = formFields.findIndex((formField: UserTaskFormField) => {
-        return formField.type === UserTaskFormFieldType.boolean;
+      const booleanFormFieldIndex: number = formFields.findIndex((formField: DataModels.UserTasks.UserTaskFormField) => {
+        return formField.type === DataModels.UserTasks.UserTaskFormFieldType.boolean;
       });
 
       const hasBooleanFormField: boolean = formFields[booleanFormFieldIndex] !== undefined;
@@ -92,7 +87,7 @@ export class DynamicUiWrapper {
     this._finishManualTask();
   }
 
-  public userTaskChanged(newUserTask: UserTask): void {
+  public userTaskChanged(newUserTask: DataModels.UserTasks.UserTask): void {
     const isUserTaskEmpty: boolean = newUserTask === undefined;
     if (isUserTaskEmpty) {
       return;
@@ -115,7 +110,7 @@ export class DynamicUiWrapper {
     }
   }
 
-  public manualTaskChanged(newManualTask: ManualTask): void {
+  public manualTaskChanged(newManualTask: DataModels.ManualTasks.ManualTask): void {
     const isManualTaskEmpty: boolean = newManualTask === undefined;
     if (isManualTaskEmpty) {
       return;
@@ -154,14 +149,12 @@ export class DynamicUiWrapper {
       return;
     }
 
-    const identity: IIdentity = this._getIdentity();
-
     const correlationId: string = this.currentUserTask.correlationId;
     const processInstanceId: string = this.currentUserTask.processInstanceId;
     const userTaskInstanceId: string = this.currentUserTask.flowNodeInstanceId;
-    const userTaskResult: UserTaskResult = this._getUserTaskResults();
+    const userTaskResult: DataModels.UserTasks.UserTaskResult = this._getUserTaskResults();
 
-    this._dynamicUiService.finishUserTask(identity,
+    this._dynamicUiService.finishUserTask(this._identity,
                                           processInstanceId,
                                           correlationId,
                                           userTaskInstanceId,
@@ -182,13 +175,11 @@ export class DynamicUiWrapper {
       return;
     }
 
-    const identity: IIdentity = this._getIdentity();
-
     const correlationId: string = this.currentManualTask.correlationId;
     const processInstanceId: string = this.currentManualTask.processInstanceId;
     const manualTaskInstanceId: string = this.currentManualTask.flowNodeInstanceId;
 
-    this._dynamicUiService.finishManualTask(identity,
+    this._dynamicUiService.finishManualTask(this._identity,
                                             processInstanceId,
                                             correlationId,
                                             manualTaskInstanceId);
@@ -201,12 +192,12 @@ export class DynamicUiWrapper {
     }
   }
 
-  private _getUserTaskResults(): UserTaskResult {
-    const userTaskResult: UserTaskResult = {
+  private _getUserTaskResults(): DataModels.UserTasks.UserTaskResult {
+    const userTaskResult: DataModels.UserTasks.UserTaskResult = {
       formFields: {},
     };
 
-    const currentFormFields: Array<UserTaskFormField> = this.currentUserTask.data.formFields;
+    const currentFormFields: Array<DataModels.UserTasks.UserTaskFormField> = this.currentUserTask.data.formFields;
 
     currentFormFields.forEach((formField: IStringFormField | IEnumFormField | IBooleanFormField) => {
       const formFieldId: string = formField.id;
@@ -220,12 +211,4 @@ export class DynamicUiWrapper {
     return userTaskResult;
   }
 
-  private _getIdentity(): IIdentity {
-    const accessToken: string = this._authenticationService.getAccessToken();
-    const identity: IIdentity = {
-      token: accessToken,
-    };
-
-    return identity;
-  }
 }

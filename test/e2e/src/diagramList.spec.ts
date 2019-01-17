@@ -6,17 +6,17 @@ import {
   ProtractorExpectedConditions,
 } from 'protractor';
 
+import {DiagramListPage} from './pages/diagramListPage';
 import {General} from './pages/general';
-import {ProcessDefListPage} from './pages/processDefListPage';
 import {ProcessModel} from './pages/processModel';
 
-describe('Process definition list', () => {
+describe('Diagram list', () => {
 
   let general: General;
-  let processDefListPage: ProcessDefListPage;
+  let diagramListPage: DiagramListPage;
   let processModel: ProcessModel;
 
-  let processModelId: string;
+  let diagramId: string;
 
   const aureliaUrl: string = browser.params.aureliaUrl;
   const defaultTimeoutMS: number = browser.params.defaultTimeoutMS;
@@ -26,14 +26,14 @@ describe('Process definition list', () => {
   beforeAll(() => {
 
     general = new General();
-    processDefListPage = new ProcessDefListPage();
+    diagramListPage = new DiagramListPage();
     processModel = new ProcessModel();
 
     // Get processModelId
-    processModelId = processModel.getProcessModelId();
+    diagramId = processModel.getProcessModelId();
 
     // Create a new process definition by POST REST call
-    processModel.postProcessModel(processModelId);
+    processModel.postProcessModel(diagramId);
   });
 
   afterAll(async() => {
@@ -66,36 +66,36 @@ describe('Process definition list', () => {
         return routerViewContainer;
      });
 
-    const processDefinitionListItem: ElementFinder = processDefListPage.processDefinitionListItem;
-    const visibilityOfProcessDefinitionListItem: Function = expectedConditions.visibilityOf(processDefinitionListItem);
+    const diagramListItem: ElementFinder = diagramListPage.diagramListItem;
+    const visibilityOfdiagramListItem: Function = expectedConditions.visibilityOf(diagramListItem);
 
     await browser.driver
       .wait(() => {
         browser
-          .wait(visibilityOfProcessDefinitionListItem, defaultTimeoutMS);
+          .wait(visibilityOfdiagramListItem, defaultTimeoutMS);
 
-        return processDefinitionListItem;
+        return diagramListItem;
       });
   });
 
-  it('should contain at least process definitions.', async() => {
-    const processDefinitionListItems: ElementArrayFinder = processDefListPage.processDefinitionListItems;
-    const numberOfProcessDefinitions: number = await processDefinitionListItems.count();
+  it('should contain at least one diagram.', async() => {
+    const diagramListItems: ElementArrayFinder = diagramListPage.diagramListItems;
+    const numberOfDiagrams: number = await diagramListItems.count();
 
-    expect(numberOfProcessDefinitions).toBeGreaterThan(0);
+    expect(numberOfDiagrams).toBeGreaterThan(0);
   });
 
-  it('should contain just created process definition.', async() => {
-    const processDefinitionListItemIds: ElementArrayFinder = processDefListPage.processDefinitionListItemIds(processModelId);
-    const numberOfProcessDefinitionsById: number = await processDefinitionListItemIds.count();
+  it('should contain just created diagram.', async() => {
+    const diagramListItemIds: ElementArrayFinder = diagramListPage.diagramListItemIds(diagramId);
+    const numberOfDiagramsById: number = await diagramListItemIds.count();
 
-    expect(numberOfProcessDefinitionsById).toBe(1);
+    expect(numberOfDiagramsById).toBe(1);
   });
 
-  it('should be possible to open a process diagram.', async() => {
-    const processModelDiagram: ElementFinder = ProcessDefListPage.processModelDiagram(processModelId);
+  it('should be possible to open a diagram.', async() => {
+    const diagram: ElementFinder = DiagramListPage.diagram(diagramId);
 
-    await processModelDiagram.click();
+    await diagram.click();
 
     const routerViewContainer: ElementFinder = general.getRouterViewContainer;
     const visibilityOfRouterViewContainer: Function = expectedConditions.visibilityOf(routerViewContainer);

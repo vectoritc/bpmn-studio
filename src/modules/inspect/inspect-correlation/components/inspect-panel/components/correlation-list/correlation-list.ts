@@ -1,13 +1,13 @@
 import {bindable, bindingMode} from 'aurelia-framework';
 
-import {Correlation} from '@process-engine/management_api_contracts';
+import {DataModels} from '@process-engine/management_api_contracts';
 
 import {CorrelationListSortProperty, ICorrelationSortSettings, ICorrelationTableEntry} from '../../../../../../../contracts/index';
 import {DateService} from '../../../../../../date-service/date.service';
 
 export class CorrelationList {
-  @bindable({ defaultBindingMode: bindingMode.twoWay }) public selectedCorrelation: Correlation;
-  @bindable({ changeHandler: 'correlationsChanged' }) public correlations: Array<Correlation>;
+  @bindable({ defaultBindingMode: bindingMode.twoWay }) public selectedCorrelation: DataModels.Correlations.Correlation;
+  @bindable({ changeHandler: 'correlationsChanged' }) public correlations: Array<DataModels.Correlations.Correlation>;
   public sortedTableData: Array<ICorrelationTableEntry>;
   public CorrelationListSortProperty: typeof CorrelationListSortProperty = CorrelationListSortProperty;
   public sortSettings: ICorrelationSortSettings = {
@@ -21,7 +21,7 @@ export class CorrelationList {
     this.selectedCorrelation = this._getCorrelationForTableEntry(selectedTableEntry);
   }
 
-  public correlationsChanged(correlations: Array<Correlation>): void {
+  public correlationsChanged(correlations: Array<DataModels.Correlations.Correlation>): void {
     this._convertCorrelationsIntoTableData(correlations);
 
     // Select latest process instance
@@ -47,7 +47,7 @@ export class CorrelationList {
     }
   }
 
-  private _convertCorrelationsIntoTableData(correlations: Array<Correlation>): void {
+  private _convertCorrelationsIntoTableData(correlations: Array<DataModels.Correlations.Correlation>): void {
     this._tableData = [];
 
     for (const correlation of correlations) {
@@ -118,8 +118,8 @@ export class CorrelationList {
   private _sortListByStartDate(): Array<ICorrelationTableEntry> {
     const sortedTableData: Array<ICorrelationTableEntry> =
       this._tableData.sort((firstEntry: ICorrelationTableEntry, secondEntry: ICorrelationTableEntry) => {
-        const firstCorrelation: Correlation = this._getCorrelationForTableEntry(firstEntry);
-        const secondCorrelation: Correlation = this._getCorrelationForTableEntry(secondEntry);
+        const firstCorrelation: DataModels.Correlations.Correlation = this._getCorrelationForTableEntry(firstEntry);
+        const secondCorrelation: DataModels.Correlations.Correlation = this._getCorrelationForTableEntry(secondEntry);
 
         const firstCorrelationDate: Date = new Date(firstCorrelation.createdAt);
         const secondCorrelationDate: Date = new Date(secondCorrelation.createdAt);
@@ -140,22 +140,27 @@ export class CorrelationList {
     return sortedTableData;
   }
 
-  private _getCorrelationForTableEntry(tableEntry: ICorrelationTableEntry): Correlation {
-    const correlationForTableEntry: Correlation = this.correlations.find((correlation: Correlation) => {
-      return correlation.id === tableEntry.correlationId;
-    });
+  private _getCorrelationForTableEntry(tableEntry: ICorrelationTableEntry): DataModels.Correlations.Correlation {
+    const correlationForTableEntry: DataModels.Correlations.Correlation =
+      this.correlations.find((correlation: DataModels.Correlations.Correlation) => {
+        return correlation.id === tableEntry.correlationId;
+      });
 
     return correlationForTableEntry;
   }
 
-  private _getIndexForCorrelation(correlation: Correlation, correlations: Array<Correlation>): number {
+  private _getIndexForCorrelation(
+    correlation: DataModels.Correlations.Correlation,
+    correlations: Array<DataModels.Correlations.Correlation>,
+  ): number {
     const correlationStartedDate: Date = new Date(correlation.createdAt);
 
-    const earlierStartedCorrelations: Array<Correlation> = correlations.filter((entry: Correlation) => {
-      const entryStartedDate: Date = new Date(entry.createdAt);
+    const earlierStartedCorrelations: Array<DataModels.Correlations.Correlation> =
+      correlations.filter((entry: DataModels.Correlations.Correlation) => {
+        const entryStartedDate: Date = new Date(entry.createdAt);
 
-      return entryStartedDate.getTime() < correlationStartedDate.getTime();
-    });
+        return entryStartedDate.getTime() < correlationStartedDate.getTime();
+      });
 
     const amountOfEarlierStartedCorrelations: number = earlierStartedCorrelations.length;
     const correlationIndex: number = amountOfEarlierStartedCorrelations + 1;

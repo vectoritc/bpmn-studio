@@ -1,6 +1,6 @@
 import {bindable, inject} from 'aurelia-framework';
 
-import {Correlation, TokenHistoryEntry} from '@process-engine/management_api_contracts';
+import {DataModels} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
 import {IShape} from '../../../../../contracts';
@@ -8,7 +8,7 @@ import {IInspectCorrelationService, IPayloadEntry, IPayloadEntryValue, IRawToken
 
 @inject('InspectCorrelationService')
 export class TokenViewer {
-  @bindable() public correlation: Correlation;
+  @bindable() public correlation: DataModels.Correlations.Correlation;
   @bindable() public activeDiagram: IDiagram;
   @bindable() public flowNode: IShape;
   @bindable() public token: string;
@@ -72,7 +72,7 @@ export class TokenViewer {
       return;
     }
 
-    const tokenHistoryEntries: Array<TokenHistoryEntry> = await this._inspectCorrelationService
+    const tokenHistoryEntries: Array<DataModels.TokenHistory.TokenHistoryEntry> = await this._inspectCorrelationService
       .getTokenForFlowNodeInstance(this.activeDiagram.id, this.correlation.id, this.flowNode.id);
 
     this.tokenEntries = this._getBeautifiedTokenEntriesForFlowNode(tokenHistoryEntries);
@@ -82,13 +82,13 @@ export class TokenViewer {
     this.shouldShowFlowNodeId = this.tokenEntries.length > 0;
   }
 
-  private _getRawTokenEntriesForFlowNode(tokenHistoryEntries: Array<TokenHistoryEntry>): Array<IRawTokenEntry> {
+  private _getRawTokenEntriesForFlowNode(tokenHistoryEntries: Array<DataModels.TokenHistory.TokenHistoryEntry>): Array<IRawTokenEntry> {
     const elementHasNoToken: boolean = tokenHistoryEntries === undefined;
     if (elementHasNoToken) {
       return [];
     }
 
-    return tokenHistoryEntries.map((historyEntry: TokenHistoryEntry, index: number) => {
+    return tokenHistoryEntries.map((historyEntry: DataModels.TokenHistory.TokenHistoryEntry, index: number) => {
       // tslint:disable-next-line no-magic-numbers
       const payloadAsString: string = JSON.stringify(historyEntry.payload, null, 2);
 
@@ -103,7 +103,7 @@ export class TokenViewer {
     });
   }
 
-  private _getBeautifiedTokenEntriesForFlowNode(tokenHistoryEntries: Array<TokenHistoryEntry>): Array<ITokenEntry> {
+  private _getBeautifiedTokenEntriesForFlowNode(tokenHistoryEntries: Array<DataModels.TokenHistory.TokenHistoryEntry>): Array<ITokenEntry> {
     const tokenEntries: Array<ITokenEntry> = [];
 
     const elementHasNoToken: boolean = tokenHistoryEntries === undefined;
@@ -111,7 +111,7 @@ export class TokenViewer {
       return tokenEntries;
     }
 
-    tokenHistoryEntries.forEach((historyEntry: TokenHistoryEntry, index: number) => {
+    tokenHistoryEntries.forEach((historyEntry: DataModels.TokenHistory.TokenHistoryEntry, index: number) => {
       const historyEntryPayload: any = historyEntry.payload;
 
       const historyEntryHasNoPayload: boolean = historyEntryPayload === undefined;
