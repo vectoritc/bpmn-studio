@@ -131,13 +131,19 @@ export class Design {
       this.showDiff = false;
       this.showPropertyPanelButton = true;
       this.showDiffDestinationButton = false;
+
+      this._eventAggregator.publish(environment.events.bpmnio.bindKeyboard);
+
     } else if (routeViewIsXML) {
       this.showDetail = false;
       this.showXML = true;
       this.showDiff = false;
       this.showDiffDestinationButton = false;
       this.showPropertyPanelButton = false;
+
+      this._eventAggregator.publish(environment.events.bpmnio.unbindKeyboard);
     } else if (routeViewIsDiff) {
+      this._eventAggregator.publish(environment.events.bpmnio.unbindKeyboard);
       /**
        * We need to check this, because after a reload the diagramdetail component is not attached yet.
        */
@@ -154,8 +160,14 @@ export class Design {
 
   public async attached(): Promise<void> {
     const routeViewIsDiff: boolean = this._routeView === 'diff';
+    const routeViewIsXML: boolean = this._routeView === 'xml';
+
     if (routeViewIsDiff) {
       this._showDiff();
+    }
+
+    if (routeViewIsDiff || routeViewIsXML) {
+      this._eventAggregator.publish(environment.events.bpmnio.unbindKeyboard);
     }
 
     this._subscriptions = [

@@ -72,6 +72,8 @@ export default {
       showDiffDestinationButton: 'design:diffDestinationButton:toggle',
       togglePropertyPanel: 'design:propertypanel:toggle',
       propertyPanelActive: 'design:propertypanel:active',
+      bindKeyboard: 'design:keyboard:bind',
+      unbindKeyboard: 'design:keyboard:unbind',
     },
     diffView: {
       changeDiffMode: 'diffview:diffmode:change',

@@ -261,6 +261,19 @@ export class BpmnIo {
       this._eventAggregator.subscribe(environment.events.bpmnio.togglePropertyPanel, () => {
         this._togglePanel();
       }),
+
+      this._eventAggregator.subscribe(environment.events.bpmnio.bindKeyboard, () => {
+        const keyboard: IKeyboard = this.modeler.get('keyboard');
+
+        const element: Document | any = document;
+        keyboard.bind(element);
+      }),
+
+      this._eventAggregator.subscribe(environment.events.bpmnio.unbindKeyboard, () => {
+        const keyboard: IKeyboard = this.modeler.get('keyboard');
+
+        keyboard.unbind();
+      }),
     ];
 
     const previousPropertyPanelWidth: string = window.localStorage.getItem('propertyPanelWidth');
@@ -547,8 +560,9 @@ export class BpmnIo {
     const keyboard: IKeyboard = this.modeler.get('keyboard');
     const editorActions: IEditorActions = this.modeler.get('editorActions');
     const backSpaceKeyCode: number = 8;
-    const removeSelectedElements: ((key: IInternalEvent, modifiers: KeyboardEvent) => boolean) =
-      (key: IInternalEvent, modifiers: KeyboardEvent): boolean => {
+
+    // tslint:disable-next-line:typedef
+    const removeSelectedElements = (key: IInternalEvent, modifiers: KeyboardEvent): boolean => {
         const backspaceWasPressed: boolean = key.keyEvent.keyCode === backSpaceKeyCode;
 
         if (backspaceWasPressed) {
