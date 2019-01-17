@@ -422,7 +422,8 @@ export class DiagramDetail {
     const associationWithStartToken: IConnection = startEventAssociations.find((connection: IConnection) => {
       const associationText: string = connection.target.businessObject.text;
 
-      const associationTextIsEmpty: boolean = associationText === undefined;
+      const associationTextIsEmpty: boolean = associationText === undefined
+                                           || associationText === null;
       if (associationTextIsEmpty) {
         return undefined;
       }
