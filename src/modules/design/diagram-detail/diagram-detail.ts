@@ -432,8 +432,8 @@ export class DiagramDetail {
       return token.startsWith('StartToken:');
     });
 
-    const associationWithStartTokenIsNotExisting: boolean = associationWithStartToken === undefined;
-    if (associationWithStartTokenIsNotExisting) {
+    const associationWithStartTokenIsExisting: boolean = associationWithStartToken !== undefined;
+    if (associationWithStartTokenIsExisting) {
       const untrimmedInitialToken: string = associationWithStartToken.target.businessObject.text;
 
       const untrimmedInitialTokenIsUndefined: boolean = untrimmedInitialToken === undefined;
