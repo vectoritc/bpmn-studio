@@ -9,9 +9,8 @@ import 'bootstrap';
 
 import {OpenIdConnect} from 'aurelia-open-id-connect';
 
-import {NotificationType} from './contracts/index';
+import {IAuthenticationService, NotificationType} from './contracts/index';
 import environment from './environment';
-import {AuthenticationService} from './modules/authentication/authentication.service';
 import {NotificationService} from './modules/notification/notification.service';
 
 import {oidcConfig} from './open-id-connect-configuration';
@@ -20,7 +19,7 @@ export class App {
   public showSolutionExplorer: boolean = false;
 
   private _openIdConnect: OpenIdConnect | any;
-  private _authenticationService: AuthenticationService;
+  private _authenticationService: IAuthenticationService;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
@@ -28,7 +27,7 @@ export class App {
   private _preventDefaultBehaviour: EventListener;
 
   constructor(openIdConnect: OpenIdConnect,
-              authenticationService: AuthenticationService,
+              authenticationService: IAuthenticationService,
               notificationService: NotificationService,
               eventAggregator: EventAggregator) {
     this._openIdConnect = openIdConnect;
