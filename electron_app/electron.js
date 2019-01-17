@@ -459,6 +459,13 @@ Main._createMainWindow = function () {
               Main._window.webContents.send('menubar__start_opening_solution');
             },
           },
+          {
+            label: "Create Diagram",
+            accelerator: "CmdOrCtrl+N",
+            click: () => {
+              Main._window.webContents.send('menubar__start_create_diagram');
+            }
+          }
         ],
       };
     };

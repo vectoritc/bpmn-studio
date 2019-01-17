@@ -33,6 +33,11 @@ export default {
   events: {
     differsFromOriginal: 'differsFromOriginal',
     xmlChanged: 'xmlChanged',
+    startPage: {
+      openLocalSolution: 'startpage:openlocalsolution',
+      openSingleDiagram: 'startpage:openSingleDiagram',
+      createSingleDiagram: 'startpage:createSingleDiagram',
+    },
     statusBar: {
       showDiagramViewButtons: 'statusbar:diagramviewbuttons:show',
       hideDiagramViewButtons: 'statusbar:diagramviewbuttons:hide',
