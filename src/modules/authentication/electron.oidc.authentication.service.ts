@@ -8,17 +8,16 @@ import {User} from 'oidc-client';
 import {AuthenticationStateEvent, IAuthenticationService, IIdentity, ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {oidcConfig} from '../../open-id-connect-configuration';
-import {NotificationService} from './../notification/notification.service';
+import {NotificationService} from '../notification/notification.service';
 
 const UNAUTHORIZED_STATUS_CODE: number = 401;
 const LOGOUT_SUCCESS_STATUS_CODE: number = 200;
 const IDENTITY_SERVER_AVAILABLE_SUCCESS_STATUS_CODE: number = 200;
 
-@inject(EventAggregator, 'NotificationService', OpenIdConnect, Router, 'SolutionService')
-export class AuthenticationService implements IAuthenticationService {
+@inject(EventAggregator, 'NotificationService', Router, 'SolutionService')
+export class ElectronOidcAuthenticationService implements IAuthenticationService {
 
   private _eventAggregator: EventAggregator;
-  private _openIdConnect: OpenIdConnect;
   private _notificationService: NotificationService;
   private _router: Router;
   private _user: User;
@@ -28,24 +27,12 @@ export class AuthenticationService implements IAuthenticationService {
 
   constructor(eventAggregator: EventAggregator,
               notificationService: NotificationService,
-              openIdConnect: OpenIdConnect,
               router: Router,
               solutionService: ISolutionService) {
     this._eventAggregator = eventAggregator;
     this._notificationService = notificationService;
-    this._openIdConnect = openIdConnect;
     this._router = router;
     this._solutionService = solutionService;
-
-    this._initialize();
-  }
-
-  private async _initialize(): Promise<void> {
-    const user: User = await this._openIdConnect.getUser();
-
-    const userIsNull: boolean = user === null;
-
-    this._user = userIsNull ? undefined : user;
   }
 
   public isLoggedIn(): boolean {
@@ -64,7 +51,7 @@ export class AuthenticationService implements IAuthenticationService {
 
     const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
 
-    ipcRenderer.on('openIDConnect-login-reply', async(event: any, accessToken: string) => {
+    ipcRenderer.on('oidc-login-reply', async(event: any, accessToken: string) => {
 
       this._accessToken = accessToken;
       const identity: IIdentity = await this.getIdentity();
@@ -80,7 +67,7 @@ export class AuthenticationService implements IAuthenticationService {
 
     });
 
-    ipcRenderer.send('openIDConnect-login');
+    ipcRenderer.send('oidc-login');
   }
 
   public finishLogout(): void {
@@ -99,14 +86,6 @@ export class AuthenticationService implements IAuthenticationService {
 
     if (!this.isLoggedIn) {
       return;
-    }
-
-    const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
-
-    if (!isRunningInElectron) {
-      // If we're in the browser, we need to let the oidc plugin handle the
-      // logout so that push state works correctly
-      return await this._openIdConnect.logout();
     }
 
     // The following part is a manual implementation of the implicit flow logout
