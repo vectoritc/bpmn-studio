@@ -18,6 +18,8 @@ export class Inspect {
 
   @bindable() public showDashboard: boolean = true;
   @bindable() public activeDiagram: IDiagram;
+  @bindable() public activeSolutionEntry: ISolutionEntry;
+
   public showHeatmap: boolean = false;
   public showInspectCorrelation: boolean = false;
   public dashboard: Dashboard;
@@ -27,7 +29,6 @@ export class Inspect {
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
   private _solutionService: ISolutionService;
-  private _activeSolutionEntry: ISolutionEntry;
 
   constructor(eventAggregator: EventAggregator,
               solutionService: ISolutionService) {
@@ -54,7 +55,7 @@ export class Inspect {
         const dashboardIsAttached: boolean = this.dashboard !== undefined;
 
         if (dashboardIsAttached) {
-          this.dashboard.canActivate();
+          this.dashboard.canActivate(this.activeSolutionEntry);
         }
       }, 0);
 
@@ -78,18 +79,12 @@ export class Inspect {
     const dashboardIsAttached: boolean = this.dashboard !== undefined;
 
     if (dashboardIsAttached) {
-      this.dashboard.canActivate();
+      this.dashboard.canActivate(this.activeSolutionEntry);
     }
 
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.inspect.shouldDisableTokenViewerButton, (tokenViewerButtonDisabled: boolean) => {
         this.tokenViewerButtonDisabled = tokenViewerButtonDisabled;
-      }),
-      this._eventAggregator.subscribe('router:navigation:success', async(navigationResult: AureliaNavigationObject) => {
-        const solutionUri: string = navigationResult.instruction.queryParams.solutionUri;
-        const diagramName: string =  navigationResult.instruction.params.diagramName;
-
-        await this._updateInspectView(diagramName, solutionUri);
       }),
     ];
   }
@@ -118,8 +113,8 @@ export class Inspect {
       solutionUri = window.localStorage.getItem('InternalProcessEngineRoute');
     }
 
-    this._activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
-    await this._activeSolutionEntry.service.openSolution(this._activeSolutionEntry.uri, this._activeSolutionEntry.identity);
+    this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
+    await this.activeSolutionEntry.service.openSolution(this.activeSolutionEntry.uri, this.activeSolutionEntry.identity);
 
     const solutionIsRemote: boolean = solutionUri.startsWith('http');
     if (solutionIsRemote) {
@@ -138,7 +133,7 @@ export class Inspect {
         });
       } else {
 
-        this.activeDiagram = await this._activeSolutionEntry.service.loadDiagram(diagramName);
+        this.activeDiagram = await this.activeSolutionEntry.service.loadDiagram(diagramName);
       }
     }
   }

@@ -73,6 +73,16 @@ describe('Dashboard view', () => {
 
   it('should contain process list.', async() => {
     const processListTag: ElementFinder = dashboard.processListTag;
+
+    const visibilityOfProcessListTag: Function = expectedConditions.visibilityOf(processListTag);
+
+    await browser.driver
+      .wait(() => {
+        browser.wait(visibilityOfProcessListTag, defaultTimeoutMS);
+
+        return dashboard.processListTag;
+      });
+
     const processListTagIsDisplayed: boolean = await processListTag.isDisplayed();
 
     expect(processListTagIsDisplayed).toBeTruthy();
@@ -160,6 +170,15 @@ describe('Dashboard view', () => {
 
   it('should contain task list.', async() => {
     const taskListContainer: ElementFinder = dashboard.taskListContainer;
+    const visibilityOfTaskListContainer: Function = expectedConditions.visibilityOf(taskListContainer);
+
+    await browser.driver
+      .wait(() => {
+        browser.wait(visibilityOfTaskListContainer, defaultTimeoutMS);
+
+        return dashboard.taskListContainer;
+      });
+
     const taskListContainerIsDisplayed: boolean = await taskListContainer.isDisplayed();
 
     expect(taskListContainerIsDisplayed).toBeTruthy();

@@ -13,6 +13,7 @@ export class HeatmapMockRepository implements IHeatmapRepository {
 
   private _managementApiClient: ManagementApiClientService;
   private _authenticationService: IAuthenticationService;
+  private _identity: IIdentity;
 
   private _mockDataForHeatmapSampleProcess: Array<FlowNodeRuntimeInformation> = [
     /** 3 Tasks */
@@ -1660,6 +1661,10 @@ export class HeatmapMockRepository implements IHeatmapRepository {
     this._authenticationService = authenticationService;
   }
 
+  public setIdentity(identity: IIdentity): void {
+    this._identity = identity;
+  }
+
   public getRuntimeInformationForProcessModel(processModelId: string): Promise<Array<FlowNodeRuntimeInformation>> {
     return new Promise ((resolve: Function, reject: Function): void => {
       resolve(this._mockDataForHeatmapSampleProcess);
@@ -1677,17 +1682,7 @@ export class HeatmapMockRepository implements IHeatmapRepository {
   }
 
   public getProcess(processModelId: string): Promise<ProcessModelExecution.ProcessModel> {
-    const identity: IIdentity = this._getIdentity();
 
-    return this._managementApiClient.getProcessModelById(identity, processModelId);
-  }
-
-  private _getIdentity(): IIdentity {
-    const accessToken: string = this._authenticationService.getAccessToken();
-    const identity: IIdentity = {
-      token: accessToken,
-    };
-
-    return identity;
+    return this._managementApiClient.getProcessModelById(this._identity, processModelId);
   }
 }

@@ -9,10 +9,10 @@ import {
 import {IIdentity} from '@essential-projects/iam_contracts';
 import {IManagementApi} from '@process-engine/management_api_contracts';
 
-import {IAuthenticationService, NotificationType} from '../../../contracts/index';
+import {ISolutionEntry, NotificationType} from '../../../contracts/index';
 import {NotificationService} from '../../notification/notification.service';
 
-@inject('ManagementApiClientService', 'NotificationService', 'AuthenticationService', Router)
+@inject('ManagementApiClientService', 'NotificationService', Router)
 export class Dashboard {
 
   public showTaskList: boolean = false;
@@ -20,25 +20,21 @@ export class Dashboard {
 
   private _managementApiService: IManagementApi;
   private _notificationService: NotificationService;
-  private _authenticationService: IAuthenticationService;
   private _router: Router;
 
   constructor(managementApiService: IManagementApi,
               notificationService: NotificationService,
-              authenticationService: IAuthenticationService,
               router: Router) {
 
     this._managementApiService = managementApiService;
     this._notificationService = notificationService;
-    this._authenticationService = authenticationService;
     this._router = router;
   }
 
-  public async canActivate(): Promise<boolean> {
-    const identity: IIdentity = this._getIdentity();
+  public async canActivate(activeSolutionEntry: ISolutionEntry): Promise<boolean> {
 
-    const hasClaimsForTaskList: boolean = await this._hasClaimsForTaskList(identity);
-    const hasClaimsForProcessList: boolean = await this._hasClaimsForProcessList(identity);
+    const hasClaimsForTaskList: boolean = await this._hasClaimsForTaskList(activeSolutionEntry.identity);
+    const hasClaimsForProcessList: boolean = await this._hasClaimsForProcessList(activeSolutionEntry.identity);
 
     if (!hasClaimsForProcessList && !hasClaimsForTaskList) {
       this._notificationService.showNotification(NotificationType.ERROR, 'You don\'t have the permission to use the dashboard features.');
@@ -88,15 +84,5 @@ export class Dashboard {
     }
 
     return true;
-  }
-
-  // TODO: Move this method into a service.
-  private _getIdentity(): IIdentity {
-    const accessToken: string = this._authenticationService.getAccessToken();
-    const identity: IIdentity = {
-      token: accessToken,
-    };
-
-    return identity;
   }
 }

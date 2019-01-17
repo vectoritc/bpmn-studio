@@ -4,7 +4,7 @@ import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {FlowNodeRuntimeInformation} from '@process-engine/kpi_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {IBpmnModeler, IElementRegistry, IOverlayManager} from '../../../contracts/index';
+import {IBpmnModeler, IElementRegistry, IOverlayManager, ISolutionEntry} from '../../../contracts/index';
 
 import {IFlowNodeAssociation, IHeatmapService} from './contracts';
 
@@ -12,6 +12,7 @@ import {IFlowNodeAssociation, IHeatmapService} from './contracts';
 export class Heatmap {
   public viewerContainer: HTMLDivElement;
   @bindable() public activeDiagram: IDiagram;
+  @bindable() public activeSolutionEntry: ISolutionEntry;
 
   private _heatmapService: IHeatmapService;
   private _modeler: IBpmnModeler;
@@ -19,6 +20,10 @@ export class Heatmap {
 
   constructor(heatmapService: IHeatmapService) {
     this._heatmapService = heatmapService;
+  }
+
+  public activeSolutionEntryChanged(newValue: ISolutionEntry): void {
+    this._heatmapService.setIdentity(newValue.identity);
   }
 
   public activeDiagramChanged(): void {

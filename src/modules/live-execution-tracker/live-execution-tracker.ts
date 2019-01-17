@@ -1,7 +1,6 @@
 import {computedFrom, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
-import {IIdentity} from '@essential-projects/iam_contracts';
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 
 import {
@@ -12,11 +11,9 @@ import {
 } from '@process-engine/management_api_contracts';
 
 import {ActiveToken} from '@process-engine/kpi_api_contracts';
-import {ProcessModel} from '@process-engine/management_api_contracts/dist/data_models';
-import {IDiagram} from '@process-engine/solutionexplorer.contracts';
+
 import {
   defaultBpmnColors,
-  IAuthenticationService,
   IBpmnModeler,
   IBpmnXmlSaveOptions,
   ICanvas,
@@ -46,7 +43,7 @@ enum RequestError {
   OtherError = 'otherError',
 }
 
-@inject(Router, 'NotificationService', 'AuthenticationService', 'ManagementApiClientService', 'SolutionService')
+@inject(Router, 'NotificationService', 'ManagementApiClientService', 'SolutionService')
 export class LiveExecutionTracker {
   public canvasModel: HTMLElement;
   public showDynamicUiModal: boolean = false;
@@ -65,11 +62,10 @@ export class LiveExecutionTracker {
 
   private _router: Router;
   private _notificationService: NotificationService;
-  private _authenticationService: IAuthenticationService;
   private _managementApiClient: IManagementApi;
   private _solutionService: ISolutionService;
 
-  private _activeSolutionUri: string;
+  private activeSolutionEntry: ISolutionEntry;
 
   private _pollingTimer: NodeJS.Timer;
   private _attached: boolean;
@@ -83,13 +79,11 @@ export class LiveExecutionTracker {
 
   constructor(router: Router,
               notificationService: NotificationService,
-              authenticationService: IAuthenticationService,
               managementApiClient: IManagementApi,
               solutionService: ISolutionService) {
 
     this._router = router;
     this._notificationService = notificationService;
-    this._authenticationService = authenticationService;
     this._managementApiClient = managementApiClient;
     this._solutionService = solutionService;
   }
@@ -97,30 +91,9 @@ export class LiveExecutionTracker {
   public async activate(routeParameters: RouteParameters): Promise<void> {
     this.correlationId = routeParameters.correlationId;
     this.processModelId = routeParameters.diagramName;
-    this._activeSolutionUri = routeParameters.solutionUri;
+    this.activeSolutionEntry = await this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
 
     this._parentProcessModelId = await this._getParentProcessModelId();
-
-    const processEngineSolution: ISolutionEntry = await this._solutionService.getSolutionEntryForUri(this._activeSolutionUri);
-    const activeDiagram: IDiagram = await this._getProcessModelAndConvertToDiagram(this.processModelId, processEngineSolution);
-  }
-
-  private async _getParentProcessModelId(): Promise<string> {
-    const parentProcessInstanceId: string = await this._getParentProcessInstanceId();
-
-    const parentProcessInstanceIdNotFound: boolean = parentProcessInstanceId === undefined;
-    if (parentProcessInstanceIdNotFound) {
-      return undefined;
-    }
-
-    const parentProcessModel: CorrelationProcessModel = await this._getProcessModelByProcessInstanceId(parentProcessInstanceId);
-
-    const parentProcessModelNotFound: boolean = parentProcessModel === undefined;
-    if (parentProcessModelNotFound) {
-      return undefined;
-    }
-
-    return parentProcessModel.processModelId;
   }
 
   public async attached(): Promise<void> {
@@ -195,7 +168,7 @@ export class LiveExecutionTracker {
     this._router.navigateToRoute('live-execution-tracker', {
       correlationId: this.correlationId,
       diagramName: this._parentProcessModelId,
-      solutionUri: this._activeSolutionUri,
+      solutionUri: this.activeSolutionEntry.uri,
     });
   }
 
@@ -209,27 +182,22 @@ export class LiveExecutionTracker {
     this.dynamicUi.clearTasks();
   }
 
-  /**
-   *
-   * @param processModelId: string | The ID of a ProcessModel.
-   * @param processEngineSolution: ISolutionEntry | The SolutionEntry of the connected ProcessEngine.
-   *
-   * This method fetches the ProcessModel of an ID and returns the matching diagram as IDiagram.
-   * The ProcessEngine Solution is needed to get the correct URI of the diagram.
-   */
-  private async _getProcessModelAndConvertToDiagram(processModelId: string, processEngineSolution: ISolutionEntry): Promise<IDiagram> {
-    const identity: IIdentity = this._getIdentity();
+  private async _getParentProcessModelId(): Promise<string> {
+    const parentProcessInstanceId: string = await this._getParentProcessInstanceId();
 
-    const processModel: ProcessModel = await this._managementApiClient.getProcessModelById(identity, processModelId);
+    const parentProcessInstanceIdNotFound: boolean = parentProcessInstanceId === undefined;
+    if (parentProcessInstanceIdNotFound) {
+      return undefined;
+    }
 
-    const diagram: IDiagram = {
-      id: processModel.id,
-      xml: processModel.xml,
-      uri: `${processEngineSolution.uri}/api/management/v1/${processModel.id}`,
-      name: processModelId,
-    };
+    const parentProcessModel: CorrelationProcessModel = await this._getProcessModelByProcessInstanceId(parentProcessInstanceId);
 
-    return diagram;
+    const parentProcessModelNotFound: boolean = parentProcessModel === undefined;
+    if (parentProcessModelNotFound) {
+      return undefined;
+    }
+
+    return parentProcessModel.processModelId;
   }
 
   private async _colorizeXml(xml: string): Promise<string> {
@@ -396,7 +364,7 @@ export class LiveExecutionTracker {
 
       this._router.navigateToRoute('live-execution-tracker', {
         diagramName: callActivityTargetProcess,
-        solutionUri: this._activeSolutionUri,
+        solutionUri: this.activeSolutionEntry.uri,
         correlationId: this.correlationId,
       });
     }
@@ -419,12 +387,11 @@ export class LiveExecutionTracker {
   }
 
   private async _getElementsWithActiveToken(elements: Array<IShape>): Promise<Array<IShape> | null> {
-    const identity: IIdentity = this._getIdentity();
 
     const getActiveTokens: Function = async(): Promise<Array<ActiveToken> | null> => {
       for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
-          return await this._managementApiClient.getActiveTokensForCorrelationAndProcessModel(identity,
+          return await this._managementApiClient.getActiveTokensForCorrelationAndProcessModel(this.activeSolutionEntry.identity,
                                                                                               this.correlationId,
                                                                                               this.processModelId);
         } catch {
@@ -455,12 +422,11 @@ export class LiveExecutionTracker {
   }
 
   private async _getElementsWithTokenHistory(elements: Array<IShape>): Promise<Array<IShape> | null> {
-    const identity: IIdentity = this._getIdentity();
 
     const getTokenHistoryGroup: Function = async(): Promise<TokenHistoryGroup | null> => {
       for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
-          return await this._managementApiClient.getTokensForCorrelationAndProcessModel(identity,
+          return await this._managementApiClient.getTokensForCorrelationAndProcessModel(this.activeSolutionEntry.identity,
                                                                                         this.correlationId,
                                                                                         this.processModelId);
         } catch {
@@ -579,13 +545,12 @@ export class LiveExecutionTracker {
   }
 
   private async _getXml(): Promise<string> {
-    const identity: IIdentity = this._getIdentity();
 
     // This is necessary because the managementApi sometimes throws an error when the correlation is not yet existing.
     const getCorrelation: () => Promise<Correlation> = async(): Promise<Correlation> => {
       for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
-          return await this._managementApiClient.getCorrelationById(identity, this.correlationId);
+          return await this._managementApiClient.getCorrelationById(this.activeSolutionEntry.identity, this.correlationId);
         } catch {
           continue;
         }
@@ -805,12 +770,11 @@ export class LiveExecutionTracker {
   }
 
   private async _isCorrelationStillActive(): Promise<boolean | RequestError> {
-    const identity: IIdentity = this._getIdentity();
 
     const getActiveCorrelations: Function = async(): Promise<Array<Correlation> | RequestError> => {
       for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
-          return await this._managementApiClient.getActiveCorrelations(identity);
+          return await this._managementApiClient.getActiveCorrelations(this.activeSolutionEntry.identity);
         } catch (error) {
           const errorIsConnectionLost: boolean = error.message === 'Failed to fetch';
 
@@ -850,23 +814,13 @@ export class LiveExecutionTracker {
     this._notificationService.showNotification(NotificationType.INFO, 'Process stopped.');
   }
 
-  private _getIdentity(): IIdentity {
-    const accessToken: string = this._authenticationService.getAccessToken();
-    const identity: IIdentity = {
-      token: accessToken,
-    };
-
-    return identity;
-  }
-
   private async _getParentProcessInstanceId(): Promise<string> {
     // This is necessary because the managementApi sometimes throws an error when the correlation is not yet existing.
     const getCorrelation: () => Promise<Correlation> = async(): Promise<Correlation> => {
-      const identity: IIdentity = this._getIdentity();
 
       for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
-          return await this._managementApiClient.getCorrelationById(identity, this.correlationId);
+          return await this._managementApiClient.getCorrelationById(this.activeSolutionEntry.identity, this.correlationId);
         } catch {
           continue;
         }
@@ -897,14 +851,13 @@ export class LiveExecutionTracker {
   }
 
   private async _getProcessModelByProcessInstanceId(processInstanceId: string): Promise<CorrelationProcessModel> {
-    const identity: IIdentity = this._getIdentity();
 
     // This is necessary because the managementApi sometimes throws an error when the correlation is not yet existing.
     const getCorrelation: () => Promise<Correlation> = async(): Promise<Correlation> => {
 
       for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
-          return await this._managementApiClient.getCorrelationById(identity, this.correlationId);
+          return await this._managementApiClient.getCorrelationById(this.activeSolutionEntry.identity, this.correlationId);
         } catch {
           continue;
         }
