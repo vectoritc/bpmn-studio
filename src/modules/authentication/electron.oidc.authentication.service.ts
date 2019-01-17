@@ -4,7 +4,13 @@ import {Router} from 'aurelia-router';
 
 import {User} from 'oidc-client';
 
-import {AuthenticationStateEvent, IAuthenticationService, IIdentity, ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
+import {AuthenticationStateEvent,
+        IAuthenticationService,
+        IIdentity,
+        ISolutionEntry,
+        ISolutionService,
+        ITokenObject,
+        NotificationType} from '../../contracts/index';
 import environment from '../../environment';
 import {oidcConfig} from '../../open-id-connect-configuration';
 import {NotificationService} from '../notification/notification.service';
