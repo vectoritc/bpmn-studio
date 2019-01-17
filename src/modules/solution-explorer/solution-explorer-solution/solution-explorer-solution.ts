@@ -810,9 +810,10 @@ export class SolutionExplorerSolution {
     const diagramNameIsSpecified: boolean = diagramName !== undefined;
 
     const routeName: string = this._router.currentInstruction.config.name;
-    const routeNameIsDiagramDetailOrInspect: boolean = routeName === 'design'
-                                                    || routeName === 'inspect';
-    if (routeNameIsDiagramDetailOrInspect) {
+    const routeNameNeedsUpdate: boolean = routeName === 'design'
+                                        || routeName === 'inspect'
+                                        || routeName === 'think';
+    if (routeNameNeedsUpdate) {
       this._diagramRoute = routeName;
       this._inspectView = this._router.currentInstruction.params.view;
     }
