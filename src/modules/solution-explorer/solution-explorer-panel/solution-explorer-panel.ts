@@ -68,9 +68,18 @@ export class SolutionExplorerPanel {
       // We are not adding the solution of the connect PE here again since that happened above.
       const entryIsNotConnectedProcessEngine: boolean = entry.uri !== uriOfProcessEngine;
       if (entryIsNotConnectedProcessEngine) {
-        await this.solutionExplorerList.openSolution(entry.uri);
-      }
+        /**
+         * Since we can't distinguish if the persisted ProcessEngine was an
+         * internal or external one yet, we consume any connection error
+         * produced by the openSolution method.
+         */
+        try {
+          await this.solutionExplorerList.openSolution(entry.uri);
+        } catch (error) {
 
+          return;
+        }
+      }
     });
 
     const persistedSingleDiagrams: Array<IDiagram> = this._solutionService.getSingleDiagrams();
