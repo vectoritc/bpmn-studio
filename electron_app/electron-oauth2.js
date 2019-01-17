@@ -62,7 +62,12 @@ module.exports = function (config, windowParams) {
           var id_token = parameterAsArray[0].split('=')[1];
           var access_token = parameterAsArray[1].split('=')[1];
 
-          resolve(access_token);
+          const user = {
+            id_token,
+            access_token
+          }
+
+          resolve(user);
           authWindow.removeAllListeners('closed');
 
           setImmediate(function () {
