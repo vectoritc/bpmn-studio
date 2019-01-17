@@ -143,7 +143,7 @@ export class SolutionExplorerList {
        * failed. A more detailed cause (such as Connection Refused) would
        * be better. This needs to be implemented in the Service or Repository.
        */
-      throw new Error('Failed to retrieve a list of ProcessModels from the Endpoint');
+      throw new Error('Failed to retrieve the list of ProcessModels from the endpoint');
     }
 
     const newOpenedSolution: ISolution = await solutionExplorer.loadSolution();
