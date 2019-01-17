@@ -254,7 +254,7 @@ export class DiagramDetail {
     }
 
     if (this.diagramHasChanged) {
-      this.saveDiagram();
+      await this.saveDiagram();
     }
 
     const parsedInitialToken: any = this._getInitialTokenValues(this.initialToken);
@@ -307,7 +307,7 @@ export class DiagramDetail {
   public async saveChangesBeforeStart(): Promise<void> {
     this.showSaveForStartModal = false;
 
-    this.saveDiagram();
+    await this.saveDiagram();
     await this.showSelectStartEventDialog();
   }
 

@@ -191,7 +191,7 @@
   </div>
   <!-- #endregion -->
     <!-- #region Select Start Event Modal for Process Start -->
-    <div show.bind="showStartEventModal">
+    <div if.bind="showStartEventModal">
       <div class="modal show show-modal" tabindex="-1" role="dialog">
         <div class="modal-dialog select-start-event-modal__dialog" role="document">
           <div class="modal-content">
@@ -203,7 +203,7 @@
               Please select a start event that should be used to start the process.
               <div>
                 <select value.bind="diagramDetail.selectedStartEventId" ref="dropdownMenu" class="process-start-event-modal-dialog__dropdown-menu">
-                  <option value="">Select StartEvent</option>
+                  <option>Select StartEvent</option>
                   <option repeat.for="startEvent of diagramDetail.processesStartEvents" value.bind="diagramDetail.startEvent.id">${diagramDetail.startEvent.id}</option>
                 </select>
               </div>
