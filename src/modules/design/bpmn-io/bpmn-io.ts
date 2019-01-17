@@ -12,11 +12,11 @@ import {
   IDiagramPrintService,
   IEditorActions,
   IElementRegistry,
-  IEvent,
   IEventFunction,
   IInternalEvent,
   IKeyboard,
   IModdleElement,
+  IProcessRef,
   IPropertiesElement,
   IShape,
   IViewbox,
@@ -59,6 +59,8 @@ export class BpmnIo {
   private _diagramPrintService: IDiagramPrintService;
   private _diagramIsInvalid: boolean = false;
 
+  private _tempProcess: IProcessRef;
+  private _diagramHasChanges: boolean = false;
   /**
    * We are using the direct reference of a container element to place the tools of bpmn-js
    * in the left sidebar (bpmn-io-layout__tools-left).
@@ -114,10 +116,23 @@ export class BpmnIo {
       this.xml = await this.getXML();
     }, handlerPriority);
 
-    this.modeler.on(['shape.added', 'shape.removed'], (element: IEvent) => {
-      const shapeIsParticipant: boolean = element.element.type === 'bpmn:Participant';
+    this.modeler.on(['shape.added', 'shape.removed'], (event: IInternalEvent) => {
+      const shapeIsParticipant: boolean = event.element.type === 'bpmn:Participant';
+
       if (shapeIsParticipant) {
-        this._checkForMultipleParticipants();
+        return this._checkForMultipleParticipants(event);
+      }
+    });
+
+    this.modeler.on('shape.remove', (event: IInternalEvent) => {
+      const shapeIsParticipant: boolean = event.element.type === 'bpmn:Participant';
+      if (shapeIsParticipant) {
+        const rootElements: Array<IProcessRef> = this.modeler._definitions.rootElements;
+        this._tempProcess = rootElements.find((element: IProcessRef) => {
+          return element.$type === 'bpmn:Process';
+        });
+
+        return event;
       }
     });
 
@@ -274,6 +289,10 @@ export class BpmnIo {
 
         keyboard.unbind();
       }),
+
+      this._eventAggregator.subscribe(environment.events.differsFromOriginal, (changes: boolean) => {
+       this._diagramHasChanges = changes;
+      }),
     ];
 
     const previousPropertyPanelWidth: string = window.localStorage.getItem('propertyPanelWidth');
@@ -306,16 +325,19 @@ export class BpmnIo {
 
   public async saveCurrentXML(): Promise<void> {
     this.savedXml = await this.getXML();
+    this._tempProcess = undefined;
   }
 
   public diagramChanged(): void {
+    this._tempProcess = undefined;
+
     // This is needed to make sure the xml was already binded
     setTimeout(() => {
       const modelerIsSet: boolean = this.modeler !== undefined && this.modeler !== null;
       if (modelerIsSet) {
         this.modeler.importXML(this.xml, (err: Error) => {
           this._fitDiagramToViewport();
-
+          this._diagramHasChanges = false;
           return 0;
         });
 
@@ -421,7 +443,7 @@ export class BpmnIo {
     return randomId;
   }
 
-  private _checkForMultipleParticipants(): void {
+  private _checkForMultipleParticipants(event: IInternalEvent): IInternalEvent {
     const elementRegistry: IElementRegistry = this.modeler.get('elementRegistry');
 
     setTimeout(() => {
@@ -431,6 +453,13 @@ export class BpmnIo {
 
       const multipleParticipants: boolean = participants.length > 1;
 
+      if (this._diagramHasChanges) {
+        participants.forEach((participant: IShape) => {
+          participant.businessObject.processRef.id = this._tempProcess.id;
+          participant.businessObject.processRef.isExecutable = this._tempProcess.isExecutable;
+        });
+      }
+
       const eventToPublish: string = multipleParticipants
                                      ? environment.events.navBar.validationError
                                      : environment.events.navBar.noValidationError;
@@ -438,6 +467,8 @@ export class BpmnIo {
       this._eventAggregator.publish(eventToPublish);
 
     }, elementRegistryTimeoutMilliseconds);
+
+    return event;
   }
 
   private _setNewPropertyPanelWidthFromMousePosition(mousePosition: number): void {
