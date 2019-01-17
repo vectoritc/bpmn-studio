@@ -92,6 +92,11 @@ export class Design {
        */
       await this.activeSolutionEntry.service.openSolution(this.activeSolutionEntry.uri, this.activeSolutionEntry.identity);
 
+      const solutionIsRemote: boolean = this.activeSolutionEntry.uri.startsWith('http');
+      if (solutionIsRemote) {
+        this._eventAggregator.publish(environment.events.configPanel.processEngineRouteChanged, this.activeSolutionEntry.uri);
+      }
+
       const isSingleDiagram: boolean = this.activeSolutionEntry.uri === 'Single Diagrams';
 
       if (isSingleDiagram) {
