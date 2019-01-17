@@ -25,10 +25,9 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
   private _eventAggregator: EventAggregator;
   private _notificationService: NotificationService;
   private _router: Router;
-  private _user: User;
+  private _tokenObject: ITokenObject;
   private _logoutWindow: Window = null;
   private _solutionService: ISolutionService;
-  private _accessToken: string;
 
   constructor(eventAggregator: EventAggregator,
               notificationService: NotificationService,
@@ -41,7 +40,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
   }
 
   public isLoggedIn(): boolean {
-    const userIsExisting: boolean = this._user !== undefined;
+    const userIsExisting: boolean = this._tokenObject !== undefined;
 
     return userIsExisting;
   }
@@ -56,9 +55,8 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
 
     const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
 
-    ipcRenderer.on('oidc-login-reply', async(event: any, accessToken: string) => {
-
-      this._accessToken = accessToken;
+    ipcRenderer.on('oidc-login-reply', async(event: any, tokenObject: ITokenObject) => {
+      this._tokenObject = tokenObject;
       const identity: IIdentity = await this.getIdentity();
       this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
 
@@ -66,7 +64,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
 
       remoteSolutions.forEach((solution: ISolutionEntry) => {
         solution.identity = {
-          token: accessToken,
+          token: tokenObject.access_token,
         };
       });
 
@@ -82,7 +80,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
       this._logoutWindow.close();
       this._logoutWindow = null;
     }
-    this._user = undefined;
+    this._tokenObject = undefined;
     this._eventAggregator.publish(AuthenticationStateEvent.LOGOUT);
     this._router.navigate('/');
   }
@@ -98,7 +96,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
     // It is not tested with other providers yet and will definitely get
     // refactored once we switch to hybrid flow.
 
-    const idToken: string = this._user.id_token;
+    const idToken: string = this._tokenObject.id_token;
     const logoutRedirectUri: string = oidcConfig.userManagerSettings.post_logout_redirect_uri;
     const queryParams: Array<Array<string>> = [
       ['id_token_hint', idToken],
@@ -137,13 +135,13 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
   }
 
   public getAccessToken(): string | null {
-    const userIsNotLoggedIn: boolean = this._accessToken === undefined;
+    const userIsNotLoggedIn: boolean = this._tokenObject === undefined;
 
     if (userIsNotLoggedIn) {
       return this._getDummyAccessToken();
     }
 
-    return this._accessToken;
+    return this._tokenObject.access_token;
   }
 
   // TODO: The dummy token needs to be removed in the future!!
