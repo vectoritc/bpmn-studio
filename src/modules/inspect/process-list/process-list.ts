@@ -3,7 +3,7 @@ import {inject, observable} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
-import {Correlation, CorrelationProcessModel, IManagementApi} from '@process-engine/management_api_contracts';
+import {DataModels, IManagementApi} from '@process-engine/management_api_contracts';
 
 import {
   AuthenticationStateEvent,
@@ -33,9 +33,9 @@ export class ProcessList {
   private _router: Router;
 
   private _getCorrelationsIntervalId: number;
-  private _getCorrelations: () => Promise<Array<Correlation>>;
+  private _getCorrelations: () => Promise<Array<DataModels.Correlations.Correlation>>;
   private _subscriptions: Array<Subscription>;
-  private _correlations: Array<Correlation> = [];
+  private _correlations: Array<DataModels.Correlations.Correlation> = [];
 
   constructor(managementApiService: IManagementApi,
               eventAggregator: EventAggregator,
@@ -97,7 +97,7 @@ export class ProcessList {
 
   public async updateProcesses(): Promise<void> {
     try {
-      const correlations: Array<Correlation> = await this._getCorrelations();
+      const correlations: Array<DataModels.Correlations.Correlation> = await this._getCorrelations();
       const correlationListWasUpdated: boolean = JSON.stringify(correlations) !== JSON.stringify(this._correlations);
 
       if (correlationListWasUpdated) {
@@ -118,7 +118,7 @@ export class ProcessList {
     this.totalItems = this._correlations.length;
   }
 
-  public get correlations(): Array<Correlation> {
+  public get correlations(): Array<DataModels.Correlations.Correlation> {
     return this._correlations.slice((this.currentPage - 1) * this.pageSize, this.pageSize * this.currentPage);
   }
 
@@ -130,28 +130,31 @@ export class ProcessList {
     }
   }
 
-  private async getAllActiveCorrelations(): Promise<Array<Correlation>> {
+  private async getAllActiveCorrelations(): Promise<Array<DataModels.Correlations.Correlation>> {
     const identity: IIdentity = this.activeSolutionEntry.identity;
 
     return this._managementApiService.getActiveCorrelations(identity);
   }
 
-  private async getCorrelationsForProcessModel(processModelId: string): Promise<Array<Correlation>> {
+  private async getCorrelationsForProcessModel(processModelId: string): Promise<Array<DataModels.Correlations.Correlation>> {
     const identity: IIdentity = this.activeSolutionEntry.identity;
 
-    const runningCorrelations: Array<Correlation> = await this._managementApiService.getActiveCorrelations(identity);
+    const runningCorrelations: Array<DataModels.Correlations.Correlation> = await this._managementApiService.getActiveCorrelations(identity);
 
-    const correlationsWithId: Array<Correlation> = runningCorrelations.filter((correlation: Correlation) => {
-      const processModelWithSearchedId: CorrelationProcessModel =  correlation.processModels.find((processModel: CorrelationProcessModel) => {
-        const isSearchedProcessModel: boolean = processModel.processModelId === processModelId;
+    const correlationsWithId: Array<DataModels.Correlations.Correlation> =
+      runningCorrelations.filter((correlation: DataModels.Correlations.Correlation) => {
 
-        return isSearchedProcessModel;
+        const processModelWithSearchedId: DataModels.Correlations.CorrelationProcessModel =
+          correlation.processModels.find((processModel: DataModels.Correlations.CorrelationProcessModel) => {
+            const isSearchedProcessModel: boolean = processModel.processModelId === processModelId;
+
+            return isSearchedProcessModel;
+          });
+
+        const processModelFound: boolean = processModelWithSearchedId !== undefined;
+
+        return processModelFound;
       });
-
-      const processModelFound: boolean = processModelWithSearchedId !== undefined;
-
-      return processModelFound;
-    });
 
     return correlationsWithId;
   }

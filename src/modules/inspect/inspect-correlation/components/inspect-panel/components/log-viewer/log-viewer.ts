@@ -2,7 +2,7 @@ import {bindable, inject} from 'aurelia-framework';
 
 import * as clipboard from 'clipboard-polyfill';
 
-import {Correlation, LogEntry} from '@process-engine/management_api_contracts';
+import {DataModels} from '@process-engine/management_api_contracts';
 
 import {ILogSortSettings, LogSortProperty, NotificationType} from '../../../../../../../contracts/index';
 import {DateService} from '../../../../../../date-service/date.service';
@@ -15,10 +15,10 @@ interface IClipboard {
 
 @inject('NotificationService', 'InspectCorrelationService')
 export class LogViewer {
-  @bindable() public log: Array<LogEntry>;
-  @bindable() public correlation: Correlation;
+  @bindable() public log: Array<DataModels.Logging.LogEntry>;
+  @bindable() public correlation: DataModels.Correlations.Correlation;
   public LogSortProperty: typeof LogSortProperty = LogSortProperty;
-  public sortedLog: Array<LogEntry>;
+  public sortedLog: Array<DataModels.Logging.LogEntry>;
   public sortSettings: ILogSortSettings = {
     ascending: false,
     sortProperty: undefined,
@@ -70,7 +70,7 @@ export class LogViewer {
 
     const sortPropertyIsTime: boolean = property === LogSortProperty.Time;
 
-    const sortedLog: Array<LogEntry> = sortPropertyIsTime
+    const sortedLog: Array<DataModels.Logging.LogEntry> = sortPropertyIsTime
                                         ? this._getSortedLogByDate()
                                         : this._getSortedLogByProperty(property);
 
@@ -79,9 +79,9 @@ export class LogViewer {
                       : sortedLog.reverse();
   }
 
-  private _getSortedLogByProperty(property: LogSortProperty): Array<LogEntry> {
-    const sortedLog: Array<LogEntry> =
-      this.log.sort((firstEntry: LogEntry, secondEntry: LogEntry) => {
+  private _getSortedLogByProperty(property: LogSortProperty): Array<DataModels.Logging.LogEntry> {
+    const sortedLog: Array<DataModels.Logging.LogEntry> =
+      this.log.sort((firstEntry: DataModels.Logging.LogEntry, secondEntry: DataModels.Logging.LogEntry) => {
         const firstEntryIsBigger: boolean = firstEntry[property] > secondEntry[property];
         if (firstEntryIsBigger) {
           return 1;
@@ -98,9 +98,9 @@ export class LogViewer {
     return sortedLog;
   }
 
-  private _getSortedLogByDate(): Array<LogEntry> {
-    const sortedLog: Array<LogEntry> =
-    this.log.sort((firstEntry: LogEntry, secondEntry: LogEntry) => {
+  private _getSortedLogByDate(): Array<DataModels.Logging.LogEntry> {
+    const sortedLog: Array<DataModels.Logging.LogEntry> =
+    this.log.sort((firstEntry: DataModels.Logging.LogEntry, secondEntry: DataModels.Logging.LogEntry) => {
 
       const firstCorrelationDate: Date = new Date(firstEntry.timeStamp);
       const secondCorrelationDate: Date = new Date(secondEntry.timeStamp);

@@ -109,7 +109,7 @@
             </div>
             <div class="modal-body">
               Choose a remote engine; the diagram will be deployed to your selection.
-              <select class="form-control" value.bind="selectedRemoteSolution">
+              <select class="form-control" value.bind="diagramDetail.selectedRemoteSolution">
                 <option repeat.for="entry of remoteSolutions" model.bind="entry">${entry.uri}</option>
               </select>
             </div>
@@ -157,8 +157,8 @@
             <form>
               <div class="form-group">
                 <label for="correlationId"><b>Custom Correlation ID</b></label>
-                <input class="form-control input-field" class.bind="hasValidationError ? 'wrong-input' : ''" id="correlationId" aria-describedby="correlationIdHelp" placeholder="Correlation ID" type="text" value.bind="diagramDetail.customCorrelationId">
-                <ul if.bind="hasValidationError" class="correlation-id-error__container">
+                <input class="form-control input-field" class.bind="diagramDetail.hasValidationError ? 'wrong-input' : ''" id="correlationId" aria-describedby="correlationIdHelp" placeholder="Correlation ID" type="text" value.bind="diagramDetail.customCorrelationId">
+                <ul if.bind="diagramDetail.hasValidationError" class="correlation-id-error__container">
                   <li class="error-list__container">Your diagram contains at least one invalid-character
                     Supported characters: [a-z, 0-9, -, _, ä, ü, ö, ß, .]
                   </li>
@@ -169,7 +169,7 @@
               </div>
               <div class="form-group">
                 <label for="initialToken"><b>Initial StartEvent Token</b></label>
-                <textarea class="form-control input-field" id="initialToken" rows="4" placeholder="Put your JSON payload here." value.bind="diagramDetail.initialToken"></textarea>
+                <textarea class="form-control input-field design-modal__textarea" id="initialToken" rows="4" placeholder="Put your JSON payload here." value.bind="diagramDetail.initialToken"></textarea>
                 <small class="form-text text-muted">
                     Setting an initial token (JSON payload) is optional; use this if you want to start your process with parameter.
                 </small>
@@ -182,7 +182,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelButtonProcessStart" click.delegate="diagramDetail.cancelDialog()">Cancel</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal" id="startButton" click.delegate="diagramDetail.setOptionsAndStart()" disabled.bind="hasValidationError">${ diagramHasChanged ? 'Save and start process' : 'Start process'}</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal" id="startButton" click.delegate="diagramDetail.setOptionsAndStart()" disabled.bind="diagramDetail.hasValidationError">${ diagramHasChanged ? 'Save and start process' : 'Start process'}</button>
           </div>
         </div>
       </div>
@@ -191,7 +191,7 @@
   </div>
   <!-- #endregion -->
     <!-- #region Select Start Event Modal for Process Start -->
-    <div show.bind="showStartEventModal">
+    <div if.bind="showStartEventModal">
       <div class="modal show show-modal" tabindex="-1" role="dialog">
         <div class="modal-dialog select-start-event-modal__dialog" role="document">
           <div class="modal-content">
@@ -203,8 +203,8 @@
               Please select a start event that should be used to start the process.
               <div>
                 <select value.bind="diagramDetail.selectedStartEventId" ref="dropdownMenu" class="process-start-event-modal-dialog__dropdown-menu">
-                  <option value="">Select StartEvent</option>
-                  <option repeat.for="startEvent of diagramDetail.processesStartEvents" value.bind="startEvent.id">${startEvent.id}</option>
+                  <option>Select StartEvent</option>
+                  <option repeat.for="startEvent of diagramDetail.processesStartEvents" value.bind="diagramDetail.startEvent.id">${diagramDetail.startEvent.id}</option>
                 </select>
               </div>
             </div>

@@ -347,8 +347,10 @@ export class SolutionExplorerList {
 
   private _createIdentityForSolutionExplorer(): IIdentity {
     const accessToken: string = this._authenticationService.getAccessToken();
+    // TODO: Get the identity from the IdentityService of `@process-engine/iam`
     const identity: IIdentity = {
       token: accessToken,
+      userId: '', // Provided by the IdentityService.
     };
 
     return identity;

@@ -2,7 +2,7 @@ import {inject} from 'aurelia-framework';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
 import {ManagementApiClientService} from '@process-engine/management_api_client';
-import {ManualTask, ManualTaskList, UserTask, UserTaskList, UserTaskResult} from '@process-engine/management_api_contracts';
+import {DataModels} from '@process-engine/management_api_contracts';
 
 import {IDynamicUiService} from '../../contracts';
 
@@ -19,7 +19,7 @@ export class DynamicUiService implements IDynamicUiService {
                         processInstanceId: string,
                         correlationId: string,
                         userTaskInstanceId: string,
-                        userTaskResult: UserTaskResult): Promise<void> {
+                        userTaskResult: DataModels.UserTasks.UserTaskResult): Promise<void> {
 
     return this._managementApiClient.finishUserTask(identity,
                                                     processInstanceId,
@@ -31,13 +31,13 @@ export class DynamicUiService implements IDynamicUiService {
   public async getUserTask(identity: IIdentity,
                            correlationId: string,
                            processModelId: string,
-                           userTaskId: string): Promise<UserTask> {
+                           userTaskId: string): Promise<DataModels.UserTasks.UserTask> {
 
-    const userTaskList: UserTaskList = await this._managementApiClient.getUserTasksForProcessModelInCorrelation(identity,
+    const userTaskList: DataModels.UserTasks.UserTaskList = await this._managementApiClient.getUserTasksForProcessModelInCorrelation(identity,
                                                                                                                 processModelId,
                                                                                                                 correlationId);
 
-    return  userTaskList.userTasks.find((userTask: UserTask) => {
+    return  userTaskList.userTasks.find((userTask: DataModels.UserTasks.UserTask) => {
       return userTask.id === userTaskId;
     });
   }
@@ -56,13 +56,13 @@ export class DynamicUiService implements IDynamicUiService {
   public async getManualTask(identity: IIdentity,
                              correlationId: string,
                              processModelId: string,
-                             manualTaskId: string): Promise<ManualTask> {
+                             manualTaskId: string): Promise<DataModels.ManualTasks.ManualTask> {
 
-    const manualTaskList: ManualTaskList = await this._managementApiClient.getManualTasksForProcessModelInCorrelation(identity,
+    const manualTaskList: DataModels.ManualTasks.ManualTaskList = await this._managementApiClient.getManualTasksForProcessModelInCorrelation(identity,
                                                                                                                       processModelId,
                                                                                                                       correlationId);
 
-    return  manualTaskList.manualTasks.find((manualTask: ManualTask) => {
+    return  manualTaskList.manualTasks.find((manualTask: DataModels.ManualTasks.ManualTask) => {
       return manualTask.id === manualTaskId;
     });
   }

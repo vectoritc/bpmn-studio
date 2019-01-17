@@ -1,8 +1,7 @@
 import {bindable, inject} from 'aurelia-framework';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
-import {Correlation} from '@process-engine/management_api_contracts';
-import {CorrelationProcessModel} from '@process-engine/management_api_contracts';
+import {DataModels} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
@@ -24,7 +23,7 @@ import {NotificationService} from '../../../../notification/notification.service
 
 @inject('NotificationService', EventAggregator)
 export class DiagramViewer {
-  @bindable() public correlation: Correlation;
+  @bindable() public correlation: DataModels.Correlations.Correlation;
   @bindable() public xml: string;
   @bindable() public activeDiagram: IDiagram;
   @bindable() public selectedFlowNode: IShape;
@@ -147,7 +146,7 @@ export class DiagramViewer {
     this._subscriptions.forEach((subscription: Subscription) => subscription.dispose());
   }
 
-  public async correlationChanged(newValue: Correlation): Promise<void> {
+  public async correlationChanged(newValue: DataModels.Correlations.Correlation): Promise<void> {
     const noCorrelation: boolean = newValue === undefined;
     if (noCorrelation) {
       return;
@@ -198,10 +197,11 @@ export class DiagramViewer {
     this.xmlIsNotSelected = this.xml === undefined;
   }
 
-  private async _getXmlByCorrelation(correlation: Correlation): Promise<string> {
-    const processModelForCorrelation: CorrelationProcessModel = correlation.processModels.find((processModel: CorrelationProcessModel) => {
-      return processModel.processModelId === this.activeDiagram.id;
-    });
+  private async _getXmlByCorrelation(correlation: DataModels.Correlations.Correlation): Promise<string> {
+    const processModelForCorrelation: DataModels.Correlations.CorrelationProcessModel =
+      correlation.processModels.find((processModel: DataModels.Correlations.CorrelationProcessModel) => {
+        return processModel.processModelId === this.activeDiagram.id;
+      });
 
     const xmlForCorrelation: string = processModelForCorrelation.xml;
 

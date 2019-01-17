@@ -21,7 +21,8 @@
           <div class="quick-start__topic" click.delegate="createNewSingleDiagram()">New Diagram</div>
           <div show.bind="isRunningInElectron && isRunningOnMacOS" class="quick-start__shortcut">⌘ + N</div>
           <div show.bind="isRunningInElectron && isRunningOnWindows" class="quick-start__shortcut">Strg + N</div>
-          <div show.bind="isRunningInElectron && isRunningOnLinux" class="quick-start__shortcut">Strg + N</div>
+          <!--See https://github.com/process-engine/bpmn-studio/issues/1292-->
+          <!--<div show.bind="isRunningInElectron && isRunningOnLinux" class="quick-start__shortcut">Strg + N</div>-->
         </div>
       </div>
     </div>

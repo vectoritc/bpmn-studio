@@ -3,15 +3,7 @@ import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
 import {isError, NotFoundError, UnauthorizedError} from '@essential-projects/errors_ts';
-import {
-  Correlation,
-  IManagementApi,
-  ManualTask,
-  ManualTaskList,
-  ProcessModelExecution,
-  UserTask,
-  UserTaskList,
-} from '@process-engine/management_api_contracts';
+import {DataModels, IManagementApi} from '@process-engine/management_api_contracts';
 
 import {
   AuthenticationStateEvent,
@@ -28,13 +20,13 @@ interface ITaskListRouteParameters {
 }
 
 interface IUserTaskWithProcessModel {
-  userTask: UserTask;
-  processModel: ProcessModelExecution.ProcessModel;
+  userTask: DataModels.UserTasks.UserTask;
+  processModel: DataModels.ProcessModels.ProcessModel;
 }
 
 interface IManualTaskWithProcessModel {
-  manualTask: ManualTask;
-  processModel: ProcessModelExecution.ProcessModel;
+  manualTask: DataModels.ManualTasks.ManualTask;
+  processModel: DataModels.ProcessModels.ProcessModel;
 }
 
 @inject(EventAggregator, 'ManagementApiClientService', Router, 'NotificationService', 'SolutionService')
@@ -175,14 +167,14 @@ export class TaskList {
 
   private async _getAllTasks(): Promise<Array<IUserTaskWithProcessModel & IManualTaskWithProcessModel>> {
 
-    const allProcessModels: ProcessModelExecution.ProcessModelList = await this._managementApiService
+    const allProcessModels: DataModels.ProcessModels.ProcessModelList = await this._managementApiService
                                                                                .getProcessModels(this.activeSolutionEntry.identity);
 
     // TODO (ph): This will create 1 + n http reqeusts, where n is the number of process models in the processengine.
     const promisesForAllUserTasks: Array<Promise<Array<IUserTaskWithProcessModel>>> = allProcessModels.processModels
-      .map(async(processModel: ProcessModelExecution.ProcessModel): Promise<Array<IUserTaskWithProcessModel>> => {
+      .map(async(processModel: DataModels.ProcessModels.ProcessModel): Promise<Array<IUserTaskWithProcessModel>> => {
         try {
-          const userTaskList: UserTaskList = await this._managementApiService
+          const userTaskList: DataModels.UserTasks.UserTaskList = await this._managementApiService
                                                        .getUserTasksForProcessModel(this.activeSolutionEntry.identity, processModel.id);
 
           const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = this._addProcessModelToUserTasks(userTaskList, processModel);
@@ -200,10 +192,10 @@ export class TaskList {
       });
 
     const promisesForAllManualTasks: Array<Promise<Array<IManualTaskWithProcessModel>>> = allProcessModels.processModels
-      .map(async(processModel: ProcessModelExecution.ProcessModel): Promise<Array<IManualTaskWithProcessModel>> => {
+      .map(async(processModel: DataModels.ProcessModels.ProcessModel): Promise<Array<IManualTaskWithProcessModel>> => {
         try {
-          const manualTaskList: ManualTaskList = await this._managementApiService
-                                                           .getManualTasksForProcessModel(this.activeSolutionEntry.identity, processModel.id);
+          const manualTaskList: DataModels.ManualTasks.ManualTaskList =
+            await this._managementApiService.getManualTasksForProcessModel(this.activeSolutionEntry.identity, processModel.id);
 
           const manualTasksAndProcessModels: Array<IManualTaskWithProcessModel> = this._addProcessModelToManualTasks(manualTaskList, processModel);
 
@@ -237,13 +229,13 @@ export class TaskList {
 
   private async _getTasksForProcessModel(processModelId: string): Promise<Array<IUserTaskWithProcessModel & IManualTaskWithProcessModel>> {
 
-    const processModel: ProcessModelExecution.ProcessModel = await
+    const processModel: DataModels.ProcessModels.ProcessModel = await
       this
       ._managementApiService
       .getProcessModelById(this.activeSolutionEntry.identity, processModelId);
 
-    let userTaskList: UserTaskList;
-    let manualTaskList: ManualTaskList;
+    let userTaskList: DataModels.UserTasks.UserTaskList;
+    let manualTaskList: DataModels.ManualTasks.ManualTaskList;
     try {
       userTaskList = await this._managementApiService.getUserTasksForProcessModel(this.activeSolutionEntry.identity, processModelId);
       manualTaskList = await this._managementApiService.getManualTasksForProcessModel(this.activeSolutionEntry.identity, processModelId);
@@ -264,13 +256,16 @@ export class TaskList {
 
   private async _getTasksForCorrelation(correlationId: string): Promise<Array<IUserTaskWithProcessModel & IManualTaskWithProcessModel>> {
 
-    const userTaskList: UserTaskList = await this._managementApiService.getUserTasksForCorrelation(this.activeSolutionEntry.identity, correlationId);
-    const manualTaskList: ManualTaskList = await this._managementApiService
-                                                     .getManualTasksForCorrelation(this.activeSolutionEntry.identity, correlationId);
+    const userTaskList: DataModels.UserTasks.UserTaskList =
+      await this._managementApiService.getUserTasksForCorrelation(this.activeSolutionEntry.identity, correlationId);
 
-    const runningCorrelations: Array<Correlation> = await this._managementApiService.getActiveCorrelations(this.activeSolutionEntry.identity);
+    const manualTaskList: DataModels.ManualTasks.ManualTaskList =
+      await this._managementApiService.getManualTasksForCorrelation(this.activeSolutionEntry.identity, correlationId);
 
-    const correlation: Correlation = runningCorrelations.find((otherCorrelation: Correlation) => {
+    const runningCorrelations: Array<DataModels.Correlations.Correlation> =
+      await this._managementApiService.getActiveCorrelations(this.activeSolutionEntry.identity);
+
+    const correlation: DataModels.Correlations.Correlation = runningCorrelations.find((otherCorrelation: DataModels.Correlations.Correlation) => {
       return otherCorrelation.id === correlationId;
     });
 
@@ -280,7 +275,7 @@ export class TaskList {
     }
 
     // TODO: This needs to be refactored so that the correct ProcessModel will be used depending on the user task
-    const processModelOfCorrelation: ProcessModelExecution.ProcessModel = await
+    const processModelOfCorrelation: DataModels.ProcessModels.ProcessModel = await
       this
       ._managementApiService
       .getProcessModelById(this.activeSolutionEntry.identity, correlation.processModels[0].processModelId);
@@ -293,12 +288,12 @@ export class TaskList {
   }
 
   private _addProcessModelToUserTasks(
-    userTaskList: UserTaskList,
-    processModel: ProcessModelExecution.ProcessModel,
+    userTaskList: DataModels.UserTasks.UserTaskList,
+    processModel: DataModels.ProcessModels.ProcessModel,
   ): Array<IUserTaskWithProcessModel> {
 
     const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = userTaskList.userTasks
-      .map((userTask: UserTask): IUserTaskWithProcessModel => ({
+      .map((userTask: DataModels.UserTasks.UserTask): IUserTaskWithProcessModel => ({
           processModel: processModel,
           userTask: userTask,
       }));
@@ -307,12 +302,12 @@ export class TaskList {
   }
 
   private _addProcessModelToManualTasks(
-    manualTaskList: ManualTaskList,
-    processModel: ProcessModelExecution.ProcessModel,
+    manualTaskList: DataModels.ManualTasks.ManualTaskList,
+    processModel: DataModels.ProcessModels.ProcessModel,
   ): Array<IManualTaskWithProcessModel> {
 
     const manualTasksAndProcessModels: Array<IManualTaskWithProcessModel> = manualTaskList.manualTasks
-      .map((manualTask: ManualTask): IManualTaskWithProcessModel => ({
+      .map((manualTask: DataModels.ManualTasks.ManualTask): IManualTaskWithProcessModel => ({
           processModel: processModel,
           manualTask: manualTask,
       }));
