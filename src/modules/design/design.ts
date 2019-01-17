@@ -280,6 +280,30 @@ export class Design {
     return remoteSolutionsWithoutActive;
   }
 
+  public get showSaveBeforeDeployModal(): boolean {
+    return this.diagramDetail.showSaveBeforeDeployModal;
+  }
+
+  public get showRemoteSolutionOnDeployModal(): boolean {
+    return this.diagramDetail.showRemoteSolutionOnDeployModal;
+  }
+
+  public get showSaveForStartModal(): boolean {
+    return this.diagramDetail.showSaveForStartModal;
+  }
+
+  public get showStartWithOptionsModal(): boolean {
+    return this.diagramDetail.showStartWithOptionsModal;
+  }
+
+  public get showStartEventModal(): boolean {
+    return this.diagramDetail.showStartEventModal;
+  }
+
+  public get diagramHasChanged(): boolean {
+    return this.diagramDetail.diagramHasChanged;
+  }
+
   private _showDiff(): void {
     this.showDiff = true;
     this.showDetail = false;
