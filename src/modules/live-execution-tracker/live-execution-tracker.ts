@@ -65,7 +65,7 @@ export class LiveExecutionTracker {
   private _managementApiClient: IManagementApi;
   private _solutionService: ISolutionService;
 
-  private _activeSolutionEntry: ISolutionEntry;
+  private activeSolutionEntry: ISolutionEntry;
 
   private _pollingTimer: NodeJS.Timer;
   private _attached: boolean;
@@ -169,7 +169,7 @@ export class LiveExecutionTracker {
     this._router.navigateToRoute('live-execution-tracker', {
       correlationId: this.correlationId,
       diagramName: this._parentProcessModelId,
-      solutionUri: this._activeSolutionEntry.uri,
+      solutionUri: this.activeSolutionEntry.uri,
     });
   }
 
@@ -365,7 +365,7 @@ export class LiveExecutionTracker {
 
       this._router.navigateToRoute('live-execution-tracker', {
         diagramName: callActivityTargetProcess,
-        solutionUri: this._activeSolutionEntry.uri,
+        solutionUri: this.activeSolutionEntry.uri,
         correlationId: this.correlationId,
       });
     }
@@ -392,7 +392,7 @@ export class LiveExecutionTracker {
     const getActiveTokens: Function = async(): Promise<Array<ActiveToken> | null> => {
       for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
-          return await this._managementApiClient.getActiveTokensForCorrelationAndProcessModel(this._activeSolutionEntry.identity,
+          return await this._managementApiClient.getActiveTokensForCorrelationAndProcessModel(this.activeSolutionEntry.identity,
                                                                                               this.correlationId,
                                                                                               this.processModelId);
         } catch {
@@ -427,7 +427,7 @@ export class LiveExecutionTracker {
     const getTokenHistoryGroup: Function = async(): Promise<TokenHistoryGroup | null> => {
       for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
-          return await this._managementApiClient.getTokensForCorrelationAndProcessModel(this._activeSolutionEntry.identity,
+          return await this._managementApiClient.getTokensForCorrelationAndProcessModel(this.activeSolutionEntry.identity,
                                                                                         this.correlationId,
                                                                                         this.processModelId);
         } catch {
@@ -551,7 +551,7 @@ export class LiveExecutionTracker {
     const getCorrelation: () => Promise<Correlation> = async(): Promise<Correlation> => {
       for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
-          return await this._managementApiClient.getCorrelationById(this._activeSolutionEntry.identity, this.correlationId);
+          return await this._managementApiClient.getCorrelationById(this.activeSolutionEntry.identity, this.correlationId);
         } catch {
           continue;
         }
@@ -775,7 +775,7 @@ export class LiveExecutionTracker {
     const getActiveCorrelations: Function = async(): Promise<Array<Correlation> | RequestError> => {
       for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
-          return await this._managementApiClient.getActiveCorrelations(this._activeSolutionEntry.identity);
+          return await this._managementApiClient.getActiveCorrelations(this.activeSolutionEntry.identity);
         } catch (error) {
           const errorIsConnectionLost: boolean = error.message === 'Failed to fetch';
 
@@ -821,7 +821,7 @@ export class LiveExecutionTracker {
 
       for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
-          return await this._managementApiClient.getCorrelationById(this._activeSolutionEntry.identity, this.correlationId);
+          return await this._managementApiClient.getCorrelationById(this.activeSolutionEntry.identity, this.correlationId);
         } catch {
           continue;
         }
@@ -858,7 +858,7 @@ export class LiveExecutionTracker {
 
       for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
-          return await this._managementApiClient.getCorrelationById(this._activeSolutionEntry.identity, this.correlationId);
+          return await this._managementApiClient.getCorrelationById(this.activeSolutionEntry.identity, this.correlationId);
         } catch {
           continue;
         }

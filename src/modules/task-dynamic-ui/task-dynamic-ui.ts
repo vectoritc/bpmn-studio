@@ -26,6 +26,7 @@ export class TaskDynamicUi {
   @bindable() public processModelId: string;
   @bindable() public taskId: string;
   @bindable() public isModal: boolean;
+  @bindable() public activeSolutionEntry: ISolutionEntry;
 
   private _activeDiagramName: string;
   private _activeSolutionUri: string;
@@ -63,8 +64,8 @@ export class TaskDynamicUi {
     this._activeDiagramName = routeParameters.diagramName;
     this._activeSolutionUri = routeParameters.solutionUri;
 
-    const activeSolutionEntry: ISolutionEntry = this._solutionService.getSolutionEntryForUri(this._activeSolutionUri);
-    this._identity = activeSolutionEntry.identity;
+    this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(this._activeSolutionUri);
+    this._identity = this.activeSolutionEntry.identity;
 
     this.isModal = false;
   }
@@ -88,6 +89,10 @@ export class TaskDynamicUi {
 
     this.setDynamicUIWrapperUserTask();
     this.setDynamicUIWrapperManualTask();
+  }
+
+  public activeSolutionEntryChanged(newValue: ISolutionEntry): void {
+    this._identity = newValue.identity;
   }
 
   public detached(): void {
