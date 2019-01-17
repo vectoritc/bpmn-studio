@@ -3,7 +3,7 @@ import {ElectronOidcAuthenticationService} from './electron.oidc.authentication.
 import {WebOidcAuthenticationService} from './web.oidc.authentication.service';
 
 export async function configure(config: FrameworkConfiguration): Promise<void> {
-  const appIsRunningInElectron: boolean = (window as any).nodeRequire();
+  const appIsRunningInElectron: boolean = (window as any).nodeRequire;
 
   if (appIsRunningInElectron) {
     config.container.registerSingleton('AuthenticationService', ElectronOidcAuthenticationService);
