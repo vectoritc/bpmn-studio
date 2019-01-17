@@ -8,7 +8,7 @@ const electron = require('electron');
 const BrowserWindow = electron.BrowserWindow || electron.remote.BrowserWindow;
 
 module.exports = function (config, windowParams) {
-  function getAccessToken(opts) {
+  function getTokenObject(opts) {
     opts = opts || {};
 
     // Build the Url Params from the Config.
@@ -118,6 +118,6 @@ module.exports = function (config, windowParams) {
   }
 
   return {
-    getAccessToken: getAccessToken,
+    getTokenObject: getTokenObject,
   };
 };

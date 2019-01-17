@@ -151,6 +151,11 @@ Main._initializeApplication = function () {
 
   }
 
+  /**
+   * This initializes the oidc flow for electron.
+   * It mainly registers on the "oidc-login" event called by the authentication
+   * service and calls the "getTokenObject"-function on the service.
+   */
   function initializeOidc() {
     const windowParams = {
       alwaysOnTop: true,
@@ -158,8 +163,6 @@ Main._initializeApplication = function () {
       webPreferences: {
         nodeIntegration: true,
         nodeIntegrationInWorker: true,
-        allowRunningInsecureContent: true,
-        webSecurit: false,
       }
     };
 
@@ -167,7 +170,7 @@ Main._initializeApplication = function () {
 
     ipcMain.on('oidc-login', (event) => {
 
-      githubOAuth.getAccessToken()
+      githubOAuth.getTokenObject()
         .then(token => {
           event.sender.send('oidc-login-reply', token);
         }, err => {
