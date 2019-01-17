@@ -420,16 +420,32 @@ export class DiagramDetail {
     });
 
     const associationWithStartToken: IConnection = startEventAssociations.find((connection: IConnection) => {
-      const token: string = connection.target.businessObject.text
-                                                            .trim();
+      const associationText: string = connection.target.businessObject.text;
+
+      const associationTextIsEmpty: boolean = associationText === undefined;
+      if (associationTextIsEmpty) {
+        return undefined;
+      }
+
+      const token: string = associationText.trim();
 
       return token.startsWith('StartToken:');
     });
 
-    if (associationWithStartToken) {
-      const initialToken: string = associationWithStartToken.target.businessObject.text
-                                                                                  .replace('StartToken:', '')
-                                                                                  .trim();
+    const associationWithStartTokenIsNotExisting: boolean = associationWithStartToken === undefined;
+    if (associationWithStartTokenIsNotExisting) {
+      const untrimmedInitialToken: string = associationWithStartToken.target.businessObject.text;
+
+      const untrimmedInitialTokenIsUndefined: boolean = untrimmedInitialToken === undefined;
+      if (untrimmedInitialTokenIsUndefined) {
+        this.initialToken = '';
+
+        return;
+      }
+
+      const initialToken: string = untrimmedInitialToken
+                                    .replace('StartToken:', '')
+                                    .trim();
 
        /**
        * This Regex replaces all single quotes with double quotes and adds double
