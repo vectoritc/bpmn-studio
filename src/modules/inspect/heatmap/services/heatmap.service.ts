@@ -1,7 +1,7 @@
 import {inject} from 'aurelia-framework';
 
 import {ActiveToken, FlowNodeRuntimeInformation} from '@process-engine/kpi_api_contracts';
-import {ProcessModelExecution} from '@process-engine/management_api_contracts';
+import {DataModels} from '@process-engine/management_api_contracts';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
 import {
@@ -115,7 +115,7 @@ export class HeatmapService implements IHeatmapService {
     });
   }
 
-  public getProcess(processModelId: string): Promise<ProcessModelExecution.ProcessModel> {
+  public getProcess(processModelId: string): Promise<DataModels.ProcessModels.ProcessModel> {
     return this._heatmapRepository.getProcess(processModelId);
   }
 

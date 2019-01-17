@@ -3,15 +3,9 @@ import {Router} from 'aurelia-router';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 
-import {
-  Correlation,
-  CorrelationProcessModel,
-  IManagementApi,
-  TokenHistoryGroup,
-} from '@process-engine/management_api_contracts';
+import {DataModels, IManagementApi} from '@process-engine/management_api_contracts';
 
 import {ActiveToken} from '@process-engine/kpi_api_contracts';
-
 import {
   defaultBpmnColors,
   IBpmnModeler,
@@ -190,7 +184,8 @@ export class LiveExecutionTracker {
       return undefined;
     }
 
-    const parentProcessModel: CorrelationProcessModel = await this._getProcessModelByProcessInstanceId(parentProcessInstanceId);
+    const parentProcessModel: DataModels.Correlations.CorrelationProcessModel =
+     await this._getProcessModelByProcessInstanceId(parentProcessInstanceId);
 
     const parentProcessModelNotFound: boolean = parentProcessModel === undefined;
     if (parentProcessModelNotFound) {
@@ -423,7 +418,7 @@ export class LiveExecutionTracker {
 
   private async _getElementsWithTokenHistory(elements: Array<IShape>): Promise<Array<IShape> | null> {
 
-    const getTokenHistoryGroup: Function = async(): Promise<TokenHistoryGroup | null> => {
+    const getTokenHistoryGroup: Function = async(): Promise<DataModels.TokenHistory.TokenHistoryGroup | null> => {
       for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
           return await this._managementApiClient.getTokensForCorrelationAndProcessModel(this.activeSolutionEntry.identity,
@@ -437,7 +432,7 @@ export class LiveExecutionTracker {
       return null;
     };
 
-    const tokenHistoryGroups: TokenHistoryGroup =  await getTokenHistoryGroup();
+    const tokenHistoryGroups: DataModels.TokenHistory.TokenHistoryGroup =  await getTokenHistoryGroup();
 
     const couldNotGetTokenHistory: boolean = tokenHistoryGroups === null;
     if (couldNotGetTokenHistory) {
@@ -460,7 +455,7 @@ export class LiveExecutionTracker {
   }
 
   private _getElementWithIncomingElements(element: IShape,
-                                          tokenHistoryGroups: TokenHistoryGroup): Array<IShape> {
+                                          tokenHistoryGroups: DataModels.TokenHistory.TokenHistoryGroup): Array<IShape> {
 
     const elementWithIncomingElements: Array<IShape> = [];
 
@@ -527,7 +522,7 @@ export class LiveExecutionTracker {
     });
   }
 
-  private _hasElementTokenHistory(elementId: string, tokenHistoryGroups: TokenHistoryGroup): boolean {
+  private _hasElementTokenHistory(elementId: string, tokenHistoryGroups: DataModels.TokenHistory.TokenHistoryGroup): boolean {
 
     const tokenHistoryFromFlowNodeInstanceFound: boolean = tokenHistoryGroups[elementId] !== undefined;
 
@@ -547,7 +542,7 @@ export class LiveExecutionTracker {
   private async _getXml(): Promise<string> {
 
     // This is necessary because the managementApi sometimes throws an error when the correlation is not yet existing.
-    const getCorrelation: () => Promise<Correlation> = async(): Promise<Correlation> => {
+    const getCorrelation: () => Promise<DataModels.Correlations.Correlation> = async(): Promise<DataModels.Correlations.Correlation> => {
       for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
           return await this._managementApiClient.getCorrelationById(this.activeSolutionEntry.identity, this.correlationId);
@@ -561,18 +556,19 @@ export class LiveExecutionTracker {
       return undefined;
     };
 
-    const correlation: Correlation = await getCorrelation();
+    const correlation: DataModels.Correlations.Correlation = await getCorrelation();
 
     const errorGettingCorrelation: boolean = correlation === undefined;
     if (errorGettingCorrelation) {
       return;
     }
 
-    const processModelFromCorrelation: CorrelationProcessModel = correlation.processModels.find((processModel: CorrelationProcessModel) => {
-      const processModelIsSearchedProcessModel: boolean = processModel.processModelId === this.processModelId;
+    const processModelFromCorrelation: DataModels.Correlations.CorrelationProcessModel =
+      correlation.processModels.find((processModel: DataModels.Correlations.CorrelationProcessModel) => {
+        const processModelIsSearchedProcessModel: boolean = processModel.processModelId === this.processModelId;
 
-      return processModelIsSearchedProcessModel;
-    });
+        return processModelIsSearchedProcessModel;
+      });
 
     const xmlFromProcessModel: string = processModelFromCorrelation.xml;
 
@@ -771,7 +767,7 @@ export class LiveExecutionTracker {
 
   private async _isCorrelationStillActive(): Promise<boolean | RequestError> {
 
-    const getActiveCorrelations: Function = async(): Promise<Array<Correlation> | RequestError> => {
+    const getActiveCorrelations: Function = async(): Promise<Array<DataModels.Correlations.Correlation> | RequestError> => {
       for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
           return await this._managementApiClient.getActiveCorrelations(this.activeSolutionEntry.identity);
@@ -787,7 +783,7 @@ export class LiveExecutionTracker {
       return RequestError.OtherError;
     };
 
-    const allActiveCorrelationsOrRequestError: Array<Correlation> | RequestError = await getActiveCorrelations();
+    const allActiveCorrelationsOrRequestError: Array<DataModels.Correlations.Correlation> | RequestError = await getActiveCorrelations();
 
     const couldNotGetCorrelation: boolean = allActiveCorrelationsOrRequestError === RequestError.ConnectionLost
                                          || allActiveCorrelationsOrRequestError === RequestError.OtherError;
@@ -797,9 +793,10 @@ export class LiveExecutionTracker {
       return requestError;
     }
 
-    const allActiveCorrelations: Array<Correlation> = (allActiveCorrelationsOrRequestError as Array<Correlation>);
+    const allActiveCorrelations: Array<DataModels.Correlations.Correlation> =
+      (allActiveCorrelationsOrRequestError as Array<DataModels.Correlations.Correlation>);
 
-    const correlationIsNotActive: boolean = !allActiveCorrelations.some((activeCorrelation: Correlation) => {
+    const correlationIsNotActive: boolean = !allActiveCorrelations.some((activeCorrelation: DataModels.Correlations.Correlation) => {
       return activeCorrelation.id === this.correlationId;
     });
 
@@ -816,7 +813,7 @@ export class LiveExecutionTracker {
 
   private async _getParentProcessInstanceId(): Promise<string> {
     // This is necessary because the managementApi sometimes throws an error when the correlation is not yet existing.
-    const getCorrelation: () => Promise<Correlation> = async(): Promise<Correlation> => {
+    const getCorrelation: () => Promise<DataModels.Correlations.Correlation> = async(): Promise<DataModels.Correlations.Correlation> => {
 
       for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
@@ -831,15 +828,15 @@ export class LiveExecutionTracker {
       return undefined;
     };
 
-    const correlation: Correlation = await getCorrelation();
+    const correlation: DataModels.Correlations.Correlation = await getCorrelation();
 
     const errorGettingCorrelation: boolean = correlation === undefined;
     if (errorGettingCorrelation) {
       return undefined;
     }
 
-    const processModelFromCorrelation: CorrelationProcessModel = correlation.processModels
-      .find((correlationProcessModel: CorrelationProcessModel): boolean => {
+    const processModelFromCorrelation: DataModels.Correlations.CorrelationProcessModel = correlation.processModels
+      .find((correlationProcessModel: DataModels.Correlations.CorrelationProcessModel): boolean => {
         const processModelFound: boolean = correlationProcessModel.processModelId === this.processModelId;
 
         return processModelFound;
@@ -850,10 +847,10 @@ export class LiveExecutionTracker {
     return parentProcessInstanceId;
   }
 
-  private async _getProcessModelByProcessInstanceId(processInstanceId: string): Promise<CorrelationProcessModel> {
+  private async _getProcessModelByProcessInstanceId(processInstanceId: string): Promise<DataModels.Correlations.CorrelationProcessModel> {
 
     // This is necessary because the managementApi sometimes throws an error when the correlation is not yet existing.
-    const getCorrelation: () => Promise<Correlation> = async(): Promise<Correlation> => {
+    const getCorrelation: () => Promise<DataModels.Correlations.Correlation> = async(): Promise<DataModels.Correlations.Correlation> => {
 
       for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
@@ -868,18 +865,19 @@ export class LiveExecutionTracker {
       return undefined;
     };
 
-    const correlation: Correlation = await getCorrelation();
+    const correlation: DataModels.Correlations.Correlation = await getCorrelation();
 
     const errorGettingCorrelation: boolean = correlation === undefined;
     if (errorGettingCorrelation) {
       return undefined;
     }
 
-    const processModel: CorrelationProcessModel = correlation.processModels.find((correlationProcessModel: CorrelationProcessModel): boolean => {
-      const processModelFound: boolean = correlationProcessModel.processInstanceId === processInstanceId;
+    const processModel: DataModels.Correlations.CorrelationProcessModel =
+      correlation.processModels.find((correlationProcessModel: DataModels.Correlations.CorrelationProcessModel): boolean => {
+        const processModelFound: boolean = correlationProcessModel.processInstanceId === processInstanceId;
 
-      return processModelFound;
-    });
+        return processModelFound;
+      });
 
     return processModel;
   }

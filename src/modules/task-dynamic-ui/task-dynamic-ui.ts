@@ -4,7 +4,7 @@ import {Router} from 'aurelia-router';
 import {domEventDispatch} from 'dom-event-dispatch';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
-import {ManualTask, UserTask} from '@process-engine/management_api_contracts';
+import {DataModels} from '@process-engine/management_api_contracts';
 
 import {AuthenticationStateEvent, IDynamicUiService, ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
 import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
@@ -36,8 +36,8 @@ export class TaskDynamicUi {
   private _solutionService: ISolutionService;
   private _dynamicUiService: IDynamicUiService;
   private _subscriptions: Array<Subscription>;
-  private _userTask: UserTask;
-  private _manualTask: ManualTask;
+  private _userTask: DataModels.UserTasks.UserTask;
+  private _manualTask: DataModels.ManualTasks.ManualTask;
   private _element: Element;
   private _identity: IIdentity;
 
@@ -101,32 +101,32 @@ export class TaskDynamicUi {
     }
   }
 
-  public set userTask(userTask: UserTask) {
+  public set userTask(userTask: DataModels.UserTasks.UserTask) {
     this._userTask = userTask;
 
     this.setDynamicUIWrapperUserTask();
   }
 
   @computedFrom('_userTask')
-  public get userTask(): UserTask {
+  public get userTask(): DataModels.UserTasks.UserTask {
     return this._userTask;
   }
 
-  public set manualTask(manualTask: ManualTask) {
+  public set manualTask(manualTask: DataModels.ManualTasks.ManualTask) {
     this._manualTask = manualTask;
 
     this.setDynamicUIWrapperManualTask();
   }
 
   @computedFrom('_manualTask')
-  public get manualTask(): ManualTask {
+  public get manualTask(): DataModels.ManualTasks.ManualTask {
     return this._manualTask;
   }
 
   @computedFrom('_userTask', '_manualTask')
   public get taskName(): string {
     const nonWhiteSpaceRegex: RegExp = /\S/;
-    const task: UserTask | ManualTask = this._userTask === undefined ? this._manualTask : this._userTask;
+    const task: DataModels.UserTasks.UserTask | DataModels.ManualTasks.ManualTask = this._userTask === undefined ? this._manualTask : this._userTask;
 
     const noTaskIsSet: boolean = task === undefined;
     if (noTaskIsSet) {
@@ -154,7 +154,7 @@ export class TaskDynamicUi {
       return;
     }
 
-    const task: UserTask | ManualTask = this._userTask === undefined ? this._manualTask : this._userTask;
+    const task: DataModels.UserTasks.UserTask | DataModels.ManualTasks.ManualTask = this._userTask === undefined ? this._manualTask : this._userTask;
 
     this._router.navigateToRoute('live-execution-tracker', {
       diagramName: this._activeDiagramName,

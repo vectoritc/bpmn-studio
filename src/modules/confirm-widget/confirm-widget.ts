@@ -1,6 +1,6 @@
 import {bindable, inject} from 'aurelia-framework';
 
-import {UserTaskConfig, UserTaskFormField, UserTaskFormFieldType} from '@process-engine/management_api_contracts';
+import {DataModels} from '@process-engine/management_api_contracts';
 
 import {NotificationType} from '../../contracts/index';
 import {NotificationService} from '../notification/notification.service';
@@ -9,8 +9,8 @@ import {NotificationService} from '../notification/notification.service';
 export class ConfirmWidget {
 
   @bindable()
-  public userTaskConfig: UserTaskConfig;
-  public formFields: Array<UserTaskFormField>;
+  public userTaskConfig: DataModels.UserTasks.UserTaskConfig;
+  public formFields: Array<DataModels.UserTasks.UserTaskFormField>;
   public confirmMessage: string;
 
   private _notificationService: NotificationService;
@@ -20,7 +20,7 @@ export class ConfirmWidget {
   }
 
   public attached(): void {
-    const firstBooleanFormField: UserTaskFormField = this._getFirstBooleanFormField();
+    const firstBooleanFormField: DataModels.UserTasks.UserTaskFormField = this._getFirstBooleanFormField();
     const userTaskHasNoBooleanFormField: boolean = firstBooleanFormField === undefined;
 
     if (userTaskHasNoBooleanFormField) {
@@ -34,15 +34,15 @@ export class ConfirmWidget {
   }
 
   // TODO: Move this to a UserTaskControlFactory
-  public getFieldControl(field: UserTaskFormField): string {
+  public getFieldControl(field: DataModels.UserTasks.UserTaskFormField): string {
     switch (field.type) {
-      case UserTaskFormFieldType.enum:
+      case DataModels.UserTasks.UserTaskFormFieldType.enum:
         return 'dropdown';
-      case UserTaskFormFieldType.string:
+      case DataModels.UserTasks.UserTaskFormFieldType.string:
         return 'textbox';
-      case UserTaskFormFieldType.boolean:
+      case DataModels.UserTasks.UserTaskFormFieldType.boolean:
         return 'checkbox';
-      case UserTaskFormFieldType.long:
+      case DataModels.UserTasks.UserTaskFormFieldType.long:
         return 'number';
       default:
         const notSupportedType: string = field.type !== undefined ? field.type : 'Custom Type';
@@ -54,20 +54,20 @@ export class ConfirmWidget {
     }
   }
 
-  private _getAllOtherFormFields(formField: UserTaskFormField): Array<UserTaskFormField> {
+  private _getAllOtherFormFields(formField: DataModels.UserTasks.UserTaskFormField): Array<DataModels.UserTasks.UserTaskFormField> {
     const booleanFormFieldIndex: number = this.userTaskConfig.formFields.indexOf(formField);
 
-    const otherFormFields: Array<UserTaskFormField> = this.userTaskConfig.formFields.slice();
+    const otherFormFields: Array<DataModels.UserTasks.UserTaskFormField> = this.userTaskConfig.formFields.slice();
     otherFormFields.splice(booleanFormFieldIndex, 1);
 
     return otherFormFields;
   }
 
-  private _getFirstBooleanFormField(): UserTaskFormField {
-    const formFields: Array<UserTaskFormField> = this.userTaskConfig.formFields;
+  private _getFirstBooleanFormField(): DataModels.UserTasks.UserTaskFormField {
+    const formFields: Array<DataModels.UserTasks.UserTaskFormField> = this.userTaskConfig.formFields;
 
-    return formFields.find((formField: UserTaskFormField): boolean => {
-      return formField.type === UserTaskFormFieldType.boolean;
+    return formFields.find((formField: DataModels.UserTasks.UserTaskFormField): boolean => {
+      return formField.type === DataModels.UserTasks.UserTaskFormFieldType.boolean;
     });
   }
 }

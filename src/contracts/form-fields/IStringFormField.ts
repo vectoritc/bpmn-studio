@@ -1,5 +1,5 @@
-import {UserTaskFormField} from '@process-engine/management_api_contracts';
+import {DataModels} from '@process-engine/management_api_contracts';
 
-export interface IStringFormField extends UserTaskFormField {
+export interface IStringFormField extends DataModels.UserTasks.UserTaskFormField {
   value: string;
 }
