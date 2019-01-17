@@ -11,13 +11,14 @@ module.exports = function (config, windowParams) {
   function getAccessToken(opts) {
     opts = opts || {};
 
+    // Build the Url Params from the Config.
     var urlParams = {
       client_id: config.clientId,
       redirect_uri: config.redirectUri,
       response_type: config.responseType,
       scope: config.scope,
-      state: config.state,
-      nonce: config.nonce,
+      state: config.state, //TODO: Make that random.
+      nonce: config.nonce, //TODO: Make that random.
     };
 
     if (opts.scope) {
@@ -31,26 +32,45 @@ module.exports = function (config, windowParams) {
     var url = config.authorizationUrl + '?' + queryString.stringify(urlParams);
 
     return new Promise(function (resolve, reject) {
+      // Open a new browser window and load the previously constructed url.
       const authWindow = new BrowserWindow(windowParams || {'use-content-size': true});
 
       authWindow.loadURL(url);
       authWindow.show();
 
+      // Reject the Promise when the user closes the new window.
       authWindow.on('closed', () => {
         reject(new Error('window was closed by user'));
       });
 
+      // Handle the different callbacks.
       function onCallback(url) {
+        // Parse callback url into its parts.
         var url_parts = nodeUrl.parse(url, true);
         var href = url_parts.href;
         var error = url_parts.error;
 
+        /**
+         * If there was an error:
+         * - Reject the promise with the error.
+         * - Close the window.
+         *
+         * If the href includes the callback uri:
+         * - Load that href in the window.
+         *
+         * If the href includes the specified redirect uri:
+         * - Parse the hash into its parts.
+         * - Add those parts to new object.
+         * - Resolve the promise with this object.
+         * - Close the window.
+         */
         if (error !== undefined) {
           reject(error);
           authWindow.removeAllListeners('closed');
           setImmediate(function () {
             authWindow.close();
           });
+
         } else if (href.includes('/connect/authorize/callback')) {
 
           authWindow.loadURL(href);
@@ -62,12 +82,12 @@ module.exports = function (config, windowParams) {
           var id_token = parameterAsArray[0].split('=')[1];
           var access_token = parameterAsArray[1].split('=')[1];
 
-          const user = {
+          const tokenObject = {
             id_token,
             access_token
           }
 
-          resolve(user);
+          resolve(tokenObject);
           authWindow.removeAllListeners('closed');
 
           setImmediate(function () {
@@ -76,6 +96,17 @@ module.exports = function (config, windowParams) {
         }
       }
 
+      /**
+       * This will trigger everytime the new window will redirect.
+       * Important: Not AFTER it redirects but BEFORE.
+       * This gives us the possibility to intercept the redirect to
+       * the specified redirect uri, which would lead to faulty behaviour
+       * due to security speciments in chromium.
+       *
+       * If that redirect would start we stop it by preventing the default
+       * behaviour and instead parse its parameters in the
+       * "onCallback"-function.
+       */
       authWindow.webContents.on('will-redirect', (event, url) => {
         if (url.includes(config.redirectUri)) {
           event.preventDefault();
