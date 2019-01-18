@@ -8,9 +8,7 @@ const electron = require('electron');
 const BrowserWindow = electron.BrowserWindow || electron.remote.BrowserWindow;
 
 module.exports = function (config, windowParams) {
-  function getTokenObject(opts) {
-    opts = opts || {};
-
+  function getTokenObject() {
     // Build the Url Params from the Config.
     var urlParams = {
       client_id: config.clientId,
@@ -20,14 +18,6 @@ module.exports = function (config, windowParams) {
       state: config.state, //TODO: Make that random.
       nonce: config.nonce, //TODO: Make that random.
     };
-
-    if (opts.scope) {
-      urlParams.scope = opts.scope;
-    }
-
-    if (opts.accessType) {
-      urlParams.access_type = opts.accessType;
-    }
 
     var url = config.authorizationUrl + '?' + queryString.stringify(urlParams);
 
