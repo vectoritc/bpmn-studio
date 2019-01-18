@@ -107,7 +107,40 @@ module.exports = function (config, windowParams) {
     });
   }
 
+  function logout(tokenObject) {
+
+    const urlParams = {
+      id_token_hint: tokenObject.idToken,
+      post_logout_redirect_uri: config.logoutRedirectUri,
+    };
+
+    const endSessionUrl = config.logoutUrl + '?' + queryString.stringify(urlParams);;
+
+    return new Promise(async function (resolve, reject) {
+
+      const response = await fetch(endSessionUrl);
+
+      const logoutWindow = new BrowserWindow(windowParams || {'use-content-size': true});
+
+      logoutWindow.webContents.on('will-navigate', (event, url) => {
+        if (url.includes(config.logoutRedirectUri)) {
+          event.preventDefault();
+          resolve(true);
+          logoutWindow.close();
+        }
+      });
+
+      logoutWindow.on('closed', () => {
+        resolve(true);
+      });
+
+      logoutWindow.loadURL(response.url);
+      logoutWindow.show();
+    });
+  }
+
   return {
     getTokenObject: getTokenObject,
+    logout: logout,
   };
 };
