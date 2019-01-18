@@ -177,6 +177,16 @@ Main._initializeApplication = function () {
           console.log('Error while getting token', err);
         });
     });
+
+    ipcMain.on('oidc-logout', (event, tokenObject) => {
+
+      githubOAuth.logout(tokenObject)
+        .then(logoutWasSuccessful => {
+          event.sender.send('oidc-logout-reply', logoutWasSuccessful);
+        }, err => {
+          console.log('Error while logging out', err);
+        });
+    })
   }
 
   function initializeFileOpenFeature() {
