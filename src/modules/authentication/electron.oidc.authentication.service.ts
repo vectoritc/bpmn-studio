@@ -87,51 +87,28 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
 
   public async logout(): Promise<void> {
 
-    if (!this.isLoggedIn) {
-      return;
-    }
+    const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
 
-    // The following part is a manual implementation of the implicit flow logout
-    // specifically for the Identity Server endpoints.
-    // It is not tested with other providers yet and will definitely get
-    // refactored once we switch to hybrid flow.
+    ipcRenderer.on('oidc-logout-reply', async(event: any, logoutWasSuccessful: boolean) => {
+      if (logoutWasSuccessful) {
+        this._eventAggregator.publish(AuthenticationStateEvent.LOGOUT);
+        this._tokenObject = undefined;
 
-    const idToken: string = this._tokenObject.id_token;
-    const logoutRedirectUri: string = oidcConfig.userManagerSettings.post_logout_redirect_uri;
-    const queryParams: Array<Array<string>> = [
-      ['id_token_hint', idToken],
-      ['post_logout_redirect_uri', logoutRedirectUri],
-    ];
+        const dummyAccesToken: string = this._getDummyAccessToken();
 
-    const endSessionUrl: URL = new URL(`${environment.openIdConnect.authority}/connect/endsession`);
-    endSessionUrl.search = new URLSearchParams(queryParams as any).toString();
+        const remoteSolutionsEntries: Array<ISolutionEntry> = this._solutionService.getRemoteSolutionEntries();
 
-    const request: RequestInit = {
-      method: 'GET',
-      mode: 'cors',
-      referrer: 'client',
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json',
-      },
-    };
-
-    try {
-
-      const response: Response = await fetch(endSessionUrl.toString(), request);
-      if (response.status !== LOGOUT_SUCCESS_STATUS_CODE) {
-        throw new Error('Logout not successful');
+        remoteSolutionsEntries.forEach((solutionEntry: ISolutionEntry) => {
+          solutionEntry.identity = {
+            token: dummyAccesToken,
+          };
+        });
       }
 
-      // If Identity Server replies with success, it has already invalidated the
-      // access_token. Now we can show the success dialog of the Identity Server
-      // in a new window and finish the logout process once the "return to
-      // application" link is clicked.
-      this._logoutWindow = window.open(response.url, '_blank');
+    });
 
-    } catch (error) {
-      throw new Error('Logout not successful');
-    }
+    ipcRenderer.send('oidc-logout', this._tokenObject);
+
   }
 
   public getAccessToken(): string | null {
@@ -141,17 +118,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
       return this._getDummyAccessToken();
     }
 
-    return this._tokenObject.access_token;
-  }
-
-  // TODO: The dummy token needs to be removed in the future!!
-  // This dummy token serves as a temporary workaround to bypass login. This
-  // enables us to work without depending on a full environment with
-  // IdentityServer.
-  private _getDummyAccessToken(): string {
-    const dummyAccessTokenString: string = 'dummy_token';
-    const base64EncodedString: string = btoa(dummyAccessTokenString);
-    return base64EncodedString;
+    return this._tokenObject.accessToken;
   }
 
   public async getIdentity(): Promise<IIdentity | null> {
@@ -205,5 +172,15 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
     }
 
     return false;
+  }
+
+  // TODO: The dummy token needs to be removed in the future!!
+  // This dummy token serves as a temporary workaround to bypass login. This
+  // enables us to work without depending on a full environment with
+  // IdentityServer.
+  private _getDummyAccessToken(): string {
+    const dummyAccessTokenString: string = 'dummy_token';
+    const base64EncodedString: string = btoa(dummyAccessTokenString);
+    return base64EncodedString;
   }
 }
