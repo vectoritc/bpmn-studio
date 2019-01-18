@@ -69,12 +69,12 @@ module.exports = function (config, windowParams) {
           var identityParameter = url_parts.hash;
           var parameterAsArray = identityParameter.split('&');
 
-          var id_token = parameterAsArray[0].split('=')[1];
-          var access_token = parameterAsArray[1].split('=')[1];
+          var idToken = parameterAsArray[0].split('=')[1];
+          var accessToken = parameterAsArray[1].split('=')[1];
 
           const tokenObject = {
-            id_token,
-            access_token
+            idToken,
+            accessToken
           }
 
           resolve(tokenObject);

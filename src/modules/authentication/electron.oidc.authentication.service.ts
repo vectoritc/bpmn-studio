@@ -64,7 +64,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
 
       remoteSolutions.forEach((solution: ISolutionEntry) => {
         solution.identity = {
-          token: tokenObject.access_token,
+          token: tokenObject.accessToken,
         };
       });
 
