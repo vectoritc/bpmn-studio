@@ -33,6 +33,13 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
     this._notificationService = notificationService;
     this._router = router;
     this._solutionService = solutionService;
+
+    this._getPersistedTokenObject();
+    const tokenObjectIsNotUndefined: boolean = this._tokenObject !== null;
+
+    if (tokenObjectIsNotUndefined) {
+      this.checkUserInfo();
+    }
   }
 
   public isLoggedIn(): boolean {
@@ -64,6 +71,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
         };
       });
 
+      this._persistTokenObject();
     });
 
     ipcRenderer.send('oidc-login');
@@ -99,6 +107,8 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
             token: dummyAccesToken,
           };
         });
+
+        window.localStorage.removeItem('tokenObject');
       }
 
     });
@@ -108,7 +118,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
   }
 
   public getAccessToken(): string | null {
-    const userIsNotLoggedIn: boolean = this._tokenObject === undefined;
+    const userIsNotLoggedIn: boolean = this._tokenObject === undefined || this._tokenObject === null;
 
     if (userIsNotLoggedIn) {
       return this._getDummyAccessToken();
@@ -178,5 +188,17 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
     const dummyAccessTokenString: string = 'dummy_token';
     const base64EncodedString: string = btoa(dummyAccessTokenString);
     return base64EncodedString;
+  }
+
+  private _persistTokenObject(): void {
+    window.localStorage.setItem('tokenObject', JSON.stringify(this._tokenObject));
+  }
+
+  private _getPersistedTokenObject(): void {
+    const tokenObjectString: string = window.localStorage.getItem('tokenObject');
+
+    const tokenObject: ITokenObject = JSON.parse(tokenObjectString);
+
+    this._tokenObject = tokenObject;
   }
 }
