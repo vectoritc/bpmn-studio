@@ -9,6 +9,7 @@ import {
   defaultBpmnColors,
   IBpmnModeler,
   IBpmnXmlSaveOptions,
+  ICanvas,
   IColorPickerColor,
   IDiagramExportService,
   IElementRegistry,
@@ -179,6 +180,8 @@ export class DiagramViewer {
         return;
       }
     }
+
+    this.fitDiagramToViewport();
   }
 
   public activeDiagramChanged(): void {
@@ -191,6 +194,8 @@ export class DiagramViewer {
     this._diagramViewer.clear();
     this.xmlIsNotSelected = true;
     this.xml = undefined;
+
+    this.fitDiagramToViewport();
   }
 
   public xmlChanged(): void {
