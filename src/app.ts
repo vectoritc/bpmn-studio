@@ -142,6 +142,13 @@ export class App {
         nav: false,
       },
       {
+        route: ['instance/:processInstanceId/task'],
+        title: 'Task List',
+        name: 'task-list-processinstance',
+        moduleId: 'modules/task-list-container/task-list-container',
+        nav: false,
+      },
+      {
         route: ['process'],
         title: 'Process Instance List',
         name: 'process-list',
