@@ -151,6 +151,30 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
     return response.json();
   }
 
+  public async checkUserInfo(): Promise<void> {
+    const token: string = this.getAccessToken();
+
+    const request: Request = new Request(`${environment.openIdConnect.authority}/connect/userinfo`, {
+      method: 'GET',
+      mode: 'cors',
+      referrer: 'no-referrer',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const response: Response = await fetch(request);
+
+    if (response.status === UNAUTHORIZED_STATUS_CODE) {
+      this._tokenObject = undefined;
+      this._persistTokenObject();
+      return;
+    }
+
+  }
+
   private async _isIdentityServerReachable(): Promise<boolean> {
     const request: Request = new Request(`${environment.openIdConnect.authority}/.well-known/openid-configuration`, {
       method: 'GET',
