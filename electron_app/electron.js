@@ -165,11 +165,11 @@ Main._initializeApplication = function () {
       }
     };
 
-    const electronOidc = electronOidc(oidcConfig, windowParams);
+    const electronOidcInstance = electronOidc(oidcConfig, windowParams);
 
     ipcMain.on('oidc-login', (event, authorityUrl) => {
 
-      electronOidc.getTokenObject(authorityUrl)
+      electronOidcInstance.getTokenObject(authorityUrl)
         .then(token => {
           event.sender.send('oidc-login-reply', token);
         }, err => {
@@ -178,7 +178,7 @@ Main._initializeApplication = function () {
     });
 
     ipcMain.on('oidc-logout', (event, tokenObject, authorityUrl) => {
-      electronOidc.logout(tokenObject, authorityUrl)
+      electronOidcInstance.logout(tokenObject, authorityUrl)
         .then(logoutWasSuccessful => {
           event.sender.send('oidc-logout-reply', logoutWasSuccessful);
         }, err => {
