@@ -6,10 +6,9 @@ const app = electron.app;
 const isDev = require('electron-is-dev');
 const getPort = require('get-port');
 const fs = require('fs');
-const electronOauth2 = require('./electron-oauth2');
-const oauthConfig = require('./oauth-config');
+const electronOidc = require('./electron-oidc');
+const oidcConfig = require('./oidc-config');
 const ipcMain = electron.ipcMain;
-const BrowserWindow = electron.BrowserWindow || electron.remote.BrowserWindow;
 
 const {dialog} = require('electron');
 
@@ -166,11 +165,11 @@ Main._initializeApplication = function () {
       }
     };
 
-    const githubOAuth = electronOauth2(oauthConfig, windowParams);
+    const githubOidc = electronOidc(oidcConfig, windowParams);
 
     ipcMain.on('oidc-login', (event) => {
 
-      githubOAuth.getTokenObject()
+      githubOidc.getTokenObject()
         .then(token => {
           event.sender.send('oidc-login-reply', token);
         }, err => {
@@ -180,7 +179,7 @@ Main._initializeApplication = function () {
 
     ipcMain.on('oidc-logout', (event, tokenObject) => {
 
-      githubOAuth.logout(tokenObject)
+      githubOidc.logout(tokenObject)
         .then(logoutWasSuccessful => {
           event.sender.send('oidc-logout-reply', logoutWasSuccessful);
         }, err => {
