@@ -66,11 +66,11 @@ module.exports = function (config, windowParams) {
           authWindow.loadURL(href);
 
         } else if (href.includes(config.redirectUri)) {
-          var identityParameter = url_parts.hash;
-          var parameterAsArray = identityParameter.split('&');
+          const identityParameter = url_parts.hash;
+          const parameterAsArray = identityParameter.split('&');
 
-          var idToken = parameterAsArray[0].split('=')[1];
-          var accessToken = parameterAsArray[1].split('=')[1];
+          const idToken = parameterAsArray[0].split('=')[1];
+          const accessToken = parameterAsArray[1].split('=')[1];
 
           const tokenObject = {
             idToken,
