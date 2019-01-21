@@ -197,6 +197,11 @@ export class DiagramViewer {
     this.xmlIsNotSelected = this.xml === undefined;
   }
 
+  public fitDiagramToViewport(): void {
+    const canvas: ICanvas = this._diagramViewer.get('canvas');
+    canvas.zoom('fit-viewport');
+  }
+
   private async _getXmlByCorrelation(correlation: DataModels.Correlations.Correlation): Promise<string> {
     const processModelForCorrelation: DataModels.Correlations.CorrelationProcessModel =
       correlation.processModels.find((processModel: DataModels.Correlations.CorrelationProcessModel) => {
