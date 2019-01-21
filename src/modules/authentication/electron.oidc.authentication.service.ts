@@ -98,17 +98,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
         this._eventAggregator.publish(AuthenticationStateEvent.LOGOUT);
         this._tokenObject = undefined;
 
-        const dummyAccesToken: string = this._getDummyAccessToken();
-
-        const remoteSolutionsEntries: Array<ISolutionEntry> = this._solutionService.getRemoteSolutionEntries();
-
-        remoteSolutionsEntries.forEach((solutionEntry: ISolutionEntry) => {
-          solutionEntry.identity = {
-            token: dummyAccesToken,
-          };
-        });
-
-        window.localStorage.removeItem('tokenObject');
+        this._logoutUserFromAllSolutions();
       }
 
     });
@@ -165,12 +155,20 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
       },
     });
 
-    const response: Response = await fetch(request);
+    try {
+      const response: Response = await fetch(request);
 
-    if (response.status === UNAUTHORIZED_STATUS_CODE) {
+      if (response.status === UNAUTHORIZED_STATUS_CODE) {
+        this._tokenObject = undefined;
+
+        this._logoutUserFromAllSolutions();
+      }
+
+    } catch (error) {
+      this._notificationService.showNotification(NotificationType.WARNING, 'The identity server may be offline!');
       this._tokenObject = undefined;
-      this._persistTokenObject();
-      return;
+
+      this._logoutUserFromAllSolutions();
     }
 
   }
@@ -224,5 +222,20 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
     const tokenObject: ITokenObject = JSON.parse(tokenObjectString);
 
     this._tokenObject = tokenObject;
+  }
+
+  private _logoutUserFromAllSolutions(): void {
+
+    const dummyAccesToken: string = this._getDummyAccessToken();
+
+    const remoteSolutionsEntries: Array<ISolutionEntry> = this._solutionService.getRemoteSolutionEntries();
+
+    remoteSolutionsEntries.forEach((solutionEntry: ISolutionEntry) => {
+      solutionEntry.identity = {
+        token: dummyAccesToken,
+      };
+    });
+
+    window.localStorage.removeItem('tokenObject');
   }
 }
