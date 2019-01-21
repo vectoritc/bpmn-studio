@@ -9,7 +9,7 @@ const crypto = require('crypto');
 const BrowserWindow = electron.BrowserWindow || electron.remote.BrowserWindow;
 
 module.exports = function (config, windowParams) {
-  function getTokenObject() {
+  function getTokenObject(authorityUrl) {
     // Build the Url Params from the Config.
     var urlParams = {
       client_id: config.clientId,
@@ -20,7 +20,7 @@ module.exports = function (config, windowParams) {
       nonce: randomString(16),
     };
 
-    var url = config.authorizationUrl + '?' + queryString.stringify(urlParams);
+    var url = `${authorityUrl}/connect/authorize?${queryString.stringify(urlParams)}`;
 
     return new Promise(function (resolve, reject) {
       // Open a new browser window and load the previously constructed url.
@@ -108,14 +108,14 @@ module.exports = function (config, windowParams) {
     });
   }
 
-  function logout(tokenObject) {
+  function logout(tokenObject, authorityUrl) {
 
     const urlParams = {
       id_token_hint: tokenObject.idToken,
       post_logout_redirect_uri: config.logoutRedirectUri,
     };
 
-    const endSessionUrl = config.logoutUrl + '?' + queryString.stringify(urlParams);;
+    const endSessionUrl = `${authorityUrl}/connect/endsession?${queryString.stringify(urlParams)}`
 
     return new Promise(async function (resolve, reject) {
 
