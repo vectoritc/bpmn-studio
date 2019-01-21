@@ -1,18 +1,18 @@
 const electron = require('electron');
+const {ipcMain} = electron;
+const {dialog} = electron;
+const {app} = electron;
+
 const autoUpdater = require('electron-updater').autoUpdater;
 const CancellationToken = require('electron-updater').CancellationToken;
 const path = require('path');
-const app = electron.app;
 const isDev = require('electron-is-dev');
 const getPort = require('get-port');
 const fs = require('fs');
+const openAboutWindow = require('about-window').default;
+
 const electronOidc = require('./electron-oidc');
 const oidcConfig = require('./oidc-config');
-const ipcMain = electron.ipcMain;
-
-const {dialog} = require('electron');
-
-const openAboutWindow = require('about-window').default;
 
 // If BPMN-Studio was opened by double-clicking a .bpmn file, then the
 // following code tells the frontend the name and content of that file;
