@@ -5,6 +5,7 @@ const queryString = require('querystring');
 const fetch = require('node-fetch');
 const nodeUrl = require('url');
 const electron = require('electron');
+const crypto = require('crypto');
 const BrowserWindow = electron.BrowserWindow || electron.remote.BrowserWindow;
 
 module.exports = function (config, windowParams) {
@@ -15,8 +16,8 @@ module.exports = function (config, windowParams) {
       redirect_uri: config.redirectUri,
       response_type: config.responseType,
       scope: config.scope,
-      state: config.state, //TODO: Make that random.
-      nonce: config.nonce, //TODO: Make that random.
+      state: randomString(16),
+      nonce: randomString(16),
     };
 
     var url = config.authorizationUrl + '?' + queryString.stringify(urlParams);
@@ -143,4 +144,25 @@ module.exports = function (config, windowParams) {
     getTokenObject: getTokenObject,
     logout: logout,
   };
+
+  function randomString(length) {
+    const charset = '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._~'
+    let result = ''
+
+    while (length > 0) {
+      const randomValues = crypto.randomBytes(length);
+
+      randomValues.forEach((value) => {
+        if (length == 0) {
+          return;
+        }
+
+        if (value < charset.length) {
+          result += charset[value];
+          length--;
+        }
+      });
+    }
+    return result;
+}
 };
