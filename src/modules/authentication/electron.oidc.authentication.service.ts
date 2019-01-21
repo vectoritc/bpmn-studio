@@ -22,7 +22,6 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
   private _notificationService: NotificationService;
   private _router: Router;
   private _tokenObject: ITokenObject;
-  private _logoutWindow: Window = null;
   private _solutionService: ISolutionService;
 
   constructor(eventAggregator: EventAggregator,
