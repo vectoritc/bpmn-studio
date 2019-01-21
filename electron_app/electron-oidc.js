@@ -16,8 +16,8 @@ module.exports = function (config, windowParams) {
       redirect_uri: config.redirectUri,
       response_type: config.responseType,
       scope: config.scope,
-      state: randomString(16),
-      nonce: randomString(16),
+      state: _getRandomString(16),
+      nonce: _getRandomString(16),
     };
 
     var url = `${authorityUrl}/connect/authorize?${queryString.stringify(urlParams)}`;
@@ -140,12 +140,7 @@ module.exports = function (config, windowParams) {
     });
   }
 
-  return {
-    getTokenObject: getTokenObject,
-    logout: logout,
-  };
-
-  function randomString(length) {
+  function _getRandomString(length) {
     const charset = '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._~'
     let result = ''
 
@@ -164,5 +159,10 @@ module.exports = function (config, windowParams) {
       });
     }
     return result;
-}
+  }
+
+  return {
+    getTokenObject: getTokenObject,
+    logout: logout,
+  };
 };
