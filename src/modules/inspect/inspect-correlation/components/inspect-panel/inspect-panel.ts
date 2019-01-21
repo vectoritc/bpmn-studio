@@ -23,6 +23,12 @@ export class InspectPanel {
     this._eventAggregator = eventAggregator;
   }
 
+  public attached(): void {
+    this._eventAggregator.subscribe(environment.events.inspectCorrelation.showLogViewer, () => {
+      this.changeTab(InspectPanelTab.LogViewer);
+    });
+  }
+
   public toggleFullscreen(): void {
     this.fullscreen = !this.fullscreen;
 
