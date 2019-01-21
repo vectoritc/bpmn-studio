@@ -2,8 +2,6 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
-import {User} from 'oidc-client';
-
 import {AuthenticationStateEvent,
         IAuthenticationService,
         IIdentity,
@@ -12,11 +10,9 @@ import {AuthenticationStateEvent,
         ITokenObject,
         NotificationType} from '../../contracts/index';
 import environment from '../../environment';
-import {oidcConfig} from '../../open-id-connect-configuration';
 import {NotificationService} from '../notification/notification.service';
 
 const UNAUTHORIZED_STATUS_CODE: number = 401;
-const LOGOUT_SUCCESS_STATUS_CODE: number = 200;
 const IDENTITY_SERVER_AVAILABLE_SUCCESS_STATUS_CODE: number = 200;
 
 @inject(EventAggregator, 'NotificationService', Router, 'SolutionService')
