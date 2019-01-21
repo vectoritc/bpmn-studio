@@ -167,9 +167,9 @@ Main._initializeApplication = function () {
 
     const githubOidc = electronOidc(oidcConfig, windowParams);
 
-    ipcMain.on('oidc-login', (event) => {
+    ipcMain.on('oidc-login', (event, authorityUrl) => {
 
-      githubOidc.getTokenObject()
+      githubOidc.getTokenObject(authorityUrl)
         .then(token => {
           event.sender.send('oidc-login-reply', token);
         }, err => {
@@ -177,9 +177,8 @@ Main._initializeApplication = function () {
         });
     });
 
-    ipcMain.on('oidc-logout', (event, tokenObject) => {
-
-      githubOidc.logout(tokenObject)
+    ipcMain.on('oidc-logout', (event, tokenObject, authorityUrl) => {
+      githubOidc.logout(tokenObject, authorityUrl)
         .then(logoutWasSuccessful => {
           event.sender.send('oidc-logout-reply', logoutWasSuccessful);
         }, err => {

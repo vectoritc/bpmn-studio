@@ -74,19 +74,14 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
       this._persistTokenObject();
     });
 
-    ipcRenderer.send('oidc-login');
-  }
+    const openIdConnectRoute: string = window.localStorage.getItem('openIdRoute');
+    const openIdRouteIsSet: boolean = openIdConnectRoute !== null;
 
-  public finishLogout(): void {
-    // This will be called in the electron version where we perform the logout
-    // manually.
-    if (this._logoutWindow !== null) {
-      this._logoutWindow.close();
-      this._logoutWindow = null;
-    }
-    this._tokenObject = undefined;
-    this._eventAggregator.publish(AuthenticationStateEvent.LOGOUT);
-    this._router.navigate('/');
+    const authorityUrl: string = openIdRouteIsSet
+                              ? openIdConnectRoute
+                              : environment.openIdConnect.defaultAuthority;
+
+    ipcRenderer.send('oidc-login', authorityUrl);
   }
 
   public async logout(): Promise<void> {
@@ -103,7 +98,14 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
 
     });
 
-    ipcRenderer.send('oidc-logout', this._tokenObject);
+    const openIdConnectRoute: string = window.localStorage.getItem('openIdRoute');
+    const openIdRouteIsSet: boolean = openIdConnectRoute !== null;
+
+    const authorityUrl: string = openIdRouteIsSet
+                              ? openIdConnectRoute
+                              : environment.openIdConnect.defaultAuthority;
+
+    ipcRenderer.send('oidc-logout', this._tokenObject, authorityUrl);
 
   }
 

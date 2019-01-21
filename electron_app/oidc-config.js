@@ -8,8 +8,6 @@
  */
 
 module.exports =  {
-  logoutUrl: 'http://localhost:5000/connect/endsession',
-  authorizationUrl: 'http://localhost:5000/connect/authorize',
   clientId: 'bpmn_studio',
   redirectUri: 'http://localhost:9000/signin-oidc',
   logoutRedirectUri: 'http://localhost:9000/signout-oidc',
