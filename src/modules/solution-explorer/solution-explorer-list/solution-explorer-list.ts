@@ -226,7 +226,20 @@ export class SolutionExplorerList {
     const filteredEntries: Array<ISolutionEntry> = this._openedSolutions
       .filter(this._shouldDisplaySolution);
 
-    return filteredEntries;
+    const sortedEntries: Array<ISolutionEntry> = filteredEntries.sort((solutionA: ISolutionEntry, solutionB: ISolutionEntry) => {
+      if (solutionA.isSingleDiagramService) {
+        return -1;
+      }
+
+      if (solutionA.uri === window.localStorage.getItem('InternalProcessEngineRoute')) {
+        return -1;
+      }
+
+      return solutionA.uri.startsWith('http') && !solutionB.uri.startsWith('http')
+              ? -1
+              : 1;
+    });
+    return sortedEntries;
   }
 
   private _cleanupSolution(uri: string): void {
