@@ -141,6 +141,11 @@ export class SolutionExplorerPanel {
 
   public async openRemoteSolution(): Promise<void> {
     try {
+      const lastCharacterIsASlash: boolean = this.uriOfRemoteSolution.endsWith('/');
+      if (lastCharacterIsASlash) {
+        this.uriOfRemoteSolution = this.uriOfRemoteSolution.substring(0, this.uriOfRemoteSolution.length - 1);
+      }
+
       await this.solutionExplorerList.openSolution(this.uriOfRemoteSolution);
     } catch (error) {
       const genericMessage: string = `Unable to connect to ProcessEngine on: ${this.uriOfRemoteSolution}`;
