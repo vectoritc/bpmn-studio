@@ -65,8 +65,6 @@ describe('bpmn-io compare view', () => {
         return getRouterViewContainer;
       });
 
-    // You have to open solution explorer before click on link
-    await navBar.openSolutionExplorerByButtonClick();
     await solutionExplorer.openProcessModelByClick(processModelId);
 
     const bpmnIoTag: ElementFinder = bpmnIo.bpmnIoTag;
