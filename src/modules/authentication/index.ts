@@ -1,6 +1,14 @@
 import {FrameworkConfiguration} from 'aurelia-framework';
-import {AuthenticationService} from './authentication.service';
+import {ElectronOidcAuthenticationService} from './electron.oidc.authentication.service';
+import {WebOidcAuthenticationService} from './web.oidc.authentication.service';
 
 export async function configure(config: FrameworkConfiguration): Promise<void> {
-  config.container.registerSingleton('AuthenticationService', AuthenticationService);
+  const appIsRunningInElectron: boolean = (window as any).nodeRequire;
+
+  if (appIsRunningInElectron) {
+    config.container.registerSingleton('AuthenticationService', ElectronOidcAuthenticationService);
+  } else {
+    config.container.registerSingleton('AuthenticationService', WebOidcAuthenticationService);
+  }
+
 }
