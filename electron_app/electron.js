@@ -1,7 +1,6 @@
 const electron = require('electron');
-const {ipcMain} = electron;
-const {dialog} = electron;
-const {app} = electron;
+
+const {ipcMain, dialog, app} = electron;
 
 const autoUpdater = require('electron-updater').autoUpdater;
 const CancellationToken = require('electron-updater').CancellationToken;
@@ -168,7 +167,6 @@ Main._initializeApplication = function () {
     const electronOidcInstance = electronOidc(oidcConfig, windowParams);
 
     ipcMain.on('oidc-login', (event, authorityUrl) => {
-
       electronOidcInstance.getTokenObject(authorityUrl)
         .then(token => {
           event.sender.send('oidc-login-reply', token);
