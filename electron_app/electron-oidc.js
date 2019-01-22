@@ -91,7 +91,7 @@ module.exports = function (config, windowParams) {
        * Important: Not AFTER it redirects but BEFORE.
        * This gives us the possibility to intercept the redirect to
        * the specified redirect uri, which would lead to faulty behaviour
-       * due to security speciments in chromium.
+       * due to security aspects in chromium.
        *
        * If that redirect would start we stop it by preventing the default
        * behaviour and instead parse its parameters in the
