@@ -143,7 +143,7 @@ export class SolutionExplorerPanel {
     try {
       const lastCharacterIsASlash: boolean = this.uriOfRemoteSolution.endsWith('/');
       if (lastCharacterIsASlash) {
-        this.uriOfRemoteSolution = this.uriOfRemoteSolution.substring(0, this.uriOfRemoteSolution.length - 1);
+        this.uriOfRemoteSolution = this.uriOfRemoteSolution.slice(0, -1);
       }
 
       await this.solutionExplorerList.openSolution(this.uriOfRemoteSolution);
