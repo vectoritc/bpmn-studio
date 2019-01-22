@@ -141,9 +141,9 @@ export class SolutionExplorerList {
       /**
        * TODO: The error message only contains 'Failed to fetch' if the connection
        * failed. A more detailed cause (such as Connection Refused) would
-       * be better. This needs to be implemented in the Service or Repository.
+       * be better. This needs to be implemented in the service or repository.
        */
-      throw new Error('Failed to retrieve the list of ProcessModels from the endpoint');
+      throw new Error('Failed to receive the list of ProcessModels from the endpoint');
     }
 
     const newOpenedSolution: ISolution = await solutionExplorer.loadSolution();
