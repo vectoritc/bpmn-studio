@@ -34,8 +34,8 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
     this._solutionService = solutionService;
 
     this._getPersistedTokenObject();
-    const tokenObjectIsNotUndefined: boolean = this._tokenObject !== null;
 
+    const tokenObjectIsNotUndefined: boolean = this._tokenObject !== null;
     if (tokenObjectIsNotUndefined) {
       this.checkUserInfo();
     }
@@ -49,8 +49,8 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
 
   public async login(): Promise<void> {
 
-    const isIdentityServerReachable: boolean = await this._isIdentityServerReachable();
-    if (!isIdentityServerReachable) {
+    const identityServerIsNotReachable: boolean = await !this._isIdentityServerReachable();
+    if (identityServerIsNotReachable) {
       this._notificationService.showNotification(NotificationType.ERROR, 'IdentityServer is offline');
       return;
     }
@@ -94,7 +94,6 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
 
         this._logoutUserFromAllSolutions();
       }
-
     });
 
     const openIdConnectRoute: string = window.localStorage.getItem('openIdRoute');
@@ -122,7 +121,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
 
     const token: string = this.getAccessToken();
 
-    const request: Request = new Request(`${environment.openIdConnect.authority}/connect/userinfo`, {
+    const userInforequest: Request = new Request(`${environment.openIdConnect.authority}/connect/userinfo`, {
       method: 'GET',
       mode: 'cors',
       referrer: 'no-referrer',
@@ -133,19 +132,18 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
       },
     });
 
-    const response: Response = await fetch(request);
-
-    if (response.status === UNAUTHORIZED_STATUS_CODE) {
+    const userInforesponse: Response = await fetch(userInforequest);
+    if (userInforesponse.status === UNAUTHORIZED_STATUS_CODE) {
       return null;
     }
 
-    return response.json();
+    return userInforesponse.json();
   }
 
   public async checkUserInfo(): Promise<void> {
     const token: string = this.getAccessToken();
 
-    const request: Request = new Request(`${environment.openIdConnect.authority}/connect/userinfo`, {
+    const userInforequest: Request = new Request(`${environment.openIdConnect.authority}/connect/userinfo`, {
       method: 'GET',
       mode: 'cors',
       referrer: 'no-referrer',
@@ -157,9 +155,9 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
     });
 
     try {
-      const response: Response = await fetch(request);
+      const userInforesponse: Response = await fetch(userInforequest);
 
-      if (response.status === UNAUTHORIZED_STATUS_CODE) {
+      if (userInforesponse.status === UNAUTHORIZED_STATUS_CODE) {
         this._tokenObject = undefined;
 
         this._logoutUserFromAllSolutions();
@@ -175,7 +173,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
   }
 
   private async _isIdentityServerReachable(): Promise<boolean> {
-    const request: Request = new Request(`${environment.openIdConnect.authority}/.well-known/openid-configuration`, {
+    const configRequest: Request = new Request(`${environment.openIdConnect.authority}/.well-known/openid-configuration`, {
       method: 'GET',
       mode: 'cors',
       referrer: 'no-referrer',
@@ -185,18 +183,18 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
       },
     });
 
-    let response: Response;
+    let configResponse: Response;
 
     try {
 
-     response = await fetch(request);
+     configResponse = await fetch(configRequest);
     } catch (error) {
       if (error.message === 'Failed to fetch') {
         return false;
       }
     }
 
-    if (response.status === IDENTITY_SERVER_AVAILABLE_SUCCESS_STATUS_CODE) {
+    if (configResponse.status === IDENTITY_SERVER_AVAILABLE_SUCCESS_STATUS_CODE) {
       return true;
     }
 
