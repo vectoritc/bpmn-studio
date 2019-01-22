@@ -1,6 +1,5 @@
 'use strict';
 
-const Promise = require('pinkie-promise');
 const queryString = require('querystring');
 const fetch = require('node-fetch');
 const nodeUrl = require('url');
