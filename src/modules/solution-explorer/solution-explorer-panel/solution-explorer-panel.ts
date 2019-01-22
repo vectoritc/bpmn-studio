@@ -203,10 +203,13 @@ export class SolutionExplorerPanel {
       return true;
     }
 
-    const uriStartsWithHttp: boolean = this.uriOfRemoteSolution.toLowerCase().startsWith('http');
-    const uriDoesntEndWithSlash: boolean = !this.uriOfRemoteSolution.endsWith('/');
+    const pattern: RegExp = new RegExp('^(https?:\\/\\/)?' +
+    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' +
+    '((\\d{1,3}\\.){3}\\d{1,3}))' +
+    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
+    '(\\?[;&amp;a-z\\d%_.~+=-]*)?(\\#[-a-z\\d_]*)?$', 'i');
 
-    const uriIsValid: boolean = uriStartsWithHttp && uriDoesntEndWithSlash;
+    const uriIsValid: boolean = pattern.test(this.uriOfRemoteSolution);
 
     return uriIsValid;
   }
