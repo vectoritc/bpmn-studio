@@ -141,6 +141,11 @@ export class SolutionExplorerPanel {
 
   public async openRemoteSolution(): Promise<void> {
     try {
+      const lastCharacterIsASlash: boolean = this.uriOfRemoteSolution.endsWith('/');
+      if (lastCharacterIsASlash) {
+        this.uriOfRemoteSolution = this.uriOfRemoteSolution.slice(0, -1);
+      }
+
       await this.solutionExplorerList.openSolution(this.uriOfRemoteSolution);
     } catch (error) {
       const genericMessage: string = `Unable to connect to ProcessEngine on: ${this.uriOfRemoteSolution}`;
@@ -203,9 +208,18 @@ export class SolutionExplorerPanel {
       return true;
     }
 
-    const uriStartsWithHttp: boolean = this.uriOfRemoteSolution.toLowerCase().startsWith('http');
+    /**
+     * This RegEx checks if the entered URI is valid or not.
+     */
+    const urlRegEx: RegExp = new RegExp('^(https?:\\/\\/)?' +
+    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' +
+    '((\\d{1,3}\\.){3}\\d{1,3}))' +
+    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
+    '(\\?[;&amp;a-z\\d%_.~+=-]*)?(\\#[-a-z\\d_]*)?$', 'i');
 
-    return uriStartsWithHttp;
+    const uriIsValid: boolean = urlRegEx.test(this.uriOfRemoteSolution);
+
+    return uriIsValid;
   }
 
   public get uriIsEmpty(): boolean {
