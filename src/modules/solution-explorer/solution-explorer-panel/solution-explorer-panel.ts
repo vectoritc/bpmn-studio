@@ -204,8 +204,11 @@ export class SolutionExplorerPanel {
     }
 
     const uriStartsWithHttp: boolean = this.uriOfRemoteSolution.toLowerCase().startsWith('http');
+    const uriDoesntEndWithSlash: boolean = !this.uriOfRemoteSolution.endsWith('/');
 
-    return uriStartsWithHttp;
+    const uriIsValid: boolean = uriStartsWithHttp && uriDoesntEndWithSlash;
+
+    return uriIsValid;
   }
 
   public get uriIsEmpty(): boolean {
