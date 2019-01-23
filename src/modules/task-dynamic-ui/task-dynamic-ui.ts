@@ -89,10 +89,18 @@ export class TaskDynamicUi {
 
     this.setDynamicUIWrapperUserTask();
     this.setDynamicUIWrapperManualTask();
+    this.dynamicUiWrapper.activeSolutionEntry = this.activeSolutionEntry;
   }
 
   public activeSolutionEntryChanged(newValue: ISolutionEntry): void {
     this._identity = newValue.identity;
+
+    const dynamicUiWrapperUndefined: boolean = this.dynamicUiWrapper === undefined;
+    if (dynamicUiWrapperUndefined) {
+      return;
+    }
+
+    this.dynamicUiWrapper.activeSolutionEntry = newValue;
   }
 
   public detached(): void {
