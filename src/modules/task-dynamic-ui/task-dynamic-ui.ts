@@ -95,8 +95,8 @@ export class TaskDynamicUi {
   public activeSolutionEntryChanged(newValue: ISolutionEntry): void {
     this._identity = newValue.identity;
 
-    const dynamicUiWrapperUndefined: boolean = this.dynamicUiWrapper === undefined;
-    if (dynamicUiWrapperUndefined) {
+    const dynamicUiWrapperIsUndefined: boolean = this.dynamicUiWrapper === undefined;
+    if (dynamicUiWrapperIsUndefined) {
       return;
     }
 
