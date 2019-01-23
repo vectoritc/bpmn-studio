@@ -68,7 +68,7 @@ pipeline {
         sh('npm run build')
         sh("npm version ${full_electron_release_version_string} --allow-same-version --force --no-git-tag-version")
 
-        stash(includes: '@fortawesome/, bootstrap/, scripts/, package.json', name: 'post_build')
+        stash(includes: '@fortawesome/, bootstrap/, scripts/, config/, package.json', name: 'post_build')
         stash(includes: 'node_modules/', name: 'post_build_node_modules')
       }
     }
