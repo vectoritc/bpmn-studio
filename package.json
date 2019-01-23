@@ -118,7 +118,7 @@
     "highlight.js": "^9.12.0",
     "highlightjs-line-numbers.js": "^2.2.0",
     "minimist": "^1.2.0",
-    "node-fetch": "^2.3.0",
+    "node-fetch": "2.3.0",
     "open": "0.0.5",
     "print-js": "1.0.47",
     "proxy-polyfill": "0.3.0",
