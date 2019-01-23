@@ -98,7 +98,7 @@
     "@process-engine/kpi_api_contracts": "1.2.0",
     "@process-engine/management_api_client": "2.0.0",
     "@process-engine/management_api_contracts": "3.0.1",
-    "@process-engine/process_engine_runtime": "5.2.1",
+    "@process-engine/process_engine_runtime": "feature~update_sqlite3",
     "@process-engine/solutionexplorer.contracts": "1.0.0",
     "@process-engine/solutionexplorer.repository.contracts": "4.0.0",
     "@process-engine/solutionexplorer.repository.filesystem": "4.0.1",
@@ -125,7 +125,7 @@
     "pushserve": "^1.0.2",
     "socket.io-client": "2.1.1",
     "spectrum-colorpicker": "1.8.0",
-    "sqlite3": "4.0.4"
+    "sqlite3": "4.0.6"
   },
   "peerDependencies": {},
   "devDependencies": {
