@@ -10,6 +10,7 @@ import {
   IBooleanFormField,
   IDynamicUiService,
   IEnumFormField,
+  ISolutionEntry,
   IStringFormField,
 } from '../../contracts';
 
@@ -25,12 +26,12 @@ export class DynamicUiWrapper {
   @bindable() public isConfirmUserTask: boolean = false;
   @bindable() public isFormUserTask: boolean = false;
   @bindable() public isModal: boolean;
+
   private _element: Element;
-
   private _router: Router;
-
   private _dynamicUiService: IDynamicUiService;
   private _identity: IIdentity;
+  private _activeSolutionEntry: ISolutionEntry;
 
   constructor(dynamicUiService: IDynamicUiService,
               router: Router,
@@ -45,6 +46,10 @@ export class DynamicUiWrapper {
 
   public set identity(identity: IIdentity) {
     this._identity = identity;
+  }
+
+  public set activeSolutionEntry(solutionEntry: ISolutionEntry) {
+    this._activeSolutionEntry = solutionEntry;
   }
 
   public async handleUserTaskButtonClick(action: 'cancel' | 'proceed' | 'decline'): Promise<void> {
@@ -139,6 +144,7 @@ export class DynamicUiWrapper {
 
     this._router.navigateToRoute('task-list-correlation', {
       correlationId: correlationId,
+      solutionUri: this._activeSolutionEntry.uri,
     });
   }
 
