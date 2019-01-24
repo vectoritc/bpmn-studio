@@ -29,6 +29,7 @@ dist
 src/environment.ts
 @fortawesome
 bootstrap
+config
 
 # Allow scripts which are located in the dev_tooling directory
 !dev_tooling/scripts/*

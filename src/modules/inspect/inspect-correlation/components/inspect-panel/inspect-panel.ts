@@ -1,4 +1,4 @@
-import {EventAggregator} from 'aurelia-event-aggregator';
+import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
 
 import {DataModels} from '@process-engine/management_api_contracts';
@@ -18,9 +18,24 @@ export class InspectPanel {
   public showLogViewer: boolean;
 
   private _eventAggregator: EventAggregator;
+  private _subscriptions: Array<Subscription>;
 
   constructor(eventAggregator: EventAggregator) {
     this._eventAggregator = eventAggregator;
+  }
+
+  public attached(): void {
+    this._subscriptions = [
+      this._eventAggregator.subscribe(environment.events.inspectCorrelation.showLogViewer, () => {
+        this.changeTab(InspectPanelTab.LogViewer);
+      }),
+    ];
+  }
+
+  public detached(): void {
+    for (const subscription of this._subscriptions) {
+      subscription.dispose();
+    }
   }
 
   public toggleFullscreen(): void {

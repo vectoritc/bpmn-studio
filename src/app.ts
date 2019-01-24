@@ -9,9 +9,8 @@ import 'bootstrap';
 
 import {OpenIdConnect} from 'aurelia-open-id-connect';
 
-import {NotificationType} from './contracts/index';
+import {IAuthenticationService, NotificationType} from './contracts/index';
 import environment from './environment';
-import {AuthenticationService} from './modules/authentication/authentication.service';
 import {NotificationService} from './modules/notification/notification.service';
 
 import {oidcConfig} from './open-id-connect-configuration';
@@ -20,7 +19,7 @@ export class App {
   public showSolutionExplorer: boolean = false;
 
   private _openIdConnect: OpenIdConnect | any;
-  private _authenticationService: AuthenticationService;
+  private _authenticationService: IAuthenticationService;
   private _notificationService: NotificationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
@@ -28,7 +27,7 @@ export class App {
   private _preventDefaultBehaviour: EventListener;
 
   constructor(openIdConnect: OpenIdConnect,
-              authenticationService: AuthenticationService,
+              authenticationService: IAuthenticationService,
               notificationService: NotificationService,
               eventAggregator: EventAggregator) {
     this._openIdConnect = openIdConnect;
@@ -50,7 +49,8 @@ export class App {
       return false;
     };
 
-    this.showSolutionExplorer = window.localStorage.getItem('SolutionExplorerVisibility') === 'true';
+    this.showSolutionExplorer = window.localStorage.getItem('SolutionExplorerVisibility') === 'true'
+                              || window.localStorage.getItem('SolutionExplorerVisibility') === null;
 
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.processSolutionPanel.toggleProcessSolutionExplorer, () => {
@@ -103,30 +103,8 @@ export class App {
     });
   }
 
-  private _parseDeepLinkingUrl(url: string): string {
-    const customProtocolPrefix: string = 'bpmn-studio://';
-    const urlFragment: string = url.substring(customProtocolPrefix.length);
-    return urlFragment;
-  }
-
   public configureRouter(config: RouterConfiguration, router: Router): void {
     const isRunningInElectron: boolean = Boolean((window as any).nodeRequire);
-
-    if (isRunningInElectron) {
-      const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
-      ipcRenderer.on('deep-linking-request', async(event: any, url: string) => {
-
-        const urlFragment: string = this._parseDeepLinkingUrl(url);
-
-        if (urlFragment === 'signout-oidc') {
-          this._authenticationService.finishLogout();
-        } else if (urlFragment.startsWith('signin-oidc')) {
-          this._authenticationService.loginViaDeepLink(urlFragment);
-        }
-      });
-
-      ipcRenderer.send('deep-linking-ready');
-    }
 
     if (!isRunningInElectron) {
       config.options.pushState = true;

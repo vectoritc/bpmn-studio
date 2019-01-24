@@ -3,8 +3,9 @@ import {bindable, inject} from 'aurelia-framework';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {AureliaNavigationObject, ISolutionEntry, ISolutionService} from '../../contracts';
+import {ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
+import {NotificationService} from '../notification/notification.service';
 import {Dashboard} from './dashboard/dashboard';
 
 interface IInspectRouteParameters {
@@ -13,7 +14,7 @@ interface IInspectRouteParameters {
   solutionUri?: string;
 }
 
-@inject(EventAggregator, 'SolutionService')
+@inject(EventAggregator, 'SolutionService', 'NotificationService')
 export class Inspect {
 
   @bindable() public showDashboard: boolean = true;
@@ -29,11 +30,31 @@ export class Inspect {
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
   private _solutionService: ISolutionService;
+  private _notificationService: NotificationService;
 
   constructor(eventAggregator: EventAggregator,
-              solutionService: ISolutionService) {
+              solutionService: ISolutionService,
+              notificationService: NotificationService) {
     this._eventAggregator = eventAggregator;
     this._solutionService = solutionService;
+    this._notificationService = notificationService;
+  }
+
+  public canActivate(routeParameters: IInspectRouteParameters): boolean {
+    const solutionUri: string = routeParameters.solutionUri
+                              ? routeParameters.solutionUri
+                              : window.localStorage.getItem('InternalProcessEngineRoute');
+
+    this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
+
+    const noSolutionEntry: boolean = this.activeSolutionEntry === undefined;
+    if (noSolutionEntry) {
+      this._notificationService.showNotification(NotificationType.INFO, 'Please open a solution first.');
+
+      return false;
+    }
+
+    return true;
   }
 
   public async activate(routeParameters: IInspectRouteParameters): Promise<void> {

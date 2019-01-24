@@ -69,8 +69,6 @@ describe('Dashboard view', () => {
       processModel.startProcess(processModelId);
   });
 
-  // process list section
-
   it('should contain process list.', async() => {
     const processListTag: ElementFinder = dashboard.processListTag;
 
