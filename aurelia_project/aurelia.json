@@ -356,8 +356,8 @@
           },
           {
             "name": "node-uuid",
-            "path": "../node_modules/node-uuid/bin",
-            "main": "node-uuid"
+            "path": "../node_modules/node-uuid",
+            "main": "uuid.js"
           },
           {
             "name": "@essential-projects/event_aggregator_contracts",
