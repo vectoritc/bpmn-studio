@@ -123,6 +123,10 @@ Main._initializeApplication = function () {
         event.sender.send('update_error');
       });
 
+      autoUpdater.addListener('download-progress', (progressObj) => {
+        event.sender.send('update_download_progress', progressObj);
+      })
+
       autoUpdater.addListener('update-available', (info) => {
         event.sender.send('update_available');
 
@@ -130,10 +134,6 @@ Main._initializeApplication = function () {
           autoUpdater.downloadUpdate(downloadCancellationToken);
         });
       });
-
-      autoUpdater.on('download-progress', (ev, progressObj) => {
-        event.sender.send('update_download_progress', progressObj);
-      })
 
       autoUpdater.addListener('update-downloaded', (info) => {
         event.sender.send('update_downloaded');
