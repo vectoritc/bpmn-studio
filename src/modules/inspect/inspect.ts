@@ -50,6 +50,7 @@ export class Inspect {
     const noSolutionEntry: boolean = this.activeSolutionEntry === undefined;
     if (noSolutionEntry) {
       this._notificationService.showNotification(NotificationType.INFO, 'Please open a solution first.');
+
       return false;
     }
 
