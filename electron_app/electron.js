@@ -131,6 +131,10 @@ Main._initializeApplication = function () {
         });
       });
 
+      autoUpdater.on('download-progress', (ev, progressObj) => {
+        event.sender.send('update_download_progress', progressObj);
+      })
+
       autoUpdater.addListener('update-downloaded', (info) => {
         event.sender.send('update_downloaded');
 
