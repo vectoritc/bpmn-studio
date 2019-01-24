@@ -23,7 +23,7 @@
         </tr>
       </thead>
       <tbody class="correlation-table__body">
-        <tr class="correlation-table__table-row" repeat.for="tableEntry of sortedTableData" class.bind="tableEntry.correlationId === selectedCorrelation.id ? 'correlation-table__selected-entry': ''" click.delegate="selectCorrelation(tableEntry)">
+        <tr dblclick.delegate="showLogViewer()" class="correlation-table__table-row" repeat.for="tableEntry of sortedTableData" class.bind="tableEntry.correlationId === selectedCorrelation.id ? 'correlation-table__selected-entry': ''" click.delegate="selectCorrelation(tableEntry)">
           <td class="correlation-table__table-entry--number">${tableEntry.index}</td>
           <td class="correlation-table__table-entry">${tableEntry.startedAt}</td>
           <td class="correlation-table__table-entry">${tableEntry.state}</td>

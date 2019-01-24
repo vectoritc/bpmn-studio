@@ -96,6 +96,7 @@ export default {
     inspectCorrelation: {
       showInspectPanel: 'inspectCorrelation:inspectPanel:show',
       showTokenViewer: 'inspectCorrelation:tokenViewer:show',
+      showLogViewer: 'inpsectCorrelation:logViewer:show',
     },
   },
   baseRoute: processEngineRoute,

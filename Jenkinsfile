@@ -50,7 +50,7 @@ pipeline {
         nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
           sh('node --version')
           sh('npm install')
-          sh('npm rebuild node-sass')
+          sh('npm rebuild')
         }
 
         archiveArtifacts('package-lock.json')
@@ -68,7 +68,7 @@ pipeline {
         sh('npm run build')
         sh("npm version ${full_electron_release_version_string} --allow-same-version --force --no-git-tag-version")
 
-        stash(includes: '@fortawesome/, bootstrap/, scripts/, package.json', name: 'post_build')
+        stash(includes: '@fortawesome/, bootstrap/, scripts/, config/, package.json', name: 'post_build')
         stash(includes: 'node_modules/', name: 'post_build_node_modules')
       }
     }
@@ -134,7 +134,7 @@ pipeline {
             unstash('post_build_node_modules')
 
             sh('node --version')
-            
+
             // We copy the node_modules folder from the slave running
             // prepare and install steps. That slave may run another OS
             // than linux. Some dependencies may not be installed if
@@ -161,7 +161,7 @@ pipeline {
             unstash('post_build_node_modules')
 
             sh('node --version')
-            
+
             // We copy the node_modules folder from the slave running
             // prepare and install steps. That slave may run another OS
             // than macos. Some dependencies may not be installed if
@@ -278,13 +278,13 @@ pipeline {
         unstash('linux_results')
         unstash('macos_results')
         unstash('windows_results')
-        
+
         script {
           // On release branches we will just archive the artifacts of the build.
           // When we build master or develop, we upload the artifacts to the
           // GitHub release.
           if (branch_is_release) {
-            
+
             archiveArtifacts 'dist/*, dist/**/*'
 
           } else {
@@ -293,7 +293,7 @@ pipeline {
               string(credentialsId: 'process-engine-ci_token', variable: 'RELEASE_GH_TOKEN')
             ]) {
               script {
-                
+
                 def files_to_upload = [
                   "dist/bpmn-studio-setup-${full_electron_release_version_string}.exe",
                   "dist/bpmn-studio-setup-${full_electron_release_version_string}.exe.blockmap",

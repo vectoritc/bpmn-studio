@@ -1,15 +1,17 @@
 const electron = require('electron');
+
+const {ipcMain, dialog, app} = electron;
+
 const autoUpdater = require('electron-updater').autoUpdater;
 const CancellationToken = require('electron-updater').CancellationToken;
 const path = require('path');
-const app = electron.app;
 const isDev = require('electron-is-dev');
 const getPort = require('get-port');
 const fs = require('fs');
-
-const {dialog} = require('electron');
-
 const openAboutWindow = require('about-window').default;
+
+const electronOidc = require('./electron-oidc');
+const oidcConfig = require('./oidc-config');
 
 // If BPMN-Studio was opened by double-clicking a .bpmn file, then the
 // following code tells the frontend the name and content of that file;
@@ -46,7 +48,7 @@ Main.execute = function () {
    * process and finally open a file via double-click.
    *
    */
-  const existingInstance = app.makeSingleInstance((argv, workingDirectory) => {
+  const existingInstance = app.hasSingleInstanceLock((argv, workingDirectory) => {
     const noArgumentsSet = argv[1] === undefined;
 
     if (noArgumentsSet) {
@@ -103,87 +105,9 @@ Main._initializeApplication = function () {
     }
   });
 
-  initializeDeepLinking();
   initializeAutoUpdater();
   initializeFileOpenFeature();
-
-  function initializeDeepLinking() {
-
-    app.setAsDefaultProtocolClient('bpmn-studio');
-
-    // open-url is called every time someone tries to open a link like:
-    // bpmn-studio://myActualUrl
-    app.on('open-url', (event, url) => {
-      console.log('open-url called', url);
-      event.preventDefault();
-
-      // This bug seems to be causing the oidc-client to use a hard redirect
-      // instead of using an iFrame:
-      // https://github.com/electron/electron/issues/9581
-
-      Main._bringExistingInstanceToForeground();
-
-      // ----------------------------------------------------------------------
-      // Hacky Implicit Flow in Electron ©2018 5Minds
-      // ----------------------------------------------------------------------
-
-      // The Login
-
-      // 1. trigger sign in on oidc-client
-      // 2. get redirected to IdentityServer login page
-      // 3. login on that page
-      // 4. get redirected to the custom protocol
-      //    (bpmn-studio://signin-oidc#<<token_data_goes_here>>)
-      // 5. electron main process navigates the browser window from Identity
-      //    Server login page to Aurelia application
-      // 6. electron main process sends the extracted token data from the signin
-      //    response to the Aurelia application
-      // 7. oidc client fetches the data via push state
-      // 8. login state is propagated through application
-
-      // ----------------------------------------------------------------------
-
-      // The Logout
-
-      // 1. send http request to IdentityServer for logout
-      //    (/connect/endsession)
-      // 2. if success, open Identity Server success page as a separate window
-      // 3. if finish link in the new window is clicked, get redirected to
-      //    custom protocol (bpmn-studio://signout-oidc)
-      // 4. electron main process sends the signout to the Aurelia application
-      // 5. state is cleared and logout state is propagated through application
-
-      // ----------------------------------------------------------------------
-
-      if (url.startsWith('bpmn-studio://signin-oidc')) {
-
-        // If this is the signin response from the implicit OAuth flow,
-        // we need to navigate to the start page to activate the Aurelia
-        // application again. Due to the bug referenced above, the login page of
-        // the IdentityServer is opened in the same window, so that the Aurelia
-        // application closes down.
-
-        Main._window.loadURL(`file://${__dirname}/../index.html`);
-
-        Main._window.loadURL('/');
-
-        // Once the Aurelia application is ready to accept deep linking
-        // requests, we can send the url with the id_token and access_token
-        // contained in the query params of the url.
-        electron.ipcMain.once('deep-linking-ready', (event) => {
-          Main._window.webContents.send('deep-linking-request', url);
-        });
-      } else {
-
-        // Because the logout portion of the implicit workflow is handled
-        // manually, the Identity Server dialog can be opened in a separate
-        // window, so that the Aurelia application keeps running.
-        // Therefore we can directly send the url for the deep linking request.
-        Main._window.webContents.send('deep-linking-request', url);
-      }
-
-    });
-  }
+  initializeOidc();
 
   function initializeAutoUpdater() {
 
@@ -223,8 +147,42 @@ Main._initializeApplication = function () {
       });
     })
 
+  }
 
+  /**
+   * This initializes the oidc flow for electron.
+   * It mainly registers on the "oidc-login" event called by the authentication
+   * service and calls the "getTokenObject"-function on the service.
+   */
+  function initializeOidc() {
+    const windowParams = {
+      alwaysOnTop: true,
+      autoHideMenuBar: true,
+      webPreferences: {
+        nodeIntegration: true,
+        nodeIntegrationInWorker: true,
+      }
+    };
 
+    const electronOidcInstance = electronOidc(oidcConfig, windowParams);
+
+    ipcMain.on('oidc-login', (event, authorityUrl) => {
+      electronOidcInstance.getTokenObject(authorityUrl)
+        .then(token => {
+          event.sender.send('oidc-login-reply', token);
+        }, err => {
+          console.log('Error while getting token', err);
+        });
+    });
+
+    ipcMain.on('oidc-logout', (event, tokenObject, authorityUrl) => {
+      electronOidcInstance.logout(tokenObject, authorityUrl)
+        .then(logoutWasSuccessful => {
+          event.sender.send('oidc-logout-reply', logoutWasSuccessful);
+        }, err => {
+          console.log('Error while logging out', err);
+        });
+    })
   }
 
   function initializeFileOpenFeature() {

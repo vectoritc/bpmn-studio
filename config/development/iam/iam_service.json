@@ -1,6 +1,0 @@
-{
-  "systemUserId": "iam_system",
-  "claimPath": "http://localhost:5000/claims/ensure",
-  "cacheClaimResults": true,
-  "disableClaimChecks": true
-}
