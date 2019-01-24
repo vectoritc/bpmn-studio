@@ -31,9 +31,11 @@ export class Think {
                               : window.localStorage.getItem('InternalProcessEngineRoute');
 
     this.activeSolutionEntry = this._solutionService.getSolutionEntryForUri(solutionUri);
+
     const noActiveSolution: boolean = this.activeSolutionEntry === undefined;
     if (noActiveSolution) {
       this._notificationService.showNotification(NotificationType.INFO, 'Please open a solution first.');
+
       return false;
     }
 
