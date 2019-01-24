@@ -355,6 +355,16 @@
             "main": "socket.io"
           },
           {
+            "name": "node-uuid",
+            "path": "../node_modules/node-uuid/bin",
+            "main": "node-uuid"
+          },
+          {
+            "name": "@essential-projects/event_aggregator_contracts",
+            "path": "../node_modules/@essential-projects/event_aggregator_contracts/dist/commonjs",
+            "main": "index.js"
+          },
+          {
             "name": "dom-event-dispatch",
             "path": "../node_modules/dom-event-dispatch/dist",
             "main": "dom-event-dispatch"
