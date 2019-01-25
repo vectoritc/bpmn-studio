@@ -358,7 +358,7 @@ Die folgenden Skripte, werden in unserem Tooling verwendet:
 
 * `test-docker`
 
-   Startet die BPMN - Studio Webanwendung als Docker Container und führt
+   Startet die BPMN-Studio Webanwendung als Docker Container und führt
    die End-to-End Tests gegen der im Container laufenden Instanz der
    BPMN-Studio Webanwendung aus.
 
