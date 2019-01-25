@@ -29,7 +29,7 @@
     "electron-build-linux": "npm run build && build --publish never --linux",
     "electron-shipit": "npm run build && build --publish always",
     "jenkins-electron-install-app-deps": "electron-builder install-app-deps",
-    "jenkins-electron-rebuild-native": "electron-rebuild --force --which-module deasync",
+    "jenkins-electron-rebuild-native": "electron-rebuild --force",
     "jenkins-electron-build-windows": "build --publish never --windows",
     "jenkins-electron-build-macos": "build --publish never --macos",
     "jenkins-electron-build-linux": "build --publish never --linux",
