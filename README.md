@@ -301,6 +301,14 @@ Die folgenden Skripte, werden in unserem Tooling verwendet:
 
    Baut das Aurelia Bundle.
 
+* `reinstall`
+
+  Entfernt die aktuell installierten Abhängigkeiten und installiert diese neu.
+
+* `reset`
+
+  Entfernt alle aktuell installierten Abhängigkeiten
+
 * `start`
 
    Startet die BPMN-Studio Webanwendung
@@ -334,6 +342,25 @@ Die folgenden Skripte, werden in unserem Tooling verwendet:
 * `electron-build-windows`
 
    Baut die Electron-Anwendung für Windows.
+
+* `electron-rebuild`
+
+   Baut alle nativen Abhängigkeiten.
+
+* `test-init`
+
+   Startet die installierte ProcessEngine und den Webdriver, welcher für
+   die End-to-End Tests benötigt wird.
+
+* `test`
+
+   Führt die End-to-End tests für das BPMN - Studio FrontEnd aus.
+
+* `test-docker`
+
+   Startet die BPMN - Studio Webanwendung als Docker Container und führt
+   die End-to-End Tests gegen der im Container laufenden Instanz der
+   BPMN-Studio Webanwendung aus.
 
 ## Was muss ich sonst noch wissen?
 
