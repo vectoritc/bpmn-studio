@@ -337,7 +337,7 @@ Die folgenden Skripte, werden in unserem Tooling verwendet:
 
 ## Was muss ich sonst noch wissen?
 
-Die Konfiguration liegt unter `aurelia_project/environments/dev|stage|prod.ts`.
+Die Konfiguration liegt unter `aurelia_project/environments/dev.ts`.
 
 # Wen kann ich auf das Projekt ansprechen?
 
