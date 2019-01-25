@@ -307,11 +307,11 @@ Die folgenden Skripte, werden in unserem Tooling verwendet:
 
 * `reset`
 
-  Entfernt alle aktuell installierten Abhängigkeiten
+  Entfernt alle aktuell installierten Abhängigkeiten.
 
 * `start`
 
-   Startet die BPMN-Studio Webanwendung
+   Startet die BPMN-Studio Webanwendung.
 
 * `start_dev`
 
@@ -354,7 +354,7 @@ Die folgenden Skripte, werden in unserem Tooling verwendet:
 
 * `test`
 
-   Führt die End-to-End tests für das BPMN - Studio FrontEnd aus.
+   Führt die End-to-End Tests für das BPMN-Studio Frontend aus.
 
 * `test-docker`
 
