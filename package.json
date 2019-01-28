@@ -95,7 +95,7 @@
     "@essential-projects/errors_ts": "1.4.2",
     "@essential-projects/http_contracts": "2.3.5",
     "@process-engine/consumer_api_contracts": "feature~add_get-process-model-by-instance-id",
-    "@process-engine/kpi_api_contracts": "1.2.0",
+    "@process-engine/kpi_api_contracts": "1.2.1",
     "@process-engine/management_api_client": "feature~add_get-process-model-by-instance-id",
     "@process-engine/management_api_contracts": "feature~add_get-process-model-by-instance-id",
     "@process-engine/process_engine_runtime": "feature~add_get-process-model-by-instance-id",
