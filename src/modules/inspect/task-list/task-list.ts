@@ -307,23 +307,18 @@ export class TaskList {
   }
 
   private async _getTasksForProcessInstanceId(processInstanceId: string): Promise<Array<IUserTaskWithProcessModel & IManualTaskWithProcessModel>> {
-    console.log(processInstanceId);
-    // const userTaskList: UserTaskList = await this._managementApiService
-    //                                               .getUserTasksForProcessInstance(this.activeSolutionEntry.identity, processInstanceId);
-    // const manualTaskList: ManualTaskList = await this._managementApiService
-    //                                               .getManualTasksForProcessInstance(this.activeSolutionEntry.identity, processInstanceId);
+    const userTaskList: DataModels.UserTasks.UserTaskList = await this._managementApiService
+                                                  .getUserTasksForProcessInstance(this.activeSolutionEntry.identity, processInstanceId);
+    const manualTaskList: DataModels.ManualTasks.ManualTaskList = await this._managementApiService
+                                                  .getManualTasksForProcessInstance(this.activeSolutionEntry.identity, processInstanceId);
 
     const processModel: DataModels.ProcessModels.ProcessModel = await
       this
       ._managementApiService
       .getProcessModelByProcessInstanceId(this.activeSolutionEntry.identity, processInstanceId);
 
-    console.log(processModel);
-    console.log('done');
-
-    const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = []; // this._addProcessModelToUserTasks(userTaskList, processModel);
-    const manualTasksAndProcessModels: Array<IManualTaskWithProcessModel> = []; // this._addProcessModelToManualTasks(
-                                                                            // manualTaskList, processModel);
+    const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = this._addProcessModelToUserTasks(userTaskList, processModel);
+    const manualTasksAndProcessModels: Array<IManualTaskWithProcessModel> = this._addProcessModelToManualTasks(manualTaskList, processModel);
 
     return [].concat(userTasksAndProcessModels, manualTasksAndProcessModels);
   }
