@@ -158,6 +158,28 @@ export class LiveExecutionTracker {
 
     this._viewerCanvas.zoom('fit-viewport');
 
+    this._diagramViewer.on('element.click', async(event: IEvent) => {
+      this.selectedFlowNode = event.element;
+    });
+
+    this.rightPanelResizeDiv.addEventListener('mousedown', (mouseDownEvent: Event) => {
+      const windowEvent: Event = mouseDownEvent || window.event;
+      windowEvent.cancelBubble = true;
+
+      const mousemoveFunction: IEventFunction = (mouseMoveEvent: MouseEvent): void => {
+        this._resizeTokenViewer(mouseMoveEvent);
+        document.getSelection().empty();
+      };
+
+      const mouseUpFunction: IEventFunction = (): void => {
+        document.removeEventListener('mousemove', mousemoveFunction);
+        document.removeEventListener('mouseup', mouseUpFunction);
+      };
+
+      document.addEventListener('mousemove', mousemoveFunction);
+      document.addEventListener('mouseup', mouseUpFunction);
+    });
+
     this._startPolling();
   }
 
@@ -968,5 +990,26 @@ export class LiveExecutionTracker {
       });
 
     return processModel;
+  }
+
+  private _resizeTokenViewer(mouseEvent: MouseEvent): void {
+    const mouseXPosition: number = mouseEvent.clientX;
+
+    const inspectCorrelation: HTMLElement = this.tokenViewer.parentElement;
+    const minSpaceForDiagramViewer: number = 300;
+
+    const windowWidth: number = window.innerWidth;
+    const rightToolbarWidth: number = 36;
+
+    const minTokenViewerWidth: number = 250;
+    const maxTokenViewerWidth: number = inspectCorrelation.clientWidth - minSpaceForDiagramViewer;
+
+    const newTokenViewerWidth: number = windowWidth - mouseXPosition - rightToolbarWidth;
+
+    /*
+     * This sets the new width of the token viewer to the minimum or maximum width,
+     * if the new width is smaller than the minimum or bigger than the maximum width.
+     */
+    this.tokenViewerWidth = Math.min(maxTokenViewerWidth, Math.max(newTokenViewerWidth, minTokenViewerWidth));
   }
 }
