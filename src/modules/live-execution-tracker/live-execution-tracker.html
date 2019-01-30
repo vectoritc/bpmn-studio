@@ -10,7 +10,7 @@
         <button class="btn btn-default let__back-button" click.delegate="navigateBack()">Back</button>
     </div>
     <div class="let__right-resize-div" ref="rightPanelResizeDiv"></div>
-    <token-viewer ref="tokenViewer" class="let__token-viewer" css="width: ${tokenViewerWidth}px;" correlation.bind="selectedCorrelation" active-diagram.bind="activeDiagram" flow-node.bind="selectedFlowNode"></token-viewer>
+    <token-viewer ref="tokenViewer" class="let__token-viewer" css="width: ${tokenViewerWidth}px;" correlation.bind="correlation" active-diagram.bind="activeDiagram" flow-node.bind="selectedFlowNode"></token-viewer>
   </div>
 
   <!-- Task-Dynamic-UI Modal -->

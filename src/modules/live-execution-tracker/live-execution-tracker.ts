@@ -53,6 +53,7 @@ export class LiveExecutionTracker {
 
   public activeDiagram: IDiagram;
   public selectedFlowNode: IShape;
+  public correlation: DataModels.Correlations.Correlation;
 
   public correlationId: string;
   public processModelId: string;
@@ -105,6 +106,7 @@ export class LiveExecutionTracker {
 
     this._parentProcessModelId = await this._getParentProcessModelId();
 
+    this.correlation = await this._managementApiClient.getCorrelationById(this.activeSolutionEntry.identity, this.correlationId);
     this.activeDiagram = await this.activeSolutionEntry.service.loadDiagram(this.processModelId);
   }
 
@@ -157,10 +159,6 @@ export class LiveExecutionTracker {
     this._diagramViewer.on('element.click', this._elementClickHandler);
 
     this._viewerCanvas.zoom('fit-viewport');
-
-    this._diagramViewer.on('element.click', async(event: IEvent) => {
-      this.selectedFlowNode = event.element;
-    });
 
     this.rightPanelResizeDiv.addEventListener('mousedown', (mouseDownEvent: Event) => {
       const windowEvent: Event = mouseDownEvent || window.event;
@@ -480,8 +478,12 @@ export class LiveExecutionTracker {
 
   private _elementClickHandler: (event: IEvent) => Promise<void> = async(event: IEvent) => {
     const clickedElement: IShape = event.element;
+
+    this.selectedFlowNode = event.element;
+
     const clickedElementIsNotAUserOrManualTask: boolean = clickedElement.type !== 'bpmn:UserTask'
                                                        && clickedElement.type !== 'bpmn:ManualTask';
+
     if (clickedElementIsNotAUserOrManualTask) {
       return;
     }
