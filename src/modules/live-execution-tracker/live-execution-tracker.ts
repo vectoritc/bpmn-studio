@@ -50,6 +50,7 @@ export class LiveExecutionTracker {
   @observable public tokenViewerWidth: number = 250;
   public tokenViewer: HTMLElement;
   public rightPanelResizeDiv: HTMLElement;
+  public showTokenViewer: boolean = false;
 
   public activeDiagram: IDiagram;
   public selectedFlowNode: IShape;
@@ -242,6 +243,10 @@ export class LiveExecutionTracker {
     this.showDynamicUiModal = false;
 
     this.dynamicUi.clearTasks();
+  }
+
+  public toggleShowTokenViewer(): void {
+    this.showTokenViewer = !this.showTokenViewer;
   }
 
   private async _getParentProcessModelId(): Promise<string> {

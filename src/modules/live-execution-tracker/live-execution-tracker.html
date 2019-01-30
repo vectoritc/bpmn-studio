@@ -9,9 +9,27 @@
         <button if.bind="hasPreviousProcess" class="btn btn-default let__parent-process-button" click.delegate="navigateBackToPreviousProcess()">Back to previous process</button>
         <button class="btn btn-default let__back-button" click.delegate="navigateBack()">Back</button>
     </div>
-    <div class="let__right-resize-div" ref="rightPanelResizeDiv"></div>
-    <token-viewer ref="tokenViewer" class="let__token-viewer" css="width: ${tokenViewerWidth}px;" correlation.bind="correlation" active-diagram.bind="activeDiagram" flow-node.bind="selectedFlowNode"></token-viewer>
+    <template if.bind="showTokenViewer">
+      <div class="let__token-viewer-resize-div" ref="rightPanelResizeDiv"></div>
+      <token-viewer ref="tokenViewer"
+                    if.bind="showTokenViewer"
+                    class="let__token-viewer"
+                    css="width: ${tokenViewerWidth}px;"
+                    correlation.bind="correlation"
+                    active-diagram.bind="activeDiagram"
+                    flow-node.bind="selectedFlowNode">
+      </token-viewer>
+    </template>
   </div>
+  <div class="let__right-toolbar">
+    <div class="tool-list tool-list--vertical">
+      <div class="let__tool"
+           class.bind="showTokenViewer ? 'let__tool--active' : ''"
+           title.bind="showTokenViewer ? 'Hide token viewer' : 'Show token viewer'"
+           click.delegate="toggleShowTokenViewer()">
+        <i class="fas fa-book"></i>
+      </div>
+    </div>
 
   <!-- Task-Dynamic-UI Modal -->
   <div if.bind="showDynamicUiModal">
