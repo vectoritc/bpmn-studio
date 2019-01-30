@@ -1,4 +1,4 @@
-import {computedFrom, inject} from 'aurelia-framework';
+import {computedFrom, inject, observable} from 'aurelia-framework';
 import {NavigationInstruction, Router} from 'aurelia-router';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
@@ -6,7 +6,8 @@ import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {DataModels, IManagementApi} from '@process-engine/management_api_contracts';
 
 import {ActiveToken} from '@process-engine/kpi_api_contracts';
-import {CorrelationProcessModel, CorrelationState} from '@process-engine/management_api_contracts/dist/data_models/correlation';
+import {CorrelationProcessModel} from '@process-engine/management_api_contracts/dist/data_models/correlation';
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {
   defaultBpmnColors,
   IBpmnModeler,
@@ -15,6 +16,7 @@ import {
   IColorPickerColor,
   IElementRegistry,
   IEvent,
+  IEventFunction,
   IModdleElement,
   IModeling,
   IOverlayManager,
@@ -44,6 +46,13 @@ export class LiveExecutionTracker {
   public canvasModel: HTMLElement;
   public showDynamicUiModal: boolean = false;
   public dynamicUi: TaskDynamicUi;
+
+  @observable public tokenViewerWidth: number = 250;
+  public tokenViewer: HTMLElement;
+  public rightPanelResizeDiv: HTMLElement;
+
+  public activeDiagram: IDiagram;
+  public selectedFlowNode: IShape;
 
   public correlationId: string;
   public processModelId: string;
@@ -95,6 +104,8 @@ export class LiveExecutionTracker {
     this.processInstanceId = routeParameters.processInstanceId;
 
     this._parentProcessModelId = await this._getParentProcessModelId();
+
+    this.activeDiagram = await this.activeSolutionEntry.service.loadDiagram(this.processModelId);
   }
 
   public async attached(): Promise<void> {
@@ -152,6 +163,9 @@ export class LiveExecutionTracker {
 
   public detached(): void {
     this._attached = false;
+
+    this._diagramViewer.detach();
+    this._diagramViewer.destroy();
 
     this._stopPolling();
   }

@@ -1,11 +1,16 @@
 .live-execution-tracker {
   position: relative;
+  display: flex;
   height: 100%;
 }
 
 .let__body {
   position: relative;
   height: calc(100% - 20px);
+}
+
+.let__diagram-viewer {
+  flex-basis: 100%;
 }
 
 .play-task-button-container {
@@ -63,4 +68,17 @@
   top: 20px;
   right: 20px;
   cursor: pointer;
+}
+
+.let__token-viewer {
+  max-width: calc(100% - 300px);
+  flex-shrink: 0;
+}
+
+.let__right-resize-div {
+  z-index: 1;
+  width: 6px;
+  margin-right: -4px;
+  cursor: col-resize;
+  flex-shrink: 0;
 }
