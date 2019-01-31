@@ -307,10 +307,10 @@ export class TaskList {
   }
 
   private async _getTasksForProcessInstanceId(processInstanceId: string): Promise<Array<IUserTaskWithProcessModel & IManualTaskWithProcessModel>> {
-    const userTaskList: DataModels.UserTasks.UserTaskList = await this._managementApiService
-                                                  .getUserTasksForProcessInstance(this.activeSolutionEntry.identity, processInstanceId);
-    const manualTaskList: DataModels.ManualTasks.ManualTaskList = await this._managementApiService
-                                                  .getManualTasksForProcessInstance(this.activeSolutionEntry.identity, processInstanceId);
+    const userTaskList: DataModels.UserTasks.UserTaskList =
+      await this._managementApiService.getUserTasksForProcessInstance(this.activeSolutionEntry.identity, processInstanceId);
+    const manualTaskList: DataModels.ManualTasks.ManualTaskList =
+      await this._managementApiService.getManualTasksForProcessInstance(this.activeSolutionEntry.identity, processInstanceId);
 
     const processModel: DataModels.ProcessModels.ProcessModel = await
       this
