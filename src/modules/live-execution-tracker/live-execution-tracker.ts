@@ -6,7 +6,7 @@ import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {DataModels, IManagementApi} from '@process-engine/management_api_contracts';
 
 import {ActiveToken} from '@process-engine/kpi_api_contracts';
-import { CorrelationProcessModel, CorrelationState } from '@process-engine/management_api_contracts/dist/data_models/correlation';
+import {CorrelationProcessModel, CorrelationState} from '@process-engine/management_api_contracts/dist/data_models/correlation';
 import {
   defaultBpmnColors,
   IBpmnModeler,
