@@ -434,7 +434,7 @@ export class LiveExecutionTracker {
     const callActivityTarget: CorrelationProcessModel = correlation.processModels
       .find((correlationProcessModel: CorrelationProcessModel): boolean => {
         const targetProcessModelFound: boolean = correlationProcessModel.parentProcessInstanceId === this.processInstanceId
-                                        && correlationProcessModel.processModelId === callActivityTargetId;
+                                              && correlationProcessModel.processModelId === callActivityTargetId;
 
         return targetProcessModelFound;
       });
