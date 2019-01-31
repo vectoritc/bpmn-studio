@@ -27,6 +27,10 @@ export class ProcessModel {
     return '/correlation/' + correlationId + '/task';
   }
 
+  public static userTasksUrlWithProcessInstance(processInstanceId: string): string {
+    return '/instance/' + processInstanceId + '/task';
+  }
+
   public static userTasksInputUrl(correlationId: string, processModel: string, processInstance: string): string {
     return '/correlation/' + correlationId + '/diagram/' + processModel + '/instance/' + processInstance + '/task/Task_0k8m2if/dynamic-ui';
   }

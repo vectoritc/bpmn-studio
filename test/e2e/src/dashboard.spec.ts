@@ -146,6 +146,7 @@ describe('Dashboard view', () => {
 
   it('should be possible to open user tasks by clicking on the hyperlink in the table.', async() => {
     const correlationId: string = processModel.getCorrelationId();
+    const processInstanceId: string = processModel.getProcessInstanceId();
     const hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId: ElementFinder =
       dashboard.hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId(correlationId);
     const visibilityOfHyperlinkOfUserTasksInProcessRunningListItemByCorrelationId: Function =
@@ -160,7 +161,7 @@ describe('Dashboard view', () => {
 
     await dashboard.openUserTasksByClickOnModelIdInProcessRunningList(correlationId);
 
-    const userTasksUrl: string = ProcessModel.userTasksUrl(correlationId);
+    const userTasksUrl: string = ProcessModel.userTasksUrlWithProcessInstance(processInstanceId);
     const currentBrowserUrl: string = await browser.getCurrentUrl();
 
     expect(currentBrowserUrl).toContain(userTasksUrl);
