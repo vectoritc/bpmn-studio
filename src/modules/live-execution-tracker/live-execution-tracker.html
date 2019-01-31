@@ -4,23 +4,23 @@
   <require from="../inspect/token-viewer/token-viewer"></require>
 
   <div class="live-execution-tracker">
-    <div class="let__diagram-viewer">
-        <div ref="canvasModel" class="let__body"></div>
-        <button if.bind="hasPreviousProcess" class="btn btn-default let__parent-process-button" click.delegate="navigateBackToPreviousProcess()">Back to previous process</button>
-        <button class="btn btn-default let__back-button" click.delegate="navigateBack()">Back</button>
+    <div class="let__main-view">
+        <div class="let__diagram-viewer">
+            <div ref="canvasModel" class="let__diagram-viewer-canvas"></div>
+            <button if.bind="hasPreviousProcess" class="btn btn-default let__parent-process-button" click.delegate="navigateBackToPreviousProcess()">Back to previous process</button>
+            <button class="btn btn-default let__back-button" click.delegate="navigateBack()">Back</button>
+        </div>
+        <div show.bind="showTokenViewer" class="let__token-viewer-resize-div" ref="tokenViewerResizeDiv"></div>
+        <token-viewer show.bind="showTokenViewer"
+                      ref="tokenViewer"
+                      class="let__token-viewer"
+                      css="width: ${tokenViewerWidth}px;"
+                      correlation.bind="correlation"
+                      active-diagram.bind="activeDiagram"
+                      flow-node.bind="selectedFlowNode">
+        </token-viewer>
+      </div>
     </div>
-    <template if.bind="showTokenViewer">
-      <div class="let__token-viewer-resize-div" ref="rightPanelResizeDiv"></div>
-      <token-viewer ref="tokenViewer"
-                    if.bind="showTokenViewer"
-                    class="let__token-viewer"
-                    css="width: ${tokenViewerWidth}px;"
-                    correlation.bind="correlation"
-                    active-diagram.bind="activeDiagram"
-                    flow-node.bind="selectedFlowNode">
-      </token-viewer>
-    </template>
-  </div>
   <div class="let__right-toolbar">
     <div class="tool-list tool-list--vertical">
       <div class="let__tool"

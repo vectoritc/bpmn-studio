@@ -49,7 +49,7 @@ export class LiveExecutionTracker {
 
   @observable public tokenViewerWidth: number = 250;
   public tokenViewer: HTMLElement;
-  public rightPanelResizeDiv: HTMLElement;
+  public tokenViewerResizeDiv: HTMLElement;
   public showTokenViewer: boolean = false;
 
   public activeDiagram: IDiagram;
@@ -161,7 +161,7 @@ export class LiveExecutionTracker {
 
     this._viewerCanvas.zoom('fit-viewport');
 
-    this.rightPanelResizeDiv.addEventListener('mousedown', (mouseDownEvent: Event) => {
+    this.tokenViewerResizeDiv.addEventListener('mousedown', (mouseDownEvent: Event) => {
       const windowEvent: Event = mouseDownEvent || window.event;
       windowEvent.cancelBubble = true;
 
