@@ -1003,7 +1003,7 @@ export class LiveExecutionTracker {
     const mouseXPosition: number = mouseEvent.clientX;
 
     const inspectCorrelation: HTMLElement = this.tokenViewer.parentElement;
-    const minSpaceForDiagramViewer: number = 300;
+    const minSpaceForDiagramViewer: number = 320;
 
     const windowWidth: number = window.innerWidth;
     const rightToolbarWidth: number = 36;
