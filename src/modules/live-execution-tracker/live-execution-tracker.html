@@ -16,6 +16,7 @@
             <btn class="button close-dynamic-ui-button"><i class="fas fa-times" click.delegate="closeDynamicUiModal()"></i></btn>
             <task-dynamic-ui correlation-id.bind="correlationId" 
                              view-model.ref="dynamicUi" 
+                             process-instance-id="processInstanceId"
                              process-model-id.bind="processModelId" 
                              task-id.bind="taskId" 
                              is-modal="true" 

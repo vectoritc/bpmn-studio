@@ -1,11 +1,12 @@
 import {computedFrom, inject} from 'aurelia-framework';
-import {Router} from 'aurelia-router';
+import {NavigationInstruction, Router} from 'aurelia-router';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 
 import {DataModels, IManagementApi} from '@process-engine/management_api_contracts';
 
 import {ActiveToken} from '@process-engine/kpi_api_contracts';
+import {CorrelationProcessModel, CorrelationState} from '@process-engine/management_api_contracts/dist/data_models/correlation';
 import {
   defaultBpmnColors,
   IBpmnModeler,
@@ -30,6 +31,7 @@ type RouteParameters = {
   diagramName: string,
   solutionUri: string,
   correlationId: string,
+  processInstanceId: string;
 };
 
 enum RequestError {
@@ -45,6 +47,7 @@ export class LiveExecutionTracker {
 
   public correlationId: string;
   public processModelId: string;
+  public processInstanceId: string;
   public taskId: string;
 
   private _diagramModeler: IBpmnModeler;
@@ -60,11 +63,13 @@ export class LiveExecutionTracker {
   private _solutionService: ISolutionService;
 
   private activeSolutionEntry: ISolutionEntry;
+  private _isNavigatingBack: boolean = false;
 
   private _pollingTimer: NodeJS.Timer;
   private _attached: boolean;
   private _previousElementIdsWithActiveToken: Array<string> = [];
   private _activeTokens: Array<ActiveToken>;
+  private _parentProcessInstanceId: string;
   private _parentProcessModelId: string;
   private _maxRetries: number = 5;
   private _activeCallActivities: Array<IShape> = [];
@@ -86,6 +91,8 @@ export class LiveExecutionTracker {
     this.correlationId = routeParameters.correlationId;
     this.processModelId = routeParameters.diagramName;
     this.activeSolutionEntry = await this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
+
+    this.processInstanceId = routeParameters.processInstanceId;
 
     this._parentProcessModelId = await this._getParentProcessModelId();
   }
@@ -163,11 +170,38 @@ export class LiveExecutionTracker {
       correlationId: this.correlationId,
       diagramName: this._parentProcessModelId,
       solutionUri: this.activeSolutionEntry.uri,
+      processInstanceId: this._parentProcessInstanceId,
     });
   }
 
   public navigateBack(): void {
+    this._isNavigatingBack = true;
     this._router.navigateBack();
+  }
+
+  /*
+  * To avoid navigating back to the dynamic UI, we need to navigate further back.
+  *
+  * This is necessary because the dynamic ui would try to display an already completed UserTask/ManualTask.
+  */
+  public canDeactivate(destinationInstruction: NavigationInstruction): boolean {
+    const isNotNavigatingBack: boolean = !this._isNavigatingBack;
+    if (isNotNavigatingBack) {
+      return true;
+    }
+
+    const previousRoute: string = destinationInstruction.config.name;
+    const previousRouteIsDynamicUi: boolean = previousRoute === 'task-dynamic-ui';
+
+    if (previousRouteIsDynamicUi) {
+      this._router.navigateBack();
+
+      return false;
+    }
+
+    this._isNavigatingBack = false;
+
+    return true;
   }
 
   public closeDynamicUiModal(): void {
@@ -344,8 +378,8 @@ export class LiveExecutionTracker {
       this.showDynamicUiModal = true;
     }
 
-  private _handleCallActivityClick: (event: MouseEvent) => void =
-    (event: MouseEvent): void => {
+  private _handleCallActivityClick: (event: MouseEvent) => Promise<void> =
+    async(event: MouseEvent): Promise<void> => {
       const elementId: string = (event.target as HTMLDivElement).id;
       const element: IShape = this._elementRegistry.get(elementId);
       const callActivityTargetProcess: string = element.businessObject.calledElement;
@@ -357,12 +391,56 @@ export class LiveExecutionTracker {
         this._notificationService.showNotification(NotificationType.INFO, notificationMessage);
       }
 
+      const targetProcessInstanceId: string = await this._getProcessInstanceIdOfCallActivityTarget(callActivityTargetProcess);
+
+      const errorGettingTargetProcessInstanceId: boolean = targetProcessInstanceId === undefined;
+      if (errorGettingTargetProcessInstanceId) {
+        return;
+      }
+
       this._router.navigateToRoute('live-execution-tracker', {
         diagramName: callActivityTargetProcess,
         solutionUri: this.activeSolutionEntry.uri,
         correlationId: this.correlationId,
+        processInstanceId: targetProcessInstanceId,
       });
     }
+
+  private async _getProcessInstanceIdOfCallActivityTarget(callActivityTargetId: string): Promise<string> {
+    // This is necessary because the managementApi sometimes throws an error when the correlation is not yet existing.
+    const getCorrelation: () => Promise<DataModels.Correlations.Correlation> = async(): Promise<DataModels.Correlations.Correlation> => {
+      for (let retries: number = 0; retries < this._maxRetries; retries++) {
+        try {
+          return await this._managementApiClient.getCorrelationById(this.activeSolutionEntry.identity, this.correlationId);
+        } catch {
+          continue;
+        }
+      }
+
+      const notificationMessage: string = 'Could not get correlation. Please try to click on the call activity again.';
+
+      this._notificationService.showNotification(NotificationType.ERROR, notificationMessage);
+
+      return undefined;
+    };
+
+    const correlation: DataModels.Correlations.Correlation = await getCorrelation();
+
+    const errorGettingCorrelation: boolean = correlation === undefined;
+    if (errorGettingCorrelation) {
+      return undefined;
+    }
+
+    const callActivityTarget: CorrelationProcessModel = correlation.processModels
+      .find((correlationProcessModel: CorrelationProcessModel): boolean => {
+        const targetProcessModelFound: boolean = correlationProcessModel.parentProcessInstanceId === this.processInstanceId
+                                              && correlationProcessModel.processModelId === callActivityTargetId;
+
+        return targetProcessModelFound;
+      });
+
+    return callActivityTarget.processInstanceId;
+  }
 
   private _elementClickHandler: (event: IEvent) => Promise<void> = async(event: IEvent) => {
     const clickedElement: IShape = event.element;
@@ -386,9 +464,7 @@ export class LiveExecutionTracker {
     const getActiveTokens: Function = async(): Promise<Array<ActiveToken> | null> => {
       for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
-          return await this._managementApiClient.getActiveTokensForCorrelationAndProcessModel(this.activeSolutionEntry.identity,
-                                                                                              this.correlationId,
-                                                                                              this.processModelId);
+          return await this._managementApiClient.getActiveTokensForProcessInstance(this.activeSolutionEntry.identity, this.processInstanceId);
         } catch {
           continue;
         }
@@ -421,9 +497,7 @@ export class LiveExecutionTracker {
     const getTokenHistoryGroup: Function = async(): Promise<DataModels.TokenHistory.TokenHistoryGroup | null> => {
       for (let retries: number = 0; retries < this._maxRetries; retries++) {
         try {
-          return await this._managementApiClient.getTokensForCorrelationAndProcessModel(this.activeSolutionEntry.identity,
-                                                                                        this.correlationId,
-                                                                                        this.processModelId);
+          return await this._managementApiClient.getTokensForProcessInstance(this.activeSolutionEntry.identity, this.processInstanceId);
         } catch {
           continue;
         }
@@ -837,7 +911,7 @@ export class LiveExecutionTracker {
 
     const processModelFromCorrelation: DataModels.Correlations.CorrelationProcessModel = correlation.processModels
       .find((correlationProcessModel: DataModels.Correlations.CorrelationProcessModel): boolean => {
-        const processModelFound: boolean = correlationProcessModel.processModelId === this.processModelId;
+        const processModelFound: boolean = correlationProcessModel.processInstanceId === this.processInstanceId;
 
         return processModelFound;
       });
