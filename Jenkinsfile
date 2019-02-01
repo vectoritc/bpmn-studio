@@ -78,12 +78,10 @@ pipeline {
           unstash('post_build')
           unstash('post_build_node_modules')
 
-          def docker_e2e_image_name = "bpmn-studio_end-to-end"
-          def docker_e2e_container_name = "${docker_e2e_image_name}_container-b${env.BUILD_NUMBER}-${env.GIT_COMMIT}"
+          def docker_e2e_image_name = "5minds/selenium_dockerized:latest"
+          def docker_e2e_container_name = "bpmn-studio_e2e_test_container-b${env.BUILD_NUMBER}-${env.GIT_COMMIT}"
 
           try {
-            sh("docker build --no-cache --file test/Dockerfile --tag ${docker_e2e_image_name} .")
-
             def docker_run_cmd = 'docker run'
             docker_run_cmd += ' --user 112:116' // Use the jenkins system user.
             docker_run_cmd += " --env HOME=${env.WORKSPACE}" // Override home folder.
@@ -92,6 +90,7 @@ pipeline {
             docker_run_cmd += ' --rm' // Delete container after run.
             docker_run_cmd += " --name ${docker_e2e_container_name}" // Set the container name.
             docker_run_cmd += " ${docker_e2e_image_name}" // The image to run.
+            docker_run_cmd += ' test/jenkins_e2e.sh' // The command to run.
 
             sh("${docker_run_cmd} | tee e2e_test_results.txt")
 
