@@ -185,8 +185,8 @@
             ]
           },
           {
-            "name": "@fortawesome/fontawesome-pro",
-            "path": "../node_modules/@fortawesome/fontawesome-pro",
+            "name": "@fortawesome/fontawesome-free",
+            "path": "../node_modules/@fortawesome/fontawesome-free",
             "main": "css/all.css",
             "resources": [
               "css/all.css"
@@ -376,12 +376,12 @@
       "node_modules/bootstrap/dist/css/bootstrap.css": "bootstrap/css",
       "src/resources/images/default-avatar.png": "src/resources/images",
       "node_modules/@process-engine/process_engine_runtime/config/sqlite/**/*": "config/sqlite",
-      "node_modules/@fortawesome/fontawesome-pro/webfonts/fa-solid-900.ttf": "@fortawesome/fontawesome-pro/webfonts",
-      "node_modules/@fortawesome/fontawesome-pro/webfonts/fa-solid-900.woff": "@fortawesome/fontawesome-pro/webfonts",
-      "node_modules/@fortawesome/fontawesome-pro/webfonts/fa-solid-900.woff2": "@fortawesome/fontawesome-pro/webfonts",
-      "node_modules/@fortawesome/fontawesome-pro/webfonts/fa-regular-400.ttf": "@fortawesome/fontawesome-pro/webfonts",
-      "node_modules/@fortawesome/fontawesome-pro/webfonts/fa-regular-400.woff": "@fortawesome/fontawesome-pro/webfonts",
-      "node_modules/@fortawesome/fontawesome-pro/webfonts/fa-regular-400.woff2": "@fortawesome/fontawesome-pro/webfonts"
+      "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.ttf": "@fortawesome/fontawesome-free/webfonts",
+      "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff": "@fortawesome/fontawesome-free/webfonts",
+      "node_modules/@fortawesome/fontawesome-free/webfonts/fa-solid-900.woff2": "@fortawesome/fontawesome-free/webfonts",
+      "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.ttf": "@fortawesome/fontawesome-free/webfonts",
+      "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff": "@fortawesome/fontawesome-free/webfonts",
+      "node_modules/@fortawesome/fontawesome-free/webfonts/fa-regular-400.woff2": "@fortawesome/fontawesome-free/webfonts"
     }
   }
 }
