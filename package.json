@@ -94,6 +94,7 @@
   "dependencies": {
     "@essential-projects/errors_ts": "1.4.2",
     "@essential-projects/http_contracts": "2.3.5",
+    "@fortawesome/fontawesome-pro": "^5.6.3",
     "@process-engine/consumer_api_contracts": "4.1.0",
     "@process-engine/kpi_api_contracts": "1.2.1",
     "@process-engine/management_api_client": "3.1.0",
@@ -130,7 +131,6 @@
   "peerDependencies": {},
   "devDependencies": {
     "@essential-projects/iam_contracts": "~3.4.0",
-    "@fortawesome/fontawesome-free": "^5.1.0",
     "@process-engine/bpmn-js-custom-bundle": "2.3.0",
     "@process-engine/process_engine_contracts": "36.5.1",
     "@types/jasmine": "^2.2.0",

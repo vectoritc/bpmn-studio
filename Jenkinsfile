@@ -139,7 +139,9 @@ pipeline {
             // prepare and install steps. That slave may run another OS
             // than linux. Some dependencies may not be installed if
             // they have an os restriction in their package.json.
-            sh('npm install')
+            nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
+              sh('npm install')
+            }
 
             sh('npm run jenkins-electron-install-app-deps')
             sh('npm run jenkins-electron-rebuild-native')
@@ -166,7 +168,9 @@ pipeline {
             // prepare and install steps. That slave may run another OS
             // than macos. Some dependencies may not be installed if
             // they have an os restriction in their package.json.
-            sh('npm install')
+            nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
+              sh('npm install')
+            }
 
             sh('npm run jenkins-electron-install-app-deps')
             sh('npm run jenkins-electron-rebuild-native')
@@ -196,7 +200,9 @@ pipeline {
             bat('node --version')
 
             // On windows a complete reinstall is required.
-            bat('npm install')
+            nodejs(configId: env.NPM_RC_FILE, nodeJSInstallationName: env.NODE_JS_VERSION) {
+              bat('npm install')
+            }
 
             bat('npm run jenkins-electron-rebuild-native')
             bat('npm run jenkins-electron-build-windows')
