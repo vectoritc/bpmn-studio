@@ -4,7 +4,14 @@ import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {FlowNodeRuntimeInformation} from '@process-engine/kpi_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {IBpmnModeler, IElementRegistry, IOverlayManager, ISolutionEntry} from '../../../contracts/index';
+import {
+  IBpmnModeler,
+  ICanvas,
+  IElementRegistry,
+  IOverlayManager,
+  ISolutionEntry,
+  IViewbox,
+} from '../../../contracts/index';
 
 import {IFlowNodeAssociation, IHeatmapService} from './contracts';
 
@@ -103,6 +110,8 @@ export class Heatmap {
     this._heatmapService.addOverlays(overlays, elementRegistry, this.activeDiagram.id);
 
     this._viewer.attachTo(this.viewerContainer);
+
+    this._fitDiagramToViewport();
   }
 
   private _pushXmlToBpmnModeler(xml: string, modeler: IBpmnModeler): Promise<void> {
@@ -115,6 +124,16 @@ export class Heatmap {
         resolve();
       });
     });
+  }
+
+  private _fitDiagramToViewport(): void {
+    const canvas: ICanvas = this._viewer.get('canvas');
+    const viewbox: IViewbox  = canvas.viewbox();
+    const diagramIsVisible: boolean = viewbox.height > 0 && viewbox.width > 0;
+
+    if (diagramIsVisible) {
+      canvas.zoom('fit-viewport');
+    }
   }
 
 }
