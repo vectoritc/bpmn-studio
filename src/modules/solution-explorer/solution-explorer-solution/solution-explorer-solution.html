@@ -64,7 +64,7 @@
             <button
               class.bind="activeDiagramUri !== diagram.uri ? 'button' : 'button button--disabled'"
               if.bind="canDeleteDiagram()"
-              click.delegate="deleteDiagram(diagram, $event)"
+              click.delegate="showDeleteDiagramModal(diagram)"
               title.bind="activeDiagramUri !== diagram.uri ? 'Delete the diagram' : 'The diagram is currently open, it cant be deleted.'">
 
               <i class="fa fa-trash"></i>
@@ -77,8 +77,7 @@
   </div>
 
   <!--Delete Diagram Modal-->
-  <div show.bind="showDeleteDiagramModal">
-    <delete-diagram-modal></delete-diagram-modal>
-  </div>
+  <delete-diagram-modal view-model.ref="deleteDiagramModal"></delete-diagram-modal>
+
 
 </template>
