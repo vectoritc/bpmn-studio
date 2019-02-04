@@ -231,7 +231,8 @@ export class SolutionExplorerList {
         return -1;
       }
 
-      if (solutionA.uri === window.localStorage.getItem('InternalProcessEngineRoute')) {
+      const solutionAIsInternalProcessEngine: boolean = solutionA.uri === window.localStorage.getItem('InternalProcessEngineRoute');
+      if (solutionAIsInternalProcessEngine) {
         return -1;
       }
 
