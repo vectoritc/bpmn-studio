@@ -63,6 +63,7 @@ export class Dashboard {
                   .all(byId)
                   .count();
   }
+
   public firstProcessRunningListItemsById(correlationId: string): ElementFinder {
     const id: string = this._domProcessIdPrefix + correlationId;
     const byId: By = by.id(id);
@@ -92,6 +93,7 @@ export class Dashboard {
     return firstProcessRunningListItemsById
             .element(byClassName);
   }
+
   public openUserTasksByClickOnModelIdInProcessRunningList(correlationId: string): promise.Promise<void> {
     const hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId: ElementFinder
           = this.hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId(correlationId);

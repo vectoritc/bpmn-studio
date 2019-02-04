@@ -142,6 +142,13 @@ export class App {
         nav: false,
       },
       {
+        route: ['instance/:processInstanceId/task'],
+        title: 'Task List',
+        name: 'task-list-processinstance',
+        moduleId: 'modules/task-list-container/task-list-container',
+        nav: false,
+      },
+      {
         route: ['process'],
         title: 'Process Instance List',
         name: 'process-list',
@@ -149,7 +156,7 @@ export class App {
         nav: false,
       },
       {
-        route: ['correlation/:correlationId/diagram/:diagramName/task/:taskId/dynamic-ui'],
+        route: ['correlation/:correlationId/diagram/:diagramName/instance/:processInstanceId/task/:taskId/dynamic-ui'],
         title: 'Task Dynamic UI',
         name: 'task-dynamic-ui',
         moduleId: 'modules/task-dynamic-ui/task-dynamic-ui',
@@ -167,7 +174,7 @@ export class App {
         moduleId: 'modules/config-panel/config-panel',
       },
       {
-        route: ['/correlation/:correlationId/diagram/:diagramName/live-execution-tracker'],
+        route: ['/correlation/:correlationId/diagram/:diagramName/instance/:processInstanceId/live-execution-tracker'],
         title: 'Live Execution Tracker',
         name: 'live-execution-tracker',
         moduleId: 'modules/live-execution-tracker/live-execution-tracker',

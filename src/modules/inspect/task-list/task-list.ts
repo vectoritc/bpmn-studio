@@ -15,6 +15,7 @@ import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 
 interface ITaskListRouteParameters {
+  processInstanceId?: string;
   diagramName?: string;
   correlationId?: string;
 }
@@ -65,14 +66,25 @@ export class TaskList {
   }
 
   public initializeTaskList(routeParameters: ITaskListRouteParameters): void {
+    const diagramName: string = routeParameters.diagramName;
+    const correlationId: string = routeParameters.correlationId;
+    const processInstanceId: string = routeParameters.processInstanceId;
 
-    if (routeParameters.diagramName) {
+    const hasDiagramName: boolean = diagramName !== undefined;
+    const hasCorrelationId: boolean = correlationId !== undefined;
+    const hasProcessInstanceId: boolean = processInstanceId !== undefined;
+
+    if (hasDiagramName) {
       this._getTasks = (): Promise<Array<IUserTaskWithProcessModel>> => {
-        return this._getTasksForProcessModel(routeParameters.diagramName);
+        return this._getTasksForProcessModel(diagramName);
       };
-    } else if (routeParameters.correlationId) {
+    } else if (hasCorrelationId) {
       this._getTasks = (): Promise<Array<IUserTaskWithProcessModel>> => {
-        return this._getTasksForCorrelation(routeParameters.correlationId);
+        return this._getTasksForCorrelation(correlationId);
+      };
+    } else if (hasProcessInstanceId) {
+      this._getTasks = (): Promise<Array<IUserTaskWithProcessModel>> => {
+        return this._getTasksForProcessInstanceId(processInstanceId);
       };
     } else {
       this._getTasks = this._getAllTasks;
@@ -126,28 +138,35 @@ export class TaskList {
   }
 
   public continueTask(taskWithProcessModel: IUserTaskWithProcessModel & IManualTaskWithProcessModel): void {
-    const correlationId: string = taskWithProcessModel.userTask
-      ? taskWithProcessModel.userTask.correlationId
-      : taskWithProcessModel.manualTask.correlationId;
+    const taskIsAnUserTask: boolean = taskWithProcessModel.userTask !== undefined;
 
-    const tasksProcessModelId: string = taskWithProcessModel.userTask
-      ? taskWithProcessModel.userTask.processModelId
-      : taskWithProcessModel.manualTask.processModelId;
+    const correlationId: string = taskIsAnUserTask
+                                ? taskWithProcessModel.userTask.correlationId
+                                : taskWithProcessModel.manualTask.correlationId;
+
+    const tasksProcessModelId: string = taskIsAnUserTask
+                                      ? taskWithProcessModel.userTask.processModelId
+                                      : taskWithProcessModel.manualTask.processModelId;
 
     const taskIsFromCallActivity: boolean = taskWithProcessModel.processModel.id !== tasksProcessModelId;
 
     const processModelId: string = taskIsFromCallActivity
-      ? tasksProcessModelId
-      : taskWithProcessModel.processModel.id;
+                                 ? tasksProcessModelId
+                                 : taskWithProcessModel.processModel.id;
 
-    const taskId: string = taskWithProcessModel.userTask
-      ? taskWithProcessModel.userTask.id
-      : taskWithProcessModel.manualTask.id;
+    const taskId: string = taskIsAnUserTask
+                         ? taskWithProcessModel.userTask.id
+                         : taskWithProcessModel.manualTask.id;
+
+    const processInstanceId: string = taskIsAnUserTask
+                                    ? taskWithProcessModel.userTask.processInstanceId
+                                    : taskWithProcessModel.manualTask.processInstanceId;
 
     this._router.navigateToRoute('task-dynamic-ui', {
       diagramName: processModelId,
       solutionUri: this.activeSolutionEntry.uri,
       correlationId: correlationId,
+      processInstanceId: processInstanceId,
       taskId: taskId,
     });
   }
@@ -283,6 +302,23 @@ export class TaskList {
     const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = this._addProcessModelToUserTasks(userTaskList, processModelOfCorrelation);
     const manualTasksAndProcessModels: Array<IManualTaskWithProcessModel> = this._addProcessModelToManualTasks(
                                                                             manualTaskList, processModelOfCorrelation);
+
+    return [].concat(userTasksAndProcessModels, manualTasksAndProcessModels);
+  }
+
+  private async _getTasksForProcessInstanceId(processInstanceId: string): Promise<Array<IUserTaskWithProcessModel & IManualTaskWithProcessModel>> {
+    const userTaskList: DataModels.UserTasks.UserTaskList =
+      await this._managementApiService.getUserTasksForProcessInstance(this.activeSolutionEntry.identity, processInstanceId);
+    const manualTaskList: DataModels.ManualTasks.ManualTaskList =
+      await this._managementApiService.getManualTasksForProcessInstance(this.activeSolutionEntry.identity, processInstanceId);
+
+    const processModel: DataModels.ProcessModels.ProcessModel = await
+      this
+      ._managementApiService
+      .getProcessModelByProcessInstanceId(this.activeSolutionEntry.identity, processInstanceId);
+
+    const userTasksAndProcessModels: Array<IUserTaskWithProcessModel> = this._addProcessModelToUserTasks(userTaskList, processModel);
+    const manualTasksAndProcessModels: Array<IManualTaskWithProcessModel> = this._addProcessModelToManualTasks(manualTaskList, processModel);
 
     return [].concat(userTasksAndProcessModels, manualTasksAndProcessModels);
   }

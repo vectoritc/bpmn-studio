@@ -10,6 +10,7 @@ export class ProcessModel {
   // tslint:disable-next-line:no-magic-numbers
   private _processModelId: string =  'TA_' + Math.floor(Math.random() * 1000000);
   private _correlationId: string;
+  private _processInstanceId: string;
 
   // Define Elements
 
@@ -26,12 +27,16 @@ export class ProcessModel {
     return '/correlation/' + correlationId + '/task';
   }
 
-  public static userTasksInputUrl(correlationId: string, processModel: string): string {
-    return '/correlation/' + correlationId + '/diagram/' + processModel + '/task/Task_0k8m2if/dynamic-ui';
+  public static userTasksUrlWithProcessInstance(processInstanceId: string): string {
+    return '/instance/' + processInstanceId + '/task';
   }
 
-  public static liveExecutionTrackerUrl(processModelId: string, correlationId: string): string {
-    return '/correlation/' + correlationId + '/diagram/' + processModelId + '/live-execution-tracker';
+  public static userTasksInputUrl(correlationId: string, processModel: string, processInstance: string): string {
+    return '/correlation/' + correlationId + '/diagram/' + processModel + '/instance/' + processInstance + '/task/Task_0k8m2if/dynamic-ui';
+  }
+
+  public static liveExecutionTrackerUrl(processModelId: string, correlationId: string, processInstanceId: string): string {
+    return `/correlation/${correlationId}/diagram/${processModelId}/instance/${processInstanceId}/live-execution-tracker`;
   }
 
   public getProcessModelId(): string {
@@ -40,6 +45,10 @@ export class ProcessModel {
 
   public getCorrelationId(): string {
     return this._correlationId;
+  }
+
+  public getProcessInstanceId(): string {
+    return this._processInstanceId;
   }
 
   public postProcessModel(processModel?: string): void {
@@ -128,6 +137,7 @@ export class ProcessModel {
 
     this._http.post(requestDestination, requestPayload, requestHeaders).jsonBody.then((jsonBody: JSON) => {
       this._correlationId = jsonBody['correlationId'];
+      this._processInstanceId = jsonBody['processInstanceId'];
     });
 
   }

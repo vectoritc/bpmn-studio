@@ -637,11 +637,11 @@ Main._startInternalProcessEngine = async function () {
       try {
 
         // Create path for sqlite database in BPMN-Studio context.
-        const userDataFolderPath = require('platform-folders').getConfigHome();
+        const userDataFolderPath = getUserConfigFolder();
         const sqlitePath = `${userDataFolderPath}/bpmn-studio/process_engine_databases`;
 
-        // Start the PE by just running the code of process_engine_runtime.
-        await require('@process-engine/process_engine_runtime')(sqlitePath);
+        const pe = require('@process-engine/process_engine_runtime');
+        pe.startRuntime(sqlitePath);
 
         console.log('Internal ProcessEngine started successfully.');
         internalProcessEngineStatus = 'success';
@@ -657,6 +657,18 @@ Main._startInternalProcessEngine = async function () {
 
     });
 
+}
+
+function getUserConfigFolder() {
+  const userHomeDir = require('os').homedir();
+  switch (process.platform) {
+    case 'darwin':
+      return path.join(userHomeDir, 'Library', 'Application Support');
+    case 'win32':
+      return path.join(userHomeDir, 'AppData', 'Roaming');
+    default:
+      return path.join(userHomeDir, '.config');
+  }
 }
 
 Main._bringExistingInstanceToForeground = function () {

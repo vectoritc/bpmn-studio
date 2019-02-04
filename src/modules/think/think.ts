@@ -1,4 +1,5 @@
 import {inject} from 'aurelia-framework';
+import {activationStrategy} from 'aurelia-router';
 
 import {ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
 import {NotificationService} from '../notification/notification.service';
@@ -46,5 +47,9 @@ export class Think {
 
   public activate(): void {
     this.showDiagramList = true;
+  }
+
+  public determineActivationStrategy(): string {
+     return activationStrategy.replace;
   }
 }
