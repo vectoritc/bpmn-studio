@@ -1,5 +1,6 @@
 <template>
   <require from="./solution-explorer-solution.css"></require>
+  <require from="./delete-diagram-modal/delete-diagram-modal"></require>
 
   <div class="solution-explorer-solution">
 
@@ -69,12 +70,15 @@
               <i class="fa fa-trash"></i>
             </button>
           </div>
-
         </template>
 
       </li>
-
     </ul>
+  </div>
+
+  <!--Delete Diagram Modal-->
+  <div show.bind="showDeleteDiagramModal">
+    <delete-diagram-modal></delete-diagram-modal>
   </div>
 
 </template>
