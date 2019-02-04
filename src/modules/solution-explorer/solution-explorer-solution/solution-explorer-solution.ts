@@ -23,6 +23,7 @@ import {NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 import {SingleDiagramsSolutionExplorerService} from '../../solution-explorer-services/SingleDiagramsSolutionExplorerService';
+import {DeleteDiagramModal} from './delete-diagram-modal/delete-diagram-modal';
 
 const ENTER_KEY: string = 'Enter';
 const ESCAPE_KEY: string = 'Escape';
@@ -133,6 +134,7 @@ export class SolutionExplorerSolution {
   @bindable public displayedSolutionEntry: ISolutionEntry;
   @bindable public fontAwesomeIconClass: string;
   public createNewDiagramInput: HTMLInputElement;
+  public deleteDiagramModal: DeleteDiagramModal;
 
   private _renameDiagramInput: HTMLInputElement;
   private _originalIconClass: string;
@@ -181,6 +183,10 @@ export class SolutionExplorerSolution {
     if (this._isCurrentlyRenamingDiagram) {
       this._resetDiagramRenaming();
     }
+  }
+
+  public showDeleteDiagramModal(diagram: IDiagram): void {
+    this.deleteDiagramModal.show(diagram, this.solutionService);
   }
 
   /**
