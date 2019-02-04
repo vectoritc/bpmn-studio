@@ -104,8 +104,15 @@ export class BasicsSection implements ISection {
     const propertyIsLast: boolean = this._propertiesElement.values.length === 1;
 
     if (propertyIsLast) {
-      this._businessObjInPanel
-        .extensionElements = undefined;
+
+      const indexOfCamundaProperties: number = this._businessObjInPanel
+        .extensionElements.values.findIndex((extensionElement: IPropertiesElement) => {
+          const elementIsCamundaPropertiesElement: boolean = extensionElement.$type === 'camunda:Properties';
+
+          return elementIsCamundaPropertiesElement;
+        });
+
+      this._businessObjInPanel.extensionElements.values.splice(indexOfCamundaProperties, 1);
     } else {
       this._propertiesElement
         .values
