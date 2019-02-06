@@ -51,12 +51,13 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
     this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
   }
 
-  public async logout(): Promise<void> {
+  public async logout(authority: string): Promise<void> {
 
     if (!this.isLoggedIn) {
       return;
     }
 
+    await this._setAuthority(authority);
     return await this._openIdConnect.logout();
   }
 
