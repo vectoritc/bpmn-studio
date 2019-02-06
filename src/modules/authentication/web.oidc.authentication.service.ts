@@ -27,11 +27,11 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
     this._openIdConnect = openIdConnect;
   }
 
+  public async isLoggedIn(authority: string): Promise<boolean> {
+    const identity: IIdentity = await this.getIdentity(authority);
 
-  public isLoggedIn(): boolean {
-    const userIsExisting: boolean = this._user !== undefined;
-
-    return userIsExisting;
+    // TODO: Get the userinfo from the authroity to determine if a user is logged in.
+    return false;
   }
 
   public async login(): Promise<void> {
