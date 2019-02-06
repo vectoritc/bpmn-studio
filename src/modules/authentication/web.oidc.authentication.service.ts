@@ -55,16 +55,6 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
     this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
   }
 
-  public finishLogout(): void {
-    // This will be called in the electron version where we perform the logout
-    // manually.
-    if (this._logoutWindow !== null) {
-      this._logoutWindow.close();
-      this._logoutWindow = null;
-    }
-    this._user = undefined;
-    this._eventAggregator.publish(AuthenticationStateEvent.LOGOUT);
-    this._router.navigate('/');
   }
 
   public async logout(): Promise<void> {
