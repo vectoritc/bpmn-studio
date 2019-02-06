@@ -34,20 +34,21 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
     return false;
   }
 
-  public async login(): Promise<void> {
+  public async login(authority: string): Promise<void> {
 
-    const isIdentityServerReachable: boolean = await this._isIdentityServerReachable();
+    const isAuthorityReachable: boolean = await this._isAuthorityReachable(authority);
 
-    if (!isIdentityServerReachable) {
-      this._notificationService.showNotification(NotificationType.ERROR, 'IdentityServer is offline');
+    if (!isAuthorityReachable) {
+      this._notificationService.showNotification(NotificationType.ERROR, 'Authority seems to be offline');
       return;
     }
 
+    await this._setAuthority(authority);
     await this._openIdConnect.login();
-    const identity: IIdentity = await this.getIdentity();
-    this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
-  }
+    window.localStorage.setItem('openIdRoute', authority);
 
+    const identity: IIdentity = await this.getIdentity(authority);
+    this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
   }
 
   public async logout(): Promise<void> {
