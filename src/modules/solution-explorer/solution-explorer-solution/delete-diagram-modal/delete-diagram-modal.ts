@@ -18,11 +18,27 @@ export class DeleteDiagramModal {
     this._notificationService = notificationService;
   }
 
-  public show(diagram: IDiagram, solutionService: ISolutionExplorerService): void {
+  public async show(diagram: IDiagram, solutionService: ISolutionExplorerService): Promise<boolean> {
     this._diagram = diagram;
     this._solutionService = solutionService;
 
     this.showModal = true;
+
+    const deletionPromise: Promise<boolean> = new Promise((resolve: Function, reject: Function): boolean | void => {
+      setTimeout(() => {
+        document.getElementById('cancelDeleteDiagramButton').addEventListener('click', () => {
+          this._closeModal();
+          resolve(false);
+        }, {once: true});
+
+        document.getElementById('deleteDiagramButton').addEventListener('click', async() => {
+          await this._deleteDiagram();
+          resolve(true);
+        }, {once: true});
+      }, 0);
+    });
+
+    return deletionPromise;
   }
 
   public closeModal(): void {
