@@ -256,30 +256,6 @@ export class SolutionExplorerSolution {
     }
   }
 
-  public async deleteDiagram(diagram: IDiagram, event: Event): Promise<void> {
-    event.stopPropagation();
-
-    if (await this._isDiagramDetailViewOfDiagramOpen(diagram.uri)) {
-      const messageTitle: string = '<h4 class="toast-message__headline">Not supported while opened.</h4>';
-      const messageBody: string = 'Deleting of opened diagrams is currently not supported. Please switch to another diagram and try again.';
-      const message: string = `${messageTitle}\n${messageBody}`;
-
-      this._notificationService.showNotification(NotificationType.INFO, message);
-
-      return;
-    }
-
-    try {
-      await this.solutionService.deleteDiagram(diagram);
-    } catch (error) {
-      const message: string = `Unable to delete the diagram: ${error.message}`;
-
-      this._notificationService.showNotification(NotificationType.ERROR, message);
-    }
-
-    await this.updateSolution();
-  }
-
   public async startRenamingOfDiagram(diagram: IDiagram, event: Event): Promise<void> {
     event.stopPropagation();
 
