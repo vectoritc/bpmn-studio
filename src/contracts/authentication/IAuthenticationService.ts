@@ -1,9 +1,9 @@
 import {IIdentity} from './IIdentity';
 
 export interface IAuthenticationService {
-  login(): Promise<void>;
-  logout(): Promise<void>;
-  isLoggedIn(): boolean;
-  getAccessToken(): string;
-  getIdentity(): Promise<IIdentity>;
+  login(authority: string): Promise<void>;
+  logout(authority: string): Promise<void>;
+  isLoggedIn(authority: string): Promise<boolean>;
+  getAccessToken(authority: string): Promise<string>;
+  getIdentity(authority: string): Promise<IIdentity>;
 }
