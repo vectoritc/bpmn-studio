@@ -66,17 +66,6 @@ export class ConfigPanel {
     }
 
     this._initialAuthority = this.authority;
-
-    this.isLoggedInToProcessEngine = this._authenticationService.isLoggedIn();
-
-    this._subscriptions = [
-      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
-        this.isLoggedInToProcessEngine = this._authenticationService.isLoggedIn();
-      }),
-      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
-        this.isLoggedInToProcessEngine = this._authenticationService.isLoggedIn();
-      }),
-    ];
   }
 
   public detached(): void {
@@ -86,11 +75,6 @@ export class ConfigPanel {
   }
 
   public async updateSettings(): Promise<void> {
-
-    const accessTokenIsNotDummy: boolean = this._authenticationService.getAccessToken() !== 'ZHVtbXlfdG9rZW4=';
-    if (accessTokenIsNotDummy) {
-      await this._authenticationService.logout();
-    }
 
     const authorityChanged: boolean = this.authority !== this._initialAuthority;
     if (authorityChanged) {
