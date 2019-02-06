@@ -240,6 +240,7 @@ export class SolutionExplorerList {
               ? -1
               : 1;
     });
+
     return sortedEntries;
   }
 
