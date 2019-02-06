@@ -6,7 +6,7 @@ import {Router} from 'aurelia-router';
 import {User} from 'oidc-client';
 
 import {AuthenticationStateEvent, IAuthenticationService, IIdentity, NotificationType} from '../../contracts/index';
-import environment from '../../environment';
+import {oidcConfig} from '../../open-id-connect-configuration';
 import {NotificationService} from './../notification/notification.service';
 
 const UNAUTHORIZED_STATUS_CODE: number = 401;
@@ -16,22 +16,15 @@ const IDENTITY_SERVER_AVAILABLE_SUCCESS_STATUS_CODE: number = 200;
 export class WebOidcAuthenticationService implements IAuthenticationService {
 
   private _eventAggregator: EventAggregator;
-  private _openIdConnect: OpenIdConnect;
+  private _openIdConnect: OpenIdConnect | any;
   private _notificationService: NotificationService;
-  private _router: Router;
-  private _user: User;
-  private _logoutWindow: Window = null;
 
   constructor(eventAggregator: EventAggregator,
               notificationService: NotificationService,
-              openIdConnect: OpenIdConnect,
-              router: Router) {
+              openIdConnect: OpenIdConnect) {
     this._eventAggregator = eventAggregator;
     this._notificationService = notificationService;
     this._openIdConnect = openIdConnect;
-    this._router = router;
-
-    this._initialize();
   }
 
   private async _initialize(): Promise<void> {
