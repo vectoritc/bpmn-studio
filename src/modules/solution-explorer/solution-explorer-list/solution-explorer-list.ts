@@ -75,8 +75,8 @@ export class SolutionExplorerList {
    */
   public async refreshSolutionsOnIdentityChange(): Promise<void> {
     const openPromises: Array<Promise<void>> = this._openedSolutions
-      .map((entry: ISolutionEntry): Promise<void> => {
-        return entry.service.openSolution(entry.uri, this._createIdentityForSolutionExplorer());
+      .map(async(entry: ISolutionEntry): Promise<void> => {
+        return entry.service.openSolution(entry.uri, await this._createIdentityForSolutionExplorer(entry.uri));
       });
 
     await Promise.all(openPromises);
@@ -101,7 +101,7 @@ export class SolutionExplorerList {
   }
 
   public async openSingleDiagram(uri: string): Promise<IDiagram> {
-    const identity: IIdentity = this._createIdentityForSolutionExplorer();
+    const identity: IIdentity = await this._createIdentityForSolutionExplorer(uri);
 
     const diagram: IDiagram = await this._singleDiagramService.openSingleDiagram(uri, identity);
 
@@ -132,7 +132,7 @@ export class SolutionExplorerList {
       solutionExplorer = await this._solutionExplorerServiceFactory.newFileSystemSolutionExplorer();
     }
 
-    const identity: IIdentity = this._createIdentityForSolutionExplorer();
+    const identity: IIdentity = await this._createIdentityForSolutionExplorer(uri);
     try {
       await solutionExplorer.openSolution(uri, identity);
     } catch (error) {
@@ -188,6 +188,10 @@ export class SolutionExplorerList {
     } else {
       this._cleanupSolution(uri);
     }
+  }
+
+  public login(solutionEntry: ISolutionEntry): void {
+    this._authenticationService.login(solutionEntry.authority);
   }
 
   /**
@@ -274,7 +278,7 @@ export class SolutionExplorerList {
         nameOfSingleDiagramService,
       );
 
-    const identity: IIdentity = this._createIdentityForSolutionExplorer();
+    const identity: IIdentity = await this._createIdentityForSolutionExplorer(uriOfSingleDiagramService);
 
     this._addSolutionEntry(uriOfSingleDiagramService, this._singleDiagramService, identity, true);
   }
@@ -340,11 +344,12 @@ export class SolutionExplorerList {
     return indexOfSolutionWithURI;
   }
 
-  private _addSolutionEntry(uri: string, service: ISolutionExplorerService, identity: IIdentity, insertAtBeginning: boolean): void {
+  private async _addSolutionEntry(uri: string, service: ISolutionExplorerService, identity: IIdentity, insertAtBeginning: boolean): Promise<void> {
     const isSingleDiagramService: boolean = this._isSingleDiagramService(service);
     const fontAwesomeIconClass: string = this._getFontAwesomeIconForSolution(service, uri);
     const canCloseSolution: boolean = this._canCloseSolution(service, uri);
     const canCreateNewDiagramsInSolution: boolean = this._canCreateNewDiagramsInSolution(service, uri);
+    const authority: string = await this._getAuthorityForSolution(uri);
 
     const entry: ISolutionEntry = {
       uri,
@@ -354,6 +359,7 @@ export class SolutionExplorerList {
       canCreateNewDiagramsInSolution,
       isSingleDiagramService,
       identity,
+      authority,
     };
 
     this._solutionService.addSolutionEntry(entry);
@@ -365,8 +371,11 @@ export class SolutionExplorerList {
     }
   }
 
-  private _createIdentityForSolutionExplorer(): IIdentity {
-    const accessToken: string = this._authenticationService.getAccessToken();
+  private async _createIdentityForSolutionExplorer(solutionUri: string): Promise<IIdentity> {
+
+    const authority: string = await this._getAuthorityForSolution(solutionUri);
+
+    const accessToken: string = await this._authenticationService.getAccessToken(authority);
     // TODO: Get the identity from the IdentityService of `@process-engine/iam`
     const identity: IIdentity = {
       token: accessToken,
@@ -374,6 +383,28 @@ export class SolutionExplorerList {
     };
 
     return identity;
+  }
+
+  private async _getAuthorityForSolution(solutionUri: string): Promise<string> {
+    const solutionIsRemote: boolean = solutionUri.startsWith('http');
+
+    if (solutionIsRemote) {
+      const request: Request = new Request(`${solutionUri}/security/authority`, {
+        method: 'GET',
+        mode: 'cors',
+        referrer: 'no-referrer',
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const response: Response = await fetch(request);
+      const authority: string = (await response.json()).authority;
+
+      return authority;
+    }
+
   }
 
 }
