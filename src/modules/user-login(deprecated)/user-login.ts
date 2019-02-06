@@ -52,7 +52,7 @@ export class UserLogin {
         this.identity = identity;
       }),
     ];
-    this.identity = await this._authenticationService.getIdentity();
+    // this.identity = await this._authenticationService.getIdentity();
   }
 
   public detached(): void {
@@ -63,13 +63,14 @@ export class UserLogin {
 
   public async login(): Promise<void> {
     try {
-      await this._authenticationService.login();
+      // await this._authenticationService.login();
     } catch (error) {
       this._notificationService.showNotification(NotificationType.ERROR, error.message);
     }
   }
 
   public logout(): Promise<void> {
-    return this._authenticationService.logout();
+    // return this._authenticationService.logout();
+    return;
   }
 }
