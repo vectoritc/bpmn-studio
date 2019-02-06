@@ -109,8 +109,8 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
     return response.json();
   }
 
-  private async _isIdentityServerReachable(): Promise<boolean> {
-    const request: Request = new Request(`${environment.openIdConnect.authority}/.well-known/openid-configuration`, {
+  private async _isAuthorityReachable(authority: string): Promise<boolean> {
+    const request: Request = new Request(`${authority}.well-known/openid-configuration`, {
       method: 'GET',
       mode: 'cors',
       referrer: 'no-referrer',
@@ -136,5 +136,13 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
     }
 
     return false;
+  }
+
+  private _setAuthority(authority: string): void {
+    oidcConfig.userManagerSettings.authority = authority;
+
+    // This dirty way to update the settings is the only way during runtime
+    this._openIdConnect.configuration.userManagerSettings.authority = authority;
+    this._openIdConnect.userManager._settings._authority = authority;
   }
 }
