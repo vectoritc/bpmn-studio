@@ -14,5 +14,6 @@ export interface ISolutionEntry {
   isSingleDiagramService: boolean;
   canCloseSolution: boolean;
   canCreateNewDiagramsInSolution: boolean;
+  authority: string;
   identity: IIdentity;
 }
