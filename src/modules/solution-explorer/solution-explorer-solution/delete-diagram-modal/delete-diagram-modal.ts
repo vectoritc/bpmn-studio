@@ -41,14 +41,14 @@ export class DeleteDiagramModal {
     return deletionPromise;
   }
 
-  public closeModal(): void {
+  private _closeModal(): void {
     this._diagram = undefined;
     this._solutionService = undefined;
 
     this.showModal = false;
   }
 
-  public async deleteDiagram(): Promise<void> {
+  private async _deleteDiagram(): Promise<void> {
     try {
       await this._solutionService.deleteDiagram(this._diagram);
     } catch (error) {
