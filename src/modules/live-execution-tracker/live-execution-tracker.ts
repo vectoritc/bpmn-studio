@@ -1,4 +1,4 @@
-import {computedFrom, inject} from 'aurelia-framework';
+import {computedFrom, inject, observable} from 'aurelia-framework';
 import {NavigationInstruction, Router} from 'aurelia-router';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
@@ -6,7 +6,8 @@ import * as bundle from '@process-engine/bpmn-js-custom-bundle';
 import {DataModels, IManagementApi} from '@process-engine/management_api_contracts';
 
 import {ActiveToken} from '@process-engine/kpi_api_contracts';
-import {CorrelationProcessModel, CorrelationState} from '@process-engine/management_api_contracts/dist/data_models/correlation';
+import {CorrelationProcessModel} from '@process-engine/management_api_contracts/dist/data_models/correlation';
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {
   defaultBpmnColors,
   IBpmnModeler,
@@ -15,6 +16,7 @@ import {
   IColorPickerColor,
   IElementRegistry,
   IEvent,
+  IEventFunction,
   IModdleElement,
   IModeling,
   IOverlayManager,
@@ -44,6 +46,15 @@ export class LiveExecutionTracker {
   public canvasModel: HTMLElement;
   public showDynamicUiModal: boolean = false;
   public dynamicUi: TaskDynamicUi;
+
+  @observable public tokenViewerWidth: number = 250;
+  public tokenViewer: HTMLElement;
+  public tokenViewerResizeDiv: HTMLElement;
+  public showTokenViewer: boolean = false;
+
+  public activeDiagram: IDiagram;
+  public selectedFlowNode: IShape;
+  public correlation: DataModels.Correlations.Correlation;
 
   public correlationId: string;
   public processModelId: string;
@@ -95,6 +106,9 @@ export class LiveExecutionTracker {
     this.processInstanceId = routeParameters.processInstanceId;
 
     this._parentProcessModelId = await this._getParentProcessModelId();
+
+    this.correlation = await this._managementApiClient.getCorrelationById(this.activeSolutionEntry.identity, this.correlationId);
+    this.activeDiagram = await this.activeSolutionEntry.service.loadDiagram(this.processModelId);
   }
 
   public async attached(): Promise<void> {
@@ -147,11 +161,32 @@ export class LiveExecutionTracker {
 
     this._viewerCanvas.zoom('fit-viewport');
 
+    this.tokenViewerResizeDiv.addEventListener('mousedown', (mouseDownEvent: Event) => {
+      const windowEvent: Event = mouseDownEvent || window.event;
+      windowEvent.cancelBubble = true;
+
+      const mousemoveFunction: IEventFunction = (mouseMoveEvent: MouseEvent): void => {
+        this._resizeTokenViewer(mouseMoveEvent);
+        document.getSelection().empty();
+      };
+
+      const mouseUpFunction: IEventFunction = (): void => {
+        document.removeEventListener('mousemove', mousemoveFunction);
+        document.removeEventListener('mouseup', mouseUpFunction);
+      };
+
+      document.addEventListener('mousemove', mousemoveFunction);
+      document.addEventListener('mouseup', mouseUpFunction);
+    });
+
     this._startPolling();
   }
 
   public detached(): void {
     this._attached = false;
+
+    this._diagramViewer.detach();
+    this._diagramViewer.destroy();
 
     this._stopPolling();
   }
@@ -208,6 +243,10 @@ export class LiveExecutionTracker {
     this.showDynamicUiModal = false;
 
     this.dynamicUi.clearTasks();
+  }
+
+  public toggleShowTokenViewer(): void {
+    this.showTokenViewer = !this.showTokenViewer;
   }
 
   private async _getParentProcessModelId(): Promise<string> {
@@ -444,8 +483,12 @@ export class LiveExecutionTracker {
 
   private _elementClickHandler: (event: IEvent) => Promise<void> = async(event: IEvent) => {
     const clickedElement: IShape = event.element;
+
+    this.selectedFlowNode = event.element;
+
     const clickedElementIsNotAUserOrManualTask: boolean = clickedElement.type !== 'bpmn:UserTask'
                                                        && clickedElement.type !== 'bpmn:ManualTask';
+
     if (clickedElementIsNotAUserOrManualTask) {
       return;
     }
@@ -954,5 +997,26 @@ export class LiveExecutionTracker {
       });
 
     return processModel;
+  }
+
+  private _resizeTokenViewer(mouseEvent: MouseEvent): void {
+    const mouseXPosition: number = mouseEvent.clientX;
+
+    const inspectCorrelation: HTMLElement = this.tokenViewer.parentElement;
+    const minSpaceForDiagramViewer: number = 320;
+
+    const windowWidth: number = window.innerWidth;
+    const rightToolbarWidth: number = 36;
+
+    const minTokenViewerWidth: number = 250;
+    const maxTokenViewerWidth: number = inspectCorrelation.clientWidth - minSpaceForDiagramViewer;
+
+    const newTokenViewerWidth: number = windowWidth - mouseXPosition - rightToolbarWidth;
+
+    /*
+     * This sets the new width of the token viewer to the minimum or maximum width,
+     * if the new width is smaller than the minimum or bigger than the maximum width.
+     */
+    this.tokenViewerWidth = Math.min(maxTokenViewerWidth, Math.max(newTokenViewerWidth, minTokenViewerWidth));
   }
 }
