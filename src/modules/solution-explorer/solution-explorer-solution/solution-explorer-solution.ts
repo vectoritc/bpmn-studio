@@ -185,8 +185,29 @@ export class SolutionExplorerSolution {
     }
   }
 
-  public showDeleteDiagramModal(diagram: IDiagram): void {
-    this.deleteDiagramModal.show(diagram, this.solutionService);
+  public async showDeleteDiagramModal(diagram: IDiagram, event: Event): Promise<void> {
+    /**
+     * We are stopping the event propagation here because we don't want the want
+     * the event to called on the list element since this would lead to a
+     * navigation to the diagram we want to delete.
+     */
+    event.stopPropagation();
+
+    if (await this._isDiagramDetailViewOfDiagramOpen(diagram.uri)) {
+      const messageTitle: string = '<h4 class="toast-message__headline">Not supported while opened.</h4>';
+      const messageBody: string = 'Deleting of opened diagrams is currently not supported. Please switch to another diagram and try again.';
+      const message: string = `${messageTitle}\n${messageBody}`;
+
+      this._notificationService.showNotification(NotificationType.INFO, message);
+
+      return;
+    }
+
+    const diagramWasDeleted: boolean = await this.deleteDiagramModal.show(diagram, this.solutionService);
+
+    if (diagramWasDeleted) {
+      this.updateSolution();
+    }
   }
 
   /**
