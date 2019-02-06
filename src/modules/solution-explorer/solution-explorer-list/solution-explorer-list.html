@@ -14,6 +14,13 @@
           <span class="solution-entry__header__name">${solutionEntry.uri}</span>
 
           <div class="solution-entry__header__actions">
+              <button class="button"
+                if.bind="!solutionEntry.canCreateNewDiagramsInSolution"
+                click.delegate="login(solutionEntry)"
+                title="Authorize">
+
+                <i class="fa fa-file-medical"></i>
+              </button>
               <button
                 class="button"
                 if.bind="solutionEntry.canCreateNewDiagramsInSolution"
