@@ -116,6 +116,7 @@ export class LiveExecutionTracker {
 
   public async attached(): Promise<void> {
     this._attached = true;
+
     this._diagramModeler = new bundle.modeler();
     this._diagramViewer = new bundle.viewer({
       additionalModules:
