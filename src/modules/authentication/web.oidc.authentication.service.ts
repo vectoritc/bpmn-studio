@@ -61,14 +61,15 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
     return await this._openIdConnect.logout();
   }
 
-  public getAccessToken(): string | null {
-    const userIsNotLoggedIn: boolean = this._user === undefined;
+  public async getAccessToken(authority: string): Promise<string | null> {
+    this._setAuthority(authority);
+    const user: User = await this._openIdConnect.getUser();
 
-    if (userIsNotLoggedIn) {
-      return this._getDummyAccessToken();
-    }
+    const userIsNotLoggedIn: boolean = user === undefined || user === null;
 
-    return this._user.access_token;
+    return userIsNotLoggedIn
+          ? this._getDummyAccessToken()
+          : user.access_token;
   }
 
   // TODO: The dummy token needs to be removed in the future!!
