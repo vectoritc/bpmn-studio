@@ -82,15 +82,14 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
     return base64EncodedString;
   }
 
-  public async getIdentity(): Promise<IIdentity | null> {
-
-    const accessToken: string = this.getAccessToken();
+  public async getIdentity(authority: string): Promise<IIdentity | null> {
+    const accessToken: string = await this.getAccessToken(authority);
 
     if (!accessToken) {
       return null;
     }
 
-    const request: Request = new Request(`${environment.openIdConnect.authority}/connect/userinfo`, {
+    const request: Request = new Request(`${authority}connect/userinfo`, {
       method: 'GET',
       mode: 'cors',
       referrer: 'no-referrer',
