@@ -7,6 +7,7 @@ import {DataModels, IManagementApi} from '@process-engine/management_api_contrac
 
 import {ActiveToken} from '@process-engine/kpi_api_contracts';
 import {CorrelationProcessModel} from '@process-engine/management_api_contracts/dist/data_models/correlation';
+import {TokenHistoryEntry} from '@process-engine/management_api_contracts/dist/data_models/token_history';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {
   defaultBpmnColors,
@@ -533,68 +534,61 @@ export class LiveExecutionTracker {
         return element.id === flowNodeId;
       });
 
-      const elementWithIncomingElements: Array<IShape> = this._getElementWithIncomingElements(elementFromTokenHistory, tokenHistoryGroups);
+      const elementFinished: boolean = tokenHistoryGroups[flowNodeId].find((tokenHistoryEntry: TokenHistoryEntry) => {
+        return tokenHistoryEntry.tokenEventType !== DataModels.TokenHistory.TokenEventType.onEnter;
+      }) !== undefined;
 
-      elementsWithTokenHistory.push(...elementWithIncomingElements);
+      if (elementFinished) {
+        const elementWithOutgoingElements: Array<IShape> = this._getElementWithOutgoingElements(elementFromTokenHistory, tokenHistoryGroups);
+
+        elementsWithTokenHistory.push(...elementWithOutgoingElements);
+      }
     }
 
     return elementsWithTokenHistory;
   }
 
-  private _getElementWithIncomingElements(element: IShape,
+  private _getElementWithOutgoingElements(element: IShape,
                                           tokenHistoryGroups: DataModels.TokenHistory.TokenHistoryGroup): Array<IShape> {
 
-    const elementWithIncomingElements: Array<IShape> = [];
+    const outgoingElementsAsIModdleElement: Array<IModdleElement> = element.businessObject.outgoing;
 
-    const elementHasNoTokenHistory: boolean = !this._hasElementTokenHistory(element.id, tokenHistoryGroups);
-
-    if (elementHasNoTokenHistory) {
-      return [];
-    }
-
-    elementWithIncomingElements.push(element);
-
-    const incomingElementsAsIModdleElement: Array<IModdleElement> = element.businessObject.incoming;
-
-    const elementHasIncomingElements: boolean = incomingElementsAsIModdleElement === undefined;
+   /*
+    * If the element has no outgoing source just return the element.
+    */
+    const elementHasIncomingElements: boolean = outgoingElementsAsIModdleElement === undefined;
     if (elementHasIncomingElements) {
-      return elementWithIncomingElements;
+      return [element];
     }
 
-    for (const incomingElement of incomingElementsAsIModdleElement) {
-      const incomingElementAsShape: IShape = this._elementRegistry.get(incomingElement.id);
-      const sourceOfIncomingElement: IShape = incomingElementAsShape.source;
+    const elementsWithOutgoingElements: Array<IShape> = [element];
 
-      const incomignElementHasNoSource: boolean = sourceOfIncomingElement === undefined;
+    for (const outgoingElement of outgoingElementsAsIModdleElement) {
+      const outgoingElementAsShape: IShape = this._elementRegistry.get(outgoingElement.id);
+      const targetOfOutgoingElement: IShape = outgoingElementAsShape.target;
+
+      const incomignElementHasNoSource: boolean = targetOfOutgoingElement === undefined;
       if (incomignElementHasNoSource) {
         continue;
       }
 
-      const previousElementIsTask: boolean = sourceOfIncomingElement.type.includes('Task');
+      const previousElementIsSequenceFlow: boolean = outgoingElementAsShape.type === 'bpmn:SequenceFlow';
 
-      if (previousElementIsTask) {
-        const elementHasActiveToken: boolean = this._hasElementActiveToken(sourceOfIncomingElement.id);
-        const sourceOfIncomingElementHasNoTokenHistory: boolean = !this._hasElementTokenHistory(sourceOfIncomingElement.id, tokenHistoryGroups);
+      if (previousElementIsSequenceFlow) {
+        elementsWithOutgoingElements.push(outgoingElementAsShape);
+      } else {
+        const elementHasActiveToken: boolean = this._hasElementActiveToken(targetOfOutgoingElement.id);
+        const sourceOfIncomingElementHasNoTokenHistory: boolean = !this._hasElementTokenHistory(targetOfOutgoingElement.id, tokenHistoryGroups);
 
         if (elementHasActiveToken || sourceOfIncomingElementHasNoTokenHistory) {
           continue;
         }
 
-        elementWithIncomingElements.push(incomingElementAsShape);
-
-      } else {
-        elementWithIncomingElements.push(incomingElementAsShape);
-
-        const sourceHasNoTokenHistory: boolean = !this._hasElementTokenHistory(sourceOfIncomingElement.id, tokenHistoryGroups);
-        if (sourceHasNoTokenHistory) {
-          elementWithIncomingElements.push(sourceOfIncomingElement);
-        }
-
-        continue;
+        elementsWithOutgoingElements.push(outgoingElementAsShape);
       }
     }
 
-    return elementWithIncomingElements;
+    return elementsWithOutgoingElements;
   }
 
   private _colorizeElements(elements: Array<IShape>, color: IColorPickerColor): void {
