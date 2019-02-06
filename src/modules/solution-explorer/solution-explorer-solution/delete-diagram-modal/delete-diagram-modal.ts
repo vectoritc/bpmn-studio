@@ -3,7 +3,7 @@ import {inject} from 'aurelia-framework';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
-import {NotificationType} from '../../../../contracts';
+import {NotificationType} from '../../../../contracts/index';
 import {NotificationService} from '../../../notification/notification.service';
 
 @inject('NotificationService')
