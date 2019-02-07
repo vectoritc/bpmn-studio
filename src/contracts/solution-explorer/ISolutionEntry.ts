@@ -16,4 +16,6 @@ export interface ISolutionEntry {
   canCreateNewDiagramsInSolution: boolean;
   authority: string;
   identity: IIdentity;
+  isLoggedIn: boolean;
+  userName?: string;
 }
