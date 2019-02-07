@@ -24,15 +24,17 @@ export class DeleteDiagramModal {
 
     this.showModal = true;
 
-    const deletionPromise: Promise<boolean> = new Promise((resolve: Function, reject: Function): boolean | void => {
+    const deletionPromise: Promise<boolean> = new Promise((resolve: Function, reject: Function): void => {
       setTimeout(() => {
         document.getElementById('cancelDeleteDiagramButton').addEventListener('click', () => {
           this._closeModal();
+
           resolve(false);
         }, {once: true});
 
         document.getElementById('deleteDiagramButton').addEventListener('click', async() => {
           await this._deleteDiagram();
+
           resolve(true);
         }, {once: true});
       }, 0);
