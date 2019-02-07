@@ -579,9 +579,9 @@ export class LiveExecutionTracker {
         elementsWithOutgoingElements.push(outgoingElementAsShape);
       } else {
         const elementHasActiveToken: boolean = this._hasElementActiveToken(targetOfOutgoingElement.id);
-        const sourceOfIncomingElementHasNoTokenHistory: boolean = !this._hasElementTokenHistory(targetOfOutgoingElement.id, tokenHistoryGroups);
+        const targetOfOutgoingElementHasNoTokenHistory: boolean = !this._hasElementTokenHistory(targetOfOutgoingElement.id, tokenHistoryGroups);
 
-        if (elementHasActiveToken || sourceOfIncomingElementHasNoTokenHistory) {
+        if (elementHasActiveToken || targetOfOutgoingElementHasNoTokenHistory) {
           continue;
         }
 
