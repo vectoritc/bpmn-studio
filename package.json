@@ -1,7 +1,7 @@
 {
   "name": "bpmn-studio",
   "description": "An Aurelia application for designing BPMN diagrams, which can also be connected to a process engine to execute these diagrams.",
-  "version": "4.19.0",
+  "version": "4.20.0",
   "author": {
     "name": "process-engine",
     "email": "hello@process-engine.io",
@@ -74,6 +74,18 @@
           "name": "BPMN"
         }
       ]
+    },
+    "linux": {
+      "target": "snap",
+      "fileAssociations": [
+        {
+          "ext": [
+            "bpmn"
+          ],
+          "name": "BPMN"
+        }
+      ],
+      "category": "Development"
     }
   },
   "files": [
@@ -97,7 +109,7 @@
     "@process-engine/kpi_api_contracts": "1.2.2",
     "@process-engine/management_api_client": "3.1.0",
     "@process-engine/management_api_contracts": "4.1.0",
-    "@process-engine/process_engine_runtime": "5.4.0",
+    "@process-engine/process_engine_runtime": "5.5.0",
     "@process-engine/solutionexplorer.contracts": "1.0.0",
     "@process-engine/solutionexplorer.repository.contracts": "4.0.0",
     "@process-engine/solutionexplorer.repository.filesystem": "4.0.1",
@@ -131,7 +143,7 @@
     "@essential-projects/iam_contracts": "~3.4.0",
     "@fortawesome/fontawesome-free": "^5.1.0",
     "@process-engine/bpmn-js-custom-bundle": "2.4.0",
-    "@process-engine/process_engine_contracts": "36.5.1",
+    "@process-engine/process_engine_contracts": "37.0.0",
     "@types/jasmine": "^2.2.0",
     "@types/node": "^6.0.45",
     "@types/spectrum": "^1.5.29",

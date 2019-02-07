@@ -1,9 +1,14 @@
+/* tslint:disable:no-use-before-declare */
+/**
+ * We are disabling this rule here because we need this kind of statement in the
+ * functions used in the promise of the modal.
+*/
 import {inject} from 'aurelia-framework';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
-import {NotificationType} from '../../../../contracts/index';
+import {IEventFunction, NotificationType} from '../../../../contracts/index';
 import {NotificationService} from '../../../notification/notification.service';
 
 @inject('NotificationService')
@@ -25,18 +30,27 @@ export class DeleteDiagramModal {
     this.showModal = true;
 
     const deletionPromise: Promise<boolean> = new Promise((resolve: Function, reject: Function): void => {
+      const cancelDeletion: IEventFunction = (): void => {
+        this._closeModal();
+
+        resolve(false);
+
+        document.getElementById('cancelDeleteDiagramButton').removeEventListener('click', cancelDeletion);
+        document.getElementById('deleteDiagramButton').removeEventListener('click', proceedDeletion);
+      };
+
+      const proceedDeletion: IEventFunction = async(): Promise<void> => {
+        await this._deleteDiagram();
+
+        resolve(true);
+
+        document.getElementById('cancelDeleteDiagramButton').removeEventListener('click', cancelDeletion);
+        document.getElementById('deleteDiagramButton').removeEventListener('click', proceedDeletion);
+      };
+
       setTimeout(() => {
-        document.getElementById('cancelDeleteDiagramButton').addEventListener('click', () => {
-          this._closeModal();
-
-          resolve(false);
-        }, {once: true});
-
-        document.getElementById('deleteDiagramButton').addEventListener('click', async() => {
-          await this._deleteDiagram();
-
-          resolve(true);
-        }, {once: true});
+        document.getElementById('cancelDeleteDiagramButton').addEventListener('click', cancelDeletion, {once: true});
+        document.getElementById('deleteDiagramButton').addEventListener('click', proceedDeletion, {once: true});
       }, 0);
     });
 

@@ -338,6 +338,7 @@ export class DiagramDetail {
     } catch (error) {
       this._notificationService
           .showNotification(NotificationType.ERROR, `Unable to save the file: ${error}.`);
+      throw error;
     }
   }
 

@@ -1,3 +1,9 @@
+/* tslint:disable:no-use-before-declare */
+/**
+ * We are disabling this rule here because we need this kind of statement in the
+ * functions used in the promise of the modal.
+*/
+
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, bindingMode, inject} from 'aurelia-framework';
 import {activationStrategy, NavigationInstruction, Redirect, Router} from 'aurelia-router';
@@ -226,34 +232,54 @@ export class Design {
         return;
       }
 
-      this.showLeaveModal = true;
-
-      // register onClick handler
-      document.getElementById('dontSaveButtonLeaveView').addEventListener('click', () => {
+      const dontSaveAndLeaveFunction: EventListenerOrEventListenerObject = (): void => {
         this.showLeaveModal = false;
         this.diagramDetail.diagramHasChanged = false;
         this._eventAggregator.publish(environment.events.navBar.diagramChangesResolved);
 
-        resolve(true);
-      });
+        document.getElementById('dontSaveButtonLeaveView').removeEventListener('click', dontSaveAndLeaveFunction);
+        document.getElementById('saveButtonLeaveView').removeEventListener('click', saveAndLeaveFunction);
+        document.getElementById('cancelButtonLeaveView').removeEventListener('click', cancelAndLeaveFunction);
 
-      document.getElementById('saveButtonLeaveView').addEventListener('click', async() => {
+        resolve(true);
+      };
+
+      const saveAndLeaveFunction: EventListenerOrEventListenerObject = async(): Promise<void> => {
         if (this.diagramDetail.diagramIsInvalid) {
           resolve(false);
         }
 
-        this.showLeaveModal = false;
-        await this.diagramDetail.saveDiagram();
-        this.diagramDetail.diagramHasChanged = false;
+        try {
+          await this.diagramDetail.saveDiagram();
+          this.diagramDetail.diagramHasChanged = false;
+          this.showLeaveModal = false;
 
-        resolve(true);
-      });
+          resolve(true);
+        } catch {
+          return;
+        }
 
-      document.getElementById('cancelButtonLeaveView').addEventListener('click', () => {
+        document.getElementById('dontSaveButtonLeaveView').removeEventListener('click', dontSaveAndLeaveFunction);
+        document.getElementById('saveButtonLeaveView').removeEventListener('click', saveAndLeaveFunction);
+        document.getElementById('cancelButtonLeaveView').removeEventListener('click', cancelAndLeaveFunction);
+      };
+
+      const cancelAndLeaveFunction: EventListenerOrEventListenerObject = (): void => {
         this.showLeaveModal = false;
+
+        document.getElementById('dontSaveButtonLeaveView').removeEventListener('click', dontSaveAndLeaveFunction);
+        document.getElementById('saveButtonLeaveView').removeEventListener('click', saveAndLeaveFunction);
+        document.getElementById('cancelButtonLeaveView').removeEventListener('click', cancelAndLeaveFunction);
 
         resolve(false);
-      });
+      };
+
+      this.showLeaveModal = true;
+
+      // register onClick handler
+      document.getElementById('dontSaveButtonLeaveView').addEventListener('click', dontSaveAndLeaveFunction);
+      document.getElementById('saveButtonLeaveView').addEventListener('click', saveAndLeaveFunction);
+      document.getElementById('cancelButtonLeaveView').addEventListener('click', cancelAndLeaveFunction);
     });
 
     return modalResult;
@@ -275,6 +301,16 @@ export class Design {
     }
 
     this.xmlForDiff = this.activeDiagram.xml;
+  }
+
+  public get connectedRemoteSolutions(): Array<ISolutionEntry> {
+    const remoteSolutions: Array<ISolutionEntry> = this._solutionService.getRemoteSolutionEntries();
+
+    const remoteSolutionsWithoutActive: Array<ISolutionEntry> = remoteSolutions.filter((remoteSolution: ISolutionEntry) => {
+      return remoteSolution.uri !== this.activeSolutionEntry.uri && remoteSolution.fontAwesomeIconClass !== 'fa-bolt';
+    });
+
+    return remoteSolutionsWithoutActive;
   }
 
   public get remoteSolutions(): Array<ISolutionEntry> {
