@@ -3,8 +3,14 @@ import {bindable, inject} from 'aurelia-framework';
 import {DataModels} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {IShape} from '../../../../../contracts';
-import {IInspectCorrelationService, IPayloadEntry, IPayloadEntryValue, IRawTokenEntry, ITokenEntry} from '../../contracts';
+import {IShape} from '../../../contracts';
+import {IInspectCorrelationService} from '../inspect-correlation/contracts/index';
+import {
+  IPayloadEntry,
+  IPayloadEntryValue,
+  IRawTokenEntry,
+  ITokenEntry,
+} from './contracts/index';
 
 @inject('InspectCorrelationService')
 export class TokenViewer {

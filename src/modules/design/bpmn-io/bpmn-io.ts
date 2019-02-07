@@ -84,6 +84,7 @@ export class BpmnIo {
         bundle.MiniMap,
         bundle.ZoomScrollModule,
         bundle.MoveCanvasModule,
+        bundle.resizeAllModule,
       ],
       moddleExtensions: {
         camunda: bundle.camundaModdleDescriptor,
