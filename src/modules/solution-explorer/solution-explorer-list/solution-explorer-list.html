@@ -15,11 +15,19 @@
 
           <div class="solution-entry__header__actions">
               <button class="button"
-                if.bind="!solutionEntry.canCreateNewDiagramsInSolution"
+                if.bind="solutionEntry.uri.startsWith('http') && !solutionEntry.isLoggedIn"
                 click.delegate="login(solutionEntry)"
                 title="Authorize">
 
                 <i class="fa fa-lock-open"></i>
+              </button>
+
+              <button class="button"
+                if.bind="solutionEntry.isLoggedIn"
+                click.delegate="logout(solutionEntry)"
+                title="Logout">
+
+                <i class="fa fa-lock"></i>
               </button>
 
               <button
