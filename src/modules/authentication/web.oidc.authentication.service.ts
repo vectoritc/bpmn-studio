@@ -47,8 +47,7 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
     await this._openIdConnect.login();
     window.localStorage.setItem('openIdRoute', authority);
 
-    const identity: IIdentity = await this.getIdentity(authority);
-    this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
+    this._eventAggregator.publish(AuthenticationStateEvent.LOGIN);
   }
 
   public async logout(authority: string): Promise<void> {
@@ -58,7 +57,8 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
     }
 
     await this._setAuthority(authority);
-    return await this._openIdConnect.logout();
+    await this._openIdConnect.logout();
+
   }
 
   public async getAccessToken(authority: string): Promise<string | null> {
