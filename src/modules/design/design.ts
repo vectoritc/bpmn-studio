@@ -297,6 +297,16 @@ export class Design {
     this.xmlForDiff = this.activeDiagram.xml;
   }
 
+  public get connectedRemoteSolutions(): Array<ISolutionEntry> {
+    const remoteSolutions: Array<ISolutionEntry> = this._solutionService.getRemoteSolutionEntries();
+
+    const remoteSolutionsWithoutActive: Array<ISolutionEntry> = remoteSolutions.filter((remoteSolution: ISolutionEntry) => {
+      return remoteSolution.uri !== this.activeSolutionEntry.uri && remoteSolution.fontAwesomeIconClass !== 'fa-bolt';
+    });
+
+    return remoteSolutionsWithoutActive;
+  }
+
   public get remoteSolutions(): Array<ISolutionEntry> {
     const remoteSolutions: Array<ISolutionEntry> = this._solutionService.getRemoteSolutionEntries();
 
