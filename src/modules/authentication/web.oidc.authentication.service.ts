@@ -30,8 +30,10 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
   public async isLoggedIn(authority: string): Promise<boolean> {
     const identity: IIdentity = await this.getIdentity(authority);
 
-    // TODO: Get the userinfo from the authroity to determine if a user is logged in.
-    return false;
+    const userIsNotAuthorized: boolean = identity === null;
+    return userIsNotAuthorized
+          ? false
+          : true;
   }
 
   public async login(authority: string): Promise<void> {
