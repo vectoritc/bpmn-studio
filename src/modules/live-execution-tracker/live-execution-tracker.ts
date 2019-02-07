@@ -573,20 +573,14 @@ export class LiveExecutionTracker {
         continue;
       }
 
-      const previousElementIsSequenceFlow: boolean = outgoingElementAsShape.type === 'bpmn:SequenceFlow';
+      const outgoingElementHasNoActiveToken: boolean = !this._hasElementActiveToken(targetOfOutgoingElement.id);
+      const targetOfOutgoingElementHasNoTokenHistory: boolean = !this._hasElementTokenHistory(targetOfOutgoingElement.id, tokenHistoryGroups);
 
-      if (previousElementIsSequenceFlow) {
-        elementsWithOutgoingElements.push(outgoingElementAsShape);
-      } else {
-        const outgoingElementHasActiveToken: boolean = this._hasElementActiveToken(targetOfOutgoingElement.id);
-        const targetOfOutgoingElementHasNoTokenHistory: boolean = !this._hasElementTokenHistory(targetOfOutgoingElement.id, tokenHistoryGroups);
-
-        if (outgoingElementHasActiveToken || targetOfOutgoingElementHasNoTokenHistory) {
+      if (outgoingElementHasNoActiveToken && targetOfOutgoingElementHasNoTokenHistory) {
           continue;
         }
 
-        elementsWithOutgoingElements.push(outgoingElementAsShape);
-      }
+      elementsWithOutgoingElements.push(outgoingElementAsShape);
     }
 
     return elementsWithOutgoingElements;
