@@ -204,7 +204,7 @@
               <div>
                 <select value.bind="diagramDetail.selectedStartEventId" ref="dropdownMenu" class="process-start-event-modal-dialog__dropdown-menu">
                   <option>Select StartEvent</option>
-                  <option repeat.for="startEvent of diagramDetail.processesStartEvents" value.bind="diagramDetail.startEvent.id">${diagramDetail.startEvent.id}</option>
+                  <option repeat.for="startEvent of diagramDetail.processesStartEvents" value.bind="startEvent.id">${startEvent.id}</option>
                 </select>
               </div>
             </div>
