@@ -9,8 +9,8 @@ import {NotificationService} from '../../../notification/notification.service';
 @inject('NotificationService')
 export class DeleteDiagramModal {
   public showModal: boolean = false;
+  public diagram: IDiagram;
 
-  private _diagram: IDiagram;
   private _solutionService: ISolutionExplorerService;
   private _notificationService: NotificationService;
 
@@ -19,7 +19,7 @@ export class DeleteDiagramModal {
   }
 
   public async show(diagram: IDiagram, solutionService: ISolutionExplorerService): Promise<boolean> {
-    this._diagram = diagram;
+    this.diagram = diagram;
     this._solutionService = solutionService;
 
     this.showModal = true;
@@ -42,7 +42,7 @@ export class DeleteDiagramModal {
   }
 
   private _closeModal(): void {
-    this._diagram = undefined;
+    this.diagram = undefined;
     this._solutionService = undefined;
 
     this.showModal = false;
@@ -50,14 +50,14 @@ export class DeleteDiagramModal {
 
   private async _deleteDiagram(): Promise<void> {
     try {
-      await this._solutionService.deleteDiagram(this._diagram);
+      await this._solutionService.deleteDiagram(this.diagram);
     } catch (error) {
       const message: string = `Unable to delete the diagram: ${error.message}`;
 
       this._notificationService.showNotification(NotificationType.ERROR, message);
     }
 
-    this._diagram = undefined;
+    this.diagram = undefined;
     this._solutionService = undefined;
 
     this.showModal = false;
