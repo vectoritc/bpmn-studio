@@ -74,6 +74,18 @@
           "name": "BPMN"
         }
       ]
+    },
+    "linux": {
+      "target": "snap",
+      "fileAssociations": [
+        {
+          "ext": [
+            "bpmn"
+          ],
+          "name": "BPMN"
+        }
+      ],
+      "category": "Development"
     }
   },
   "files": [
