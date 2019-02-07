@@ -1,5 +1,6 @@
 <template>
   <require from="./solution-explorer-solution.css"></require>
+  <require from="./delete-diagram-modal/delete-diagram-modal"></require>
 
   <div class="solution-explorer-solution">
 
@@ -63,18 +64,19 @@
             <button
               class.bind="activeDiagramUri !== diagram.uri ? 'button' : 'button button--disabled'"
               if.bind="canDeleteDiagram()"
-              click.delegate="deleteDiagram(diagram, $event)"
+              click.delegate="showDeleteDiagramModal(diagram, $event)"
               title.bind="activeDiagramUri !== diagram.uri ? 'Delete the diagram' : 'The diagram is currently open, it cant be deleted.'">
 
               <i class="fa fa-trash"></i>
             </button>
           </div>
-
         </template>
 
       </li>
-
     </ul>
   </div>
+
+  <!--Delete Diagram Modal-->
+  <delete-diagram-modal view-model.ref="deleteDiagramModal"></delete-diagram-modal>
 
 </template>
