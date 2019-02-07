@@ -198,6 +198,14 @@ export class SolutionExplorerList {
     solutionEntry.userName = (await this._authenticationService.getIdentity(solutionEntry.authority)).name;
   }
 
+  public async logout(solutionEntry: ISolutionEntry): Promise<void> {
+    await this._authenticationService.logout(solutionEntry.authority);
+
+    solutionEntry.identity = await this._createIdentityForSolutionExplorer(solutionEntry.uri);
+    solutionEntry.isLoggedIn = false;
+    solutionEntry.userName = undefined;
+  }
+
   /**
    * Starts the creation process of a new diagram inside the given solution
    * entry.
@@ -354,7 +362,7 @@ export class SolutionExplorerList {
     const canCloseSolution: boolean = this._canCloseSolution(service, uri);
     const canCreateNewDiagramsInSolution: boolean = this._canCreateNewDiagramsInSolution(service, uri);
     const authority: string = await this._getAuthorityForSolution(uri);
-    const isLoggedIn: boolean = false;
+    const isLoggedIn: boolean = await this._authenticationService.isLoggedIn(authority);
 
     const entry: ISolutionEntry = {
       uri,
