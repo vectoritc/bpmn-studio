@@ -1,6 +1,7 @@
 <template>
   <require from="./solution-explorer-panel.css"></require>
   <require from="../solution-explorer-list/solution-explorer-list"></require>
+  <require from="../../custom_elements/modal/modal"></require>
 
   <div class="solution-explorer">
     <div class="solution-explorer-panel">
@@ -46,24 +47,16 @@
   </div>
 
   <!-- Open Remote Solution Modal -->
-  <div show.bind="showOpenRemoteSolutionModal">
-    <div class="modal show show-modal" tabindex="-1" role="dialog" id="openRemoteSolutionModal">
-      <div class="modal-dialog open-remote-solution-modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4 class="modal-title">Open Remote Solution</h4>
-          </div>
-          <div class="modal-body">
-            Location:
-            <input type="text" class="form-control" class.bind="uriIsValid ? '' : 'uri-input--invalid'" value.bind="uriOfRemoteSolution" placeholder="Please provide a URI for the remote ProcessEngine">
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelOpenRemoteSolutionButton" click.delegate="closeRemoteSolutionModal()">Cancel</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal" id="openRemoteSolutionButton" disabled.bind="!uriIsValid || uriIsEmpty" click.delegate="openRemoteSolution()">Open Solution</button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal-backdrop fade in"></div>
-  </div>
+  <modal show.bind="showOpenRemoteSolutionModal" 
+         header-text="Open Remote Solution">
+    <template replace-part="modal-body">
+      Location:
+      <input type="text" class="form-control" class.bind="uriIsValid ? '' : 'uri-input--invalid'" value.bind="uriOfRemoteSolution" placeholder="Please provide a URI for the remote ProcessEngine">
+    </template>
+    <template replace-part="modal-footer">
+      <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelOpenRemoteSolutionButton" click.delegate="closeRemoteSolutionModal()">Cancel</button>
+      <button type="button" class="btn btn-default" data-dismiss="modal" id="openRemoteSolutionButton" disabled.bind="!uriIsValid || uriIsEmpty" click.delegate="openRemoteSolution()">Open Solution</button>
+    </template>
+  </modal>
+
 </template>
