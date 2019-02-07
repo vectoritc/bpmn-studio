@@ -395,7 +395,7 @@ export class SolutionExplorerList {
 
     const authority: string = await this._getAuthorityForSolution(solutionUri);
 
-    const accessToken: string = await this._authenticationService.getAccessToken(authority);
+    const accessToken: string = await this._authenticationService.getDummyAccessToken();
     // TODO: Get the identity from the IdentityService of `@process-engine/iam`
     const identity: IIdentity = {
       token: accessToken,

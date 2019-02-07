@@ -49,7 +49,6 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
       const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
 
       ipcRenderer.on('oidc-login-reply', async(event: any, tokenObject: ITokenObject) => {
-
         const identity: IUserIdentity = await this.getUserIdentity(authority);
 
         const loginResult: ILoginResult = {
@@ -57,11 +56,13 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
           token: tokenObject.accessToken,
         };
 
+        console.log('login result', loginResult);
         this._eventAggregator.publish(AuthenticationStateEvent.LOGIN);
 
         resolve(loginResult);
       });
 
+      console.log('send login', authority);
       ipcRenderer.send('oidc-login', authority);
     });
 
@@ -90,23 +91,16 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
 
   }
 
-  public async getAccessToken(authority: string): Promise<string | null> {
+  public async getUserIdentity(authority: string, accessToken: string): Promise<IUserIdentity | null> {
 
-    return this._getDummyAccessToken();
-  }
-
-  public async getUserIdentity(authority: string): Promise<IUserIdentity | null> {
-
-    const token: string = await this.getAccessToken(authority);
-
-    const userInforequest: Request = new Request(`${environment.openIdConnect.authority}/connect/userinfo`, {
+    const userInforequest: Request = new Request(`${authority}connect/userinfo`, {
       method: 'GET',
       mode: 'cors',
       referrer: 'no-referrer',
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     });
 
@@ -119,7 +113,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
   }
 
   private async _isAuthorityReachable(authority: string): Promise<boolean> {
-    const configRequest: Request = new Request(`${authority}/.well-known/openid-configuration`, {
+    const configRequest: Request = new Request(`${authority}.well-known/openid-configuration`, {
       method: 'GET',
       mode: 'cors',
       referrer: 'no-referrer',
@@ -151,7 +145,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
   // This dummy token serves as a temporary workaround to bypass login. This
   // enables us to work without depending on a full environment with
   // IdentityServer.
-  private _getDummyAccessToken(): string {
+  private getDummyAccessToken(): string {
     const dummyAccessTokenString: string = 'dummy_token';
     const base64EncodedString: string = btoa(dummyAccessTokenString);
     return base64EncodedString;
