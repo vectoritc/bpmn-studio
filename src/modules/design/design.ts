@@ -226,18 +226,19 @@ export class Design {
         return;
       }
 
-      this.showLeaveModal = true;
-
-      // register onClick handler
-      document.getElementById('dontSaveButtonLeaveView').addEventListener('click', () => {
+      const dontSaveAndLeaveFunction: EventListenerOrEventListenerObject = (): void => {
         this.showLeaveModal = false;
         this.diagramDetail.diagramHasChanged = false;
         this._eventAggregator.publish(environment.events.navBar.diagramChangesResolved);
 
-        resolve(true);
-      });
+        document.getElementById('dontSaveButtonLeaveView').removeEventListener('click', dontSaveAndLeaveFunction);
+        document.getElementById('saveButtonLeaveView').removeEventListener('click', saveAndLeaveFunction);
+        document.getElementById('cancelButtonLeaveView').removeEventListener('click', cancelAndLeaveFunction);
 
-      document.getElementById('saveButtonLeaveView').addEventListener('click', async() => {
+        resolve(true);
+      };
+
+      const saveAndLeaveFunction: EventListenerOrEventListenerObject = async(): Promise<void> => {
         if (this.diagramDetail.diagramIsInvalid) {
           resolve(false);
         }
@@ -246,14 +247,29 @@ export class Design {
         await this.diagramDetail.saveDiagram();
         this.diagramDetail.diagramHasChanged = false;
 
-        resolve(true);
-      });
+        document.getElementById('dontSaveButtonLeaveView').removeEventListener('click', dontSaveAndLeaveFunction);
+        document.getElementById('saveButtonLeaveView').removeEventListener('click', saveAndLeaveFunction);
+        document.getElementById('cancelButtonLeaveView').removeEventListener('click', cancelAndLeaveFunction);
 
-      document.getElementById('cancelButtonLeaveView').addEventListener('click', () => {
+        resolve(true);
+      };
+
+      const cancelAndLeaveFunction: EventListenerOrEventListenerObject = (): void => {
         this.showLeaveModal = false;
 
+        document.getElementById('dontSaveButtonLeaveView').removeEventListener('click', dontSaveAndLeaveFunction);
+        document.getElementById('saveButtonLeaveView').removeEventListener('click', saveAndLeaveFunction);
+        document.getElementById('cancelButtonLeaveView').removeEventListener('click', cancelAndLeaveFunction);
+
         resolve(false);
-      });
+      };
+
+      this.showLeaveModal = true;
+
+      // register onClick handler
+      document.getElementById('dontSaveButtonLeaveView').addEventListener('click', dontSaveAndLeaveFunction);
+      document.getElementById('saveButtonLeaveView').addEventListener('click', saveAndLeaveFunction);
+      document.getElementById('cancelButtonLeaveView').addEventListener('click', cancelAndLeaveFunction);
     });
 
     return modalResult;
