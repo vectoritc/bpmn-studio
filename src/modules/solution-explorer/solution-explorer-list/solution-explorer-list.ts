@@ -190,8 +190,12 @@ export class SolutionExplorerList {
     }
   }
 
-  public login(solutionEntry: ISolutionEntry): void {
-    this._authenticationService.login(solutionEntry.authority);
+  public async login(solutionEntry: ISolutionEntry): Promise<void> {
+    await this._authenticationService.login(solutionEntry.authority);
+
+    solutionEntry.identity = await this._createIdentityForSolutionExplorer(solutionEntry.uri);
+    solutionEntry.isLoggedIn = true;
+    solutionEntry.userName = (await this._authenticationService.getIdentity(solutionEntry.authority)).name;
   }
 
   /**
@@ -350,6 +354,7 @@ export class SolutionExplorerList {
     const canCloseSolution: boolean = this._canCloseSolution(service, uri);
     const canCreateNewDiagramsInSolution: boolean = this._canCreateNewDiagramsInSolution(service, uri);
     const authority: string = await this._getAuthorityForSolution(uri);
+    const isLoggedIn: boolean = false;
 
     const entry: ISolutionEntry = {
       uri,
@@ -360,6 +365,7 @@ export class SolutionExplorerList {
       isSingleDiagramService,
       identity,
       authority,
+      isLoggedIn,
     };
 
     this._solutionService.addSolutionEntry(entry);
