@@ -568,8 +568,8 @@ export class LiveExecutionTracker {
       const outgoingElementAsShape: IShape = this._elementRegistry.get(outgoingElement.id);
       const targetOfOutgoingElement: IShape = outgoingElementAsShape.target;
 
-      const incomignElementHasNoSource: boolean = targetOfOutgoingElement === undefined;
-      if (incomignElementHasNoSource) {
+      const outgoingElementHasNoTarget: boolean = targetOfOutgoingElement === undefined;
+      if (outgoingElementHasNoTarget) {
         continue;
       }
 
