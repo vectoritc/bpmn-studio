@@ -536,7 +536,7 @@ export class LiveExecutionTracker {
       });
 
       const elementFinished: boolean = tokenHistoryGroups[flowNodeId].find((tokenHistoryEntry: TokenHistoryEntry) => {
-        return tokenHistoryEntry.tokenEventType !== DataModels.TokenHistory.TokenEventType.onEnter;
+        return tokenHistoryEntry.tokenEventType === DataModels.TokenHistory.TokenEventType.onExit;
       }) !== undefined;
 
       if (elementFinished) {
