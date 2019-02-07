@@ -4,7 +4,7 @@ import {bindable, inject} from 'aurelia-framework';
 import {DataModels} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {InspectPanelTab} from '../../../../../contracts/index';
+import {InspectPanelTab, ISolutionEntry} from '../../../../../contracts/index';
 import environment from '../../../../../environment';
 
 @inject(EventAggregator)
@@ -13,6 +13,7 @@ export class InspectPanel {
   @bindable() public selectedCorrelation: DataModels.Correlations.Correlation;
   @bindable() public fullscreen: boolean = false;
   @bindable() public activeDiagram: IDiagram;
+  @bindable() public activeSolutionEntry: ISolutionEntry;
   public InspectPanelTab: typeof InspectPanelTab = InspectPanelTab;
   public showCorrelationList: boolean = true;
   public showLogViewer: boolean;

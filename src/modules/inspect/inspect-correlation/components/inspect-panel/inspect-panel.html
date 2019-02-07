@@ -25,7 +25,7 @@
     </div>
     <div class="inspect-panel__body">
       <correlation-list if.bind="showCorrelationList" correlations.bind="correlations" selected-correlation.two-way="selectedCorrelation"></correlation-list>
-      <log-viewer if.bind="showLogViewer" correlation.bind="selectedCorrelation"></log-viewer>
+      <log-viewer if.bind="showLogViewer" active-solution-entry.bind="activeSolutionEntry" correlation.bind="selectedCorrelation"></log-viewer>
     </div>
   </div>
 </template>

@@ -4,13 +4,14 @@ import {bindable, inject, observable} from 'aurelia-framework';
 import {DataModels} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {IEventFunction, IShape} from '../../../contracts/index';
+import {IEventFunction, IShape, ISolutionEntry} from '../../../contracts/index';
 import environment from '../../../environment';
 import {IInspectCorrelationService} from './contracts';
 
 @inject('InspectCorrelationService', EventAggregator)
 export class InspectCorrelation {
   @bindable() public activeDiagram: IDiagram;
+  @bindable() public activeSolutionEntry: ISolutionEntry;
   @bindable() public selectedCorrelation: DataModels.Correlations.Correlation;
   @bindable() public inspectPanelFullscreen: boolean = false;
   @observable public bottomPanelHeight: number = 250;
@@ -93,7 +94,8 @@ export class InspectCorrelation {
   }
 
   public async activeDiagramChanged(): Promise<void> {
-    this.correlations = await this._inspectCorrelationService.getAllCorrelationsForProcessModelId(this.activeDiagram.id);
+    this.correlations = await this._inspectCorrelationService
+                                  .getAllCorrelationsForProcessModelId(this.activeDiagram.id, this.activeSolutionEntry.identity);
   }
 
   private _resizeInspectPanel(mouseEvent: MouseEvent): void {
