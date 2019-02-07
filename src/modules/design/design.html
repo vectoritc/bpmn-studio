@@ -105,10 +105,10 @@
         <div class="modal-dialog remote-solution-deploy-modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h4 class="modal-title">Multiple Connected Engines Found</h4>
+              <h4 class="modal-title">Multiple Connected ProcessEngines Found</h4>
             </div>
             <div class="modal-body">
-              Choose a remote engine; the diagram will be deployed to your selection.
+              Choose a remote ProcessEngine; the diagram will be deployed to your selection.
               <select class="form-control" value.bind="diagramDetail.selectedRemoteSolution">
                 <option repeat.for="entry of connectedRemoteSolutions" model.bind="entry">${entry.uri}</option>
               </select>
