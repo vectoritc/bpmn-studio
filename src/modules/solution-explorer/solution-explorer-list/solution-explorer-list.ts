@@ -9,6 +9,7 @@ import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service
 import {
   IAuthenticationService,
   IDiagramValidationService,
+  ILoginResult,
   ISolutionEntry,
   ISolutionService,
 } from '../../../contracts';
@@ -191,11 +192,16 @@ export class SolutionExplorerList {
   }
 
   public async login(solutionEntry: ISolutionEntry): Promise<void> {
-    await this._authenticationService.login(solutionEntry.authority);
+    const result: ILoginResult = await this._authenticationService.login(solutionEntry.authority);
 
-    solutionEntry.identity = await this._createIdentityForSolutionExplorer(solutionEntry.uri);
+    const identity: IIdentity = {
+      token: result.token,
+      userId: '',
+    };
+
+    solutionEntry.identity = identity;
     solutionEntry.isLoggedIn = true;
-    solutionEntry.userName = (await this._authenticationService.getIdentity(solutionEntry.authority)).name;
+    solutionEntry.userName = result.identity.name;
   }
 
   public async logout(solutionEntry: ISolutionEntry): Promise<void> {
