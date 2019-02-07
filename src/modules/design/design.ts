@@ -243,15 +243,19 @@ export class Design {
           resolve(false);
         }
 
-        this.showLeaveModal = false;
-        await this.diagramDetail.saveDiagram();
-        this.diagramDetail.diagramHasChanged = false;
+        try {
+          await this.diagramDetail.saveDiagram();
+          this.diagramDetail.diagramHasChanged = false;
+          this.showLeaveModal = false;
+
+          resolve(true);
+        } catch {
+          return;
+        }
 
         document.getElementById('dontSaveButtonLeaveView').removeEventListener('click', dontSaveAndLeaveFunction);
         document.getElementById('saveButtonLeaveView').removeEventListener('click', saveAndLeaveFunction);
         document.getElementById('cancelButtonLeaveView').removeEventListener('click', cancelAndLeaveFunction);
-
-        resolve(true);
       };
 
       const cancelAndLeaveFunction: EventListenerOrEventListenerObject = (): void => {
