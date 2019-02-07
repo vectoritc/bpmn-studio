@@ -578,10 +578,10 @@ export class LiveExecutionTracker {
       if (previousElementIsSequenceFlow) {
         elementsWithOutgoingElements.push(outgoingElementAsShape);
       } else {
-        const elementHasActiveToken: boolean = this._hasElementActiveToken(targetOfOutgoingElement.id);
+        const outgoingElementHasActiveToken: boolean = this._hasElementActiveToken(targetOfOutgoingElement.id);
         const targetOfOutgoingElementHasNoTokenHistory: boolean = !this._hasElementTokenHistory(targetOfOutgoingElement.id, tokenHistoryGroups);
 
-        if (elementHasActiveToken || targetOfOutgoingElementHasNoTokenHistory) {
+        if (outgoingElementHasActiveToken || targetOfOutgoingElementHasNoTokenHistory) {
           continue;
         }
 
