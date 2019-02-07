@@ -311,56 +311,56 @@ Die folgenden Skripte, werden in unserem Tooling verwendet:
 
 * `start`
 
-   Startet die BPMN-Studio Webanwendung.
+  Startet die BPMN-Studio Webanwendung.
 
 * `start_dev`
 
-   Startet die BPMN-Studio Webanwendung und trackt die Quelldatein
-   (geänderte Quelltextdatein werden neu transpiliert und die
-   Webanwendung wird neu geladen).
+  Startet die BPMN-Studio Webanwendung und trackt die Quelldatein
+  (geänderte Quelltextdatein werden neu transpiliert und die
+  Webanwendung wird neu geladen).
 
 * `electron-start-dev`
 
-   Baut das Aurelia Bundle und startet die Electron Anwendung.
+  Baut das Aurelia Bundle und startet die Electron Anwendung.
 
 * `reset`
 
-   Entfernt alle node_modules, die `package-lock.json` Datei und bereinigt den NPM-Cache.
+  Entfernt alle node_modules, die `package-lock.json` Datei und bereinigt den NPM-Cache.
 
 * `lint`
 
-   Startet `tslint` für das gesamte Projekt.
+  Startet `tslint` für das gesamte Projekt.
 
 * `electron-build-macos`
 
-   Baut die Electron-Anwendung für macOS.
+  Baut die Electron-Anwendung für macOS.
 
 * `electron-build-linux`
 
-   Baut die Electron-Anwendung für Linux.
+  Baut die Electron-Anwendung für Linux.
 
 * `electron-build-windows`
 
-   Baut die Electron-Anwendung für Windows.
+  Baut die Electron-Anwendung für Windows.
 
 * `electron-rebuild`
 
-   Baut alle nativen Abhängigkeiten.
+  Baut alle nativen Abhängigkeiten.
 
 * `test-init`
 
-   Startet die installierte ProcessEngine und den Webdriver, welcher für
-   die End-to-End Tests benötigt wird.
+  Startet die installierte ProcessEngine und den Webdriver, welcher für
+  die End-to-End Tests benötigt wird.
 
 * `test`
 
-   Führt die End-to-End Tests für das BPMN-Studio Frontend aus.
+  Führt die End-to-End Tests für das BPMN-Studio Frontend aus.
 
 * `test-docker`
 
-   Startet die BPMN-Studio Webanwendung als Docker Container und führt
-   die End-to-End Tests gegen der im Container laufenden Instanz der
-   BPMN-Studio Webanwendung aus.
+  Startet die BPMN-Studio Webanwendung als Docker Container und führt
+  die End-to-End Tests gegen der im Container laufenden Instanz der
+  BPMN-Studio Webanwendung aus.
 
 ## Was muss ich sonst noch wissen?
 
