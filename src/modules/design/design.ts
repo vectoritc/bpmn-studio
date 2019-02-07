@@ -1,3 +1,9 @@
+/* tslint:disable:no-use-before-declare */
+/**
+ * We are disabling this rule here because we need this kind of statement in the
+ * functions used in the promise of the modal.
+*/
+
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, bindingMode, inject} from 'aurelia-framework';
 import {activationStrategy, NavigationInstruction, Redirect, Router} from 'aurelia-router';

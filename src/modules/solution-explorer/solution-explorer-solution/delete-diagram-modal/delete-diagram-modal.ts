@@ -1,3 +1,8 @@
+/* tslint:disable:no-use-before-declare */
+/**
+ * We are disabling this rule here because we need this kind of statement in the
+ * functions used in the promise of the modal.
+*/
 import {inject} from 'aurelia-framework';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
