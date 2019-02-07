@@ -5,7 +5,7 @@ import {Router} from 'aurelia-router';
 
 import {User} from 'oidc-client';
 
-import {AuthenticationStateEvent, IAuthenticationService, IIdentity, NotificationType} from '../../contracts/index';
+import {AuthenticationStateEvent, IAuthenticationService, ILoginResult, ILogoutResult, IUserIdentity, NotificationType} from '../../contracts/index';
 import {oidcConfig} from '../../open-id-connect-configuration';
 import {NotificationService} from './../notification/notification.service';
 
@@ -28,7 +28,7 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
   }
 
   public async isLoggedIn(authority: string): Promise<boolean> {
-    const identity: IIdentity = await this.getIdentity(authority);
+    const identity: IUserIdentity = await this.getUserIdentity(authority);
 
     const userIsNotAuthorized: boolean = identity === null;
     return userIsNotAuthorized
@@ -36,7 +36,7 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
           : true;
   }
 
-  public async login(authority: string): Promise<void> {
+  public async login(authority: string): Promise<ILoginResult> {
 
     const isAuthorityReachable: boolean = await this._isAuthorityReachable(authority);
 
@@ -50,6 +50,13 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
     window.localStorage.setItem('openIdRoute', authority);
 
     this._eventAggregator.publish(AuthenticationStateEvent.LOGIN);
+
+    const loginResult: ILoginResult = {
+      identity: await this.getUserIdentity(authority),
+      token: await this.getAccessToken(authority),
+    };
+
+    return loginResult;
   }
 
   public async logout(authority: string): Promise<void> {
@@ -84,7 +91,7 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
     return base64EncodedString;
   }
 
-  public async getIdentity(authority: string): Promise<IIdentity | null> {
+  public async getUserIdentity(authority: string): Promise<IUserIdentity | null> {
     const accessToken: string = await this.getAccessToken(authority);
 
     if (!accessToken) {
