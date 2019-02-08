@@ -2,21 +2,21 @@
   <require from="./modal.css"></require>
 
   <div class="modal show show-modal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-style" style.bind="styleString" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>
-            <template replaceable part="modal-header">
+    <div class="modal-dialog modal-style" style.bind="modalStyle" role="document">
+      <div class="modal-content" style="max-height: 100%">
+        <div class="modal-header" style.bind="headerStyle">
+          <template replaceable part="modal-header">
+            <h3>
               ${headerText}
-            </template>
-          </h3>
+            </h3>
+          </template>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" style.bind="bodyStyle">
           <template replaceable part="modal-body">
             ${bodyText}
           </template>
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer" style.bind="footerStyle">
           <template replaceable part="modal-footer">
             ${footerText}
           </template>

@@ -5,5 +5,11 @@ export class Modal {
   @bindable public headerText: string;
   @bindable public bodyText: string;
   @bindable public footerText: string;
-  @bindable public styleString: string;
+
+  @bindable public modalStyle: string;
+  @bindable public bodyStyle: string;
+  @bindable public footerStyle: string;
+  @bindable public headerStyle: string;
+
+  @bindable public origin: HTMLElement;
 }
