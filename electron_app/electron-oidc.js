@@ -110,7 +110,7 @@ module.exports = function (config, windowParams) {
   function logout(tokenObject, authorityUrl) {
 
     const urlParams = {
-      id_token_hint: tokenObject.idToken,
+      id_token_hint: tokenObject.userId,
       post_logout_redirect_uri: config.logoutRedirectUri,
     };
 
