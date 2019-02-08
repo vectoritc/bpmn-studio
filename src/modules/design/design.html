@@ -65,11 +65,11 @@
     </modal>
 
     <modal show.bind="showRemoteSolutionOnDeployModal" 
-          header-text="Save Diagram Before Deploying">
+          header-text="Multiple Connected ProcessEngines Found">
       <template replace-part="modal-body">
-        Choose a remote engine; the diagram will be deployed to your selection.
+        Choose a remote ProcessEngines; the diagram will be deployed to your selection.
         <select class="form-control" value.bind="diagramDetail.selectedRemoteSolution">
-          <option repeat.for="entry of remoteSolutions" model.bind="entry">${entry.uri}</option>
+          <option repeat.for="entry of connectedRemoteSolutions" model.bind="entry">${entry.uri}</option>
         </select>
       </template>
 
@@ -134,7 +134,7 @@
         <div>
           <select value.bind="diagramDetail.selectedStartEventId" ref="dropdownMenu" class="process-start-event-modal-dialog__dropdown-menu">
             <option>Select StartEvent</option>
-            <option repeat.for="startEvent of diagramDetail.processesStartEvents" value.bind="diagramDetail.startEvent.id">${diagramDetail.startEvent.id}</option>
+            <option repeat.for="startEvent of diagramDetail.processesStartEvents" value.bind="startEvent.id">${startEvent.id}</option>
           </select>
         </div>
       </template>
