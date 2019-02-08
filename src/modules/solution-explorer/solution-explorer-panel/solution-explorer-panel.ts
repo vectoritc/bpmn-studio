@@ -98,12 +98,6 @@ export class SolutionExplorerPanel {
     }
 
     this._subscriptions = [
-      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
-        this.solutionExplorerList.refreshSolutionsOnIdentityChange();
-      }),
-      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
-        this.solutionExplorerList.refreshSolutionsOnIdentityChange();
-      }),
       this._eventAggregator.subscribe(environment.events.diagramDetail.onDiagramDeployed, () => {
         this._refreshSolutions();
       }),
