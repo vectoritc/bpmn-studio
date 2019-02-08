@@ -132,14 +132,4 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
 
     return false;
   }
-
-  // TODO: The dummy token needs to be removed in the future!!
-  // This dummy token serves as a temporary workaround to bypass login. This
-  // enables us to work without depending on a full environment with
-  // IdentityServer.
-  public async getAccessToken(authority: string): Promise<string> {
-    const dummyAccessTokenString: string = 'dummy_token';
-    const base64EncodedString: string = btoa(dummyAccessTokenString);
-    return base64EncodedString;
-  }
 }

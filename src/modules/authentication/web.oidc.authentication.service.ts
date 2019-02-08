@@ -54,7 +54,7 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
 
     const loginResult: ILoginResult = {
       identity: await this._getUserIdentity(authority),
-      accessToken: await this.getAccessToken(authority),
+      accessToken: await this._getAccessToken(authority),
       idToken: '',
     };
 
@@ -72,19 +72,8 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
 
   }
 
-  public async getAccessToken(authority: string): Promise<string | null> {
-    this._setAuthority(authority);
-    const user: User = await this._openIdConnect.getUser();
-
-    const userIsNotLoggedIn: boolean = user === undefined || user === null;
-
-    return userIsNotLoggedIn
-          ? this._getDummyAccessToken()
-          : user.access_token;
-  }
-
   private async _getUserIdentity(authority: string): Promise<IUserIdentity | null> {
-    const accessToken: string = await this.getAccessToken(authority);
+    const accessToken: string = await this._getAccessToken(authority);
     const accessTokenIsDummyToken: boolean = accessToken === this._getDummyAccessToken();
 
     if (accessTokenIsDummyToken) {
@@ -156,5 +145,16 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
     const dummyAccessTokenString: string = 'dummy_token';
     const base64EncodedString: string = btoa(dummyAccessTokenString);
     return base64EncodedString;
+  }
+
+  private async _getAccessToken(authority: string): Promise<string | null> {
+    this._setAuthority(authority);
+    const user: User = await this._openIdConnect.getUser();
+
+    const userIsNotLoggedIn: boolean = user === undefined || user === null;
+
+    return userIsNotLoggedIn
+          ? this._getDummyAccessToken()
+          : user.access_token;
   }
 }
