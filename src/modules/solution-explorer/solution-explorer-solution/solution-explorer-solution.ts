@@ -187,7 +187,7 @@ export class SolutionExplorerSolution {
 
   public async showDeleteDiagramModal(diagram: IDiagram, event: Event): Promise<void> {
     /**
-     * We are stopping the event propagation here, because we don't want the want
+     * We are stopping the event propagation here, because we don't want
      * the event to be called on the list element, since this would lead to a
      * navigation to the diagram we want to delete.
      */
