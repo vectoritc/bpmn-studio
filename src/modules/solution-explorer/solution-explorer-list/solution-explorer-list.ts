@@ -71,21 +71,6 @@ export class SolutionExplorerList {
   }
 
   /**
-   * Reopen all currently opened solutions to reload the identity
-   * used to open the solution.
-   */
-  public async refreshSolutionsOnIdentityChange(): Promise<void> {
-    const openPromises: Array<Promise<void>> = this._openedSolutions
-      .map(async(entry: ISolutionEntry): Promise<void> => {
-        return entry.service.openSolution(entry.uri, await this._createIdentityForSolutionExplorer(entry.uri));
-      });
-
-    await Promise.all(openPromises);
-
-    return this.refreshSolutions();
-  }
-
-  /**
    * Refreshes all currently opened solutions.
    */
   public async refreshSolutions(): Promise<void> {
