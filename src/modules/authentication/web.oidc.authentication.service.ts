@@ -81,17 +81,6 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
           : user.access_token;
   }
 
-  // TODO: The dummy token needs to be removed in the future!!
-  // This dummy token serves as a temporary workaround to bypass login. This
-  // enables us to work without depending on a full environment with
-  // IdentityServer.
-  private _getDummyAccessToken(): string {
-    const dummyAccessTokenString: string = 'dummy_token';
-    const base64EncodedString: string = btoa(dummyAccessTokenString);
-    return base64EncodedString;
-  }
-
-  public async getUserIdentity(authority: string): Promise<IUserIdentity | null> {
     const accessToken: string = await this.getAccessToken(authority);
 
     if (!accessToken) {
@@ -153,5 +142,15 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
     // This dirty way to update the settings is the only way during runtime
     this._openIdConnect.configuration.userManagerSettings.authority = authority;
     this._openIdConnect.userManager._settings._authority = authority;
+  }
+
+  // TODO: The dummy token needs to be removed in the future!!
+  // This dummy token serves as a temporary workaround to bypass login. This
+  // enables us to work without depending on a full environment with
+  // IdentityServer.
+  private _getDummyAccessToken(): string {
+    const dummyAccessTokenString: string = 'dummy_token';
+    const base64EncodedString: string = btoa(dummyAccessTokenString);
+    return base64EncodedString;
   }
 }
