@@ -5,7 +5,7 @@ import {Router} from 'aurelia-router';
 
 import {User} from 'oidc-client';
 
-import {AuthenticationStateEvent, IAuthenticationService, ILoginResult, ILogoutResult, IUserIdentity, NotificationType} from '../../contracts/index';
+import {AuthenticationStateEvent, IAuthenticationService, ILoginResult, IUserIdentity, NotificationType} from '../../contracts/index';
 import {oidcConfig} from '../../open-id-connect-configuration';
 import {NotificationService} from './../notification/notification.service';
 
@@ -28,7 +28,7 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
   }
 
   public async isLoggedIn(authority: string): Promise<boolean> {
-    const identity: IUserIdentity = await this.getUserIdentity(authority);
+    const identity: IUserIdentity = await this._getUserIdentity(authority);
 
     const userIsNotAuthorized: boolean = identity === null;
     return userIsNotAuthorized
@@ -52,7 +52,7 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
     this._eventAggregator.publish(AuthenticationStateEvent.LOGIN);
 
     const loginResult: ILoginResult = {
-      identity: await this.getUserIdentity(authority),
+      identity: await this._getUserIdentity(authority),
       token: await this.getAccessToken(authority),
     };
 
@@ -81,9 +81,11 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
           : user.access_token;
   }
 
+  private async _getUserIdentity(authority: string): Promise<IUserIdentity | null> {
     const accessToken: string = await this.getAccessToken(authority);
+    const accessTokenIsDummyToken: boolean = accessToken === this._getDummyAccessToken();
 
-    if (!accessToken) {
+    if (accessTokenIsDummyToken) {
       return null;
     }
 
