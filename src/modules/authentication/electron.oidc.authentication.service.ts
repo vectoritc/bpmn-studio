@@ -76,15 +76,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
       }
     });
 
-    const openIdConnectRoute: string = window.localStorage.getItem('openIdRoute');
-    const openIdRouteIsSet: boolean = openIdConnectRoute !== null;
-
-    const authorityUrl: string = openIdRouteIsSet
-                              ? openIdConnectRoute
-                              : environment.openIdConnect.defaultAuthority;
-
-    ipcRenderer.send('oidc-logout', this._tokenObject, authorityUrl);
-
+    ipcRenderer.send('oidc-logout', this._tokenObject, authority);
   }
 
   public async getUserIdentity(authority: string, accessToken: string): Promise<IUserIdentity | null> {
