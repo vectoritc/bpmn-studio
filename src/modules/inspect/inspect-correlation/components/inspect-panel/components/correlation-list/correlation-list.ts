@@ -5,7 +5,7 @@ import {DataModels} from '@process-engine/management_api_contracts';
 
 import {CorrelationListSortProperty, ICorrelationSortSettings, ICorrelationTableEntry} from '../../../../../../../contracts/index';
 import environment from '../../../../../../../environment';
-import {DateService} from '../../../../../../date-service/date.service';
+import {DateService} from '../../../../../../../services/date-service/date.service';
 
 @inject(EventAggregator)
 export class CorrelationList {

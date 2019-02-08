@@ -11,11 +11,6 @@ import {
   ISolutionService,
 } from '../../contracts/index';
 
-interface RouteParameters {
-  diagramName?: string;
-  solutionUri?: string;
-}
-
 @inject(Router, 'SolutionService', 'AuthenticationService', EventAggregator)
 export class ConfigPanel {
   public internalSolution: ISolutionEntry;

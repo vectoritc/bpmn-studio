@@ -2,7 +2,7 @@ import {inject} from 'aurelia-framework';
 import {activationStrategy} from 'aurelia-router';
 
 import {ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
-import {NotificationService} from '../notification/notification.service';
+import {NotificationService} from '../../services/notification-service/notification.service';
 
 export interface IThinkRouteParameters {
   view?: string;

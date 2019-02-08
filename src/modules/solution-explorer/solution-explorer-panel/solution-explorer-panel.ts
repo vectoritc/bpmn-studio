@@ -7,7 +7,7 @@ import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {AuthenticationStateEvent, IFile, IInputEvent, ISolutionEntry, ISolutionService} from '../../../contracts/index';
 import {NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
-import {NotificationService} from '../../notification/notification.service';
+import {NotificationService} from '../../../services/notification-service/notification.service';
 import {SolutionExplorerList} from '../solution-explorer-list/solution-explorer-list';
 
 import * as os from 'os';

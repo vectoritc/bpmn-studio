@@ -8,7 +8,7 @@ import {DataModels} from '@process-engine/management_api_contracts';
 
 import {AuthenticationStateEvent, IDynamicUiService, ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
 import {DynamicUiWrapper} from '../dynamic-ui-wrapper/dynamic-ui-wrapper';
-import {NotificationService} from '../notification/notification.service';
+import {NotificationService} from '../../services/notification-service/notification.service';
 
 interface RouteParameters {
   diagramName: string;
