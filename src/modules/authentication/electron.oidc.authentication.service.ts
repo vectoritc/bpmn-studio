@@ -54,7 +54,8 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
 
         const loginResult: ILoginResult = {
           identity: identity,
-          token: tokenObject.accessToken,
+          accessToken: tokenObject.accessToken,
+          idToken: tokenObject.idToken,
         };
 
         this._eventAggregator.publish(AuthenticationStateEvent.LOGIN);
@@ -68,7 +69,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
     return loginResultPromise;
   }
 
-  public async logout(authority: string): Promise<void> {
+  public async logout(authority: string, identity: IIdentity): Promise<void> {
 
     const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
 
@@ -79,7 +80,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
       }
     });
 
-    ipcRenderer.send('oidc-logout', this._tokenObject, authority);
+    ipcRenderer.send('oidc-logout', identity, authority);
   }
 
   public async _getUserIdentity(authority: string, identity: IIdentity): Promise<IUserIdentity | null> {
@@ -136,7 +137,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
   // This dummy token serves as a temporary workaround to bypass login. This
   // enables us to work without depending on a full environment with
   // IdentityServer.
-  private async getAccessToken(authority: string): Promise<string> {
+  public async getAccessToken(authority: string): Promise<string> {
     const dummyAccessTokenString: string = 'dummy_token';
     const base64EncodedString: string = btoa(dummyAccessTokenString);
     return base64EncodedString;
