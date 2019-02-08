@@ -52,13 +52,11 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
           token: tokenObject.accessToken,
         };
 
-        console.log('login result', loginResult);
         this._eventAggregator.publish(AuthenticationStateEvent.LOGIN);
 
         resolve(loginResult);
       });
 
-      console.log('send login', authority);
       ipcRenderer.send('oidc-login', authority);
     });
 
