@@ -202,6 +202,8 @@ export class SolutionExplorerList {
     solutionEntry.identity = identity;
     solutionEntry.isLoggedIn = true;
     solutionEntry.userName = result.identity.name;
+
+    solutionEntry.service.openSolution(solutionEntry.uri, solutionEntry.identity);
   }
 
   public async logout(solutionEntry: ISolutionEntry): Promise<void> {
