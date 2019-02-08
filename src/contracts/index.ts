@@ -1,6 +1,5 @@
 export * from './authentication/index';
 export * from './bpmnmodeler/index';
-export * from './choose-dialog/index';
 export * from './colorpicker/index';
 export * from './diagram-validation-service/index';
 export * from './diagram-creation-service/index';
