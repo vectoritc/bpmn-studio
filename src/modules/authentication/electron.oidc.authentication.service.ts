@@ -45,7 +45,12 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
       const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
 
       ipcRenderer.on('oidc-login-reply', async(event: any, tokenObject: ITokenObject) => {
-        const identity: IUserIdentity = await this.getUserIdentity(authority);
+        const iamIdentity: IIdentity = {
+          token: tokenObject.accessToken,
+          userId: tokenObject.idToken,
+        };
+
+        const identity: IUserIdentity = await this._getUserIdentity(authority, iamIdentity);
 
         const loginResult: ILoginResult = {
           identity: identity,
