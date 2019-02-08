@@ -192,11 +192,13 @@ export class SolutionExplorerList {
   }
 
   public async logout(solutionEntry: ISolutionEntry): Promise<void> {
-    await this._authenticationService.logout(solutionEntry.authority);
+    await this._authenticationService.logout(solutionEntry.authority, solutionEntry.identity);
 
     solutionEntry.identity = await this._createIdentityForSolutionExplorer(solutionEntry.uri);
     solutionEntry.isLoggedIn = false;
     solutionEntry.userName = undefined;
+
+    await solutionEntry.service.openSolution(solutionEntry.uri, solutionEntry.identity);
   }
 
   /**
