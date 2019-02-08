@@ -1,34 +1,30 @@
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
-import {Router} from 'aurelia-router';
+
+import {IIdentity} from '@essential-projects/iam_contracts';
 
 import {AuthenticationStateEvent,
         IAuthenticationService,
         ILoginResult,
-        ISolutionEntry,
         ISolutionService,
         ITokenObject,
         IUserIdentity,
         NotificationType} from '../../contracts/index';
-import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
 const UNAUTHORIZED_STATUS_CODE: number = 401;
 const IDENTITY_SERVER_AVAILABLE_SUCCESS_STATUS_CODE: number = 200;
 
-@inject(EventAggregator, 'NotificationService', 'SolutionService')
+@inject(EventAggregator, 'NotificationService')
 export class ElectronOidcAuthenticationService implements IAuthenticationService {
 
   private _eventAggregator: EventAggregator;
   private _notificationService: NotificationService;
-  private _solutionService: ISolutionService;
 
   constructor(eventAggregator: EventAggregator,
-              notificationService: NotificationService,
-              solutionService: ISolutionService) {
+              notificationService: NotificationService) {
     this._eventAggregator = eventAggregator;
     this._notificationService = notificationService;
-    this._solutionService = solutionService;
   }
 
   public async isLoggedIn(authority: string): Promise<boolean> {
