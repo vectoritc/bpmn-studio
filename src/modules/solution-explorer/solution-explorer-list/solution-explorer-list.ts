@@ -180,15 +180,15 @@ export class SolutionExplorerList {
     const result: ILoginResult = await this._authenticationService.login(solutionEntry.authority);
 
     const identity: IIdentity = {
-      token: result.token,
-      userId: '',
+      token: result.accessToken,
+      userId: result.idToken,
     };
 
     solutionEntry.identity = identity;
     solutionEntry.isLoggedIn = true;
     solutionEntry.userName = result.identity.name;
 
-    solutionEntry.service.openSolution(solutionEntry.uri, solutionEntry.identity);
+    await solutionEntry.service.openSolution(solutionEntry.uri, solutionEntry.identity);
   }
 
   public async logout(solutionEntry: ISolutionEntry): Promise<void> {
