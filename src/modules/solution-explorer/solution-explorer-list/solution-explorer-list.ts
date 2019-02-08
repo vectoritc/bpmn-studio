@@ -87,7 +87,7 @@ export class SolutionExplorerList {
   }
 
   public async openSingleDiagram(uri: string): Promise<IDiagram> {
-    const identity: IIdentity = await this._createIdentityForSolutionExplorer(uri);
+    const identity: IIdentity = await this._createIdentityForSolutionExplorer();
 
     const diagram: IDiagram = await this._singleDiagramService.openSingleDiagram(uri, identity);
 
@@ -118,7 +118,7 @@ export class SolutionExplorerList {
       solutionExplorer = await this._solutionExplorerServiceFactory.newFileSystemSolutionExplorer();
     }
 
-    const identity: IIdentity = await this._createIdentityForSolutionExplorer(uri);
+    const identity: IIdentity = await this._createIdentityForSolutionExplorer();
     try {
       await solutionExplorer.openSolution(uri, identity);
     } catch (error) {
@@ -194,7 +194,7 @@ export class SolutionExplorerList {
   public async logout(solutionEntry: ISolutionEntry): Promise<void> {
     await this._authenticationService.logout(solutionEntry.authority, solutionEntry.identity);
 
-    solutionEntry.identity = await this._createIdentityForSolutionExplorer(solutionEntry.uri);
+    solutionEntry.identity = await this._createIdentityForSolutionExplorer();
     solutionEntry.isLoggedIn = false;
     solutionEntry.userName = undefined;
 
@@ -285,7 +285,7 @@ export class SolutionExplorerList {
         nameOfSingleDiagramService,
       );
 
-    const identity: IIdentity = await this._createIdentityForSolutionExplorer(uriOfSingleDiagramService);
+    const identity: IIdentity = await this._createIdentityForSolutionExplorer();
 
     this._addSolutionEntry(uriOfSingleDiagramService, this._singleDiagramService, identity, true);
   }
@@ -380,11 +380,9 @@ export class SolutionExplorerList {
     }
   }
 
-  private async _createIdentityForSolutionExplorer(solutionUri: string): Promise<IIdentity> {
+  private async _createIdentityForSolutionExplorer(): Promise<IIdentity> {
 
-    const authority: string = await this._getAuthorityForSolution(solutionUri);
-
-    const accessToken: string = await this._authenticationService.getAccessToken(authority);
+    const accessToken: string = this.createDummyAccessToken();
     // TODO: Get the identity from the IdentityService of `@process-engine/iam`
     const identity: IIdentity = {
       token: accessToken,
@@ -414,6 +412,12 @@ export class SolutionExplorerList {
       return authority;
     }
 
+  }
+
+  private createDummyAccessToken(): string {
+    const dummyAccessTokenString: string = 'dummy_token';
+    const base64EncodedString: string = btoa(dummyAccessTokenString);
+    return base64EncodedString;
   }
 
 }
