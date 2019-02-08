@@ -3,11 +3,9 @@
 }
 
 .show-modal {
-  display: block;
+  display: block !important;
 }
 
 .modal-style {
-  position: relative;
   top: 20%;
-  width: 400px;
 }
