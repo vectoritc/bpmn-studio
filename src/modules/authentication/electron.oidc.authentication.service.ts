@@ -79,7 +79,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
     ipcRenderer.send('oidc-logout', this._tokenObject, authority);
   }
 
-  public async getUserIdentity(authority: string, accessToken: string): Promise<IUserIdentity | null> {
+  public async _getUserIdentity(authority: string, identity: IIdentity): Promise<IUserIdentity | null> {
 
     const userInforequest: Request = new Request(`${authority}connect/userinfo`, {
       method: 'GET',
@@ -88,7 +88,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${identity.token}`,
       },
     });
 
@@ -133,7 +133,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
   // This dummy token serves as a temporary workaround to bypass login. This
   // enables us to work without depending on a full environment with
   // IdentityServer.
-  private getDummyAccessToken(): string {
+  private async getAccessToken(authority: string): Promise<string> {
     const dummyAccessTokenString: string = 'dummy_token';
     const base64EncodedString: string = btoa(dummyAccessTokenString);
     return base64EncodedString;
