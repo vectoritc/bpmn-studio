@@ -1,10 +1,8 @@
 import {ILoginResult} from './ILoginResult';
-import {IUserIdentity} from './IUserIdentity';
 
 export interface IAuthenticationService {
   login(authority: string): Promise<ILoginResult>;
   logout(authority: string): Promise<void>;
   isLoggedIn(authority: string): Promise<boolean>;
-  getDummyAccessToken(): string;
-  getUserIdentity(authority: string): Promise<IUserIdentity>;
+  getAccessToken(authority: string): Promise<string>;
 }
