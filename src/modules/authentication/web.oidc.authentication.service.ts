@@ -3,6 +3,7 @@ import {inject} from 'aurelia-framework';
 import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {Router} from 'aurelia-router';
 
+import {IIdentity} from '@essential-projects/iam_contracts';
 import {User} from 'oidc-client';
 
 import {AuthenticationStateEvent, IAuthenticationService, ILoginResult, IUserIdentity, NotificationType} from '../../contracts/index';
@@ -53,13 +54,14 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
 
     const loginResult: ILoginResult = {
       identity: await this._getUserIdentity(authority),
-      token: await this.getAccessToken(authority),
+      accessToken: await this.getAccessToken(authority),
+      idToken: '',
     };
 
     return loginResult;
   }
 
-  public async logout(authority: string): Promise<void> {
+  public async logout(authority: string, identity: IIdentity): Promise<void> {
 
     if (!this.isLoggedIn) {
       return;
