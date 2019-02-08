@@ -45,6 +45,7 @@ export function configure(aurelia: Aurelia): void {
 
   aurelia.use
     .standardConfiguration()
+    .globalResources('modules/custom_elements/modal/modal.html')
     .feature('modules/fetch-http-client')
     .feature('modules/dynamic-ui')
     .feature('modules/notification')
