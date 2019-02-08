@@ -114,7 +114,7 @@ module.exports = function (config, windowParams) {
       post_logout_redirect_uri: config.logoutRedirectUri,
     };
 
-    const endSessionUrl = `${authorityUrl}/connect/endsession?${queryString.stringify(urlParams)}`
+    const endSessionUrl = `${authorityUrl}connect/endsession?${queryString.stringify(urlParams)}`
 
     return new Promise(async function (resolve, reject) {
 
