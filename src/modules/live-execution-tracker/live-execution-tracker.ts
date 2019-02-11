@@ -106,6 +106,7 @@ export class LiveExecutionTracker {
 
     this.processInstanceId = routeParameters.processInstanceId;
 
+    this._parentProcessInstanceId = await this._getParentProcessInstanceId();
     this._parentProcessModelId = await this._getParentProcessModelId();
 
     this.correlation = await this._managementApiClient.getCorrelationById(this.activeSolutionEntry.identity, this.correlationId);
@@ -221,15 +222,13 @@ export class LiveExecutionTracker {
   }
 
   private async _getParentProcessModelId(): Promise<string> {
-    const parentProcessInstanceId: string = await this._getParentProcessInstanceId();
-
-    const parentProcessInstanceIdNotFound: boolean = parentProcessInstanceId === undefined;
+    const parentProcessInstanceIdNotFound: boolean = this._parentProcessInstanceId === undefined;
     if (parentProcessInstanceIdNotFound) {
       return undefined;
     }
 
     const parentProcessModel: DataModels.Correlations.CorrelationProcessModel =
-     await this._getProcessModelByProcessInstanceId(parentProcessInstanceId);
+     await this._getProcessModelByProcessInstanceId(this._parentProcessInstanceId);
 
     const parentProcessModelNotFound: boolean = parentProcessModel === undefined;
     if (parentProcessModelNotFound) {
