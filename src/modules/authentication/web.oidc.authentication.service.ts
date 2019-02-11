@@ -17,6 +17,11 @@ const IDENTITY_SERVER_AVAILABLE_SUCCESS_STATUS_CODE: number = 200;
 export class WebOidcAuthenticationService implements IAuthenticationService {
 
   private _eventAggregator: EventAggregator;
+  /**
+   * We have to use any here since it is the only way to access the private members
+   * of this. We need the access them when changing the authority while the application
+   * is running.
+   */
   private _openIdConnect: OpenIdConnect | any;
   private _notificationService: NotificationService;
 
@@ -55,6 +60,7 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
     const loginResult: ILoginResult = {
       identity: await this._getUserIdentity(authority),
       accessToken: await this._getAccessToken(authority),
+      // The idToken is provided by the oidc service when making requests and therefore not set here.
       idToken: '',
     };
 
