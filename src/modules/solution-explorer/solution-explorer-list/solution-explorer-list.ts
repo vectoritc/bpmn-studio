@@ -87,7 +87,7 @@ export class SolutionExplorerList {
   }
 
   public async openSingleDiagram(uri: string): Promise<IDiagram> {
-    const identity: IIdentity = await this._createIdentityForSolutionExplorer();
+    const identity: IIdentity = this._createIdentityForSolutionExplorer();
 
     const diagram: IDiagram = await this._singleDiagramService.openSingleDiagram(uri, identity);
 
@@ -120,7 +120,7 @@ export class SolutionExplorerList {
 
     const identityIsNotSet: boolean = identity === undefined || identity === null;
     if (identityIsNotSet) {
-      identity = await this._createIdentityForSolutionExplorer();
+      identity = this._createIdentityForSolutionExplorer();
     }
 
     try {
@@ -199,7 +199,7 @@ export class SolutionExplorerList {
   public async logout(solutionEntry: ISolutionEntry): Promise<void> {
     await this._authenticationService.logout(solutionEntry.authority, solutionEntry.identity);
 
-    solutionEntry.identity = await this._createIdentityForSolutionExplorer();
+    solutionEntry.identity = this._createIdentityForSolutionExplorer();
     solutionEntry.isLoggedIn = false;
     solutionEntry.userName = undefined;
 
@@ -290,7 +290,7 @@ export class SolutionExplorerList {
         nameOfSingleDiagramService,
       );
 
-    const identity: IIdentity = await this._createIdentityForSolutionExplorer();
+    const identity: IIdentity = this._createIdentityForSolutionExplorer();
 
     this._addSolutionEntry(uriOfSingleDiagramService, this._singleDiagramService, identity, true);
   }
@@ -390,7 +390,7 @@ export class SolutionExplorerList {
     }
   }
 
-  private async _createIdentityForSolutionExplorer(): Promise<IIdentity> {
+  private _createIdentityForSolutionExplorer(): IIdentity {
 
     const accessToken: string = this.createDummyAccessToken();
     // TODO: Get the identity from the IdentityService of `@process-engine/iam`
