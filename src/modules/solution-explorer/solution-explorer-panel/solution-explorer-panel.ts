@@ -39,6 +39,7 @@ export class SolutionExplorerPanel {
   public singleDiagramInput: HTMLInputElement;
   public showOpenRemoteSolutionModal: boolean = false;
   public uriOfRemoteSolution: string;
+  public solutionExplorerPanel: SolutionExplorerPanel = this;
 
   constructor(
     eventAggregator: EventAggregator,
