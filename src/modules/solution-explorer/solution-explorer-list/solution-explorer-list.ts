@@ -392,7 +392,7 @@ export class SolutionExplorerList {
 
   private _createIdentityForSolutionExplorer(): IIdentity {
 
-    const accessToken: string = this.createDummyAccessToken();
+    const accessToken: string = this._createDummyAccessToken();
     // TODO: Get the identity from the IdentityService of `@process-engine/iam`
     const identity: IIdentity = {
       token: accessToken,
@@ -424,7 +424,7 @@ export class SolutionExplorerList {
 
   }
 
-  private createDummyAccessToken(): string {
+  private _createDummyAccessToken(): string {
     const dummyAccessTokenString: string = 'dummy_token';
     const base64EncodedString: string = btoa(dummyAccessTokenString);
     return base64EncodedString;
