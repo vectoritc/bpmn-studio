@@ -36,17 +36,15 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
   public async isLoggedIn(authority: string, identity: IIdentity): Promise<boolean> {
     const userIdentity: IUserIdentity = await this._getUserIdentity(authority);
 
-    const userIsNotAuthorized: boolean = userIdentity === null;
-    return userIsNotAuthorized
-          ? false
-          : true;
+    const userIsAuthorized: boolean = userIdentity !== null && userIdentity !== undefined;
+    return userIsAuthorized;
   }
 
   public async login(authority: string): Promise<ILoginResult> {
 
-    const isAuthorityReachable: boolean = await this._isAuthorityReachable(authority);
+    const isUnAuthorityReachable: boolean = (await this._isAuthorityReachable(authority));
 
-    if (!isAuthorityReachable) {
+    if (isUnAuthorityReachable) {
       this._notificationService.showNotification(NotificationType.ERROR, 'Authority seems to be offline');
       return;
     }
@@ -150,6 +148,7 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
   private _getDummyAccessToken(): string {
     const dummyAccessTokenString: string = 'dummy_token';
     const base64EncodedString: string = btoa(dummyAccessTokenString);
+
     return base64EncodedString;
   }
 
