@@ -6,7 +6,6 @@ import {IIdentity} from '@essential-projects/iam_contracts';
 import {AuthenticationStateEvent,
         IAuthenticationService,
         ILoginResult,
-        ISolutionService,
         ITokenObject,
         IUserIdentity,
         NotificationType} from '../../contracts/index';
