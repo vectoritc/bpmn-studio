@@ -33,7 +33,6 @@ export class SolutionService implements ISolutionService {
 
     this._persistedEntries = openedSolutions;
     this._allSolutionEntries = this._allSolutionEntries.concat(openedSolutions);
-
   }
 
   /**
@@ -53,7 +52,7 @@ export class SolutionService implements ISolutionService {
     }
 
     this._allSolutionEntries.push(solutionEntry);
-    this._persistSolutionsInLocalStorage();
+    this.persistSolutionsInLocalStorage();
   }
 
   public getPersistedEntries(): Array<ISolutionEntry> {
@@ -89,7 +88,7 @@ export class SolutionService implements ISolutionService {
     }
 
     this._allSolutionEntries.splice(this._allSolutionEntries.indexOf(solutionToRemove), 1);
-    this._persistSolutionsInLocalStorage();
+    this.persistSolutionsInLocalStorage();
   }
 
   /**
@@ -122,7 +121,7 @@ export class SolutionService implements ISolutionService {
     return this._persistedSingleDiagrams;
   }
 
-  private _persistSolutionsInLocalStorage(): void {
+  public persistSolutionsInLocalStorage(): void {
     /**
      * Right now the single diagrams don't get persisted.
      */
