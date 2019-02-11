@@ -141,9 +141,20 @@ export class LiveExecutionTracker {
       return;
     }
 
+    // Import the xml to the modeler to add colors to it
+    await this._importXmlIntoDiagramModeler(xml);
+
+    /*
+     * Remove all colors if the diagram has already colored elements.
+     * For example, if the user has some elements colored orange and is running
+     * the diagram, one would think in LiveExecutionTracker that the element is
+     * active although it is not active.
+    */
+    this._clearColors();
+
     const colorizedXml: string = await (async(): Promise<string> => {
       try {
-        return await this._colorizeXml(xml);
+        return await this._colorizeXml();
       } catch {
         return undefined;
       }
@@ -240,10 +251,7 @@ export class LiveExecutionTracker {
     return parentProcessModel.processModelId;
   }
 
-  private async _colorizeXml(xml: string): Promise<string> {
-    // Import the xml to the modeler to add colors to it
-    await this._importXmlIntoDiagramModeler(xml);
-
+  private async _colorizeXml(): Promise<string> {
     // Get all elements that can have a token
     const allElements: Array<IShape> = this._elementRegistry.filter((element: IShape): boolean => {
       const elementCanHaveAToken: boolean = element.type !== 'bpmn:SequenceFlow'
@@ -272,14 +280,6 @@ export class LiveExecutionTracker {
     if (couldNotGetTokenHistory) {
       throw new Error('Could not get TokenHistories.');
     }
-
-    /*
-     * Remove all colors if the diagram has already colored elements.
-     * For example, if the user has some elements colored orange and is running
-     * the diagram, one would think in LiveExecutionTracker that the element is
-     * active although it is not active.
-    */
-    this._clearColors();
 
     // Colorize the found elements and add overlay to those that can be started.
     this._colorizeElements(elementsWithTokenHistory, defaultBpmnColors.green);
@@ -797,7 +797,7 @@ export class LiveExecutionTracker {
 
       const colorizedXml: string = await (async(): Promise<string> => {
         try {
-          return await this._colorizeXml(xml);
+          return await this._colorizeXml();
         } catch {
           return undefined;
         }
