@@ -15,6 +15,7 @@ import {NotificationService} from '../../../notification/notification.service';
 export class DeleteDiagramModal {
   public showModal: boolean = false;
   public diagram: IDiagram;
+  public deleteDiagramModal: DeleteDiagramModal = this;
 
   private _solutionService: ISolutionExplorerService;
   private _notificationService: NotificationService;
