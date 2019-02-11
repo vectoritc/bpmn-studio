@@ -193,6 +193,7 @@ export class SolutionExplorerList {
     solutionEntry.userName = result.identity.name;
 
     await solutionEntry.service.openSolution(solutionEntry.uri, solutionEntry.identity);
+    this._solutionService.persistSolutionsInLocalStorage();
   }
 
   public async logout(solutionEntry: ISolutionEntry): Promise<void> {
@@ -361,7 +362,7 @@ export class SolutionExplorerList {
     const canCloseSolution: boolean = this._canCloseSolution(service, uri);
     const canCreateNewDiagramsInSolution: boolean = this._canCreateNewDiagramsInSolution(service, uri);
     const authority: string = await this._getAuthorityForSolution(uri);
-    const isLoggedIn: boolean = await this._authenticationService.isLoggedIn(authority);
+
     const authorityIsUndefined: boolean = authority === undefined;
 
     const isLoggedIn: boolean = authorityIsUndefined
