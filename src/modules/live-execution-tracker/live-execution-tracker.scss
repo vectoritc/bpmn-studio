@@ -46,8 +46,10 @@
 .let__parent-process-button {
   position: absolute;
   bottom: 100px;
-  left: 100px;
+  left: 50%;
   width: 200px;
+  // half the width
+  margin-left: -100px;
 }
 
 .close-dynamic-ui-button {
