@@ -32,7 +32,8 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
 
     try {
       userIdentity = await this._getUserIdentity(authority, identity);
-    } catch(error) {
+    } catch (error) {
+
       return false;
     }
 
