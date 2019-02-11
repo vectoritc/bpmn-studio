@@ -44,14 +44,14 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
 
   public async login(authority: string): Promise<ILoginResult> {
 
+    const identityServerIsNotReachable: boolean = !(await this._isAuthorityReachable(authority));
+
+    if (identityServerIsNotReachable) {
+
+      return;
+    }
+
     const loginResultPromise: Promise<ILoginResult> = new Promise(async(resolve: Function, reject: Function): Promise<void> => {
-
-      const identityServerIsNotReachable: boolean = await !this._isAuthorityReachable(authority);
-      if (identityServerIsNotReachable) {
-        this._notificationService.showNotification(NotificationType.ERROR, 'Can not connect to the IdentityServer.');
-
-        return;
-      }
 
       const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
 
@@ -132,8 +132,11 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
      configResponse = await fetch(configRequest);
     } catch (error) {
       if (error.message === 'Failed to fetch') {
+        this._notificationService.showNotification(NotificationType.ERROR, 'IdentityServer is offline.');
+
         return false;
       }
+
     }
 
     if (configResponse.status === IDENTITY_SERVER_AVAILABLE_SUCCESS_STATUS_CODE) {
