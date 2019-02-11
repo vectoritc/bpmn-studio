@@ -580,15 +580,16 @@ export class LiveExecutionTracker {
         continue;
       }
 
-      if (outgoingElementAsShape.type === 'bpmn:SequenceFlow') {
-
+      const outgoingElementIsSequenceFlow: boolean = outgoingElementAsShape.type === 'bpmn:SequenceFlow';
+      if (outgoingElementIsSequenceFlow) {
         const tokenHistoryForTarget: TokenHistoryEntry = tokenHistoryGroups[targetOfOutgoingElement.id][0];
         const previousFlowNodeInstanceIdOfTarget: string = tokenHistoryForTarget.previousFlowNodeInstanceId;
 
         const tokenHistoryForElement: TokenHistoryEntry = tokenHistoryGroups[element.id][0];
         const flowNodeInstanceIdOfElement: string = tokenHistoryForElement.flowNodeInstanceId;
 
-        if (previousFlowNodeInstanceIdOfTarget === flowNodeInstanceIdOfElement) {
+        const sequenceFlowWasExecuted: boolean = previousFlowNodeInstanceIdOfTarget === flowNodeInstanceIdOfElement;
+        if (sequenceFlowWasExecuted) {
           elementsWithOutgoingElements.push(outgoingElementAsShape);
         }
 
