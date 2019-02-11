@@ -95,7 +95,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
 
   public async _getUserIdentity(authority: string, identity: IIdentity): Promise<IUserIdentity | null> {
 
-    const userInforequest: Request = new Request(`${authority}connect/userinfo`, {
+    const userInfoRequest: Request = new Request(`${authority}connect/userinfo`, {
       method: 'GET',
       mode: 'cors',
       referrer: 'no-referrer',
@@ -106,12 +106,12 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
       },
     });
 
-    const userInforesponse: Response = await fetch(userInforequest);
-    if (userInforesponse.status === UNAUTHORIZED_STATUS_CODE) {
+    const userInfoResponse: Response = await fetch(userInfoRequest);
+    if (userInfoResponse.status === UNAUTHORIZED_STATUS_CODE) {
       return null;
     }
 
-    return userInforesponse.json();
+    return userInfoResponse.json();
   }
 
   private async _isAuthorityReachable(authority: string): Promise<boolean> {
