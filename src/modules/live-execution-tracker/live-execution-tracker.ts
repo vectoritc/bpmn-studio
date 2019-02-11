@@ -581,7 +581,6 @@ export class LiveExecutionTracker {
       }
 
       if (outgoingElementAsShape.type === 'bpmn:SequenceFlow') {
-        console.log(outgoingElementAsShape);
 
         const tokenHistoryForTarget: TokenHistoryEntry = tokenHistoryGroups[targetOfOutgoingElement.id][0];
         const previousFlowNodeInstanceIdOfTarget: string = tokenHistoryForTarget.previousFlowNodeInstanceId;
@@ -589,8 +588,6 @@ export class LiveExecutionTracker {
         const tokenHistoryForElement: TokenHistoryEntry = tokenHistoryGroups[element.id][0];
         const flowNodeInstanceIdOfElement: string = tokenHistoryForElement.flowNodeInstanceId;
 
-        console.log(previousFlowNodeInstanceIdOfTarget);
-        console.log(flowNodeInstanceIdOfElement);
         if (previousFlowNodeInstanceIdOfTarget === flowNodeInstanceIdOfElement) {
           elementsWithOutgoingElements.push(outgoingElementAsShape);
         }
