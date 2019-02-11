@@ -27,9 +27,19 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
     this._notificationService = notificationService;
   }
 
-  public async isLoggedIn(authority: string): Promise<boolean> {
+  public async isLoggedIn(authority: string, identity: IIdentity): Promise<boolean> {
 
-    return false;
+    let userIdentity: IUserIdentity;
+
+    try {
+      userIdentity = await this._getUserIdentity(authority, identity);
+    } catch(error) {
+      return false;
+    }
+
+    const userIdentityIsDefined: boolean = userIdentity !== undefined && userIdentity !== null;
+
+    return userIdentityIsDefined;
   }
 
   public async login(authority: string): Promise<ILoginResult> {

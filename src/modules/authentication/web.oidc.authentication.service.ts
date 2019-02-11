@@ -28,10 +28,10 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
     this._openIdConnect = openIdConnect;
   }
 
-  public async isLoggedIn(authority: string): Promise<boolean> {
-    const identity: IUserIdentity = await this._getUserIdentity(authority);
+  public async isLoggedIn(authority: string, identity: IIdentity): Promise<boolean> {
+    const userIdentity: IUserIdentity = await this._getUserIdentity(authority);
 
-    const userIsNotAuthorized: boolean = identity === null;
+    const userIsNotAuthorized: boolean = userIdentity === null;
     return userIsNotAuthorized
           ? false
           : true;

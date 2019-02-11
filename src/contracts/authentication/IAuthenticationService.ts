@@ -4,5 +4,5 @@ import {ILoginResult} from './ILoginResult';
 export interface IAuthenticationService {
   login(authority: string): Promise<ILoginResult>;
   logout(authority: string, identity: IIdentity): Promise<void>;
-  isLoggedIn(authority: string): Promise<boolean>;
+  isLoggedIn(authority: string, identity: IIdentity): Promise<boolean>;
 }
