@@ -557,8 +557,8 @@ export class LiveExecutionTracker {
    /*
     * If the element has no outgoing source just return the element.
     */
-    const elementHasIncomingElements: boolean = outgoingElementsAsIModdleElement === undefined;
-    if (elementHasIncomingElements) {
+    const elementHasOutgoingElements: boolean = outgoingElementsAsIModdleElement === undefined;
+    if (elementHasOutgoingElements) {
       return [element];
     }
 
