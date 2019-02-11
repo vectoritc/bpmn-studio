@@ -47,7 +47,8 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
 
       const identityServerIsNotReachable: boolean = await !this._isAuthorityReachable(authority);
       if (identityServerIsNotReachable) {
-        this._notificationService.showNotification(NotificationType.ERROR, 'IdentityServer is offline');
+        this._notificationService.showNotification(NotificationType.ERROR, 'Can not connect to the IdentityServer.');
+
         return;
       }
 
@@ -85,7 +86,6 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
     ipcRenderer.on('oidc-logout-reply', async(event: any, logoutWasSuccessful: boolean) => {
       if (logoutWasSuccessful) {
         this._eventAggregator.publish(AuthenticationStateEvent.LOGOUT);
-
       }
     });
 
