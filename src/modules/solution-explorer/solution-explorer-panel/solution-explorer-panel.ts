@@ -60,8 +60,10 @@ export class SolutionExplorerPanel {
   public async bind(): Promise<void> {
     const uriOfProcessEngine: string = window.localStorage.getItem('InternalProcessEngineRoute');
 
+    const persistedInternalSolution: ISolutionEntry = this._solutionService.getSolutionEntryForUri(uriOfProcessEngine);
+
     // Open the solution of the currently configured processengine instance on startup.
-    await this.solutionExplorerList.openSolution(uriOfProcessEngine);
+    await this.solutionExplorerList.openSolution(uriOfProcessEngine, true, persistedInternalSolution.identity);
 
     // Open the previously opened solutions.
     const previouslyOpenedSolutions: Array<ISolutionEntry> = this._solutionService.getPersistedEntries();
@@ -75,7 +77,7 @@ export class SolutionExplorerPanel {
          * produced by the openSolution method.
          */
         try {
-          await this.solutionExplorerList.openSolution(entry.uri);
+          await this.solutionExplorerList.openSolution(entry.uri, false, entry.identity);
         } catch (error) {
 
           return;
