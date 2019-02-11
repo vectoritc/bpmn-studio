@@ -108,7 +108,7 @@ export class SolutionExplorerList {
     });
   }
 
-  public async openSolution(uri: string, insertAtBeginning: boolean = false): Promise<void> {
+  public async openSolution(uri: string, insertAtBeginning: boolean = false, identity?: IIdentity): Promise<void> {
     const uriIsRemote: boolean = uri.startsWith('http');
 
     let solutionExplorer: ISolutionExplorerService;
@@ -118,7 +118,11 @@ export class SolutionExplorerList {
       solutionExplorer = await this._solutionExplorerServiceFactory.newFileSystemSolutionExplorer();
     }
 
-    const identity: IIdentity = await this._createIdentityForSolutionExplorer();
+    const identityIsNotSet: boolean = identity === undefined || identity === null;
+    if (identityIsNotSet) {
+      identity = await this._createIdentityForSolutionExplorer();
+    }
+
     try {
       await solutionExplorer.openSolution(uri, identity);
     } catch (error) {
@@ -358,6 +362,11 @@ export class SolutionExplorerList {
     const canCreateNewDiagramsInSolution: boolean = this._canCreateNewDiagramsInSolution(service, uri);
     const authority: string = await this._getAuthorityForSolution(uri);
     const isLoggedIn: boolean = await this._authenticationService.isLoggedIn(authority);
+    const authorityIsUndefined: boolean = authority === undefined;
+
+    const isLoggedIn: boolean = authorityIsUndefined
+                                ? false
+                                : await this._authenticationService.isLoggedIn(authority, identity);
 
     const entry: ISolutionEntry = {
       uri,
