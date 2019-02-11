@@ -123,13 +123,6 @@ export class StatusBar {
     this._eventAggregator.publish(environment.events.inspectCorrelation.showInspectPanel, this.showInspectPanel);
   }
 
-  public navigateToSettings(): void {
-    this._router.navigateToRoute('configuration', {
-      diagramName: this.activeDiagram ? this.activeDiagram.name : undefined,
-      solutionUri: this.activeSolutionEntry ? this.activeSolutionEntry.uri : undefined,
-    });
-  }
-
   private _refreshRightButtons(): void {
     const currentView: string = this._router.currentInstruction.params.view;
     switch (currentView) {
