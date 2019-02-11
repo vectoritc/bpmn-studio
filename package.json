@@ -143,7 +143,7 @@
     "@essential-projects/iam_contracts": "~3.4.0",
     "@fortawesome/fontawesome-free": "^5.1.0",
     "@process-engine/bpmn-js-custom-bundle": "2.4.0",
-    "@process-engine/process_engine_contracts": "37.0.0",
+    "@process-engine/process_engine_contracts": "37.0.1",
     "@types/jasmine": "^2.2.0",
     "@types/node": "^6.0.45",
     "@types/spectrum": "^1.5.29",
