@@ -13,6 +13,9 @@ export class Dashboard {
     this.url = `${applicationUrl}/inspect/dashboard`;
   }
 
+  public async init(): Promise<void> {
+    await browser.get(this.url);
+    browser.wait(ExpectedConditions.visibilityOf(this._dashboardContainer), browser.params.defaultTimeoutMS);
   }
 
   public async openProcessModelByClickOnModelIdInProcessRunningList(correlationId: string): promise.Promise<void> {
