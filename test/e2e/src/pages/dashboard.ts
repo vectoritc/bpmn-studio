@@ -32,21 +32,16 @@ export class Dashboard {
             .element(byClassName);
   }
 
-  public openUserTasksByClickOnModelIdInProcessRunningList(correlationId: string): promise.Promise<void> {
-    const hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId: ElementFinder
-          = this.hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId(correlationId);
+  private get _dashboardContainer(): ElementFinder {
+    const dashboardContainerById: By = by.id(this._dashboardContainerId);
 
-    return hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId.click();
+    return element(dashboardContainerById);
   }
 
-  // task list section
-  public firstTaskWaitingById(processId: string): ElementFinder {
-    const id: string = this._domTaskIdPrefix + processId;
-    const byId: By = by.id(id);
+  private get _processListContainer(): ElementFinder {
+    const processListContainerbyId: By = by.id(this._processListContainerId);
 
-    return this.taskListContainer
-            .all(byId)
-            .first();
+    return element(processListContainerbyId);
   }
 
   public async countOfTasksWaitingListItems(): Promise<number> {
@@ -69,9 +64,9 @@ export class Dashboard {
 
     return taskListContinueButton.click();
   }
+  private get _taskListContainer(): ElementFinder {
+    const taskListContainerById: By = by.id(this._taskListContainerId);
 
-  // user task section
-  public continueUserTaskByClickOnDynamicUiWrapperContinueButton(): promise.Promise<void> {
-    return this.dynamicUiWrapperContinueButton.click();
+    return element(taskListContainerById);
   }
 }
