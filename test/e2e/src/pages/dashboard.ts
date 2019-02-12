@@ -1,58 +1,16 @@
-import {
-  by,
-  element,
-  ElementArrayFinder,
-  ElementFinder,
-} from 'protractor';
+import {browser, by, element, ElementFinder, ExpectedConditions} from 'protractor';
 
-import {
-  By,
-  promise,
-} from 'selenium-webdriver';
+import {By} from 'selenium-webdriver';
 
 export class Dashboard {
+  public url: string;
 
-  // Define Links, Urls, Classes
-  public dashboardLink: string = '/inspect/dashboard';
-  public inspectLink: string = '/inspect';
-  private _domProcessIdPrefix: string = 'processList-';
-  private _domProcessClassName: string = 'process-list-item';
+  private _dashboardContainerId: string = 'dashboardContainer';
+  private _processListContainerId: string = 'processListContainer';
+  private _taskListContainerId: string = 'taskListContainer';
 
-  private _domTaskIdPrefix: string = 'taskList-';
-  private _domTaskClassName: string = 'task-list-item';
-
-  // Define Elements
-  private _byTagName: By = by.tagName('process-list');
-  private _byDomProcessClassName: By = by.className(this._domProcessClassName);
-  private _byDomTaskClassName: By = by.className(this._domTaskClassName);
-  private _byIdTaskListContainer: By = by.id('taskListContainer');
-  private _byIdDynamicUiWrapper: By = by.id('dynamic-ui-wrapper-continue-button');
-  private _byProcessListItemModelName: By = by.className('process-list-item-modelname');
-  private _byProcessListItemUserTasks: By = by.className('process-list-item-user-tasks');
-  private _byTaskListContinueButton: By = by.className('task-list-continue-button');
-
-  public processListTag: ElementFinder = element(this._byTagName);
-  public taskListContainer: ElementFinder = element(this._byIdTaskListContainer);
-  public dynamicUiWrapperContinueButton: ElementFinder = element(this._byIdDynamicUiWrapper);
-
-  public processRunningListItems: ElementArrayFinder =
-    this.processListTag
-      .all(this._byDomProcessClassName);
-
-  public firstProcessRunningListItems: ElementFinder =
-    this.processRunningListItems
-      .first();
-
-  public firstTaskListItems: ElementFinder =
-    this.taskListContainer
-      .all(this._byDomTaskClassName)
-        .first();
-
-  // Define Functions
-  public async countOfProcessRunningListItems(): Promise<number> {
-    return this.processListTag
-            .all(this._byDomProcessClassName)
-            .count();
+  constructor(applicationUrl: string) {
+    this.url = `${applicationUrl}/inspect/dashboard`;
   }
 
   public async countOfProcessRunningListItemsByCorrelationId(correlationId: string): Promise<number> {
