@@ -100,4 +100,9 @@ export class StatusBar {
     return element(showDiffButtonById);
   }
 
+  private get _disableDiffViewButton(): ElementFinder {
+    const disabelDiffViewButtonById: By = by.id(this._disableDiffViewButtonId);
+
+    return element(disabelDiffViewButtonById);
+  }
 }
