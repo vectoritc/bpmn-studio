@@ -13,29 +13,6 @@ export class Dashboard {
     this.url = `${applicationUrl}/inspect/dashboard`;
   }
 
-  public async countOfProcessRunningListItemsByCorrelationId(correlationId: string): Promise<number> {
-    const id: string = this._domProcessIdPrefix + correlationId;
-    const byId: By = by.id(id);
-
-    return await this.processListTag
-                  .all(byId)
-                  .count();
-  }
-
-  public firstProcessRunningListItemsById(correlationId: string): ElementFinder {
-    const id: string = this._domProcessIdPrefix + correlationId;
-    const byId: By = by.id(id);
-
-    return this.processListTag
-            .all(byId)
-            .first();
-  }
-
-  public hyperlinkOfProcessRunningListItemByCorrelationId(correlationId: string): ElementFinder {
-    const firstProcessRunningListItemsById: ElementFinder = this.firstProcessRunningListItemsById(correlationId);
-
-    return firstProcessRunningListItemsById
-            .element(this._byProcessListItemModelName);
   }
 
   public async openProcessModelByClickOnModelIdInProcessRunningList(correlationId: string): promise.Promise<void> {
