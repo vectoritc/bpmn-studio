@@ -44,26 +44,6 @@ export class Dashboard {
     return element(processListContainerbyId);
   }
 
-  public async countOfTasksWaitingListItems(): Promise<number> {
-    return this.taskListContainer
-            .all(this._byDomTaskClassName)
-            .count();
-  }
-  public async countOfTasksWaitingListItemsById(processModelId: string): Promise<number> {
-    const id: string = this._domTaskIdPrefix + processModelId;
-    const byId: By = by.id(id);
-
-    return this.taskListContainer
-            .all(byId)
-            .count();
-  }
-
-  public continueTaskByClickOnButton(processModelId: string): promise.Promise<void> {
-    const firstTaskWaitingById: ElementFinder = this.firstTaskWaitingById(processModelId);
-    const taskListContinueButton: ElementFinder = firstTaskWaitingById.element(this._byTaskListContinueButton);
-
-    return taskListContinueButton.click();
-  }
   private get _taskListContainer(): ElementFinder {
     const taskListContainerById: By = by.id(this._taskListContainerId);
 
