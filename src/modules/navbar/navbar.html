@@ -8,7 +8,7 @@
         </button>
       </div>
       <div repeat.for="nav of router.navigation" class="button menu__menu-tabbed-link" class.bind="nav.isActive ? 'button--active menu__menu-tabbed-link--active' : ''">
-        <a id="navbar${nav.title}" class="menu-tabbed-link" click.delegate="navigate(nav)">${nav.title}</a>
+        <a id="navbar-${nav.title}" class="menu-tabbed-link" click.delegate="navigate(nav)">${nav.title}</a>
       </div>
     </div>
     <div class="menu-bar__menu menu-bar__menu--center" id="navBarCenter">
