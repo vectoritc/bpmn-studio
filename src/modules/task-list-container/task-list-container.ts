@@ -39,8 +39,17 @@ export class TaskListContainer {
     this._solutionService = solutionService;
   }
 
-  public async canActivate(routeParameters: ITaskListRouteParameters): Promise<boolean> {
-    const activeSolutionEntry: ISolutionEntry = this._solutionService.getSolutionEntryForUri(routeParameters.solutionUri);
+  public async canActivate(): Promise<boolean> {
+    const solutionUriIsSet: boolean = this._router.currentInstruction !== null
+                                   && this._router.currentInstruction !== undefined
+                                   && this._router.currentInstruction.queryParams.solutionUri !== null
+                                   && this._router.currentInstruction.queryParams.solutionUri !== undefined;
+
+    const activeSolutionUri: string = solutionUriIsSet
+                                    ? this._router.currentInstruction.queryParams.solutionUri
+                                    : window.localStorage.getItem('InternalProcessEngineRoute');
+
+    const activeSolutionEntry: ISolutionEntry = this._solutionService.getSolutionEntryForUri(activeSolutionUri);
 
     const hasNoClaimsForTaskList: boolean = !(await this._hasClaimsForTaskList(activeSolutionEntry.identity));
 
