@@ -11,11 +11,21 @@ export class SolutionExplorer {
     browser.wait(ExpectedConditions.visibilityOf(this._solutionExplorerPanelContainer), browser.params.defaultTimeoutMS);
   }
 
+  public async getVisbilityOfSolutionExplorer(): Promise<boolean> {
 
+    return this._solutionExplorerPanelContainer.isDisplayed();
   }
 
+  public async getVisibilityOfDiagramEntry(diagramName: string): Promise<boolean> {
+    const diagramEntry: ElementFinder = this._getDiagramEntry(diagramName);
+
+    return diagramEntry.isDisplayed();
   }
 
+  public async openDiagramByClick(diagramName: string): Promise<void> {
+    const diagramIdentifier: ElementFinder = this._getDiagramEntry(diagramName);
+
+    return diagramIdentifier.click();
   }
 
   private get _solutionExplorerPanelContainer(): ElementFinder {
