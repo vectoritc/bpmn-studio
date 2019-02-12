@@ -1,15 +1,6 @@
-import {
-  browser,
-  by,
-  element,
-  ElementArrayFinder,
-  ElementFinder,
-} from 'protractor';
+import {browser, by, element, ElementFinder, ExpectedConditions} from 'protractor';
 
-import {
-  By,
-  promise,
-} from 'selenium-webdriver';
+import {By} from 'selenium-webdriver';
 
 export class SolutionExplorer {
 
