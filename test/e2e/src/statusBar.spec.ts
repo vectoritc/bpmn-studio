@@ -1,67 +1,36 @@
-import {
-  browser,
-  ElementFinder,
-  protractor,
-  ProtractorExpectedConditions,
-} from 'protractor';
-
-import {Settings} from './pages/settings';
+import {RouterView} from './pages/routerView';
 import {StatusBar} from './pages/statusBar';
 
-describe('Status bar', () => {
-  let settings: Settings;
+describe('Status Bar', () => {
+
+  let routerView: RouterView;
   let statusBar: StatusBar;
 
-  const aureliaUrl: string = browser.params.aureliaUrl;
-  const defaultTimeoutMS: number = browser.params.defaultTimeoutMS;
-
-  const expectedConditions: ProtractorExpectedConditions = protractor.ExpectedConditions;
-
-  beforeAll(() => {
-
-    settings = new Settings();
+  beforeAll(async() => {
+    routerView = new RouterView();
     statusBar = new StatusBar();
   });
 
   beforeEach(async() => {
-    const statusBarTag: ElementFinder = statusBar.statusBarTag;
-    const visibilityOfStatusBarTag: Function = expectedConditions.visibilityOf(statusBarTag);
-
-    await browser.get(aureliaUrl);
-    await browser.driver
-      .wait(() => {
-        browser.wait(visibilityOfStatusBarTag, defaultTimeoutMS);
-
-        return statusBar.statusBarTag;
-    });
+    await routerView.init();
+    await statusBar.init();
   });
 
-  it('should display.', async() => {
-    const statusBarTag: ElementFinder = statusBar.statusBarTag;
-    const statusBarTagIsDisplayed: boolean = await statusBarTag.isDisplayed();
+  it('should contain left container.', async() => {
+    const visibilityOfLeftContainer: boolean = await statusBar.getVisibilityOfLeftContainer();
 
-    expect(statusBarTagIsDisplayed).toBeTruthy();
+    expect(visibilityOfLeftContainer).toBeTruthy();
   });
 
-  it('should contain root and 3 elements (left-bar, center-bar, right bar).', async() => {
-    const statusBarContainer: ElementFinder = statusBar.statusBarContainer;
-    const statusBarContainerIsDisplayed: boolean = await statusBarContainer.isDisplayed();
+  it('should contain center container.', async() => {
+    const visibilityOfCenterContainer: boolean = await statusBar.getVisibilityOfCenterContainer();
 
-    expect(statusBarContainerIsDisplayed).toBeTruthy();
+    expect(visibilityOfCenterContainer).toBeTruthy();
+  });
 
-    const statusBarContainerLeft: ElementFinder = statusBar.statusBarContainerLeft;
-    const statusBarContainerLeftIsDisplayed: boolean = await statusBarContainerLeft.isDisplayed();
+  it('should contain right container.', async() => {
+    const visibilityOfRightContainer: boolean = await statusBar.getVisibilityOfRightContainer();
 
-    expect(statusBarContainerLeftIsDisplayed).toBeTruthy();
-
-    const statusBarContainerCenter: ElementFinder = statusBar.statusBarContainerCenter;
-    const statusBarContainerCenterIsDisplayed: boolean = await statusBarContainerCenter.isDisplayed();
-
-    expect(statusBarContainerCenterIsDisplayed).toBeTruthy();
-
-    const statusBarContainerRight: ElementFinder = statusBar.statusBarContainerRight;
-    const statusBarContainerRightIsDisplayed: boolean = await statusBarContainerRight.isDisplayed();
-
-    expect(statusBarContainerRightIsDisplayed).toBeTruthy();
+    expect(visibilityOfRightContainer).toBeTruthy();
   });
 });
