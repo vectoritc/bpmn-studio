@@ -18,18 +18,16 @@ export class Dashboard {
     browser.wait(ExpectedConditions.visibilityOf(this._dashboardContainer), browser.params.defaultTimeoutMS);
   }
 
-  public async openProcessModelByClickOnModelIdInProcessRunningList(correlationId: string): promise.Promise<void> {
-    const hyperlinkOfProcessRunningListItemByCorrelationId: ElementFinder = this.hyperlinkOfProcessRunningListItemByCorrelationId(correlationId);
+  public async getVisibilityOfProcessListContainer(): Promise<boolean> {
+    browser.wait(ExpectedConditions.visibilityOf(this._processListContainer), browser.params.defaultTimeoutMS);
 
-    return hyperlinkOfProcessRunningListItemByCorrelationId.click();
+    return this._processListContainer.isDisplayed();
   }
 
-  public hyperlinkOfUserTasksInProcessRunningListItemByCorrelationId(correlationId: string): ElementFinder {
-    const byClassName: By = this._byProcessListItemUserTasks;
-    const firstProcessRunningListItemsById: ElementFinder = this.firstProcessRunningListItemsById(correlationId);
+  public async getVisibilityOfTaskListContainer(): Promise<boolean> {
+    browser.wait(ExpectedConditions.visibilityOf(this._taskListContainer), browser.params.defaultTimeoutMS);
 
-    return firstProcessRunningListItemsById
-            .element(byClassName);
+    return this._taskListContainer.isDisplayed();
   }
 
   private get _dashboardContainer(): ElementFinder {
