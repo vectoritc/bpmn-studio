@@ -36,8 +36,8 @@ describe('bpmn-io XML view', () => {
   });
 
   beforeEach(async() => {
-    routerView.init();
-    diagramDetail.init();
+    await routerView.init();
+    await diagramDetail.init();
   });
 
   it('should contain `Show XML` button in status bar.', async() => {
