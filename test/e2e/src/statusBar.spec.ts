@@ -25,6 +25,12 @@ describe('Status Bar', () => {
     diagramDetail = new DiagramDetail(applicationUrl, diagram.name);
     xmlView = new XmlView(applicationUrl, diagram.name);
     diffView = new DiffView(applicationUrl, diagram.name);
+
+    await diagram.deployDiagram();
+  });
+
+  afterAll(async() => {
+    await diagram.deleteDiagram();
   });
 
   beforeEach(async() => {

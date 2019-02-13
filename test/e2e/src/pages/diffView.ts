@@ -19,6 +19,7 @@ export class DiffView {
   }
 
   public async getVisibilityOfDiffViewContainer(): Promise<boolean> {
+    await browser.wait(ExpectedConditions.visibilityOf(this._diffViewContainer), browser.params.defaultTimeoutMS);
 
     return this._diffViewContainer.isDisplayed();
   }
