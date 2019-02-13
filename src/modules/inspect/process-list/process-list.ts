@@ -132,7 +132,7 @@ export class ProcessList {
 
   private async getAllActiveCorrelations(): Promise<Array<DataModels.Correlations.Correlation>> {
     const identity: IIdentity = this.activeSolutionEntry.identity;
-    console.log('used identity', identity);
+
     return this._managementApiService.getActiveCorrelations(identity);
   }
 
