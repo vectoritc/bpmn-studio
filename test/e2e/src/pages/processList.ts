@@ -28,30 +28,35 @@ export class ProcessList {
 
   public async getVisibilityOfListEntry(correlationId: string): Promise<boolean> {
     const listEntry: ElementFinder = this._getListEntry(correlationId);
+    browser.wait(ExpectedConditions.visibilityOf(listEntry), browser.params.defaultTimeoutMS);
 
     return listEntry.isDisplayed();
   }
 
   public async getVisbilityOfDiagramDesignLink(correlationId: string): Promise<boolean> {
     const diagramDesignLink: ElementFinder = this._getDiagramDesignLink(correlationId);
+    browser.wait(ExpectedConditions.visibilityOf(diagramDesignLink), browser.params.defaultTimeoutMS);
 
     return diagramDesignLink.isDisplayed();
   }
 
   public async clickOnDiagramDesignLink(correlationId: string): Promise<void> {
     const diagramDesignLink: ElementFinder = this._getDiagramDesignLink(correlationId);
+    browser.wait(ExpectedConditions.visibilityOf(diagramDesignLink), browser.params.defaultTimeoutMS);
 
     return diagramDesignLink.click();
   }
 
   public async getVisbilityOfUserTaskLink(correlationId: string): Promise<boolean> {
     const userTaskLink: ElementFinder = this._getUserTaskLink(correlationId);
+    browser.wait(ExpectedConditions.visibilityOf(userTaskLink), browser.params.defaultTimeoutMS);
 
     return userTaskLink.isDisplayed();
   }
 
   public async clickOnUserTaskLink(correlationId: string): Promise<void> {
     const userTaskLink: ElementFinder = this._getUserTaskLink(correlationId);
+    browser.wait(ExpectedConditions.visibilityOf(userTaskLink), browser.params.defaultTimeoutMS);
 
     return userTaskLink.click();
   }
