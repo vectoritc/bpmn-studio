@@ -49,7 +49,7 @@ export class StatusBar {
     return this._enableXmlViewButton.click();
   }
 
-  public async getVisibilityOfDisbaleXmlViewButton(): Promise<boolean> {
+  public async getVisibilityOfDisableXmlViewButton(): Promise<boolean> {
 
     return this._disableXmlViewButton.isDisplayed();
   }
