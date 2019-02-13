@@ -108,7 +108,9 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
     });
 
     const userInfoResponse: Response = await fetch(userInfoRequest);
-    if (userInfoResponse.status === UNAUTHORIZED_STATUS_CODE) {
+    const requestIsUnauthorized: boolean = userInfoResponse.status === UNAUTHORIZED_STATUS_CODE;
+
+    if (requestIsUnauthorized) {
       return null;
     }
 
@@ -132,7 +134,9 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
 
      configResponse = await fetch(configRequest);
     } catch (error) {
-      if (error.message === 'Failed to fetch') {
+
+      const identityServerWasOffline: boolean = error.message === 'Failed to fetch';
+      if (identityServerWasOffline) {
         this._notificationService.showNotification(NotificationType.ERROR, 'IdentityServer is offline.');
 
         return false;
@@ -140,7 +144,8 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
 
     }
 
-    if (configResponse.status === IDENTITY_SERVER_AVAILABLE_SUCCESS_STATUS_CODE) {
+    const identityServerWasAvailable: boolean = configResponse.status === IDENTITY_SERVER_AVAILABLE_SUCCESS_STATUS_CODE;
+    if (identityServerWasAvailable) {
       return true;
     }
 
