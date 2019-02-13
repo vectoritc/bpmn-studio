@@ -96,6 +96,10 @@ export class SolutionExplorerList {
     return solutionIsInternalSolution;
   }
 
+  public openSettings(): void {
+    this._router.navigateToRoute('settings');
+  }
+
   public async openSingleDiagram(uri: string): Promise<IDiagram> {
     const identity: IIdentity = this._createIdentityForSolutionExplorer();
 
