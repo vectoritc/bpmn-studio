@@ -76,7 +76,6 @@ export class LiveExecutionTracker {
   private _solutionService: ISolutionService;
 
   private activeSolutionEntry: ISolutionEntry;
-  private _isNavigatingBack: boolean = false;
 
   private _pollingTimer: NodeJS.Timer;
   private _attached: boolean;
@@ -107,6 +106,7 @@ export class LiveExecutionTracker {
 
     this.processInstanceId = routeParameters.processInstanceId;
 
+    this._parentProcessInstanceId = await this._getParentProcessInstanceId();
     this._parentProcessModelId = await this._getParentProcessModelId();
 
     this.correlation = await this._managementApiClient.getCorrelationById(this.activeSolutionEntry.identity, this.correlationId);
@@ -211,36 +211,6 @@ export class LiveExecutionTracker {
     });
   }
 
-  public navigateBack(): void {
-    this._isNavigatingBack = true;
-    this._router.navigateBack();
-  }
-
-  /*
-  * To avoid navigating back to the dynamic UI, we need to navigate further back.
-  *
-  * This is necessary because the dynamic ui would try to display an already completed UserTask/ManualTask.
-  */
-  public canDeactivate(destinationInstruction: NavigationInstruction): boolean {
-    const isNotNavigatingBack: boolean = !this._isNavigatingBack;
-    if (isNotNavigatingBack) {
-      return true;
-    }
-
-    const previousRoute: string = destinationInstruction.config.name;
-    const previousRouteIsDynamicUi: boolean = previousRoute === 'task-dynamic-ui';
-
-    if (previousRouteIsDynamicUi) {
-      this._router.navigateBack();
-
-      return false;
-    }
-
-    this._isNavigatingBack = false;
-
-    return true;
-  }
-
   public closeDynamicUiModal(): void {
     this.showDynamicUiModal = false;
 
@@ -252,15 +222,13 @@ export class LiveExecutionTracker {
   }
 
   private async _getParentProcessModelId(): Promise<string> {
-    const parentProcessInstanceId: string = await this._getParentProcessInstanceId();
-
-    const parentProcessInstanceIdNotFound: boolean = parentProcessInstanceId === undefined;
+    const parentProcessInstanceIdNotFound: boolean = this._parentProcessInstanceId === undefined;
     if (parentProcessInstanceIdNotFound) {
       return undefined;
     }
 
     const parentProcessModel: DataModels.Correlations.CorrelationProcessModel =
-     await this._getProcessModelByProcessInstanceId(parentProcessInstanceId);
+     await this._getProcessModelByProcessInstanceId(this._parentProcessInstanceId);
 
     const parentProcessModelNotFound: boolean = parentProcessModel === undefined;
     if (parentProcessModelNotFound) {
