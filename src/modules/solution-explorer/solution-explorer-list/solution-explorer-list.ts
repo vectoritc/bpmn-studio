@@ -24,6 +24,7 @@ interface IUriToViewModelMap {
 
 @inject(Router, EventAggregator, 'SolutionExplorerServiceFactory', 'AuthenticationService', 'DiagramValidationService', 'SolutionService')
 export class SolutionExplorerList {
+  public internalSolutionUri: string;
 
   private _router: Router;
   private _eventAggregator: EventAggregator;
@@ -69,6 +70,8 @@ export class SolutionExplorerList {
 
     // Allows us to debug the solution explorer list.
     (window as any).solutionList = this;
+
+    this.internalSolutionUri = window.localStorage.getItem('InternalProcessEngineRoute');
   }
 
   /**
@@ -85,6 +88,12 @@ export class SolutionExplorerList {
       });
 
     await Promise.all(refreshPromises);
+  }
+
+  public solutionIsInternalSolution(solution: ISolutionEntry): boolean {
+    const solutionIsInternalSolution: boolean = solution.uri === this.internalSolutionUri;
+
+    return solutionIsInternalSolution;
   }
 
   public async openSingleDiagram(uri: string): Promise<IDiagram> {
