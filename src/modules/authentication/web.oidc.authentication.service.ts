@@ -34,7 +34,7 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
   }
 
   public async isLoggedIn(authority: string, identity: IIdentity): Promise<boolean> {
-    const userIdentity: IUserIdentity = await this._getUserIdentity(authority);
+    const userIdentity: IUserIdentity = await this.getUserIdentity(authority);
 
     const userIsAuthorized: boolean = userIdentity !== null && userIdentity !== undefined;
     return userIsAuthorized;
@@ -56,7 +56,7 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
     this._eventAggregator.publish(AuthenticationStateEvent.LOGIN);
 
     const loginResult: ILoginResult = {
-      identity: await this._getUserIdentity(authority),
+      identity: await this.getUserIdentity(authority),
       accessToken: await this._getAccessToken(authority),
       // The idToken is provided by the oidc service when making requests and therefore not set here.
       idToken: '',
@@ -76,7 +76,7 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
 
   }
 
-  private async _getUserIdentity(authority: string): Promise<IUserIdentity | null> {
+  public async getUserIdentity(authority: string): Promise<IUserIdentity | null> {
     const accessToken: string = await this._getAccessToken(authority);
     const accessTokenIsDummyToken: boolean = accessToken === this._getDummyAccessToken();
 

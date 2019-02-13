@@ -31,7 +31,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
     let userIdentity: IUserIdentity;
 
     try {
-      userIdentity = await this._getUserIdentity(authority, identity);
+      userIdentity = await this.getUserIdentity(authority, identity);
     } catch (error) {
 
       return false;
@@ -61,7 +61,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
           userId: tokenObject.idToken,
         };
 
-        const identity: IUserIdentity = await this._getUserIdentity(authority, iamIdentity);
+        const identity: IUserIdentity = await this.getUserIdentity(authority, iamIdentity);
 
         const loginResult: ILoginResult = {
           identity: identity,
@@ -93,7 +93,7 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
     ipcRenderer.send('oidc-logout', identity, authority);
   }
 
-  public async _getUserIdentity(authority: string, identity: IIdentity): Promise<IUserIdentity | null> {
+  public async getUserIdentity(authority: string, identity: IIdentity): Promise<IUserIdentity | null> {
 
     const userInfoRequest: Request = new Request(`${authority}connect/userinfo`, {
       method: 'GET',
