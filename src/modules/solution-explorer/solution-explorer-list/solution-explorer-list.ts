@@ -12,6 +12,7 @@ import {
   ILoginResult,
   ISolutionEntry,
   ISolutionService,
+  IUserIdentity,
 } from '../../../contracts';
 import {SingleDiagramsSolutionExplorerService} from '../../solution-explorer-services/SingleDiagramsSolutionExplorerService';
 import {SolutionExplorerServiceFactory} from '../../solution-explorer-services/SolutionExplorerServiceFactory';
@@ -200,6 +201,8 @@ export class SolutionExplorerList {
 
     await solutionEntry.service.openSolution(solutionEntry.uri, solutionEntry.identity);
     this._solutionService.persistSolutionsInLocalStorage();
+
+    this._router.navigateToRoute('start-page');
   }
 
   public async logout(solutionEntry: ISolutionEntry): Promise<void> {
@@ -210,6 +213,9 @@ export class SolutionExplorerList {
     solutionEntry.userName = undefined;
 
     await solutionEntry.service.openSolution(solutionEntry.uri, solutionEntry.identity);
+    this._solutionService.persistSolutionsInLocalStorage();
+
+    this._router.navigateToRoute('start-page');
   }
 
   /**
@@ -374,6 +380,13 @@ export class SolutionExplorerList {
     const isLoggedIn: boolean = authorityIsUndefined
                                 ? false
                                 : await this._authenticationService.isLoggedIn(authority, identity);
+
+    let userName: string;
+
+    if (isLoggedIn) {
+      const userIdentity: IUserIdentity = await this._authenticationService.getUserIdentity(authority, identity);
+      userName = userIdentity.name;
+    }
 
     const entry: ISolutionEntry = {
       uri,
