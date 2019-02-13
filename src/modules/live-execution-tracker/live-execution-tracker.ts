@@ -588,8 +588,11 @@ export class LiveExecutionTracker {
         const tokenHistoryForElement: TokenHistoryEntry = tokenHistoryGroups[element.id][0];
         const flowNodeInstanceIdOfElement: string = tokenHistoryForElement.flowNodeInstanceId;
 
+        // This is needed because the ParallelGateway only knows the flowNodeId of the first element that reaches the ParallelGateway
+        const targetOfOutgoingElementIsGateway: boolean = targetOfOutgoingElement.type === 'bpmn:ParallelGateway';
+
         const sequenceFlowWasExecuted: boolean = previousFlowNodeInstanceIdOfTarget === flowNodeInstanceIdOfElement;
-        if (sequenceFlowWasExecuted) {
+        if (sequenceFlowWasExecuted || targetOfOutgoingElementIsGateway) {
           elementsWithOutgoingElements.push(outgoingElementAsShape);
         }
 
