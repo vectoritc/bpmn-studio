@@ -60,7 +60,6 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
           token: tokenObject.accessToken,
           userId: tokenObject.idToken,
         };
-
         const identity: IUserIdentity = await this.getUserIdentity(authority, iamIdentity);
 
         const loginResult: ILoginResult = {
@@ -70,6 +69,8 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
         };
 
         this._eventAggregator.publish(AuthenticationStateEvent.LOGIN);
+
+        ipcRenderer.removeAllListeners('oidc-login-reply');
 
         resolve(loginResult);
       });
