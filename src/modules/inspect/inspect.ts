@@ -42,7 +42,7 @@ export class Inspect {
   }
 
   public determineActivationStrategy(): string {
-    return activationStrategy.replace;
+    return activationStrategy.invokeLifecycle;
  }
 
   public canActivate(routeParameters: IInspectRouteParameters): boolean {

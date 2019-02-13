@@ -6,7 +6,7 @@
   <div class="inspect">
 
     <div show.bind="showDashboard" class="inspect__dashboard-container">
-      <dashboard view-model.ref="dashboard"></dashboard>
+      <dashboard view-model.ref="dashboard" active-solution-entry.bind="activeSolutionEntry"></dashboard>
     </div>
     <div show.bind="showHeatmap" class="inspect__heatmap-container">
       <heatmap active-diagram.bind="activeDiagram" active-solution-entry.bind="activeSolutionEntry"></heatmap>

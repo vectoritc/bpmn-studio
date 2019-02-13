@@ -4,8 +4,8 @@
   <require from="../process-list/process-list"></require>
 
   <div class="dashboard-container">
-    <process-list show.bind="showProcessList"></process-list>
-    <task-list show.bind="showTaskList"></task-list>
+    <process-list active-solution-entry.bind="activeSolutionEntry" show.bind="showProcessList"></process-list>
+    <task-list active-solution-entry.bind="activeSolutionEntry" show.bind="showTaskList"></task-list>
   </div>
 
 </template>

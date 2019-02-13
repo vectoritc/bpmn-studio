@@ -1,4 +1,4 @@
-import {inject} from 'aurelia-framework';
+import {bindable, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
 import {
@@ -15,6 +15,7 @@ import {NotificationService} from '../../notification/notification.service';
 @inject('ManagementApiClientService', 'NotificationService', Router)
 export class Dashboard {
 
+  @bindable() public activeSolutionEntry: ISolutionEntry;
   public showTaskList: boolean = false;
   public showProcessList: boolean = false;
 
