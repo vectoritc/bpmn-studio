@@ -1,4 +1,4 @@
-import {by, element, ElementFinder} from 'protractor';
+import {browser, by, element, ElementFinder, ExpectedConditions} from 'protractor';
 
 import {By} from 'selenium-webdriver';
 
@@ -10,6 +10,12 @@ export class XmlView {
 
   constructor(applicationUrl: string, diagramName: string) {
     this.url = `${applicationUrl}/design/xml/diagram/${diagramName}?solutionUri=http%3A%2F%2Flocalhost%3A8000`;
+  }
+
+  public async init(): Promise<void> {
+    await browser.get(this.url);
+
+    await browser.wait(ExpectedConditions.visibilityOf(this._xmlViewContainer), browser.params.defaultTimeoutMS);
   }
 
   public async getVisibilityOfXmlViewContainer(): Promise<boolean> {
