@@ -1,8 +1,4 @@
-import {
-  browser,
-  protractor,
-  ProtractorExpectedConditions,
-} from 'protractor';
+import {browser} from 'protractor';
 
 import {SimpleDiagram} from './diagrams/simpleDiagram';
 import {DiagramDetail} from './pages/diagramDetail';
@@ -10,7 +6,7 @@ import {RouterView} from './pages/routerView';
 import {StatusBar} from './pages/statusBar';
 import {XmlView} from './pages/xmlView';
 
-describe('bpmn-io XML view', () => {
+describe('XML view', () => {
 
   let routerView: RouterView;
   let diagram: SimpleDiagram;
@@ -19,9 +15,6 @@ describe('bpmn-io XML view', () => {
   let xmlView: XmlView;
 
   const applicationUrl: string = browser.params.aureliaUrl;
-  const defaultTimeoutMS: number = browser.params.defaultTimeoutMS;
-
-  const expectedConditions: ProtractorExpectedConditions = protractor.ExpectedConditions;
 
   beforeAll(async() => {
     routerView = new RouterView();
