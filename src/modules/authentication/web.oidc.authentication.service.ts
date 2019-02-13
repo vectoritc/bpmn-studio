@@ -43,9 +43,9 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
 
   public async login(authority: string): Promise<ILoginResult> {
 
-    const isUnAuthorityReachable: boolean = (await this._isAuthorityReachable(authority));
+    const isAuthorityUnReachable: boolean = !(await this._isAuthorityReachable(authority));
 
-    if (isUnAuthorityReachable) {
+    if (isAuthorityUnReachable) {
       this._notificationService.showNotification(NotificationType.ERROR, 'Authority seems to be offline');
 
       return;
