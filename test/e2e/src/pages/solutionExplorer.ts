@@ -18,14 +18,16 @@ export class SolutionExplorer {
 
   public async getVisibilityOfDiagramEntry(diagramName: string): Promise<boolean> {
     const diagramEntry: ElementFinder = this._getDiagramEntry(diagramName);
+    browser.wait(ExpectedConditions.visibilityOf(diagramEntry), browser.params.defaultTimeoutMS);
 
     return diagramEntry.isDisplayed();
   }
 
   public async openDiagramByClick(diagramName: string): Promise<void> {
-    const diagramIdentifier: ElementFinder = this._getDiagramEntry(diagramName);
+    const diagramEntry: ElementFinder = this._getDiagramEntry(diagramName);
+    browser.wait(ExpectedConditions.visibilityOf(diagramEntry), browser.params.defaultTimeoutMS);
 
-    return diagramIdentifier.click();
+    return diagramEntry.click();
   }
 
   private get _solutionExplorerPanelContainer(): ElementFinder {
