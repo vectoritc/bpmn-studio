@@ -8,6 +8,7 @@ import {SimpleDiagram} from './diagrams/simpleDiagram';
 import {DiagramDetail} from './pages/diagramDetail';
 import {RouterView} from './pages/routerView';
 import {StatusBar} from './pages/statusBar';
+import {XmlView} from './pages/xmlView';
 
 describe('bpmn-io XML view', () => {
 
@@ -15,6 +16,7 @@ describe('bpmn-io XML view', () => {
   let diagram: SimpleDiagram;
   let statusBar: StatusBar;
   let diagramDetail: DiagramDetail;
+  let xmlView: XmlView;
 
   const applicationUrl: string = browser.params.aureliaUrl;
   const defaultTimeoutMS: number = browser.params.defaultTimeoutMS;
@@ -26,6 +28,7 @@ describe('bpmn-io XML view', () => {
     diagram = new SimpleDiagram();
     statusBar = new StatusBar();
     diagramDetail = new DiagramDetail(applicationUrl, diagram.name);
+    xmlView = new XmlView(applicationUrl, diagram.name);
 
     await diagram.deployDiagram();
   });
@@ -51,6 +54,12 @@ describe('bpmn-io XML view', () => {
 
     const currentBrowserUrl: string = await browser.getCurrentUrl();
 
-    expect(currentBrowserUrl).toBeTruthy('xml');
+    expect(currentBrowserUrl).toContain(xmlView.url);
+
+    const visibilityOfXmlViewContainer: boolean = await xmlView.getVisibilityOfXmlViewContainer();
+
+    expect(visibilityOfXmlViewContainer).toBeTruthy();
   });
+
+  // TODO Test: Check if XML is formatted.
 });
