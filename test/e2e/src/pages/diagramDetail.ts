@@ -19,9 +19,14 @@ export class DiagramDetail {
     await browser.wait(ExpectedConditions.visibilityOf(this._diagramDetailContainer), browser.params.defaultTimeoutMS);
   }
 
-  public async getVisibilityOfBpmnIoContainer(): Promise<boolean> {
+  public async getVisibilityOfDiagramDetailContainer(): Promise<boolean> {
 
     return this._diagramDetailContainer.isDisplayed();
+  }
+
+  public async getVisibilityOfBpmnIoContainer(): Promise<boolean> {
+
+    return this._bpmnIoContainer.isDisplayed();
   }
 
   private get _diagramDetailContainer(): ElementFinder {
