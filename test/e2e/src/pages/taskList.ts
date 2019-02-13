@@ -27,30 +27,35 @@ export class TaskList {
 
   public async getVisibilityOfListEntry(diagramName: string): Promise<boolean> {
     const listEntry: ElementFinder = this._getListEntry(diagramName);
+    browser.wait(ExpectedConditions.visibilityOf(listEntry), browser.params.defaultTimeoutMS);
 
     return listEntry.isDisplayed();
   }
 
   public async getVisibilityOfDesignLink(diagramName: string): Promise<boolean> {
     const designLink: ElementFinder = this._getDiagramDesignLink(diagramName);
+    browser.wait(ExpectedConditions.visibilityOf(designLink), browser.params.defaultTimeoutMS);
 
     return designLink.isDisplayed();
   }
 
   public async clickOnDesignLink(diagramName: string): Promise<void> {
     const designLink: ElementFinder = this._getDiagramDesignLink(diagramName);
+    browser.wait(ExpectedConditions.visibilityOf(designLink), browser.params.defaultTimeoutMS);
 
     return designLink.click();
   }
 
   public async getVisbilityOfContinueButton(diagramName: string): Promise<boolean> {
     const continueButton: ElementFinder = this._getContinueButton(diagramName);
+    browser.wait(ExpectedConditions.visibilityOf(continueButton), browser.params.defaultTimeoutMS);
 
     return continueButton.isDisplayed();
   }
 
   public async clickOnContinueButton(diagramName: string): Promise<void> {
     const continueButton: ElementFinder = this._getContinueButton(diagramName);
+    browser.wait(ExpectedConditions.visibilityOf(continueButton), browser.params.defaultTimeoutMS);
 
     return continueButton.click();
   }
