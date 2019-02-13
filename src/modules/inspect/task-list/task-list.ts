@@ -1,5 +1,5 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {inject} from 'aurelia-framework';
+import {bindable, inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
 import {isError, NotFoundError, UnauthorizedError} from '@essential-projects/errors_ts';
@@ -33,12 +33,13 @@ interface IManualTaskWithProcessModel {
 @inject(EventAggregator, 'ManagementApiClientService', Router, 'NotificationService', 'SolutionService')
 export class TaskList {
 
+  @bindable() public activeSolutionEntry: ISolutionEntry;
+
   public currentPage: number = 0;
   public pageSize: number = 10;
   public totalItems: number;
 
   public successfullyRequested: boolean = false;
-  public activeSolutionEntry: ISolutionEntry;
 
   private _activeSolutionUri: string;
   private _eventAggregator: EventAggregator;

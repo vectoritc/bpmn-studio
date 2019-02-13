@@ -9,8 +9,10 @@ import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service
 import {
   IAuthenticationService,
   IDiagramValidationService,
+  ILoginResult,
   ISolutionEntry,
   ISolutionService,
+  IUserIdentity,
 } from '../../../contracts';
 import {SingleDiagramsSolutionExplorerService} from '../../solution-explorer-services/SingleDiagramsSolutionExplorerService';
 import {SolutionExplorerServiceFactory} from '../../solution-explorer-services/SolutionExplorerServiceFactory';
@@ -22,6 +24,7 @@ interface IUriToViewModelMap {
 
 @inject(Router, EventAggregator, 'SolutionExplorerServiceFactory', 'AuthenticationService', 'DiagramValidationService', 'SolutionService')
 export class SolutionExplorerList {
+  public internalSolutionUri: string;
 
   private _router: Router;
   private _eventAggregator: EventAggregator;
@@ -67,21 +70,8 @@ export class SolutionExplorerList {
 
     // Allows us to debug the solution explorer list.
     (window as any).solutionList = this;
-  }
 
-  /**
-   * Reopen all currently opened solutions to reload the identity
-   * used to open the solution.
-   */
-  public async refreshSolutionsOnIdentityChange(): Promise<void> {
-    const openPromises: Array<Promise<void>> = this._openedSolutions
-      .map((entry: ISolutionEntry): Promise<void> => {
-        return entry.service.openSolution(entry.uri, this._createIdentityForSolutionExplorer());
-      });
-
-    await Promise.all(openPromises);
-
-    return this.refreshSolutions();
+    this.internalSolutionUri = window.localStorage.getItem('InternalProcessEngineRoute');
   }
 
   /**
@@ -98,6 +88,16 @@ export class SolutionExplorerList {
       });
 
     await Promise.all(refreshPromises);
+  }
+
+  public solutionIsInternalSolution(solution: ISolutionEntry): boolean {
+    const solutionIsInternalSolution: boolean = solution.uri === this.internalSolutionUri;
+
+    return solutionIsInternalSolution;
+  }
+
+  public openSettings(): void {
+    this._router.navigateToRoute('settings');
   }
 
   public async openSingleDiagram(uri: string): Promise<IDiagram> {
@@ -122,7 +122,7 @@ export class SolutionExplorerList {
     });
   }
 
-  public async openSolution(uri: string, insertAtBeginning: boolean = false): Promise<void> {
+  public async openSolution(uri: string, insertAtBeginning: boolean = false, identity?: IIdentity): Promise<void> {
     const uriIsRemote: boolean = uri.startsWith('http');
 
     let solutionExplorer: ISolutionExplorerService;
@@ -132,7 +132,11 @@ export class SolutionExplorerList {
       solutionExplorer = await this._solutionExplorerServiceFactory.newFileSystemSolutionExplorer();
     }
 
-    const identity: IIdentity = this._createIdentityForSolutionExplorer();
+    const identityIsNotSet: boolean = identity === undefined || identity === null;
+    if (identityIsNotSet) {
+      identity = this._createIdentityForSolutionExplorer();
+    }
+
     try {
       await solutionExplorer.openSolution(uri, identity);
     } catch (error) {
@@ -188,6 +192,43 @@ export class SolutionExplorerList {
     } else {
       this._cleanupSolution(uri);
     }
+  }
+
+  public async login(solutionEntry: ISolutionEntry): Promise<void> {
+    const result: ILoginResult = await this._authenticationService.login(solutionEntry.authority);
+
+    const userIsNotLoggedIn: boolean = result.idToken === 'access_denied';
+    if (userIsNotLoggedIn) {
+
+      return;
+    }
+
+    const identity: IIdentity = {
+      token: result.accessToken,
+      userId: result.idToken,
+    };
+
+    solutionEntry.identity = identity;
+    solutionEntry.isLoggedIn = true;
+    solutionEntry.userName = result.identity.name;
+
+    await solutionEntry.service.openSolution(solutionEntry.uri, solutionEntry.identity);
+    this._solutionService.persistSolutionsInLocalStorage();
+
+    this._router.navigateToRoute('start-page');
+  }
+
+  public async logout(solutionEntry: ISolutionEntry): Promise<void> {
+    await this._authenticationService.logout(solutionEntry.authority, solutionEntry.identity);
+
+    solutionEntry.identity = this._createIdentityForSolutionExplorer();
+    solutionEntry.isLoggedIn = false;
+    solutionEntry.userName = undefined;
+
+    await solutionEntry.service.openSolution(solutionEntry.uri, solutionEntry.identity);
+    this._solutionService.persistSolutionsInLocalStorage();
+
+    this._router.navigateToRoute('start-page');
   }
 
   /**
@@ -340,11 +381,25 @@ export class SolutionExplorerList {
     return indexOfSolutionWithURI;
   }
 
-  private _addSolutionEntry(uri: string, service: ISolutionExplorerService, identity: IIdentity, insertAtBeginning: boolean): void {
+  private async _addSolutionEntry(uri: string, service: ISolutionExplorerService, identity: IIdentity, insertAtBeginning: boolean): Promise<void> {
     const isSingleDiagramService: boolean = this._isSingleDiagramService(service);
     const fontAwesomeIconClass: string = this._getFontAwesomeIconForSolution(service, uri);
     const canCloseSolution: boolean = this._canCloseSolution(service, uri);
     const canCreateNewDiagramsInSolution: boolean = this._canCreateNewDiagramsInSolution(service, uri);
+    const authority: string = await this._getAuthorityForSolution(uri);
+
+    const authorityIsUndefined: boolean = authority === undefined;
+
+    const isLoggedIn: boolean = authorityIsUndefined
+                                ? false
+                                : await this._authenticationService.isLoggedIn(authority, identity);
+
+    let userName: string;
+
+    if (isLoggedIn) {
+      const userIdentity: IUserIdentity = await this._authenticationService.getUserIdentity(authority, identity);
+      userName = userIdentity.name;
+    }
 
     const entry: ISolutionEntry = {
       uri,
@@ -354,6 +409,9 @@ export class SolutionExplorerList {
       canCreateNewDiagramsInSolution,
       isSingleDiagramService,
       identity,
+      authority,
+      isLoggedIn,
+      userName,
     };
 
     this._solutionService.addSolutionEntry(entry);
@@ -366,7 +424,8 @@ export class SolutionExplorerList {
   }
 
   private _createIdentityForSolutionExplorer(): IIdentity {
-    const accessToken: string = this._authenticationService.getAccessToken();
+
+    const accessToken: string = this._createDummyAccessToken();
     // TODO: Get the identity from the IdentityService of `@process-engine/iam`
     const identity: IIdentity = {
       token: accessToken,
@@ -374,6 +433,35 @@ export class SolutionExplorerList {
     };
 
     return identity;
+  }
+
+  private async _getAuthorityForSolution(solutionUri: string): Promise<string> {
+    const solutionIsRemote: boolean = solutionUri.startsWith('http');
+
+    if (solutionIsRemote) {
+      const request: Request = new Request(`${solutionUri}/security/authority`, {
+        method: 'GET',
+        mode: 'cors',
+        referrer: 'no-referrer',
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const response: Response = await fetch(request);
+      const authority: string = (await response.json()).authority;
+
+      return authority;
+    }
+
+  }
+
+  private _createDummyAccessToken(): string {
+    const dummyAccessTokenString: string = 'dummy_token';
+    const base64EncodedString: string = btoa(dummyAccessTokenString);
+
+    return base64EncodedString;
   }
 
 }

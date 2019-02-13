@@ -1,6 +1,7 @@
-import {IIdentity} from './IIdentity';
+import {IUserIdentity} from './IUserIdentity';
 
 export interface ILoginResult {
-  identity: IIdentity;
-  token: string;
+  identity: IUserIdentity;
+  accessToken: string;
+  idToken: string;
 }

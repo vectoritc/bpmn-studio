@@ -6,10 +6,9 @@
     </div>
     <div class="config-panel__card card">
       <div class="card-header">
-          OpenID Connect
+        Authority
       </div>
       <div class="card-body">
-        <label for="authority">Authority</label>
         <input value.bind="authority" type="text" class="form-control" id="authority">
         <div class="config-panel__card__alert alert alert-info" if.bind="authority !== defaultAuthority" role="alert">
           <span>

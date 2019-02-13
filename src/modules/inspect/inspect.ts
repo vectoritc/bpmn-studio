@@ -1,5 +1,6 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, inject} from 'aurelia-framework';
+import {activationStrategy} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
@@ -39,6 +40,10 @@ export class Inspect {
     this._solutionService = solutionService;
     this._notificationService = notificationService;
   }
+
+  public determineActivationStrategy(): string {
+    return activationStrategy.invokeLifecycle;
+ }
 
   public canActivate(routeParameters: IInspectRouteParameters): boolean {
     const solutionUri: string = routeParameters.solutionUri

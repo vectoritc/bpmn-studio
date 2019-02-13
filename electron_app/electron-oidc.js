@@ -19,7 +19,7 @@ module.exports = function (config, windowParams) {
       nonce: _getRandomString(16),
     };
 
-    var url = `${authorityUrl}/connect/authorize?${queryString.stringify(urlParams)}`;
+    var url = `${authorityUrl}connect/authorize?${queryString.stringify(urlParams)}`;
 
     return new Promise(function (resolve, reject) {
       // Open a new browser window and load the previously constructed url.
@@ -110,11 +110,11 @@ module.exports = function (config, windowParams) {
   function logout(tokenObject, authorityUrl) {
 
     const urlParams = {
-      id_token_hint: tokenObject.idToken,
+      id_token_hint: tokenObject.userId,
       post_logout_redirect_uri: config.logoutRedirectUri,
     };
 
-    const endSessionUrl = `${authorityUrl}/connect/endsession?${queryString.stringify(urlParams)}`
+    const endSessionUrl = `${authorityUrl}connect/endsession?${queryString.stringify(urlParams)}`
 
     return new Promise(async function (resolve, reject) {
 

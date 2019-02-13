@@ -14,6 +14,30 @@
           <span class="solution-entry__header__name">${solutionEntry.uri}</span>
 
           <div class="solution-entry__header__actions">
+              <button class="button"
+                if.bind="solutionEntry.uri.startsWith('http') && !solutionEntry.isLoggedIn"
+                click.delegate="login(solutionEntry)"
+                title="Login">
+
+                <i class="fa fa-lock-open"></i>
+              </button>
+
+              <button class="button"
+              if.bind="solutionIsInternalSolution(solutionEntry)"
+              click.delegate="openSettings()"
+              title="Open Settings of the internal ProcessEngine">
+
+              <i class="fa fa-cog"></i>
+            </button>
+
+              <button class="button"
+                if.bind="solutionEntry.isLoggedIn"
+                click.delegate="logout(solutionEntry)"
+                title.bind="`Logout ${solutionEntry.userName}`">
+
+                <i class="fa fa-lock"></i>
+              </button>
+
               <button
                 class="button"
                 if.bind="solutionEntry.canCreateNewDiagramsInSolution"
@@ -22,6 +46,7 @@
 
                 <i class="fa fa-file-medical"></i>
               </button>
+
               <button
                 class="button"
                 if.bind="solutionEntry.canCloseSolution"

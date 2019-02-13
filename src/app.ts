@@ -168,16 +168,16 @@ export class App {
         moduleId: 'modules/design/diagram-detail/diagram-detail',
       },
       {
-        route: 'configuration',
-        title: 'Configuration',
-        name: 'configuration',
-        moduleId: 'modules/config-panel/config-panel',
-      },
-      {
         route: ['/correlation/:correlationId/diagram/:diagramName/instance/:processInstanceId/live-execution-tracker'],
         title: 'Live Execution Tracker',
         name: 'live-execution-tracker',
         moduleId: 'modules/live-execution-tracker/live-execution-tracker',
+      },
+      {
+        route: 'settings',
+        title: 'Settings',
+        name: 'settings',
+        moduleId: 'modules/config-panel/config-panel',
       },
       {
         route: ['think', 'think/:view?/diagram/:diagramName?'],
