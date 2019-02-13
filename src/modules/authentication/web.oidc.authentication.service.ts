@@ -37,6 +37,7 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
     const userIdentity: IUserIdentity = await this.getUserIdentity(authority);
 
     const userIsAuthorized: boolean = userIdentity !== null && userIdentity !== undefined;
+
     return userIsAuthorized;
   }
 
@@ -46,6 +47,7 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
 
     if (isUnAuthorityReachable) {
       this._notificationService.showNotification(NotificationType.ERROR, 'Authority seems to be offline');
+
       return;
     }
 

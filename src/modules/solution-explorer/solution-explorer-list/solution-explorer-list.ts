@@ -447,6 +447,7 @@ export class SolutionExplorerList {
   private _createDummyAccessToken(): string {
     const dummyAccessTokenString: string = 'dummy_token';
     const base64EncodedString: string = btoa(dummyAccessTokenString);
+
     return base64EncodedString;
   }
 
