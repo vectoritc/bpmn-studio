@@ -18,6 +18,8 @@ export class StatusBar {
   private _oldVsNewButtonId: string = 'statusBarOldVsNew';
   private _changeLogButtonId: string = 'statusBarChangesLog';
 
+  private _activeClass: string = 'status-bar__element--active';
+
   public async init(): Promise<void> {
     const statusBarContainer: ElementFinder = this._statusBarContainer;
 
@@ -38,6 +40,8 @@ export class StatusBar {
 
     return this._rightStatusBarContainer.isDisplayed();
   }
+
+  // General Design Buttons
 
   public async getVisibilityOfEnableXmlViewButton(): Promise<boolean> {
 
@@ -79,6 +83,8 @@ export class StatusBar {
     return this._disableDiffViewButton.click();
   }
 
+  // Diff View Buttons
+
   public async getVisibilityOfNewVsOldButton(): Promise<boolean> {
 
     return this._newVsOldButton.isDisplayed();
@@ -87,6 +93,13 @@ export class StatusBar {
   public async clickOnNewVsOldButton(): Promise<void> {
 
     return this._newVsOldButton.click();
+  }
+
+  public async getActiveStateOfNewVsOldButton(): Promise<boolean> {
+    const classNames: string = await this._newVsOldButton.getAttribute('class');
+    const buttonIsActive: boolean = classNames.includes(this._activeClass);
+
+    return buttonIsActive;
   }
 
   public async getVisibilityOfOldVsNewButton(): Promise<boolean> {
@@ -99,6 +112,13 @@ export class StatusBar {
     return this._oldVsNewButton.click();
   }
 
+  public async getActiveStateOfOldVsNewButton(): Promise<boolean> {
+    const classNames: string = await this._oldVsNewButton.getAttribute('class');
+    const buttonIsActive: boolean = classNames.includes(this._activeClass);
+
+    return buttonIsActive;
+  }
+
   public async getVisibilityOfChangeLogButton(): Promise<boolean> {
 
     return this._changeLogButton.isDisplayed();
@@ -107,6 +127,13 @@ export class StatusBar {
   public async clickOnChangeLogButton(): Promise<void> {
 
     return this._changeLogButton.click();
+  }
+
+  public async getActiveStateOfChangeLogButton(): Promise<boolean> {
+    const classNames: string = await this._changeLogButton.getAttribute('class');
+    const buttonIsActive: boolean = classNames.includes(this._activeClass);
+
+    return buttonIsActive;
   }
 
   private get _statusBarContainer(): ElementFinder {

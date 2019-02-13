@@ -118,7 +118,7 @@ describe('Status Bar', () => {
     expect(visibilityOfEnableXmlViewButton).toBeTruthy();
   });
 
-  it('(on diff view should show disable diff view button.', async() => {
+  it('(on diff view) should show disable diff view button.', async() => {
     await diffView.init();
 
     const visibilityOfDisableDiffViewButton: boolean = await statusBar.getVisibilityOfDisableDiffViewButton();
@@ -126,12 +126,70 @@ describe('Status Bar', () => {
     expect(visibilityOfDisableDiffViewButton).toBeTruthy();
   });
 
-  it('(on diff view should show enable xml view button.', async() => {
+  it('(on diff view) should show enable xml view button.', async() => {
     await diffView.init();
 
     const visibilityOfEnableXmlViewButton: boolean = await statusBar.getVisibilityOfEnableXmlViewButton();
 
     expect(visibilityOfEnableXmlViewButton).toBeTruthy();
+  });
+
+  it('(on diff view) should contain old vs new button', async() => {
+    await diffView.init();
+
+    const visibilityOfOldVsNewButton: boolean = await statusBar.getVisibilityOfOldVsNewButton();
+
+    expect(visibilityOfOldVsNewButton).toBeTruthy();
+  });
+
+  it('(on diff view) should contain active new vs old button', async() => {
+    await diffView.init();
+
+    const visbilityOfNewVsOldButton: boolean = await statusBar.getVisibilityOfNewVsOldButton();
+
+    expect(visbilityOfNewVsOldButton).toBeTruthy();
+
+    const activeStateOfNewVsOldButton: boolean = await statusBar.getActiveStateOfNewVsOldButton();
+
+    expect(activeStateOfNewVsOldButton).toBeTruthy();
+  });
+
+  it('(on diff view) should contain changelog button.', async() => {
+    await diffView.init();
+
+    const visibilityOfChangeLogButton: boolean = await statusBar.getVisibilityOfChangeLogButton();
+
+    expect(visibilityOfChangeLogButton).toBeTruthy();
+  });
+
+  it('(on diff view) should contain active old vs new button after click on it.', async() => {
+    await diffView.init();
+
+    await statusBar.clickOnOldVsNewButton();
+
+    const activeStateOfOldVsNewButton: boolean = await statusBar.getActiveStateOfOldVsNewButton();
+
+    expect(activeStateOfOldVsNewButton).toBeTruthy();
+  });
+
+  it('(on diff view) should contain inactive new vs old button after click on old vs new button.', async() => {
+    await diffView.init();
+
+    await statusBar.clickOnOldVsNewButton();
+
+    const activeStateOfNewVsOldButton: boolean = await statusBar.getActiveStateOfNewVsOldButton();
+
+    expect(activeStateOfNewVsOldButton).toBeFalsy();
+  });
+
+  it('(on diff view) should contain active change log button after click on it.', async() => {
+    await diffView.init();
+
+    await statusBar.clickOnChangeLogButton();
+
+    const activeStateOfChangeLogButton: boolean = await statusBar.getActiveStateOfChangeLogButton();
+
+    expect(activeStateOfChangeLogButton).toBeTruthy();
   });
 
 });
