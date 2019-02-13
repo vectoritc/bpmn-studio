@@ -15,17 +15,17 @@ export class Dashboard {
 
   public async init(): Promise<void> {
     await browser.get(this.url);
-    browser.wait(ExpectedConditions.visibilityOf(this._dashboardContainer), browser.params.defaultTimeoutMS);
+    await browser.wait(ExpectedConditions.visibilityOf(this._dashboardContainer), browser.params.defaultTimeoutMS);
   }
 
   public async getVisibilityOfProcessListContainer(): Promise<boolean> {
-    browser.wait(ExpectedConditions.visibilityOf(this._processListContainer), browser.params.defaultTimeoutMS);
+    await browser.wait(ExpectedConditions.visibilityOf(this._processListContainer), browser.params.defaultTimeoutMS);
 
     return this._processListContainer.isDisplayed();
   }
 
   public async getVisibilityOfTaskListContainer(): Promise<boolean> {
-    browser.wait(ExpectedConditions.visibilityOf(this._taskListContainer), browser.params.defaultTimeoutMS);
+    await browser.wait(ExpectedConditions.visibilityOf(this._taskListContainer), browser.params.defaultTimeoutMS);
 
     return this._taskListContainer.isDisplayed();
   }

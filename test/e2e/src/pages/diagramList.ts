@@ -16,7 +16,7 @@ export class DiagramList {
   public async init(): Promise<void> {
     await browser.get(this.url);
 
-    browser.wait(ExpectedConditions.visibilityOf(this._diagramListContainer), browser.params.defaultTimeoutMS);
+    await browser.wait(ExpectedConditions.visibilityOf(this._diagramListContainer), browser.params.defaultTimeoutMS);
   }
 
   public async getVisibilityOfDiagramListEntry(diagramName: string): Promise<boolean> {

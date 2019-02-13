@@ -16,7 +16,7 @@ export class DiagramDetail {
   public async init(): Promise<void> {
     await browser.get(this.url);
 
-    browser.wait(ExpectedConditions.visibilityOf(this._diagramDetailContainer), browser.params.defaultTimeoutMS);
+    await browser.wait(ExpectedConditions.visibilityOf(this._diagramDetailContainer), browser.params.defaultTimeoutMS);
   }
 
   public async getVisibilityOfBpmnIoContainer(): Promise<boolean> {

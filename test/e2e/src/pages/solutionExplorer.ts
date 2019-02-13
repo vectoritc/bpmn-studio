@@ -8,7 +8,7 @@ export class SolutionExplorer {
   private _solutionExplorerPanelTag: string = 'solution-explorer-panel';
 
   public async init(): Promise<void> {
-    browser.wait(ExpectedConditions.visibilityOf(this._solutionExplorerPanelContainer), browser.params.defaultTimeoutMS);
+    await browser.wait(ExpectedConditions.visibilityOf(this._solutionExplorerPanelContainer), browser.params.defaultTimeoutMS);
   }
 
   public async getVisbilityOfSolutionExplorer(): Promise<boolean> {
@@ -18,14 +18,14 @@ export class SolutionExplorer {
 
   public async getVisibilityOfDiagramEntry(diagramName: string): Promise<boolean> {
     const diagramEntry: ElementFinder = this._getDiagramEntry(diagramName);
-    browser.wait(ExpectedConditions.visibilityOf(diagramEntry), browser.params.defaultTimeoutMS);
+    await browser.wait(ExpectedConditions.visibilityOf(diagramEntry), browser.params.defaultTimeoutMS);
 
     return diagramEntry.isDisplayed();
   }
 
   public async openDiagramByClick(diagramName: string): Promise<void> {
     const diagramEntry: ElementFinder = this._getDiagramEntry(diagramName);
-    browser.wait(ExpectedConditions.visibilityOf(diagramEntry), browser.params.defaultTimeoutMS);
+    await browser.wait(ExpectedConditions.visibilityOf(diagramEntry), browser.params.defaultTimeoutMS);
 
     return diagramEntry.click();
   }
