@@ -183,6 +183,12 @@ export class SolutionExplorerList {
   public async login(solutionEntry: ISolutionEntry): Promise<void> {
     const result: ILoginResult = await this._authenticationService.login(solutionEntry.authority);
 
+    const userIsNotLoggedIn: boolean = result.idToken === 'access_denied';
+    if (userIsNotLoggedIn) {
+
+      return;
+    }
+
     const identity: IIdentity = {
       token: result.accessToken,
       userId: result.idToken,
@@ -379,6 +385,7 @@ export class SolutionExplorerList {
       identity,
       authority,
       isLoggedIn,
+      userName,
     };
 
     this._solutionService.addSolutionEntry(entry);
