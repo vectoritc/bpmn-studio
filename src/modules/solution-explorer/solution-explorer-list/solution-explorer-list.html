@@ -23,6 +23,14 @@
               </button>
 
               <button class="button"
+              if.bind="solutionIsInternalSolution(solutionEntry)"
+              click.delegate="openSettings()"
+              title="Open Settings of the internal ProcessEngine">
+
+              <i class="fa fa-cog"></i>
+            </button>
+
+              <button class="button"
                 if.bind="solutionEntry.isLoggedIn"
                 click.delegate="logout(solutionEntry)"
                 title.bind="`Logout ${solutionEntry.userName}`">
