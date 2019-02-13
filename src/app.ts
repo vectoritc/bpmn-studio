@@ -174,6 +174,12 @@ export class App {
         moduleId: 'modules/live-execution-tracker/live-execution-tracker',
       },
       {
+        route: 'settings',
+        title: 'Settings',
+        name: 'settings',
+        moduleId: 'modules/config-panel/config-panel',
+      },
+      {
         route: ['think', 'think/:view?/diagram/:diagramName?'],
         title: 'Think',
         name: 'think',
