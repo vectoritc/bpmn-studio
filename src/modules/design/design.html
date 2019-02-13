@@ -12,7 +12,7 @@
     <div show.bind="showXML" class="design__xml-view-container" id="diagramXmlContainer">
       <bpmn-xml-view xml.bind="xml"></bpmn-xml-view>
     </div>
-    <div if.bind="showDiff" class="design__diff-view-container">
+    <div if.bind="showDiff" class="design__diff-view-container" id="diagramDiffContainer">
       <bpmn-diff-view saved-xml.bind="activeDiagram.xml" current-xml.bind="xmlForDiff" process-model-id.bind="activeDiagram.name"></bpmn-diff-view>
     </div>
 
