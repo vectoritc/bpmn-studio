@@ -7,10 +7,16 @@ export class StatusBar {
   private _leftStatusBarContainerId: string = 'statusBarLeft';
   private _centerStatusBarContainerId: string = 'statusBarCenter';
   private _rightStatusBarContainerId: string = 'statusBarRight';
+
   private _enableXmlViewButtonId: string = 'statusBarXMLViewButton';
   private _disableXmlViewButtonId: string = 'statusBarDisableXMLViewButton';
+
   private _enableDiffViewButtonId: string = 'statusBarDiffViewButton';
   private _disableDiffViewButtonId: string = 'statusBarDisableDiffViewButton';
+
+  private _newVsOldButtonId: string = 'statusBarNewVsOld';
+  private _oldVsNewButtonId: string = 'statusBarOldVsNew';
+  private _changeLogButtonId: string = 'statusBarChangesLog';
 
   public async init(): Promise<void> {
     const statusBarContainer: ElementFinder = this._statusBarContainer;
@@ -48,14 +54,59 @@ export class StatusBar {
     return this._disableXmlViewButton.isDisplayed();
   }
 
+  public async clickOnDisableXmlViewButton(): Promise<void> {
+
+    return this._disableXmlViewButton.click();
+  }
+
   public async getVisibilityOfEnableDiffViewButton(): Promise<boolean> {
 
     return this._enableDiffViewButton.isDisplayed();
   }
 
+  public async clickOnEnableDiffViewButton(): Promise<void> {
+
+    return this._enableDiffViewButton.click();
+  }
+
   public async getVisibilityOfDisableDiffViewButton(): Promise<boolean> {
 
     return this._disableDiffViewButton.isDisplayed();
+  }
+
+  public async clickOnDisableDiffViewButton(): Promise<void> {
+
+    return this._disableDiffViewButton.click();
+  }
+
+  public async getVisibilityOfNewVsOldButton(): Promise<boolean> {
+
+    return this._newVsOldButton.isDisplayed();
+  }
+
+  public async clickOnNewVsOldButton(): Promise<void> {
+
+    return this._newVsOldButton.click();
+  }
+
+  public async getVisibilityOfOldVsNewButton(): Promise<boolean> {
+
+    return this._oldVsNewButton.isDisplayed();
+  }
+
+  public async clickOnOldVsNewButton(): Promise<void> {
+
+    return this._oldVsNewButton.click();
+  }
+
+  public async getVisibilityOfChangeLogButton(): Promise<boolean> {
+
+    return this._changeLogButton.isDisplayed();
+  }
+
+  public async clickOnChangeLogButton(): Promise<void> {
+
+    return this._changeLogButton.click();
   }
 
   private get _statusBarContainer(): ElementFinder {
@@ -104,5 +155,23 @@ export class StatusBar {
     const disabelDiffViewButtonById: By = by.id(this._disableDiffViewButtonId);
 
     return element(disabelDiffViewButtonById);
+  }
+
+  private get _newVsOldButton(): ElementFinder {
+    const newVsOldButtonById: By = by.id(this._newVsOldButtonId);
+
+    return element(newVsOldButtonById);
+  }
+
+  private get _oldVsNewButton(): ElementFinder {
+    const oldVsNewButtonId: By = by.id(this._oldVsNewButtonId);
+
+    return element(oldVsNewButtonId);
+  }
+
+  private get _changeLogButton(): ElementFinder {
+    const changeLogButtonById: By = by.id(this._changeLogButtonId);
+
+    return element(changeLogButtonById);
   }
 }
