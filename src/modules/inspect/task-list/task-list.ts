@@ -92,10 +92,6 @@ export class TaskList {
     }
   }
 
-  public activeSolutionEntryChanged(newValue: ISolutionEntry): void {
-    console.log(newValue);
-  }
-
   public attached(): void {
     const getTasksIsUndefined: boolean = this._getTasks === undefined;
 
