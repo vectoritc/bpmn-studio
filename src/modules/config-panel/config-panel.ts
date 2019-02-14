@@ -1,129 +1,74 @@
-import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {bindable, computedFrom, inject} from 'aurelia-framework';
-import {OpenIdConnect} from 'aurelia-open-id-connect';
+import {EventAggregator} from 'aurelia-event-aggregator';
+import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
+
+import {IIdentity} from '@essential-projects/iam_contracts';
 
 import {IAuthenticationService} from '../../contracts/authentication/IAuthenticationService';
 import {
   AuthenticationStateEvent,
-  NotificationType,
+  ISolutionEntry,
+  ISolutionService,
 } from '../../contracts/index';
-import environment from '../../environment';
-import {oidcConfig} from '../../open-id-connect-configuration';
-import {NotificationService} from '../notification/notification.service';
 
 interface RouteParameters {
   diagramName?: string;
   solutionUri?: string;
 }
 
-@inject(Router, 'NotificationService', EventAggregator, 'AuthenticationService', OpenIdConnect, 'InternalProcessEngineBaseRoute')
+@inject(Router, 'SolutionService', 'AuthenticationService', EventAggregator)
 export class ConfigPanel {
-  @bindable public authority: string;
-  public readonly defaultAuthority: string = environment.openIdConnect.defaultAuthority;
-  public isLoggedInToProcessEngine: boolean;
-  public internalProcessEngineBaseRoute: string | null;
+  public internalSolution: ISolutionEntry;
+  public authority: string;
+  public defaultAuthority: string;
 
   private _router: Router;
-  private _notificationService: NotificationService;
-  private _eventAggregator: EventAggregator;
+  private _solutionService: ISolutionService;
   private _authenticationService: IAuthenticationService;
-  private _subscriptions: Array<Subscription>;
-  // We use any here, because we need to call private members (see below)
-  private _openIdConnect: OpenIdConnect | any;
-  private _initialAuthority: string;
-  private _activeSolutionUri: string;
+  private _eventAggregator: EventAggregator;
 
   constructor(router: Router,
-              notificationService: NotificationService,
-              eventAggregator: EventAggregator,
+              solutionService: ISolutionService,
               authenticationService: IAuthenticationService,
-              openIdConnect: OpenIdConnect,
-              internalProcessEngineBaseRoute: string | null,
-            ) {
-
+              eventAggregator: EventAggregator) {
     this._router = router;
-    this._notificationService = notificationService;
-    this._eventAggregator = eventAggregator;
+    this._solutionService = solutionService;
     this._authenticationService = authenticationService;
-    this._openIdConnect = openIdConnect;
-    this.internalProcessEngineBaseRoute = internalProcessEngineBaseRoute;
+    this._eventAggregator = eventAggregator;
   }
 
-  public activate(routeParameters: RouteParameters): void {
+  public async attached(): Promise<void> {
+    const internalSolutionUri: string = window.localStorage.getItem('InternalProcessEngineRoute');
 
-    this._activeSolutionUri = routeParameters.solutionUri;
-  }
-
-  public attached(): void {
-    const customOpenIdRoute: string = window.localStorage.getItem('openIdRoute');
-    const customOpenIdRouteIsSet: boolean = customOpenIdRoute !== null
-                                         && customOpenIdRoute !== undefined
-                                         && customOpenIdRoute !== '';
-
-    if (customOpenIdRouteIsSet) {
-      this.authority = customOpenIdRoute;
-    }
-
-    this._initialAuthority = this.authority;
-
-    this.isLoggedInToProcessEngine = this._authenticationService.isLoggedIn();
-
-    this._subscriptions = [
-      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
-        this.isLoggedInToProcessEngine = this._authenticationService.isLoggedIn();
-      }),
-      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
-        this.isLoggedInToProcessEngine = this._authenticationService.isLoggedIn();
-      }),
-    ];
-  }
-
-  public detached(): void {
-    for (const subscription of this._subscriptions) {
-      subscription.dispose();
-    }
+    this.internalSolution = this._solutionService.getSolutionEntryForUri(internalSolutionUri);
+    this.authority = this.internalSolution.authority;
+    this.defaultAuthority = await this._getAuthorityForInternalSolution();
   }
 
   public async updateSettings(): Promise<void> {
-
-    const accessTokenIsNotDummy: boolean = this._authenticationService.getAccessToken() !== 'ZHVtbXlfdG9rZW4=';
-    if (accessTokenIsNotDummy) {
-      await this._authenticationService.logout();
+    const authorityDoesNotEndWithSlash: boolean = !this.authority.endsWith('/');
+    if (authorityDoesNotEndWithSlash) {
+      this.authority = `${this.authority}/`;
     }
 
-    const authorityChanged: boolean = this.authority !== this._initialAuthority;
-    if (authorityChanged) {
-      this._updateAuthority();
+    const userIsLoggedIn: boolean = await this._authenticationService.isLoggedIn(this.internalSolution.authority, this.internalSolution.identity);
+
+    if (userIsLoggedIn) {
+      await this._authenticationService.logout(this.internalSolution.authority, this.internalSolution.identity);
+
+      this.internalSolution.identity = this._createDummyIdentity();
+      this.internalSolution.isLoggedIn = false;
+      this.internalSolution.userName = undefined;
+
+      this.internalSolution.service.openSolution(this.internalSolution.uri, this.internalSolution.identity);
+      this._solutionService.persistSolutionsInLocalStorage();
+
+      this._eventAggregator.publish(AuthenticationStateEvent.LOGOUT);
     }
 
-    this._notificationService.showNotification(NotificationType.SUCCESS, 'Successfully saved settings!');
+    this.internalSolution.authority = this.authority;
 
-    const solutionUriIsSet: boolean = this._activeSolutionUri !== undefined;
-    if (solutionUriIsSet) {
-      const solutionUriIsRemote: boolean = this._activeSolutionUri.startsWith('http');
-
-      if (solutionUriIsRemote) {
-        this._router.navigateToRoute('start-page');
-
-        return;
-      }
-    }
-
-    if (authorityChanged) {
-      this._router.navigateToRoute('start-page');
-    } else {
-      this._router.navigateBack();
-    }
-
-  }
-
-  public authorityChanged(): void {
-    /*
-     * TODO: The environment variables should not carry state. This should be done via a configurationService.
-     * https://github.com/process-engine/bpmn-studio/issues/673
-     */
-    environment.openIdConnect.authority = this.authority;
+    this._router.navigateBack();
   }
 
   public setDefaultAuthority(): void {
@@ -134,20 +79,60 @@ export class ConfigPanel {
     this._router.navigateBack();
   }
 
-  private _updateAuthority(): void {
-    const authorityIsSet: boolean = this.authority !== undefined
-                                  && this.authority !== null
-                                  && this.authority !== '';
+  private async _getAuthorityForInternalSolution(): Promise<string> {
+      const request: Request = new Request(`${this.internalSolution.uri}/security/authority`, {
+        method: 'GET',
+        mode: 'cors',
+        referrer: 'no-referrer',
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json',
+        },
+      });
 
-    if (authorityIsSet) {
-      window.localStorage.setItem('openIdRoute', this.authority);
+      const response: Response = await fetch(request);
+      const authority: string = (await response.json()).authority;
+
+      return authority;
+
+  }
+
+  public get uriIsValid(): boolean {
+    if (this.uriIsEmpty) {
+      return true;
     }
 
-    oidcConfig.userManagerSettings.authority = this.authority;
+    /**
+     * This RegEx checks if the entered URI is valid or not.
+     */
+    const urlRegEx: RegExp = /^(?:http(s)?:\/\/)+[\w.-]?[\w\-\._~:/?#[\]@!\$&\'\(\)\*\+,;=.]+$/g;
+    const uriIsValid: boolean = urlRegEx.test(this.authority);
 
-    // This dirty way to update the settings is the only way during runtime
-    this._openIdConnect.configuration.userManagerSettings.authority = this.authority;
-    this._openIdConnect.userManager._settings._authority = this.authority;
+    return uriIsValid;
+  }
+
+  public get uriIsEmpty(): boolean {
+    const uriIsEmtpy: boolean = this.authority === undefined || this.authority.length === 0;
+
+    return uriIsEmtpy;
+  }
+
+  private _createDummyIdentity(): IIdentity {
+    const accessToken: string = this._createDummyAccessToken();
+    // TODO: Get the identity from the IdentityService of `@process-engine/iam`
+    const identity: IIdentity = {
+      token: accessToken,
+      userId: '', // Provided by the IdentityService.
+    };
+
+    return identity;
+  }
+
+  private _createDummyAccessToken(): string {
+    const dummyAccessTokenString: string = 'dummy_token';
+    const base64EncodedString: string = btoa(dummyAccessTokenString);
+
+    return base64EncodedString;
   }
 
 }

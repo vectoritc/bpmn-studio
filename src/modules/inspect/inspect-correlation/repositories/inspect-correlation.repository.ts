@@ -18,9 +18,7 @@ export class InspectCorrelationRepository implements IInspectCorrelationReposito
     this._authenticationService = authenticationService;
   }
 
-  public async getAllCorrelationsForProcessModelId(processModelId: string): Promise<Array<DataModels.Correlations.Correlation>> {
-    const identity: IIdentity = this._createIdentity();
-
+  public async getAllCorrelationsForProcessModelId(processModelId: string, identity: IIdentity): Promise<Array<DataModels.Correlations.Correlation>> {
     const allCorrelations: Array<DataModels.Correlations.Correlation> = await this._managementApiService.getAllCorrelations(identity);
 
     const correlationsForProcessModelId: Array<DataModels.Correlations.Correlation> =
@@ -41,9 +39,8 @@ export class InspectCorrelationRepository implements IInspectCorrelationReposito
     return correlationsForProcessModelId;
   }
 
-  public async getLogsForCorrelation(correlation: DataModels.Correlations.Correlation): Promise<Array<DataModels.Logging.LogEntry>> {
-    const identity: IIdentity = this._createIdentity();
-
+  public async getLogsForCorrelation(correlation: DataModels.Correlations.Correlation,
+                                     identity: IIdentity): Promise<Array<DataModels.Logging.LogEntry>> {
     const logsForAllProcessModelsOfCorrelation: Array<Array<DataModels.Logging.LogEntry>> = [];
 
     for (const processModel of correlation.processModels) {
@@ -65,21 +62,10 @@ export class InspectCorrelationRepository implements IInspectCorrelationReposito
     processModelId: string,
     correlationId: string,
     flowNodeId: string,
+    identity: IIdentity,
   ): Promise<Array<DataModels.TokenHistory.TokenHistoryEntry>> {
-    const identity: IIdentity = this._createIdentity();
 
     return this._managementApiService.getTokensForFlowNodeInstance(identity, correlationId, processModelId, flowNodeId);
   }
 
-  private _createIdentity(): IIdentity {
-    const accessToken: string = this._authenticationService.getAccessToken();
-
-    // TODO: Get the identity from the IdentityService of `@process-engine/iam`
-    const identity: IIdentity = {
-      token: accessToken,
-      userId: '', // Provided by the IdentityService.
-    };
-
-    return identity;
-  }
 }

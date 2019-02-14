@@ -1,11 +1,11 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
-import {PipelineResult, Router} from 'aurelia-router';
+import {Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {IFile, IInputEvent, ISolutionEntry, ISolutionService} from '../../../contracts';
-import {AuthenticationStateEvent, NotificationType} from '../../../contracts/index';
+import {AuthenticationStateEvent, IFile, IInputEvent, ISolutionEntry, ISolutionService} from '../../../contracts/index';
+import {NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 import {SolutionExplorerList} from '../solution-explorer-list/solution-explorer-list';
@@ -39,6 +39,7 @@ export class SolutionExplorerPanel {
   public singleDiagramInput: HTMLInputElement;
   public showOpenRemoteSolutionModal: boolean = false;
   public uriOfRemoteSolution: string;
+  public solutionExplorerPanel: SolutionExplorerPanel = this;
 
   constructor(
     eventAggregator: EventAggregator,
@@ -57,10 +58,18 @@ export class SolutionExplorerPanel {
   }
 
   public async bind(): Promise<void> {
+    // Open the solution of the currently configured processengine instance on startup.
     const uriOfProcessEngine: string = window.localStorage.getItem('InternalProcessEngineRoute');
 
-    // Open the solution of the currently configured processengine instance on startup.
-    await this.solutionExplorerList.openSolution(uriOfProcessEngine);
+    const persistedInternalSolution: ISolutionEntry = this._solutionService.getSolutionEntryForUri(uriOfProcessEngine);
+    const internalSolutionWasPersisted: boolean = persistedInternalSolution !== undefined;
+    if (internalSolutionWasPersisted) {
+      // Only open the internal solution with the persisted identity when it as persisted.
+      await this.solutionExplorerList.openSolution(uriOfProcessEngine, true, persistedInternalSolution.identity);
+    } else {
+      // Otherwise just open it without an identity.
+      await this.solutionExplorerList.openSolution(uriOfProcessEngine);
+    }
 
     // Open the previously opened solutions.
     const previouslyOpenedSolutions: Array<ISolutionEntry> = this._solutionService.getPersistedEntries();
@@ -74,7 +83,7 @@ export class SolutionExplorerPanel {
          * produced by the openSolution method.
          */
         try {
-          await this.solutionExplorerList.openSolution(entry.uri);
+          await this.solutionExplorerList.openSolution(entry.uri, false, entry.identity);
         } catch (error) {
 
           return;
@@ -97,12 +106,6 @@ export class SolutionExplorerPanel {
     }
 
     this._subscriptions = [
-      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGIN, () => {
-        this.solutionExplorerList.refreshSolutionsOnIdentityChange();
-      }),
-      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
-        this.solutionExplorerList.refreshSolutionsOnIdentityChange();
-      }),
       this._eventAggregator.subscribe(environment.events.diagramDetail.onDiagramDeployed, () => {
         this._refreshSolutions();
       }),
@@ -114,6 +117,9 @@ export class SolutionExplorerPanel {
       }),
       this._eventAggregator.subscribe(environment.events.startPage.createSingleDiagram, () => {
         this._createNewDiagram();
+      }),
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
+        this.solutionExplorerList.refreshSolutions();
       }),
     ];
   }
@@ -303,8 +309,11 @@ export class SolutionExplorerPanel {
 
   private _createNewDiagram(): void {
     const activeSolutionUri: string = this._router.currentInstruction.queryParams.solutionUri;
-    const activeSolutionCanCreateDiagrams: boolean = activeSolutionUri !== undefined
-                                                   && !activeSolutionUri.startsWith('http');
+    const activeSolution: ISolutionEntry = this._solutionService.getSolutionEntryForUri(activeSolutionUri);
+
+    const activeSolutionCanCreateDiagrams: boolean = activeSolution !== undefined
+                                                  && !activeSolution.uri.startsWith('http')
+                                                  && activeSolution.canCreateNewDiagramsInSolution;
 
     const uri: string = activeSolutionCanCreateDiagrams
                         ? activeSolutionUri

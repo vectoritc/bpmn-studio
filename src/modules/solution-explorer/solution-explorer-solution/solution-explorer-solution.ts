@@ -18,8 +18,12 @@ import {ForbiddenError, isError, UnauthorizedError} from '@essential-projects/er
 import {IDiagram, ISolution} from '@process-engine/solutionexplorer.contracts';
 import {ISolutionExplorerService} from '@process-engine/solutionexplorer.service.contracts';
 
-import {IDiagramCreationService, ISolutionEntry, ISolutionService, IUserInputValidationRule} from '../../../contracts';
-import {NotificationType} from '../../../contracts/index';
+import {AuthenticationStateEvent,
+        IDiagramCreationService,
+        ISolutionEntry,
+        ISolutionService,
+        IUserInputValidationRule,
+        NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 import {SingleDiagramsSolutionExplorerService} from '../../solution-explorer-services/SingleDiagramsSolutionExplorerService';
@@ -187,7 +191,7 @@ export class SolutionExplorerSolution {
 
   public async showDeleteDiagramModal(diagram: IDiagram, event: Event): Promise<void> {
     /**
-     * We are stopping the event propagation here, because we don't want the want
+     * We are stopping the event propagation here, because we don't want
      * the event to be called on the list element, since this would lead to a
      * navigation to the diagram we want to delete.
      */

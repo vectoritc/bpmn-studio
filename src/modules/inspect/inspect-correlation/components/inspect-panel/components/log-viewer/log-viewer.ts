@@ -4,7 +4,7 @@ import * as clipboard from 'clipboard-polyfill';
 
 import {DataModels} from '@process-engine/management_api_contracts';
 
-import {ILogSortSettings, LogSortProperty, NotificationType} from '../../../../../../../contracts/index';
+import {ILogSortSettings, ISolutionEntry, LogSortProperty, NotificationType} from '../../../../../../../contracts/index';
 import {DateService} from '../../../../../../date-service/date.service';
 import {NotificationService} from '../../../../../../notification/notification.service';
 import {IInspectCorrelationService} from '../../../../contracts';
@@ -17,6 +17,7 @@ interface IClipboard {
 export class LogViewer {
   @bindable() public log: Array<DataModels.Logging.LogEntry>;
   @bindable() public correlation: DataModels.Correlations.Correlation;
+  @bindable() public activeSolutionEntry: ISolutionEntry;
   public LogSortProperty: typeof LogSortProperty = LogSortProperty;
   public sortedLog: Array<DataModels.Logging.LogEntry>;
   public sortSettings: ILogSortSettings = {
@@ -33,7 +34,7 @@ export class LogViewer {
   }
 
   public async correlationChanged(): Promise<void> {
-    this.log = await this._inspectCorrelationService.getLogsForCorrelation(this.correlation);
+    this.log = await this._inspectCorrelationService.getLogsForCorrelation(this.correlation, this.activeSolutionEntry.identity);
 
     this.sortList(LogSortProperty.Time);
   }

@@ -64,22 +64,4 @@ describe('Status bar', () => {
 
     expect(statusBarContainerRightIsDisplayed).toBeTruthy();
   });
-
-  it('should contain settings button.', async() => {
-    const statusBarSettingsButton: ElementFinder = statusBar.statusBarSettingsButton;
-    const statusBarSettingsButtonIsDisplayed: boolean = await statusBarSettingsButton.isDisplayed();
-
-    expect(statusBarSettingsButtonIsDisplayed).toBeTruthy();
-  });
-
-  it('should be possible to click settings button and get redirected.', async() => {
-    const statusBarSettingsButton: ElementFinder = statusBar.statusBarSettingsButton;
-
-    await statusBarSettingsButton.click();
-
-    const currentBrowserUrl: string = await browser.getCurrentUrl();
-    const settingsLink: string = settings.settingsLink;
-
-    expect(currentBrowserUrl).toMatch(settingsLink);
-  });
 });

@@ -43,40 +43,18 @@
   opacity: 1;
 }
 
-.dynamic-ui-modal-dialog {
-  position: relative;
-  top: 20%;
-  bottom: 20%;
-  width: 400px;
-  height: 60%;
-}
-
-.dynamic-ui-modal-content {
-  max-height: 100%;
-  overflow: auto;
-}
-
-.dynamic-ui-modal-body {
-  height: 100%;
-}
-
 .let__parent-process-button {
   position: absolute;
   bottom: 100px;
-  left: 100px;
+  left: 50%;
   width: 200px;
-}
-
-.let__back-button {
-  position: absolute;
-  bottom: 100px;
-  right: 100px;
-  width: 200px;
+  // half the width
+  margin-left: -100px;
 }
 
 .close-dynamic-ui-button {
   position: absolute;
-  top: 20px;
+  top: 5px;
   right: 20px;
   cursor: pointer;
 }

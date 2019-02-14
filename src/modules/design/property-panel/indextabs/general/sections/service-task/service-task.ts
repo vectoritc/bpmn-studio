@@ -48,7 +48,7 @@ export class ServiceTaskSection implements ISection {
   }
 
   public selectedKindChanged(): void {
-    const selectedKindIsHttpService: boolean = this.selectedKind === 'HttpService';
+    const selectedKindIsHttpService: boolean = this.selectedKind === 'HttpClient';
     const selectedKindIsExternalTask: boolean = this.selectedKind === 'external';
 
     if (selectedKindIsHttpService) {
@@ -107,7 +107,7 @@ export class ServiceTaskSection implements ISection {
 
     const modulePropertyObject: Object = {
       name: 'module',
-      value: 'HttpService',
+      value: 'HttpClient',
     };
 
     const moduleProperty: IProperty = this._moddle.create('camunda:Property', modulePropertyObject);

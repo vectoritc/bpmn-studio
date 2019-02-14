@@ -1,5 +1,5 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {inject, observable} from 'aurelia-framework';
+import {bindable, inject, observable} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
 
 import {IIdentity} from '@essential-projects/iam_contracts';
@@ -18,12 +18,12 @@ import {NotificationService} from '../../notification/notification.service';
 export class ProcessList {
 
   @observable public currentPage: number = 0;
+  @bindable() public activeSolutionEntry: ISolutionEntry;
   public pageSize: number = 10;
   public totalItems: number;
   public status: Array<string> = [];
   public succesfullRequested: boolean = false;
   public selectedState: HTMLSelectElement;
-  public activeSolutionEntry: ISolutionEntry;
 
   private _managementApiService: IManagementApi;
   private _eventAggregator: EventAggregator;

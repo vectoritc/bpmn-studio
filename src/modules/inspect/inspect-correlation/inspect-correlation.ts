@@ -4,13 +4,14 @@ import {bindable, inject, observable} from 'aurelia-framework';
 import {DataModels} from '@process-engine/management_api_contracts';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {IEventFunction, IShape} from '../../../contracts/index';
+import {IEventFunction, IShape, ISolutionEntry} from '../../../contracts/index';
 import environment from '../../../environment';
 import {IInspectCorrelationService} from './contracts';
 
 @inject('InspectCorrelationService', EventAggregator)
 export class InspectCorrelation {
   @bindable() public activeDiagram: IDiagram;
+  @bindable() public activeSolutionEntry: ISolutionEntry;
   @bindable() public selectedCorrelation: DataModels.Correlations.Correlation;
   @bindable() public inspectPanelFullscreen: boolean = false;
   @observable public bottomPanelHeight: number = 250;
@@ -24,6 +25,8 @@ export class InspectCorrelation {
   public rightPanelResizeDiv: HTMLDivElement;
   public selectedFlowNode: IShape;
 
+  public viewIsAttached: boolean = false;
+
   private _inspectCorrelationService: IInspectCorrelationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
@@ -35,7 +38,10 @@ export class InspectCorrelation {
     this._eventAggregator = eventAggregator;
   }
 
-  public attached(): void {
+  public async attached(): Promise<void> {
+    this.correlations = await this._inspectCorrelationService
+                                  .getAllCorrelationsForProcessModelId(this.activeDiagram.id, this.activeSolutionEntry.identity);
+
     this._eventAggregator.publish(environment.events.statusBar.showInspectCorrelationButtons, true);
 
     this._subscriptions = [
@@ -82,6 +88,8 @@ export class InspectCorrelation {
       document.addEventListener('mousemove', mousemoveFunction);
       document.addEventListener('mouseup', mouseUpFunction);
     });
+
+    this.viewIsAttached = true;
   }
 
   public detached(): void {
@@ -93,7 +101,10 @@ export class InspectCorrelation {
   }
 
   public async activeDiagramChanged(): Promise<void> {
-    this.correlations = await this._inspectCorrelationService.getAllCorrelationsForProcessModelId(this.activeDiagram.id);
+    if (this.viewIsAttached) {
+      this.correlations = await this._inspectCorrelationService
+                                    .getAllCorrelationsForProcessModelId(this.activeDiagram.id, this.activeSolutionEntry.identity);
+    }
   }
 
   private _resizeInspectPanel(mouseEvent: MouseEvent): void {

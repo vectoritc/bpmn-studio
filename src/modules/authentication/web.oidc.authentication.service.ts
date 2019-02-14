@@ -3,10 +3,11 @@ import {inject} from 'aurelia-framework';
 import {OpenIdConnect} from 'aurelia-open-id-connect';
 import {Router} from 'aurelia-router';
 
+import {IIdentity} from '@essential-projects/iam_contracts';
 import {User} from 'oidc-client';
 
-import {AuthenticationStateEvent, IAuthenticationService, IIdentity, NotificationType} from '../../contracts/index';
-import environment from '../../environment';
+import {AuthenticationStateEvent, IAuthenticationService, ILoginResult, IUserIdentity, NotificationType} from '../../contracts/index';
+import {oidcConfig} from '../../open-id-connect-configuration';
 import {NotificationService} from './../notification/notification.service';
 
 const UNAUTHORIZED_STATUS_CODE: number = 401;
@@ -16,102 +17,82 @@ const IDENTITY_SERVER_AVAILABLE_SUCCESS_STATUS_CODE: number = 200;
 export class WebOidcAuthenticationService implements IAuthenticationService {
 
   private _eventAggregator: EventAggregator;
-  private _openIdConnect: OpenIdConnect;
+  /**
+   * We have to use any here since it is the only way to access the private members
+   * of this. We need the access them when changing the authority while the application
+   * is running.
+   */
+  private _openIdConnect: OpenIdConnect | any;
   private _notificationService: NotificationService;
-  private _router: Router;
-  private _user: User;
-  private _logoutWindow: Window = null;
 
   constructor(eventAggregator: EventAggregator,
               notificationService: NotificationService,
-              openIdConnect: OpenIdConnect,
-              router: Router) {
+              openIdConnect: OpenIdConnect) {
     this._eventAggregator = eventAggregator;
     this._notificationService = notificationService;
     this._openIdConnect = openIdConnect;
-    this._router = router;
-
-    this._initialize();
   }
 
-  private async _initialize(): Promise<void> {
-    const user: User = await this._openIdConnect.getUser();
+  public async isLoggedIn(authority: string, identity: IIdentity): Promise<boolean> {
+    authority = this._formAuthority(authority);
 
-    const userIsNull: boolean = user === null;
+    const userIdentity: IUserIdentity = await this.getUserIdentity(authority);
 
-    this._user = userIsNull ? undefined : user;
+    const userIsAuthorized: boolean = userIdentity !== null && userIdentity !== undefined;
+
+    return userIsAuthorized;
   }
 
-  public isLoggedIn(): boolean {
-    const userIsExisting: boolean = this._user !== undefined;
+  public async login(authority: string): Promise<ILoginResult> {
+    authority = this._formAuthority(authority);
 
-    return userIsExisting;
-  }
+    const isAuthorityUnReachable: boolean = !(await this._isAuthorityReachable(authority));
 
-  public async login(): Promise<void> {
+    if (isAuthorityUnReachable) {
+      this._notificationService.showNotification(NotificationType.ERROR, 'Authority seems to be offline');
 
-    const isIdentityServerReachable: boolean = await this._isIdentityServerReachable();
-
-    if (!isIdentityServerReachable) {
-      this._notificationService.showNotification(NotificationType.ERROR, 'IdentityServer is offline');
       return;
     }
 
+    await this._setAuthority(authority);
     await this._openIdConnect.login();
-    const identity: IIdentity = await this.getIdentity();
-    this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
+    window.localStorage.setItem('openIdRoute', authority);
+
+    this._eventAggregator.publish(AuthenticationStateEvent.LOGIN);
+
+    const loginResult: ILoginResult = {
+      identity: await this.getUserIdentity(authority),
+      accessToken: await this._getAccessToken(authority),
+      // The idToken is provided by the oidc service when making requests and therefore not set here.
+      idToken: '',
+    };
+
+    return loginResult;
   }
 
-  public finishLogout(): void {
-    // This will be called in the electron version where we perform the logout
-    // manually.
-    if (this._logoutWindow !== null) {
-      this._logoutWindow.close();
-      this._logoutWindow = null;
-    }
-    this._user = undefined;
-    this._eventAggregator.publish(AuthenticationStateEvent.LOGOUT);
-    this._router.navigate('/');
-  }
-
-  public async logout(): Promise<void> {
+  public async logout(authority: string, identity: IIdentity): Promise<void> {
+    authority = this._formAuthority(authority);
 
     if (!this.isLoggedIn) {
       return;
     }
 
-    return await this._openIdConnect.logout();
+    await this._setAuthority(authority);
+    await this._openIdConnect.logout();
+
   }
 
-  public getAccessToken(): string | null {
-    const userIsNotLoggedIn: boolean = this._user === undefined;
+  public async getUserIdentity(authority: string): Promise<IUserIdentity | null> {
+    authority = this._formAuthority(authority);
 
-    if (userIsNotLoggedIn) {
-      return this._getDummyAccessToken();
-    }
+    const accessToken: string = await this._getAccessToken(authority);
+    const accessTokenIsDummyToken: boolean = accessToken === this._getDummyAccessToken();
 
-    return this._user.access_token;
-  }
-
-  // TODO: The dummy token needs to be removed in the future!!
-  // This dummy token serves as a temporary workaround to bypass login. This
-  // enables us to work without depending on a full environment with
-  // IdentityServer.
-  private _getDummyAccessToken(): string {
-    const dummyAccessTokenString: string = 'dummy_token';
-    const base64EncodedString: string = btoa(dummyAccessTokenString);
-    return base64EncodedString;
-  }
-
-  public async getIdentity(): Promise<IIdentity | null> {
-
-    const accessToken: string = this.getAccessToken();
-
-    if (!accessToken) {
+    if (accessTokenIsDummyToken) {
       return null;
     }
 
-    const request: Request = new Request(`${environment.openIdConnect.authority}/connect/userinfo`, {
+    const request: Request = new Request(`${authority}connect/userinfo`, {
       method: 'GET',
       mode: 'cors',
       referrer: 'no-referrer',
@@ -131,8 +112,8 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
     return response.json();
   }
 
-  private async _isIdentityServerReachable(): Promise<boolean> {
-    const request: Request = new Request(`${environment.openIdConnect.authority}/.well-known/openid-configuration`, {
+  private async _isAuthorityReachable(authority: string): Promise<boolean> {
+    const request: Request = new Request(`${authority}.well-known/openid-configuration`, {
       method: 'GET',
       mode: 'cors',
       referrer: 'no-referrer',
@@ -158,5 +139,45 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
     }
 
     return false;
+  }
+
+  private _setAuthority(authority: string): void {
+    oidcConfig.userManagerSettings.authority = authority;
+
+    // This dirty way to update the settings is the only way during runtime
+    this._openIdConnect.configuration.userManagerSettings.authority = authority;
+    this._openIdConnect.userManager._settings._authority = authority;
+  }
+
+  // TODO: The dummy token needs to be removed in the future!!
+  // This dummy token serves as a temporary workaround to bypass login. This
+  // enables us to work without depending on a full environment with
+  // IdentityServer.
+  private _getDummyAccessToken(): string {
+    const dummyAccessTokenString: string = 'dummy_token';
+    const base64EncodedString: string = btoa(dummyAccessTokenString);
+
+    return base64EncodedString;
+  }
+
+  private async _getAccessToken(authority: string): Promise<string | null> {
+    this._setAuthority(authority);
+    const user: User = await this._openIdConnect.getUser();
+
+    const userIsNotLoggedIn: boolean = user === undefined || user === null;
+
+    return userIsNotLoggedIn
+          ? this._getDummyAccessToken()
+          : user.access_token;
+  }
+
+  private _formAuthority(authority: string): string {
+    const authorityDoesNotEndWithSlash: boolean = !authority.endsWith('/');
+
+    if (authorityDoesNotEndWithSlash) {
+      authority = `${authority}/`;
+    }
+
+    return authority;
   }
 }

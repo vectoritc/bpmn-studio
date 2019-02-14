@@ -74,14 +74,6 @@ describe('Navigation bar', () => {
     expect(navBarContainerRightIsDisplayed).toBeTruthy();
   });
 
-  // This section tests the login button
-  it('should contain login button.', async() => {
-    const navBarLogInButton: ElementFinder = navBar.navBarLogInButton;
-    const navBarLogInButtonIsDisplayed: boolean = await navBarLogInButton.isDisplayed();
-
-    expect(navBarLogInButtonIsDisplayed).toBeTruthy();
-  });
-
   // This section tests the solution explorer button
   it('should contain solution explorer button.', async() => {
     const navBarSolutionExplorerButton: ElementFinder = navBar.navBarSolutionExplorerButton;

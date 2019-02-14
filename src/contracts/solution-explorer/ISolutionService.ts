@@ -47,4 +47,9 @@ export interface ISolutionService {
    * Returns a list of all single diagrams in the service.
    */
   getSingleDiagrams(): Array<IDiagram>;
+
+  /**
+   * Persists the currently opened Solutions in the LocalStorage.
+   */
+  persistSolutionsInLocalStorage(): void;
 }

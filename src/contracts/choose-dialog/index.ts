@@ -1,1 +1,0 @@
-export {IChooseDialogOption} from './IChooseDialogOption';

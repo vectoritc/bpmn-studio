@@ -1,180 +1,132 @@
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
-import {Router} from 'aurelia-router';
+
+import {IIdentity} from '@essential-projects/iam_contracts';
 
 import {AuthenticationStateEvent,
         IAuthenticationService,
-        IIdentity,
-        ISolutionEntry,
-        ISolutionService,
+        ILoginResult,
         ITokenObject,
+        IUserIdentity,
         NotificationType} from '../../contracts/index';
-import environment from '../../environment';
 import {NotificationService} from '../notification/notification.service';
 
 const UNAUTHORIZED_STATUS_CODE: number = 401;
 const IDENTITY_SERVER_AVAILABLE_SUCCESS_STATUS_CODE: number = 200;
 
-@inject(EventAggregator, 'NotificationService', Router, 'SolutionService')
+@inject(EventAggregator, 'NotificationService')
 export class ElectronOidcAuthenticationService implements IAuthenticationService {
 
   private _eventAggregator: EventAggregator;
   private _notificationService: NotificationService;
-  private _router: Router;
-  private _tokenObject: ITokenObject;
-  private _solutionService: ISolutionService;
 
   constructor(eventAggregator: EventAggregator,
-              notificationService: NotificationService,
-              router: Router,
-              solutionService: ISolutionService) {
+              notificationService: NotificationService) {
     this._eventAggregator = eventAggregator;
     this._notificationService = notificationService;
-    this._router = router;
-    this._solutionService = solutionService;
+  }
 
-    this._getPersistedTokenObject();
+  public async isLoggedIn(authority: string, identity: IIdentity): Promise<boolean> {
 
-    const tokenObjectIsNotUndefined: boolean = this._tokenObject !== null;
-    if (tokenObjectIsNotUndefined) {
-      this.checkUserInfo();
+    authority = this._formAuthority(authority);
+
+    let userIdentity: IUserIdentity;
+
+    try {
+      userIdentity = await this.getUserIdentity(authority, identity);
+    } catch (error) {
+
+      return false;
     }
+
+    const userIdentityIsDefined: boolean = userIdentity !== undefined && userIdentity !== null;
+
+    return userIdentityIsDefined;
   }
 
-  public isLoggedIn(): boolean {
-    const userIsExisting: boolean = this._tokenObject !== undefined;
+  public async login(authority: string): Promise<ILoginResult> {
 
-    return userIsExisting;
-  }
+    authority = this._formAuthority(authority);
 
-  public async login(): Promise<void> {
+    const identityServerIsNotReachable: boolean = !(await this._isAuthorityReachable(authority));
 
-    const identityServerIsNotReachable: boolean = await !this._isIdentityServerReachable();
     if (identityServerIsNotReachable) {
-      this._notificationService.showNotification(NotificationType.ERROR, 'IdentityServer is offline');
+
       return;
     }
 
-    const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
+    const loginResultPromise: Promise<ILoginResult> = new Promise(async(resolve: Function, reject: Function): Promise<void> => {
 
-    ipcRenderer.on('oidc-login-reply', async(event: any, tokenObject: ITokenObject) => {
-      this._tokenObject = tokenObject;
-      const identity: IIdentity = await this.getIdentity();
-      this._eventAggregator.publish(AuthenticationStateEvent.LOGIN, identity);
+      const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
 
-      const remoteSolutions: Array<ISolutionEntry> = this._solutionService.getRemoteSolutionEntries();
-
-      remoteSolutions.forEach((solution: ISolutionEntry) => {
-        solution.identity = {
+      ipcRenderer.on('oidc-login-reply', async(event: any, tokenObject: ITokenObject) => {
+        const iamIdentity: IIdentity = {
           token: tokenObject.accessToken,
           userId: tokenObject.idToken,
         };
+        const identity: IUserIdentity = await this.getUserIdentity(authority, iamIdentity);
+
+        const loginResult: ILoginResult = {
+          identity: identity,
+          accessToken: tokenObject.accessToken,
+          idToken: tokenObject.idToken,
+        };
+
+        this._eventAggregator.publish(AuthenticationStateEvent.LOGIN);
+
+        ipcRenderer.removeAllListeners('oidc-login-reply');
+
+        resolve(loginResult);
       });
 
-      this._persistTokenObject();
+      ipcRenderer.send('oidc-login', authority);
     });
 
-    const openIdConnectRoute: string = window.localStorage.getItem('openIdRoute');
-    const openIdRouteIsSet: boolean = openIdConnectRoute !== null;
-
-    const authorityUrl: string = openIdRouteIsSet
-                              ? openIdConnectRoute
-                              : environment.openIdConnect.defaultAuthority;
-
-    ipcRenderer.send('oidc-login', authorityUrl);
+    return loginResultPromise;
   }
 
-  public async logout(): Promise<void> {
+  public async logout(authority: string, identity: IIdentity): Promise<void> {
+
+    authority = this._formAuthority(authority);
 
     const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
 
     ipcRenderer.on('oidc-logout-reply', async(event: any, logoutWasSuccessful: boolean) => {
       if (logoutWasSuccessful) {
         this._eventAggregator.publish(AuthenticationStateEvent.LOGOUT);
-        this._tokenObject = undefined;
-
-        this._logoutUserFromAllSolutions();
       }
     });
 
-    const openIdConnectRoute: string = window.localStorage.getItem('openIdRoute');
-    const openIdRouteIsSet: boolean = openIdConnectRoute !== null;
-
-    const authorityUrl: string = openIdRouteIsSet
-                              ? openIdConnectRoute
-                              : environment.openIdConnect.defaultAuthority;
-
-    ipcRenderer.send('oidc-logout', this._tokenObject, authorityUrl);
-
+    ipcRenderer.send('oidc-logout', identity, authority);
   }
 
-  public getAccessToken(): string | null {
-    const userIsNotLoggedIn: boolean = this._tokenObject === undefined || this._tokenObject === null;
+  public async getUserIdentity(authority: string, identity: IIdentity): Promise<IUserIdentity | null> {
 
-    if (userIsNotLoggedIn) {
-      return this._getDummyAccessToken();
-    }
+    authority = this._formAuthority(authority);
 
-    return this._tokenObject.accessToken;
-  }
-
-  public async getIdentity(): Promise<IIdentity | null> {
-
-    const token: string = this.getAccessToken();
-
-    const userInforequest: Request = new Request(`${environment.openIdConnect.authority}/connect/userinfo`, {
+    const userInfoRequest: Request = new Request(`${authority}connect/userinfo`, {
       method: 'GET',
       mode: 'cors',
       referrer: 'no-referrer',
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${identity.token}`,
       },
     });
 
-    const userInforesponse: Response = await fetch(userInforequest);
-    if (userInforesponse.status === UNAUTHORIZED_STATUS_CODE) {
+    const userInfoResponse: Response = await fetch(userInfoRequest);
+    const requestIsUnauthorized: boolean = userInfoResponse.status === UNAUTHORIZED_STATUS_CODE;
+
+    if (requestIsUnauthorized) {
       return null;
     }
 
-    return userInforesponse.json();
+    return userInfoResponse.json();
   }
 
-  public async checkUserInfo(): Promise<void> {
-    const token: string = this.getAccessToken();
-
-    const userInforequest: Request = new Request(`${environment.openIdConnect.authority}/connect/userinfo`, {
-      method: 'GET',
-      mode: 'cors',
-      referrer: 'no-referrer',
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    try {
-      const userInforesponse: Response = await fetch(userInforequest);
-
-      if (userInforesponse.status === UNAUTHORIZED_STATUS_CODE) {
-        this._tokenObject = undefined;
-
-        this._logoutUserFromAllSolutions();
-      }
-
-    } catch (error) {
-      this._notificationService.showNotification(NotificationType.WARNING, 'The identity server may be offline!');
-      this._tokenObject = undefined;
-
-      this._logoutUserFromAllSolutions();
-    }
-
-  }
-
-  private async _isIdentityServerReachable(): Promise<boolean> {
-    const configRequest: Request = new Request(`${environment.openIdConnect.authority}/.well-known/openid-configuration`, {
+  private async _isAuthorityReachable(authority: string): Promise<boolean> {
+    const configRequest: Request = new Request(`${authority}.well-known/openid-configuration`, {
       method: 'GET',
       mode: 'cors',
       referrer: 'no-referrer',
@@ -190,53 +142,31 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
 
      configResponse = await fetch(configRequest);
     } catch (error) {
-      if (error.message === 'Failed to fetch') {
+
+      const identityServerWasOffline: boolean = error.message === 'Failed to fetch';
+      if (identityServerWasOffline) {
+        this._notificationService.showNotification(NotificationType.ERROR, 'IdentityServer is offline.');
+
         return false;
       }
+
     }
 
-    if (configResponse.status === IDENTITY_SERVER_AVAILABLE_SUCCESS_STATUS_CODE) {
+    const identityServerWasAvailable: boolean = configResponse.status === IDENTITY_SERVER_AVAILABLE_SUCCESS_STATUS_CODE;
+    if (identityServerWasAvailable) {
       return true;
     }
 
     return false;
   }
 
-  // TODO: The dummy token needs to be removed in the future!!
-  // This dummy token serves as a temporary workaround to bypass login. This
-  // enables us to work without depending on a full environment with
-  // IdentityServer.
-  private _getDummyAccessToken(): string {
-    const dummyAccessTokenString: string = 'dummy_token';
-    const base64EncodedString: string = btoa(dummyAccessTokenString);
-    return base64EncodedString;
-  }
+  private _formAuthority(authority: string): string {
+    const authorityDoesNotEndWithSlash: boolean = !authority.endsWith('/');
 
-  private _persistTokenObject(): void {
-    window.localStorage.setItem('tokenObject', JSON.stringify(this._tokenObject));
-  }
+    if (authorityDoesNotEndWithSlash) {
+      authority = `${authority}/`;
+    }
 
-  private _getPersistedTokenObject(): void {
-    const tokenObjectString: string = window.localStorage.getItem('tokenObject');
-
-    const tokenObject: ITokenObject = JSON.parse(tokenObjectString);
-
-    this._tokenObject = tokenObject;
-  }
-
-  private _logoutUserFromAllSolutions(): void {
-
-    const dummyAccesToken: string = this._getDummyAccessToken();
-
-    const remoteSolutionsEntries: Array<ISolutionEntry> = this._solutionService.getRemoteSolutionEntries();
-
-    remoteSolutionsEntries.forEach((solutionEntry: ISolutionEntry) => {
-      solutionEntry.identity = {
-        token: dummyAccesToken,
-        userId: '',
-      };
-    });
-
-    window.localStorage.removeItem('tokenObject');
+    return authority;
   }
 }
