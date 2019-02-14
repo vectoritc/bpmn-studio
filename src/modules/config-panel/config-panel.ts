@@ -1,25 +1,22 @@
-import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
-import {bindable, computedFrom, inject} from 'aurelia-framework';
-import {OpenIdConnect} from 'aurelia-open-id-connect';
+import {EventAggregator} from 'aurelia-event-aggregator';
+import {inject} from 'aurelia-framework';
 import {Router} from 'aurelia-router';
+
+import {IIdentity} from '@essential-projects/iam_contracts';
 
 import {IAuthenticationService} from '../../contracts/authentication/IAuthenticationService';
 import {
   AuthenticationStateEvent,
   ISolutionEntry,
   ISolutionService,
-  NotificationType,
 } from '../../contracts/index';
-import environment from '../../environment';
-import {oidcConfig} from '../../open-id-connect-configuration';
-import {NotificationService} from '../notification/notification.service';
 
 interface RouteParameters {
   diagramName?: string;
   solutionUri?: string;
 }
 
-@inject(Router, 'SolutionService', 'AuthenticationService')
+@inject(Router, 'SolutionService', 'AuthenticationService', EventAggregator)
 export class ConfigPanel {
   public internalSolution: ISolutionEntry;
   public authority: string;
@@ -28,13 +25,16 @@ export class ConfigPanel {
   private _router: Router;
   private _solutionService: ISolutionService;
   private _authenticationService: IAuthenticationService;
+  private _eventAggregator: EventAggregator;
 
   constructor(router: Router,
               solutionService: ISolutionService,
-              authenticationService: IAuthenticationService) {
+              authenticationService: IAuthenticationService,
+              eventAggregator: EventAggregator) {
     this._router = router;
     this._solutionService = solutionService;
     this._authenticationService = authenticationService;
+    this._eventAggregator = eventAggregator;
   }
 
   public async attached(): Promise<void> {
@@ -50,6 +50,15 @@ export class ConfigPanel {
 
     if (userIsLoggedIn) {
       await this._authenticationService.logout(this.internalSolution.authority, this.internalSolution.identity);
+
+      this.internalSolution.identity = this._createDummyIdentity();
+      this.internalSolution.isLoggedIn = false;
+      this.internalSolution.userName = undefined;
+
+      this.internalSolution.service.openSolution(this.internalSolution.uri, this.internalSolution.identity);
+      this._solutionService.persistSolutionsInLocalStorage();
+
+      this._eventAggregator.publish(AuthenticationStateEvent.LOGOUT);
     }
 
     this.internalSolution.authority = this.authority;
@@ -81,6 +90,24 @@ export class ConfigPanel {
 
       return authority;
 
+  }
+
+  private _createDummyIdentity(): IIdentity {
+    const accessToken: string = this._createDummyAccessToken();
+    // TODO: Get the identity from the IdentityService of `@process-engine/iam`
+    const identity: IIdentity = {
+      token: accessToken,
+      userId: '', // Provided by the IdentityService.
+    };
+
+    return identity;
+  }
+
+  private _createDummyAccessToken(): string {
+    const dummyAccessTokenString: string = 'dummy_token';
+    const base64EncodedString: string = btoa(dummyAccessTokenString);
+
+    return base64EncodedString;
   }
 
 }

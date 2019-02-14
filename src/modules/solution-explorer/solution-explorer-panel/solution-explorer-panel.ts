@@ -4,7 +4,7 @@ import {Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {IFile, IInputEvent, ISolutionEntry, ISolutionService} from '../../../contracts';
+import {AuthenticationStateEvent, IFile, IInputEvent, ISolutionEntry, ISolutionService} from '../../../contracts';
 import {NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
@@ -117,6 +117,9 @@ export class SolutionExplorerPanel {
       }),
       this._eventAggregator.subscribe(environment.events.startPage.createSingleDiagram, () => {
         this._createNewDiagram();
+      }),
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
+        this.solutionExplorerList.refreshSolutions();
       }),
     ];
   }
