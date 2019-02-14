@@ -16,7 +16,8 @@
                     css="width: ${tokenViewerWidth}px;"
                     correlation.bind="correlation"
                     active-diagram.bind="activeDiagram"
-                    flow-node.bind="selectedFlowNode">
+                    flow-node.bind="selectedFlowNode"
+                    active-solution-entry.bind="activeSolutionEntry">
       </token-viewer>
     </div>
   </div>
@@ -31,8 +32,8 @@
     </div>
   </div>
 
-  <modal if.bind="showDynamicUiModal" 
-         modal-style.bind="modalStyleString" 
+  <modal if.bind="showDynamicUiModal"
+         modal-style.bind="modalStyleString"
          css="display: ${showDynamicUiModal ? 'block' : 'none'};"
          body-style="overflow: auto;"
          origin.bind="liveExecutionTracker">
