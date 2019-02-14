@@ -197,6 +197,12 @@ export class SolutionExplorerList {
   public async login(solutionEntry: ISolutionEntry): Promise<void> {
     const result: ILoginResult = await this._authenticationService.login(solutionEntry.authority);
 
+    const couldNotConnectToAuthority: boolean = result === undefined;
+    if (couldNotConnectToAuthority) {
+
+      return;
+    }
+
     const userIsNotLoggedIn: boolean = result.idToken === 'access_denied';
     if (userIsNotLoggedIn) {
 
