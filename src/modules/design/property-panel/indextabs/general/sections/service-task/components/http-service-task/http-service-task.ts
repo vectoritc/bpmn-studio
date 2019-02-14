@@ -1,9 +1,7 @@
 import {EventAggregator} from 'aurelia-event-aggregator';
 import {bindable, inject, observable} from 'aurelia-framework';
 
-import { method } from 'bluebird';
 import {IBpmnModdle,
-        IModdleElement,
         IPageModel,
         IPropertiesElement,
         IProperty,
