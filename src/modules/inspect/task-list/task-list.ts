@@ -92,6 +92,10 @@ export class TaskList {
     }
   }
 
+  public activeSolutionEntryChanged(newValue: ISolutionEntry): void {
+    console.log(newValue);
+  }
+
   public attached(): void {
     const getTasksIsUndefined: boolean = this._getTasks === undefined;
 
@@ -367,7 +371,7 @@ export class TaskList {
       } else {
 
         this._notificationService.showNotification(NotificationType.ERROR, `Error receiving task list: ${error.message}`);
-
+        this._userTasks = undefined;
       }
     }
 
