@@ -65,8 +65,8 @@ describe('Dashboard view', () => {
       });
   });
 
-  it('should contain process definitions.', () => {
-      processModel.startProcess(processModelId);
+  it('should contain process definitions.', async() => {
+    await processModel.startProcess(processModelId);
   });
 
   it('should contain process list.', async() => {
