@@ -306,8 +306,11 @@ export class SolutionExplorerPanel {
 
   private _createNewDiagram(): void {
     const activeSolutionUri: string = this._router.currentInstruction.queryParams.solutionUri;
-    const activeSolutionCanCreateDiagrams: boolean = activeSolutionUri !== undefined
-                                                   && !activeSolutionUri.startsWith('http');
+    const activeSolution: ISolutionEntry = this._solutionService.getSolutionEntryForUri(activeSolutionUri);
+
+    const activeSolutionCanCreateDiagrams: boolean = activeSolution !== undefined
+                                                  && !activeSolution.uri.startsWith('http')
+                                                  && activeSolution.canCreateNewDiagramsInSolution;
 
     const uri: string = activeSolutionCanCreateDiagrams
                         ? activeSolutionUri
