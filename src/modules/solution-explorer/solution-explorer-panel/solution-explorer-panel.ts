@@ -1,11 +1,11 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
-import {PipelineResult, Router} from 'aurelia-router';
+import {Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
 import {IFile, IInputEvent, ISolutionEntry, ISolutionService} from '../../../contracts';
-import {AuthenticationStateEvent, NotificationType} from '../../../contracts/index';
+import {NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 import {SolutionExplorerList} from '../solution-explorer-list/solution-explorer-list';
