@@ -294,6 +294,7 @@ export class NavBar {
     const activeSolutionIsRemoteSolution: boolean = this.activeSolutionEntry.uri.startsWith('http') && this.activeDiagram !== undefined;
     const activeRouteIsDiagramDetail: boolean = activeRoute === 'design';
     const activeRouteIsInspect: boolean = activeRoute === 'inspect';
+    const activeRouteIsLET: boolean = activeRoute === 'live-execution-tracker';
 
     this.disableStartButton = !activeSolutionIsRemoteSolution;
     this.disableDiagramUploadButton = activeSolutionIsRemoteSolution;
@@ -321,7 +322,12 @@ export class NavBar {
       }
 
       this.showTools = false;
+    } else if (activeRouteIsLET) {
+      this.showTools = false;
+      this.showInspectTools = false;
+      this.showExportOnInspectCorrelation = false;
     }
+
   }
 
   private async _updateNavbar(): Promise<void> {
