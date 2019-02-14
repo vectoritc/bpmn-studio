@@ -33,8 +33,8 @@ describe('Diagram Detail', () => {
   });
 
   beforeEach(async() => {
-    await routerView.init();
-    await diagramDetail.init();
+    await routerView.show();
+    await diagramDetail.show();
   });
 
   it('should contain the bpmn-io container.', async() => {

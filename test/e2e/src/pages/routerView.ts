@@ -6,7 +6,7 @@ export class RouterView {
 
   private _routerViewTagName: string = 'router-view';
 
-  public async init(): Promise<void> {
+  public async show(): Promise<void> {
     await browser.get(browser.params.aureliaUrl);
 
     await browser.wait(ExpectedConditions.visibilityOf(this._routerViewContainer), browser.params.defaultTimeoutMS);

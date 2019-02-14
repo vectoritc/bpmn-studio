@@ -35,8 +35,8 @@ describe('Dashboard', () => {
   });
 
   beforeEach(async() => {
-    await routerView.init();
-    await dashboard.init();
+    await routerView.show();
+    await dashboard.show();
   });
 
   it('should contain the process list.', async() => {

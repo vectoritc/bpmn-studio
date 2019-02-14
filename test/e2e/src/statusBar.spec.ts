@@ -34,8 +34,8 @@ describe('Status Bar', () => {
   });
 
   beforeEach(async() => {
-    await routerView.init();
-    await statusBar.init();
+    await routerView.show();
+    await statusBar.show();
   });
 
   it('should contain left container.', async() => {
@@ -57,7 +57,7 @@ describe('Status Bar', () => {
   });
 
   it('(on diagram detail) should show enable xml view button.', async() => {
-    await diagramDetail.init();
+    await diagramDetail.show();
 
     const visibilityOfEnableXmlViewButton: boolean = await statusBar.getVisibilityOfEnableXmlViewButton();
 
@@ -65,7 +65,7 @@ describe('Status Bar', () => {
   });
 
   it('(on diagram detail) should show enable diff view button.', async() => {
-    await diagramDetail.init();
+    await diagramDetail.show();
 
     const visibilityOfEnableDiffViewButton: boolean = await statusBar.getVisibilityOfEnableDiffViewButton();
 
@@ -73,7 +73,7 @@ describe('Status Bar', () => {
   });
 
   it('(on diagram detail) should show disable xml view button after click on enable xml view button.', async() => {
-    await diagramDetail.init();
+    await diagramDetail.show();
 
     await statusBar.clickOnEnableXmlViewButton();
 
@@ -83,7 +83,7 @@ describe('Status Bar', () => {
   });
 
   it('(on diagram detail) should show disable diff view button after click on enable diff view button.', async() => {
-    await diagramDetail.init();
+    await diagramDetail.show();
 
     await statusBar.clickOnEnableDiffViewButton();
 
@@ -93,7 +93,7 @@ describe('Status Bar', () => {
   });
 
   it('(on xml view) should show disable xml view button.', async() => {
-    await xmlView.init();
+    await xmlView.show();
 
     const visibilityOfDisableXmlViewButton: boolean = await statusBar.getVisibilityOfDisableXmlViewButton();
 
@@ -101,7 +101,7 @@ describe('Status Bar', () => {
   });
 
   it('(on xml view) should show enable diff view button.', async() => {
-    await xmlView.init();
+    await xmlView.show();
 
     const visibilityOfEnableDiffViewButton: boolean = await statusBar.getVisibilityOfEnableDiffViewButton();
 
@@ -109,7 +109,7 @@ describe('Status Bar', () => {
   });
 
   it('(on xml view) should show enable xml view button after lick on disbale xml view button', async() => {
-    await xmlView.init();
+    await xmlView.show();
 
     await statusBar.clickOnDisableXmlViewButton();
 
@@ -119,7 +119,7 @@ describe('Status Bar', () => {
   });
 
   it('(on diff view) should show disable diff view button.', async() => {
-    await diffView.init();
+    await diffView.show();
 
     const visibilityOfDisableDiffViewButton: boolean = await statusBar.getVisibilityOfDisableDiffViewButton();
 
@@ -127,7 +127,7 @@ describe('Status Bar', () => {
   });
 
   it('(on diff view) should show enable xml view button.', async() => {
-    await diffView.init();
+    await diffView.show();
 
     const visibilityOfEnableXmlViewButton: boolean = await statusBar.getVisibilityOfEnableXmlViewButton();
 
@@ -135,7 +135,7 @@ describe('Status Bar', () => {
   });
 
   it('(on diff view) should contain old vs new button', async() => {
-    await diffView.init();
+    await diffView.show();
 
     const visibilityOfOldVsNewButton: boolean = await statusBar.getVisibilityOfOldVsNewButton();
 
@@ -143,7 +143,7 @@ describe('Status Bar', () => {
   });
 
   it('(on diff view) should contain active new vs old button', async() => {
-    await diffView.init();
+    await diffView.show();
 
     const visbilityOfNewVsOldButton: boolean = await statusBar.getVisibilityOfNewVsOldButton();
 
@@ -155,7 +155,7 @@ describe('Status Bar', () => {
   });
 
   it('(on diff view) should contain changelog button.', async() => {
-    await diffView.init();
+    await diffView.show();
 
     const visibilityOfChangeLogButton: boolean = await statusBar.getVisibilityOfChangeLogButton();
 
@@ -163,7 +163,7 @@ describe('Status Bar', () => {
   });
 
   it('(on diff view) should contain active old vs new button after click on it.', async() => {
-    await diffView.init();
+    await diffView.show();
 
     await statusBar.clickOnOldVsNewButton();
 
@@ -173,7 +173,7 @@ describe('Status Bar', () => {
   });
 
   it('(on diff view) should contain inactive new vs old button after click on old vs new button.', async() => {
-    await diffView.init();
+    await diffView.show();
 
     await statusBar.clickOnOldVsNewButton();
 
@@ -183,7 +183,7 @@ describe('Status Bar', () => {
   });
 
   it('(on diff view) should contain active change log button after click on it.', async() => {
-    await diffView.init();
+    await diffView.show();
 
     await statusBar.clickOnChangeLogButton();
 

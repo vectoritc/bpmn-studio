@@ -30,8 +30,8 @@ describe('NavBar', () => {
   });
 
   beforeEach(async() => {
-    await routerView.init();
-    await navBar.init();
+    await routerView.show();
+    await navBar.show();
   });
 
   it('should contain left container.', async() => {

@@ -32,8 +32,8 @@ describe('XML view', () => {
   });
 
   beforeEach(async() => {
-    await routerView.init();
-    await diagramDetail.init();
+    await routerView.show();
+    await diagramDetail.show();
   });
 
   it('should contain `Show XML` button in status bar.', async() => {

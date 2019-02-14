@@ -12,7 +12,7 @@ export class XmlView {
     this.url = `${applicationUrl}/design/xml/diagram/${diagramName}?solutionUri=http%3A%2F%2Flocalhost%3A8000`;
   }
 
-  public async init(): Promise<void> {
+  public async show(): Promise<void> {
     await browser.get(this.url);
 
     await browser.wait(ExpectedConditions.visibilityOf(this._xmlViewContainer), browser.params.defaultTimeoutMS);

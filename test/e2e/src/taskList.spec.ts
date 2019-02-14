@@ -26,8 +26,8 @@ describe('Task List', () => {
   });
 
   beforeEach(async() => {
-    await routerView.init();
-    await taskList.init();
+    await routerView.show();
+    await taskList.show();
   });
 
   it('should show the user task of the started process.', async() => {

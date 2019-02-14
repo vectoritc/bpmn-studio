@@ -29,8 +29,8 @@ describe('Solution Explorer', () => {
   });
 
   beforeEach(async() => {
-    await routerView.init();
-    await solutionExplorer.init();
+    await routerView.show();
+    await solutionExplorer.show();
   });
 
   it('should display the deployed diagram.', async() => {

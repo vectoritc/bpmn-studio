@@ -34,11 +34,11 @@ describe('Design view', () => {
   });
 
   beforeEach(async() => {
-    await routerView.init();
+    await routerView.show();
   });
 
   it('should show detail view after navigating.', async() => {
-    await diagramDetail.init();
+    await diagramDetail.show();
 
     const visibilityOfDiagramDetailContainer: boolean = await diagramDetail.getVisibilityOfDiagramDetailContainer();
 
@@ -46,7 +46,7 @@ describe('Design view', () => {
   });
 
   it('should show xml view after navigating.', async() => {
-    await xmlView.init();
+    await xmlView.show();
 
     const visibilityOfXmlViewContainer: boolean = await xmlView.getVisibilityOfXmlViewContainer();
 
@@ -54,7 +54,7 @@ describe('Design view', () => {
   });
 
   it('should show diff view after navigating.', async() => {
-    await diffView.init();
+    await diffView.show();
 
     const visibilityOfDiffViewContainer: boolean = await diffView.getVisibilityOfDiffViewContainer();
 
@@ -62,8 +62,8 @@ describe('Design view', () => {
   });
 
   it('should show xml view after click on button in status bar.', async() => {
-    await diagramDetail.init();
-    await statusBar.init();
+    await diagramDetail.show();
+    await statusBar.show();
 
     await statusBar.clickOnEnableXmlViewButton();
 
@@ -73,8 +73,8 @@ describe('Design view', () => {
   });
 
   it('should show detail view again when currently showing the xml view and clicking on button in status bar.', async() => {
-    await xmlView.init();
-    await statusBar.init();
+    await xmlView.show();
+    await statusBar.show();
 
     await statusBar.clickOnDisableXmlViewButton();
 
@@ -84,8 +84,8 @@ describe('Design view', () => {
   });
 
   it('should show diff view after click on button in status bar.', async() => {
-    await diagramDetail.init();
-    await statusBar.init();
+    await diagramDetail.show();
+    await statusBar.show();
 
     await statusBar.clickOnEnableDiffViewButton();
 
@@ -95,8 +95,8 @@ describe('Design view', () => {
   });
 
   it('should show detail view again after when currently showing the diff view and clicking on button in status bar.', async() => {
-    await diffView.init();
-    await statusBar.init();
+    await diffView.show();
+    await statusBar.show();
 
     await statusBar.clickOnDisableDiffViewButton();
 

@@ -15,7 +15,7 @@ export class ProcessList {
     this.url = `${applicationUrl}/process`;
   }
 
-  public async init(): Promise<void> {
+  public async show(): Promise<void> {
     await browser.get(this.url);
 
     await browser.wait(ExpectedConditions.visibilityOf(this._processListContainer), browser.params.defaultTimeoutMS);

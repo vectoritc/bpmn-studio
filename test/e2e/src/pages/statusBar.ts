@@ -20,7 +20,7 @@ export class StatusBar {
 
   private _activeClass: string = 'status-bar__element--active';
 
-  public async init(): Promise<void> {
+  public async show(): Promise<void> {
     const statusBarContainer: ElementFinder = this._statusBarContainer;
 
     await browser.wait(ExpectedConditions.visibilityOf(statusBarContainer), browser.params.defaultTimeoutMS);

@@ -13,7 +13,7 @@ export class Dashboard {
     this.url = `${applicationUrl}/inspect/dashboard`;
   }
 
-  public async init(): Promise<void> {
+  public async show(): Promise<void> {
     await browser.get(this.url);
     await browser.wait(ExpectedConditions.visibilityOf(this._dashboardContainer), browser.params.defaultTimeoutMS);
   }

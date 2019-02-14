@@ -34,8 +34,8 @@ describe('Process List', () => {
   });
 
   beforeEach(async() => {
-    await routerView.init();
-    await processList.init();
+    await routerView.show();
+    await processList.show();
   });
 
   it('should show the started process.', async() => {

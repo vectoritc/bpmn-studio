@@ -13,7 +13,7 @@ export class DiagramList {
     this.url = `${applicationUrl}/think`;
   }
 
-  public async init(): Promise<void> {
+  public async show(): Promise<void> {
     await browser.get(this.url);
 
     await browser.wait(ExpectedConditions.visibilityOf(this._diagramListContainer), browser.params.defaultTimeoutMS);

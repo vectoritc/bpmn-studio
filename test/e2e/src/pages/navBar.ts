@@ -15,7 +15,7 @@ export class NavBar {
 
   private _buttonActiveClassName: string = 'button--active';
 
-  public async init(): Promise<void> {
+  public async show(): Promise<void> {
     await browser.wait(ExpectedConditions.visibilityOf(this._navBarContainer), browser.params.defaultTimeoutMS);
   }
 

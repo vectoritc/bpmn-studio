@@ -36,8 +36,8 @@ describe('Diff view', () => {
   });
 
   beforeEach(async() => {
-    await routerView.init();
-    await diagramDetail.init();
+    await routerView.show();
+    await diagramDetail.show();
   });
 
   it('should contain `Show Diff` button in status bar.', async() => {

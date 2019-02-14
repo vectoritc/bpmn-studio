@@ -34,8 +34,8 @@ describe('Diagram List', () => {
   });
 
   beforeEach(async() => {
-    await routerView.init();
-    await diagramList.init();
+    await routerView.show();
+    await diagramList.show();
   });
 
   it('should contain the deployed diagram.', async() => {

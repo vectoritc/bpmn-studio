@@ -7,7 +7,7 @@ export class SolutionExplorer {
   private _diagramIdIdentifier: string = 'diagramList-';
   private _solutionExplorerPanelTag: string = 'solution-explorer-panel';
 
-  public async init(): Promise<void> {
+  public async show(): Promise<void> {
     await browser.wait(ExpectedConditions.visibilityOf(this._solutionExplorerPanelContainer), browser.params.defaultTimeoutMS);
   }
 

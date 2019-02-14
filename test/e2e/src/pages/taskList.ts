@@ -14,7 +14,7 @@ export class TaskList {
     this.url = `${applicationUrl}/task`;
   }
 
-  public async init(): Promise<void> {
+  public async show(): Promise<void> {
     await browser.get(this.url);
 
     await browser.wait(ExpectedConditions.visibilityOf(this._taskListContainer), browser.params.defaultTimeoutMS);
