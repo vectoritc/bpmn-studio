@@ -25,6 +25,8 @@ export class InspectCorrelation {
   public rightPanelResizeDiv: HTMLDivElement;
   public selectedFlowNode: IShape;
 
+  public viewIsAttached: boolean = false;
+
   private _inspectCorrelationService: IInspectCorrelationService;
   private _eventAggregator: EventAggregator;
   private _subscriptions: Array<Subscription>;
@@ -36,7 +38,10 @@ export class InspectCorrelation {
     this._eventAggregator = eventAggregator;
   }
 
-  public attached(): void {
+  public async attached(): Promise<void> {
+    this.correlations = await this._inspectCorrelationService
+                                  .getAllCorrelationsForProcessModelId(this.activeDiagram.id, this.activeSolutionEntry.identity);
+
     this._eventAggregator.publish(environment.events.statusBar.showInspectCorrelationButtons, true);
 
     this._subscriptions = [
@@ -83,6 +88,8 @@ export class InspectCorrelation {
       document.addEventListener('mousemove', mousemoveFunction);
       document.addEventListener('mouseup', mouseUpFunction);
     });
+
+    this.viewIsAttached = true;
   }
 
   public detached(): void {
@@ -94,8 +101,10 @@ export class InspectCorrelation {
   }
 
   public async activeDiagramChanged(): Promise<void> {
-    this.correlations = await this._inspectCorrelationService
-                                  .getAllCorrelationsForProcessModelId(this.activeDiagram.id, this.activeSolutionEntry.identity);
+    if (this.viewIsAttached) {
+      this.correlations = await this._inspectCorrelationService
+                                    .getAllCorrelationsForProcessModelId(this.activeDiagram.id, this.activeSolutionEntry.identity);
+    }
   }
 
   private _resizeInspectPanel(mouseEvent: MouseEvent): void {

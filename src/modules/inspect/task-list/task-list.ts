@@ -367,7 +367,7 @@ export class TaskList {
       } else {
 
         this._notificationService.showNotification(NotificationType.ERROR, `Error receiving task list: ${error.message}`);
-
+        this._userTasks = undefined;
       }
     }
 

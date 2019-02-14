@@ -1,11 +1,11 @@
 import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {inject} from 'aurelia-framework';
-import {PipelineResult, Router} from 'aurelia-router';
+import {Router} from 'aurelia-router';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {IFile, IInputEvent, ISolutionEntry, ISolutionService} from '../../../contracts';
-import {AuthenticationStateEvent, NotificationType} from '../../../contracts/index';
+import {AuthenticationStateEvent, IFile, IInputEvent, ISolutionEntry, ISolutionService} from '../../../contracts/index';
+import {NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
 import {NotificationService} from '../../notification/notification.service';
 import {SolutionExplorerList} from '../solution-explorer-list/solution-explorer-list';
@@ -117,6 +117,9 @@ export class SolutionExplorerPanel {
       }),
       this._eventAggregator.subscribe(environment.events.startPage.createSingleDiagram, () => {
         this._createNewDiagram();
+      }),
+      this._eventAggregator.subscribe(AuthenticationStateEvent.LOGOUT, () => {
+        this.solutionExplorerList.refreshSolutions();
       }),
     ];
   }
@@ -306,8 +309,11 @@ export class SolutionExplorerPanel {
 
   private _createNewDiagram(): void {
     const activeSolutionUri: string = this._router.currentInstruction.queryParams.solutionUri;
-    const activeSolutionCanCreateDiagrams: boolean = activeSolutionUri !== undefined
-                                                   && !activeSolutionUri.startsWith('http');
+    const activeSolution: ISolutionEntry = this._solutionService.getSolutionEntryForUri(activeSolutionUri);
+
+    const activeSolutionCanCreateDiagrams: boolean = activeSolution !== undefined
+                                                  && !activeSolution.uri.startsWith('http')
+                                                  && activeSolution.canCreateNewDiagramsInSolution;
 
     const uri: string = activeSolutionCanCreateDiagrams
                         ? activeSolutionUri

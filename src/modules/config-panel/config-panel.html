@@ -9,7 +9,7 @@
         Authority
       </div>
       <div class="card-body">
-        <input value.bind="authority" type="text" class="form-control" id="authority">
+        <input value.bind="authority" class.bind="uriIsValid ? '' : 'uri-input--invalid'" type="text" class="form-control" id="authority">
         <div class="config-panel__card__alert alert alert-info" if.bind="authority !== defaultAuthority" role="alert">
           <span>
             <i class="fa fa-info-circle" aria-hidden="true"></i>
@@ -20,7 +20,7 @@
         </div>
       </div>
     </div>
-    <button click.delegate="updateSettings()" class="btn btn-success">Save</button>
+    <button click.delegate="updateSettings()" disabled.bind="!uriIsValid" class="btn btn-success">Save</button>
     <button click.delegate="cancelUpdate()" class="btn btn-danger">Cancel</button>
   </div>
 </template>

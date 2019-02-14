@@ -28,6 +28,8 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
 
   public async isLoggedIn(authority: string, identity: IIdentity): Promise<boolean> {
 
+    authority = this._formAuthority(authority);
+
     let userIdentity: IUserIdentity;
 
     try {
@@ -43,6 +45,8 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
   }
 
   public async login(authority: string): Promise<ILoginResult> {
+
+    authority = this._formAuthority(authority);
 
     const identityServerIsNotReachable: boolean = !(await this._isAuthorityReachable(authority));
 
@@ -83,6 +87,8 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
 
   public async logout(authority: string, identity: IIdentity): Promise<void> {
 
+    authority = this._formAuthority(authority);
+
     const ipcRenderer: any = (window as any).nodeRequire('electron').ipcRenderer;
 
     ipcRenderer.on('oidc-logout-reply', async(event: any, logoutWasSuccessful: boolean) => {
@@ -95,6 +101,8 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
   }
 
   public async getUserIdentity(authority: string, identity: IIdentity): Promise<IUserIdentity | null> {
+
+    authority = this._formAuthority(authority);
 
     const userInfoRequest: Request = new Request(`${authority}connect/userinfo`, {
       method: 'GET',
@@ -150,5 +158,15 @@ export class ElectronOidcAuthenticationService implements IAuthenticationService
     }
 
     return false;
+  }
+
+  private _formAuthority(authority: string): string {
+    const authorityDoesNotEndWithSlash: boolean = !authority.endsWith('/');
+
+    if (authorityDoesNotEndWithSlash) {
+      authority = `${authority}/`;
+    }
+
+    return authority;
   }
 }

@@ -34,6 +34,8 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
   }
 
   public async isLoggedIn(authority: string, identity: IIdentity): Promise<boolean> {
+    authority = this._formAuthority(authority);
+
     const userIdentity: IUserIdentity = await this.getUserIdentity(authority);
 
     const userIsAuthorized: boolean = userIdentity !== null && userIdentity !== undefined;
@@ -42,6 +44,7 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
   }
 
   public async login(authority: string): Promise<ILoginResult> {
+    authority = this._formAuthority(authority);
 
     const isAuthorityUnReachable: boolean = !(await this._isAuthorityReachable(authority));
 
@@ -68,6 +71,7 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
   }
 
   public async logout(authority: string, identity: IIdentity): Promise<void> {
+    authority = this._formAuthority(authority);
 
     if (!this.isLoggedIn) {
       return;
@@ -79,6 +83,8 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
   }
 
   public async getUserIdentity(authority: string): Promise<IUserIdentity | null> {
+    authority = this._formAuthority(authority);
+
     const accessToken: string = await this._getAccessToken(authority);
     const accessTokenIsDummyToken: boolean = accessToken === this._getDummyAccessToken();
 
@@ -163,5 +169,15 @@ export class WebOidcAuthenticationService implements IAuthenticationService {
     return userIsNotLoggedIn
           ? this._getDummyAccessToken()
           : user.access_token;
+  }
+
+  private _formAuthority(authority: string): string {
+    const authorityDoesNotEndWithSlash: boolean = !authority.endsWith('/');
+
+    if (authorityDoesNotEndWithSlash) {
+      authority = `${authority}/`;
+    }
+
+    return authority;
   }
 }

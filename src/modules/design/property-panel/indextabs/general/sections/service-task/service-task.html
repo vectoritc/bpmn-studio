@@ -12,7 +12,7 @@
           <td>
             <select class="props-input props-select" value.bind="selectedKind">
               <option value="null">-Choose Kind-</option>
-              <option value="HttpService">HTTP REST Service</option>
+              <option value="HttpClient">HTTP REST Service</option>
               <option value="external">External Task</option>
             </select>
           </td>
@@ -20,6 +20,6 @@
       </table>
     </div>
   </div>
-  <http-service-task if.bind="selectedKind === 'HttpService'" model.bind="model"></http-service-task>
+  <http-service-task if.bind="selectedKind === 'HttpClient'" model.bind="model"></http-service-task>
   <external-task if.bind="selectedKind === 'external'" model.bind="model"></external-task>
 </template>

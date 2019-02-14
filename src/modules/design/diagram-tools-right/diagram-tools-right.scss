@@ -88,6 +88,14 @@
   border-right: none;
 }
 
+.sp-sat, .sp-val {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+}
+
 .color-selection-dropdown--show {
   display: block;
 }
