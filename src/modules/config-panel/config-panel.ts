@@ -46,6 +46,11 @@ export class ConfigPanel {
   }
 
   public async updateSettings(): Promise<void> {
+    const authorityDoesNotEndWithSlash: boolean = !this.authority.endsWith('/');
+    if (authorityDoesNotEndWithSlash) {
+      this.authority = `${this.authority}/`;
+    }
+
     const userIsLoggedIn: boolean = await this._authenticationService.isLoggedIn(this.internalSolution.authority, this.internalSolution.identity);
 
     if (userIsLoggedIn) {
@@ -90,6 +95,26 @@ export class ConfigPanel {
 
       return authority;
 
+  }
+
+  public get uriIsValid(): boolean {
+    if (this.uriIsEmpty) {
+      return true;
+    }
+
+    /**
+     * This RegEx checks if the entered URI is valid or not.
+     */
+    const urlRegEx: RegExp = /^(?:http(s)?:\/\/)+[\w.-]?[\w\-\._~:/?#[\]@!\$&\'\(\)\*\+,;=.]+$/g;
+    const uriIsValid: boolean = urlRegEx.test(this.authority);
+
+    return uriIsValid;
+  }
+
+  public get uriIsEmpty(): boolean {
+    const uriIsEmtpy: boolean = this.authority === undefined || this.authority.length === 0;
+
+    return uriIsEmtpy;
   }
 
   private _createDummyIdentity(): IIdentity {

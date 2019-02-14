@@ -27,3 +27,11 @@
 .config-panel__card__alert__link {
   cursor: pointer;
 }
+
+.uri-input--invalid {
+  border: 2px red solid;
+}
+
+.uri-input--invalid:focus {
+  border: 2px red solid;
+}
