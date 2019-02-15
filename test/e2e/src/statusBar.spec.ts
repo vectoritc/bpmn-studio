@@ -154,7 +154,7 @@ describe('Status Bar', () => {
     expect(activeStateOfNewVsOldButton).toBeTruthy();
   });
 
-  it('(on diff view) should contain changelog button.', async() => {
+  it('should contain the changelog button on the `diff view`.', async() => {
     await diffView.show();
 
     const visibilityOfChangeLogButton: boolean = await statusBar.getVisibilityOfChangeLogButton();
