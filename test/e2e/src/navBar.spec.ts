@@ -52,7 +52,7 @@ describe('NavBar', () => {
     expect(visibilityOfRightNavBarContainer).toBeTruthy();
   });
 
-  it('should contain active solution explorer button.', async() => {
+  it('should contain the `active solution explorer` button.', async() => {
     const visibilityOfSolutionExplorerButton: boolean = await navBar.getVisibilityOfSolutionExplorerButton();
 
     expect(visibilityOfSolutionExplorerButton).toBeTruthy();
