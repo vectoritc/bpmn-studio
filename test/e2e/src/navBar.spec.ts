@@ -86,7 +86,7 @@ describe('NavBar', () => {
     expect(solutionExplorerButtonIsActive).toBeTruthy();
   });
 
-  it('should contain think button.', async() => {
+  it('should contain the `think` button.', async() => {
     const visibilityOfThinkButton: boolean = await navBar.getVisibilityOfThinkButton();
 
     expect(visibilityOfThinkButton).toBeTruthy();
