@@ -1,9 +1,4 @@
-import {
-  browser,
-  ElementFinder,
-  protractor,
-  ProtractorExpectedConditions,
-} from 'protractor';
+import {browser} from 'protractor';
 
 import {DiagramWithUserTask} from './diagrams/diagramWithUserTask';
 import {ProcessList} from './pages/processList';
@@ -16,9 +11,6 @@ describe('Process List', () => {
   let routerView: RouterView;
 
   const applicationUrl: string = browser.params.aureliaUrl;
-  const defaultTimeoutMS: number = browser.params.defaultTimeoutMS;
-
-  const expectedConditions: ProtractorExpectedConditions = protractor.ExpectedConditions;
 
   beforeAll(async() => {
     processList = new ProcessList(applicationUrl);
