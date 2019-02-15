@@ -94,7 +94,7 @@ describe('Design view', () => {
     expect(visibilityOfDiffViewContainer).toBeTruthy();
   });
 
-  it('should show detail view again after when currently showing the diff view and clicking on button in status bar.', async() => {
+  it('should switch from `diff view` to `detail view` after clicking on the button in the status bar.', async() => {
     await diffView.show();
     await statusBar.show();
 
