@@ -92,7 +92,7 @@ describe('Status Bar', () => {
     expect(visibilityOfDisableDiffViewButton).toBeTruthy();
   });
 
-  it('(on xml view) should show disable xml view button.', async() => {
+  it('should show the `disable xml view` button on the `xml view`.', async() => {
     await xmlView.show();
 
     const visibilityOfDisableXmlViewButton: boolean = await statusBar.getVisibilityOfDisableXmlViewButton();
