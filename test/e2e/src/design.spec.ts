@@ -53,7 +53,7 @@ describe('Design view', () => {
     expect(visibilityOfXmlViewContainer).toBeTruthy();
   });
 
-  it('should show diff view after navigating.', async() => {
+  it('should show the `diff view` after navigating to it.', async() => {
     await diffView.show();
 
     const visibilityOfDiffViewContainer: boolean = await diffView.getVisibilityOfDiffViewContainer();
