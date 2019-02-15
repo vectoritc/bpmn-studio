@@ -44,7 +44,7 @@ describe('Diagram List', () => {
     expect(visibilityOfDiagramListEntry).toBeTruthy();
   });
 
-  it('should navigate to design on click on link in table.', async() => {
+  it('should navigate to `design view` after clicking on the link in the table.', async() => {
     diagramList.clickOnDiagramListEntry(diagram.name);
 
     const currentBrowserUrl: string = await browser.getCurrentUrl();
