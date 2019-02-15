@@ -39,7 +39,7 @@ describe('Solution Explorer', () => {
     expect(diagramIsVisible).toBeTruthy();
   });
 
-  it('should navigate to design on click on diagram name.', async() => {
+  it('should navigate to the `design view`, after clicking on the diagram name.', async() => {
     await solutionExplorer.openDiagramByClick(diagram.name);
 
     const currentBrowserUrl: string = await browser.getCurrentUrl();
