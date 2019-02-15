@@ -42,7 +42,7 @@ describe('XML view', () => {
     expect(statusBarXMLViewButtonIsDisplayed).toBeTruthy();
   });
 
-  it('should be possible to open xml view when click on `Show XML` button.', async() => {
+  it('should open the `xml view`, when clicking on the `Show XML` button.', async() => {
     await statusBar.clickOnEnableXmlViewButton();
 
     const currentBrowserUrl: string = await browser.getCurrentUrl();
