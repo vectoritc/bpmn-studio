@@ -36,7 +36,7 @@ describe('Process List', () => {
     expect(visibilityOfListEntry).toBeTruthy();
   });
 
-  it('should navigate to design on click on link in table.', async() => {
+  it('should navigate to the `design view`, after clicking on the corresponding link in the table.', async() => {
     await processList.clickOnDiagramDesignLink(diagram.correlationId);
 
     const currentBrowserUrl: string = await browser.getCurrentUrl();
