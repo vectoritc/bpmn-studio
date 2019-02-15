@@ -46,7 +46,7 @@ describe('Diff view', () => {
     expect(statusBarDiffViewButtonIsDisplayed).toBeTruthy();
   });
 
-  it('should open diff view when click on `Show Diff` button.', async() => {
+  it('should open the `diff view` when clicking on the `Show Diff` button.', async() => {
     await statusBar.clickOnEnableDiffViewButton();
 
     const currentBrowserUrl: string = await browser.getCurrentUrl();
