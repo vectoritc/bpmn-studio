@@ -72,7 +72,7 @@ describe('Design view', () => {
     expect(visibilityOfXmlViewContainer).toBeTruthy();
   });
 
-  it('should show detail view again when currently showing the xml view and clicking on button in status bar.', async() => {
+  it('should switch from `xml view` to `detail view`, after clicking on the button in the status bar.', async() => {
     await xmlView.show();
     await statusBar.show();
 
