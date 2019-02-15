@@ -37,7 +37,7 @@ describe('Design view', () => {
     await routerView.show();
   });
 
-  it('should show detail view after navigating.', async() => {
+  it('should show the `detail view` after navigating to it.', async() => {
     await diagramDetail.show();
 
     const visibilityOfDiagramDetailContainer: boolean = await diagramDetail.getVisibilityOfDiagramDetailContainer();
