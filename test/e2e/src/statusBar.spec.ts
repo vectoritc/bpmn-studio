@@ -182,7 +182,7 @@ describe('Status Bar', () => {
     expect(activeStateOfNewVsOldButton).toBeFalsy();
   });
 
-  it('(on diff view) should contain active change log button after click on it.', async() => {
+  it('should contain the `active change log` button on the `diff view`, after clicking on it.', async() => {
     await diffView.show();
 
     await statusBar.clickOnChangeLogButton();
