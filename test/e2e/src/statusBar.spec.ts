@@ -72,7 +72,7 @@ describe('Status Bar', () => {
     expect(visibilityOfEnableDiffViewButton).toBeTruthy();
   });
 
-  it('(on diagram detail) should show disable xml view button after click on enable xml view button.', async() => {
+  it('should show the `disable xml view button` on the `diagram detail view`, after clicking on the `enable xml view` button.', async() => {
     await diagramDetail.show();
 
     await statusBar.clickOnEnableXmlViewButton();
