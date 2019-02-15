@@ -43,7 +43,7 @@ describe('Task List', () => {
     expect(currentBrowserUrl).toContain(diagram.name);
   });
 
-  it('should be able to continue user task with button click.', async() => {
+  it('should be able to continue the user task with a click on the `continue` button.', async() => {
     await taskList.clickOnContinueButton(diagram.name);
 
     const currentBrowserUrl: string = await browser.getCurrentUrl();
