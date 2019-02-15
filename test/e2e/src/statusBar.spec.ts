@@ -142,7 +142,7 @@ describe('Status Bar', () => {
     expect(visibilityOfOldVsNewButton).toBeTruthy();
   });
 
-  it('(on diff view) should contain active new vs old button', async() => {
+  it('should contain the `active new vs old` button on the `diff view`.', async() => {
     await diffView.show();
 
     const visbilityOfNewVsOldButton: boolean = await statusBar.getVisibilityOfNewVsOldButton();
