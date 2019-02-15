@@ -45,7 +45,7 @@ describe('Design view', () => {
     expect(visibilityOfDiagramDetailContainer).toBeTruthy();
   });
 
-  it('should show xml view after navigating.', async() => {
+  it('should show the `xml view` after navigating to it.', async() => {
     await xmlView.show();
 
     const visibilityOfXmlViewContainer: boolean = await xmlView.getVisibilityOfXmlViewContainer();
