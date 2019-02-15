@@ -83,7 +83,7 @@ describe('Design view', () => {
     expect(visibilityOfDiagramDetailContainer).toBeTruthy();
   });
 
-  it('should show diff view after click on button in status bar.', async() => {
+  it('should show `diff view` after clicking on the button in the status bar.', async() => {
     await diagramDetail.show();
     await statusBar.show();
 
