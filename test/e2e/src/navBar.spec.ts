@@ -104,7 +104,7 @@ describe('NavBar', () => {
     expect(visibilityOfInspectButton).toBeTruthy();
   });
 
-  it('should navigate to dashboard on inspect button click.', async() => {
+  it('should navigate to the dashboard,  after clicking on the `inspect` button.', async() => {
     await navBar.clickOnInspectButton();
 
     const currentBrowserUrl: string = await browser.getCurrentUrl();
