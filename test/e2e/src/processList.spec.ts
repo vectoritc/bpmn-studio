@@ -43,7 +43,7 @@ describe('Process List', () => {
     expect(currentBrowserUrl).toContain(diagram.name);
   });
 
-  it('should navigate to task list on click on link in table.', async() => {
+  it('should navigate to the `task list`, after clicking on the corresponding link in the table.', async() => {
     await processList.clickOnUserTaskLink(diagram.correlationId);
 
     const currentBrowserUrl: string = await browser.getCurrentUrl();
