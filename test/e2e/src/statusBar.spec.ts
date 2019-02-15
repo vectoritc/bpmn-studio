@@ -134,7 +134,7 @@ describe('Status Bar', () => {
     expect(visibilityOfEnableXmlViewButton).toBeTruthy();
   });
 
-  it('(on diff view) should contain old vs new button', async() => {
+  it('should contain the `old vs new` button on the `diff view.`', async() => {
     await diffView.show();
 
     const visibilityOfOldVsNewButton: boolean = await statusBar.getVisibilityOfOldVsNewButton();
