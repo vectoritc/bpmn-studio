@@ -43,7 +43,7 @@ export class BpmnIo {
   @bindable({changeHandler: 'nameChanged'}) public name: string;
   @bindable() public openedFromProcessEngine: boolean = true;
   @observable public propertyPanelWidth: number;
-  @bindable() public showLinter: boolean;
+  public showLinter: boolean;
 
   public savedXml: string;
   public showPropertyPanel: boolean = false;
