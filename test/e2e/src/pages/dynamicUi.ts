@@ -12,7 +12,7 @@ export class DynamicUi {
     return this._dynamicUiWrapper.isDisplayed();
   }
 
-  private get _dynamicUuWrapper(): ElementFinder {
+  private get _dynamicUiWrapper(): ElementFinder {
     const dynamicUiWrapperByTag: By = by.tagName(this._dynamicUiWrapperTag);
 
     return element(dynamicUiWrapperByTag);
