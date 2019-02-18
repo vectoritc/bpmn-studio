@@ -592,7 +592,8 @@ export class LiveExecutionTracker {
         const targetOfOutgoingElementIsGateway: boolean = targetOfOutgoingElement.type === 'bpmn:ParallelGateway';
 
         const sequenceFlowWasExecuted: boolean = previousFlowNodeInstanceIdOfTarget === flowNodeInstanceIdOfElement;
-        if (sequenceFlowWasExecuted || targetOfOutgoingElementIsGateway) {
+       const needToAddToOutgoingElements: boolean  = sequenceFlowWasExecuted || targetOfOutgoingElementIsGateway
+        if (needToAddToOutgoingElements) {
           elementsWithOutgoingElements.push(outgoingElementAsShape);
         }
 
