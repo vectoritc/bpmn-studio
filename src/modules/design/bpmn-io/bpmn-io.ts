@@ -161,6 +161,7 @@ export class BpmnIo {
         this.savedXml = await this.getXML();
       });
 
+      // Wait until the html is rendered
       setTimeout(() => {
         const linter: HTMLElement = document.querySelector('.bpmn-js-bpmnlint-button');
         linter.style.display = 'none';
