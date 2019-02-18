@@ -34,61 +34,53 @@ Main._window = null;
 
 Main.execute = function () {
   /**
-   * This method gets called when BPMN-Studio starts for the first time. When it
-   * starts it's the first instance, therefore this functions returns "false"
-   * and the following if-clause will start BPMN-Studio.
-   *
-   * If you double-click on a .bpmn file, the callback will be called again,
-   * but this time "argv" will hold the command line arguments the second
-   * instance would have been started with.
-   *
-   * Since this would be the second instance the method in the second instance
-   * will return "true" and therefore quit the instance. The callback of the
-   * first instance allows us to send the double-click event to the renderer
-   * process and finally open a file via double-click.
-   *
+   * Makes this application a Single Instance Application.
    */
-  const existingInstance = app.hasSingleInstanceLock((argv, workingDirectory) => {
-    const noArgumentsSet = argv[1] === undefined;
+  app.requestSingleInstanceLock();
 
-    if (noArgumentsSet) {
-      return;
-    }
+  /**
+   * Check if this application got the Single Instance Lock.
+   * true: This instance is the first instance.
+   * false: This instance is the second instance.
+   */
+  const hasSingleInstanceLock = app.hasSingleInstanceLock();
 
-    const argumentIsFilePath = argv[1].endsWith('.bpmn');
-    const argumentIsSignInRedirect = argv[1].startsWith('bpmn-studio://signin-oidc');
-    const argumentIsSignOutRedirect = argv[1].startsWith('bpmn-studio://signout-oidc');
-
-    if (argumentIsFilePath) {
-      const filePath = argv[1];
-      Main._bringExistingInstanceToForeground();
-
-      answerOpenFileEvent(filePath)
-    }
-
-    if (argumentIsSignInRedirect || argumentIsSignOutRedirect) {
-      const redirectUrl = argv[1];
-
-      Main._window.loadURL(`file://${__dirname}/../index.html`);
-      Main._window.loadURL('/');
-
-      electron.ipcMain.once('deep-linking-ready', (event) => {
-        Main._window.webContents.send('deep-linking-request', redirectUrl);
-      });
-    }
-
-  });
-
-  if (existingInstance) {
-    // Quit the new instance if required
-    app.quit();
-
-  } else {
-    // If this is the first instance then start the application
+  if (hasSingleInstanceLock) {
     Main._startInternalProcessEngine();
 
     Main._initializeApplication();
 
+    app.on('second-instance', (event, argv, workingDirectory) => {
+      const noArgumentsSet = argv[1] === undefined;
+
+      if (noArgumentsSet) {
+        return;
+      }
+
+      const argumentIsFilePath = argv[1].endsWith('.bpmn');
+      const argumentIsSignInRedirect = argv[1].startsWith('bpmn-studio://signin-oidc');
+      const argumentIsSignOutRedirect = argv[1].startsWith('bpmn-studio://signout-oidc');
+
+      if (argumentIsFilePath) {
+        const filePath = argv[1];
+        Main._bringExistingInstanceToForeground();
+
+        answerOpenFileEvent(filePath)
+      }
+
+      if (argumentIsSignInRedirect || argumentIsSignOutRedirect) {
+        const redirectUrl = argv[1];
+
+        Main._window.loadURL(`file://${__dirname}/../index.html`);
+        Main._window.loadURL('/');
+
+        electron.ipcMain.once('deep-linking-ready', (event) => {
+          Main._window.webContents.send('deep-linking-request', redirectUrl);
+        });
+      }
+    })
+  } else {
+    app.quit();
   }
 }
 
