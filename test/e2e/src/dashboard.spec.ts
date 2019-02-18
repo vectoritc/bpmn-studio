@@ -15,9 +15,6 @@ describe('Dashboard', () => {
   let routerView: RouterView;
 
   const applicationUrl: string = browser.params.aureliaUrl;
-  const defaultTimeoutMS: number = browser.params.defaultTimeoutMS;
-
-  const expectedConditions: ProtractorExpectedConditions = protractor.ExpectedConditions;
 
   beforeAll(async() => {
     dashboard = new Dashboard(applicationUrl);
