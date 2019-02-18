@@ -185,6 +185,11 @@
             ]
           },
           {
+            "name": "@process-engine/bpmn-lint_rules",
+            "path": "../node_modules/@process-engine/bpmn-lint_rules/dist",
+            "main": "packed-config.js"
+          },
+          {
             "name": "@fortawesome/fontawesome-free",
             "path": "../node_modules/@fortawesome/fontawesome-free",
             "main": "css/all.css",
