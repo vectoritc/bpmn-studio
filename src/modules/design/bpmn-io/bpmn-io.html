@@ -28,7 +28,7 @@
       <div class="modeler">
         <div class="diagram" id="bpmnIoDiagram">
           <div ref="canvasModel" class="canvasModel"></div>
-          <button class="btn btn-default linter-toggle-button" title.bind="showLinter ? 'Hide Linter' : 'Show Linter'" click.delegate="toggleLinter()"><i class="fas fa-check"></i></button>
+          <button class="button btn btn-default linter-toggle-button" title.bind="showLinter ? 'Hide Linter' : 'Show Linter'" click.delegate="toggleLinter()" css.bind="showLinter? 'opacity: 1;' : ''"><i class="fas fa-check"></i></button>
         </div>
         <div class="properties" ref="propertyPanel" show.bind="showPropertyPanel" css="width: ${propertyPanelWidth}px; max-width: calc(100% - ${minCanvasWidth}px); min-width: ${minPropertyPanelWidth}px;">
           <div class="resize-div" ref="resizeButton"></div>
