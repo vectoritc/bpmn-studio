@@ -16,6 +16,7 @@ import {
   IEventFunction,
   IInternalEvent,
   IKeyboard,
+  ILinting,
   IModdleElement,
   IProcessRef,
   IPropertiesElement,
@@ -51,7 +52,7 @@ export class BpmnIo {
   public minPropertyPanelWidth: number = 200;
 
   private _bpmnLintButton: HTMLElement;
-  private _linting: any;
+  private _linting: ILinting;
 
   private _propertyPanelShouldOpen: boolean = false;
   private _propertyPanelHiddenForSpaceReasons: boolean = false;
