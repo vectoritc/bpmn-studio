@@ -68,7 +68,8 @@ Main.execute = function () {
         answerOpenFileEvent(filePath)
       }
 
-      if (argumentIsSignInRedirect || argumentIsSignOutRedirect) {
+      const argumentContainsRedirect = argumentIsSignInRedirect || argumentIsSignOutRedirect
+      if (argumentContainsRedirect) {
         const redirectUrl = argv[1];
 
         Main._window.loadURL(`file://${__dirname}/../index.html`);
