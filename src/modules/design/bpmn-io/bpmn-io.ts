@@ -3,7 +3,7 @@ import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, bindingMode, inject, observable} from 'aurelia-framework';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
-import bpmnlintConfig from './config';
+import bpmnlintConfig from '@process-engine/bpmn-lint_rules';
 
 import {
   IBpmnModeler,
