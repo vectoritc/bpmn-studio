@@ -590,9 +590,9 @@ export class LiveExecutionTracker {
 
         // This is needed because the ParallelGateway only knows the flowNodeId of the first element that reaches the ParallelGateway
         const targetOfOutgoingElementIsGateway: boolean = targetOfOutgoingElement.type === 'bpmn:ParallelGateway';
-
         const sequenceFlowWasExecuted: boolean = previousFlowNodeInstanceIdOfTarget === flowNodeInstanceIdOfElement;
-       const needToAddToOutgoingElements: boolean  = sequenceFlowWasExecuted || targetOfOutgoingElementIsGateway
+
+        const needToAddToOutgoingElements: boolean  = sequenceFlowWasExecuted || targetOfOutgoingElementIsGateway;
         if (needToAddToOutgoingElements) {
           elementsWithOutgoingElements.push(outgoingElementAsShape);
         }
