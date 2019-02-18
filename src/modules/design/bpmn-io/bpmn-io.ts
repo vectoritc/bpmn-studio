@@ -85,7 +85,11 @@ export class BpmnIo {
         bundle.ZoomScrollModule,
         bundle.MoveCanvasModule,
         bundle.resizeAllModule,
+        bundle.lintModule,
       ],
+      linting: {
+        bpmnlint: bpmnlintConfig,
+      },
       moddleExtensions: {
         camunda: bundle.camundaModdleDescriptor,
       },
