@@ -19,6 +19,7 @@ export class XmlView {
   }
 
   public async getVisibilityOfXmlViewContainer(): Promise<boolean> {
+    await browser.wait(ExpectedConditions.visibilityOf(this._xmlViewContainer), browser.params.defaultTimeoutMS);
 
     return this._xmlViewContainer.isDisplayed();
   }
