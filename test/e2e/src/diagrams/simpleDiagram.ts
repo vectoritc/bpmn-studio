@@ -1,6 +1,9 @@
 import {browser} from 'protractor';
 import {HttpClient} from 'protractor-http-client';
 
+interface RequestObject {
+  [key: string]: string;
+}
 export class SimpleDiagram {
   // tslint:disable-next-line:no-magic-numbers
   public name: string =  'TA_' + Math.floor(Math.random() * 1000000);
@@ -41,7 +44,7 @@ export class SimpleDiagram {
            'bpmnElement=\"Task_0z3p6gi\"><dc:Bounds x=\"169\" y=\"47\" width=\"100\" height=\"80\" /></bpmndi:BPMNShape>' +
            '</bpmndi:BPMNPlane></bpmndi:BPMNDiagram></bpmn:definitions>',
     };
-    const requestHeaders: any = {
+    const requestHeaders: RequestObject = {
       authorization: 'Bearer ZHVtbXlfdG9rZW4=',
     };
 
@@ -50,7 +53,7 @@ export class SimpleDiagram {
 
   public async deleteDiagram(): Promise<void> {
     const requestDestination: string = `/api/management/v1/process_models/${this.name}/delete`;
-    const requestHeaders: any = {
+    const requestHeaders: RequestObject = {
       authorization: 'Bearer ZHVtbXlfdG9rZW4=',
     };
 
@@ -61,8 +64,8 @@ export class SimpleDiagram {
     const requestDestination: string =
       `/api/management/v1/process_models/${this.name}/start_events/StartEvent_1mox3jl/start?start_callback_type=1`;
 
-    const requestPayload: any = {};
-    const requestHeaders: any = {
+    const requestPayload: RequestObject = {};
+    const requestHeaders: RequestObject = {
       authorization: 'Bearer ZHVtbXlfdG9rZW4=',
     };
 

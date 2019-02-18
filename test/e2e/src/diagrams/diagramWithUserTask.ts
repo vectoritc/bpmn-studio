@@ -1,6 +1,10 @@
 import {browser} from 'protractor';
 import {HttpClient} from 'protractor-http-client';
 
+interface RequestObject {
+  [key: string]: string;
+}
+
 export class DiagramWithUserTask {
     // tslint:disable-next-line:no-magic-numbers
     public name: string =  'TA_' + Math.floor(Math.random() * 1000000);
@@ -16,7 +20,7 @@ export class DiagramWithUserTask {
 
     public async deployDiagram(): Promise<void> {
       const requestDestination: string = `/api/management/v1/process_models/${this.name}/update`;
-      const requestPayload: any = {
+      const requestPayload: RequestObject = {
         xml: `<?xml version="1.0" encoding="UTF-8"?>
         <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
         xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -84,7 +88,7 @@ export class DiagramWithUserTask {
 
     public async deleteDiagram(): Promise<void> {
       const requestDestination: string = `/api/management/v1/process_models/${this.name}/delete`;
-      const requestHeaders: any = {
+      const requestHeaders: RequestObject = {
         authorization: 'Bearer ZHVtbXlfdG9rZW4=',
       };
 
@@ -95,8 +99,8 @@ export class DiagramWithUserTask {
       const requestDestination: string =
         `/api/management/v1/process_models/${this.name}/start_events/StartEvent_1mox3jl/start?start_callback_type=1`;
 
-      const requestPayload: any = {};
-      const requestHeaders: any = {
+      const requestPayload: RequestObject = {};
+      const requestHeaders: RequestObject = {
         authorization: 'Bearer ZHVtbXlfdG9rZW4=',
       };
 
