@@ -4,12 +4,15 @@ import {HttpClient} from 'protractor-http-client';
 export class DiagramWithUserTask {
     // tslint:disable-next-line:no-magic-numbers
     public name: string =  'TA_' + Math.floor(Math.random() * 1000000);
+    public userTaskId: string = 'Task_1adxlm1';
     public correlationId: string;
     public processInstanceId: string;
+    public userTaskDynamicUiUrl: string;
 
     // Define Instances
     private _processEngineUrl: string = browser.params.processEngineUrl;
     private _http: HttpClient = new HttpClient(this._processEngineUrl);
+    private _applicationUrl: string = browser.params.aureliaUrl;
 
     public async deployDiagram(): Promise<void> {
       const requestDestination: string = `/api/management/v1/process_models/${this.name}/update`;
@@ -101,5 +104,11 @@ export class DiagramWithUserTask {
         this.correlationId = jsonBody['correlationId'];
         this.processInstanceId = jsonBody['processInstanceId'];
       });
+
+      this.userTaskDynamicUiUrl = `${this._applicationUrl}
+                                  /correlation/${this.correlationId}
+                                  /diagram/${this.name}
+                                  /instance/${this.processInstanceId}
+                                  /task/${this.userTaskId}`;
     }
 }
