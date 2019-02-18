@@ -1,6 +1,7 @@
 import {browser} from 'protractor';
 
 import {DiagramWithUserTask} from './diagrams/diagramWithUserTask';
+import {DynamicUi} from './pages/dynamicUi';
 import {RouterView} from './pages/routerView';
 import {TaskList} from './pages/taskList';
 
@@ -9,6 +10,7 @@ describe('Task List', () => {
   let taskList: TaskList;
   let diagram: DiagramWithUserTask;
   let routerView: RouterView;
+  let dynamicUi: DynamicUi;
 
   const applicationUrl: string = browser.params.aureliaUrl;
 
@@ -16,6 +18,7 @@ describe('Task List', () => {
     taskList = new TaskList(applicationUrl);
     diagram = new DiagramWithUserTask();
     routerView = new RouterView();
+    dynamicUi = new DynamicUi();
 
     await diagram.deployDiagram();
     await diagram.startProcess();
@@ -48,6 +51,10 @@ describe('Task List', () => {
 
     const currentBrowserUrl: string = await browser.getCurrentUrl();
     expect(currentBrowserUrl).toContain(diagram.name);
+
+    const visbilityOfDynamicUiWrapper: boolean = await dynamicUi.getVisibilityOfDynamicUiWrapper();
+
+    expect(visbilityOfDynamicUiWrapper).toBeTruthy();
   });
 
 });
