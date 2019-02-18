@@ -4,14 +4,16 @@ import {By} from 'selenium-webdriver';
 
 export class TaskList {
   public url: string;
+  public urlWithProcessInstanceId: string;
 
   private _listEntryIdentifier: string = 'taskList-';
   private _taskListContainerId: string = 'taskListContainer';
   private _diagramLinkClassName: string = 'task-list-item-modelname';
   private _continueButtonClassName: string = 'task-list-continue-button';
 
-  constructor(applicationUrl: string) {
+  constructor(applicationUrl: string, processInstanceId?: string) {
     this.url = `${applicationUrl}/task`;
+    this.urlWithProcessInstanceId = `${applicationUrl}/instance/${processInstanceId}/task`;
   }
 
   public async show(): Promise<void> {
