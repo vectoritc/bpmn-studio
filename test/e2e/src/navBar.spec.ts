@@ -110,5 +110,8 @@ describe('NavBar', () => {
     const currentBrowserUrl: string = await browser.getCurrentUrl();
 
     expect(currentBrowserUrl).toContain(dashboard.url);
+
+    const visibilityOfDashboardContainer: boolean = await dashboard.getVisibilityOfDashboardContainer();
+    expect(visibilityOfDashboardContainer).toBeTruthy();
   });
 });
