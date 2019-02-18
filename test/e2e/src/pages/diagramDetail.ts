@@ -20,11 +20,13 @@ export class DiagramDetail {
   }
 
   public async getVisibilityOfDiagramDetailContainer(): Promise<boolean> {
+    await browser.wait(ExpectedConditions.visibilityOf(this._diagramDetailContainer), browser.params.defaultTimeoutMS);
 
     return this._diagramDetailContainer.isDisplayed();
   }
 
   public async getVisibilityOfBpmnIoContainer(): Promise<boolean> {
+    await browser.wait(ExpectedConditions.visibilityOf(this._bpmnIoContainer), browser.params.defaultTimeoutMS);
 
     return this._bpmnIoContainer.isDisplayed();
   }
