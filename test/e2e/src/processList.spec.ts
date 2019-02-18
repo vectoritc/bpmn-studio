@@ -21,10 +21,11 @@ describe('Process List', () => {
     diagram = new DiagramWithUserTask();
     routerView = new RouterView();
     diagramDetail = new DiagramDetail(applicationUrl, diagram.name);
-    taskList = new TaskList(applicationUrl);
 
     await diagram.deployDiagram();
     await diagram.startProcess();
+
+    taskList = new TaskList(applicationUrl, diagram.processInstanceId);
   });
 
   afterAll(async() => {
@@ -56,7 +57,7 @@ describe('Process List', () => {
     await processList.clickOnUserTaskLink(diagram.correlationId);
 
     const currentBrowserUrl: string = await browser.getCurrentUrl();
-    expect(currentBrowserUrl).toContain(taskList.url);
+    expect(currentBrowserUrl).toContain(taskList.urlWithProcessInstanceId);
 
     const visibilityOfTaskListContainer: boolean = await taskList.getVisibilityOfTaskListContainer();
     expect(visibilityOfTaskListContainer).toBeTruthy();
