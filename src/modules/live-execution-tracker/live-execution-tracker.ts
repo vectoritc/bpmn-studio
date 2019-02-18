@@ -7,6 +7,7 @@ import {DataModels, IManagementApi} from '@process-engine/management_api_contrac
 
 import {ActiveToken} from '@process-engine/kpi_api_contracts';
 import {CorrelationProcessModel} from '@process-engine/management_api_contracts/dist/data_models/correlation';
+import {TokenHistoryEntry} from '@process-engine/management_api_contracts/dist/data_models/token_history';
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 import {
   defaultBpmnColors,
@@ -115,6 +116,7 @@ export class LiveExecutionTracker {
 
   public async attached(): Promise<void> {
     this._attached = true;
+
     this._diagramModeler = new bundle.modeler();
     this._diagramViewer = new bundle.viewer({
       additionalModules:
@@ -139,9 +141,20 @@ export class LiveExecutionTracker {
       return;
     }
 
+    // Import the xml to the modeler to add colors to it
+    await this._importXmlIntoDiagramModeler(xml);
+
+    /*
+     * Remove all colors if the diagram has already colored elements.
+     * For example, if the user has some elements colored orange and is running
+     * the diagram, one would think in LiveExecutionTracker that the element is
+     * active although it is not active.
+    */
+    this._clearColors();
+
     const colorizedXml: string = await (async(): Promise<string> => {
       try {
-        return await this._colorizeXml(xml);
+        return await this._colorizeXml();
       } catch {
         return undefined;
       }
@@ -238,10 +251,7 @@ export class LiveExecutionTracker {
     return parentProcessModel.processModelId;
   }
 
-  private async _colorizeXml(xml: string): Promise<string> {
-    // Import the xml to the modeler to add colors to it
-    await this._importXmlIntoDiagramModeler(xml);
-
+  private async _colorizeXml(): Promise<string> {
     // Get all elements that can have a token
     const allElements: Array<IShape> = this._elementRegistry.filter((element: IShape): boolean => {
       const elementCanHaveAToken: boolean = element.type !== 'bpmn:SequenceFlow'
@@ -270,14 +280,6 @@ export class LiveExecutionTracker {
     if (couldNotGetTokenHistory) {
       throw new Error('Could not get TokenHistories.');
     }
-
-    /*
-     * Remove all colors if the diagram has already colored elements.
-     * For example, if the user has some elements colored orange and is running
-     * the diagram, one would think in LiveExecutionTracker that the element is
-     * active although it is not active.
-    */
-    this._clearColors();
 
     // Colorize the found elements and add overlay to those that can be started.
     this._colorizeElements(elementsWithTokenHistory, defaultBpmnColors.green);
@@ -533,68 +535,75 @@ export class LiveExecutionTracker {
         return element.id === flowNodeId;
       });
 
-      const elementWithIncomingElements: Array<IShape> = this._getElementWithIncomingElements(elementFromTokenHistory, tokenHistoryGroups);
+      const elementFinished: boolean = tokenHistoryGroups[flowNodeId].find((tokenHistoryEntry: TokenHistoryEntry) => {
+        return tokenHistoryEntry.tokenEventType === DataModels.TokenHistory.TokenEventType.onExit;
+      }) !== undefined;
 
-      elementsWithTokenHistory.push(...elementWithIncomingElements);
+      if (elementFinished) {
+        const elementWithOutgoingElements: Array<IShape> = this._getElementWithOutgoingElements(elementFromTokenHistory, tokenHistoryGroups);
+
+        elementsWithTokenHistory.push(...elementWithOutgoingElements);
+      }
     }
 
     return elementsWithTokenHistory;
   }
 
-  private _getElementWithIncomingElements(element: IShape,
+  private _getElementWithOutgoingElements(element: IShape,
                                           tokenHistoryGroups: DataModels.TokenHistory.TokenHistoryGroup): Array<IShape> {
 
-    const elementWithIncomingElements: Array<IShape> = [];
+    const outgoingElementsAsIModdleElement: Array<IModdleElement> = element.businessObject.outgoing;
 
-    const elementHasNoTokenHistory: boolean = !this._hasElementTokenHistory(element.id, tokenHistoryGroups);
-
-    if (elementHasNoTokenHistory) {
-      return [];
+   /*
+    * If the element has no outgoing source just return the element.
+    */
+    const elementHasOutgoingElements: boolean = outgoingElementsAsIModdleElement === undefined;
+    if (elementHasOutgoingElements) {
+      return [element];
     }
 
-    elementWithIncomingElements.push(element);
+    const elementsWithOutgoingElements: Array<IShape> = [element];
 
-    const incomingElementsAsIModdleElement: Array<IModdleElement> = element.businessObject.incoming;
+    for (const outgoingElement of outgoingElementsAsIModdleElement) {
+      const outgoingElementAsShape: IShape = this._elementRegistry.get(outgoingElement.id);
+      const targetOfOutgoingElement: IShape = outgoingElementAsShape.target;
 
-    const elementHasIncomingElements: boolean = incomingElementsAsIModdleElement === undefined;
-    if (elementHasIncomingElements) {
-      return elementWithIncomingElements;
-    }
-
-    for (const incomingElement of incomingElementsAsIModdleElement) {
-      const incomingElementAsShape: IShape = this._elementRegistry.get(incomingElement.id);
-      const sourceOfIncomingElement: IShape = incomingElementAsShape.source;
-
-      const incomignElementHasNoSource: boolean = sourceOfIncomingElement === undefined;
-      if (incomignElementHasNoSource) {
+      const outgoingElementHasNoTarget: boolean = targetOfOutgoingElement === undefined;
+      if (outgoingElementHasNoTarget) {
         continue;
       }
 
-      const previousElementIsTask: boolean = sourceOfIncomingElement.type.includes('Task');
+      const outgoingElementHasNoActiveToken: boolean = !this._hasElementActiveToken(targetOfOutgoingElement.id);
+      const targetOfOutgoingElementHasNoTokenHistory: boolean = !this._hasElementTokenHistory(targetOfOutgoingElement.id, tokenHistoryGroups);
 
-      if (previousElementIsTask) {
-        const elementHasActiveToken: boolean = this._hasElementActiveToken(sourceOfIncomingElement.id);
-        const sourceOfIncomingElementHasNoTokenHistory: boolean = !this._hasElementTokenHistory(sourceOfIncomingElement.id, tokenHistoryGroups);
+      if (outgoingElementHasNoActiveToken && targetOfOutgoingElementHasNoTokenHistory) {
+        continue;
+      }
 
-        if (elementHasActiveToken || sourceOfIncomingElementHasNoTokenHistory) {
-          continue;
-        }
+      const outgoingElementIsSequenceFlow: boolean = outgoingElementAsShape.type === 'bpmn:SequenceFlow';
+      if (outgoingElementIsSequenceFlow) {
+        const tokenHistoryForTarget: TokenHistoryEntry = tokenHistoryGroups[targetOfOutgoingElement.id][0];
+        const previousFlowNodeInstanceIdOfTarget: string = tokenHistoryForTarget.previousFlowNodeInstanceId;
 
-        elementWithIncomingElements.push(incomingElementAsShape);
+        const tokenHistoryForElement: TokenHistoryEntry = tokenHistoryGroups[element.id][0];
+        const flowNodeInstanceIdOfElement: string = tokenHistoryForElement.flowNodeInstanceId;
 
-      } else {
-        elementWithIncomingElements.push(incomingElementAsShape);
+        // This is needed because the ParallelGateway only knows the flowNodeId of the first element that reaches the ParallelGateway
+        const targetOfOutgoingElementIsGateway: boolean = targetOfOutgoingElement.type === 'bpmn:ParallelGateway';
+        const sequenceFlowWasExecuted: boolean = previousFlowNodeInstanceIdOfTarget === flowNodeInstanceIdOfElement;
 
-        const sourceHasNoTokenHistory: boolean = !this._hasElementTokenHistory(sourceOfIncomingElement.id, tokenHistoryGroups);
-        if (sourceHasNoTokenHistory) {
-          elementWithIncomingElements.push(sourceOfIncomingElement);
+        const needToAddToOutgoingElements: boolean  = sequenceFlowWasExecuted || targetOfOutgoingElementIsGateway;
+        if (needToAddToOutgoingElements) {
+          elementsWithOutgoingElements.push(outgoingElementAsShape);
         }
 
         continue;
       }
+
+      elementsWithOutgoingElements.push(outgoingElementAsShape);
     }
 
-    return elementWithIncomingElements;
+    return elementsWithOutgoingElements;
   }
 
   private _colorizeElements(elements: Array<IShape>, color: IColorPickerColor): void {
@@ -790,7 +799,7 @@ export class LiveExecutionTracker {
 
       const colorizedXml: string = await (async(): Promise<string> => {
         try {
-          return await this._colorizeXml(xml);
+          return await this._colorizeXml();
         } catch {
           return undefined;
         }
