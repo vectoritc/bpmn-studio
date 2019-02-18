@@ -23,6 +23,7 @@ export class TaskList {
   }
 
   public async getVisibilityOfTaskListContainer(): Promise<boolean> {
+    await browser.wait(ExpectedConditions.visibilityOf(this._taskListContainer), browser.params.defaultTimeoutMS);
 
     return this._taskListContainer.isDisplayed();
   }

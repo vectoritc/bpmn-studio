@@ -91,7 +91,7 @@ export class DiagramWithUserTask {
       await this._http.get(requestDestination, requestHeaders);
     }
 
-    public startProcess(): void {
+    public async startProcess(): Promise<void> {
       const requestDestination: string =
         `/api/management/v1/process_models/${this.name}/start_events/StartEvent_1mox3jl/start?start_callback_type=1`;
 
@@ -100,15 +100,15 @@ export class DiagramWithUserTask {
         authorization: 'Bearer ZHVtbXlfdG9rZW4=',
       };
 
-      this._http.post(requestDestination, requestPayload, requestHeaders).jsonBody.then((jsonBody: JSON) => {
+      await this._http.post(requestDestination, requestPayload, requestHeaders).jsonBody.then((jsonBody: JSON) => {
         this.correlationId = jsonBody['correlationId'];
         this.processInstanceId = jsonBody['processInstanceId'];
       });
 
-      this.userTaskDynamicUiUrl = `${this._applicationUrl}
-                                  /correlation/${this.correlationId}
-                                  /diagram/${this.name}
-                                  /instance/${this.processInstanceId}
-                                  /task/${this.userTaskId}`;
+      this.userTaskDynamicUiUrl = this._applicationUrl +
+                                  '/correlation/' + this.correlationId +
+                                  '/diagram/' + this.name +
+                                  '/instance/' + this.processInstanceId +
+                                  '/task/' + this.userTaskId;
     }
 }
