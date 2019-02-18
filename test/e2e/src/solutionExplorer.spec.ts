@@ -1,9 +1,4 @@
-import {
-  browser,
-  ElementFinder,
-  protractor,
-  ProtractorExpectedConditions,
-} from 'protractor';
+import {browser} from 'protractor';
 
 import {SimpleDiagram} from './diagrams/simpleDiagram';
 import {RouterView} from './pages/routerView';
