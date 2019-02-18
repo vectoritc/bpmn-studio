@@ -14,8 +14,8 @@ import {
   ISolutionService,
   IUserIdentity,
 } from '../../../contracts';
-import {SingleDiagramsSolutionExplorerService} from '../../solution-explorer-services/SingleDiagramsSolutionExplorerService';
-import {SolutionExplorerServiceFactory} from '../../solution-explorer-services/SolutionExplorerServiceFactory';
+import {SingleDiagramsSolutionExplorerService} from '../../../services/solution-explorer-services/SingleDiagramsSolutionExplorerService';
+import {SolutionExplorerServiceFactory} from '../../../services/solution-explorer-services/SolutionExplorerServiceFactory';
 import {SolutionExplorerSolution} from '../solution-explorer-solution/solution-explorer-solution';
 
 interface IUriToViewModelMap {

@@ -19,7 +19,7 @@ import {
   NotificationType,
 } from '../../../contracts/index';
 import environment from '../../../environment';
-import {NotificationService} from '../../notification/notification.service';
+import {NotificationService} from '../../../services/notification-service/notification.service';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
 
 @inject('ManagementApiClientService',

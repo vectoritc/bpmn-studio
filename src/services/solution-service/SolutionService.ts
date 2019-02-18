@@ -2,8 +2,8 @@ import {inject} from 'aurelia-framework';
 
 import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
-import {ISolutionEntry, ISolutionService} from '../contracts';
-import {SolutionExplorerServiceFactory} from '../modules/solution-explorer-services/SolutionExplorerServiceFactory';
+import {ISolutionEntry, ISolutionService} from '../../contracts';
+import {SolutionExplorerServiceFactory} from '../solution-explorer-services/SolutionExplorerServiceFactory';
 
 @inject('SolutionExplorerServiceFactory')
 export class SolutionService implements ISolutionService {

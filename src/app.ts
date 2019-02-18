@@ -11,7 +11,7 @@ import {OpenIdConnect} from 'aurelia-open-id-connect';
 
 import {IAuthenticationService, NotificationType} from './contracts/index';
 import environment from './environment';
-import {NotificationService} from './modules/notification/notification.service';
+import {NotificationService} from './services/notification-service/notification.service';
 
 import {oidcConfig} from './open-id-connect-configuration';
 @inject(OpenIdConnect, 'AuthenticationService', 'NotificationService', EventAggregator)
