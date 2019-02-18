@@ -50,6 +50,9 @@ export class BpmnIo {
   public minCanvasWidth: number = 100;
   public minPropertyPanelWidth: number = 200;
 
+  private _bpmnLintButton: HTMLElement;
+  private _linting: any;
+
   private _propertyPanelShouldOpen: boolean = false;
   private _propertyPanelHiddenForSpaceReasons: boolean = false;
   private _propertyPanelHasNoSpace: boolean = false;
@@ -163,8 +166,11 @@ export class BpmnIo {
 
       // Wait until the html is rendered
       setTimeout(() => {
-        const linter: HTMLElement = document.querySelector('.bpmn-js-bpmnlint-button');
-        linter.style.display = 'none';
+        this._bpmnLintButton = document.querySelector('.bpmn-js-bpmnlint-button');
+
+        this._bpmnLintButton.style.display = 'none';
+
+        this._linting = this.modeler.get('linting');
       }, 0);
     }
 
@@ -422,17 +428,13 @@ export class BpmnIo {
     this.showLinter = !this.showLinter;
 
     if (this.showLinter) {
-      const linter: HTMLElement = document.querySelector('.bpmn-js-bpmnlint-button');
-      linter.style.display = 'block';
+      this._bpmnLintButton.style.display = 'block';
 
-      const linting: any = this.modeler.get('linting');
-      linting.activateLinting();
+      this._linting.activateLinting();
     } else {
-      const linter: HTMLElement = document.querySelector('.bpmn-js-bpmnlint-button');
-      linter.style.display = 'none';
+      this._bpmnLintButton.style.display = 'none';
 
-      const linting: any = this.modeler.get('linting');
-      linting.deactivateLinting();
+      this._linting.deactivateLinting();
     }
   }
 
