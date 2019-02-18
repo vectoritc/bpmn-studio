@@ -158,6 +158,12 @@ export class BpmnIo {
       this.modeler.importXML(this.xml, async(err: Error) => {
         this.savedXml = await this.getXML();
       });
+
+      this.modeler.on('import.done', () => {
+        const linting = this.modeler.get('linting');
+
+        linting.activateLinting();
+      });
     }
 
     this.modeler.attachTo(this.canvasModel);
