@@ -1,6 +1,7 @@
 import {browser} from 'protractor';
 
 import {DiagramWithUserTask} from './diagrams/diagramWithUserTask';
+import {DiagramDetail} from './pages/diagramDetail';
 import {DynamicUi} from './pages/dynamicUi';
 import {RouterView} from './pages/routerView';
 import {TaskList} from './pages/taskList';
@@ -11,6 +12,7 @@ describe('Task List', () => {
   let diagram: DiagramWithUserTask;
   let routerView: RouterView;
   let dynamicUi: DynamicUi;
+  let diagramDetail: DiagramDetail;
 
   const applicationUrl: string = browser.params.aureliaUrl;
 
@@ -19,6 +21,7 @@ describe('Task List', () => {
     diagram = new DiagramWithUserTask();
     routerView = new RouterView();
     dynamicUi = new DynamicUi();
+    diagramDetail = new DiagramDetail(applicationUrl, diagram.name);
 
     await diagram.deployDiagram();
     await diagram.startProcess();
@@ -43,7 +46,12 @@ describe('Task List', () => {
     await taskList.clickOnDesignLink(diagram.name);
 
     const currentBrowserUrl: string = await browser.getCurrentUrl();
+
     expect(currentBrowserUrl).toContain(diagram.name);
+
+    const visbilityOfDiagramDetailContainer: boolean = await diagramDetail.getVisibilityOfDiagramDetailContainer();
+
+    expect(visbilityOfDiagramDetailContainer).toBeTruthy();
   });
 
   it('should be able to continue the user task with a click on the `continue` button.', async() => {
