@@ -18,6 +18,12 @@ export class Dashboard {
     await browser.wait(ExpectedConditions.visibilityOf(this._dashboardContainer), browser.params.defaultTimeoutMS);
   }
 
+  public async getVisibilityOfDashboardContainer(): Promise<boolean> {
+    await browser.wait(ExpectedConditions.visibilityOf(this._dashboardContainer), browser.params.defaultTimeoutMS);
+
+    return this._dashboardContainer.isDisplayed();
+  }
+
   public async getVisibilityOfProcessListContainer(): Promise<boolean> {
     await browser.wait(ExpectedConditions.visibilityOf(this._processListContainer), browser.params.defaultTimeoutMS);
 
