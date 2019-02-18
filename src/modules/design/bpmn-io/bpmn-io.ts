@@ -42,6 +42,7 @@ export class BpmnIo {
   @bindable({changeHandler: 'nameChanged'}) public name: string;
   @bindable() public openedFromProcessEngine: boolean = true;
   @observable public propertyPanelWidth: number;
+  @bindable() public showLinter: boolean;
 
   public savedXml: string;
   public showPropertyPanel: boolean = false;
@@ -160,11 +161,10 @@ export class BpmnIo {
         this.savedXml = await this.getXML();
       });
 
-      this.modeler.on('import.done', () => {
-        const linting = this.modeler.get('linting');
-
-        linting.activateLinting();
-      });
+      setTimeout(() => {
+        const linter: HTMLElement = document.querySelector('.bpmn-js-bpmnlint-button');
+        linter.style.display = 'none';
+      }, 0);
     }
 
     this.modeler.attachTo(this.canvasModel);
@@ -415,6 +415,24 @@ export class BpmnIo {
       });
     });
     return returnPromise;
+  }
+
+  public toggleLinter(): void {
+    this.showLinter = !this.showLinter;
+
+    if (this.showLinter) {
+      const linter: HTMLElement = document.querySelector('.bpmn-js-bpmnlint-button');
+      linter.style.display = 'block';
+
+      const linting: any = this.modeler.get('linting');
+      linting.activateLinting();
+    } else {
+      const linter: HTMLElement = document.querySelector('.bpmn-js-bpmnlint-button');
+      linter.style.display = 'none';
+
+      const linting: any = this.modeler.get('linting');
+      linting.deactivateLinting();
+    }
   }
 
   private _fitDiagramToViewport(): void {
