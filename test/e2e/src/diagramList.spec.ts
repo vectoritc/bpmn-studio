@@ -43,6 +43,11 @@ describe('Diagram List', () => {
     diagramList.clickOnDiagramListEntry(diagram.name);
 
     const currentBrowserUrl: string = await browser.getCurrentUrl();
+
     expect(currentBrowserUrl).toContain(diagramDetail.url);
+
+    const visibilityOfDiagramDetailContainer: boolean = await diagramDetail.getVisibilityOfDiagramDetailContainer();
+
+    expect(visibilityOfDiagramDetailContainer).toBeTruthy();
   });
 });
