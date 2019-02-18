@@ -1,8 +1,4 @@
-import {
-  browser,
-  protractor,
-  ProtractorExpectedConditions,
-} from 'protractor';
+import {browser} from 'protractor';
 
 import {DiagramWithUserTask} from './diagrams/diagramWithUserTask';
 import {Dashboard} from './pages/dashboard';

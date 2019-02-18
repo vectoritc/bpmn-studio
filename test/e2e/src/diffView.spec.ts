@@ -1,8 +1,4 @@
-import {
-  browser,
-  protractor,
-  ProtractorExpectedConditions,
-} from 'protractor';
+import {browser} from 'protractor';
 
 import {SimpleDiagram} from './diagrams/simpleDiagram';
 import {DiagramDetail} from './pages/diagramDetail';
