@@ -6,13 +6,13 @@
 
   <div class="design">
 
-    <div show.bind="showDetail" class="design__detail-container">
+    <div show.bind="showDetail" class="design__detail-container" id="diagramDetailContainer">
       <diagram-detail view-model.ref="diagramDetail" active-diagram.bind="activeDiagram" xml.two-way="xml" active-solution-entry.bind="activeSolutionEntry"></diagram-detail>
     </div>
-    <div show.bind="showXML" class="design__xml-view-container">
+    <div show.bind="showXML" class="design__xml-view-container" id="diagramXmlContainer">
       <bpmn-xml-view xml.bind="xml"></bpmn-xml-view>
     </div>
-    <div if.bind="showDiff" class="design__diff-view-container">
+    <div if.bind="showDiff" class="design__diff-view-container" id="diagramDiffContainer">
       <bpmn-diff-view saved-xml.bind="activeDiagram.xml" current-xml.bind="xmlForDiff" process-model-id.bind="activeDiagram.name"></bpmn-diff-view>
     </div>
 
@@ -34,8 +34,8 @@
       </div>
     </div>
 
-    <modal show.bind="showQuitModal" 
-           header-text="Document Contains Changes" 
+    <modal show.bind="showQuitModal"
+           header-text="Document Contains Changes"
            body-text="Your process has unsaved changes. Save changes to diagram before quitting the BPMN-Studio?">
       <template replace-part="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal" click.delegate="cancelQuitting()">Cancel</button>
@@ -44,8 +44,8 @@
       </template>
     </modal>
 
-    <modal show.bind="showLeaveModal" 
-          header-text="Document Contains Changes" 
+    <modal show.bind="showLeaveModal"
+          header-text="Document Contains Changes"
           body-text="Your process has unsaved changes. Save changes to diagram before leaving?">
       <template replace-part="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelButtonLeaveView">Cancel</button>
@@ -54,8 +54,8 @@
       </template>
     </modal>
 
-    <modal show.bind="showSaveBeforeDeployModal" 
-          header-text="Save Diagram Before Deploying" 
+    <modal show.bind="showSaveBeforeDeployModal"
+          header-text="Save Diagram Before Deploying"
           body-text="In order to deploy your diagram, you have to save your recent changes to disk.">
       <template replace-part="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelDeploy" click.delegate="diagramDetail.cancelSaveBeforeDeployModal()"> Cancel</button>
@@ -63,7 +63,7 @@
       </template>
     </modal>
 
-    <modal show.bind="showRemoteSolutionOnDeployModal" 
+    <modal show.bind="showRemoteSolutionOnDeployModal"
           header-text="Multiple Connected ProcessEngines Found">
       <template replace-part="modal-body">
         Choose a remote ProcessEngines; the diagram will be deployed to your selection.
@@ -78,8 +78,8 @@
       </template>
     </modal>
 
-    <modal show.bind="showSaveForStartModal" 
-          header-text="Document Contains Changes" 
+    <modal show.bind="showSaveForStartModal"
+          header-text="Document Contains Changes"
           body-text="Your process has unsaved changes. Save changes to diagram before starting the process?">
       <template replace-part="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal" id="cancelButtonProcessStart" click.delegate="diagramDetail.cancelDialog()">Cancel</button>
@@ -87,8 +87,8 @@
       </template>
     </modal>
 
-    <modal show.bind="showStartWithOptionsModal" 
-          header-text="Start Options" 
+    <modal show.bind="showStartWithOptionsModal"
+          header-text="Start Options"
           body-text="Your process has unsaved changes. Save changes to diagram before starting the process?">
       <template replace-part="modal-body">
         <form>
@@ -124,8 +124,8 @@
       </template>
     </modal>
 
-    <modal show.bind="showStartEventModal" 
-          header-text="Select initial StartEvent" 
+    <modal show.bind="showStartEventModal"
+          header-text="Select initial StartEvent"
           body-text="Your process has unsaved changes. Save changes to diagram before starting the process?">
       <template <template replace-part="modal-body">
         This process contains more than one start event.<br>

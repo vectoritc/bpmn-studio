@@ -52,6 +52,9 @@ export class App {
     this.showSolutionExplorer = window.localStorage.getItem('SolutionExplorerVisibility') === 'true'
                               || window.localStorage.getItem('SolutionExplorerVisibility') === null;
 
+    const showSolutionExplorer: string = this.showSolutionExplorer ? 'true' : 'false';
+    window.localStorage.setItem('SolutionExplorerVisibility', showSolutionExplorer);
+
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.processSolutionPanel.toggleProcessSolutionExplorer, () => {
         this.showSolutionExplorer = !this.showSolutionExplorer;

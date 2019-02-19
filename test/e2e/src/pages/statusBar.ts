@@ -1,48 +1,204 @@
-import {
-  by,
-  element,
-  ElementFinder,
-} from 'protractor';
+import {browser, by, element, ElementFinder, ExpectedConditions} from 'protractor';
 
 import {By} from 'selenium-webdriver';
 
 export class StatusBar {
+  private _statusBarTag: string = 'status-bar';
+  private _leftStatusBarContainerId: string = 'statusBarLeft';
+  private _centerStatusBarContainerId: string = 'statusBarCenter';
+  private _rightStatusBarContainerId: string = 'statusBarRight';
 
-  // Define Links, Urls, Classes
-  public statusBarLink: string = '/think';
-  public statusBarActiveClassName: string = 'status-bar__element--active';
+  private _enableXmlViewButtonId: string = 'statusBarXMLViewButton';
+  private _disableXmlViewButtonId: string = 'statusBarDisableXMLViewButton';
 
-  // Define Elements
-  private _byTagName: By = by.tagName('status-bar');
-  private _byStatusBarSettingsButton: By = by.id('statusBarSettingsButton');
-  private _byStatusBarContainer: By = by.id('statusBarContainer');
-  private _byStatusBarLeft: By = by.id('statusBarLeft');
-  private _byStatusBarCenter: By = by.id('statusBarCenter');
-  private _byStatusBarRight: By = by.id('statusBarRight');
-  private _byStatusBarXMLViewButton: By = by.id('statusBarXMLViewButton');
-  private _byStatusBarDiffViewButton: By = by.id('statusBarDiffViewButton');
-  private _byStatusBarDisableDiffViewButton: By = by.id('statusBarDisableDiffViewButton');
-  private _byStatusBarOldVsNewButton: By = by.id('statusBarOldVsNew');
-  private _byStatusBarNewVsOldButton: By = by.id('statusBarNewVsOld');
-  private _byStatusBarChangesLogButton: By = by.id('statusBarChangesLog');
+  private _enableDiffViewButtonId: string = 'statusBarDiffViewButton';
+  private _disableDiffViewButtonId: string = 'statusBarDisableDiffViewButton';
 
-  public statusBarTag: ElementFinder = element(this._byTagName);
-  public statusBarSettingsButton: ElementFinder = this.statusBarTag.element(this._byStatusBarSettingsButton);
-  public statusBarContainer: ElementFinder = this.statusBarTag.element(this._byStatusBarContainer);
-  public statusBarContainerLeft: ElementFinder = this.statusBarTag.element(this._byStatusBarLeft);
-  public statusBarContainerCenter: ElementFinder = this.statusBarTag.element(this._byStatusBarCenter);
-  public statusBarContainerRight: ElementFinder = this.statusBarTag.element(this._byStatusBarRight);
-  public statusBarXMLViewButton: ElementFinder = this.statusBarTag.element(this._byStatusBarXMLViewButton);
-  public statusBarDiffViewButton: ElementFinder = this.statusBarTag.element(this._byStatusBarDiffViewButton);
-  public statusBarDisableDiffViewButton: ElementFinder = this.statusBarTag.element(this._byStatusBarDisableDiffViewButton);
-  public statusBarOldVsNewButton: ElementFinder = this.statusBarTag.element(this._byStatusBarOldVsNewButton);
-  public statusBarNewVsOldButton: ElementFinder = this.statusBarTag.element(this._byStatusBarNewVsOldButton);
-  public statusBarChangesLogButton: ElementFinder = this.statusBarTag.element(this._byStatusBarChangesLogButton);
+  private _newVsOldButtonId: string = 'statusBarNewVsOld';
+  private _oldVsNewButtonId: string = 'statusBarOldVsNew';
+  private _changeLogButtonId: string = 'statusBarChangesLog';
 
-  // Define Function
-  public async statusBarButtonIsEnabled(statusBarButton: ElementFinder): Promise<boolean> {
-    const statusBarButtonClass: string = await statusBarButton.getAttribute('class');
-    return statusBarButtonClass.includes(this.statusBarActiveClassName);
+  private _activeClass: string = 'status-bar__element--active';
+
+  public async show(): Promise<void> {
+    const statusBarContainer: ElementFinder = this._statusBarContainer;
+
+    await browser.wait(ExpectedConditions.visibilityOf(statusBarContainer), browser.params.defaultTimeoutMS);
   }
 
+  public async getVisibilityOfLeftContainer(): Promise<boolean> {
+
+    return this._leftStatusBarContainer.isDisplayed();
+  }
+
+  public async getVisibilityOfCenterContainer(): Promise<boolean> {
+
+    return this._centerStatusBarContainer.isDisplayed();
+  }
+
+  public async getVisibilityOfRightContainer(): Promise<boolean> {
+
+    return this._rightStatusBarContainer.isDisplayed();
+  }
+
+  // General Design Buttons
+
+  public async getVisibilityOfEnableXmlViewButton(): Promise<boolean> {
+
+    return this._enableXmlViewButton.isDisplayed();
+  }
+
+  public async clickOnEnableXmlViewButton(): Promise<void> {
+
+    return this._enableXmlViewButton.click();
+  }
+
+  public async getVisibilityOfDisableXmlViewButton(): Promise<boolean> {
+
+    return this._disableXmlViewButton.isDisplayed();
+  }
+
+  public async clickOnDisableXmlViewButton(): Promise<void> {
+
+    return this._disableXmlViewButton.click();
+  }
+
+  public async getVisibilityOfEnableDiffViewButton(): Promise<boolean> {
+
+    return this._enableDiffViewButton.isDisplayed();
+  }
+
+  public async clickOnEnableDiffViewButton(): Promise<void> {
+
+    return this._enableDiffViewButton.click();
+  }
+
+  public async getVisibilityOfDisableDiffViewButton(): Promise<boolean> {
+
+    return this._disableDiffViewButton.isDisplayed();
+  }
+
+  public async clickOnDisableDiffViewButton(): Promise<void> {
+
+    return this._disableDiffViewButton.click();
+  }
+
+  // Diff View Buttons
+
+  public async getVisibilityOfNewVsOldButton(): Promise<boolean> {
+
+    return this._newVsOldButton.isDisplayed();
+  }
+
+  public async clickOnNewVsOldButton(): Promise<void> {
+
+    return this._newVsOldButton.click();
+  }
+
+  public async getActiveStateOfNewVsOldButton(): Promise<boolean> {
+    const classNames: string = await this._newVsOldButton.getAttribute('class');
+    const buttonIsActive: boolean = classNames.includes(this._activeClass);
+
+    return buttonIsActive;
+  }
+
+  public async getVisibilityOfOldVsNewButton(): Promise<boolean> {
+
+    return this._oldVsNewButton.isDisplayed();
+  }
+
+  public async clickOnOldVsNewButton(): Promise<void> {
+
+    return this._oldVsNewButton.click();
+  }
+
+  public async getActiveStateOfOldVsNewButton(): Promise<boolean> {
+    const classNames: string = await this._oldVsNewButton.getAttribute('class');
+    const buttonIsActive: boolean = classNames.includes(this._activeClass);
+
+    return buttonIsActive;
+  }
+
+  public async getVisibilityOfChangeLogButton(): Promise<boolean> {
+
+    return this._changeLogButton.isDisplayed();
+  }
+
+  public async clickOnChangeLogButton(): Promise<void> {
+
+    return this._changeLogButton.click();
+  }
+
+  public async getActiveStateOfChangeLogButton(): Promise<boolean> {
+    const classNames: string = await this._changeLogButton.getAttribute('class');
+    const buttonIsActive: boolean = classNames.includes(this._activeClass);
+
+    return buttonIsActive;
+  }
+
+  private get _statusBarContainer(): ElementFinder {
+    const statusBarByTag: By = by.tagName(this._statusBarTag);
+
+    return element(statusBarByTag);
+  }
+
+  private get _leftStatusBarContainer(): ElementFinder {
+    const leftContainerById: By = by.id(this._leftStatusBarContainerId);
+
+    return element(leftContainerById);
+  }
+
+  private get _centerStatusBarContainer(): ElementFinder {
+    const centerContainerById: By = by.id(this._centerStatusBarContainerId);
+
+    return element(centerContainerById);
+  }
+
+  private get _rightStatusBarContainer(): ElementFinder {
+    const rightContainerById: By = by.id(this._rightStatusBarContainerId);
+
+    return element(rightContainerById);
+  }
+
+  private get _enableXmlViewButton(): ElementFinder {
+    const showXmlButtonById: By = by.id(this._enableXmlViewButtonId);
+
+    return element(showXmlButtonById);
+  }
+
+  private get _disableXmlViewButton(): ElementFinder {
+    const disabelXmlViewButtonById: By = by.id(this._disableXmlViewButtonId);
+
+    return element(disabelXmlViewButtonById);
+  }
+
+  private get _enableDiffViewButton(): ElementFinder {
+    const showDiffButtonById: By = by.id(this._enableDiffViewButtonId);
+
+    return element(showDiffButtonById);
+  }
+
+  private get _disableDiffViewButton(): ElementFinder {
+    const disableDiffViewButtonById: By = by.id(this._disableDiffViewButtonId);
+
+    return element(disableDiffViewButtonById);
+  }
+
+  private get _newVsOldButton(): ElementFinder {
+    const newVsOldButtonById: By = by.id(this._newVsOldButtonId);
+
+    return element(newVsOldButtonById);
+  }
+
+  private get _oldVsNewButton(): ElementFinder {
+    const oldVsNewButtonId: By = by.id(this._oldVsNewButtonId);
+
+    return element(oldVsNewButtonId);
+  }
+
+  private get _changeLogButton(): ElementFinder {
+    const changeLogButtonById: By = by.id(this._changeLogButtonId);
+
+    return element(changeLogButtonById);
+  }
 }
