@@ -3,21 +3,25 @@ import {bindable, bindingMode, computedFrom, inject, observable} from 'aurelia-f
 import {Router} from 'aurelia-router';
 import {ValidateEvent, ValidationController} from 'aurelia-validation';
 
-import {DataModels, IManagementApi} from '@process-engine/management_api_contracts';
-import {IDiagram} from '@process-engine/solutionexplorer.contracts';
-
 import {
   IConnection,
-  IElementRegistry,
   IExtensionElement,
   IFormElement,
   IModdleElement,
   IShape,
+} from '@process-engine/bpmn-elements_contracts';
+
+import {DataModels, IManagementApi} from '@process-engine/management_api_contracts';
+import {IDiagram} from '@process-engine/solutionexplorer.contracts';
+
+import {
+  IElementRegistry,
   ISolutionEntry,
   ISolutionService,
   IUserInputValidationRule,
   NotificationType,
 } from '../../../contracts/index';
+
 import environment from '../../../environment';
 import {NotificationService} from '../../../services/notification-service/notification.service';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
