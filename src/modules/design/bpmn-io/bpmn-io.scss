@@ -225,6 +225,10 @@
  * This fixes the style of the bpmnlint icons.
  * Child combinators are used because these icons do not have a class.
  */
+.bpmn-js-bpmnlint-issues > .icons > .icon {
+  z-index: -1;
+}
+
 .bpmn-js-bpmnlint-issues > .icons > .icon > svg {
   margin-top: -3px;
 }
