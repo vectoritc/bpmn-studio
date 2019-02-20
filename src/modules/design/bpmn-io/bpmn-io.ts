@@ -165,6 +165,12 @@ export class BpmnIo {
         this.savedXml = await this.getXML();
       });
 
+      this.modeler.on('import.done', () => {
+        if (this.showLinter) {
+          this._linting.activateLinting();
+        }
+      });
+
       // Wait until the HTML is rendered
       setTimeout(() => {
         this._bpmnLintButton = document.querySelector('.bpmn-js-bpmnlint-button');
