@@ -165,7 +165,7 @@ export class BpmnIo {
         this.savedXml = await this.getXML();
       });
 
-      // Wait until the html is rendered
+      // Wait until the HTML is rendered
       setTimeout(() => {
         this._bpmnLintButton = document.querySelector('.bpmn-js-bpmnlint-button');
 
