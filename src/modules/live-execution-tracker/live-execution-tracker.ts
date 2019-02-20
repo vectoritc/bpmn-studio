@@ -34,7 +34,7 @@ type RouteParameters = {
   solutionUri: string,
   correlationId: string,
   processInstanceId: string,
-  taskId: string,
+  taskId?: string,
 };
 
 enum RequestError {
