@@ -27,3 +27,4 @@ export {IDescriptor} from './IDescriptor';
 export {IViewbox} from './IViewbox';
 export {IInnerViewbox} from './IInnerViewbox';
 export {IOuterViewbox} from './IOuterViewbox';
+export {ILinting} from './ILinting';
