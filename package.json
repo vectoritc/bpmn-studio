@@ -138,6 +138,7 @@
   "devDependencies": {
     "@essential-projects/http_contracts": "2.3.6",
     "@essential-projects/iam_contracts": "~3.4.1",
+    "@process-engine/bpmn-elements_contracts": "feature~add_setup",
     "@process-engine/consumer_api_contracts": "4.1.1",
     "@process-engine/kpi_api_contracts": "1.2.3",
     "@process-engine/management_api_contracts": "4.2.1",
