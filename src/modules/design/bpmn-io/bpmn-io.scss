@@ -236,3 +236,12 @@
 .bpmn-js-bpmnlint-button > svg {
   margin-top: -4px;
 }
+.bpmn-js-bpmnlint-issues > .group > .header {
+  padding: 3px;
+}
+
+.bpmn-js-bpmnlint-issues > .group > .header > svg {
+  margin-top: -6px;
+  margin-left: 1px;
+  margin-bottom: 0px;
+}
