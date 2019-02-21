@@ -21,6 +21,7 @@ export class PropertyPanel {
   private _generalTimerEventSectionId: string = 'js-general-timerEvent-section';
   private _extensionsBasicsSectionId: string = 'js-extensions-basics-section';
   private _extensionsProcessSectionId: string = 'js-extensions-process-section';
+  private _formsBasicsSectionId: string = 'js-forms-basics-section';
 
   public async show(): Promise<void> {
     await browser.wait(ExpectedConditions.visibilityOf(this._propertyPanelContainer), browser.params.defaultTimeoutMS);
