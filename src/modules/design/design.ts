@@ -160,6 +160,7 @@ export class Design {
        */
       const diagramDetailIsNotAttached: boolean = this.diagramDetail === undefined;
       if (diagramDetailIsNotAttached) {
+        this.xmlForDiff = this.activeDiagram.xml;
         return;
       }
 
