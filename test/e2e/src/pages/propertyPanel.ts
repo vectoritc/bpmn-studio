@@ -18,6 +18,7 @@ export class PropertyPanel {
   private _generalScriptTaskSectionId: string = 'js-general-scriptTask-section';
   private _generalServiceTaskSectionId: string = 'js-general-serviceTask-section';
   private _generalSignalEventSectionId: string = 'js-general-signalEvent-section';
+  private _generalTimerEventSectionId: string = 'js-general-timerEvent-section';
 
   public async show(): Promise<void> {
     await browser.wait(ExpectedConditions.visibilityOf(this._propertyPanelContainer), browser.params.defaultTimeoutMS);
