@@ -6,6 +6,7 @@ export class PropertyPanel {
 
   private _propertyPanelContainerId: string = 'js-properties-panel';
   private _generalBasicsSectionId: string = 'js-general-basics-section';
+  private _generalCallActivitySectionId: string = 'js-general-callActivity-section';
 
   public async show(): Promise<void> {
     await browser.wait(ExpectedConditions.visibilityOf(this._propertyPanelContainer), browser.params.defaultTimeoutMS);
