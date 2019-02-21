@@ -34,9 +34,11 @@ export class LogViewer {
   }
 
   public async correlationChanged(): Promise<void> {
-    this.log = await this._inspectCorrelationService.getLogsForCorrelation(this.correlation, this.activeSolutionEntry.identity);
+    setTimeout(async() => {
+      this.log = await this._inspectCorrelationService.getLogsForCorrelation(this.correlation, this.activeSolutionEntry.identity);
 
-    this.sortList(LogSortProperty.Time);
+      this.sortList(LogSortProperty.Time);
+    }, 0);
   }
 
   public copyToClipboard(textToCopy: string): void {
