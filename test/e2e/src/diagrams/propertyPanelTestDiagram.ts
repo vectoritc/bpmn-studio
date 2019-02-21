@@ -9,6 +9,7 @@ export class PropertyPanelTestDiagram {
   // tslint:disable-next-line:no-magic-numbers
   public name: string =  'TA_' + Math.floor(Math.random() * 1000000);
 
+  public participantId: string = 'PPTest_Participant';
   public startEventId: string = 'PPTest_StartEvent';
   public endEventId: string = 'PPTest_EndEvent';
   public scriptTaskId: string = 'PPTest_Task_Script';
@@ -43,7 +44,7 @@ export class PropertyPanelTestDiagram {
                         id="Definition_1" targetNamespace="http://bpmn.io/schema/bpmn"
                         exporter="BPMN Studio" exporterVersion="1">
         <bpmn:collaboration id="Collaboration_1cidyxu" name="">
-          <bpmn:participant id="Participant_0px403d" name="${this.name}" processRef="${this.name}" />
+          <bpmn:participant id="${this.participantId}" name="${this.name}" processRef="${this.name}" />
         </bpmn:collaboration>
         <bpmn:process id="${this.name}" name="${this.name}" isExecutable="true">
           <bpmn:laneSet>
@@ -166,7 +167,7 @@ export class PropertyPanelTestDiagram {
         <bpmn:signal id="Signal_i7DAygfG" name="Signal Name" />
         <bpmndi:BPMNDiagram id="BPMNDiagram_1">
           <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1cidyxu">
-            <bpmndi:BPMNShape id="Participant_0px403d_di" bpmnElement="Participant_0px403d">
+            <bpmndi:BPMNShape id="${this.participantId}_di" bpmnElement="${this.participantId}">
               <dc:Bounds x="-306" y="-2" width="1218" height="299" />
             </bpmndi:BPMNShape>
             <bpmndi:BPMNShape id="Lane_1xzf0d3_di" bpmnElement="Lane_1xzf0d3">
