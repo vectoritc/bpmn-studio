@@ -19,6 +19,12 @@ export class DiagramDetail {
     await browser.wait(ExpectedConditions.visibilityOf(this._diagramDetailContainer), browser.params.defaultTimeoutMS);
   }
 
+  public clickOnElement(elementId: string): void {
+    const diagramElement: HTMLElement = document.querySelector(`[data-element-id="${elementId}"]`);
+
+    diagramElement.click();
+  }
+
   public async getVisibilityOfDiagramDetailContainer(): Promise<boolean> {
     await browser.wait(ExpectedConditions.visibilityOf(this._diagramDetailContainer), browser.params.defaultTimeoutMS);
 
