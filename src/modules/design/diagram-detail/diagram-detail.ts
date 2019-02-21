@@ -35,6 +35,7 @@ export class DiagramDetail {
   @observable({changeHandler: 'correlationChanged'}) public customCorrelationId: string;
   @observable({changeHandler: 'diagramHasChangedChanged'}) public diagramHasChanged: boolean;
   @bindable({defaultBindingMode: bindingMode.oneWay}) public xml: string;
+  @bindable() public initialToken: string;
   public bpmnio: BpmnIo;
   public showUnsavedChangesModal: boolean = false;
   public showSaveForStartModal: boolean = false;
@@ -43,7 +44,6 @@ export class DiagramDetail {
   public showStartWithOptionsModal: boolean = false;
   public processesStartEvents: Array<DataModels.Events.Event> = [];
   public selectedStartEventId: string;
-  public initialToken: string;
   public hasValidationError: boolean = false;
   public diagramIsInvalid: boolean = false;
   public showRemoteSolutionOnDeployModal: boolean = false;
