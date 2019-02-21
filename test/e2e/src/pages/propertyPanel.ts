@@ -10,6 +10,7 @@ export class PropertyPanel {
   private _generalConditionalEventSectionId: string = 'js-general-conditionalEvent-section';
   private _generalErrorEventSectionId: string = 'js-general-errorEvent-section';
   private _generalEscalationEventSectionId: string = 'js-general-escalationEvent-section';
+  private _generalFlowSectionId: string = 'js-general-flow-section';
 
   public async show(): Promise<void> {
     await browser.wait(ExpectedConditions.visibilityOf(this._propertyPanelContainer), browser.params.defaultTimeoutMS);
