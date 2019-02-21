@@ -31,7 +31,7 @@ export class Design {
 
   @bindable() public activeDiagram: IDiagram;
   @bindable() public activeSolutionEntry: ISolutionEntry;
-
+  @bindable() public xmlForDiff: string;
   @bindable({defaultBindingMode: bindingMode.oneWay}) public xml: string;
 
   public showQuitModal: boolean;
@@ -43,8 +43,8 @@ export class Design {
   public propertyPanelShown: boolean;
   public showPropertyPanelButton: boolean = true;
   public showDiffDestinationButton: boolean = false;
+  public design: Design = this;
 
-  @bindable() public xmlForDiff: string;
   public diagramDetail: DiagramDetail;
 
   private _eventAggregator: EventAggregator;
