@@ -10,7 +10,7 @@ import {IIdentity} from '@essential-projects/iam_contracts';
 import {IManagementApi} from '@process-engine/management_api_contracts';
 
 import {ISolutionEntry, NotificationType} from '../../../contracts/index';
-import {NotificationService} from '../../notification/notification.service';
+import {NotificationService} from '../../../services/notification-service/notification.service';
 
 @inject('ManagementApiClientService', 'NotificationService', Router)
 export class Dashboard {

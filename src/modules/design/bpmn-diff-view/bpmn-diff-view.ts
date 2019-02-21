@@ -28,9 +28,9 @@ import {
   NotificationType,
 } from '../../../contracts/index';
 import environment from '../../../environment';
-import {SolutionService} from '../../../services/SolutionService';
-import {ElementNameService} from '../../elementname/elementname.service';
-import {NotificationService} from '../../notification/notification.service';
+import {ElementNameService} from '../../../services/elementname-service/elementname.service';
+import {NotificationService} from '../../../services/notification-service/notification.service';
+import {SolutionService} from '../../../services/solution-service/SolutionService';
 
 @inject('NotificationService',
         EventAggregator,

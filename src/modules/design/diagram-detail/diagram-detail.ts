@@ -19,7 +19,7 @@ import {
   NotificationType,
 } from '../../../contracts/index';
 import environment from '../../../environment';
-import {NotificationService} from '../../notification/notification.service';
+import {NotificationService} from '../../../services/notification-service/notification.service';
 import {BpmnIo} from '../bpmn-io/bpmn-io';
 
 @inject('ManagementApiClientService',
@@ -35,6 +35,7 @@ export class DiagramDetail {
   @observable({changeHandler: 'correlationChanged'}) public customCorrelationId: string;
   @observable({changeHandler: 'diagramHasChangedChanged'}) public diagramHasChanged: boolean;
   @bindable({defaultBindingMode: bindingMode.oneWay}) public xml: string;
+  @bindable() public initialToken: string;
   public bpmnio: BpmnIo;
   public showUnsavedChangesModal: boolean = false;
   public showSaveForStartModal: boolean = false;
@@ -43,7 +44,6 @@ export class DiagramDetail {
   public showStartWithOptionsModal: boolean = false;
   public processesStartEvents: Array<DataModels.Events.Event> = [];
   public selectedStartEventId: string;
-  public initialToken: string;
   public hasValidationError: boolean = false;
   public diagramIsInvalid: boolean = false;
   public showRemoteSolutionOnDeployModal: boolean = false;

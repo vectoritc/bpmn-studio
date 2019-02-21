@@ -3,7 +3,7 @@ import {bindable, inject} from 'aurelia-framework';
 import {DataModels} from '@process-engine/management_api_contracts';
 
 import {NotificationType} from '../../contracts/index';
-import {NotificationService} from '../notification/notification.service';
+import {NotificationService} from '../../services/notification-service/notification.service';
 
 @inject('NotificationService')
 export class ConfirmWidget {

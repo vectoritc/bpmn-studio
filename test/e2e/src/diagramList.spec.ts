@@ -1,116 +1,53 @@
-import {
-  browser,
-  ElementArrayFinder,
-  ElementFinder,
-  protractor,
-  ProtractorExpectedConditions,
-} from 'protractor';
+import {browser} from 'protractor';
 
-import {DiagramListPage} from './pages/diagramListPage';
-import {General} from './pages/general';
-import {ProcessModel} from './pages/processModel';
+import {SimpleDiagram} from './diagrams/simpleDiagram';
+import {DiagramDetail} from './pages/diagramDetail';
+import {DiagramList} from './pages/diagramList';
+import {RouterView} from './pages/routerView';
 
-describe('Diagram list', () => {
+describe('Diagram List', () => {
 
-  let general: General;
-  let diagramListPage: DiagramListPage;
-  let processModel: ProcessModel;
+  let diagramList: DiagramList;
+  let routerView: RouterView;
+  let diagram: SimpleDiagram;
+  let diagramDetail: DiagramDetail;
 
-  let diagramId: string;
+  const applicationUrl: string = browser.params.aureliaUrl;
 
-  const aureliaUrl: string = browser.params.aureliaUrl;
-  const defaultTimeoutMS: number = browser.params.defaultTimeoutMS;
+  beforeAll(async() => {
 
-  const expectedConditions: ProtractorExpectedConditions = protractor.ExpectedConditions;
+    diagram = new SimpleDiagram();
+    diagramList = new DiagramList(applicationUrl);
+    routerView = new RouterView();
+    diagramDetail = new DiagramDetail(applicationUrl, diagram.name);
 
-  beforeAll(() => {
-
-    general = new General();
-    diagramListPage = new DiagramListPage();
-    processModel = new ProcessModel();
-
-    // Get processModelId
-    diagramId = processModel.getProcessModelId();
-
-    // Create a new process definition by POST REST call
-    processModel.postProcessModel(diagramId);
+    await diagram.deployDiagram();
   });
 
   afterAll(async() => {
-
-    await processModel.deleteProcessModel();
+    await diagram.deleteDiagram();
   });
 
   beforeEach(async() => {
-    const routerViewContainer: ElementFinder = general.getRouterViewContainer;
-    const visibilityOfRouterViewContainer: Function = expectedConditions.visibilityOf(routerViewContainer);
-
-    await browser.get(aureliaUrl);
-    await browser.driver
-      .wait(() => {
-        browser
-          .wait(visibilityOfRouterViewContainer, defaultTimeoutMS);
-
-        return routerViewContainer;
-     });
-
-    const processModelLink: string = ProcessModel.getProcessModelLink();
-    const destination: string = aureliaUrl + processModelLink;
-
-    await browser.get(destination);
-    await browser.driver
-      .wait(() => {
-        browser
-          .wait(visibilityOfRouterViewContainer, defaultTimeoutMS);
-
-        return routerViewContainer;
-     });
-
-    const diagramListItem: ElementFinder = diagramListPage.diagramListItem;
-    const visibilityOfdiagramListItem: Function = expectedConditions.visibilityOf(diagramListItem);
-
-    await browser.driver
-      .wait(() => {
-        browser
-          .wait(visibilityOfdiagramListItem, defaultTimeoutMS);
-
-        return diagramListItem;
-      });
+    await routerView.show();
+    await diagramList.show();
   });
 
-  it('should contain at least one diagram.', async() => {
-    const diagramListItems: ElementArrayFinder = diagramListPage.diagramListItems;
-    const numberOfDiagrams: number = await diagramListItems.count();
+  it('should contain the deployed diagram.', async() => {
+    const visibilityOfDiagramListEntry: boolean = await diagramList.getVisibilityOfDiagramListEntry(diagram.name);
 
-    expect(numberOfDiagrams).toBeGreaterThan(0);
+    expect(visibilityOfDiagramListEntry).toBeTruthy();
   });
 
-  it('should contain just created diagram.', async() => {
-    const diagramListItemIds: ElementArrayFinder = diagramListPage.diagramListItemIds(diagramId);
-    const numberOfDiagramsById: number = await diagramListItemIds.count();
-
-    expect(numberOfDiagramsById).toBe(1);
-  });
-
-  it('should be possible to open a diagram.', async() => {
-    const diagram: ElementFinder = DiagramListPage.diagram(diagramId);
-
-    await diagram.click();
-
-    const routerViewContainer: ElementFinder = general.getRouterViewContainer;
-    const visibilityOfRouterViewContainer: Function = expectedConditions.visibilityOf(routerViewContainer);
-
-    browser.driver
-      .wait(() => {
-        browser
-          .wait(visibilityOfRouterViewContainer, defaultTimeoutMS);
-
-        return routerViewContainer;
-     });
+  it('should navigate to `detail view` after clicking on the link in the table.', async() => {
+    diagramList.clickOnDiagramListEntry(diagram.name);
 
     const currentBrowserUrl: string = await browser.getCurrentUrl();
-    const processModelLink: string = ProcessModel.getProcessModelUrl();
 
-    expect(currentBrowserUrl).toContain(processModelLink);
+    expect(currentBrowserUrl).toContain(diagramDetail.url);
+
+    const visibilityOfDiagramDetailContainer: boolean = await diagramDetail.getVisibilityOfDiagramDetailContainer();
+
+    expect(visibilityOfDiagramDetailContainer).toBeTruthy();
   });
 });

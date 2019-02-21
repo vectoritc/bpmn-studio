@@ -11,7 +11,7 @@ import {OpenIdConnect} from 'aurelia-open-id-connect';
 
 import {IAuthenticationService, NotificationType} from './contracts/index';
 import environment from './environment';
-import {NotificationService} from './modules/notification/notification.service';
+import {NotificationService} from './services/notification-service/notification.service';
 
 import {oidcConfig} from './open-id-connect-configuration';
 @inject(OpenIdConnect, 'AuthenticationService', 'NotificationService', EventAggregator)
@@ -51,6 +51,9 @@ export class App {
 
     this.showSolutionExplorer = window.localStorage.getItem('SolutionExplorerVisibility') === 'true'
                               || window.localStorage.getItem('SolutionExplorerVisibility') === null;
+
+    const showSolutionExplorer: string = this.showSolutionExplorer ? 'true' : 'false';
+    window.localStorage.setItem('SolutionExplorerVisibility', showSolutionExplorer);
 
     this._subscriptions = [
       this._eventAggregator.subscribe(environment.events.processSolutionPanel.toggleProcessSolutionExplorer, () => {

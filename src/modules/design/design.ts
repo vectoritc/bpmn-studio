@@ -12,7 +12,7 @@ import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
 import {ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
-import {NotificationService} from '../notification/notification.service';
+import {NotificationService} from '../../services/notification-service/notification.service';
 import {DiagramDetail} from './diagram-detail/diagram-detail';
 
 export interface IDesignRouteParameters {
@@ -31,7 +31,7 @@ export class Design {
 
   @bindable() public activeDiagram: IDiagram;
   @bindable() public activeSolutionEntry: ISolutionEntry;
-
+  @bindable() public xmlForDiff: string;
   @bindable({defaultBindingMode: bindingMode.oneWay}) public xml: string;
 
   public showQuitModal: boolean;
@@ -43,8 +43,8 @@ export class Design {
   public propertyPanelShown: boolean;
   public showPropertyPanelButton: boolean = true;
   public showDiffDestinationButton: boolean = false;
+  public design: Design = this;
 
-  @bindable() public xmlForDiff: string;
   public diagramDetail: DiagramDetail;
 
   private _eventAggregator: EventAggregator;
@@ -160,6 +160,7 @@ export class Design {
        */
       const diagramDetailIsNotAttached: boolean = this.diagramDetail === undefined;
       if (diagramDetailIsNotAttached) {
+        this.xmlForDiff = this.activeDiagram.xml;
         return;
       }
 

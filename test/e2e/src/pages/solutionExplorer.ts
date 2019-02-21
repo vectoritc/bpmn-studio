@@ -1,51 +1,46 @@
-import {
-  browser,
-  by,
-  element,
-  ElementArrayFinder,
-  ElementFinder,
-} from 'protractor';
+import {browser, by, element, ElementFinder, ExpectedConditions} from 'protractor';
 
-import {
-  By,
-  promise,
-} from 'selenium-webdriver';
+import {By} from 'selenium-webdriver';
 
 export class SolutionExplorer {
 
-  // Define Elements
-  private identifier: string = 'diagramList-';
-  public solutionExplorerTag: ElementFinder = element(by.tagName('solution-explorer-list'));
-  public solutionExplorerListItems: ElementArrayFinder = this.solutionExplorerTag.all(by.className('diagram-entry'));
+  private _diagramIdIdentifier: string = 'diagramList-';
+  private _solutionExplorerPanelTag: string = 'solution-explorer-panel';
 
-  // Define Functions
-  public solutionExplorerListItemsId(processModelId: string): ElementFinder {
-    const id: string = this.identifier + processModelId;
-    const byId: By = by.id(id);
-
-    return this.solutionExplorerTag.element(byId);
-  }
-  public solutionExplorerListItemsIds(processModelId: string): ElementArrayFinder {
-    const id: string = this.identifier + processModelId;
-    const byId: By = by.id(id);
-
-    return element.all(byId);
+  public async show(): Promise<void> {
+    await browser.wait(ExpectedConditions.visibilityOf(this._solutionExplorerPanelContainer), browser.params.defaultTimeoutMS);
   }
 
-  public async openProcessModelByClick(processModelId: string): promise.Promise<void> {
-    const retryCount: number = 3;
-    const hibernatingSeconds: number = 1000;
-    const solutionExplorerListItemsId: ElementFinder = this.solutionExplorerListItemsId(processModelId);
+  public async getVisbilityOfSolutionExplorer(): Promise<boolean> {
 
-    for (let currentTry: number = 1; currentTry <= retryCount; currentTry++) {
-      const itemIsPresent: boolean = await solutionExplorerListItemsId.isPresent();
-      if (itemIsPresent) {
-        break;
-      } else {
-        browser.sleep(hibernatingSeconds);
-      }
-    }
-
-    return solutionExplorerListItemsId.click();
+    return this._solutionExplorerPanelContainer.isDisplayed();
   }
+
+  public async getVisibilityOfDiagramEntry(diagramName: string): Promise<boolean> {
+    const diagramEntry: ElementFinder = this._getDiagramEntry(diagramName);
+    await browser.wait(ExpectedConditions.visibilityOf(diagramEntry), browser.params.defaultTimeoutMS);
+
+    return diagramEntry.isDisplayed();
+  }
+
+  public async openDiagramByClick(diagramName: string): Promise<void> {
+    const diagramEntry: ElementFinder = this._getDiagramEntry(diagramName);
+    await browser.wait(ExpectedConditions.visibilityOf(diagramEntry), browser.params.defaultTimeoutMS);
+
+    return diagramEntry.click();
+  }
+
+  private get _solutionExplorerPanelContainer(): ElementFinder {
+    const panelContainerByTag: By = by.tagName(this._solutionExplorerPanelTag);
+
+    return element(panelContainerByTag);
+  }
+
+  private _getDiagramEntry(diagramName: string): ElementFinder {
+    const diagramEntryById: string = this._diagramIdIdentifier + diagramName;
+    const byId: By = by.id(diagramEntryById);
+
+    return element(byId);
+  }
+
 }

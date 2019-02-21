@@ -18,7 +18,7 @@ import {defaultBpmnColors,
         IViewbox,
         NotificationType} from '../../../contracts/index';
 import environment from '../../../environment';
-import {NotificationService} from '../../notification/notification.service';
+import {NotificationService} from '../../../services/notification-service/notification.service';
 
 @inject('NotificationService')
 export class DiagramToolsRight {

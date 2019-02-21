@@ -6,7 +6,7 @@ import {IDiagram} from '@process-engine/solutionexplorer.contracts';
 
 import {ISolutionEntry, ISolutionService, NotificationType} from '../../contracts/index';
 import environment from '../../environment';
-import {NotificationService} from '../notification/notification.service';
+import {NotificationService} from '../../services/notification-service/notification.service';
 import {Dashboard} from './dashboard/dashboard';
 
 interface IInspectRouteParameters {

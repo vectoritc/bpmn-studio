@@ -1,87 +1,53 @@
-import {
-  browser,
-  ElementArrayFinder,
-  ElementFinder,
-  protractor,
-  ProtractorExpectedConditions,
-} from 'protractor';
+import {browser} from 'protractor';
 
-import {NavBar} from './pages/navBar';
-import {ProcessModel} from './pages/processModel';
+import {SimpleDiagram} from './diagrams/simpleDiagram';
+import {DiagramDetail} from './pages/diagramDetail';
+import {RouterView} from './pages/routerView';
 import {SolutionExplorer} from './pages/solutionExplorer';
 
 describe('Solution Explorer', () => {
 
-  let navBar: NavBar;
-  let processModel: ProcessModel;
   let solutionExplorer: SolutionExplorer;
+  let diagram: SimpleDiagram;
+  let routerView: RouterView;
+  let diagramDetail: DiagramDetail;
 
-  let processModelId: string;
+  const applicationUrl: string = browser.params.aureliaUrl;
 
-  const aureliaUrl: string = browser.params.aureliaUrl;
-  const defaultTimeoutMS: number = browser.params.defaultTimeoutMS;
+  beforeAll(async() => {
 
-  const expectedConditions: ProtractorExpectedConditions = protractor.ExpectedConditions;
-
-  beforeAll(() => {
-
-    navBar = new NavBar();
-    processModel = new ProcessModel();
     solutionExplorer = new SolutionExplorer();
+    diagram = new SimpleDiagram();
+    routerView = new RouterView();
+    diagramDetail = new DiagramDetail(applicationUrl, diagram.name);
 
-    processModelId = processModel.getProcessModelId();
-
-    // Create a new process definition by POST REST call
-    processModel.postProcessModel(processModelId);
+    await diagram.deployDiagram();
   });
 
   afterAll(async() => {
-
-    await processModel.deleteProcessModel();
+    await diagram.deleteDiagram();
   });
 
   beforeEach(async() => {
-    const navBarTag: ElementFinder = navBar.navBarTag;
-    const visibilityOfNavBarTag: Function = expectedConditions.visibilityOf(navBarTag);
-
-    await browser.get(aureliaUrl);
-    await browser.driver
-      .wait(() => {
-        browser.wait(visibilityOfNavBarTag, defaultTimeoutMS);
-
-        return navBarTag;
-      });
-
-    // Wait until solutions are loaded
-    await browser.driver.wait(() => {
-      browser.wait(expectedConditions.visibilityOf(solutionExplorer.solutionExplorerListItemsId(processModelId)), defaultTimeoutMS);
-
-      return solutionExplorer.solutionExplorerListItemsId(processModelId);
-    });
+    await routerView.show();
+    await solutionExplorer.show();
   });
 
-  it('should display more than one process definitions.', async() => {
-    const solutionExplorerListItems: ElementArrayFinder = solutionExplorer.solutionExplorerListItems;
-    const numberOfProcessDefinitions: number = await solutionExplorerListItems.count();
+  it('should display the deployed diagram.', async() => {
+    const diagramIsVisible: boolean = await solutionExplorer.getVisibilityOfDiagramEntry(diagram.name);
 
-    expect(numberOfProcessDefinitions).toBeGreaterThan(0);
+    expect(diagramIsVisible).toBeTruthy();
   });
 
-  it('should display created solution.', async() => {
-    const solutionExplorerListItemsIds: ElementArrayFinder = solutionExplorer.solutionExplorerListItemsIds(processModelId);
-    const numberOfProcessDefinitionsById: number = await solutionExplorerListItemsIds.count();
-
-    expect(numberOfProcessDefinitionsById).toBe(1);
-  });
-
-  it('should be possible to open a process diagram.', async() => {
-    const getProcessModelLink: string = ProcessModel.getProcessModelUrl();
-
-    await solutionExplorer.openProcessModelByClick(processModelId);
+  it('should navigate to the `detail view`, after clicking on the diagram name.', async() => {
+    await solutionExplorer.openDiagramByClick(diagram.name);
 
     const currentBrowserUrl: string = await browser.getCurrentUrl();
 
-    expect(currentBrowserUrl).toContain(getProcessModelLink);
-  });
+    expect(currentBrowserUrl).toContain(diagram.name);
 
+    const visibilityOfDiagramDetailContainer: boolean = await diagramDetail.getVisibilityOfDiagramDetailContainer();
+
+    expect(visibilityOfDiagramDetailContainer).toBeTruthy();
+  });
 });

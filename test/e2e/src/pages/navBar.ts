@@ -1,57 +1,122 @@
-import {
-  by,
-  element,
-  ElementArrayFinder,
-  ElementFinder,
-} from 'protractor';
+import {browser, by, element, ElementFinder, ExpectedConditions} from 'protractor';
 
-import {
-  By,
-  promise,
-} from 'selenium-webdriver';
+import {By} from 'selenium-webdriver';
 
 export class NavBar {
+  private _navBarContainerId: string = 'navBarContainer';
+  private _leftNavBarContainerId: string = 'navBarLeft';
+  private _centerNavBarContainerId: string = 'navBarCenter';
+  private _rightNavBarContainerId: string = 'navBarRight';
 
-  // Define Links, Urls, Classes
-  public navBarDisabledClassName: string = 'menu-tabbed-link--disabled';
+  private _thinkButtonId: string = 'navbar-Think';
+  private _designButtonId: string = 'navbar-Design';
+  private _inspectButtonId: string = 'navbar-Inspect';
+  private _solutionExplorerButtonId: string = 'navbarSolutionExplorerButton';
 
-  // Define Elements
-  private _byTagName: By = by.tagName('nav-bar');
-  private _byStatusBarContainer: By = by.id('navBarContainer');
-  private _byStatusBarLeft: By = by.id('navBarLeft');
-  private _byStatusBarCenter: By = by.id('navBarCenter');
-  private _byStatusBarRight: By = by.id('navBarRight');
-  private _byLoginButton: By = by.id('userLoginButton');
-  private _bySolutionExplorerButton: By = by.id('navbarSolutionExplorerButton');
-  private _byActiveButton: By = by.css('#navbarSolutionExplorerButton.button--active');
-  private _byThinkLink: By = by.id('navbarThink');
-  private _byDesignLink: By = by.id('navbarDesign');
-  private _byInspectLink: By = by.id('navbarInspect');
+  private _buttonActiveClassName: string = 'button--active';
 
-  public navBarTag: ElementFinder = element(this._byTagName);
-  public navBarContainer: ElementFinder = this.navBarTag.element(this._byStatusBarContainer);
-  public navBarContainerLeft: ElementFinder = this.navBarTag.element(this._byStatusBarLeft);
-  public navBarContainerCenter: ElementFinder = this.navBarTag.element(this._byStatusBarCenter);
-  public navBarContainerRight: ElementFinder = this.navBarTag.element(this._byStatusBarRight);
-  public navBarLogInButton: ElementFinder = this.navBarTag.element(this._byLoginButton);
-
-  public navBarSolutionExplorerButton: ElementFinder = this.navBarTag.element(this._bySolutionExplorerButton);
-  public navBarActiveSolutionExplorer: ElementArrayFinder = this.navBarTag.all(this._byActiveButton);
-
-  public navBarThinkLink: ElementFinder = this.navBarTag.element(this._byThinkLink);
-  public navBarDesignLink: ElementFinder = this.navBarTag.element(this._byDesignLink);
-  public navBarInspectLink: ElementFinder = this.navBarTag.element(this._byInspectLink);
-
-  // Define Functions
-  public openSolutionExplorerByButtonClick(): promise.Promise<void> {
-    return this.navBarSolutionExplorerButton.click();
+  public async show(): Promise<void> {
+    await browser.wait(ExpectedConditions.visibilityOf(this._navBarContainer), browser.params.defaultTimeoutMS);
   }
 
-  public async navBarButtonIsDisabled(button: ElementFinder): Promise<boolean> {
-    const navBarButtonAttributes: string = await button.getAttribute('class');
-    const containsDisabledAttribute: boolean = navBarButtonAttributes.includes(this.navBarDisabledClassName);
+  public async getVisibilityOfLeftContainer(): Promise<boolean> {
 
-    return !containsDisabledAttribute;
+    return this._leftNavBarContainer.isDisplayed();
+  }
+
+  public async getVisibilityOfCenterContainer(): Promise<boolean> {
+
+    return this._centerNavBarContainer.isDisplayed();
+  }
+
+  public async getVisibilityOfRightContainer(): Promise<boolean> {
+
+    return this._rightNavBarContainer.isDisplayed();
+  }
+
+  public async getVisibilityOfSolutionExplorerButton(): Promise<boolean> {
+
+    return this._solutionExplorerButton.isDisplayed();
+  }
+
+  public async getActiveStateOfSolutionExplorerButton(): Promise<boolean> {
+    const attributes: string = await this._solutionExplorerButton.getAttribute('class');
+    const containsActiveClass: boolean = attributes.includes(this._buttonActiveClassName);
+
+    return containsActiveClass;
+  }
+
+  public async clickOnSolutionExplorerButton(): Promise<void> {
+
+    return this._solutionExplorerButton.click();
+  }
+
+  public async getVisibilityOfThinkButton(): Promise<boolean> {
+
+    return this._thinkButton.isDisplayed();
+  }
+
+  public async getVisibilityOfDesignButton(): Promise<boolean> {
+
+    return this._designButton.isDisplayed();
+  }
+
+  public async getVisibilityOfInspectButton(): Promise<boolean> {
+
+    return this._inspectButton.isDisplayed();
+  }
+
+  public async clickOnInspectButton(): Promise<void> {
+
+    return this._inspectButton.click();
+  }
+
+  private get _navBarContainer(): ElementFinder {
+    const navBarContainerById: By = by.id(this._navBarContainerId);
+
+    return element(navBarContainerById);
+  }
+
+  private get _leftNavBarContainer(): ElementFinder {
+    const leftNavBarContainerById: By = by.id(this._leftNavBarContainerId);
+
+    return element(leftNavBarContainerById);
+  }
+
+  private get _centerNavBarContainer(): ElementFinder {
+    const centerNavBarContainer: By = by.id(this._centerNavBarContainerId);
+
+    return element(centerNavBarContainer);
+  }
+
+  private get _rightNavBarContainer(): ElementFinder {
+    const rightNavBarContainerById: By = by.id(this._rightNavBarContainerId);
+
+    return element(rightNavBarContainerById);
+  }
+
+  private get _solutionExplorerButton(): ElementFinder {
+    const solutionExlorerButtonById: By = by.id(this._solutionExplorerButtonId);
+
+    return element(solutionExlorerButtonById);
+  }
+
+  private get _thinkButton(): ElementFinder {
+    const thinkButtonById: By = by.id(this._thinkButtonId);
+
+    return element(thinkButtonById);
+  }
+
+  private get _designButton(): ElementFinder {
+    const designButtonById: By = by.id(this._designButtonId);
+
+    return element(designButtonById);
+  }
+
+  private get _inspectButton(): ElementFinder {
+    const inspectButtonById: By = by.id(this._inspectButtonId);
+
+    return element(inspectButtonById);
   }
 
 }

@@ -2,7 +2,7 @@ import {Aurelia, RelativeViewStrategy} from 'aurelia-framework';
 
 import {NotificationType} from './contracts/index';
 import environment from './environment';
-import {NotificationService} from './modules/notification/notification.service';
+import {NotificationService} from './services/notification-service/notification.service';
 
 import {oidcConfig} from './open-id-connect-configuration';
 
@@ -47,20 +47,20 @@ export function configure(aurelia: Aurelia): void {
     .standardConfiguration()
     .globalResources('modules/custom_elements/modal/modal.html')
     .feature('modules/fetch-http-client')
-    .feature('modules/dynamic-ui')
-    .feature('modules/notification')
-    .feature('modules/diagram-validation-service')
+    .feature('services/dynamic-ui-service')
+    .feature('services/notification-service')
+    .feature('services/diagram-validation-service')
     .feature('modules/management-api_client')
-    .feature('modules/authentication')
+    .feature('services/authentication-service')
     /*
-     * The modules/solution-explorer-services has a hard dependency on
+     * The services/solution-explorer-services has a hard dependency on
      * EventAggregator and AuthenticationService.
      */
-    .feature('modules/solution-explorer-services')
+    .feature('services/solution-explorer-services')
     .feature('modules/inspect/inspect-correlation')
-    .feature('modules/diagram-creation-service')
+    .feature('services/diagram-creation-service')
+    .feature('services/solution-service')
     .feature('modules/inspect/heatmap')
-    .feature('services')
     .plugin('aurelia-bootstrap')
     .plugin('aurelia-validation')
     .plugin('aurelia-open-id-connect', () => oidcConfig);

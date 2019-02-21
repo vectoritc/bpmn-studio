@@ -3,6 +3,7 @@ import {EventAggregator, Subscription} from 'aurelia-event-aggregator';
 import {bindable, bindingMode, inject, observable} from 'aurelia-framework';
 
 import * as bundle from '@process-engine/bpmn-js-custom-bundle';
+import * as bpmnlintConfig from '@process-engine/bpmn-lint_rules';
 
 import {
   IBpmnModeler,
@@ -15,6 +16,7 @@ import {
   IEventFunction,
   IInternalEvent,
   IKeyboard,
+  ILinting,
   IModdleElement,
   IProcessRef,
   IPropertiesElement,
@@ -23,7 +25,7 @@ import {
   NotificationType,
 } from '../../../contracts/index';
 import environment from '../../../environment';
-import {NotificationService} from '../../notification/notification.service';
+import {NotificationService} from '../../../services/notification-service/notification.service';
 import {DiagramExportService, DiagramPrintService} from './services/index';
 
 const sideBarRightSize: number = 35;
@@ -41,12 +43,16 @@ export class BpmnIo {
   @bindable({changeHandler: 'nameChanged'}) public name: string;
   @bindable() public openedFromProcessEngine: boolean = true;
   @observable public propertyPanelWidth: number;
+  public showLinter: boolean;
 
   public savedXml: string;
   public showPropertyPanel: boolean = false;
   public colorPickerLoaded: boolean = false;
   public minCanvasWidth: number = 100;
   public minPropertyPanelWidth: number = 200;
+
+  private _bpmnLintButton: HTMLElement;
+  private _linting: ILinting;
 
   private _propertyPanelShouldOpen: boolean = false;
   private _propertyPanelHiddenForSpaceReasons: boolean = false;
@@ -85,7 +91,11 @@ export class BpmnIo {
         bundle.ZoomScrollModule,
         bundle.MoveCanvasModule,
         bundle.resizeAllModule,
+        bundle.lintModule,
       ],
+      linting: {
+        bpmnlint: bpmnlintConfig,
+      },
       moddleExtensions: {
         camunda: bundle.camundaModdleDescriptor,
       },
@@ -154,6 +164,21 @@ export class BpmnIo {
       this.modeler.importXML(this.xml, async(err: Error) => {
         this.savedXml = await this.getXML();
       });
+
+      this.modeler.on('import.done', () => {
+        if (this.showLinter) {
+          this._linting.activateLinting();
+        }
+      });
+
+      // Wait until the HTML is rendered
+      setTimeout(() => {
+        this._bpmnLintButton = document.querySelector('.bpmn-js-bpmnlint-button');
+
+        this._bpmnLintButton.style.display = 'none';
+
+        this._linting = this.modeler.get('linting');
+      }, 0);
     }
 
     this.modeler.attachTo(this.canvasModel);
@@ -404,6 +429,20 @@ export class BpmnIo {
       });
     });
     return returnPromise;
+  }
+
+  public toggleLinter(): void {
+    this.showLinter = !this.showLinter;
+
+    if (this.showLinter) {
+      this._bpmnLintButton.style.display = 'block';
+
+      this._linting.activateLinting();
+    } else {
+      this._bpmnLintButton.style.display = 'none';
+
+      this._linting.deactivateLinting();
+    }
   }
 
   private _fitDiagramToViewport(): void {

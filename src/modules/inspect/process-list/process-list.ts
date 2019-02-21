@@ -12,7 +12,7 @@ import {
   NotificationType,
 } from '../../../contracts/index';
 import environment from '../../../environment';
-import {NotificationService} from '../../notification/notification.service';
+import {NotificationService} from '../../../services/notification-service/notification.service';
 
 @inject('ManagementApiClientService', EventAggregator, 'NotificationService', 'SolutionService', Router)
 export class ProcessList {

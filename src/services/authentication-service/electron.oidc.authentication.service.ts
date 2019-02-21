@@ -9,7 +9,8 @@ import {AuthenticationStateEvent,
         ITokenObject,
         IUserIdentity,
         NotificationType} from '../../contracts/index';
-import {NotificationService} from '../notification/notification.service';
+
+import {NotificationService} from '../../services/notification-service/notification.service';
 
 const UNAUTHORIZED_STATUS_CODE: number = 401;
 const IDENTITY_SERVER_AVAILABLE_SUCCESS_STATUS_CODE: number = 200;
