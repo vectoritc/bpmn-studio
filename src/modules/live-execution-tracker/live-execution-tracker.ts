@@ -456,22 +456,7 @@ export class LiveExecutionTracker {
   private _elementClickHandler: (event: IEvent) => Promise<void> = async(event: IEvent) => {
     const clickedElement: IShape = event.element;
 
-    this.selectedFlowNode = event.element;
-
-    const clickedElementIsNotAUserOrManualTask: boolean = clickedElement.type !== 'bpmn:UserTask'
-                                                       && clickedElement.type !== 'bpmn:ManualTask';
-
-    if (clickedElementIsNotAUserOrManualTask) {
-      return;
-    }
-
-    const elementHasNoActiveToken: boolean = !this._hasElementActiveToken(clickedElement.id);
-    if (elementHasNoActiveToken) {
-      return;
-    }
-
-    this.showDynamicUiModal = true;
-    this.taskId = clickedElement.id;
+    this.selectedFlowNode = clickedElement;
   }
 
   private async _getElementsWithActiveToken(elements: Array<IShape>): Promise<Array<IShape> | null> {
