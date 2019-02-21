@@ -838,6 +838,10 @@ export class LiveExecutionTracker {
 
       if (correlationIsStillActive && this._attached) {
         this._startPolling();
+      } else {
+        // Clear overlays after process stopped
+        this._elementsWithEventListeners = [];
+        this._overlays.clear();
       }
     }, environment.processengine.liveExecutionTrackerPollingIntervalInMs);
   }
