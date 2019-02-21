@@ -13,6 +13,7 @@ export class PropertyPanel {
   private _generalFlowSectionId: string = 'js-general-flow-section';
   private _generalMessageEventSectionId: string = 'js-general-messageEvent-section';
   private _generalMessageTaskSectionId: string = 'js-general-messageTask-section';
+  private _generalPoolSectionId: string = 'js-general-pool-section';
 
   public async show(): Promise<void> {
     await browser.wait(ExpectedConditions.visibilityOf(this._propertyPanelContainer), browser.params.defaultTimeoutMS);
