@@ -93,7 +93,11 @@ export class SolutionExplorerPanel {
 
     const persistedSingleDiagrams: Array<IDiagram> = this._solutionService.getSingleDiagrams();
     persistedSingleDiagrams.forEach(async(diagram: IDiagram) => {
-      await this.solutionExplorerList.openSingleDiagram(diagram.uri);
+      try {
+        await this.solutionExplorerList.openSingleDiagram(diagram.uri);
+      } catch (error) {
+        this._solutionService.removeSingleDiagramByUri(diagram.uri);
+      }
     });
 
   }

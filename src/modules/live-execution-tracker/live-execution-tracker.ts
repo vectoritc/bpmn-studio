@@ -331,8 +331,8 @@ export class LiveExecutionTracker {
     for (const element of activeManualAndUserTasks) {
       this._overlays.add(element, {
         position: {
-          left: -1,
-          top: -1,
+          left: 30,
+          top: 25,
         },
         html: `<div class="play-task-button-container" id="${element.id}"><i class="fas fa-play play-task-button"></i></div>`,
       });
@@ -456,22 +456,7 @@ export class LiveExecutionTracker {
   private _elementClickHandler: (event: IEvent) => Promise<void> = async(event: IEvent) => {
     const clickedElement: IShape = event.element;
 
-    this.selectedFlowNode = event.element;
-
-    const clickedElementIsNotAUserOrManualTask: boolean = clickedElement.type !== 'bpmn:UserTask'
-                                                       && clickedElement.type !== 'bpmn:ManualTask';
-
-    if (clickedElementIsNotAUserOrManualTask) {
-      return;
-    }
-
-    const elementHasNoActiveToken: boolean = !this._hasElementActiveToken(clickedElement.id);
-    if (elementHasNoActiveToken) {
-      return;
-    }
-
-    this.showDynamicUiModal = true;
-    this.taskId = clickedElement.id;
+    this.selectedFlowNode = clickedElement;
   }
 
   private async _getElementsWithActiveToken(elements: Array<IShape>): Promise<Array<IShape> | null> {
@@ -853,6 +838,10 @@ export class LiveExecutionTracker {
 
       if (correlationIsStillActive && this._attached) {
         this._startPolling();
+      } else {
+        // Clear overlays after process stopped
+        this._elementsWithEventListeners = [];
+        this._overlays.clear();
       }
     }, environment.processengine.liveExecutionTrackerPollingIntervalInMs);
   }

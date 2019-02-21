@@ -155,9 +155,18 @@ export class StatusBar {
     const diagramIsSet: boolean = diagramName !== undefined;
 
     if (solutionIsSet && diagramIsSet) {
-      this.activeDiagram = await this.activeSolutionEntry
-        .service
-        .loadDiagram(diagramName);
+      const activeSolutionIsSingleDiagramSolution: boolean = solutionUriFromNavigation === 'Single Diagrams';
+      if (activeSolutionIsSingleDiagramSolution) {
+        const persistedDiagrams: Array<IDiagram> = this._solutionService.getSingleDiagrams();
+
+        this.activeDiagram = persistedDiagrams.find((diagram: IDiagram) => {
+          return diagram.name === diagramName;
+        });
+      } else {
+        this.activeDiagram = await this.activeSolutionEntry
+          .service
+          .loadDiagram(diagramName);
+      }
     }
   }
 }
