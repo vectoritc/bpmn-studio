@@ -95,6 +95,10 @@ export class PropertyPanel {
     return this._extensionsProcessSection.isDisplayed();
   }
 
+  public async getVisbilityOfFormBasicsSection(): Promise<boolean> {
+    return this._formBasicsSection.isDisplayed();
+  }
+
   private get _propertyPanelContainer(): ElementFinder {
     const propertyPanelContainerById: By = by.id(this._propertyPanelContainerId);
 
