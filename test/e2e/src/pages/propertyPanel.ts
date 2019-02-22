@@ -111,4 +111,28 @@ export class PropertyPanel {
     return element(signalEventSectionById);
   }
 
+  private get _timerEventSection(): ElementFinder {
+    const timerEventSectionById: By = by.id(this._generalTimerEventSectionId);
+
+    return element(timerEventSectionById);
+  }
+
+  private get _extensionsBasicsSection(): ElementFinder {
+    const extensionsBasicsSectionById: By = by.id(this._extensionsBasicsSectionId);
+
+    return element(extensionsBasicsSectionById);
+  }
+
+  private get _extensionsProcessSection(): ElementFinder {
+    const extensionsProcessSectionById: By = by.id(this._extensionsProcessSectionId);
+
+    return element(extensionsProcessSectionById);
+  }
+
+  private get _formBasicsSection(): ElementFinder {
+    const formBasicsSection: By = by.id(this._formsBasicsSectionId);
+
+    return element(formBasicsSection);
+  }
+
 }
