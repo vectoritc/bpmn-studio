@@ -86,6 +86,15 @@ export class PropertyPanel {
   public async getVisbilityOfTimerEventSection(): Promise<boolean> {
     return this._timerEventSection.isDisplayed();
   }
+
+  public async getVisbilityOfExtensionsBasicSection(): Promise<boolean> {
+    return this._extensionsBasicsSection.isDisplayed();
+  }
+
+  public async getVisbilityOfExtensionsProcessSection(): Promise<boolean> {
+    return this._extensionsProcessSection.isDisplayed();
+  }
+
   private get _propertyPanelContainer(): ElementFinder {
     const propertyPanelContainerById: By = by.id(this._propertyPanelContainerId);
 
