@@ -27,6 +27,65 @@ export class PropertyPanel {
     await browser.wait(ExpectedConditions.visibilityOf(this._propertyPanelContainer), browser.params.defaultTimeoutMS);
   }
 
+  public async getVisbilityOfPropertyPanelContainer(): Promise<boolean> {
+    return this._propertyPanelContainer.isDisplayed();
+  }
+
+  public async getVisibilityOfGeneralBasicsSection(): Promise<boolean> {
+    return this._generalBasicsSection.isDisplayed();
+  }
+
+  public async getVisibilityOfCallActivitySection(): Promise<boolean> {
+    return this._callActivitySection.isDisplayed();
+  }
+
+  public async getVisibilityOfConditionalEventSection(): Promise<boolean> {
+    return this._conditionalEventSection.isDisplayed();
+  }
+
+  public async getVisibilityOfErrorEventSection(): Promise<boolean> {
+    return this._errorEventSection.isDisplayed();
+  }
+
+  public async getVisibilityOfEscalationEventSection(): Promise<boolean> {
+    return this._escalationEventSection.isDisplayed();
+  }
+
+  public async getVisibilityOfFlowSection(): Promise<boolean> {
+    return this._flowSection.isDisplayed();
+  }
+
+  public async getVisibilityOfMessageEventSection(): Promise<boolean> {
+    return this._messageEventSection.isDisplayed();
+  }
+
+  public async getVisibilityOfMessageTaskSection(): Promise<boolean> {
+    return this._messageTaskSection.isDisplayed();
+  }
+
+  public async getVisibilityOfPoolSection(): Promise<boolean> {
+    return this._poolSection.isDisplayed();
+  }
+
+  public async getVisibilityOfScriptTaskSection(): Promise<boolean> {
+    return this._scriptTaskSection.isDisplayed();
+  }
+
+  public async getVisibilityOfGeneralProcessSection(): Promise<boolean> {
+    return this._generalProcessSection.isDisplayed();
+  }
+
+  public async getVisbilityOfServiceTaskSection(): Promise<boolean> {
+    return this._serviceTaskSection.isDisplayed();
+  }
+
+  public async getVisbilityOfSignalEventSection(): Promise<boolean> {
+    return this._signalEventSection.isDisplayed();
+  }
+
+  public async getVisbilityOfTimerEventSection(): Promise<boolean> {
+    return this._timerEventSection.isDisplayed();
+  }
   private get _propertyPanelContainer(): ElementFinder {
     const propertyPanelContainerById: By = by.id(this._propertyPanelContainerId);
 
