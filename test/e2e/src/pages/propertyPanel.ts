@@ -32,4 +32,83 @@ export class PropertyPanel {
 
     return element(propertyPanelContainerById);
   }
+
+  private get _generalBasicsSection(): ElementFinder {
+    const generalBasicsSectionById: By = by.id(this._generalBasicsSectionId);
+
+    return element(generalBasicsSectionById);
+  }
+
+  private get _callActivitySection(): ElementFinder {
+    const callActivitySectionById: By = by.id(this._generalCallActivitySectionId);
+
+    return element(callActivitySectionById);
+  }
+
+  private get _conditionalEventSection(): ElementFinder {
+    const conditionalEventSectionById: By = by.id(this._generalConditionalEventSectionId);
+
+    return element(conditionalEventSectionById);
+  }
+
+  private get _errorEventSection(): ElementFinder {
+    const errorEventSectionById: By = by.id(this._generalErrorEventSectionId);
+
+    return element(errorEventSectionById);
+  }
+
+  private get _escalationEventSection(): ElementFinder {
+    const escalationEventSectionById: By = by.id(this._generalEscalationEventSectionId);
+
+    return element(escalationEventSectionById);
+  }
+
+  private get _flowSection(): ElementFinder {
+    const flowSectionById: By = by.id(this._generalFlowSectionId);
+
+    return element(flowSectionById);
+  }
+
+  private get _messageEventSection(): ElementFinder {
+    const messageEventSectionById: By = by.id(this._generalMessageEventSectionId);
+
+    return element(messageEventSectionById);
+  }
+
+  private get _messageTaskSection(): ElementFinder {
+    const messageTaskSectionById: By = by.id(this._generalMessageTaskSectionId);
+
+    return element(messageTaskSectionById);
+  }
+
+  private get _poolSection(): ElementFinder {
+    const poolSectionById: By = by.id(this._generalPoolSectionId);
+
+    return element(poolSectionById);
+  }
+
+  private get _generalProcessSection(): ElementFinder {
+    const processSectionById: By = by.id(this._generalProcessSectionId);
+
+    return element(processSectionById);
+  }
+
+  private get _scriptTaskSection(): ElementFinder {
+    const scriptTaskSectionById: By = by.id(this._generalScriptTaskSectionId);
+
+    return element(scriptTaskSectionById);
+  }
+
+  private get _serviceTaskSection(): ElementFinder {
+    const serviceTaskSectionById: By = by.id(this._generalServiceTaskSectionId);
+
+    return element(serviceTaskSectionById);
+  }
+
+  private get _signalEventSection(): ElementFinder {
+    const signalEventSectionById: By = by.id(this._generalSignalEventSectionId);
+
+    return element(signalEventSectionById);
+  }
+
 }
