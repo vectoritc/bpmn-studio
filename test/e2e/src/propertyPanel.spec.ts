@@ -143,4 +143,28 @@ describe('Property Panel', () => {
     expect(visbilityOfServiceTaskSection).toBeTruthy();
   });
 
+  it('should show SignalEvent section after click on SignalStartEvent.', async() => {
+    await diagramDetail.clickOnElement(diagram.signalStartEventId);
+
+    const visbilityOfSignalEventSection: boolean = await propertyPanel.getVisbilityOfSignalEventSection();
+
+    expect(visbilityOfSignalEventSection).toBeTruthy();
+  });
+
+  it('should show SignalEvent section after click on intermediate SignalSendEvent.', async() => {
+    await diagramDetail.clickOnElement(diagram.intermediateSignalSendEventId);
+
+    const visbilityOfSignalEventSection: boolean = await propertyPanel.getVisbilityOfSignalEventSection();
+
+    expect(visbilityOfSignalEventSection).toBeTruthy();
+  });
+
+  it('should show SignalEvent section after click on intermediate SignalCatchEvent.', async() => {
+    await diagramDetail.clickOnElement(diagram.intermediateSignalCatchEventId);
+
+    const visbilityOfSignalEventSection: boolean = await propertyPanel.getVisbilityOfSignalEventSection();
+
+    expect(visbilityOfSignalEventSection).toBeTruthy();
+  });
+
 });
