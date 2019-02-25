@@ -47,4 +47,12 @@ describe('Property Panel', () => {
     expect(visibilityOfGeneralBasicsSection).toBeTruthy();
   });
 
+  it('should show CallActivity section after click on CallActivity.', async() => {
+    await diagramDetail.clickOnElement(diagram.callActivityId);
+
+    const visbilityOfCallActivitySection: boolean = await propertyPanel.getVisibilityOfCallActivitySection();
+
+    expect(visbilityOfCallActivitySection).toBeTruthy();
+  });
+
 });
