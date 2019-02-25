@@ -71,4 +71,12 @@ describe('Property Panel', () => {
     expect(visbilityOfErrorEventSection).toBeTruthy();
   });
 
+  it('should show EscalationEvent section after click on EscalationEvent.', async() => {
+    await diagramDetail.clickOnElement(diagram.intermediateEscalationEventId);
+
+    const visbilityOfEscalationEventSection: boolean = await propertyPanel.getVisibilityOfEscalationEventSection();
+
+    expect(visbilityOfEscalationEventSection).toBeTruthy();
+  });
+
 });
