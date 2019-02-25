@@ -28,75 +28,125 @@ export class PropertyPanel {
   }
 
   public async getVisbilityOfPropertyPanelContainer(): Promise<boolean> {
+    this._waitForVisbilityOfElement(this._propertyPanelContainer);
+
     return this._propertyPanelContainer.isDisplayed();
   }
 
   public async getVisibilityOfGeneralBasicsSection(): Promise<boolean> {
+    await this._waitForVisbilityOfElement(this._generalBasicsSection);
+
     return this._generalBasicsSection.isDisplayed();
   }
 
   public async getVisibilityOfCallActivitySection(): Promise<boolean> {
+    await this._waitForVisbilityOfElement(this._callActivitySection);
+
     return this._callActivitySection.isDisplayed();
   }
 
   public async getVisibilityOfConditionalEventSection(): Promise<boolean> {
+    await this._waitForVisbilityOfElement(this._conditionalEventSection);
+
     return this._conditionalEventSection.isDisplayed();
   }
 
   public async getVisibilityOfErrorEventSection(): Promise<boolean> {
+    await this._waitForVisbilityOfElement(this._errorEventSection);
+
     return this._errorEventSection.isDisplayed();
   }
 
   public async getVisibilityOfEscalationEventSection(): Promise<boolean> {
+    await this._waitForVisbilityOfElement(this._escalationEventSection);
+
     return this._escalationEventSection.isDisplayed();
   }
 
   public async getVisibilityOfFlowSection(): Promise<boolean> {
+    await this._waitForVisbilityOfElement(this._flowSection);
+
     return this._flowSection.isDisplayed();
   }
 
   public async getVisibilityOfMessageEventSection(): Promise<boolean> {
+    await this._waitForVisbilityOfElement(this._messageEventSection);
+
     return this._messageEventSection.isDisplayed();
   }
 
   public async getVisibilityOfMessageTaskSection(): Promise<boolean> {
+    await this._waitForVisbilityOfElement(this._messageTaskSection);
+
     return this._messageTaskSection.isDisplayed();
   }
 
   public async getVisibilityOfPoolSection(): Promise<boolean> {
+    await this._waitForVisbilityOfElement(this._poolSection);
+
     return this._poolSection.isDisplayed();
   }
 
   public async getVisibilityOfScriptTaskSection(): Promise<boolean> {
+    await this._waitForVisbilityOfElement(this._scriptTaskSection);
+
     return this._scriptTaskSection.isDisplayed();
   }
 
   public async getVisibilityOfGeneralProcessSection(): Promise<boolean> {
+    await this._waitForVisbilityOfElement(this._generalProcessSection);
+
     return this._generalProcessSection.isDisplayed();
   }
 
   public async getVisbilityOfServiceTaskSection(): Promise<boolean> {
+    await this._waitForVisbilityOfElement(this._serviceTaskSection);
+
     return this._serviceTaskSection.isDisplayed();
   }
 
   public async getVisbilityOfSignalEventSection(): Promise<boolean> {
+    await this._waitForVisbilityOfElement(this._signalEventSection);
+
     return this._signalEventSection.isDisplayed();
   }
 
   public async getVisbilityOfTimerEventSection(): Promise<boolean> {
+    await this._waitForVisbilityOfElement(this._timerEventSection);
+
     return this._timerEventSection.isDisplayed();
   }
 
   public async getVisbilityOfExtensionsBasicSection(): Promise<boolean> {
+    await this._waitForVisbilityOfElement(this._extensionsBasicsSection);
+
     return this._extensionsBasicsSection.isDisplayed();
   }
 
+  public async getPresenceOfExtensionsBasicSection(): Promise<boolean> {
+    await this._waitForVisbilityOfElement(this._extensionsBasicsSection);
+
+    return this._extensionsBasicsSection.isPresent();
+  }
+
   public async getVisbilityOfExtensionsProcessSection(): Promise<boolean> {
+    await this._waitForVisbilityOfElement(this._extensionsProcessSection);
+
     return this._extensionsProcessSection.isDisplayed();
   }
 
   public async getVisbilityOfFormBasicsSection(): Promise<boolean> {
+    await this._waitForVisbilityOfElement(this._formBasicsSection);
+
     return this._formBasicsSection.isDisplayed();
+  }
+
+  private async _waitForVisbilityOfElement(finder: ElementFinder): Promise<void> {
+    await browser.wait(ExpectedConditions.visibilityOf(finder), browser.params.defaultTimeoutMS).catch(() => {
+      // If this timeouts do nothing.
+      // We are basically supressing the timeout error here.
+      // This way we get better error messages for debugging by the actual test function.
+    });
   }
 
   private get _propertyPanelContainer(): ElementFinder {
