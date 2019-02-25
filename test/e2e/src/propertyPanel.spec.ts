@@ -135,4 +135,12 @@ describe('Property Panel', () => {
     expect(visbilityOfScriptTaskSection).toBeTruthy();
   });
 
+  it('should show ServiceTask section after click on ScriptTask.', async() => {
+    await diagramDetail.clickOnElement(diagram.serviceTaskId);
+
+    const visbilityOfServiceTaskSection: boolean = await propertyPanel.getVisbilityOfServiceTaskSection();
+
+    expect(visbilityOfServiceTaskSection).toBeTruthy();
+  });
+
 });
