@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definition_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.3">
-  <bpmn:collaboration id="Collaboration_1cidyxu" name="">
+  <bpmn:collaboration id="PPTest_Collaboration" name="">
     <bpmn:participant id="PPTest_Participant" name="PPTest" processRef="PPTest" />
   </bpmn:collaboration>
   <bpmn:process id="PPTest" name="PPTest" isExecutable="true">
@@ -22,6 +22,8 @@
         <bpmn:flowNodeRef>PPTest_StartEvent_Timer</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>PPTest_StartEvent_Signal</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>PPTest_StartEvent_Message</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>PPTest_BoundaryEvent_Conditional</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>PPTest_BoundaryEvent_Error</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:startEvent id="PPTest_StartEvent" name="Start Event">
@@ -118,12 +120,20 @@
       <bpmn:messageEventDefinition />
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="SequenceFlow_12o2b6h" sourceRef="PPTest_StartEvent_Message" targetRef="PPTest_Task_Service" />
+    <bpmn:boundaryEvent id="PPTest_BoundaryEvent_Conditional" attachedToRef="PPTest_Task_Script">
+      <bpmn:conditionalEventDefinition>
+        <bpmn:condition xsi:type="bpmn:tFormalExpression" />
+      </bpmn:conditionalEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="PPTest_BoundaryEvent_Error" attachedToRef="PPTest_Task_MessageReceive">
+      <bpmn:errorEventDefinition />
+    </bpmn:boundaryEvent>
   </bpmn:process>
   <bpmn:message id="Message_3Ythx4Yn" name="Message Name" />
   <bpmn:escalation id="Escalation_x57IyDG4" name="Escalation Name" />
   <bpmn:signal id="Signal_i7DAygfG" name="Signal Name" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1cidyxu">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="PPTest_Collaboration">
       <bpmndi:BPMNShape id="Participant_0px403d_di" bpmnElement="PPTest_Participant">
         <dc:Bounds x="-306" y="-2" width="1218" height="299" />
       </bpmndi:BPMNShape>
@@ -253,6 +263,12 @@
         <di:waypoint x="531" y="53" />
         <di:waypoint x="531" y="103" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BoundaryEvent_185l69l_di" bpmnElement="PPTest_BoundaryEvent_Error">
+        <dc:Bounds x="179" y="85" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_0jc7a75_di" bpmnElement="PPTest_BoundaryEvent_Conditional">
+        <dc:Bounds x="-13" y="85" width="36" height="36" />
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
