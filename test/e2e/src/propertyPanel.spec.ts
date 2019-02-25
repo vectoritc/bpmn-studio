@@ -79,4 +79,12 @@ describe('Property Panel', () => {
     expect(visbilityOfEscalationEventSection).toBeTruthy();
   });
 
+  it('should show MessageEvent section after click on MessageCatchEvent.', async() => {
+    await diagramDetail.clickOnElement(diagram.intermediateMessageCatchEventId);
+
+    const visibilityOfMessageEventSection: boolean = await propertyPanel.getVisibilityOfMessageEventSection();
+
+    expect(visibilityOfMessageEventSection).toBeTruthy();
+  });
+
 });
