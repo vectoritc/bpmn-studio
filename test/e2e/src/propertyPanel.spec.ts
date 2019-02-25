@@ -127,4 +127,12 @@ describe('Property Panel', () => {
     expect(visbilityOfProcessSection).toBeTruthy();
   });
 
+  it('should show ScriptTask section after click on ScriptTask.', async() => {
+    await diagramDetail.clickOnElement(diagram.scriptTaskId);
+
+    const visbilityOfScriptTaskSection: boolean = await propertyPanel.getVisibilityOfScriptTaskSection();
+
+    expect(visbilityOfScriptTaskSection).toBeTruthy();
+  });
+
 });
