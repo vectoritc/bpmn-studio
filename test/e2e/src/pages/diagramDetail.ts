@@ -1,4 +1,4 @@
-import {browser, by, element, ElementFinder, ExpectedConditions} from 'protractor';
+import {browser, by, element, ElementArrayFinder, ElementFinder, ExpectedConditions} from 'protractor';
 
 import {By} from 'selenium-webdriver';
 
@@ -19,10 +19,13 @@ export class DiagramDetail {
     await browser.wait(ExpectedConditions.visibilityOf(this._diagramDetailContainer), browser.params.defaultTimeoutMS);
   }
 
-  public clickOnElement(elementId: string): void {
-    const diagramElement: HTMLElement = document.querySelector(`[data-element-id="${elementId}"]`);
+  public async clickOnElement(elementId: string): Promise<void> {
+    const cssString: string = `[data-element-id="${elementId}"]`;
 
-    diagramElement.click();
+    const elementByCss: By  = by.css(cssString);
+    const bpmnElements: ElementArrayFinder = element.all(elementByCss);
+
+    return bpmnElements.first().click();
   }
 
   public async getVisibilityOfDiagramDetailContainer(): Promise<boolean> {
