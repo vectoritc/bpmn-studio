@@ -39,4 +39,12 @@ describe('Property Panel', () => {
     expect(visibilityOfGeneralBasicsSection).toBeTruthy();
   });
 
+  it('should show general basics section after click on StartEvent.', async() => {
+    await diagramDetail.clickOnElement(diagram.startEventId);
+
+    const visibilityOfGeneralBasicsSection: boolean = await propertyPanel.getVisibilityOfGeneralBasicsSection();
+
+    expect(visibilityOfGeneralBasicsSection).toBeTruthy();
+  });
+
 });
