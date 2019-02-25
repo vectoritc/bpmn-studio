@@ -167,4 +167,20 @@ describe('Property Panel', () => {
     expect(visbilityOfSignalEventSection).toBeTruthy();
   });
 
+  it('should show TimerEvent section after click on TimerStartEvent.', async() => {
+    await diagramDetail.clickOnElement(diagram.timerStartEventId);
+
+    const visbilityOfTimerEventSection: boolean = await propertyPanel.getVisbilityOfTimerEventSection();
+
+    expect(visbilityOfTimerEventSection).toBeTruthy();
+  });
+
+  it('should show TimerEvent section after click on intermediate TimerEvent.', async() => {
+    await diagramDetail.clickOnElement(diagram.intermediateTimerEventId);
+
+    const visbilityOfTimerEventSection: boolean = await propertyPanel.getVisbilityOfTimerEventSection();
+
+    expect(visbilityOfTimerEventSection).toBeTruthy();
+  });
+
 });
