@@ -87,4 +87,20 @@ describe('Property Panel', () => {
     expect(visibilityOfMessageEventSection).toBeTruthy();
   });
 
+  it('should show MessageEvent section after click on MessageSendEvent.', async() => {
+    await diagramDetail.clickOnElement(diagram.intermediateMessageSendEventId);
+
+    const visibilityOfMessageEventSection: boolean = await propertyPanel.getVisibilityOfMessageEventSection();
+
+    expect(visibilityOfMessageEventSection).toBeTruthy();
+  });
+
+  it('should show MessageEvent section after click on MessageStartEvent.', async() => {
+    await diagramDetail.clickOnElement(diagram.messageStartEventId);
+
+    const visibilityOfMessageEventSection: boolean = await propertyPanel.getVisibilityOfMessageEventSection();
+
+    expect(visibilityOfMessageEventSection).toBeTruthy();
+  });
+
 });
