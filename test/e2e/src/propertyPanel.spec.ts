@@ -103,4 +103,20 @@ describe('Property Panel', () => {
     expect(visibilityOfMessageEventSection).toBeTruthy();
   });
 
+  it('should show MessageTask section after click on MessageReceiveTask.', async() => {
+    await diagramDetail.clickOnElement(diagram.messageReceiveTaskId);
+
+    const visibilityOfMessageTaskSection: boolean = await propertyPanel.getVisibilityOfMessageTaskSection();
+
+    expect(visibilityOfMessageTaskSection).toBeTruthy();
+  });
+
+  it('should show MessageTask section after click on MessageSendTask.', async() => {
+    await diagramDetail.clickOnElement(diagram.messageSendTaskId);
+
+    const visibilityOfMessageTaskSection: boolean = await propertyPanel.getVisibilityOfMessageTaskSection();
+
+    expect(visibilityOfMessageTaskSection).toBeTruthy();
+  });
+
 });
