@@ -119,4 +119,12 @@ describe('Property Panel', () => {
     expect(visibilityOfMessageTaskSection).toBeTruthy();
   });
 
+  it('should show Process section after click on Collaboration.', async() => {
+    await diagramDetail.clickOnElement(diagram.collaborationId);
+
+    const visbilityOfProcessSection: boolean = await propertyPanel.getVisibilityOfGeneralProcessSection();
+
+    expect(visbilityOfProcessSection).toBeTruthy();
+  });
+
 });
