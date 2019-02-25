@@ -183,4 +183,86 @@ describe('Property Panel', () => {
     expect(visbilityOfTimerEventSection).toBeTruthy();
   });
 
+  it('should show extensions basic section after click on any element except Collaboration.', async() => {
+    await diagramDetail.clickOnElement(diagram.startEventId);
+
+    let visibilityOfExstensionsSection: boolean = await propertyPanel.getVisbilityOfExtensionsBasicSection();
+
+    expect(visibilityOfExstensionsSection).toBeTruthy();
+    await diagramDetail.clickOnElement(diagram.callActivityId);
+
+    visibilityOfExstensionsSection = await propertyPanel.getVisbilityOfExtensionsBasicSection();
+
+    expect(visibilityOfExstensionsSection).toBeTruthy();
+    await diagramDetail.clickOnElement(diagram.errorBoundaryEventId);
+
+    visibilityOfExstensionsSection = await propertyPanel.getVisbilityOfExtensionsBasicSection();
+
+    expect(visibilityOfExstensionsSection).toBeTruthy();
+    await diagramDetail.clickOnElement(diagram.conditionalBoundaryEventId);
+
+    visibilityOfExstensionsSection = await propertyPanel.getVisbilityOfExtensionsBasicSection();
+
+    expect(visibilityOfExstensionsSection).toBeTruthy();
+    await diagramDetail.clickOnElement(diagram.intermediateEscalationEventId);
+
+    visibilityOfExstensionsSection = await propertyPanel.getVisbilityOfExtensionsBasicSection();
+
+    expect(visibilityOfExstensionsSection).toBeTruthy();
+    await diagramDetail.clickOnElement(diagram.messageStartEventId);
+
+    visibilityOfExstensionsSection = await propertyPanel.getVisbilityOfExtensionsBasicSection();
+
+    expect(visibilityOfExstensionsSection).toBeTruthy();
+    await diagramDetail.clickOnElement(diagram.messageSendTaskId);
+
+    visibilityOfExstensionsSection = await propertyPanel.getVisbilityOfExtensionsBasicSection();
+
+    expect(visibilityOfExstensionsSection).toBeTruthy();
+    await diagramDetail.clickOnElement(diagram.messageReceiveTaskId);
+
+    visibilityOfExstensionsSection = await propertyPanel.getVisbilityOfExtensionsBasicSection();
+
+    expect(visibilityOfExstensionsSection).toBeTruthy();
+    await diagramDetail.clickOnElement(diagram.signalStartEventId);
+
+    visibilityOfExstensionsSection = await propertyPanel.getVisbilityOfExtensionsBasicSection();
+
+    expect(visibilityOfExstensionsSection).toBeTruthy();
+    await diagramDetail.clickOnElement(diagram.scriptTaskId);
+
+    visibilityOfExstensionsSection = await propertyPanel.getVisbilityOfExtensionsBasicSection();
+
+    expect(visibilityOfExstensionsSection).toBeTruthy();
+    await diagramDetail.clickOnElement(diagram.serviceTaskId);
+
+    visibilityOfExstensionsSection = await propertyPanel.getVisbilityOfExtensionsBasicSection();
+
+    expect(visibilityOfExstensionsSection).toBeTruthy();
+    await diagramDetail.clickOnElement(diagram.endEventId);
+
+    visibilityOfExstensionsSection = await propertyPanel.getVisbilityOfExtensionsBasicSection();
+
+    expect(visibilityOfExstensionsSection).toBeTruthy();
+    await diagramDetail.clickOnElement(diagram.intermediateMessageCatchEventId);
+
+    visibilityOfExstensionsSection = await propertyPanel.getVisbilityOfExtensionsBasicSection();
+
+    expect(visibilityOfExstensionsSection).toBeTruthy();
+    await diagramDetail.clickOnElement(diagram.intermediateMessageSendEventId);
+
+    visibilityOfExstensionsSection = await propertyPanel.getVisbilityOfExtensionsBasicSection();
+
+    expect(visibilityOfExstensionsSection).toBeTruthy();
+    await diagramDetail.clickOnElement(diagram.intermediateSignalCatchEventId);
+
+    visibilityOfExstensionsSection = await propertyPanel.getVisbilityOfExtensionsBasicSection();
+
+    expect(visibilityOfExstensionsSection).toBeTruthy();
+    await diagramDetail.clickOnElement(diagram.intermediateSignalSendEventId);
+
+    visibilityOfExstensionsSection = await propertyPanel.getVisbilityOfExtensionsBasicSection();
+
+    expect(visibilityOfExstensionsSection).toBeTruthy();
+  });
 });
