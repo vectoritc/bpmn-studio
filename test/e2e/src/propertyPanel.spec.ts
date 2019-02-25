@@ -55,4 +55,12 @@ describe('Property Panel', () => {
     expect(visbilityOfCallActivitySection).toBeTruthy();
   });
 
+  it('should show ConditionalEvent section after click on ConditionalEvent.', async() => {
+    await diagramDetail.clickOnElement(diagram.conditionalBoundaryEventId);
+
+    const visibilityOfConditionalEventSection: boolean = await propertyPanel.getVisibilityOfConditionalEventSection();
+
+    expect(visibilityOfConditionalEventSection).toBeTruthy();
+  });
+
 });
