@@ -63,4 +63,12 @@ describe('Property Panel', () => {
     expect(visibilityOfConditionalEventSection).toBeTruthy();
   });
 
+  it('should show ErrorEvent section after click on ErrorEvent.', async() => {
+    await diagramDetail.clickOnElement(diagram.errorBoundaryEventId);
+
+    const visbilityOfErrorEventSection: boolean = await propertyPanel.getVisibilityOfErrorEventSection();
+
+    expect(visbilityOfErrorEventSection).toBeTruthy();
+  });
+
 });
