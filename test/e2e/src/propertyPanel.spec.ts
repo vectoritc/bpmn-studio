@@ -32,4 +32,11 @@ describe('Property Panel', () => {
     await diagramDetail.show();
     await propertyPanel.show();
   });
+
+  it('should show general basics section after loading of the diagram.', async() => {
+    const visibilityOfGeneralBasicsSection: boolean = await propertyPanel.getVisibilityOfGeneralBasicsSection();
+
+    expect(visibilityOfGeneralBasicsSection).toBeTruthy();
+  });
+
 });
