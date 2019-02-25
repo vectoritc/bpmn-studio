@@ -265,4 +265,20 @@ describe('Property Panel', () => {
 
     expect(visibilityOfExstensionsSection).toBeTruthy();
   });
+
+  it('should not show basic extensions section after click on Collaboration.', async() => {
+    await diagramDetail.clickOnElement(diagram.collaborationId);
+
+    const visibilityOfExstensionsSection: boolean = await propertyPanel.getPresenceOfExtensionsBasicSection();
+
+    expect(visibilityOfExstensionsSection).toBeFalsy();
+  });
+
+  it('should show process extensions section after click on Collaboration.', async() => {
+    await diagramDetail.clickOnElement(diagram.collaborationId);
+
+    const visbilityOfProcessExtensionsSection: boolean = await propertyPanel.getVisbilityOfExtensionsProcessSection();
+
+    expect(visbilityOfProcessExtensionsSection).toBeTruthy();
+  });
 });
