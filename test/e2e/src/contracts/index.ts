@@ -1,2 +1,2 @@
 export * from './IRequestHeaders';
-export * from './IPayload';
+export * from './IRequestPayload';
