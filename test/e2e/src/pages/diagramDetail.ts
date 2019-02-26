@@ -22,7 +22,7 @@ export class DiagramDetail {
   public async clickOnElement(elementId: string): Promise<void> {
     const cssString: string = `[data-element-id="${elementId}"]`;
 
-    const elementByCss: By  = by.css(cssString);
+    const elementByCss: By = by.css(cssString);
     const bpmnElements: ElementArrayFinder = element.all(elementByCss);
 
     return bpmnElements.first().click();
