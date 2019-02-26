@@ -1,9 +1,7 @@
 import {browser} from 'protractor';
 import {HttpClient} from 'protractor-http-client';
 
-interface RequestObject {
-  [key: string]: string;
-}
+import {IRequestHeaders, IRequestPayload} from '../contracts/index';
 
 export class PropertyPanelTestDiagram {
   public name: string =  'PPTest';
@@ -35,7 +33,7 @@ export class PropertyPanelTestDiagram {
 
   public async deployDiagram(): Promise<void> {
     const requestDestination: string = `/api/management/v1/process_models/${this.name}/update`;
-    const requestPayload: any = {
+    const requestPayload: IRequestPayload = {
       xml: `<?xml version="1.0" encoding="UTF-8"?>
       <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
                         xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
@@ -319,19 +317,24 @@ export class PropertyPanelTestDiagram {
         </bpmndi:BPMNDiagram>
       </bpmn:definitions>`,
     };
-    const requestHeaders: RequestObject = {
-      authorization: 'Bearer ZHVtbXlfdG9rZW4=',
-    };
+
+    const requestHeaders: IRequestHeaders = this._getRequestHeaders();
 
     await this._http.post(requestDestination, requestPayload, requestHeaders);
   }
 
   public async deleteDiagram(): Promise<void> {
     const requestDestination: string = `/api/management/v1/process_models/${this.name}/delete`;
-    const requestHeaders: RequestObject = {
+    const requestHeaders: IRequestHeaders = this._getRequestHeaders();
+
+    await this._http.get(requestDestination, requestHeaders);
+  }
+
+  private _getRequestHeaders(): IRequestHeaders {
+    const requestHeaders: IRequestHeaders = {
       authorization: 'Bearer ZHVtbXlfdG9rZW4=',
     };
 
-    await this._http.get(requestDestination, requestHeaders);
+    return requestHeaders;
   }
 }
