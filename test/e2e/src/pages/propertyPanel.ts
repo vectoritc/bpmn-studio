@@ -24,7 +24,9 @@ export class PropertyPanel {
   private _formsBasicsSectionId: string = 'js-forms-basics-section';
 
   public async show(): Promise<void> {
-    await browser.wait(ExpectedConditions.visibilityOf(this._propertyPanelContainer), browser.params.defaultTimeoutMS);
+    const containerVisbility: Function = ExpectedConditions.visibilityOf(this._propertyPanelContainer);
+
+    await browser.wait(containerVisbility, browser.params.defaultTimeoutMS);
   }
 
   public async getVisbilityOfPropertyPanelContainer(): Promise<boolean> {
@@ -142,7 +144,9 @@ export class PropertyPanel {
   }
 
   private async _waitForVisbilityOfElement(finder: ElementFinder): Promise<void> {
-    await browser.wait(ExpectedConditions.visibilityOf(finder), browser.params.defaultTimeoutMS).catch(() => {
+    const finderVisibility: Function = ExpectedConditions.visibilityOf(finder);
+
+    await browser.wait(finderVisibility, browser.params.defaultTimeoutMS).catch(() => {
       // If this timeouts do nothing.
       // We are basically supressing the timeout error here.
       // This way we get better error messages for debugging by the actual test function.
