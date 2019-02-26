@@ -72,6 +72,12 @@ export class SingleDiagramsSolutionExplorerService implements ISolutionExplorerS
 
   public async openSingleDiagram(uri: string, identity: IIdentity): Promise<IDiagram> {
 
+    const uriIsNoBpmnFile: boolean = !uri.endsWith('.bpmn');
+
+    if (uriIsNoBpmnFile) {
+      throw new Error('File is no BPMN file.');
+    }
+
     const uriAlreadyOpened: boolean = this._findOfDiagramWithURI(uri) >= 0;
 
     if (uriAlreadyOpened) {
